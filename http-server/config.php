@@ -11,6 +11,7 @@ use Swoole\WebSocket\Frame;
 return [
 	'servers' => [
 		[
+			'id'       => '',
 			'type'     => Server::HTTP,
 			'host'     => '127.0.0.1',
 			'port'     => 9527,
@@ -26,6 +27,7 @@ return [
 			]
 		],
 		[
+			'id'       => '',
 			'type'     => Server::PACKAGE,
 			'host'     => '127.0.0.1',
 			'port'     => 9628,
@@ -45,6 +47,7 @@ return [
 			]
 		],
 		[
+			'id'       => '',
 			'type'     => Server::TCP,
 			'host'     => '127.0.0.1',
 			'port'     => 9629,
@@ -68,6 +71,7 @@ return [
 			]
 		],
 		[
+			'id'       => '',
 			'type'     => Server::WEBSOCKET,
 			'host'     => '127.0.0.1',
 			'port'     => 9530,

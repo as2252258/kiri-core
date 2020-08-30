@@ -4,6 +4,7 @@ defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
 
 use HttpServer\Http\Response;
 use Snowflake\Snowflake;
+use HttpServer\Http\Context;
 
 if (!function_exists('make')) {
 
@@ -90,8 +91,12 @@ if (!function_exists('alias')) {
 }
 
 
+
 if (!function_exists('name')) {
 
+	/**
+	 * @param string $name
+	 */
 	function name($name)
 	{
 		swoole_set_process_name($name);
@@ -107,10 +112,10 @@ if (!function_exists('response')) {
 	 */
 	function response()
 	{
-		if (!Snowflake::has('response')) {
+		if (!Context::hasContext('response')) {
 			return make('response', Response::class);
 		}
-		return Snowflake::get()->response;
+		return Context::getContext('response');
 	}
 
 }
