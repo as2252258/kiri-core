@@ -91,7 +91,6 @@ if (!function_exists('alias')) {
 }
 
 
-
 if (!function_exists('name')) {
 
 	/**
@@ -130,7 +129,6 @@ if (!function_exists('redirect')) {
 }
 
 
-
 if (!function_exists('env')) {
 
 	/**
@@ -145,6 +143,23 @@ if (!function_exists('env')) {
 			return $default;
 		}
 		return $env;
+	}
+
+}
+
+if (!function_exists('sweep')) {
+
+	/**
+	 * @param string $configPath
+	 * @return array|false|string|null
+	 */
+	function sweep($configPath = APP_PATH . '/config')
+	{
+		$array = [];
+		foreach (glob($configPath . '/*') as $config) {
+			$array = array_merge(require_once "$config", $array);
+		}
+		return $array;
 	}
 
 }
