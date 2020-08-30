@@ -145,7 +145,7 @@ abstract class BaseApplication extends Service
 		}
 		if ($storage = Config::get('storage', false, 'storage')) {
 			if (strpos($storage, APP_PATH) === false) {
-				$storage = realpath(APP_PATH . $storage);
+				$storage = APP_PATH . $storage . '/';
 			}
 			if (!is_dir($storage)) {
 				mkdir($storage, 777);
