@@ -148,7 +148,7 @@ abstract class BaseApplication extends Service
 				$storage = APP_PATH . $storage . '/';
 			}
 			if (!is_dir($storage)) {
-				mkdir($storage, 777);
+				mkdir($storage);
 			}
 			if (!is_dir($storage) || !is_writeable($storage)) {
 				throw new InitException("Directory {$storage} does not have write permission");
