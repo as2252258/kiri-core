@@ -1,0 +1,29 @@
+{
+    "name": "framework/snowflake",
+    "description": "test framework",
+    "authors": [
+        {
+            "name": "XiangLin",
+            "email": "as2252258@163.com"
+        }
+    ],
+    "require": {
+        "php": ">= 7.1",
+        "swoole/ide-helper": "@dev",
+        "amphp/amp": "^2.0.3",
+        "lcobucci/clock": "^1.0",
+        "psr/log": "^1.0",
+      "ext-json": "*",
+        "phpmailer/phpmailer": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Snowflake\\": "system",
+            "HttpServer\\": "http-server"
+        },
+        "files": [
+            "error.php",
+            "function.php"
+        ]
+    }
+}
