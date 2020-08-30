@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        #format {
+            word-break: break-all;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body style="background-color: #666;color: #fff;presentation-level: increment;">
+<pre id="format"></pre>
+<script type="text/javascript">
+    let sock, tick, format = document.getElementById('format');
+
+    function message(message) {
+        let div = document.createElement('div');
+        div.innerHTML = message.data;
+        div.style.cssText = 'padding:5px 10px;background-color:#222;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;word-break: break-all;word-wrap: break-word;';
+        div.style.marginBottom = '10px';
+        let count = format.getElementsByTagName('div');
+
+        format.insertBefore(div, count[0]);
+    }
+
+    function close() {
+        setTimeout(function () {
+            connect();
+            sock.onmessage = message;
+            sock.onclose = close;
+        }, 3000);
+        console.log('onClose')
+    }
+
+    function connect() {
+        sock = new WebSocket('ws://127.0.0.1:9530/');
+        sock.onopen = function () {
+            if (tick) {
+                clearInterval(tick)
+            }
+            tick = setInterval(function () {
+                sock.send('tick');
+            }, 30000)
+        }
+    }
+
+    connect();
+    sock.onmessage = message;
+    sock.onclose = close;
+</script>
+</body>
+</html>
