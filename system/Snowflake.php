@@ -93,7 +93,7 @@ class Snowflake
 	{
 		$path = realpath(static::$service->storage);
 		if (!is_dir($path)) {
-//			mkdir($path);
+			mkdir($path);
 		}
 		return $path;
 	}
@@ -128,11 +128,11 @@ class Snowflake
 	public static function writeFile($fileName, $content, $is_append = FILE_APPEND)
 	{
 		return false;
-//		if (self::inCoroutine()) {
-//			return Coroutine::writeFile($fileName, $content, $is_append);
-//		} else {
-//			return file_put_contents($fileName, $content, $is_append);
-//		}
+		if (self::inCoroutine()) {
+			return Coroutine::writeFile($fileName, $content, $is_append);
+		} else {
+			return file_put_contents($fileName, $content, $is_append);
+		}
 	}
 
 

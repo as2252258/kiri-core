@@ -43,11 +43,11 @@ if (!function_exists('storage')) {
 	function storage($fileName = '', $path = '')
 	{
 		$basePath = Snowflake::getStoragePath();
-//		if (empty($path)) {
-//			return $basePath . '/' . $fileName;
-//		} else if (empty($fileName)) {
-//			return initDir($basePath, $path);
-//		}
+		if (empty($path)) {
+			return $basePath . '/' . $fileName;
+		} else if (empty($fileName)) {
+			return initDir($basePath, $path);
+		}
 		return initDir($basePath, $path) . $fileName;
 	}
 
@@ -64,10 +64,10 @@ if (!function_exists('storage')) {
 		foreach ($explode as $value) {
 			$path .= $value . '/';
 			if (!is_dir($basePath . $path)) {
-//				mkdir($basePath . $path);
+				mkdir($basePath . $path);
 			}
 			if (!is_dir($basePath . $path)) {
-//				throw new Exception('System error, directory ' . $basePath . $path . ' is not writable');
+				throw new Exception('System error, directory ' . $basePath . $path . ' is not writable');
 			}
 		}
 		return realpath($basePath . $path);

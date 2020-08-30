@@ -20,6 +20,7 @@ use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\InitException;
 use Snowflake\Pool\Connection;
 use Snowflake\Pool\RedisClient;
 use Snowflake\Processes;
@@ -142,45 +143,17 @@ abstract class BaseApplication extends Service
 		foreach ($config as $key => $value) {
 			Config::set($key, $value);
 		}
-//		if (isset($config['id'])) {
-//			$this->id = $config['id'];
-//			unset($config['id']);
-//		}
-//		if (isset($config['storage'])) {
-//			$this->storage = $config['storage'];
-//			unset($config['storage']);
-//		}
-//		if (!empty($this->runtimePath)) {
-//			if (!is_dir($this->runtimePath)) {
-//				mkdir($this->runtimePath, 777);
-//			}
-//
-//			if (!is_dir($this->runtimePath) || !is_writeable($this->runtimePath)) {
-//				throw new InitException("Directory {$this->runtimePath} does not have write permission");
-//			}
-//		}
-//		if (isset($config['aliases'])) {
-//			$this->classAlias($config);
-//		}
-//
-//		foreach ($this->moreComponents() as $key => $val) {
-//			if (isset($config['components'][$key])) {
-//				$config['components'][$key] = array_merge($val, $config['components'][$key]);
-//			} else {
-//				$config['components'][$key] = $val;
-//			}
-//		}
-	}
-
-	/**
-	 * @param array $data
-	 */
-	private function classAlias(array &$data)
-	{
-		foreach ($data['aliases'] as $key => $val) {
-			class_alias($val, $key, true);
+		if ($storage = Config::get('storage', false, 'storage')) {
+			if (strpos($storage, APP_PATH) === false) {
+				$storage = realpath(APP_PATH . $storage);
+			}
+			if (!is_dir($storage)) {
+				mkdir($storage, 777);
+			}
+			if (!is_dir($storage) || !is_writeable($storage)) {
+				throw new InitException("Directory {$storage} does not have write permission");
+			}
 		}
-		unset($data['aliases']);
 	}
 
 
