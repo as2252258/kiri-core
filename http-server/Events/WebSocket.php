@@ -67,10 +67,11 @@ class WebSocket extends Server
 	{
 		parent::set($settings);
 
-		$this->application->set(WebSocket::class, $this);
-		$this->application->set(Pool::class, $pool);
+		$application = Snowflake::get();
+		$application->set(WebSocket::class, $this);
+		$application->set(Pool::class, $pool);
 
-		ServerManager::set($this, $settings, $this->application, $events, $config);
+		ServerManager::set($this, $settings, $application, $events, $config);
 	}
 
 
