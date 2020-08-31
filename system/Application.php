@@ -51,7 +51,7 @@ class Application extends BaseApplication
 	 * @param $name
 	 * @param $service
 	 * @return Application
-	 * @throws Exception
+	 * @throws
 	 */
 	public function import(string $name, string $service)
 	{
@@ -64,7 +64,7 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws Exception
+	 * @throws
 	 */
 	public function start()
 	{
