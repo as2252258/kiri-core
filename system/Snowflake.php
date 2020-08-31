@@ -109,6 +109,15 @@ class Snowflake
 
 
 	/**
+	 * @return Container
+	 */
+	public static function getDi()
+	{
+		return static::$container;
+	}
+
+
+	/**
 	 * @param $workerId
 	 * @return false|int|mixed
 	 * @throws Exception
@@ -127,7 +136,6 @@ class Snowflake
 	 */
 	public static function writeFile($fileName, $content, $is_append = FILE_APPEND)
 	{
-		return false;
 		if (self::inCoroutine()) {
 			return Coroutine::writeFile($fileName, $content, $is_append);
 		} else {
