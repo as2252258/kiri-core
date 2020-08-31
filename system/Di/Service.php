@@ -76,7 +76,6 @@ class Service extends Component
 		if ($definition === NULL) {
 			return $this->remove($id);
 		}
-
 		unset($this->_components[$id]);
 		if (is_object($definition) || is_callable($definition, TRUE)) {
 			return $this->_definition[$id] = $definition;

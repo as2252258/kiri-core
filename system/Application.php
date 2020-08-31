@@ -48,6 +48,22 @@ class Application extends BaseApplication
 
 
 	/**
+	 * @param $name
+	 * @param $service
+	 * @return Application
+	 * @throws Exception
+	 */
+	public function import(string $name, string $service)
+	{
+		$class = $this->set($name, ['class' => $service]);
+		if (method_exists($class, 'onImport')) {
+			$class->onImport($this);
+		}
+		return $this;
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	public function start()
