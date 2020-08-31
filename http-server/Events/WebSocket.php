@@ -99,6 +99,7 @@ class WebSocket extends Server
 			$manager->runWith($path, [$frame, $server]);
 		} catch (Exception $exception) {
 			$this->application->addError($exception->getMessage(), 'websocket');
+			$server->send($frame->fd, $exception->getMessage());
 		} finally {
 			$event = Snowflake::get()->event;
 			$event->trigger(Event::EVENT_AFTER_REQUEST);
