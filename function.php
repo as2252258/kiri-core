@@ -44,11 +44,16 @@ if (!function_exists('storage')) {
 	{
 		$basePath = Snowflake::getStoragePath();
 		if (empty($path)) {
-			return $basePath . '/' . $fileName;
+			$fileName = $basePath . '/' . $fileName;
 		} else if (empty($fileName)) {
-			return initDir($basePath, $path);
+			$fileName = initDir($basePath, $path);
+		} else {
+			$fileName = initDir($basePath, $path) . '/' . $fileName;
 		}
-		return initDir($basePath, $path) . $fileName;
+		if (!file_exists($fileName)) {
+			touch($fileName);
+		}
+		return $fileName;
 	}
 
 
@@ -61,16 +66,17 @@ if (!function_exists('storage')) {
 	function initDir($basePath, $path)
 	{
 		$explode = array_filter(explode('/', $path));
+		$_path = '/' . trim($basePath, '/') . '/';
 		foreach ($explode as $value) {
-			$path .= $value . '/';
-			if (!is_dir($basePath . $path)) {
-				mkdir($basePath . $path);
+			$_path .= $value . '/';
+			if (!is_dir(rtrim($_path, '/'))) {
+				mkdir(rtrim($_path, '/'));
 			}
-			if (!is_dir($basePath . $path)) {
-				throw new Exception('System error, directory ' . $basePath . $path . ' is not writable');
+			if (!is_dir($_path)) {
+				throw new Exception('System error, directory ' . $_path . ' is not writable');
 			}
 		}
-		return realpath($basePath . $path);
+		return realpath($_path);
 	}
 
 
