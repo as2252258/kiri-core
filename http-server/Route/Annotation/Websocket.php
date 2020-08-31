@@ -56,7 +56,7 @@ class Websocket extends Annotation
 	{
 		$prefix = 'WEBSOCKET:ANNOTATION:' . $events;
 		if (isset($comment[2])) {
-			return $prefix . ':' . $comment[2];
+			return rtrim($prefix, ':') . ':' . $comment[2];
 		}
 		return $prefix;
 	}
