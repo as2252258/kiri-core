@@ -1,9 +1,10 @@
 <?php
 
-namespace Snowflake\Annotation;
+namespace Snowflake\Annotation\Definition;
 
 
 use ReflectionClass;
+use Snowflake\Annotation\Annotation;
 
 /**
  * Class Websocket

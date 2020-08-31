@@ -1,12 +1,13 @@
 <?php
 
 
-namespace Snowflake\Annotation;
+namespace Snowflake\Annotation\Definition;
 
 
 use Closure;
 use ReflectionClass;
 use ReflectionException;
+use Snowflake\Annotation\Annotation;
 use Snowflake\Snowflake;
 
 /**
