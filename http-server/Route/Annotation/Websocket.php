@@ -52,7 +52,7 @@ class Websocket extends Annotation
 	 * @param $comment
 	 * @return false|string
 	 */
-	public function getName($events, $comment)
+	public function getName($events, $comment = [])
 	{
 		$prefix = rtrim('WEBSOCKET:ANNOTATION:' . $events, ':');
 		if (isset($comment[2])) {

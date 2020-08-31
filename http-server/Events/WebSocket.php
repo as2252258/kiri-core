@@ -115,12 +115,9 @@ class WebSocket extends Server
 	 */
 	protected function connect($request, $response)
 	{
-		$manager = Snowflake::get()->event;
-		if ($manager->exists(Event::SERVER_HANDSHAKE)) {
-			return $manager->trigger(Event::SERVER_HANDSHAKE, [$request, $response]);
-		}
-		$response->status(502);
-		$response->end();
+		/** @var AWebsocket $manager */
+		$manager = Snowflake::get()->annotation->get('websocket');
+		$manager->runWith($manager->getName(AWebsocket::HANDSHAKE), [$request, $response]);
 		return true;
 	}
 
@@ -154,13 +151,7 @@ class WebSocket extends Server
 		foreach ($headers as $key => $val) {
 			$response->header($key, $val);
 		}
-		if (isset($request->get['debug']) && $request->get['debug'] == 'test') {
-			$response->status(101);
-			$response->end();
-			return true;
-		} else {
-			return $this->connect($request, $response);
-		}
+		return $this->connect($request, $response);
 	}
 
 	/**
@@ -170,14 +161,14 @@ class WebSocket extends Server
 	 */
 	public function onClose(Server $server, int $fd)
 	{
-		$event = Snowflake::get()->event;
 		try {
-			if ($event->exists(Event::SERVER_CLOSE)) {
-				$event->trigger(Event::SERVER_CLOSE, [$fd]);
-			}
+			/** @var AWebsocket $manager */
+			$manager = Snowflake::get()->annotation->get('websocket');
+			$manager->runWith($manager->getName(AWebsocket::CLOSE), [$fd]);
 		} catch (\Throwable $exception) {
 			$this->application->addError($exception->getMessage());
 		} finally {
+			$event = Snowflake::get()->event;
 			$event->trigger(Event::RELEASE_ALL);
 			Logger::insert();
 		}
