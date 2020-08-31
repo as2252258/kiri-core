@@ -103,7 +103,7 @@ class Annotation extends BaseAnnotation
 	public function get($name)
 	{
 		if (!isset($this->_Scan_directory[$name])) {
-			throw new Exception('Undefined analytic function.');
+			throw new Exception('Undefined analytic class ' . $name . '.');
 		}
 		return $this->_Scan_directory[$name];
 	}
