@@ -62,6 +62,24 @@ class Node extends Application
 		return $this->newExec();
 	}
 
+
+	/**
+	 * @return bool
+	 */
+	public function hasInterceptor()
+	{
+		return count($this->_interceptors) > 0;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getInterceptor()
+	{
+		return $this->_interceptors;
+	}
+
 	/**
 	 * @param $request
 	 * @return bool
@@ -133,10 +151,7 @@ class Node extends Application
 			/** @var Annotation $annotation */
 			$annotation = Snowflake::createObject(Annotation::class);
 			if (!empty($methods)) {
-				$annotations = $annotation->instance($reflect);
-				if (isset($annotations['Interceptor'])) {
-				}
-
+				$this->_interceptors = $annotation->instance($reflect, $action);
 			}
 			return [$reflect->newInstance(), $action];
 		} catch (Exception $exception) {
@@ -145,6 +160,7 @@ class Node extends Application
 			return null;
 		}
 	}
+
 
 	/**
 	 * @return string
@@ -297,7 +313,7 @@ class Node extends Application
 		if (!empty($this->handler)) {
 			$made = new Middleware();
 			$made->setMiddleWares($this->middleware);
-			$this->callback = $made->getGenerate($this->handler);
+			$this->callback = $made->getGenerate($this);
 		}
 		return $this;
 	}

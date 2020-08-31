@@ -49,11 +49,12 @@ abstract class BaseAnnotation extends Component
 
 	/**
 	 * @param ReflectionClass $reflect
+	 * @param string $method
 	 * @param array $rules
 	 * @return array
 	 * @throws Exception
 	 */
-	public function instance($reflect, $rules = [])
+	public function instance($reflect, $method = '', $rules = [])
 	{
 		$annotations = $this->getPrivates($reflect);
 
@@ -62,11 +63,14 @@ abstract class BaseAnnotation extends Component
 			throw new Exception('Class ' . $reflect->getName() . ' cannot be instantiated.');
 		}
 
-		$object = $reflect->newInstance();
-
 		$array = [];
-		foreach ($classMethods as $classMethod) {
-			$array = $this->resolveDocComment($classMethod, $object, $annotations, $array);
+		$object = $reflect->newInstance();
+		if (!empty($method)) {
+			$array = $this->resolveDocComment($reflect->getMethod($method), $object, $annotations, $array);
+		} else {
+			foreach ($classMethods as $classMethod) {
+				$array = $this->resolveDocComment($classMethod, $object, $annotations, $array);
+			}
 		}
 		return $array;
 	}

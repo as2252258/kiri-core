@@ -43,19 +43,38 @@ class Middleware
 	}
 
 	/**
-	 * @param $dispatch
+	 * @param Node $node
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getGenerate($dispatch)
+	public function getGenerate($node)
 	{
-		$last = function ($passable) use ($dispatch) {
-			return Dispatch::create($dispatch, $passable)->dispatch();
+		$last = function ($passable) use ($node) {
+			return Dispatch::create($node->handler, $passable)->dispatch();
 		};
-		$data = array_reduce(array_reverse($this->middleWares), $this->core(), $last);
+		$middleWares = $this->annotation($node);
+		$data = array_reduce(array_reverse($middleWares), $this->core(), $last);
 		$this->middleWares = [];
 		return $data;
 	}
+
+
+	/**
+	 * @param Node $node
+	 * @return array
+	 */
+	public function annotation($node)
+	{
+		$middleWares = $this->middleWares;
+		if (!$node->hasInterceptor()) {
+			return $middleWares;
+		}
+		foreach ($node->getInterceptor() as $item) {
+			$middleWares[] = $item;
+		}
+		return $middleWares;
+	}
+
 
 	/**
 	 * @return Closure
