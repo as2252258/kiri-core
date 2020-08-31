@@ -67,10 +67,9 @@ class Dispatch
 		} else {
 			$controller = $this->handler;
 		}
-		$request = Context::get('request');
-		$controller->setRequest($request);
-		$controller->setHeaders($request->headers);
-		$controller->setInput($request->params);
+		$controller->request = Context::get('request');
+		$controller->headers = $controller->request->headers;
+		$controller->input = $controller->request->params;
 	}
 
 }

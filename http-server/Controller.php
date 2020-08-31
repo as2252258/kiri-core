@@ -18,15 +18,15 @@ class Controller extends Application
 {
 
 	/** @var HttpParams $input */
-	protected $input;
+	public $input;
 
 
 	/** @var HttpHeaders */
-	protected $headers;
+	public $headers;
 
 
 	/** @var Request */
-	protected $request;
+	public $request;
 
 	/**
 	 * @param HttpParams $input
