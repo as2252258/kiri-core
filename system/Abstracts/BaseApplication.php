@@ -236,7 +236,6 @@ abstract class BaseApplication extends Service
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
 			'processes'         => ['class' => Processes::class],
-			'db'                => ['class' => DatabasesProviders::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => RedisClient::class],
 			'pool'              => ['class' => SPool::class],
