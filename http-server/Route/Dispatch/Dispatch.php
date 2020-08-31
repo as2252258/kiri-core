@@ -67,7 +67,7 @@ class Dispatch
 		} else {
 			$controller = $this->handler;
 		}
-		$controller->request = Context::get('request');
+		$controller->request = Context::getContext('request');
 		$controller->headers = $controller->request->headers;
 		$controller->input = $controller->request->params;
 	}
