@@ -43,7 +43,7 @@ class Annotation extends BaseAnnotation
 
 	private $_classMap = [
 		'websocket' => Websocket::class,
-		'http'      => Http::class
+		'http'      => \HttpServer\Events\Http::class
 	];
 
 
