@@ -23,7 +23,7 @@ class Router extends Application implements RouterInterface
 	/** @var Node[] $nodes */
 	public $nodes = [];
 	public $groupTacks = [];
-	public $dir = 'App\\Controllers';
+	public $dir = 'App\\Http';
 
 	/** @var string[] */
 	public $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
@@ -34,7 +34,7 @@ class Router extends Application implements RouterInterface
 	 */
 	public function init()
 	{
-		$this->dir = Config::get('controller.path', false, $this->dir);
+		$this->dir = Config::get('http.namespace', false, $this->dir);
 	}
 
 	/**
