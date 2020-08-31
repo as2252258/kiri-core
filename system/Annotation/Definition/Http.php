@@ -20,55 +20,26 @@ class Http extends Annotation
 
 	/**
 	 * @var string
-	 * 拦截器
+	 * @Interceptor(LoginInterceptor)
 	 */
-	private $Interceptor;
+	private $Interceptor = 'required|not empty';
 
 
 	/**
 	 * @var string
-	 * 限速
 	 */
-	private $Limits;
+	private $Limits = 'required|not empty';
+
+	protected $_annotations = [];
 
 
 	/**
-	 * @param $controller
-	 * @param $methodName
-	 * @param $handler
-	 * @return array
-	 * @throws ReflectionException
+	 * @param $events
+	 * @return bool
 	 */
-	public function createLimits($controller, $methodName, $handler)
+	public function isLegitimate($events)
 	{
-		$namespace = 'App\Http\Interceptor\\' . $handler;
-		$class = Snowflake::getDi()->getReflect($namespace);
-
-		$object = $class->newInstance();
-
-
-		$method = $class->getMethod('Interceptor');
-
-
-		return [$object, 'Interceptor'];
-	}
-
-
-	/**
-	 * @param $controller
-	 * @param $methodName
-	 * @param $handler
-	 * @return array
-	 * @throws ReflectionException
-	 */
-	public function createInterceptor($controller, $methodName, $handler)
-	{
-		$namespace = 'App\Interceptor\\' . $handler;
-		$class = Snowflake::getDi()->getReflect($namespace);
-
-		$object = $class->newInstance();
-
-		return [$object, 'Interceptor', [request(), [$controller, $methodName]]];
+		return isset($events[2]) && !empty($events[2]);
 	}
 
 
@@ -79,7 +50,8 @@ class Http extends Annotation
 	 */
 	public function getName($name, $events)
 	{
-		return self::HTTP_EVENT . $name . ':' . $events[1];
+		return self::HTTP_EVENT . $name . ':' . $events[2];
 	}
+
 
 }
