@@ -87,14 +87,7 @@ class Annotation extends BaseAnnotation
 				if (!$this->isLegitimate($events)) {
 					continue;
 				}
-				$_key = $this->getName($annotation, $events);
-				if (empty($events[2])) {
-					$this->push($_key, [$controller, $methodName]);
-				} else {
-					$handler = $this->createHandler($controller, $methodName, $events[2]);
-
-					$this->push($_key, $handler, [request(), [$controller, $methodName]]);
-				}
+				$this->push($this->getName($annotation, $events), [$controller, $methodName]);
 			}
 		}
 	}
