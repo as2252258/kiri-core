@@ -26,7 +26,7 @@ class Router extends Application implements RouterInterface
 	/** @var Node[] $nodes */
 	public $nodes = [];
 	public $groupTacks = [];
-	public $dir = 'App\\Http';
+	public $dir = 'App\\Http\\Controllers';
 
 	/** @var string[] */
 	public $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
