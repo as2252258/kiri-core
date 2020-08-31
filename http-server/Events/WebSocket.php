@@ -10,12 +10,14 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\ServerManager;
+use ReflectionException;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Request as SRequest;
 use Swoole\Http\Response as SResponse;
+use Swoole\Process\Pool;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
@@ -50,15 +52,19 @@ class WebSocket extends Server
 
 	/**
 	 * @param array $settings
+	 * @param null $pool
 	 * @param array $events
-	 * @param $config
+	 * @param array $config
 	 * @return mixed|void
-	 * @throws \ReflectionException
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
 	 */
-	public function set(array $settings, $events = [], $config = [])
+	public function set(array $settings, $pool = null, $events = [], $config = [])
 	{
 		parent::set($settings);
+		Snowflake::get()->set(WebSocket::class, $this);
+		Snowflake::get()->set(Pool::class, $pool);
 		ServerManager::set($this, $settings, $this->application, $events, $config);
 	}
 

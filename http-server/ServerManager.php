@@ -26,7 +26,7 @@ class ServerManager
 		}
 		[$category, $config, $handlers, $settings] = $process;
 		$server = new $category[1](...static::parameter($application, $config, $category));
-		$server->set($settings ?? [], $handlers, $config);
+		$server->set($settings ?? [], $pool, $handlers, $config);
 		static::notice($application, $workerId, $config);
 		if (property_exists($server, 'pack')) {
 			$server->pack = $config['message']['pack'] ?? function ($data) {

@@ -52,15 +52,18 @@ abstract class Service extends Server
 
 	/**
 	 * @param array $settings
+	 * @param null $pool
 	 * @param array $events
 	 * @param array $config
 	 * @return mixed|void
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
-	public function set(array $settings, $events = [], $config = [])
+	public function set(array $settings, $pool = null, $events = [], $config = [])
 	{
 		parent::set($settings);
+		Snowflake::get()->set(Pool::class, $pool);
 		ServerManager::set($this, $settings, $this->application, $events, $config);
 	}
 

@@ -57,7 +57,6 @@ return [
 			],
 			'message'  => [
 				'pack'   => function ($data) {
-					var_dump($data);
 					return \Snowflake\Core\JSON::encode($data);
 				},
 				'unpack' => function ($data) {
@@ -86,6 +85,9 @@ return [
 				'receive'  => function ($server, int $fd, int $reactorId, string $data) {
 					$server->push(1, 'success.');
 					$server->send($fd, 'success.');
+
+					$socket = Snowflake::get()->get(\HttpServer\Events\WebSocket::class);
+					$socket->push(1, 'hello word~~~~~~~~~~~~~');
 				},
 				'settings' => []
 			],
@@ -103,6 +105,7 @@ return [
 				},
 				Event::SERVER_MESSAGE      => function (\Swoole\WebSocket\Server $server, Frame $frame) {
 					$this->error('websocket SERVER_MESSAGE.');
+
 					return $server->push($frame->fd, 'hello word~');
 				},
 				Event::SERVER_CLOSE        => function (int $fd) {
