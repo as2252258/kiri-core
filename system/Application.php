@@ -37,7 +37,7 @@ class Application extends BaseApplication
 		$process = Snowflake::get()->processes;
 		if (Config::has('servers', true)) {
 			/** @var Server $https */
-			$https = $this->make(Server::class);
+			$https = $this->make(Server::class, Server::class);
 			$servers = $https->initCore(Config::get('servers'));
 			$process->push($servers);
 		}
