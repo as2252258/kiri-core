@@ -9,7 +9,7 @@ use Snowflake\Application;
 
 /**
  * Class Process
- * @package BeReborn\Service
+ * @package Snowflake\Snowflake\Service
  */
 abstract class Process extends Component
 {

@@ -11,7 +11,7 @@ namespace HttpServer\IInterface;
 
 /**
  * Interface IFormatter
- * @package BeReborn\Http\Formatter
+ * @package Snowflake\Snowflake\Http\Formatter
  */
 interface IFormatter
 {

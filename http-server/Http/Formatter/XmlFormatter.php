@@ -17,7 +17,7 @@ use HttpServer\IInterface\IFormatter;
 
 /**
  * Class XmlFormatter
- * @package BeReborn\Http\Formatter
+ * @package Snowflake\Snowflake\Http\Formatter
  */
 class XmlFormatter extends Application implements IFormatter
 {

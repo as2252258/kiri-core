@@ -7,7 +7,7 @@ namespace Snowflake\Abstracts;
 
 /**
  * Class BaseAnnotation
- * @package BeReborn\Annotation\Base
+ * @package Snowflake\Snowflake\Annotation\Base
  */
 abstract class BaseAnnotation extends Component
 {

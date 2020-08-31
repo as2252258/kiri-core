@@ -14,7 +14,7 @@ use Swoole\WebSocket\Server;
 
 /**
  * Class ServerBase
- * @package BeReborn\Server
+ * @package Snowflake\Snowflake\Server
  */
 abstract class ServerBase extends Application
 {

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace BeReborn\Console;
+namespace Snowflake\Console;
 
 /**
  * Class DefaultCommand
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 class DefaultCommand extends Command
 {

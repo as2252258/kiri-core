@@ -155,6 +155,19 @@ class Snowflake
 	}
 
 
+	public static function rename($tmp)
+	{
+		$hash = md5_file($tmp['tmp_name']);
+
+		$later = '.' . exif_imagetype($tmp['tmp_name']);
+
+		$match = '/(\w{12})(\w{5})(\w{9})(\w{6})/';
+		$tmp = preg_replace($match, '$1-$2-$3-$4', $hash);
+
+		return strtoupper($tmp) . $later;
+	}
+
+
 	/**
 	 * @return bool
 	 */

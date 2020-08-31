@@ -9,9 +9,7 @@ use HttpServer\ServerManager;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use Snowflake\Abstracts\Component;
-use Swoole\Process;
 use Swoole\Process\Pool;
-use Swoole\Timer;
 
 /**
  * Class Processes
@@ -39,6 +37,12 @@ class Processes extends Component
 			if ($event->exists(Event::PROCESS_WORKER_STOP)) {
 				$event->trigger(Event::PROCESS_WORKER_STOP);
 			}
+
+			$email = Config::get('admin.email');
+			if (!empty($email)) {
+				$nickname = Config::get('admin.name', false, '亲爱的开发者');
+				$this->system_mail($email, $nickname);
+			}
 		});
 		$server->on('message', function ($pool, $message) {
 			file_put_contents('a.log', func_get_args());
@@ -47,7 +51,11 @@ class Processes extends Component
 	}
 
 
-	protected function system_mail()
+	/**
+	 * @param $email
+	 * @param $nickname
+	 */
+	protected function system_mail($email, $nickname)
 	{
 		try {
 			$mail = new PHPMailer(true);
@@ -62,16 +70,12 @@ class Processes extends Component
 			$mail->Port = 587;                                          // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
 			//Recipients
-			$mail->setFrom('from@example.com', 'Mailer');
-			$mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
-			$mail->addAddress('ellen@example.com');               // Name is optional
-			$mail->addReplyTo('info@example.com', 'Information');
-			$mail->addCC('cc@example.com');
-			$mail->addBCC('bcc@example.com');
+			$mail->setFrom('system@example.com', '系统管理员');
+			$mail->addAddress($email, $nickname);                // Add a recipient
 
 			// Attachments
-			$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-			$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+//			$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+//			$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
 
 			// Content
 			$mail->isHTML(true);                                  // Set email format to HTML

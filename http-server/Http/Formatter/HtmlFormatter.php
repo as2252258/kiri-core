@@ -9,14 +9,14 @@
 namespace HttpServer\Http\Formatter;
 
 
-use BeReborn\Core\JSON;
+use Snowflake\Core\JSON;
 use HttpServer\Application;
 use Swoole\Http\Response;
 use HttpServer\IInterface\IFormatter;
 
 /**
  * Class HtmlFormatter
- * @package BeReborn\Http\Formatter
+ * @package Snowflake\Snowflake\Http\Formatter
  */
 class HtmlFormatter extends Application implements IFormatter
 {

@@ -12,7 +12,7 @@ use Snowflake\Snowflake;
 
 /**
  * Class WebController
- * @package BeReborn\Web
+ * @package Snowflake\Snowflake\Web
  */
 class Controller extends Application
 {

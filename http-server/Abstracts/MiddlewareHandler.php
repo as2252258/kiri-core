@@ -7,7 +7,7 @@ use HttpServer\IInterface\IMiddleware;
 
 /**
  * Class MiddlewareHandler
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 abstract class MiddlewareHandler implements IMiddleware
 {

@@ -10,7 +10,7 @@ namespace Snowflake\Core;
 
 /**
  * Class Xml
- * @package BeReborn\Core
+ * @package Snowflake\Snowflake\Core
  */
 class Xml
 {

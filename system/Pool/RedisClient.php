@@ -12,7 +12,7 @@ use Exception;
 
 /**
  * Class RedisClient
- * @package BeReborn\Pool
+ * @package Snowflake\Snowflake\Pool
  */
 class RedisClient extends Pool
 {

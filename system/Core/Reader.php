@@ -5,7 +5,7 @@ namespace Snowflake\Core;
 
 /**
  * Class Reader
- * @package BeReborn\Core
+ * @package Snowflake\Snowflake\Core
  */
 class Reader
 {

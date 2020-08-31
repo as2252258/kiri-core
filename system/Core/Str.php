@@ -7,7 +7,7 @@ use Exception;
 
 /**
  * Class Str
- * @package BeReborn\Core
+ * @package Snowflake\Snowflake\Core
  */
 class Str
 {

@@ -13,7 +13,7 @@ use Exception;
 
 /**
  * Class ArrayAccess
- * @package BeReborn\Core
+ * @package Snowflake\Core
  */
 class ArrayAccess
 {

@@ -8,7 +8,7 @@ use HttpServer\Http\Request;
 
 /**
  * Interface IMiddleware
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 interface IMiddleware
 {

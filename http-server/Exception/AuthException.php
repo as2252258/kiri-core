@@ -13,7 +13,7 @@ use Throwable;
 
 /**
  * Class AuthException
- * @package BeReborn\Exception
+ * @package Snowflake\Snowflake\Exception
  */
 class AuthException extends \Exception
 {

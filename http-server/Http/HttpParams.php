@@ -8,13 +8,13 @@
 
 namespace HttpServer\Http;
 
-use BeReborn\Core\JSON;
 use Exception;
 use HttpServer\Exception\RequestException;
+use Snowflake\Snowflake;
 
 /**
  * Class HttpParams
- * @package BeReborn\Http
+ * @package Snowflake\Snowflake\Http
  */
 class HttpParams
 {
@@ -177,7 +177,7 @@ class HttpParams
         }
         $param = $this->files[$name];
         $param['class'] = File::class;
-        return \BeReborn::createObject($param);
+        return Snowflake::createObject($param);
     }
 
     /**

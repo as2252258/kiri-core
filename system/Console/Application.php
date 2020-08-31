@@ -6,18 +6,18 @@
  * Time: 2:16
  */
 
-namespace BeReborn\Console;
+namespace Snowflake\Console;
 
 
-use BeReborn\Base\BaseApplication;
-use kafka\Protocol\SyncGroup;
+use Snowflake\Abstracts\BaseApplication;
 use Swoole\Coroutine\Channel;
 use Swoole\Runtime;
 use Swoole\Timer;
+use Snowflake\Snowflake;
 
 /**
  * Class Application
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 class Application extends BaseApplication
 {
@@ -52,7 +52,7 @@ class Application extends BaseApplication
 	public function register($class)
 	{
 		if (is_string($class) || is_callable($class, true)) {
-			$class = \BeReborn::createObject($class);
+			$class = Snowflake::createObject($class);
 		}
 		$this->console->signCommand($class);
 	}
@@ -65,10 +65,8 @@ class Application extends BaseApplication
 	 */
 	public function run($kernel = null)
 	{
-		setCommand(true);
 		try {
-			$params = '';
-			$kernel = \BeReborn::make($kernel, Kernel::class);
+			$kernel = make($kernel, Kernel::class);
 
 			Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
 

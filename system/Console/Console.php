@@ -1,11 +1,11 @@
 <?php
 
 
-namespace BeReborn\Console;
+namespace Snowflake\Console;
 
 /**
  * Class Console
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 class Console extends AbstractConsole
 {

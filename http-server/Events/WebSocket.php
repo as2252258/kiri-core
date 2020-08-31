@@ -8,7 +8,6 @@
 
 namespace HttpServer\Events;
 
-use BeReborn;
 use Exception;
 use HttpServer\ServerManager;
 use Snowflake\Error\Logger;
@@ -22,7 +21,7 @@ use Swoole\WebSocket\Server;
 
 /**
  * Class ServerWebSocket
- * @package BeReborn\Server
+ * @package Snowflake\Snowflake\Server
  */
 class WebSocket extends Server
 {

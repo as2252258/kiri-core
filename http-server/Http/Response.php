@@ -20,7 +20,7 @@ use Swoole\Http\Response as SResponse;
 
 /**
  * Class Response
- * @package BeReborn\Http
+ * @package Snowflake\Snowflake\Http
  */
 class Response extends Application
 {

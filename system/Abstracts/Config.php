@@ -15,7 +15,7 @@ use Snowflake\Abstracts\Component;
 
 /**
  * Class Config
- * @package BeReborn\Base
+ * @package Snowflake\Snowflake\Base
  */
 class Config extends Component
 {

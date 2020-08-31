@@ -15,7 +15,7 @@ use HttpServer\Route\Dispatch\Dispatch;
 
 /**
  * Class Middleware
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 class Middleware
 {

@@ -5,7 +5,7 @@ namespace Snowflake\Console;
 
 /**
  * Interface CommandInterface
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 interface CommandInterface
 {

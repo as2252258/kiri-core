@@ -1,30 +1,42 @@
 {
-    "name": "game-worker/snowflake",
-    "description": "test framework",
-    "authors": [
-        {
-            "name": "XiangLin",
-            "email": "as2252258@163.com"
-        }
-    ],
-    "license": "MIT",
-    "require": {
-        "php": ">= 7.1",
-        "swoole/ide-helper": "@dev",
-        "amphp/amp": "^2.0.3",
-        "lcobucci/clock": "^1.0",
-        "psr/log": "^1.0",
-      "ext-json": "*",
-        "phpmailer/phpmailer": "^6.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "Snowflake\\": "system",
-            "HttpServer\\": "http-server"
-        },
-        "files": [
-            "error.php",
-            "function.php"
-        ]
+  "name": "game-worker/snowflake",
+  "description": "test framework",
+  "authors": [
+    {
+      "name": "XiangLin",
+      "email": "as2252258@163.com"
     }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">= 7.1",
+    "swoole/ide-helper": "@dev",
+    "amphp/amp": "^2.0.3",
+    "lcobucci/clock": "^1.0",
+    "psr/log": "^1.0",
+    "ext-json": "*",
+    "phpmailer/phpmailer": "^6.1",
+    "ext-exif": "*",
+    "ext-fileinfo": "*",
+    "ext-pdo": "*",
+    "ext-redis": "*",
+    "ext-simplexml": "*",
+    "ext-libxml": "*",
+    "ext-iconv": "*",
+    "ext-mbstring": "*",
+    "ext-xml": "*",
+    "ext-memcached": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Snowflake\\": "system",
+      "HttpServer\\": "http-server",
+      "validator\\": "validator",
+      "Database\\": "Database"
+    },
+    "files": [
+      "error.php",
+      "function.php"
+    ]
+  }
 }

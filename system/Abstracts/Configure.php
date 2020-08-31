@@ -10,7 +10,7 @@ namespace Snowflake\Abstracts;
 
 /**
  * Interface Configure
- * @package BeReborn\Base
+ * @package Snowflake\Snowflake\Base
  */
 interface Configure
 {

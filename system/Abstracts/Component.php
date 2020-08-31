@@ -10,10 +10,11 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
+use Snowflake\Snowflake;
 
 /**
  * Class Component
- * @package BeReborn\Base
+ * @package Snowflake\Snowflake\Base
  */
 class Component extends BaseObject
 {
@@ -73,6 +74,7 @@ class Component extends BaseObject
 	 */
 	public function trigger($name, $event = null, $params = [], $isRemove = false)
 	{
+		$aEvents = Snowflake::get()->event;
 		if (isset($this->_events[$name])) {
 			$events = $this->_events[$name];
 			foreach ($events as $key => $_event) {
@@ -82,11 +84,11 @@ class Component extends BaseObject
 				call_user_func($_event, ...$params);
 				if ($isRemove) {
 					unset($this->_events[$name][$key]);
-					of($name, $_event);
+					$aEvents->of($name, $_event);
 				}
 			}
 		}
-		fire($name, $event);
+		$aEvents->trigger($name, $event);
 	}
 
 	/**
@@ -96,14 +98,15 @@ class Component extends BaseObject
 	 */
 	public function off($name, $handler = NULL)
 	{
+		$aEvents = Snowflake::get()->event;
 		if (!isset($this->_events[$name])) {
-			return of($name, $handler);
+			return $aEvents->of($name, $handler);
 		}
 
 		if (empty($handler)) {
 			unset($this->_events[$name]);
 
-			return of($name, $handler);
+			return $aEvents->of($name, $handler);
 		}
 
 		foreach ($this->_events[$name] as $key => $val) {
@@ -114,7 +117,7 @@ class Component extends BaseObject
 
 			break;
 		}
-		return of($name, $handler);
+		return $aEvents->of($name, $handler);
 	}
 
 	/**
@@ -122,7 +125,8 @@ class Component extends BaseObject
 	public function offAll()
 	{
 		$this->_events = [];
-		ofAll();
+		$aEvents = Snowflake::get()->event;
+		$aEvents->clean();
 	}
 
 

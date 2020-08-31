@@ -10,7 +10,7 @@ namespace Snowflake\Error;
 
 /**
  * Interface ErrorInterface
- * @package BeReborn\Error
+ * @package Snowflake\Snowflake\Error
  */
 interface ErrorInterface
 {

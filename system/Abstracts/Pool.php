@@ -10,7 +10,7 @@ use Swoole\Coroutine\Channel;
 
 /**
  * Class Pool
- * @package BeReborn\Pool
+ * @package Snowflake\Snowflake\Pool
  */
 abstract class Pool extends Component
 {
@@ -41,6 +41,7 @@ abstract class Pool extends Component
 	 * @param $name
 	 * @param int $timeout
 	 * @return mixed
+	 * @throws Exception
 	 */
 	protected function get($name, $timeout = -1)
 	{

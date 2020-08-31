@@ -17,7 +17,7 @@ use Swoole\Coroutine\System;
 
 /**
  * Class Client
- * @package BeReborn\Http
+ * @package Snowflake\Snowflake\Http
  */
 class Client
 {

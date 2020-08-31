@@ -6,7 +6,7 @@ namespace HttpServer\Route;
 
 /**
  * Class Any
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 class Any
 {

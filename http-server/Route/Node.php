@@ -7,10 +7,11 @@ namespace HttpServer\Route;
 use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
+use Snowflake\Snowflake;
 
 /**
  * Class Node
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 class Node extends Application
 {
@@ -100,7 +101,7 @@ class Node extends Application
 				$rule['class'] = Filter::class;
 			}
 			/** @var Filter $object */
-			$object = \BeReborn::createObject($rule);
+			$object = Snowflake::createObject($rule);
 			if (!$object->handler()) {
 				return false;
 			};
@@ -243,7 +244,7 @@ class Node extends Application
 	 */
 	public function limits(int $limit, int $duration = 60, bool $isBindConsumer = false)
 	{
-		$limits = \BeReborn::$app->getLimits();
+		$limits = Snowflake::get()->getLimits();
 		$limits->addLimits($this->path, $limit, $duration, $isBindConsumer);
 		return $this;
 	}
@@ -266,7 +267,7 @@ class Node extends Application
 				if (is_array($middle)) {
 					$_tmp = $this->each($middle, $_tmp);
 				} else {
-					$_tmp[] = \BeReborn::createObject($middle);
+					$_tmp[] = Snowflake::createObject($middle);
 				}
 			} catch (Exception $exception) {
 			}
@@ -305,7 +306,7 @@ class Node extends Application
 			if (is_array($class)) {
 				$_temp = $this->each($class, $_temp);
 			} else {
-				$_temp[] = \BeReborn::createObject($class);
+				$_temp[] = Snowflake::createObject($class);
 			}
 		}
 		return $_temp;

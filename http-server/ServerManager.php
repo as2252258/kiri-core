@@ -5,10 +5,8 @@ namespace HttpServer;
 
 use Exception;
 use ReflectionException;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Process\Pool;
 
 class ServerManager
 {

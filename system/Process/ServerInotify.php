@@ -10,7 +10,6 @@ namespace Snowflake\Process;
 
 
 use Exception;
-use BeReborn;
 use Snowflake\Snowflake;
 use Swoole\Event;
 use Swoole\Timer;
@@ -18,7 +17,7 @@ use swoole_process;
 
 /**
  * Class ServerInotify
- * @package BeReborn\Server
+ * @package Snowflake\Snowflake\Server
  */
 class ServerInotify extends Process
 {

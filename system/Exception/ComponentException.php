@@ -13,7 +13,7 @@ use Throwable;
 
 /**
  * Class ComponentException
- * @package BeReborn\Exception
+ * @package Snowflake\Snowflake\Exception
  */
 class ComponentException extends \Exception
 {

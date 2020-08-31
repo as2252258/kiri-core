@@ -4,13 +4,15 @@
 namespace HttpServer\Route;
 
 
+use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Abstracts\MiddlewareHandler;
+use Snowflake\Snowflake;
 
 /**
  * Class CoreMiddleware
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  * 跨域中间件
  */
 class CoreMiddleware extends MiddlewareHandler
@@ -27,7 +29,7 @@ class CoreMiddleware extends MiddlewareHandler
 		$header = $request->headers;
 
 		/** @var Response $response */
-		$response = \BeReborn::getApp('response');
+		$response = Context::getContext('response');
 		$request_method = $header->getHeader('access-control-request-method');
 		$request_headers = $header->getHeader('access-control-request-headers');
 		$response->addHeader('Access-Control-Allow-Headers', $request_headers);

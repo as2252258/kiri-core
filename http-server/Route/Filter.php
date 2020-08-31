@@ -11,10 +11,11 @@ use HttpServer\Route\Filter\HeaderFilter;
 use HttpServer\Route\Filter\QueryFilter;
 use Exception;
 use HttpServer\Application;
+use Snowflake\Snowflake;
 
 /**
  * Class Filter
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 class Filter extends Application
 {
@@ -37,7 +38,7 @@ class Filter extends Application
 		}
 
 		/** @var BodyFilter $class */
-		$class = \BeReborn::createObject(BodyFilter::class);
+		$class = Snowflake::createObject(BodyFilter::class);
 		$class->rules = [];
 		$class->params = Input()->params();
 
@@ -57,7 +58,7 @@ class Filter extends Application
 		}
 
 		/** @var HeaderFilter $class */
-		$class = \BeReborn::createObject(HeaderFilter::class);
+		$class = Snowflake::createObject(HeaderFilter::class);
 		$class->rules = [];
 		$class->params = request()->headers->getHeaders();
 
@@ -77,7 +78,7 @@ class Filter extends Application
 		}
 
 		/** @var QueryFilter $class */
-		$class = \BeReborn::createObject(QueryFilter::class);
+		$class = Snowflake::createObject(QueryFilter::class);
 		$class->rules = [];
 		$class->params = request()->headers->getHeaders();
 

@@ -18,7 +18,7 @@ use Snowflake\Snowflake;
 /**
  * Class ErrorHandler
  *
- * @package BeReborn\Base
+ * @package Snowflake\Snowflake\Base
  * @property-read $asError
  */
 class ErrorHandler extends Component implements ErrorInterface

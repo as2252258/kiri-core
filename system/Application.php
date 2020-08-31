@@ -10,14 +10,13 @@ namespace Snowflake;
 
 
 use Exception;
-use HttpServer\Abstracts\HttpService;
 use HttpServer\Server;
 use Snowflake\Abstracts\BaseApplication;
 
 /**
  * Class Init
  *
- * @package BeReborn\Web
+ * @package Snowflake
  *
  * @property-read Config $config
  */
@@ -66,6 +65,6 @@ class Application extends BaseApplication
 	 */
 	public function make($className, $abstracts = null)
 	{
-		return Snowflake::createObject($className);
+		return make($className, $abstracts);
 	}
 }

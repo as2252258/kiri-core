@@ -14,7 +14,7 @@ use HttpServer\IInterface\IFormatter;
 
 /**
  * Class JsonFormatter
- * @package BeReborn\Http\Formatter
+ * @package Snowflake\Snowflake\Http\Formatter
  */
 class JsonFormatter extends Application implements IFormatter
 {

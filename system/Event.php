@@ -148,6 +148,12 @@ class Event extends BaseObject
 	}
 
 
+	public function clean()
+	{
+		$this->_events = [];
+	}
+
+
 	/**
 	 * @param $name
 	 * @param null $handler

@@ -5,11 +5,12 @@ namespace Snowflake\Console;
 
 
 use Exception;
+use Snowflake\Snowflake;
 use Swoole\Coroutine\Channel;
 
 /**
  * Class AbstractConsole
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 abstract class AbstractConsole
 {
@@ -33,7 +34,7 @@ abstract class AbstractConsole
 	public function __construct(array $config = [])
 	{
 		$this->_config = $config;
-		$this->signCommand(\BeReborn::createObject(DefaultCommand::class));
+		$this->signCommand(Snowflake::createObject(DefaultCommand::class));
 	}
 
 	/**
@@ -104,7 +105,7 @@ abstract class AbstractConsole
 			return;
 		}
 		foreach ($kernel as $command) {
-			$this->signCommand(\BeReborn::createObject($command));
+			$this->signCommand(Snowflake::createObject($command));
 		}
 	}
 

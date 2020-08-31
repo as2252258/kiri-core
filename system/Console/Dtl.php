@@ -4,15 +4,14 @@
 namespace Snowflake\Console;
 
 
-
-
-
+use HttpServer\Http\Context;
+use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 
 /**
  * Class Dtl
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 class Dtl
 {
@@ -61,9 +60,9 @@ class Dtl
 		$request = new Request();
 		$request->fd = 0;
 		$request->params = new HttpParams([], $arrays, []);
-		$request->headers = new HttpParams([]);
+		$request->headers = new HttpHeaders([]);
 
-		Context::setRequest($request);
+		Context::setContext('request', $request);
 		return $arrays;
 	}
 

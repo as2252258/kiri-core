@@ -10,7 +10,7 @@ namespace Snowflake\Core;
 
 /**
  * Class JSON
- * @package BeReborn\Core
+ * @package Snowflake\Snowflake\Core
  */
 class JSON
 {

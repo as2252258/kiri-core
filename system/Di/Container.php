@@ -15,7 +15,7 @@ use Snowflake\Exception\NotFindClassException;
 
 /**
  * Class Container
- * @package BeReborn\Di
+ * @package Snowflake\Di
  */
 class Container extends BaseObject
 {
@@ -132,7 +132,7 @@ class Container extends BaseObject
 			return $reflect->newInstanceArgs($dependencies ?? []);
 		}
 
-		if (!empty($dependencies) && $reflect->implementsInterface('BeReborn\Base\Configure')) {
+		if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
 			$dependencies[count($dependencies) - 1] = $config;
 			return $reflect->newInstanceArgs($dependencies);
 		}

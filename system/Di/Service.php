@@ -16,7 +16,7 @@ use Snowflake\Snowflake;
 
 /**
  * Class Service
- * @package BeReborn\Di
+ * @package Snowflake\Snowflake\Di
  */
 class Service extends Component
 {

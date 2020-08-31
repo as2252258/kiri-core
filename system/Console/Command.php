@@ -7,7 +7,7 @@ use Snowflake\Abstracts\BaseObject;
 
 /**
  * Class Command
- * @package BeReborn\Console
+ * @package Snowflake\Console
  */
 abstract class Command extends BaseObject implements CommandInterface
 {

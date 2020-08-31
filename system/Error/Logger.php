@@ -9,13 +9,13 @@
 namespace Snowflake\Error;
 
 use Exception;
+use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\System;
 use Swoole\Process;
 
 /**
  * Class Logger
- * @package BeReborn\Error
+ * @package Snowflake\Snowflake\Error
  */
 class Logger
 {
@@ -102,7 +102,7 @@ class Logger
 	public static function print_r($message, $category = '')
 	{
 		/** @var Process $logger */
-		$logger = \BeReborn::getApp('logger');
+		$logger = Snowflake::get()->logger;
 		$logger->write(JSON::encode([$message, $category]));
 	}
 

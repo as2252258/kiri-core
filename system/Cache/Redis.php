@@ -17,7 +17,7 @@ use Swoole\Coroutine;
 
 /**
  * Class Redis
- * @package BeReborn\Cache
+ * @package Snowflake\Snowflake\Cache
  * @see \Redis
  * @method append($key, $value): int
  * @method auth($password):

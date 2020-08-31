@@ -12,7 +12,7 @@ use Snowflake\Snowflake;
 
 /**
  * Class Annotation
- * @package BeReborn\Annotation
+ * @package Snowflake\Snowflake\Annotation
  * @property Websocket $websocket
  */
 class Annotation extends BaseAnnotation

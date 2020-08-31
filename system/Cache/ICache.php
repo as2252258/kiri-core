@@ -10,7 +10,7 @@ namespace Snowflake\Cache;
 
 /**
  * Interface ICache
- * @package BeReborn\Cache
+ * @package Snowflake\Snowflake\Cache
  */
 interface ICache
 {

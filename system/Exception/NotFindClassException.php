@@ -13,7 +13,7 @@ use Throwable;
 
 /**
  * Class NotFindClassException
- * @package BeReborn\Exception
+ * @package Snowflake\Snowflake\Exception
  */
 class NotFindClassException extends \Exception
 {

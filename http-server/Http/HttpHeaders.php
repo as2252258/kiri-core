@@ -10,7 +10,7 @@ namespace HttpServer\Http;
 
 /**
  * Class HttpHeaders
- * @package BeReborn\Http
+ * @package Snowflake\Snowflake\Http
  */
 class HttpHeaders
 {

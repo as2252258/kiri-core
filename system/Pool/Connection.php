@@ -10,7 +10,7 @@ use Snowflake\Abstracts\Pool;
 
 /**
  * Class Connection
- * @package BeReborn\Pool
+ * @package Snowflake\Pool
  */
 class Connection extends Pool
 {

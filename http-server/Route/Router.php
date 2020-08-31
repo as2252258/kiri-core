@@ -12,10 +12,11 @@ use HttpServer\Application;
 use Snowflake\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Snowflake;
 
 /**
  * Class Router
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 class Router extends Application implements RouterInterface
 {
@@ -173,7 +174,7 @@ class Router extends Application implements RouterInterface
 	 */
 	public function listen(int $port, Closure $closure)
 	{
-		$stdClass = \BeReborn::createObject(Handler::class);
+		$stdClass = Snowflake::createObject(Handler::class);
 		$this->group(['prefix' => $port], $closure, $stdClass);
 	}
 

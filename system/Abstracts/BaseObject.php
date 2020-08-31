@@ -15,7 +15,7 @@ use Snowflake\Snowflake;
 /**
  * Class BaseObject
  * @method defer()
- * @package BeReborn\Base
+ * @package Snowflake\Snowflake\Base
  * @method afterInit
  * @method initialization
  */

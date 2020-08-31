@@ -6,6 +6,7 @@ use Snowflake\Core\Help;
 use Exception;
 use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
+use Snowflake\Snowflake;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
 defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
@@ -13,7 +14,7 @@ defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
 /**
  * Class HttpRequest
  *
- * @package BeReborn\HttpRequest
+ * @package Snowflake\Snowflake\HttpRequest
  *
  * @property-read $isPost
  * @property-read $isGet
@@ -284,14 +285,7 @@ class Request extends Application
      */
     public function getIsHttp()
     {
-        if (!app()->has('socket')) {
-            return false;
-        }
-        $socket = \BeReborn::$app->getSocket()->getServer();
-        if (empty($this->fd)) {
-            return false;
-        }
-        return $socket->exist($this->fd) && !$socket->isEstablished($this->fd);
+        return true;
     }
 
     /**

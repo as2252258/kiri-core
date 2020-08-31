@@ -6,10 +6,11 @@ namespace HttpServer\Route;
 
 use Exception;
 use HttpServer\Application;
+use Snowflake\Snowflake;
 
 /**
  * Class TcpListen
- * @package BeReborn\Route
+ * @package Snowflake\Snowflake\Route
  */
 class Handler extends Application
 {
@@ -23,7 +24,7 @@ class Handler extends Application
 	 */
 	public function __construct()
 	{
-		$this->router = \BeReborn::$app->getRouter();
+		$this->router = Snowflake::get()->router;
 
 		parent::__construct([]);
 	}

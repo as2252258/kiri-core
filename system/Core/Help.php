@@ -6,7 +6,7 @@ namespace Snowflake\Core;
 
 /**
  * Class Help
- * @package BeReborn\Core
+ * @package Snowflake\Snowflake\Core
  */
 class Help
 {

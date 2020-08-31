@@ -29,7 +29,7 @@ use Snowflake\Event;
 
 /**
  * Class BaseApplication
- * @package BeReborn\Base
+ * @package Snowflake\Snowflake\Base
  * @property $json
  * @property Annotation $annotation
  * @property Event $event
@@ -38,6 +38,7 @@ use Snowflake\Event;
  * @property \Snowflake\Pool\Pool $pool
  * @property Server $servers
  * @property Connection $connections
+ * @property Logger $logger
  */
 abstract class BaseApplication extends Service
 {
@@ -191,6 +192,17 @@ abstract class BaseApplication extends Service
 	{
 		return current($this->getLocalIps());
 	}
+
+
+	/**
+	 * @return Logger
+	 * @throws ComponentException
+	 */
+	public function getLogger(): Logger
+	{
+		return $this->get('logger');
+	}
+
 
 	/**
 	 * @param $ip

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace BeReborn\Console;
+namespace Snowflake\Console;
 
 
 class Kernel

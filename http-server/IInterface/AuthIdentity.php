@@ -6,7 +6,7 @@ namespace HttpServer\IInterface;
 
 /**
  * Interface AuthIdentity
- * @package BeReborn\Http
+ * @package Snowflake\Snowflake\Http
  */
 interface AuthIdentity
 {

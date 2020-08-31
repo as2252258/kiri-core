@@ -10,7 +10,6 @@ use Swoole\Timer;
 
 /**
  * Class Logfilemonitoring
- * @package components
  */
 class Leafleting extends Process
 {

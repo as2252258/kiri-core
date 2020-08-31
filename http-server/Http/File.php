@@ -4,10 +4,10 @@
 namespace HttpServer\Http;
 
 use Exception;
+use Snowflake\Snowflake;
 
 /**
  * Class File
- * @package BeReborn\Http
  */
 class File
 {
@@ -57,7 +57,7 @@ class File
 			return $this->newName;
 		}
 		$param = ['tmp_name' => $this->getTmpPath()];
-		$this->newName = \BeReborn::rename($param);
+		$this->newName = Snowflake::rename($param);
 		return $this->newName;
 	}
 

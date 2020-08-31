@@ -10,7 +10,7 @@ namespace Snowflake\Core;
 
 /**
  * Class DateFormat
- * @package BeReborn\Core
+ * @package Snowflake\Snowflake\Core
  */
 class DateFormat
 {

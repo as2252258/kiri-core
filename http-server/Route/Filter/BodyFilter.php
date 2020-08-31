@@ -8,7 +8,7 @@ use Exception;
 
 /**
  * Class BodyFilter
- * @package BeReborn\Route\Filter
+ * @package Snowflake\Snowflake\Route\Filter
  */
 class BodyFilter extends Filter
 {
