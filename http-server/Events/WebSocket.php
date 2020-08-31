@@ -95,8 +95,7 @@ class WebSocket extends Server
 
 			/** @var AWebsocket $manager */
 			$manager = Snowflake::get()->annotation->get('websocket');
-			$path = $manager->getName(AWebsocket::MESSAGE, $frame->data['route']);
-			$manager->runWith($path, [$frame, $server]);
+			$manager->runWith($manager->getName(AWebsocket::MESSAGE, [0, $frame->data['route']]), [$frame, $server]);
 		} catch (Exception $exception) {
 			$this->application->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
