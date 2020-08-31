@@ -7,6 +7,8 @@ use Exception;
 use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\BaseAnnotation;
+use Snowflake\Annotation\Definition\Http;
+use Snowflake\Annotation\Definition\Websocket;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use validator\RequiredValidator;
