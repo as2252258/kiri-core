@@ -36,6 +36,10 @@ class Websocket extends Annotation
 	}
 
 
+	/**
+	 * @param $events
+	 * @return bool|void
+	 */
 	public function isLegitimate($events)
 	{
 		return true;

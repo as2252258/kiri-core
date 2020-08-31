@@ -134,7 +134,7 @@ class Annotation extends BaseAnnotation
 	 */
 	public function isLegitimate($events)
 	{
-		throw new Exception('Undefined analytic function.');
+		throw new Exception('Undefined analytic function isLegitimate.');
 	}
 
 
@@ -145,7 +145,7 @@ class Annotation extends BaseAnnotation
 	 */
 	public function getName($function, $events)
 	{
-		throw new Exception('Undefined analytic function.');
+		throw new Exception('Undefined analytic function getName.');
 	}
 
 

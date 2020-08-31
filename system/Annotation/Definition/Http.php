@@ -55,4 +55,15 @@ class Http extends Annotation
 	}
 
 
+	/**
+	 * @param $controller
+	 * @param $methodName
+	 * @param $events
+	 * @return array|void
+	 */
+	public function createHandler($controller, $methodName, $events)
+	{
+		return [$controller, $methodName];
+	}
+
 }
