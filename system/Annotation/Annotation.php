@@ -65,10 +65,7 @@ class Annotation extends BaseAnnotation
 	 */
 	public function registration_notes($path, $namespace, $class)
 	{
-		$path = rtrim($path, '/');
-		foreach (glob($path . '/*') as $item) {
-			$this->scanning($item, $namespace, $class);
-		}
+		$this->scanning(rtrim($path, '/'), $namespace, $class);
 	}
 
 
