@@ -342,8 +342,8 @@ class Redis extends Component
 			'prefix'       => Config::get('id'),
 			'auth'         => '',
 			'databases'    => '0',
-			'timeout'      => -1,
 			'read_timeout' => -1,
+			'conn_timeout' => -1,
 		]);
 		return [
 			'host'         => $config['host'],
