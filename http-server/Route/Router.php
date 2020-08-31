@@ -471,6 +471,17 @@ class Router extends Application implements RouterInterface
 	 */
 	public function loadRouterSetting()
 	{
+		$prefix = APP_PATH . 'app/Http/';
+
+		/** @var Annotation $annotation */
+		$annotation = Snowflake::get()->annotation;
+		$annotation->register('http', Annotation::class);
+
+		$annotation = $annotation->get('http');
+		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
+		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
+
+		$router = $this;
 		$this->loadRouteDir(APP_PATH . '/routes');
 	}
 
@@ -486,8 +497,9 @@ class Router extends Application implements RouterInterface
 			try {
 				if (is_dir($files[$i])) {
 					$this->loadRouteDir($files[$i]);
+				} else {
+					include_once "{$files[$i]}";
 				}
-				$this->loadRouteFile($files[$i]);
 			} catch (Exception $exception) {
 				$this->error($exception->getMessage());
 			} finally {
@@ -497,27 +509,4 @@ class Router extends Application implements RouterInterface
 			}
 		}
 	}
-
-	/**
-	 * @param $file
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	private function loadRouteFile($file)
-	{
-		$router = $this;
-
-		$prefix = APP_PATH . 'app/Http/';
-
-		/** @var Annotation $annotation */
-		$annotation = Snowflake::get()->annotation;
-		$annotation->register('http', Annotation::class);
-
-		$annotation = $annotation->get('http');
-		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
-		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
-
-		include_once "$file";
-	}
-
 }
