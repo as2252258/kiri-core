@@ -36,6 +36,12 @@ class Websocket extends Annotation
 	}
 
 
+	public function isLegitimate($events)
+	{
+		return true;
+	}
+
+
 	/**
 	 * @param $events
 	 * @param $comment
