@@ -8,6 +8,7 @@ use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
+use Snowflake\Annotation\Definition\Http;
 use Snowflake\Snowflake;
 
 /**
@@ -149,9 +150,9 @@ class Node extends Application
 			}
 
 			/** @var Annotation $annotation */
-			$annotation = Snowflake::get()->annotation->http;
-			if (!empty($methods = $annotation->getAnnotation(Annotation::class))) {
-				$this->_interceptors = $annotation->instance($reflect, $action, $methods);
+			$annotation = Snowflake::get()->annotation->get('http');
+			if (!empty($annotations = $annotation->getAnnotation(Annotation::class))) {
+				$this->_interceptors = $annotation->read($reflect, $action, $annotations);
 			}
 			return [$reflect->newInstance(), $action];
 		} catch (Exception $exception) {

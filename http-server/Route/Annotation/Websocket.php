@@ -1,9 +1,8 @@
 <?php
 
-namespace Snowflake\Annotation\Definition;
+namespace HttpServer\Route\Annotation;
 
 
-use ReflectionClass;
 use Snowflake\Annotation\Annotation;
 
 /**
@@ -13,7 +12,9 @@ use Snowflake\Annotation\Annotation;
 class Websocket extends Annotation
 {
 
-	const WEBSOCKET_ANNOTATION = 'WEBSOCKET:ANNOTATION:';
+	const MESSAGE = 'Message:';
+	const HANDSHAKE = 'Handshake:';
+	const CLOSE = 'Close:';
 
 	private $Message = 'required|not empty';
 
@@ -53,7 +54,7 @@ class Websocket extends Annotation
 	 */
 	public function getName($events, $comment)
 	{
-		$prefix = self::WEBSOCKET_ANNOTATION . $events;
+		$prefix = 'WEBSOCKET:ANNOTATION:' . $events;
 		if (isset($comment[2])) {
 			return $prefix . ':' . $comment[2];
 		}

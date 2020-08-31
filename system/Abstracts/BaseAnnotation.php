@@ -21,34 +21,6 @@ abstract class BaseAnnotation extends Component
 
 	/**
 	 * @param ReflectionClass $reflect
-	 * @return array
-	 */
-	protected function getPrivates(ReflectionClass $reflect)
-	{
-		$arrays = [];
-		$properties = $reflect->getProperties(ReflectionMethod::IS_PRIVATE);
-		foreach ($properties as $property) {
-			$arrays[] = $property->getName();
-		}
-		return $arrays;
-	}
-
-
-	/**
-	 * @param string $class
-	 * @return string[]
-	 * @throws ReflectionException
-	 */
-	public function getAnnotation(string $class)
-	{
-		$reflect = Snowflake::getDi()->getReflect($class);
-
-		return $this->getPrivates($reflect);
-	}
-
-
-	/**
-	 * @param ReflectionClass $reflect
 	 * @param string $method
 	 * @param array $annotations
 	 * @return array
@@ -86,23 +58,64 @@ abstract class BaseAnnotation extends Component
 	protected function resolveDocComment($function, $object, $annotations, $array)
 	{
 		$comment = $function->getDocComment();
+		$array = $this->getDocCommentAnnotation($annotations, $comment);
+		foreach ($array as $name => $annotation) {
+			foreach ($annotation as $index => $events) {
+				if (!isset($events[1])) {
+					continue;
+				}
+				if (!($_key = $this->getName($name, $events))) {
+					continue;
+				}
+				if (isset($item[2])) {
+					$handler = Snowflake::createObject($events[2]);
+				} else {
+					$handler = [$object, $events[1]];
+				}
+				if (!isset($array[$annotation])) {
+					$array[$annotation] = [];
+				}
+				$array[$name][] = [$_key, $handler];
+			}
+
+		}
+		return $array;
+	}
+
+
+	/**
+	 * @param $object
+	 * @param $events
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	protected function getOrCreate($object, $events)
+	{
+		if (isset($item[2])) {
+			$handler = Snowflake::createObject($events[2]);
+		} else {
+			$handler = [$object, $events[1]];
+		}
+	}
+
+
+	/**
+	 * @param $annotations
+	 * @param $comment
+	 * @return array
+	 */
+	protected function getDocCommentAnnotation($annotations, $comment)
+	{
+		$array = [];
 		foreach ($annotations as $annotation) {
 			preg_match('/@(' . $annotation . ')\((.*?)\)/', $comment, $events);
 			if (!isset($events[1])) {
 				continue;
 			}
-			if (!($_key = $this->getName($function, $events))) {
-				continue;
-			}
-			if (isset($events[2])) {
-				$handler = Snowflake::createObject($events[2]);
-			} else {
-				$handler = [$object, $events[1]];
-			}
 			if (!isset($array[$annotation])) {
 				$array[$annotation] = [];
 			}
-			$array[$annotation][] = [$_key, $handler];
+			$array[$annotation] = [$annotation, $events];
 		}
 		return $array;
 	}

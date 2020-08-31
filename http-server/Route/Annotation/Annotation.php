@@ -3,6 +3,7 @@
 
 namespace HttpServer\Route\Annotation;
 
+use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\BaseAnnotation;
 use Snowflake\Snowflake;
@@ -28,6 +29,47 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	private $Limits = 'required|not empty';
 
 	protected $_annotations = [];
+
+
+
+
+	/**
+	 * @param ReflectionClass $reflect
+	 * @param $method
+	 * @param $annotations
+	 * @return mixed|null
+	 * @throws ReflectionException
+	 */
+	public function read($reflect, $method, $annotations)
+	{
+		$method = $reflect->getMethod($method);
+
+		$_annotations = $this->getDocCommentAnnotation($annotations, $method->getDocComment());
+
+		$array = [];
+		foreach ($_annotations as $keyName => $annotation) {
+			if (!in_array($keyName, $annotations)) {
+				continue;
+			}
+			$array[$keyName] = $this->pop($this->getName(...$annotation));
+		}
+		return $array;
+	}
+
+
+	/**
+	 * @param $controller
+	 * @param $methodName
+	 * @param $events
+	 * @return array|void
+	 * @throws
+	 */
+	public function createHandler($controller, $methodName, $events)
+	{
+		return Snowflake::createObject($events[2]);
+	}
+
+
 
 
 	/**

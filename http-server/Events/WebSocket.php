@@ -11,6 +11,7 @@ namespace HttpServer\Events;
 use Exception;
 use HttpServer\ServerManager;
 use ReflectionException;
+use Snowflake\Application;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
@@ -20,6 +21,7 @@ use Swoole\Http\Response as SResponse;
 use Swoole\Process\Pool;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
+use HttpServer\Route\Annotation\Websocket as AWebsocket;
 
 /**
  * Class ServerWebSocket
@@ -32,6 +34,7 @@ class WebSocket extends Server
 	public $callback = [];
 
 
+	/** @var Application */
 	public $application;
 
 
@@ -63,8 +66,14 @@ class WebSocket extends Server
 	public function set(array $settings, $pool = null, $events = [], $config = [])
 	{
 		parent::set($settings);
-		Snowflake::get()->set(WebSocket::class, $this);
-		Snowflake::get()->set(Pool::class, $pool);
+
+		$application = Snowflake::get();
+		$application->set(WebSocket::class, $this);
+		$application->set(Pool::class, $pool);
+
+		$annotation = $application->annotation;
+		$annotation->register('websocket', AWebsocket::class);
+
 		ServerManager::set($this, $settings, $this->application, $events, $config);
 	}
 
@@ -87,25 +96,17 @@ class WebSocket extends Server
 			}
 			$json = json_decode($frame->data, true);
 
-			$manager = Snowflake::get()->annotation;
-			$manager->runWith($this->getName($json), [$frame->fd, $server]);
+			/** @var AWebsocket $manager */
+			$manager = Snowflake::get()->annotation->get('websocket');
+			$path = $manager->getName(AWebsocket::MESSAGE, $json['route']);
+			$manager->runWith($path, [$frame->fd, $server]);
 		} catch (Exception $exception) {
-//			$this->error($exception->getMessage(), __METHOD__, __FILE__);
-//			$this->addError($exception->getMessage());
+			$this->application->addError($exception->getMessage(), 'websocket');
 		} finally {
 			$event = Snowflake::get()->event;
 			$event->trigger(Event::EVENT_AFTER_REQUEST);
 			Logger::insert();
 		}
-	}
-
-	/**
-	 * @param $json
-	 * @return string
-	 */
-	private function getName($json)
-	{
-		return 'WEBSOCKET:MESSAGE:' . $json['route'];
 	}
 
 	/**
@@ -177,7 +178,7 @@ class WebSocket extends Server
 				$event->trigger(Event::SERVER_CLOSE, [$fd]);
 			}
 		} catch (\Throwable $exception) {
-//			$this->addError($exception->getMessage());
+			$this->application->addError($exception->getMessage());
 		} finally {
 			$event->trigger(Event::RELEASE_ALL);
 			Logger::insert();

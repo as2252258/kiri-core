@@ -6,9 +6,8 @@ namespace Snowflake\Annotation;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use Snowflake\Abstracts\BaseAnnotation;
-use Snowflake\Annotation\Definition\Http;
-use Snowflake\Annotation\Definition\Websocket;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use validator\RequiredValidator;
@@ -17,15 +16,9 @@ use validator\RequiredValidator as NotEmptyValidator;
 /**
  * Class Annotation
  * @package Snowflake\Snowflake\Annotation
- * @property Websocket $websocket
- * @property Http $http
  */
 class Annotation extends BaseAnnotation
 {
-
-	protected $_Scan_directory = [];
-	protected $params = [];
-
 	public $namespace = '';
 
 	public $prefix = '';
@@ -33,72 +26,34 @@ class Annotation extends BaseAnnotation
 	public $path = '';
 
 
-	private $rules = [
-		'required'  => [
-			'class' => RequiredValidator::class
-		],
-		'not empty' => [
-			'class' => NotEmptyValidator::class
-		]
-	];
+	protected $_Scan_directory = [];
+
+	protected $_alias = [];
+
+	protected $params = [];
 
 
-	private $_classMap = [
-		'websocket' => Websocket::class,
-		'http'      => Http::class
-	];
-
+	private $_classMap = [];
 
 	/**
 	 * @param $name
 	 * @param $class
+	 * @throws
 	 */
 	public function register($name, $class)
 	{
-		$this->_classMap[$name] = $class;
+		$this->_classMap[$name] = Snowflake::createObject($class);
 	}
 
 
 	/**
 	 * @param $path
 	 * @param $namespace
-	 * @param $class
 	 * @throws ReflectionException
 	 */
-	public function registration_notes($path, $namespace, $class)
+	public function registration_notes($path, $namespace)
 	{
-		$this->scanning(rtrim($path, '/'), $namespace, $class);
-	}
-
-
-	/**
-	 * @return string|Http
-	 * @throws
-	 */
-	public function getHttp()
-	{
-		if (is_object($this->_classMap['http'])) {
-			return $this->_classMap['http'];
-		}
-
-		return $this->_classMap['http'] = Snowflake::createObject($this->_classMap['http']);
-	}
-
-
-	/**
-	 * @return string|Websocket
-	 * @throws
-	 */
-	public function getWebsocket()
-	{
-		if (is_object($this->_classMap['websocket'])) {
-			return $this->_classMap['websocket'];
-		}
-
-		return $this->_classMap['websocket'] = Snowflake::createObject($this->_classMap['websocket']);
-
-
-		return make($this->_classMap['websocket'], $this->_classMap['websocket']);
+		$this->scanning(rtrim($path, '/'), $namespace, get_called_class());
 	}
 
 	/**
@@ -107,8 +62,9 @@ class Annotation extends BaseAnnotation
 	 * @throws ReflectionException
 	 * @throws Exception
 	 * @Message(updatePosition)
+	 * 注入注解
 	 */
-	public function resolve(ReflectionClass $reflect, string $className)
+	private function resolve(ReflectionClass $reflect, string $className)
 	{
 		$controller = $reflect->newInstance();
 
@@ -136,6 +92,20 @@ class Annotation extends BaseAnnotation
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function get($name)
+	{
+		if (!isset($this->_Scan_directory[$name])) {
+			throw new Exception('Undefined analytic function.');
+		}
+		return $this->_Scan_directory[$name];
 	}
 
 
@@ -196,16 +166,17 @@ class Annotation extends BaseAnnotation
 
 	/**
 	 * @param $path
+	 * @param array $params
 	 * @return bool|mixed
 	 */
-	public function runWith($path)
+	public function runWith($path, $params = [])
 	{
 		if (!$this->has($path)) {
 			return null;
 		}
 		$callback = $this->_Scan_directory[$path];
 		if (!isset($this->params[$path])) {
-			return $callback();
+			return $callback(...$params);
 		}
 		return $callback(...$this->params[$path]);
 	}
@@ -222,6 +193,19 @@ class Annotation extends BaseAnnotation
 		if (!empty($params)) {
 			$this->params[$name] = $params;
 		}
+	}
+
+
+	/**
+	 * @param $name
+	 * @return array|null[]
+	 */
+	public function pop($name)
+	{
+		if (!isset($this->_Scan_directory[$name])) {
+			return [$this->_Scan_directory[$name], $this->params[$name] ?? []];
+		}
+		return [null, null];
 	}
 
 
@@ -251,6 +235,33 @@ class Annotation extends BaseAnnotation
 			$this->_classMap[$name] = Snowflake::createObject($this->_classMap[$name]);
 		}
 		return $this->_classMap[$name];
+	}
+
+	/**
+	 * @param ReflectionClass $reflect
+	 * @return array
+	 */
+	protected function getPrivates(ReflectionClass $reflect)
+	{
+		$arrays = [];
+		$properties = $reflect->getProperties(ReflectionMethod::IS_PRIVATE);
+		foreach ($properties as $property) {
+			$arrays[] = $property->getName();
+		}
+		return $arrays;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @return string[]
+	 * @throws ReflectionException
+	 */
+	public function getAnnotation(string $class)
+	{
+		$reflect = Snowflake::getDi()->getReflect($class);
+
+		return $this->getPrivates($reflect);
 	}
 
 
