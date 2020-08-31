@@ -469,13 +469,9 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @throws
 	 */
-	public function loader()
+	public function loadRouterSetting()
 	{
-		try {
-			$this->loadDir(APP_PATH . '/routes');
-		} catch (Exception $exception) {
-			$this->error($exception->getMessage());
-		}
+		$this->loadRouteDir(APP_PATH . '/routes');
 	}
 
 	/**
@@ -483,19 +479,22 @@ class Router extends Application implements RouterInterface
 	 * @throws Exception
 	 * 加载目录下的路由文件
 	 */
-	private function loadDir($path)
+	private function loadRouteDir($path)
 	{
-		try {
-			$files = glob($path . '/*');
-			for ($i = 0; $i < count($files); $i++) {
+		$files = glob($path . '/*');
+		for ($i = 0; $i < count($files); $i++) {
+			try {
 				if (is_dir($files[$i])) {
-					$this->loadDir($files[$i]);
-				} else {
-					$this->loadFile($files[$i]);
+					$this->loadRouteDir($files[$i]);
+				}
+				$this->loadRouteFile($files[$i]);
+			} catch (Exception $exception) {
+				$this->error($exception->getMessage());
+			} finally {
+				if (isset($exception)) {
+					unset($exception);
 				}
 			}
-		} catch (Exception $exception) {
-			$this->error($exception->getMessage());
 		}
 	}
 
@@ -504,7 +503,7 @@ class Router extends Application implements RouterInterface
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function loadFile($file)
+	private function loadRouteFile($file)
 	{
 		$router = $this;
 
@@ -512,7 +511,7 @@ class Router extends Application implements RouterInterface
 
 		/** @var Annotation $annotation */
 		$annotation = Snowflake::get()->annotation;
-		$annotation->register('http',Annotation::class);
+		$annotation->register('http', Annotation::class);
 
 		$annotation = $annotation->get('http');
 		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
