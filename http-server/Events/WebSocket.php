@@ -88,7 +88,7 @@ class WebSocket extends Server
 
 			$event = Snowflake::get()->event;
 			if ($event->exists(Event::SERVER_MESSAGE)) {
-				$frame->data = $event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
+				$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
 			} else {
 				$frame->data = json_decode($frame->data, true);
 			}
