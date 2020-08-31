@@ -5,6 +5,8 @@ namespace HttpServer\Route\Dispatch;
 
 
 use HttpServer\Controller;
+use HttpServer\Http\Context;
+use Snowflake\Snowflake;
 
 /**
  * Class Dispatch
@@ -65,7 +67,7 @@ class Dispatch
 		} else {
 			$controller = $this->handler;
 		}
-		$request = \BeReborn::getApp('request');
+		$request = Context::get('request');
 		$controller->setRequest($request);
 		$controller->setHeaders($request->headers);
 		$controller->setInput($request->params);
