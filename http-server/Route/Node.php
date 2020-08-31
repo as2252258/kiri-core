@@ -149,9 +149,9 @@ class Node extends Application
 			}
 
 			/** @var Annotation $annotation */
-			$annotation = Snowflake::createObject(Annotation::class);
-			if (!empty($methods)) {
-				$this->_interceptors = $annotation->instance($reflect, $action);
+			$annotation = Snowflake::get()->annotation->http;
+			if (!empty($methods = $annotation->getAnnotation(Annotation::class))) {
+				$this->_interceptors = $annotation->instance($reflect, $action, $methods);
 			}
 			return [$reflect->newInstance(), $action];
 		} catch (Exception $exception) {

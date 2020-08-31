@@ -50,14 +50,13 @@ abstract class BaseAnnotation extends Component
 	/**
 	 * @param ReflectionClass $reflect
 	 * @param string $method
-	 * @param array $rules
+	 * @param array $annotations
 	 * @return array
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function instance($reflect, $method = '', $rules = [])
+	public function instance($reflect, $method = '', $annotations = [])
 	{
-		$annotations = $this->getPrivates($reflect);
-
 		$classMethods = $reflect->getMethods(ReflectionMethod::IS_PUBLIC);
 		if (!$reflect->isInstantiable()) {
 			throw new Exception('Class ' . $reflect->getName() . ' cannot be instantiated.');
