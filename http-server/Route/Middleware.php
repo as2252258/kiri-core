@@ -10,7 +10,6 @@ namespace HttpServer\Route;
 
 use Closure;
 use Exception;
-use HttpServer\IInterface\IMiddleware;
 use HttpServer\Route\Dispatch\Dispatch;
 
 /**
@@ -65,7 +64,7 @@ class Middleware
 	{
 		return function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {
-				if ($pipe instanceof IMiddleware) {
+				if ($pipe instanceof \HttpServer\IInterface\Middleware) {
 					return $pipe->handler($passable, $stack);
 				} else {
 					return $pipe($passable, $stack);

@@ -9,9 +9,12 @@ use HttpServer\Http\Context;
 use HttpServer\Controller;
 use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
+use HttpServer\Route\Annotation\Annotation;
+use ReflectionException;
 use Snowflake\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -498,10 +501,20 @@ class Router extends Application implements RouterInterface
 
 	/**
 	 * @param $file
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	private function loadFile($file)
 	{
 		$router = $this;
+
+		$prefix = APP_PATH . 'app/Http/';
+
+		/** @var Annotation $annotation */
+		$annotation = Snowflake::createObject(Annotation::class);
+		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
+		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
+
 		include_once "$file";
 	}
 

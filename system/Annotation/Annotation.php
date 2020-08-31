@@ -6,19 +6,24 @@ namespace Snowflake\Annotation;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use Snowflake\Abstracts\BaseAnnotation;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use validator\RequiredValidator;
+use validator\RequiredValidator as NotEmptyValidator;
 
 /**
  * Class Annotation
  * @package Snowflake\Snowflake\Annotation
  * @property Websocket $websocket
+ * @property Http $http
  */
 class Annotation extends BaseAnnotation
 {
 
 	protected $_Scan_directory = [];
+	protected $params = [];
 
 	public $namespace = '';
 
@@ -27,8 +32,19 @@ class Annotation extends BaseAnnotation
 	public $path = '';
 
 
+	private $rules = [
+		'required'  => [
+			'class' => RequiredValidator::class
+		],
+		'not empty' => [
+			'class' => NotEmptyValidator::class
+		]
+	];
+
+
 	private $_classMap = [
-		'websocket' => Websocket::class
+		'websocket' => Websocket::class,
+		'http'      => Http::class
 	];
 
 
@@ -43,58 +59,125 @@ class Annotation extends BaseAnnotation
 
 
 	/**
+	 * @param $path
+	 * @param $namespace
 	 * @throws ReflectionException
 	 */
-	public function registration_notes()
+	public function registration_notes($path, $namespace)
 	{
-		if (!is_array($this->path)) {
-			return;
-		}
-		foreach ($this->path as $item) {
-			$this->scanning($item);
+		foreach ($path as $item) {
+			$this->scanning($item, $namespace);
 		}
 	}
 
+
+	/**
+	 * @return string
+	 * @throws
+	 */
+	public function getHttp()
+	{
+		return Snowflake::createObject($this->_classMap['http']);
+	}
+
+
+	/**
+	 * @return string
+	 * @throws
+	 */
+	public function getWebsocket()
+	{
+		return Snowflake::createObject($this->_classMap['websocket']);
+	}
+
+	/**
+	 * @param ReflectionClass $reflect
+	 * @Message(updatePosition)
+	 * @throws Exception
+	 */
+	public function resolve(ReflectionClass $reflect)
+	{
+		$controller = $reflect->newInstance();
+
+		$methods = $this->getPrivates($reflect);
+
+		foreach ($methods as $function) {
+			$comment = $function->getDocComment();
+			$methodName = $function->getName();
+
+			preg_match('/@(' . $function . ')\((.*?)\)/', $comment, $events);
+			if (!isset($events[1])) {
+				continue;
+			}
+			if (!$this->isLegitimate($events)) {
+				continue;
+			}
+			$_key = $this->getName($function, $events);
+			if (empty($events[2])) {
+				$this->push($_key, [$controller, $methodName]);
+			} else {
+				$handler = $this->createHandler($controller, $methodName, $events[2]);
+
+				$this->push($_key, $handler, [request(), [$controller, $methodName]]);
+			}
+		}
+	}
+
+
+	/**
+	 * @param $events
+	 * @throws Exception
+	 */
+	public function isLegitimate($events)
+	{
+		throw new Exception('Undefined analytic function.');
+	}
+
+
+	/**
+	 * @param $function
+	 * @param $events
+	 * @throws Exception
+	 */
+	public function getName($function, $events)
+	{
+		throw new Exception('Undefined analytic function.');
+	}
+
+
+	/**
+	 * @param $controller
+	 * @param $methodName
+	 * @param $events
+	 * @throws Exception
+	 */
+	public function createHandler($controller, $methodName, $events)
+	{
+		throw new Exception('Undefined analytic function.');
+	}
+
+
 	/**
 	 * @param string $path
+	 * @param $namespace
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	protected function scanning($path = '')
+	protected function scanning($path, $namespace)
 	{
-		if (empty($path)) {
-			$path = rtrim($this->path, '/');
-		}
+		$di = Snowflake::getDi();
 		foreach (glob($path . '/*') as $file) {
 			if (is_dir($file)) {
-				$this->scanning($path);
+				$this->scanning($path, $namespace);
 			}
 
 			$explode = explode('/', $file);
 
 			$class = str_replace('.php', '', end($explode));
 
-			$reflect = new ReflectionClass($this->namespace . $class);
-
-			$methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
-			if (empty($methods) || !$reflect->isInstantiable()) {
-				continue;
-			}
-			$this->resolve($reflect, $methods);
+			$this->resolve($di->getReflect($namespace . '\\' . $class));
 		}
 	}
-
-
-	/**
-	 * @param ReflectionClass $class
-	 * @param array $methods
-	 * @throws Exception
-	 */
-	public function resolve(ReflectionClass $class, array $methods)
-	{
-		throw new Exception('Undefined analytic function.');
-	}
-
 
 	/**
 	 * @param $path
@@ -106,17 +189,25 @@ class Annotation extends BaseAnnotation
 		if (!$this->has($path)) {
 			return null;
 		}
-		return call_user_func($this->_Scan_directory[$path], ...$param);
+		$callback = $this->_Scan_directory[$path];
+		if (!isset($this->params[$path])) {
+			return $callback(...$param);
+		}
+		return $callback(...$this->params[$path]);
 	}
 
 
 	/**
 	 * @param $name
 	 * @param $callback
+	 * @param array $params
 	 */
-	public function push($name, $callback)
+	public function push($name, $callback, $params = [])
 	{
 		$this->_Scan_directory[$name] = $callback;
+		if (!empty($params)) {
+			$this->params[$name] = $params;
+		}
 	}
 
 

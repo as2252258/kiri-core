@@ -61,12 +61,10 @@ class Dispatch
 	 */
 	protected function bindParam()
 	{
-		/** @var Controller $controller */
-		if (is_array($this->handler)) {
-			$controller = $this->handler[0];
-		} else {
-			$controller = $this->handler;
+		if ($this->handler instanceof \Closure) {
+			return;
 		}
+		$controller = $this->handler[0];
 		$controller->request = Context::getContext('request');
 		$controller->headers = $controller->request->headers;
 		$controller->input = $controller->request->params;

@@ -93,10 +93,9 @@ return [
 			],
 			'events'   => [
 				Event::SERVER_WORKER_START => function () {
+					$path = APP_PATH . 'app/Websocket';
 					$websocket = Snowflake::get()->annotation->websocket;
-//					$websocket->path = $this->socketControllers;
-					$websocket->namespace = 'App\\Sockets\\';
-					$websocket->registration_notes();
+					$websocket->registration_notes($path, 'App\\Sockets\\');
 				},
 				Event::SERVER_HANDSHAKE    => function (Request $request, Response $response) {
 					$this->error($request->fd . ' connect.');
@@ -105,8 +104,15 @@ return [
 				},
 				Event::SERVER_MESSAGE      => function (\Swoole\WebSocket\Server $server, Frame $frame) {
 					$this->error('websocket SERVER_MESSAGE.');
-
-					return $server->push($frame->fd, 'hello word~');
+					if (is_null($json = json_decode($frame->data, true))) {
+						return $server->push($frame->fd, 'format error~');
+					}
+					$websocket = Snowflake::get()->annotation->websocket;
+					if ($websocket->has($json['path'])) {
+						return $websocket->runWith($json['path'], [$frame->fd, $json]);
+					} else {
+						return $server->push($frame->fd, 'hello word~');
+					}
 				},
 				Event::SERVER_CLOSE        => function (int $fd) {
 					$this->error($fd . ' disconnect.');

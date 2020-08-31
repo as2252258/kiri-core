@@ -182,6 +182,21 @@ class Container extends BaseObject
 		return [$reflection, $dependencies];
 	}
 
+
+	/**
+	 * @param $class
+	 * @return mixed
+	 * @throws ReflectionException
+	 */
+	public function getReflect($class): ReflectionClass
+	{
+		if (!isset($this->_reflection[$class])) {
+			$this->resolveDependencies($class);
+		}
+		return $this->_reflection[$class];
+	}
+
+
 	/**
 	 * @param $class
 	 */

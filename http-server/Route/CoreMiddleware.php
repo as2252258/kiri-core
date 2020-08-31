@@ -4,27 +4,27 @@
 namespace HttpServer\Route;
 
 
+use Closure;
+use Exception;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
-use HttpServer\Abstracts\MiddlewareHandler;
-use Snowflake\Snowflake;
 
 /**
  * Class CoreMiddleware
  * @package Snowflake\Snowflake\Route
  * 跨域中间件
  */
-class CoreMiddleware extends MiddlewareHandler
+class CoreMiddleware implements \HttpServer\IInterface\Middleware
 {
 
 	/**
 	 * @param Request $request
-	 * @param \Closure $next
+	 * @param Closure $next
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function handler(Request $request,\Closure $next)
+	public function handler(Request $request, Closure $next)
 	{
 		$header = $request->headers;
 

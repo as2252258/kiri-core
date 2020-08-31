@@ -10,7 +10,7 @@ use HttpServer\Http\Request;
  * Interface IMiddleware
  * @package Snowflake\Snowflake\Route
  */
-interface IMiddleware
+interface Middleware
 {
 
 	public function handler(Request $request,\Closure $next);

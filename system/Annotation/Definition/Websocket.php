@@ -12,55 +12,41 @@ use ReflectionClass;
 class Websocket extends Annotation
 {
 
-	const MESSAGE = 'WEBSOCKET:MESSAGE:';
-	const EVENT = 'WEBSOCKET:EVENT:';
+	const WEBSOCKET_ANNOTATION = 'WEBSOCKET:ANNOTATION:';
 
-	public $Message;
+	private $Message = 'required|not empty';
 
 
-	public $Event;
+	private $Handshake;
+
+
+	private $Close;
 
 
 	/**
-	 * @param ReflectionClass $reflect
-	 * @param array $methods
+	 * @param $controller
+	 * @param $methodName
+	 * @param $events
+	 * @return array
 	 */
-	public function resolve(ReflectionClass $reflect, array $methods)
+	public function createHandler($controller, $methodName, $events)
 	{
-		$controller = $reflect->newInstance();
-
-		foreach ($methods as $function) {
-			$comment = $function->getDocComment();
-			$methodName = $function->getName();
-
-			preg_match('/@Event\((.*)?\)/', $comment, $events);
-			if (!isset($events[1])) {
-				continue;
-			}
-
-			if (!($_key = $this->getName($events, $comment))) {
-				continue;
-			}
-			$this->push($_key, [$controller, $methodName]);
-		}
+		return [$controller, $methodName];
 	}
+
 
 	/**
 	 * @param $events
 	 * @param $comment
 	 * @return false|string
 	 */
-	private function getName($events, $comment)
+	public function getName($events, $comment)
 	{
-		$event = $events[1];
-		if ($event !== 'message') {
-			return self::EVENT . $event;
+		$prefix = self::WEBSOCKET_ANNOTATION . $events;
+		if (isset($comment[2])) {
+			return $prefix . ':' . $comment[2];
 		}
-		preg_match('/@Message\((.*)?\)/', $comment, $message);
-		if (isset($message[1])) {
-			return false;
-		}
-		return self::MESSAGE . $message[1];
+		return $prefix;
 	}
 
 }

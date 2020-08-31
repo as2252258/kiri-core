@@ -7,6 +7,7 @@ namespace HttpServer\Route;
 use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
+use HttpServer\Route\Annotation\Annotation;
 use Snowflake\Snowflake;
 
 /**
@@ -35,6 +36,8 @@ class Node extends Application
 	public $namespace = [];
 	public $middleware = [];
 	public $callback = [];
+
+	private $_interceptors = [];
 
 	/**
 	 * @param $handler
@@ -118,13 +121,22 @@ class Node extends Application
 	private function getReflect(string $controller, string $action)
 	{
 		try {
-			$reflect = new \ReflectionClass($controller);
+			$reflect = Snowflake::getDi()->getReflect($controller);
 			if (!$reflect->isInstantiable()) {
 				throw new Exception($controller . ' Class is con\'t Instantiable.');
 			}
 
 			if (!empty($action) && !$reflect->hasMethod($action)) {
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
+			}
+
+			/** @var Annotation $annotation */
+			$annotation = Snowflake::createObject(Annotation::class);
+			if (!empty($methods)) {
+				$annotations = $annotation->instance($reflect);
+				if (isset($annotations['Interceptor'])) {
+				}
+
 			}
 			return [$reflect->newInstance(), $action];
 		} catch (Exception $exception) {
