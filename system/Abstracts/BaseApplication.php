@@ -27,8 +27,8 @@ use Snowflake\Pool\RedisClient;
 use Snowflake\Processes;
 use Snowflake\Snowflake;
 use Snowflake\Event;
-use Database\Connection as DbConnection;
 use Snowflake\Pool\Pool as SPool;
+use Database\DatabasesProviders;
 
 /**
  * Class BaseApplication
@@ -40,7 +40,7 @@ use Snowflake\Pool\Pool as SPool;
  * @property Processes $processes
  * @property SPool $pool
  * @property Server $servers
- * @property DbConnection $db
+ * @property DatabasesProviders $db
  * @property Connection $connections
  * @property Logger $logger
  */

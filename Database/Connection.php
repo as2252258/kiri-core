@@ -41,18 +41,6 @@ class Connection extends Component
 	public $maxNumber = 100;
 
 	/**
-	 * @var array
-	 *
-	 * @example [
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 * ]
-	 */
-	public $masterConfig = [];
-
-	/**
 	 * @var bool
 	 * enable database cache
 	 */
@@ -63,10 +51,9 @@ class Connection extends Component
 	 * @var array
 	 *
 	 * @example [
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
-	 *    ['cds' => 'mysql:dbname=dbname;host=127.0.0.1', 'username' => 'root', 'password' => 'root'],
+	 *    'cds'      => 'mysql:dbname=dbname;host=127.0.0.1',
+	 *    'username' => 'root',
+	 *    'password' => 'root'
 	 * ]
 	 */
 	public $slaveConfig = [];
@@ -185,28 +172,6 @@ class Connection extends Component
 		$pool = Snowflake::get()->connections;
 		return $pool->getConnection($config, true);
 	}
-
-
-	/**
-	 * @param $name
-	 * @return Connection
-	 * @throws ConfigException
-	 */
-	public function instance($name)
-	{
-		$config = Config::get('databases.' . $name, true);
-
-		$this->cds = $config['cds'];
-		$this->username = $config['username'];
-		$this->password = $config['password'];
-
-		$this->tablePrefix = $config['tablePrefix'];
-
-		$this->slaveConfig = $config['slaveConfig'];
-
-		return $this;
-	}
-
 
 	/**
 	 * @return PDO
