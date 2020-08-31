@@ -24,8 +24,7 @@
     "ext-libxml": "*",
     "ext-iconv": "*",
     "ext-mbstring": "*",
-    "ext-xml": "*",
-    "ext-memcached": "*"
+    "ext-xml": "*"
   },
   "autoload": {
     "psr-4": {
