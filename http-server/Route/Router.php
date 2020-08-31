@@ -511,9 +511,9 @@ class Router extends Application implements RouterInterface
 		$prefix = APP_PATH . 'app/Http/';
 
 		/** @var Annotation $annotation */
-		$annotation = make(Annotation::class, Annotation::class);
-		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
-		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
+		$annotation = Snowflake::get()->annotation->getHttp();
+		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor',Annotation::class);
+		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits',Annotation::class);
 
 		include_once "$file";
 	}
