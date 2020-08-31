@@ -34,14 +34,36 @@ class Config extends Component
 	public static function get($key, $try = FALSE, $default = null)
 	{
 		$config = Snowflake::get()->config;
-		if (isset($config->data[$key])) {
-			return $config->data[$key];
-		} else if ($default !== null) {
-			return $default;
-		} else if ($try) {
-			throw new ConfigException(str_replace(':key', $key, self::ERROR_MESSAGE));
+
+		if (strpos($key, '.') === false) {
+			if (isset($config->data[$key])) {
+				return $config->data[$key];
+			} else if ($default !== null) {
+				return $default;
+			} else if ($try) {
+				throw new ConfigException(str_replace(':key', $key, self::ERROR_MESSAGE));
+			}
+			return NULL;
 		}
-		return NULL;
+		$keys = explode('.', $key);
+
+		$parent = $config->data[array_shift($keys)] ?? null;
+		if (empty($parent)) {
+			return $default;
+		}
+		if (empty($keys) || !is_array($parent)) {
+			return $parent;
+		}
+		foreach ($keys as $key) {
+			if (!isset($parent[$key])) {
+				return $parent;
+			}
+			$parent = $parent[$key];
+			if (empty($keys) || !is_array($parent)) {
+				return $parent;
+			}
+		}
+		return $parent;
 	}
 
 	/**
