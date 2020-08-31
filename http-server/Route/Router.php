@@ -502,7 +502,7 @@ class Router extends Application implements RouterInterface
 	private function loadFile($file)
 	{
 		$router = $this;
-		include_once "Router.php";
+		include_once "$file";
 	}
 
 }
