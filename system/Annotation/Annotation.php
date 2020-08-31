@@ -72,12 +72,12 @@ class Annotation extends BaseAnnotation
 
 
 	/**
-	 * @return \HttpServer\Events\Http
+	 * @return Http
 	 * @throws
 	 */
 	public function getHttp()
 	{
-		return Snowflake::createObject($this->_classMap['http']);
+		return make($this->_classMap['http'], $this->_classMap['http']);
 	}
 
 
@@ -87,7 +87,7 @@ class Annotation extends BaseAnnotation
 	 */
 	public function getWebsocket()
 	{
-		return Snowflake::createObject($this->_classMap['websocket']);
+		return make($this->_classMap['websocket'], $this->_classMap['websocket']);
 	}
 
 	/**
