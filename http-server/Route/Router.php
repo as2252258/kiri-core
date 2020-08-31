@@ -481,7 +481,6 @@ class Router extends Application implements RouterInterface
 		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
 		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
 
-		$router = $this;
 		$this->loadRouteDir(APP_PATH . '/routes');
 	}
 
@@ -494,19 +493,31 @@ class Router extends Application implements RouterInterface
 	{
 		$files = glob($path . '/*');
 		for ($i = 0; $i < count($files); $i++) {
-			try {
-				if (is_dir($files[$i])) {
-					$this->loadRouteDir($files[$i]);
-				} else {
-					include_once "{$files[$i]}";
-				}
-			} catch (Exception $exception) {
-				$this->error($exception->getMessage());
-			} finally {
-				if (isset($exception)) {
-					unset($exception);
-				}
+			if (is_dir($files[$i])) {
+				$this->loadRouteDir($files[$i]);
+			} else {
+				$this->loadRouterFile($files[$i]);
 			}
 		}
 	}
+
+
+	/**
+	 * @param $files
+	 * @throws Exception
+	 */
+	private function loadRouterFile($files)
+	{
+		try {
+			$router = $this;
+			include_once "{$files}";
+		} catch (Exception $exception) {
+			$this->error($exception->getMessage());
+		} finally {
+			if (isset($exception)) {
+				unset($exception);
+			}
+		}
+	}
+
 }

@@ -22,7 +22,7 @@ return [
 			'events'   => [
 				Event::SERVER_WORKER_START => function () {
 					$router = Snowflake::get()->router;
-					$router->loader();
+					$router->loadRouterSetting();
 				},
 			]
 		],

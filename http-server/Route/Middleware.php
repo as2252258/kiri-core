@@ -70,7 +70,7 @@ class Middleware
 			return $middleWares;
 		}
 		foreach ($node->getInterceptor() as $item) {
-			$middleWares[] = $item;
+			$middleWares[] = $item[0];
 		}
 		return $middleWares;
 	}
