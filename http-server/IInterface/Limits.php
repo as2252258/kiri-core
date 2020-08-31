@@ -10,6 +10,6 @@ use Closure;
 interface Limits
 {
 
-	public function request(Request $request, Closure $closure);
+	public function next(Request $request, Closure $closure);
 
 }
