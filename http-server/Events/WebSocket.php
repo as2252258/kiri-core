@@ -89,13 +89,14 @@ class WebSocket extends Server
 			$event = Snowflake::get()->event;
 			if ($event->exists(Event::SERVER_MESSAGE)) {
 				$frame->data = $event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
+			} else {
+				$frame->data = json_decode($frame->data, true);
 			}
-			$json = json_decode($frame->data, true);
 
 			/** @var AWebsocket $manager */
 			$manager = Snowflake::get()->annotation->get('websocket');
-			$path = $manager->getName(AWebsocket::MESSAGE, $json['route']);
-			$manager->runWith($path, [$frame->fd, $server]);
+			$path = $manager->getName(AWebsocket::MESSAGE, $frame->data['route']);
+			$manager->runWith($path, [$frame, $server]);
 		} catch (Exception $exception) {
 			$this->application->addError($exception->getMessage(), 'websocket');
 		} finally {
