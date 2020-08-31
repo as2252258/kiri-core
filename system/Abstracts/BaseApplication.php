@@ -212,7 +212,7 @@ abstract class BaseApplication extends Service
 	 * @return mixed
 	 * @throws ComponentException
 	 */
-	public function getRedis()
+	public function getRedis(): Redis
 	{
 		return $this->get('redis');
 	}
