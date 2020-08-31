@@ -65,7 +65,8 @@ class Annotation extends BaseAnnotation
 	 */
 	public function registration_notes($path, $namespace)
 	{
-		foreach ($path as $item) {
+		$path = rtrim($path, '/');
+		foreach (glob($path . '/*') as $item) {
 			$this->scanning($item, $namespace);
 		}
 	}
@@ -181,17 +182,16 @@ class Annotation extends BaseAnnotation
 
 	/**
 	 * @param $path
-	 * @param mixed ...$param
 	 * @return bool|mixed
 	 */
-	public function runWith($path, $param)
+	public function runWith($path)
 	{
 		if (!$this->has($path)) {
 			return null;
 		}
 		$callback = $this->_Scan_directory[$path];
 		if (!isset($this->params[$path])) {
-			return $callback(...$param);
+			return $callback();
 		}
 		return $callback(...$this->params[$path]);
 	}
