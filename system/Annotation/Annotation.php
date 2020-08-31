@@ -6,7 +6,6 @@ namespace Snowflake\Annotation;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
 use Snowflake\Abstracts\BaseAnnotation;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;

@@ -502,7 +502,7 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $file
 	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	private function loadFile($file)
 	{
@@ -511,7 +511,7 @@ class Router extends Application implements RouterInterface
 		$prefix = APP_PATH . 'app/Http/';
 
 		/** @var Annotation $annotation */
-		$annotation = Snowflake::createObject(Annotation::class);
+		$annotation = make(Annotation::class, Annotation::class);
 		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
 		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
 
