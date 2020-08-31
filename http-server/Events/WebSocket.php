@@ -70,9 +70,6 @@ class WebSocket extends Server
 		$this->application->set(WebSocket::class, $this);
 		$this->application->set(Pool::class, $pool);
 
-		$annotation = $this->application->annotation;
-		$annotation->register('websocket', AWebsocket::class);
-
 		ServerManager::set($this, $settings, $this->application, $events, $config);
 	}
 
@@ -85,13 +82,13 @@ class WebSocket extends Server
 	public function onMessage(Server $server, Frame $frame)
 	{
 		try {
-			$event = Snowflake::get()->event;
-			if ($event->exists(Event::SERVER_MESSAGE)) {
-				$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
-				return;
-			}
 			if ($frame->opcode == 0x08) {
 				return;
+			}
+
+			$event = Snowflake::get()->event;
+			if ($event->exists(Event::SERVER_MESSAGE)) {
+				$frame->data = $event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
 			}
 			$json = json_decode($frame->data, true);
 
