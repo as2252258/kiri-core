@@ -39,11 +39,12 @@ class Annotation extends BaseAnnotation
 	/**
 	 * @param $name
 	 * @param $class
+	 * @return mixed
 	 * @throws
 	 */
 	public function register($name, $class)
 	{
-		if (!isset($this->_classMap[$name]) && is_string($this->_classMap[$name])) {
+		if (!isset($this->_classMap[$name]) || is_string($this->_classMap[$name])) {
 			$this->_classMap[$name] = Snowflake::createObject($class);
 		}
 		return $this->_classMap[$name];
