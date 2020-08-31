@@ -14,8 +14,10 @@ use Database\Mysql\Schema;
 use Database\Orm\Select;
 use Exception;
 use PDO;
+use Snowflake\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 /**
@@ -182,6 +184,27 @@ class Connection extends Component
 		];
 		$pool = Snowflake::get()->connections;
 		return $pool->getConnection($config, true);
+	}
+
+
+	/**
+	 * @param $name
+	 * @return Connection
+	 * @throws ConfigException
+	 */
+	public function instance($name)
+	{
+		$config = Config::get('databases.' . $name, true);
+
+		$this->cds = $config['cds'];
+		$this->username = $config['username'];
+		$this->password = $config['password'];
+
+		$this->tablePrefix = $config['tablePrefix'];
+
+		$this->slaveConfig = $config['slaveConfig'];
+
+		return $this;
 	}
 
 

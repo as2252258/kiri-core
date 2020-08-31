@@ -766,7 +766,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public static function setDatabaseConnect($bsName)
 	{
-		return Snowflake::$app->{$bsName};
+		return Snowflake::get()->db->instance($bsName);
 	}
 
 	/**

@@ -12,6 +12,7 @@ use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -331,17 +332,27 @@ class Redis extends Component
 
 	/**
 	 * @return array
+	 * @throws ConfigException
 	 */
 	public function get_config(): array
 	{
+		$config = Config::get('cache.redis', false, [
+			'host'         => '127.0.0.1',
+			'port'         => '6379',
+			'prefix'       => Config::get('id'),
+			'auth'         => '',
+			'databases'    => '0',
+			'timeout'      => -1,
+			'read_timeout' => -1,
+		]);
 		return [
-			'host'         => env('REDIS.HOST', $this->host),
-			'port'         => env('REDIS.PORT', $this->port),
-			'auth'         => env('REDIS.PASSWORD', $this->auth),
-			'timeout'      => env('REDIS.TIMEOUT', 2),
-			'databases'    => env('REDIS.DATABASE', $this->databases),
-			'read_timeout' => env('REDIS.READ_TIMEOUT', 10),
-			'prefix'       => env('REDIS.PREFIX', 'system:'),
+			'host'         => $config['host'],
+			'port'         => $config['port'],
+			'auth'         => $config['auth'],
+			'timeout'      => $config['conn_timeout'],
+			'databases'    => $config['databases'],
+			'read_timeout' => $config['read_timeout'],
+			'prefix'       => $config['prefix'],
 		];
 	}
 

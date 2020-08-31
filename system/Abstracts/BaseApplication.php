@@ -15,6 +15,7 @@ use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 use Snowflake\Annotation\Annotation;
+use Snowflake\Cache\Redis;
 use Snowflake\Config;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
@@ -26,6 +27,8 @@ use Snowflake\Pool\RedisClient;
 use Snowflake\Processes;
 use Snowflake\Snowflake;
 use Snowflake\Event;
+use Database\Connection as DbConnection;
+use Snowflake\Pool\Pool as SPool;
 
 /**
  * Class BaseApplication
@@ -35,8 +38,9 @@ use Snowflake\Event;
  * @property Event $event
  * @property Router $router
  * @property Processes $processes
- * @property \Snowflake\Pool\Pool $pool
+ * @property SPool $pool
  * @property Server $servers
+ * @property DbConnection $db
  * @property Connection $connections
  * @property Logger $logger
  */
@@ -205,6 +209,15 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return mixed
+	 * @throws ComponentException
+	 */
+	public function getRedis()
+	{
+		return $this->get('redis');
+	}
+
+	/**
 	 * @param $ip
 	 * @return bool
 	 */
@@ -223,14 +236,16 @@ abstract class BaseApplication extends Service
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
 			'processes'         => ['class' => Processes::class],
+			'db'                => ['class' => DbConnection::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => RedisClient::class],
-			'pool'              => ['class' => \Snowflake\Pool\Pool::class],
+			'pool'              => ['class' => SPool::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
 			'router'            => ['class' => Router::class],
+			'redis'             => ['class' => Redis::class],
 		]);
 	}
 }
