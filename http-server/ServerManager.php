@@ -15,13 +15,13 @@ class ServerManager
 	/**
 	 * @param $pool
 	 * @param $process
-	 * @param $application
 	 * @param $workerId
 	 * @return mixed
 	 */
-	public static function create($pool, $process, $application, $workerId)
+	public static function create($pool, $process, $workerId)
 	{
 		try {
+			$application = Snowflake::get();
 			if (is_string($process) && class_exists($process)) {
 				return static::createProcess($process, $application, $pool, $workerId);
 			}

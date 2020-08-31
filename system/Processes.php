@@ -27,10 +27,9 @@ class Processes extends Component
 	 */
 	public function initCore()
 	{
-		$application = Snowflake::get();
-		$server = $application->set(Pool::class, new Pool($this->size(), SWOOLE_IPC_UNIXSOCK));
-		$server->on('workerStart', function (Pool $pool, int $workerId) use ($application) {
-			ServerManager::create($pool, $this->processes[$workerId], $application, $workerId);
+		$server = new Pool($this->size(), SWOOLE_IPC_UNIXSOCK);
+		$server->on('workerStart', function (Pool $pool, int $workerId) {
+			ServerManager::create($pool, $this->processes[$workerId], $workerId);
 		});
 		$server->on('workerStop', function (Pool $pool, int $workerId) {
 			$event = Snowflake::get()->event;
