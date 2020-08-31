@@ -35,6 +35,19 @@ abstract class BaseAnnotation extends Component
 
 
 	/**
+	 * @param string $class
+	 * @return string[]
+	 * @throws ReflectionException
+	 */
+	public function getAnnotation(string $class)
+	{
+		$reflect = Snowflake::getDi()->getReflect($class);
+
+		return $this->getPrivates($reflect);
+	}
+
+
+	/**
 	 * @param ReflectionClass $reflect
 	 * @param array $rules
 	 * @return array

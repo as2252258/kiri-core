@@ -60,13 +60,14 @@ class Annotation extends BaseAnnotation
 	/**
 	 * @param $path
 	 * @param $namespace
+	 * @param $class
 	 * @throws ReflectionException
 	 */
-	public function registration_notes($path, $namespace)
+	public function registration_notes($path, $namespace, $class)
 	{
 		$path = rtrim($path, '/');
 		foreach (glob($path . '/*') as $item) {
-			$this->scanning($item, $namespace);
+			$this->scanning($item, $namespace, $class);
 		}
 	}
 
@@ -92,33 +93,37 @@ class Annotation extends BaseAnnotation
 
 	/**
 	 * @param ReflectionClass $reflect
-	 * @Message(updatePosition)
+	 * @param string $className
+	 * @throws ReflectionException
 	 * @throws Exception
+	 * @Message(updatePosition)
 	 */
-	public function resolve(ReflectionClass $reflect)
+	public function resolve(ReflectionClass $reflect, string $className)
 	{
 		$controller = $reflect->newInstance();
 
-		$methods = $this->getPrivates($reflect);
-
+		$annotations = $this->getAnnotation($className);
+		$methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
 		foreach ($methods as $function) {
-			$comment = $function->getDocComment();
-			$methodName = $function->getName();
+			foreach ($annotations as $annotation) {
+				$comment = $function->getDocComment();
+				$methodName = $function->getName();
 
-			preg_match('/@(' . $function . ')\((.*?)\)/', $comment, $events);
-			if (!isset($events[1])) {
-				continue;
-			}
-			if (!$this->isLegitimate($events)) {
-				continue;
-			}
-			$_key = $this->getName($function, $events);
-			if (empty($events[2])) {
-				$this->push($_key, [$controller, $methodName]);
-			} else {
-				$handler = $this->createHandler($controller, $methodName, $events[2]);
+				preg_match('/@(' . $annotation . ')\((.*?)\)/', $comment, $events);
+				if (!isset($events[1])) {
+					continue;
+				}
+				if (!$this->isLegitimate($events)) {
+					continue;
+				}
+				$_key = $this->getName($annotation, $events);
+				if (empty($events[2])) {
+					$this->push($_key, [$controller, $methodName]);
+				} else {
+					$handler = $this->createHandler($controller, $methodName, $events[2]);
 
-				$this->push($_key, $handler, [request(), [$controller, $methodName]]);
+					$this->push($_key, $handler, [request(), [$controller, $methodName]]);
+				}
 			}
 		}
 	}
@@ -160,22 +165,22 @@ class Annotation extends BaseAnnotation
 	/**
 	 * @param string $path
 	 * @param $namespace
+	 * @param $className
 	 * @throws ReflectionException
-	 * @throws Exception
 	 */
-	protected function scanning($path, $namespace)
+	protected function scanning($path, $namespace, $className)
 	{
 		$di = Snowflake::getDi();
 		foreach (glob($path . '/*') as $file) {
 			if (is_dir($file)) {
-				$this->scanning($path, $namespace);
+				$this->scanning($path, $namespace, $className);
 			}
 
 			$explode = explode('/', $file);
 
 			$class = str_replace('.php', '', end($explode));
 
-			$this->resolve($di->getReflect($namespace . '\\' . $class));
+			$this->resolve($di->getReflect($namespace . '\\' . $class), $className);
 		}
 	}
 
