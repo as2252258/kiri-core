@@ -125,8 +125,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		Logger::trance($data, $this->category);
 
-		print_r($data);
-		return PHP_EOL;
+		return response()->send($data);
 	}
 
 	/**
