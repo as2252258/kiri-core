@@ -200,7 +200,7 @@ class Annotation extends BaseAnnotation
 	 */
 	public function pop($name)
 	{
-		if (!isset($this->_Scan_directory[$name])) {
+		if (isset($this->_Scan_directory[$name])) {
 			return [$this->_Scan_directory[$name], $this->params[$name] ?? []];
 		}
 		return [null, null];
