@@ -21,24 +21,29 @@ class ServerManager
 	 */
 	public static function create($pool, $process, $application, $workerId)
 	{
-		if (is_string($process) && class_exists($process)) {
-			return static::createProcess($process, $application, $pool, $workerId);
+		try {
+			if (is_string($process) && class_exists($process)) {
+				return static::createProcess($process, $application, $pool, $workerId);
+			}
+			[$category, $config, $handlers, $settings] = $process;
+			$server = new $category[1](...static::parameter($application, $config, $category));
+			$server->set($settings ?? [], $pool, $handlers, $config);
+			static::notice($application, $workerId, $config);
+			if (property_exists($server, 'pack')) {
+				$server->pack = $config['message']['pack'] ?? function ($data) {
+						return $data;
+					};
+			}
+			if (property_exists($server, 'unpack')) {
+				$server->unpack = $config['message']['unpack'] ?? function ($data) {
+						return $data;
+					};
+			}
+			return $server->start();
+		} catch (Exception $exception) {
+			echo $exception->getMessage() . PHP_EOL;
+			return $pool->shutdown();
 		}
-		[$category, $config, $handlers, $settings] = $process;
-		$server = new $category[1](...static::parameter($application, $config, $category));
-		$server->set($settings ?? [], $pool, $handlers, $config);
-		static::notice($application, $workerId, $config);
-		if (property_exists($server, 'pack')) {
-			$server->pack = $config['message']['pack'] ?? function ($data) {
-					return $data;
-				};
-		}
-		if (property_exists($server, 'unpack')) {
-			$server->unpack = $config['message']['unpack'] ?? function ($data) {
-					return $data;
-				};
-		}
-		return $server->start();
 	}
 
 
