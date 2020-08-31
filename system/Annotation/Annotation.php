@@ -73,7 +73,7 @@ class Annotation extends BaseAnnotation
 
 
 	/**
-	 * @return string
+	 * @return \HttpServer\Events\Http
 	 * @throws
 	 */
 	public function getHttp()
@@ -83,7 +83,7 @@ class Annotation extends BaseAnnotation
 
 
 	/**
-	 * @return string
+	 * @return Websocket
 	 * @throws
 	 */
 	public function getWebsocket()
