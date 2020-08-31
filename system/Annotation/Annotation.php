@@ -4,6 +4,7 @@
 namespace Snowflake\Annotation;
 
 use Exception;
+use HttpServer\Route\Annotation\Websocket;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -42,7 +43,10 @@ class Annotation extends BaseAnnotation
 	 */
 	public function register($name, $class)
 	{
-		$this->_classMap[$name] = Snowflake::createObject($class);
+		if (!isset($this->_classMap[$name]) && is_string($this->_classMap[$name])) {
+			$this->_classMap[$name] = Snowflake::createObject($class);
+		}
+		return $this->_classMap[$name];
 	}
 
 
