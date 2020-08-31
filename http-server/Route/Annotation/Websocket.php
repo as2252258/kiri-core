@@ -12,9 +12,9 @@ use Snowflake\Annotation\Annotation;
 class Websocket extends Annotation
 {
 
-	const MESSAGE = 'Message:';
-	const HANDSHAKE = 'Handshake:';
-	const CLOSE = 'Close:';
+	const MESSAGE = 'Message';
+	const HANDSHAKE = 'Handshake';
+	const CLOSE = 'Close';
 
 	private $Message = 'required|not empty';
 
