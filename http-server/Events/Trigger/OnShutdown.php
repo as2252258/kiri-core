@@ -21,6 +21,7 @@ class OnShutdown extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
+		var_dump($server);
 	}
 
 }

@@ -5,14 +5,12 @@ namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Application;
 use HttpServer\ServerManager;
 use ReflectionException;
+use Snowflake\Application;
 use Snowflake\Core\JSON;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Process\Pool;
 use Swoole\Server;
 use Closure;
 
@@ -23,7 +21,7 @@ use Closure;
 abstract class Service extends Server
 {
 
-	/** @var \Snowflake\Application */
+	/** @var Application */
 	protected $application;
 
 
