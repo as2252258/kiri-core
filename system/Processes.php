@@ -44,7 +44,7 @@ class Processes extends Component
 			}
 		});
 		$server->on('message', function ($pool, $message) {
-			file_put_contents(storage('a.log'), func_get_args());
+			file_put_contents(storage('a.log'), $message);
 		});
 		return $server;
 	}
