@@ -28,7 +28,7 @@ class Config extends Component
 	 * @param $key
 	 * @param bool $try
 	 * @param mixed $default
-	 * @return null
+	 * @return mixed
 	 * @throws
 	 */
 	public static function get($key, $try = FALSE, $default = null)

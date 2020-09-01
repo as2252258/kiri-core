@@ -22,6 +22,7 @@ use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\InitException;
+use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\Connection;
 use Snowflake\Pool\RedisClient;
 use Snowflake\Processes;
@@ -43,6 +44,7 @@ use Database\DatabasesProviders;
  * @property DatabasesProviders $db
  * @property Connection $connections
  * @property Logger $logger
+ * @property Jwt $jwt
  */
 abstract class BaseApplication extends Service
 {
@@ -245,6 +247,7 @@ abstract class BaseApplication extends Service
 			'logger'            => ['class' => Logger::class],
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
+			'jwt'               => ['class' => Jwt::class],
 		]);
 	}
 }
