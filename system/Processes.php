@@ -31,7 +31,7 @@ class Processes extends Component
 		$server = $application->set(Pool::class, new Pool($this->size(), SWOOLE_IPC_UNIXSOCK));
 		$server->on('workerStart', function (Pool $pool, int $workerId) use ($application) {
 			if (is_string($this->processes[$workerId]) && class_exists($this->processes[$workerId])) {
-				$application->set($this->processes[$workerId], $workerId);
+				Config::set($this->processes[$workerId], $workerId);
 			}
 			ServerManager::create($pool, $this->processes[$workerId], $workerId);
 		});
