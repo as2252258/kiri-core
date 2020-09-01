@@ -47,7 +47,7 @@ abstract class Process extends Component
 	 */
 	protected function exportSocket($workerId)
 	{
-		return $this->application->get(Pool::class)->getProcess(1)->exportSocket();
+		return $this->application->get(Pool::class)->getProcess($workerId)->exportSocket();
 	}
 
 
