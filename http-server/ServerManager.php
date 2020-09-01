@@ -23,7 +23,6 @@ class ServerManager
 	{
 		try {
 			$application = Snowflake::get();
-			$application->set(Pool::class, $pool);
 			if (is_string($process) && class_exists($process)) {
 				return static::createProcess($process, $application, $pool, $workerId);
 			}
