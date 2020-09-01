@@ -228,6 +228,106 @@ abstract class BaseApplication extends Service
 		return $this->getFirstLocal() == $ip;
 	}
 
+
+	/**
+	 * @return ErrorHandler
+	 * @throws ComponentException
+	 */
+	public function getError()
+	{
+		return $this->get('error');
+	}
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getProcesses()
+	{
+		return $this->get('processes');
+	}
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getAnnotation()
+	{
+		return $this->get('annotation');
+	}
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getConnections()
+	{
+		return $this->get('connections');
+	}
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getPool()
+	{
+		return $this->get('pool');
+	}
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getResponse()
+	{
+		return $this->get('response');
+	}
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getRequest()
+	{
+		return $this->get('request');
+	}
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getConfig()
+	{
+		return $this->get('config');
+	}
+
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getRouter()
+	{
+		return $this->get('router');
+	}
+
+
+	/**
+	 * @return Processes
+	 * @throws ComponentException
+	 */
+	public function getJwt()
+	{
+		return $this->get('jwt');
+	}
+
+
 	/**
 	 * @throws Exception
 	 */
