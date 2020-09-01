@@ -38,13 +38,11 @@ abstract class Process extends Component
 
 
 	/**
-	 * @param $process
 	 */
-	protected function start($process)
+	protected function start()
 	{
-		do {
-			$this->onHandler($process);
-		} while (true);
+		$_process = new \Swoole\Process([$this, 'onHandler'], false, null, true);
+		$_process->start();
 	}
 
 }

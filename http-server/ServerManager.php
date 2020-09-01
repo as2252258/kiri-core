@@ -68,9 +68,10 @@ class ServerManager
 	 */
 	protected static function createProcess($process, $application, $pool, $workerId)
 	{
+		$application->set($pool->getProcess($workerId));
 		$process = new $process($application);
 		$application->debug(sprintf('Worker #%d is running.', $workerId));
-		return $process->start($pool->getProcess($workerId));
+		return $process->start();
 	}
 
 
