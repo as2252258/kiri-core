@@ -43,7 +43,7 @@ class Processes extends Component
 				$this->system_mail($email, $nickname);
 			}
 		});
-		$server->on('message', function ($pool, $message) {
+		$server->on('message', function (Pool $pool, $message) {
 			file_put_contents(storage('a.log'), $message);
 		});
 		return $server;
@@ -70,7 +70,7 @@ class Processes extends Component
 
 			//Recipients
 			$mail->setFrom('system@example.com', '系统管理员');
-			$mail->addAddress($email, $nickname);                // Add a recipient
+			$mail->addAddress($email, $nickname);                 // Add a recipient
 
 			// Attachments
 //			$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
