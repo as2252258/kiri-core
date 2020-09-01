@@ -6,6 +6,9 @@ namespace HttpServer\Events\Trigger;
 
 use Exception;
 use HttpServer\Events\Callback;
+use HttpServer\Events\Http;
+use HttpServer\Events\WebSocket;
+use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -36,6 +39,9 @@ class OnWorkerStart extends Callback
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
 		}
+		if ($worker_id >= $server->setting['worker_num']) {
+			return;
+		}
 		$this->setWorkerAction($server, $worker_id);
 	}
 
@@ -47,10 +53,21 @@ class OnWorkerStart extends Callback
 	private function setWorkerAction($socket, $worker_id)
 	{
 		try {
-			$event = Snowflake::get()->event;
-			if ($event->exists(Event::SERVER_WORKER_START)) {
-				$event->trigger(Event::SERVER_WORKER_START);
+			if ($socket instanceof Http) {
+				$router = Snowflake::get()->router;
+				$router->loadRouterSetting();
+			} else if ($socket instanceof WebSocket) {
+				$path = APP_PATH . 'app/Websocket';
+
+				/** @var AWebsocket $websocket */
+				$websocket = Snowflake::get()->annotation->register('websocket', AWebsocket::class);
+				$websocket->registration_notes($path, 'App\\Websocket');
 			}
+			$event = Snowflake::get()->event;
+			if (!$event->exists(Event::SERVER_WORKER_START)) {
+				return;
+			}
+			$event->trigger(Event::SERVER_WORKER_START);
 		} catch (\Throwable $exception) {
 			Logger::write($exception->getMessage(), 'worker');
 		}
