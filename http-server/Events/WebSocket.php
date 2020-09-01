@@ -48,7 +48,7 @@ class WebSocket extends Server
 	 */
 	public function __construct($application, $host, $port = null, $mode = null, $sock_type = null)
 	{
-		$application->set($host . ':' . $port, $this);
+		$application->set(WebSocket::class, $this);
 		$this->application = $application;
 		parent::__construct($host, $port, $mode, $sock_type);
 	}
