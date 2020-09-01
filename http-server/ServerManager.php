@@ -7,6 +7,7 @@ use Exception;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use Swoole\Process\Pool;
 
 class ServerManager
 {
@@ -68,7 +69,7 @@ class ServerManager
 	 */
 	protected static function createProcess($process, $application, $pool, $workerId)
 	{
-		$application->set($pool->getProcess($workerId));
+		$application->set(Pool::class, $pool);
 		$process = new $process($application);
 		$application->debug(sprintf('Worker #%d is running.', $workerId));
 		return $process->start();
