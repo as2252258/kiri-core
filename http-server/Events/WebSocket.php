@@ -48,6 +48,7 @@ class WebSocket extends Server
 	 */
 	public function __construct($application, $host, $port = null, $mode = null, $sock_type = null)
 	{
+		$application->set($host . ':' . $port, $this);
 		$this->application = $application;
 		parent::__construct($host, $port, $mode, $sock_type);
 	}
@@ -67,10 +68,7 @@ class WebSocket extends Server
 	{
 		parent::set($settings);
 
-		$application = Snowflake::get();
-		$application->set(WebSocket::class, $this);
-
-		ServerManager::set($this, $settings, $application, $events, $config);
+		ServerManager::set($this, $settings, $this->application, $events, $config);
 	}
 
 
