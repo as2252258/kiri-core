@@ -6,6 +6,9 @@ namespace Snowflake\Process;
 
 use Snowflake\Abstracts\Component;
 use Snowflake\Application;
+use Snowflake\Exception\ComponentException;
+use Swoole\Coroutine\Socket;
+use Swoole\Process\Pool;
 
 /**
  * Class Process
@@ -35,6 +38,17 @@ abstract class Process extends Component
 	 * @return mixed
 	 */
 	abstract public function onHandler(\Swoole\Process $process);
+
+
+	/**
+	 * @param $workerId
+	 * @return Socket
+	 * @throws ComponentException
+	 */
+	protected function exportSocket($workerId)
+	{
+		return $this->application->get(Pool::class)->getProcess(1)->exportSocket();
+	}
 
 
 	/**
