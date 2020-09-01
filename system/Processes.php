@@ -30,9 +30,6 @@ class Processes extends Component
 		$application = Snowflake::get();
 		$server = $application->set(Pool::class, new Pool($this->size(), SWOOLE_IPC_UNIXSOCK));
 		$server->on('workerStart', function (Pool $pool, int $workerId) use ($application) {
-			if (is_string($this->processes[$workerId]) && class_exists($this->processes[$workerId])) {
-				Config::set($this->processes[$workerId], $workerId);
-			}
 			ServerManager::create($pool, $this->processes[$workerId], $workerId);
 		});
 		$server->on('workerStop', function (Pool $pool, int $workerId) {
