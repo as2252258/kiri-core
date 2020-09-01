@@ -40,13 +40,7 @@ class ServerManager
 						return $data;
 					};
 			}
-			$server->start();
-
-			do {
-
-			} while (true);
-
-			return 1;
+			return $server->start();
 		} catch (Exception $exception) {
 			echo $exception->getMessage() . PHP_EOL;
 			return $pool->shutdown();
