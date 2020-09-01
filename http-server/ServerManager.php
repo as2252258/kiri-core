@@ -98,6 +98,7 @@ class ServerManager
 	public static function set($server, $settings, $application, $events = [], $config = [])
 	{
 		$server->on('start', static::createHandler('start'));
+		$server->on('shutdown', static::createHandler('shutdown'));
 		$server->on('workerStop', static::createHandler('workerStop'));
 		$server->on('workerExit', static::createHandler('workerExit'));
 		$server->on('workerStart', static::createHandler('workerStart'));
