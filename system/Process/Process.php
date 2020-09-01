@@ -18,7 +18,6 @@ abstract class Process extends Component
 	protected $application;
 
 
-
 	/**
 	 * Process constructor.
 	 * @param $application
@@ -43,7 +42,9 @@ abstract class Process extends Component
 	 */
 	protected function start($process)
 	{
-		$this->onHandler($process);
+		do {
+			$this->onHandler($process);
+		} while (true);
 	}
 
 }
