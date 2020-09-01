@@ -250,7 +250,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
+	 * @return Annotation
 	 * @throws ComponentException
 	 */
 	public function getAnnotation()
@@ -260,7 +260,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
+	 * @return Connection
 	 * @throws ComponentException
 	 */
 	public function getConnections()
@@ -270,7 +270,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
+	 * @return Pool
 	 * @throws ComponentException
 	 */
 	public function getPool()
@@ -279,7 +279,7 @@ abstract class BaseApplication extends Service
 	}
 
 	/**
-	 * @return Processes
+	 * @return Response
 	 * @throws ComponentException
 	 */
 	public function getResponse()
@@ -288,7 +288,7 @@ abstract class BaseApplication extends Service
 	}
 
 	/**
-	 * @return Processes
+	 * @return Request
 	 * @throws ComponentException
 	 */
 	public function getRequest()
@@ -298,7 +298,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
+	 * @return Config
 	 * @throws ComponentException
 	 */
 	public function getConfig()
@@ -309,7 +309,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
+	 * @return Router
 	 * @throws ComponentException
 	 */
 	public function getRouter()
@@ -319,7 +319,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
+	 * @return Jwt
 	 * @throws ComponentException
 	 */
 	public function getJwt()
