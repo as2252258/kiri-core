@@ -67,8 +67,7 @@ class Application extends BaseApplication
 	 */
 	public function start()
 	{
-		/** @var Server $manager */
-		$manager = Snowflake::get()->get('server');
+		$manager = Snowflake::get()->server;
 		$manager->start();
 	}
 
