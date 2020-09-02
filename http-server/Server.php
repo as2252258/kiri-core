@@ -25,6 +25,7 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Process;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
+use Swoole\Runtime;
 
 /**
  * Class Server
@@ -75,12 +76,34 @@ class Server extends Application
 		$annotation->register('http', Annotation::class);
 		$annotation->register('websocket', AWebsocket::class);
 
-		$configs = $this->sortServers($configs);
-		foreach ($configs as $server) {
+		$this->enableCoroutine(true);
+		foreach ($this->sortServers($configs) as $server) {
 			$this->create($server);
 		}
+
 		$this->onProcessListener();
 		return $this->getServer();
+	}
+
+
+	/**
+	 * @param bool $isEnable
+	 */
+	private function enableCoroutine($isEnable = true)
+	{
+		if ($isEnable !== true) {
+			return;
+		}
+		Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
+			SWOOLE_HOOK_UNIX |
+			SWOOLE_HOOK_UDP |
+			SWOOLE_HOOK_UDG |
+			SWOOLE_HOOK_SSL |
+			SWOOLE_HOOK_TLS |
+			SWOOLE_HOOK_SLEEP |
+			SWOOLE_HOOK_STREAM_FUNCTION |
+			SWOOLE_HOOK_PROC
+		);
 	}
 
 
