@@ -63,7 +63,7 @@ class ServerInotify extends Process
 	{
 		$this->debug('file modify listener.');
 
-		$this->loadByDir(APP_PATH . '/app');
+		$this->loadByDir(APP_PATH . 'app');
 	}
 
 
