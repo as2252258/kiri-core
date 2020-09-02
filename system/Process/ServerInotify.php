@@ -63,16 +63,17 @@ class ServerInotify extends Process
 	{
 		$this->debug('file modify listener.');
 
-		$this->loadByDir(APP_PATH . 'app');
+		$this->loadByDir(APP_PATH . 'app', true);
 	}
 
 
 	/**
 	 * @param $path
+	 * @param bool $isReload
 	 * @return void
 	 * @throws Exception
 	 */
-	private function loadByDir($path)
+	private function loadByDir($path, $isReload = false)
 	{
 		$path = rtrim($path, '/');
 		foreach (glob($path . '/*') as $value) {
@@ -82,15 +83,19 @@ class ServerInotify extends Process
 			}
 			$md5 = md5($value);
 			if (!isset($this->md5Map[$md5])) {
-				$this->debug('not hav ' . $value);
-				return $this->reload();
+				if ($isReload) {
+					return $this->reload();
+				}
+				$this->md5Map[$md5] = filectime($value);
+			} else {
+				$mTime = filectime($value);
+				if ($this->md5Map[$md5] != $mTime) {
+					if ($isReload) {
+						return $this->reload();
+					}
+					$this->md5Map[$md5] = filectime($value);
+				}
 			}
-			$mTime = filectime($value);
-			if ($this->md5Map[$md5] != $mTime) {
-				$this->debug('not hav ' . $this->md5Map[$md5] . ':' . $mTime);
-				return $this->reload();
-			}
-			$this->md5Map[$md5] = $mTime;
 		}
 	}
 
