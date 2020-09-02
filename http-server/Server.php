@@ -68,10 +68,6 @@ class Server extends Application
 	 */
 	public function initCore(array $configs)
 	{
-		if ($this->baseServer) {
-			return $this->getServer();
-		}
-
 		$annotation = Snowflake::get()->annotation;
 		$annotation->register('tcp', Tcp::class);
 		$annotation->register('http', Annotation::class);
