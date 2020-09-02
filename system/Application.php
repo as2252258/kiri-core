@@ -11,7 +11,9 @@ namespace Snowflake;
 
 use Exception;
 use HttpServer\Server;
+use ReflectionException;
 use Snowflake\Abstracts\BaseApplication;
+use Snowflake\Exception\NotFindClassException;
 
 /**
  * Class Init
@@ -39,14 +41,17 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @param $name
-	 * @param $service
-	 * @return Application
-	 * @throws
+	 * @param string $service
+	 * @return $this
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function import(string $name, string $service)
+	public function import(string $service)
 	{
-		$class = $this->set($name, ['class' => $service]);
+		if (!class_exists($service)) {
+			throw new NotFindClassException($service);
+		}
+		$class = Snowflake::createObject($service);
 		if (method_exists($class, 'onImport')) {
 			$class->onImport($this);
 		}
