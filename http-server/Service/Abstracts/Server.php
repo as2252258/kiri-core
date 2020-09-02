@@ -71,12 +71,7 @@ trait Server
 		$settings = $this->setting;
 		if (($taskNumber = $settings['task_worker_num'] ?? 0) > 0) {
 			$this->on('finish', $this->createHandler('finish'));
-			$callback = $this->createHandler('task');
-			if ($settings['task_enable_coroutine'] ?? false) {
-				$this->on('task', [$callback, 'onContinueTask']);
-			} else {
-				$this->on('task', [$callback, 'onTask']);
-			}
+			$this->on('task', $this->createHandler('task'));
 		}
 	}
 

@@ -12,6 +12,10 @@ use Swoole\Server;
 use Swoole\Timer;
 use Exception;
 
+/**
+ * Class OnTask
+ * @package HttpServer\Events
+ */
 class OnTask extends Callback
 {
 
@@ -21,10 +25,10 @@ class OnTask extends Callback
 	public function onHandler()
 	{
 		$parameter = func_get_args();
-		if (count($parameter) < 4) {
-			$this->onContinueTask(...func_get_args());
+		if (func_num_args() < 4) {
+			$this->onContinueTask(...$parameter);
 		} else {
-			$this->onTask(...func_get_args());
+			$this->onTask(...$parameter);
 		}
 	}
 
