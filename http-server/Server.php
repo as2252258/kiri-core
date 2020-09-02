@@ -170,8 +170,15 @@ class Server extends Application
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$this->baseServer->set($settings);
-			if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler'])) {
-				$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler']);
+
+			if ($this->baseServer instanceof WebSocket) {
+				if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler'])) {
+					$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler']);
+				}
+			} else if ($this->baseServer instanceof Http) {
+				if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
+					$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
+				}
 			}
 		} else {
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
