@@ -153,7 +153,7 @@ class Server extends Application
 	 */
 	private function dispatchCreate($config, $settings)
 	{
-		if (!$this->baseServer) {
+		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$this->baseServer->set($settings);
