@@ -5,6 +5,7 @@ defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
 use HttpServer\Http\Response;
 use Snowflake\Snowflake;
 use HttpServer\Http\Context;
+use Snowflake\Core\ArrayAccess;
 
 if (!function_exists('make')) {
 
@@ -279,6 +280,22 @@ if (!function_exists('sweep')) {
 			$array = array_merge(require_once "$config", $array);
 		}
 		return $array;
+	}
+
+}
+
+
+if (!function_exists('merge')) {
+
+
+	/**
+	 * @param $param
+	 * @param $param1
+	 * @return array
+	 */
+	function merge($param, $param1)
+	{
+		return ArrayAccess::merge($param, $param1);
 	}
 
 }
