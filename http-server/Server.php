@@ -182,6 +182,8 @@ class Server extends Application
 			$newListener->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
 			$newListener->on('packet', [Snowflake::createObject(OnPacket::class), 'onHandler']);
 			$newListener->on('receive', [Snowflake::createObject(OnReceive::class), 'onHandler']);
+
+			var_dump($newListener);
 		} else if ($config['type'] == self::WEBSOCKET) {
 			throw new Exception('Base server must instanceof \Swoole\WebSocket\Server::class.');
 		} else {
