@@ -10,7 +10,7 @@ use Snowflake\Application;
  * Class Providers
  * @package Snowflake\Abstracts
  */
-abstract class Providers extends Component
+abstract class Providers extends Component implements Provider
 {
 
 

@@ -25,7 +25,6 @@ use Snowflake\Exception\InitException;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\Connection;
 use Snowflake\Pool\RedisClient;
-use Snowflake\Processes;
 use Snowflake\Snowflake;
 use Snowflake\Event;
 use Snowflake\Pool\Pool as SPool;
@@ -38,7 +37,6 @@ use Database\DatabasesProviders;
  * @property Annotation $annotation
  * @property Event $event
  * @property Router $router
- * @property Processes $processes
  * @property SPool $pool
  * @property Server $server
  * @property DatabasesProviders $db
@@ -240,16 +238,6 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Processes
-	 * @throws ComponentException
-	 */
-	public function getProcesses()
-	{
-		return $this->get('processes');
-	}
-
-
-	/**
 	 * @return Annotation
 	 * @throws ComponentException
 	 */
@@ -346,7 +334,6 @@ abstract class BaseApplication extends Service
 			'error'             => ['class' => ErrorHandler::class],
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
-			'processes'         => ['class' => Processes::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => RedisClient::class],
 			'pool'              => ['class' => SPool::class],

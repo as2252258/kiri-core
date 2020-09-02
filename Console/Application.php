@@ -6,7 +6,7 @@
  * Time: 2:16
  */
 
-namespace Snowflake\Console;
+namespace Console;
 
 
 use Snowflake\Abstracts\BaseApplication;
@@ -17,7 +17,7 @@ use Snowflake\Snowflake;
 
 /**
  * Class Application
- * @package Snowflake\Console
+ * @package Console
  */
 class Application extends BaseApplication
 {

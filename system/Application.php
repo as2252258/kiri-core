@@ -9,8 +9,10 @@
 namespace Snowflake;
 
 
+use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
+use HttpServer\Server;
 use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Exception\NotFindClassException;
@@ -36,6 +38,7 @@ class Application extends BaseApplication
 	 */
 	public function init()
 	{
+		$this->import(ConsoleProviders::class);
 		$this->import(DatabasesProviders::class);
 		$this->import(ServerProviders::class);
 	}
@@ -64,9 +67,9 @@ class Application extends BaseApplication
 	 */
 	public function start()
 	{
-		$process = Snowflake::get()->processes;
-		$process->initCore();
-		$process->start();
+		/** @var Server $manager */
+		$manager = Snowflake::get()->get('server');
+		$manager->start();
 	}
 
 

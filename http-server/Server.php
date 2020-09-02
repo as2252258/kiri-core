@@ -61,6 +61,16 @@ class Server extends Application
 
 
 	/**
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public function init()
+	{
+		$this->initCore(Config::get('servers', true));
+	}
+
+
+	/**
 	 * @param array $configs
 	 * @return Http|Packet|Receive|WebSocket
 	 * @throws Exception
@@ -83,6 +93,17 @@ class Server extends Application
 
 		$this->onProcessListener();
 		return $this->getServer();
+	}
+
+
+	/**
+	 * @return mixed
+	 *
+	 * start server
+	 */
+	public function start()
+	{
+		return $this->baseServer->start();
 	}
 
 

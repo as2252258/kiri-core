@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 
 use HttpServer\Http\Context;
@@ -11,7 +11,7 @@ use HttpServer\Http\Request;
 
 /**
  * Class Dtl
- * @package Snowflake\Console
+ * @package Console
  */
 class Dtl
 {

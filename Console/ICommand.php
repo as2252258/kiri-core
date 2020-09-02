@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 
 interface ICommand

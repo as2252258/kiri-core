@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 
 use Exception;
@@ -10,7 +10,7 @@ use Swoole\Coroutine\Channel;
 
 /**
  * Class AbstractConsole
- * @package Snowflake\Console
+ * @package Console
  */
 abstract class AbstractConsole
 {

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 /**
  * Interface CommandInterface
- * @package Snowflake\Console
+ * @package Console
  */
 interface CommandInterface
 {

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 /**
  * Class Console
- * @package Snowflake\Console
+ * @package Console
  */
 class Console extends AbstractConsole
 {

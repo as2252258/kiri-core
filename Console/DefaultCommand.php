@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 /**
  * Class DefaultCommand
- * @package Snowflake\Console
+ * @package Console
  */
 class DefaultCommand extends Command
 {

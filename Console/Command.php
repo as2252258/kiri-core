@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Snowflake\Console;
+namespace Console;
 
 use Snowflake\Abstracts\BaseObject;
 
 /**
  * Class Command
- * @package Snowflake\Console
+ * @package Console
  */
 abstract class Command extends BaseObject implements CommandInterface
 {
