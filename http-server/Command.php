@@ -35,8 +35,8 @@ class Command extends \Console\Command
 		$action = $dtl->get('action', 3);
 
 		/** @var Server $server */
-//		$server = Snowflake::get()->get('server');
-//		$server->start();
+		$server = Snowflake::get()->get('server');
+		$server->start();
 	}
 
 }

@@ -9,7 +9,7 @@
 namespace Console;
 
 
-use Snowflake\Abstracts\BaseApplication;
+use Snowflake\Abstracts\Component;
 use Swoole\Coroutine\Channel;
 use Swoole\Runtime;
 use Swoole\Timer;
@@ -19,7 +19,7 @@ use Snowflake\Snowflake;
  * Class Application
  * @package Console
  */
-class Application extends BaseApplication
+class Application extends Component
 {
 
 	/**
