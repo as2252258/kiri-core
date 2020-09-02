@@ -17,6 +17,7 @@ use HttpServer\Service\WebSocket;
 use Exception;
 use ReflectionException;
 use Snowflake\Config;
+use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -67,9 +68,9 @@ class Server extends Application
 		}
 
 		$annotation = Snowflake::get()->annotation;
-		$annotation->register('tcp',Tcp::class);
-		$annotation->register('http',Annotation::class);
-		$annotation->register('websocket',AWebsocket::class);
+		$annotation->register('tcp', Tcp::class);
+		$annotation->register('http', Annotation::class);
+		$annotation->register('websocket', AWebsocket::class);
 
 		$configs = $this->sortServers($configs);
 		foreach ($configs as $server) {
@@ -162,16 +163,20 @@ class Server extends Application
 	 */
 	private function dispatchCreate($config, $settings)
 	{
+		$event = Snowflake::get()->event;
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$this->baseServer->set($settings);
+			if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler'])) {
+				$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler']);
+			}
 		} else {
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 			if (!empty($settings)) {
 				$newListener->set($settings);
 			}
-			$this->onListenerBind($config, $this->baseServer);
+			$this->onListenerBind($config, $this->baseServer, $event);
 		}
 		return $this->baseServer;
 	}
@@ -180,12 +185,18 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $newListener
+	 * @param $event
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function onListenerBind($config, $newListener)
+	private function onListenerBind($config, $newListener, $event)
 	{
 		if ($config['type'] == self::HTTP) {
 			$newListener->on('request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
+			if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
+				$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
+			}
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
 			$newListener->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
 			$newListener->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
@@ -196,6 +207,29 @@ class Server extends Application
 		} else {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
+	}
+
+
+	/**
+	 * Load router handler
+	 */
+	public function onLoadHttpHandler()
+	{
+		$router = Snowflake::get()->router;
+		$router->loadRouterSetting();
+	}
+
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function onLoadWebsocketHandler()
+	{
+		$path = APP_PATH . 'app/Websocket';
+
+		/** @var AWebsocket $websocket */
+		$websocket = Snowflake::get()->annotation->register('websocket', AWebsocket::class);
+		$websocket->registration_notes($path, 'App\\Websocket');
 	}
 
 
