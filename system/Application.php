@@ -34,11 +34,12 @@ class Application extends BaseApplication
 	 */
 	public function init()
 	{
-		/** @var Server $https */
-		$https = $this->make(Server::class, Server::class);
+		$application = Snowflake::get();
+
+		$https = $application->server;
 		$https->initCore(Config::get('servers', true));
 
-		$process = Snowflake::get()->processes;
+		$process = $application->processes;
 		$process->initCore();
 	}
 
