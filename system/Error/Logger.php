@@ -9,6 +9,7 @@
 namespace Snowflake\Error;
 
 use Exception;
+use Snowflake\Abstracts\Component;
 use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
 use Swoole\Process;
@@ -17,21 +18,23 @@ use Swoole\Process;
  * Class Logger
  * @package Snowflake\Snowflake\Error
  */
-class Logger
+class Logger extends Component
 {
 
-	private static $logs = [];
+	private $logs = [];
 
-	public static $worker_id;
+	public $worker_id;
 
 	/**
 	 * @param $message
 	 * @param string $category
+	 * @param null $_
 	 * @throws Exception
 	 */
-	public static function debug($message, $category = 'app')
+	public function debug($message, $category = 'app', $_ = null)
 	{
-		static::writer($message, $category);
+		parent::debug($message);
+		$this->writer($message, $category);
 	}
 
 
@@ -40,30 +43,34 @@ class Logger
 	 * @param string $category
 	 * @throws Exception
 	 */
-	public static function trance($message, $category = 'app')
+	public function trance($message, $category = 'app')
 	{
-		static::writer($message, $category);
+		$this->writer($message, $category);
 	}
 
 
 	/**
 	 * @param $message
 	 * @param string $category
+	 * @param null $_
 	 * @throws Exception
 	 */
-	public static function error($message, $category = 'app')
+	public function error($message, $category = 'error', $_ = null)
 	{
-		static::writer($message, $category);
+		parent::error($message);
+		$this->writer($message, $category);
 	}
 
 	/**
 	 * @param $message
 	 * @param string $category
+	 * @param null $_
 	 * @throws Exception
 	 */
-	public static function success($message, $category = 'app')
+	public function success($message, $category = 'app', $_ = null)
 	{
-		static::writer($message, $category);
+		parent::success($message);
+		$this->writer($message, $category);
 	}
 
 	/**
@@ -72,23 +79,23 @@ class Logger
 	 * @return string
 	 * @throws Exception
 	 */
-	private static function writer($message, $category = 'app')
+	private function writer($message, $category = 'app')
 	{
 		if ($message instanceof \Throwable) {
 			$message = $message->getMessage();
 		} else {
 			if (is_array($message) || is_object($message)) {
-				$message = static::arrayFormat($message);
+				$message = $this->arrayFormat($message);
 			}
 		}
 		if (is_array($message)) {
-			$message = static::arrayFormat($message);
+			$message = $this->arrayFormat($message);
 		}
 		if (!empty($message)) {
-			if (!is_array(static::$logs)) {
-				static::$logs = [];
+			if (!is_array($this->$logs)) {
+				$this->$logs = [];
 			}
-			static::$logs[] = [$category, $message];
+			$this->$logs[] = [$category, $message];
 		}
 		return $message;
 	}
@@ -99,7 +106,7 @@ class Logger
 	 * @param $category
 	 * @throws Exception
 	 */
-	public static function print_r($message, $category = '')
+	public function print_r($message, $category = '')
 	{
 		/** @var Process $logger */
 		$logger = Snowflake::get()->logger;
@@ -111,10 +118,10 @@ class Logger
 	 * @param string $application
 	 * @return mixed
 	 */
-	public static function getLastError($application = 'app')
+	public function getLastError($application = 'app')
 	{
 		$_tmp = [];
-		foreach (static::$logs as $key => $val) {
+		foreach ($this->logs as $key => $val) {
 			if ($val[0] != $application) {
 				continue;
 			}
@@ -131,7 +138,7 @@ class Logger
 	 * @param string $category
 	 * @throws Exception
 	 */
-	public static function write(string $messages, $category = 'app')
+	public function write(string $messages, $category = 'app')
 	{
 		if (empty($messages)) {
 			return;
@@ -146,7 +153,7 @@ class Logger
 	 * @param $logFile
 	 * @return false|string
 	 */
-	private static function getSource($logFile)
+	private function getSource($logFile)
 	{
 		if (!file_exists($logFile)) {
 			shell_exec('echo 3 > /proc/sys/vm/drop_caches');
@@ -162,37 +169,37 @@ class Logger
 	 * @throws Exception
 	 * 写入日志
 	 */
-	public static function insert()
+	public function insert()
 	{
-		if (empty(static::$logs)) {
+		if (empty($this->logs)) {
 			return;
 		}
-		foreach (static::$logs as $log) {
+		foreach ($this->logs as $log) {
 			[$category, $message] = $log;
-			static::write($message, $category);
+			$this->write($message, $category);
 		}
-		static::$logs = [];
+		$this->logs = [];
 	}
 
 	/**
 	 * @return array
 	 */
-	public static function clear()
+	public function clear()
 	{
-		return static::$logs = [];
+		return $this->logs = [];
 	}
 
 	/**
 	 * @param $data
 	 * @return string
 	 */
-	private static function arrayFormat($data)
+	private function arrayFormat($data)
 	{
 		if (is_string($data)) {
 			return $data;
 		}
 		if ($data instanceof Exception) {
-			$data = static::getException($data);
+			$data = $this->getException($data);
 		} else if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
@@ -200,7 +207,7 @@ class Logger
 		$_tmp = [];
 		foreach ($data as $key => $val) {
 			if (is_array($val)) {
-				$_tmp[] = static::arrayFormat($val);
+				$_tmp[] = $this->arrayFormat($val);
 			} else {
 				$_tmp[] = (is_string($key) ? $key . ' : ' : '') . $val;
 			}
@@ -212,7 +219,7 @@ class Logger
 	 * @param Exception $exception
 	 * @return array
 	 */
-	private static function getException($exception)
+	private function getException($exception)
 	{
 		$_tmp = [$exception->getMessage()];
 		$_tmp[] = $exception->getFile() . ' on line ' . $exception->getLine();

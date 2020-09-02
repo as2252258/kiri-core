@@ -4,17 +4,59 @@
 namespace HttpServer\Events;
 
 
-use Exception;
+use Closure;
+use HttpServer\Events\Abstracts\Callback;
+use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
+use Exception;
 
 /**
  * Class OnPacket
- * @package HttpServer\Events\Trigger
+ * @package HttpServer\Events
  */
-class Packet extends Service
+class OnPacket extends Callback
 {
+
+
+	/** @var Closure|array */
+	public $unpack;
+
+
+	/** @var Closure|array */
+	public $pack;
+
+
+	/**
+	 * @param $data
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function pack($data)
+	{
+		$callback = $this->pack;
+		if (is_callable($callback, true)) {
+			return $callback($data);
+		}
+		return JSON::encode($data);
+	}
+
+
+	/**
+	 * @param $data
+	 * @return mixed
+	 */
+	public function unpack($data)
+	{
+		$callback = $this->unpack;
+		if (is_callable($callback, true)) {
+			return $callback($data);
+		}
+		return JSON::decode($data);
+	}
+
+
 
 	/**
 	 * @param Server $server
@@ -40,5 +82,6 @@ class Packet extends Service
 			$event->trigger(Event::SERVER_WORKER_STOP);
 		}
 	}
+
 
 }

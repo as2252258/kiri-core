@@ -3,12 +3,22 @@
 
 namespace HttpServer;
 
-use HttpServer\Events\Http;
-use HttpServer\Events\Receive;
-use HttpServer\Events\Packet;
-use HttpServer\Events\WebSocket;
+use HttpServer\Events\OnClose;
+use HttpServer\Events\OnConnect;
+use HttpServer\Events\OnPacket;
+use HttpServer\Events\OnReceive;
+use HttpServer\Events\OnRequest;
+use HttpServer\Service\Http;
+use HttpServer\Service\Receive;
+use HttpServer\Service\Packet;
+use HttpServer\Service\WebSocket;
 use Exception;
+use ReflectionException;
+use Snowflake\Config;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use Swoole\Process;
 
 /**
  * Class Server
@@ -38,18 +48,63 @@ class Server extends Application
 		'WEBSOCKET' => [SWOOLE_SOCK_TCP, WebSocket::class],
 	];
 
+	/** @var Http|WebSocket|Packet|Receive */
+	private $baseServer;
+
+
 	/**
 	 * @param array $configs
-	 * @return array
+	 * @return Http|Packet|Receive|WebSocket
 	 * @throws Exception
 	 */
 	public function initCore(array $configs)
 	{
-		$response = [];
+		$configs = $this->sortServers($configs);
 		foreach ($configs as $server) {
-			$response[] = $this->create($server);
+			$this->create($server);
 		}
-		return $response;
+		$this->onProcessListener();
+		return $this->getServer();
+	}
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+	public function onProcessListener()
+	{
+		$processes = Config::get('processes');
+		if (empty($processes) || !is_array($processes)) {
+			return;
+		}
+
+		$application = Snowflake::get();
+		foreach ($processes as $name => $process) {
+			$class = Snowflake::createObject($process);
+
+			if (!method_exists($class, 'onHandler')) {
+				continue;
+			}
+
+			$system = new Process([$class, 'onHandler'], false, null, true);
+			if (Snowflake::isLinux()) {
+				$system->name($name);
+			}
+			$this->baseServer->addProcess($system);
+			$application->set($name, $process);
+		}
+	}
+
+
+	/**
+	 * @return Http|WebSocket|Packet|Receive
+	 */
+	public function getServer()
+	{
+		return $this->baseServer;
 	}
 
 
@@ -74,6 +129,7 @@ class Server extends Application
 
 	/**
 	 * @param $config
+	 * @throws Exception
 	 */
 	protected function createEventListen($config)
 	{
@@ -94,33 +150,83 @@ class Server extends Application
 	 */
 	private function dispatchCreate($config, $settings)
 	{
-		switch ($config['type']) {
-			case self::HTTP:
-				$handler = [
-					['request', [Http::class, 'onHandler']]
-				];
-				break;
-			case self::TCP:
-				$handler = [
-					['receive', [Receive::class, 'onReceive']]
-				];
-				break;
-			case self::PACKAGE:
-				$handler = [
-					['packet', [Packet::class, 'onHandler']]
-				];
-				break;
-			case self::WEBSOCKET:
-				$handler = [
-					['handshake', [WebSocket::class, 'onHandshake']],
-					['message', [WebSocket::class, 'onMessage']],
-					['close', [WebSocket::class, 'onClose']],
-				];
-				break;
-			default:
-				throw new Exception('Unknown server type(' . $config['type'] . ').');
+		if (!($this->baseServer instanceof \Swoole\Server)) {
+			$this->baseServer = new ($this->dispatch($config['type']))();
+			$this->baseServer->set($settings);
+		} else {
+			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], SWOOLE_TCP);
+			if (!empty($settings)) {
+				$newListener->set($settings);
+			}
+			$this->onListenerBind($config, $newListener);
 		}
-		return [$this->server[$config['type']], $config, $handler, $settings];
+		return $this->baseServer;
+	}
+
+
+	/**
+	 * @param $config
+	 * @param $newListener
+	 * @throws Exception
+	 */
+	private function onListenerBind($config, $newListener)
+	{
+		if ($config['type'] == self::HTTP) {
+			$newListener->on('request', [OnRequest::class, 'onHandler']);
+		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
+			$newListener->on('connect', [OnConnect::class, 'onHandler']);
+			$newListener->on('close', [OnClose::class, 'onHandler']);
+			if ($config['type'] == self::PACKAGE) {
+				$newListener->on('packet', [OnPacket::class, 'onHandler']);
+			} else {
+				$newListener->on('receive', [OnReceive::class, 'onHandler']);
+			}
+			$newListener->on('connect', [OnConnect::class, 'onHandler']);
+			$newListener->on('close', [OnClose::class, 'onHandler']);
+		} else if ($config['type'] == self::WEBSOCKET) {
+			throw new Exception('Base server must instanceof \Swoole\WebSocket\Server::class.');
+		} else {
+			throw new Exception('Unknown server type(' . $config['type'] . ').');
+		}
+	}
+
+
+	/**
+	 * @param $type
+	 * @return string
+	 */
+	private function dispatch($type)
+	{
+		$default = [
+			self::HTTP      => \Swoole\Http\Server::class,
+			self::WEBSOCKET => \Swoole\WebSocket\Server::class,
+			self::TCP       => \Swoole\Server::class,
+			self::PACKAGE   => \Swoole\Server::class
+		];
+		return $default[$type] ?? \Swoole\Server::class;
+	}
+
+	/**
+	 * @param $servers
+	 * @return array
+	 */
+	private function sortServers($servers)
+	{
+		$array = [];
+		foreach ($servers as $server) {
+			switch ($server['type']) {
+				case self::WEBSOCKET:
+					array_unshift($array, $server);
+					break;
+				case self::HTTP:
+				case self::PACKAGE | self::TCP:
+					$array[] = $server;
+					break;
+				default:
+					$array[] = $server;
+			}
+		}
+		return $array;
 	}
 
 

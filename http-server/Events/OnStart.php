@@ -1,10 +1,10 @@
 <?php
 
 
-namespace HttpServer\Events\Trigger;
+namespace HttpServer\Events;
 
 
-use HttpServer\Events\Callback;
+use HttpServer\Events\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;

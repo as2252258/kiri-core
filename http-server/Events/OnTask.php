@@ -1,10 +1,10 @@
 <?php
 
 
-namespace HttpServer\Events\Trigger\Trigger;
+namespace HttpServer\Events;
 
 
-use HttpServer\Events\Callback;
+use HttpServer\Events\Abstracts\Callback;
 use HttpServer\IInterface\Task as ITask;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -106,8 +106,6 @@ class OnTask extends Callback
 		} finally {
 			$event = Snowflake::get()->event;
 			$event->trigger(Event::RELEASE_ALL);
-
-			$this->endCoroutine();
 			Timer::clearAll();
 		}
 		return $finish;

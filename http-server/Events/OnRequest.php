@@ -4,66 +4,31 @@
 namespace HttpServer\Events;
 
 
+use Exception;
+use HttpServer\Events\Abstracts\Callback;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
-use HttpServer\ServerManager;
-use ReflectionException;
-use Snowflake\Application;
+use HttpServer\Service\Http;
 use Snowflake\Core\JSON;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Exception;
-use Swoole\Http\Server;
-use Swoole\Process\Pool;
 
-class Http extends Server
+/**
+ * Class OnRequest
+ * @package HttpServer\Events
+ */
+class OnRequest extends Callback
 {
 
-	/** @var Application */
-	protected $application;
-
-
-	/**
-	 * Receive constructor.
-	 * @param $application
-	 * @param $host
-	 * @param null $port
-	 * @param null $mode
-	 * @param null $sock_type
-	 */
-	public function __construct($application, $host, $port = null, $mode = null, $sock_type = null)
-	{
-		$application->set(Http::class, $this);
-		$this->application = $application;
-		parent::__construct($host, $port, $mode, $sock_type);
-	}
-
-
-	/**
-	 * @param array $settings
-	 * @param null $pool
-	 * @param array $events
-	 * @param array $config
-	 * @return mixed|void
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	public function set(array $settings, $pool = null, $events = [], $config = [])
-	{
-		parent::set($settings);
-		ServerManager::set($this, $settings, $this->application, $events, $config);
-	}
 
 
 	/**
 	 * @param Request $request
 	 * @param Response $response
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
@@ -79,7 +44,7 @@ class Http extends Server
 			}
 		} finally {
 			$dividing_line = str_pad('', 100, '-');
-			$this->application->debug($dividing_line, 'app');
+			$this->debug($dividing_line, 'app');
 		}
 	}
 
@@ -96,7 +61,7 @@ class Http extends Server
 			'file'    => $exception->getFile(),
 			'line'    => $exception->getLine()
 		];
-		$this->application->error(var_export($errorInfo, true));
+		$this->error(var_export($errorInfo, true));
 
 		$code = $exception->getCode() ?? 500;
 		$trance = array_slice($exception->getTrace(), 0, 10);
@@ -118,5 +83,6 @@ class Http extends Server
 		$response = Context::setContext('response', HResponse::create($response));
 		return [$request, $response];
 	}
+
 
 }

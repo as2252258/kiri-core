@@ -134,7 +134,6 @@ class BaseObject implements Configure
 		}
 		echo "\033[35m[DEBUG][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		echo PHP_EOL;
-		Logger::trance($message, 'debug');
 	}
 
 
@@ -151,7 +150,6 @@ class BaseObject implements Configure
 		}
 		echo "\033[34m[INFO][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		echo PHP_EOL;
-		Logger::trance($message, 'info');
 	}
 
 	/**
@@ -167,7 +165,6 @@ class BaseObject implements Configure
 		}
 		echo "\033[36m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		echo PHP_EOL;
-		Logger::trance($message, 'success');
 	}
 
 
@@ -184,7 +181,6 @@ class BaseObject implements Configure
 		}
 		echo "\033[33m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		echo PHP_EOL;
-		Logger::trance($message, 'warning');
 	}
 
 
@@ -194,7 +190,7 @@ class BaseObject implements Configure
 	 * @param string|null $file
 	 * @throws Exception
 	 */
-	public function error($message, string $method = null, string $file = null)
+	public function error($message, $method = null, $file = null)
 	{
 		if (!empty($file)) {
 			echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . "\033[0m";
@@ -205,7 +201,6 @@ class BaseObject implements Configure
 		}
 		echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . (empty($method) ? '' : $method . ': ') . $message . "\033[0m";
 		echo PHP_EOL;
-		Logger::error($message, 'error');
 	}
 
 }

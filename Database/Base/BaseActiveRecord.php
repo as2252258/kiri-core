@@ -20,6 +20,7 @@ use Database\Mysql\Columns;
 use Database\Relation;
 use Snowflake\Error\Logger;
 use Exception;
+use Snowflake\Exception\ComponentException;
 use validator\Validator;
 use Database\IOrm;
 use Snowflake\Snowflake;
@@ -118,10 +119,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return mixed
 	 *
 	 * get last exception or other error
+	 * @throws ComponentException
 	 */
 	public function getLastError()
 	{
-		return Logger::getLastError('mysql');
+		return Snowflake::get()->getLogger()->getLastError('mysql');
 	}
 
 	/**

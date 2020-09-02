@@ -307,7 +307,6 @@ abstract class BaseApplication extends Service
 	}
 
 
-
 	/**
 	 * @return Router
 	 * @throws ComponentException
@@ -348,6 +347,7 @@ abstract class BaseApplication extends Service
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
+			'server'            => ['class' => Server::class],
 		]);
 	}
 }

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace HttpServer\Events\Trigger;
+namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Events\Callback;
+use HttpServer\Events\Abstracts\Callback;
 use Swoole\Server;
 
 class OnFinish extends Callback

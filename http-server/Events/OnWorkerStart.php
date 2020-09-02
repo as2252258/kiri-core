@@ -1,11 +1,11 @@
 <?php
 
 
-namespace HttpServer\Events\Trigger;
+namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Events\Callback;
+use HttpServer\Events\Abstracts\Callback;
 use HttpServer\Events\Http;
 use HttpServer\Events\WebSocket;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
@@ -16,7 +16,7 @@ use Swoole\Server;
 
 /**
  * Class OnWorkerStart
- * @package HttpServer\Events\Trigger
+ * @package HttpServer\Events
  */
 class OnWorkerStart extends Callback
 {
@@ -31,8 +31,6 @@ class OnWorkerStart extends Callback
 	 */
 	public function onHandler(Server $server, $worker_id)
 	{
-		Logger::$worker_id = $worker_id;
-
 		Snowflake::setProcessId($server->worker_pid);
 
 		$get_name = $this->get_process_name($server, $worker_id);
@@ -69,7 +67,7 @@ class OnWorkerStart extends Callback
 			}
 			$event->trigger(Event::SERVER_WORKER_START);
 		} catch (\Throwable $exception) {
-			Logger::write($exception->getMessage(), 'worker');
+			Snowflake::get()->getLogger()->write($exception->getMessage(), 'worker');
 		}
 	}
 

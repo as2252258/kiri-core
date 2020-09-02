@@ -1,7 +1,7 @@
 <?php
 
 
-namespace HttpServer\Events;
+namespace HttpServer\Events\Abstracts;
 
 
 use Exception;
@@ -13,21 +13,6 @@ use Swoole\Timer;
 
 abstract class Callback extends Application
 {
-
-	/** @var \Snowflake\Application */
-	protected $container;
-
-
-	/**
-	 * Callback constructor.
-	 * @param $container
-	 */
-	public function __construct($container)
-	{
-		$this->container = $container;
-	}
-
-
 
 
 	/**
@@ -46,8 +31,10 @@ abstract class Callback extends Application
 		$this->eventNotify($message, $event);
 
 		Snowflake::clearProcessId($server->worker_pid);
-		Logger::write($this->_MESSAGE[$message] . $worker_id);
-		Logger::clear();
+
+		$logger = Snowflake::get()->getLogger();
+		$logger->write($this->_MESSAGE[$message] . $worker_id);
+		$logger->clear();
 	}
 
 

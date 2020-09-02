@@ -78,19 +78,6 @@ return [
 				'worker_num'       => 10,
 				'enable_coroutine' => 1
 			],
-			'grpc'     => [
-				'host'     => '127.0.0.1',
-				'port'     => 5555,
-				'mode'     => SWOOLE_SOCK_TCP,
-				'receive'  => function ($server, int $fd, int $reactorId, string $data) {
-					$server->push(1, 'success.');
-					$server->send($fd, 'success.');
-
-					$socket = Snowflake::get()->get(\HttpServer\Events\WebSocket::class);
-					$socket->push(1, 'hello word~~~~~~~~~~~~~');
-				},
-				'settings' => []
-			],
 			'events'   => [
 				Event::SERVER_WORKER_START => function () {
 					$path = APP_PATH . 'app/Websocket';

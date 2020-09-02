@@ -4,18 +4,58 @@
 namespace HttpServer\Events;
 
 
-use Exception;
+use HttpServer\Events\Abstracts\Callback;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
+use Exception;
+use Closure;
 
 /**
- * Class Receive
+ * Class OnReceive
  * @package HttpServer\Events
  */
-class Receive extends Service
+class OnReceive extends Callback
 {
+
+
+	/** @var Closure|array */
+	public $unpack;
+
+
+	/** @var Closure|array */
+	public $pack;
+
+
+	/**
+	 * @param $data
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function pack($data)
+	{
+		$callback = $this->pack;
+		if (is_callable($callback, true)) {
+			return $callback($data);
+		}
+		return JSON::encode($data);
+	}
+
+
+	/**
+	 * @param $data
+	 * @return mixed
+	 */
+	public function unpack($data)
+	{
+		$callback = $this->unpack;
+		if (is_callable($callback, true)) {
+			return $callback($data);
+		}
+		return JSON::decode($data);
+	}
+
 
 	/**
 	 * @param Server $server
@@ -25,7 +65,7 @@ class Receive extends Service
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onReceive(\Swoole\Server $server, int $fd, int $reactorId, string $data)
+	public function onHandler(\Swoole\Server $server, int $fd, int $reactorId, string $data)
 	{
 		try {
 			$client = [$fd];

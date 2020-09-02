@@ -15,6 +15,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 {
 
 	const HTTP_EVENT = 'http:event:';
+	const CLOSE = 'Close';
 
 	/**
 	 * @var string
