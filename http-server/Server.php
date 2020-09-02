@@ -18,6 +18,7 @@ use Exception;
 use ReflectionException;
 use Snowflake\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -170,16 +171,7 @@ class Server extends Application
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$this->baseServer->set($settings);
-
-			if ($this->baseServer instanceof WebSocket) {
-				if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler'])) {
-					$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler']);
-				}
-			} else if ($this->baseServer instanceof Http) {
-				if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
-					$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
-				}
-			}
+			$this->bindAnnotation();
 		} else {
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 			if (isset($config['settings']) && is_array($config['settings'])) {
@@ -188,6 +180,27 @@ class Server extends Application
 			$this->onListenerBind($config, $this->baseServer, $event);
 		}
 		return $this->baseServer;
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	private function bindAnnotation()
+	{
+		$event = Snowflake::get()->event;
+		if ($this->baseServer instanceof WebSocket) {
+			if ($event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler'])) {
+				return;
+			}
+			$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler']);
+		}
+		if ($this->baseServer instanceof Http) {
+			if ($event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
+				return;
+			}
+			$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
+		}
 	}
 
 
@@ -204,9 +217,6 @@ class Server extends Application
 		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
-			if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
-				$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
-			}
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
 			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
 			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
@@ -224,14 +234,23 @@ class Server extends Application
 	 * @param $server
 	 * @param $name
 	 * @param $callback
+	 * @throws Exception
 	 */
 	private function onBind($server, $name, $callback)
 	{
 		if (in_array($name, $this->listening)) {
 			return;
 		}
-		$this->listening[] = $name;
+		array_push($this->listening, $name);
 		$server->on($name, $callback);
+
+		$event = Snowflake::get()->event;
+		if ($name === 'request') {
+			if ($event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
+				return;
+			}
+			$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
+		}
 	}
 
 
