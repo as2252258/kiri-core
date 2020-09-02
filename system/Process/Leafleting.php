@@ -6,6 +6,7 @@ namespace Snowflake\Process;
 
 use Exception;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Timer;
 
 /**
@@ -21,9 +22,11 @@ class Leafleting extends Process
 	 */
 	public function onHandler(\Swoole\Process $process)
 	{
-		Timer::tick(1000, function () use ($process)  {
+		while (true) {
 			var_dump($process->read());
-		});
+
+			Coroutine::sleep(1);
+		}
 	}
 
 }
