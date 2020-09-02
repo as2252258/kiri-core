@@ -81,10 +81,12 @@ class ServerInotify extends Process
 				$this->loadByDir($value);
 			}
 			if (!isset($this->md5Map[$md5])) {
+				$this->debug('not hav ' . $value);
 				return $this->reload();
 			}
 			$mTime = filectime($value);
 			if ($this->md5Map[$md5] != $mTime) {
+				$this->debug('not hav ' . $this->md5Map[$md5] . ':' . $mTime);
 				return $this->reload();
 			}
 			$this->md5Map[$md5] = $mTime;
