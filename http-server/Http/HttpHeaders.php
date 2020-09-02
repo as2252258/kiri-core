@@ -96,6 +96,14 @@ class HttpHeaders
 	}
 
 	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		return $this->headers;
+	}
+
+	/**
 	 * @param $name
 	 * @return mixed|null
 	 */
