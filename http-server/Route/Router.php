@@ -238,10 +238,8 @@ class Router extends Application implements RouterInterface
 		if (!empty($dir)) {
 			array_unshift($name, implode('\\', $dir));
 		} else {
-			if ($method == 'receive') {
-				$dir = 'App\\Tcp';
-			} else if ($method == 'package') {
-				$dir = 'App\\Udp';
+			if ($method == 'package' || $method == 'receive') {
+				$dir = 'App\\Listener';
 			} else {
 				$dir = $this->dir;
 			}
