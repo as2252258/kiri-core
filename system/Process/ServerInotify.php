@@ -47,7 +47,7 @@ class ServerInotify extends Process
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			$this->loadByDir(APP_PATH . '/app');
+			$this->loadByDir(APP_PATH . 'app');
 			Timer::tick(1000, [$this, 'tick']);
 		}
 	}
