@@ -43,8 +43,7 @@ class Application extends BaseApplication
 	/**
 	 * @param string $service
 	 * @return $this
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws
 	 */
 	public function import(string $service)
 	{
