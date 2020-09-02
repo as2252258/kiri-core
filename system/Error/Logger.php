@@ -92,10 +92,10 @@ class Logger extends Component
 			$message = $this->arrayFormat($message);
 		}
 		if (!empty($message)) {
-			if (!is_array($this->$logs)) {
-				$this->$logs = [];
+			if (!is_array($this->logs)) {
+				$this->logs = [];
 			}
-			$this->$logs[] = [$category, $message];
+			$this->logs[] = [$category, $message];
 		}
 		return $message;
 	}
