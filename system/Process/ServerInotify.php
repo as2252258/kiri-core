@@ -47,9 +47,12 @@ class ServerInotify extends Process
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			Timer::tick(10000, [$this, 'tick']);
+			Timer::tick(1000, [$this, 'tick']);
 		}
 	}
+
+
+	private $md5Map = [];
 
 
 	/**
@@ -58,8 +61,34 @@ class ServerInotify extends Process
 	public function tick()
 	{
 		$this->debug('file modify listener.');
-		$this->reload();
+
+		$this->loadByDir(APP_PATH . '/app');
 	}
+
+
+	/**
+	 * @param $path
+	 * @return void
+	 * @throws Exception
+	 */
+	private function loadByDir($path)
+	{
+		$path = rtrim($path, '/');
+		foreach (glob($path . '/*') as $value) {
+			$md5 = md5($value);
+
+			if (is_dir($value)) {
+				$this->loadByDir($value);
+			}
+			if (!isset($this->md5Map[$md5])) {
+				return $this->reload();
+			}
+			if ($this->md5Map[$md5] != filectime($value)) {
+				return $this->reload();
+			}
+		}
+	}
+
 
 	/**
 	 * 开始监听
