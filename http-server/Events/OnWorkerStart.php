@@ -51,16 +51,7 @@ class OnWorkerStart extends Callback
 	private function setWorkerAction($socket, $worker_id)
 	{
 		try {
-			if ($socket instanceof Http) {
-				$router = Snowflake::get()->router;
-				$router->loadRouterSetting();
-			} else if ($socket instanceof Websocket) {
-				$path = APP_PATH . 'app/Websocket';
-
-				/** @var AWebsocket $websocket */
-				$websocket = Snowflake::get()->annotation->register('websocket', AWebsocket::class);
-				$websocket->registration_notes($path, 'App\\Websocket');
-			}
+			$this->debug(sprintf('Worker #%d is start.....', $worker_id));
 			$event = Snowflake::get()->event;
 			if (!$event->exists(Event::SERVER_WORKER_START)) {
 				return;
