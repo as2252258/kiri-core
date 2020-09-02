@@ -56,8 +56,14 @@ class Annotation extends BaseAnnotation
 	 * @param $namespace
 	 * @throws ReflectionException
 	 */
-	public function registration_notes($path, $namespace)
+	public function registration_notes($path = '', $namespace = '')
 	{
+		if (empty($path)) {
+			$path = $this->path;
+		}
+		if (empty($namespace)) {
+			$namespace = $this->namespace;
+		}
 		$this->scanning(rtrim($path, '/'), $namespace, get_called_class());
 	}
 

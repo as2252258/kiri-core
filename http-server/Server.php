@@ -166,7 +166,6 @@ class Server extends Application
 	 */
 	private function dispatchCreate($config, $settings)
 	{
-		$event = Snowflake::get()->event;
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
@@ -177,7 +176,7 @@ class Server extends Application
 			if (isset($config['settings']) && is_array($config['settings'])) {
 				$newListener->set($config['settings']);
 			}
-			$this->onListenerBind($config, $this->baseServer, $event);
+			$this->onListenerBind($config, $this->baseServer);
 		}
 		return $this->baseServer;
 	}
@@ -188,18 +187,11 @@ class Server extends Application
 	 */
 	private function bindAnnotation()
 	{
-		$event = Snowflake::get()->event;
 		if ($this->baseServer instanceof WebSocket) {
-			if ($event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler'])) {
-				return;
-			}
-			$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadWebsocketHandler']);
+			$this->onLoadWebsocketHandler();
 		}
 		if ($this->baseServer instanceof Http) {
-			if ($event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
-				return;
-			}
-			$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
+			$this->onLoadHttpHandler();
 		}
 	}
 
@@ -207,12 +199,11 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $newListener
-	 * @param $event
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function onListenerBind($config, $newListener, $event)
+	private function onListenerBind($config, $newListener)
 	{
 		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
@@ -241,39 +232,44 @@ class Server extends Application
 		if (in_array($name, $this->listening)) {
 			return;
 		}
+		if ($name === 'request') {
+			$this->onLoadHttpHandler();
+		}
 		array_push($this->listening, $name);
 		$server->on($name, $callback);
-
-		$event = Snowflake::get()->event;
-		if ($name === 'request') {
-			if ($event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
-				return;
-			}
-			$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
-		}
 	}
 
 
 	/**
 	 * Load router handler
+	 * @throws Exception
 	 */
 	public function onLoadHttpHandler()
 	{
-		$router = Snowflake::get()->router;
-		$router->loadRouterSetting();
+		$event = Snowflake::get()->getEvent();
+		$router = Snowflake::get()->getRouter();
+		if ($event->exists(Event::SERVER_WORKER_START, [$router, 'loadRouterSetting'])) {
+			return;
+		}
+		$event->on(Event::SERVER_WORKER_START, [$router, 'loadRouterSetting']);
 	}
 
 
 	/**
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function onLoadWebsocketHandler()
 	{
-		$path = APP_PATH . 'app/Websocket';
-
 		/** @var AWebsocket $websocket */
 		$websocket = Snowflake::get()->annotation->register('websocket', AWebsocket::class);
-		$websocket->registration_notes($path, 'App\\Websocket');
+		$websocket->namespace = 'App\\Websocket';
+		$websocket->path = APP_PATH . 'app/Websocket';
+
+		$event = Snowflake::get()->event;
+		if ($event->exists(Event::SERVER_WORKER_START, [$websocket, 'registration_notes'])) {
+			return;
+		}
+		$event->on(Event::SERVER_WORKER_START, [$websocket, 'registration_notes']);
 	}
 
 
