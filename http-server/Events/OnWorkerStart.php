@@ -6,9 +6,9 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Events\Abstracts\Callback;
-use HttpServer\Events\Http;
-use HttpServer\Events\WebSocket;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
+use HttpServer\Service\Http;
+use HttpServer\Service\Websocket;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -54,7 +54,7 @@ class OnWorkerStart extends Callback
 			if ($socket instanceof Http) {
 				$router = Snowflake::get()->router;
 				$router->loadRouterSetting();
-			} else if ($socket instanceof WebSocket) {
+			} else if ($socket instanceof Websocket) {
 				$path = APP_PATH . 'app/Websocket';
 
 				/** @var AWebsocket $websocket */
