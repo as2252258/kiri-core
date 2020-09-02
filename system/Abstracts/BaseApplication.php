@@ -40,7 +40,7 @@ use Database\DatabasesProviders;
  * @property Router $router
  * @property Processes $processes
  * @property SPool $pool
- * @property Server $servers
+ * @property Server $server
  * @property DatabasesProviders $db
  * @property Connection $connections
  * @property Logger $logger
