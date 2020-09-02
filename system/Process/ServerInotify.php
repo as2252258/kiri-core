@@ -76,10 +76,11 @@ class ServerInotify extends Process
 	{
 		$path = rtrim($path, '/');
 		foreach (glob($path . '/*') as $value) {
-			$md5 = md5($value);
 			if (is_dir($value)) {
 				$this->loadByDir($value);
+				continue;
 			}
+			$md5 = md5($value);
 			if (!isset($this->md5Map[$md5])) {
 				$this->debug('not hav ' . $value);
 				return $this->reload();
