@@ -30,8 +30,8 @@ class ServerProviders extends Providers
 			'class' => Server::class
 		]);
 
-		/** @var \Console\Application $console */
-		$console = $application->get('console');
-		$console->register(Command::class);
+//		/** @var \Console\Application $console */
+//		$console = $application->get('console');
+//		$console->register(Command::class);
 	}
 }
