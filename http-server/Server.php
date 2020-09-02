@@ -17,6 +17,7 @@ use HttpServer\Service\WebSocket;
 use Exception;
 use ReflectionException;
 use Snowflake\Config;
+use Snowflake\Core\ArrayAccess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -134,6 +135,9 @@ class Server extends Application
 		$settings = Config::get('settings', false, []);
 		if (!isset($this->server[$config['type']])) {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
+		}
+		if (isset($config['settings'])) {
+			$settings = ArrayAccess::merge($settings, $config['settings']);
 		}
 		$server = $this->dispatchCreate($config, $settings);
 		if (isset($config['events'])) {
