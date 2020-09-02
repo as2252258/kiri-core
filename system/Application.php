@@ -50,7 +50,7 @@ class Application extends BaseApplication
 		if (!class_exists($service)) {
 			throw new NotFindClassException($service);
 		}
-		$class = Snowflake::createObject($service, [Snowflake::get()]);
+		$class = Snowflake::createObject($service);
 		if (method_exists($class, 'onImport')) {
 			$class->onImport($this);
 		}
