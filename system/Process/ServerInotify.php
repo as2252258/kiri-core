@@ -82,18 +82,18 @@ class ServerInotify extends Process
 				continue;
 			}
 			$md5 = md5($value);
+			$mTime = filectime($value);
 			if (!isset($this->md5Map[$md5])) {
 				if ($isReload) {
 					return $this->reload();
 				}
-				$this->md5Map[$md5] = filectime($value);
+				$this->md5Map[$md5] = $mTime;
 			} else {
-				$mTime = filectime($value);
 				if ($this->md5Map[$md5] != $mTime) {
 					if ($isReload) {
 						return $this->reload();
 					}
-					$this->md5Map[$md5] = filectime($value);
+					$this->md5Map[$md5] = $mTime;
 				}
 			}
 		}
