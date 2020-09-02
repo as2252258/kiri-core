@@ -123,7 +123,6 @@ class Server extends Application
 		$application = Snowflake::get();
 		foreach ($processes as $name => $process) {
 			$class = Snowflake::createObject($process);
-
 			if (!method_exists($class, 'onHandler')) {
 				continue;
 			}
