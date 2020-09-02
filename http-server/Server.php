@@ -45,6 +45,7 @@ class Server extends Application
 	const PACKAGE = 'PACKAGE';
 	const WEBSOCKET = 'WEBSOCKET';
 
+	private $listening = [];
 	private $server = [
 		'HTTP'      => [SWOOLE_TCP, Http::class],
 		'TCP'       => [SWOOLE_TCP, Receive::class],
