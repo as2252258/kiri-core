@@ -9,9 +9,9 @@
 namespace Snowflake;
 
 
+use Database\DatabasesProviders;
 use Exception;
-use HttpServer\Server;
-use ReflectionException;
+use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Exception\NotFindClassException;
 
@@ -29,6 +29,16 @@ class Application extends BaseApplication
 	 * @var string
 	 */
 	public $id = 'uniqueId';
+
+
+	/**
+	 * @throws NotFindClassException
+	 */
+	public function init()
+	{
+		$this->import(DatabasesProviders::class);
+		$this->import(ServerProviders::class);
+	}
 
 
 	/**
