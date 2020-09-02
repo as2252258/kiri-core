@@ -19,7 +19,7 @@ class OnWorkerError extends Callback
 	 * @param int $worker_pid
 	 * @param int $exit_code
 	 * @param int $signal
-	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function onHandler(Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
 	{
@@ -27,9 +27,7 @@ class OnWorkerError extends Callback
 		if (!Config::has('email')) {
 			return;
 		}
-		$email = Config::get('email');
-		$name = Config::get('nickname', false, 'Admin');
-		$this->system_mail($email, $name, print_r([
+		$this->system_mail(print_r([
 			'$worker_pid' => $worker_pid,
 			'$worker_id'  => $worker_id,
 			'$exit_code'  => $exit_code,
