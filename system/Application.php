@@ -34,13 +34,7 @@ class Application extends BaseApplication
 	 */
 	public function init()
 	{
-		$application = Snowflake::get();
-
-		$https = $application->server;
-		$https->initCore(Config::get('servers', true));
-
-		$process = $application->processes;
-		$process->initCore();
+		Snowflake::get()->processes->initCore();
 	}
 
 
