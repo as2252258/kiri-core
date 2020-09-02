@@ -32,15 +32,6 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws Exception
-	 */
-	public function init()
-	{
-		Snowflake::get()->processes->initCore();
-	}
-
-
-	/**
 	 * @param string $service
 	 * @return $this
 	 * @throws
@@ -64,6 +55,7 @@ class Application extends BaseApplication
 	public function start()
 	{
 		$process = Snowflake::get()->processes;
+		$process->initCore();
 		$process->start();
 	}
 

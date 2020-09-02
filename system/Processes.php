@@ -5,6 +5,7 @@ namespace Snowflake;
 
 
 use Exception;
+use HttpServer\Server;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use Snowflake\Abstracts\Component;
@@ -26,6 +27,7 @@ class Processes extends Component
 	 */
 	public function initCore()
 	{
+		/** @var Server $manager */
 		$manager = Snowflake::get()->get('server');
 
 		$serverConfig = Config::get('servers', true);
