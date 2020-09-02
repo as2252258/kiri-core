@@ -61,8 +61,6 @@ class ServerInotify extends Process
 	 */
 	public function tick()
 	{
-		$this->debug('file modify listener.');
-
 		$this->loadByDir(APP_PATH . 'app', true);
 	}
 
