@@ -11,6 +11,7 @@ use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use HttpServer\Service\Http;
 use Snowflake\Core\JSON;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
@@ -24,7 +25,6 @@ class OnRequest extends Callback
 {
 
 
-
 	/**
 	 * @param Request $request
 	 * @param Response $response
@@ -36,15 +36,30 @@ class OnRequest extends Callback
 			[$sRequest, $sResponse] = static::setContext($request, $response);
 			$sResponse->send(Snowflake::get()->router->dispatch(), 200);
 		} catch (Error | \Throwable $exception) {
-			if (!isset($sResponse)) {
-				$response->status(200);
-				$response->end($exception->getMessage());
-			} else {
-				$sResponse->send($this->format($exception), 200);
-			}
+			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		} finally {
-			$dividing_line = str_pad('', 100, '-');
-			$this->debug($dividing_line, 'app');
+			$events = Snowflake::get()->getEvent();
+			if (!$events->exists(Event::EVENT_AFTER_REQUEST)) {
+				return;
+			}
+			$events->trigger(Event::EVENT_AFTER_REQUEST, [$request]);
+		}
+	}
+
+
+	/**
+	 * @param $sResponse
+	 * @param $exception
+	 * @param $response
+	 * @throws Exception
+	 */
+	protected function sendErrorMessage($sResponse, $exception, $response)
+	{
+		if (empty($sResponse)) {
+			$response->status(200);
+			$response->end($exception->getMessage());
+		} else {
+			$sResponse->send($this->format($exception), 200);
 		}
 	}
 

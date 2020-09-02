@@ -318,6 +318,16 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return Event
+	 * @throws ComponentException
+	 */
+	public function getEvent()
+	{
+		return $this->get('event');
+	}
+
+
+	/**
 	 * @return Jwt
 	 * @throws ComponentException
 	 */
