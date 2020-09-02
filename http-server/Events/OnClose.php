@@ -31,23 +31,10 @@ class OnClose extends Callback
 	public function onHandler(Server $server, int $fd)
 	{
 		try {
-			if ($server instanceof WServer) {
-				if (!$server->isEstablished($fd)) {
-					return;
-				}
-				$manager = Snowflake::get()->annotation->get('websocket');
-				$name = $manager->getName(AWebsocket::CLOSE);
-			} else if ($server instanceof HServer) {
-				$manager = Snowflake::get()->annotation->get('http');
-				$name = $manager->getName(Annotation::CLOSE);
-			} else {
-				$manager = Snowflake::get()->annotation->get('tcp');
-				$name = $manager->getName(Tcp::CLOSE);
+			[$manager, $name] = $this->resovle($server, $fd);
+			if ($manager !== null && !$manager->has($name)) {
+				$manager->runWith($name, [$fd]);
 			}
-			if (!$manager->has($name)) {
-				return;
-			}
-			$manager->runWith($name, [$fd]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage());
 		} finally {
@@ -57,6 +44,31 @@ class OnClose extends Callback
 			$logger = Snowflake::get()->getLogger();
 			$logger->insert();
 		}
+	}
+
+
+	/**
+	 * @param $server
+	 * @param $fd
+	 * @return array|null
+	 * @throws Exception
+	 */
+	public function resovle($server, $fd)
+	{
+		if ($server instanceof WServer) {
+			if (!$server->isEstablished($fd)) {
+				return [null, null];
+			}
+			$manager = Snowflake::get()->annotation->get('websocket');
+			$name = $manager->getName(AWebsocket::CLOSE);
+		} else if ($server instanceof HServer) {
+			$manager = Snowflake::get()->annotation->get('http');
+			$name = $manager->getName(Annotation::CLOSE);
+		} else {
+			$manager = Snowflake::get()->annotation->get('tcp');
+			$name = $manager->getName(Tcp::CLOSE);
+		}
+		return [$manager, $name];
 	}
 
 
