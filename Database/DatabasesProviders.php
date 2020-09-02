@@ -6,6 +6,8 @@ namespace Database;
 
 use Exception;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Providers;
+use Snowflake\Application;
 use Snowflake\Config;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -14,8 +16,18 @@ use Snowflake\Snowflake;
  * Class DatabasesProviders
  * @package Database
  */
-class DatabasesProviders extends Component
+class DatabasesProviders extends Providers
 {
+
+
+	/**
+	 * @param Application $application
+	 * @throws Exception
+	 */
+	public function onImport(Application $application)
+	{
+		$application->set('db', $this);
+	}
 
 
 	/**

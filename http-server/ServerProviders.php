@@ -7,6 +7,7 @@ namespace HttpServer;
 use Exception;
 use HttpServer\Server;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Providers;
 use Snowflake\Config;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -15,15 +16,17 @@ use Snowflake\Snowflake;
  * Class DatabasesProviders
  * @package Database
  */
-class ServerProviders extends Component
+class ServerProviders extends Providers
 {
 
+
 	/**
+	 * @param \Snowflake\Application $application
 	 * @throws Exception
 	 */
-	public function onImport()
+	public function onImport(\Snowflake\Application $application)
 	{
-		Snowflake::get()->set('server', [
+		$application->set('server', [
 			'class' => Server::class
 		]);
 	}
