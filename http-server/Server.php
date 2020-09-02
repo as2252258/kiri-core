@@ -197,12 +197,12 @@ class Server extends Application
 	private function dispatch($type)
 	{
 		$default = [
-			self::HTTP      => \Swoole\Http\Server::class,
-			self::WEBSOCKET => \Swoole\WebSocket\Server::class,
-			self::TCP       => \Swoole\Server::class,
-			self::PACKAGE   => \Swoole\Server::class
+			self::HTTP      => Http::class,
+			self::WEBSOCKET => WebSocket::class,
+			self::TCP       => Receive::class,
+			self::PACKAGE   => Packet::class
 		];
-		return $default[$type] ?? \Swoole\Server::class;
+		return $default[$type] ?? Receive::class;
 	}
 
 	/**
