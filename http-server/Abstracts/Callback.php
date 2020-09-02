@@ -6,6 +6,8 @@ namespace HttpServer\Events\Abstracts;
 
 use Exception;
 use HttpServer\Application;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -36,7 +38,6 @@ abstract class Callback extends Application
 		$logger->write($this->_MESSAGE[$message] . $worker_id);
 		$logger->clear();
 	}
-
 
 
 	const EVENT_ERROR = 'WORKER:ERROR';
@@ -75,6 +76,47 @@ abstract class Callback extends Application
 				}
 				$event->trigger(Event::SERVER_WORKER_STOP);
 				break;
+		}
+	}
+
+
+	/**
+	 * @param $email
+	 * @param $nickname
+	 * @param $message
+	 * @throws
+	 */
+	protected function system_mail($email, $nickname, $message)
+	{
+		$mail = new PHPMailer(true);
+		try {
+			//Server settings
+			$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+			$mail->isSMTP();                                            // Send using SMTP
+			$mail->Host = 'smtp1.example.com';                          // Set the SMTP server to send through
+			$mail->SMTPAuth = true;                                     // Enable SMTP authentication
+			$mail->Username = 'user@example.com';                       // SMTP username
+			$mail->Password = 'secret';                                 // SMTP password
+			$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+			$mail->Port = 587;                                          // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+			//Recipients
+			$mail->setFrom('system@example.com', '系统管理员');
+			$mail->addAddress($email, $nickname);                 // Add a recipient
+
+			// Attachments
+//			$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+//			$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+
+			// Content
+			$mail->isHTML(true);                                  // Set email format to HTML
+			$mail->Subject = 'Here is the subject';
+			$mail->Body = $message;
+			$mail->AltBody = $message;
+
+			$mail->send();
+		} catch (Exception $e) {
+			$this->addError($e->getMessage(),'email');
 		}
 	}
 

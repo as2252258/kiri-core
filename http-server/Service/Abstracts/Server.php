@@ -49,14 +49,15 @@ trait Server
 	 */
 	public function onHandlerListener()
 	{
-		$this->on('start', $this->createHandler('start'));
-		$this->on('shutdown', $this->createHandler('shutdown'));
 		$this->on('workerStop', $this->createHandler('workerStop'));
 		$this->on('workerExit', $this->createHandler('workerExit'));
 		$this->on('workerStart', $this->createHandler('workerStart'));
 		$this->on('workerError', $this->createHandler('workerError'));
-		$this->on('managerStop', $this->createHandler('managerStop'));
 		$this->on('managerStart', $this->createHandler('managerStart'));
+		$this->on('managerStop', $this->createHandler('managerStop'));
+		$this->on('pipeMessage', $this->createHandler('pipeMessage'));
+		$this->on('shutdown', $this->createHandler('shutdown'));
+		$this->on('start', $this->createHandler('start'));
 		$this->addTask();
 	}
 

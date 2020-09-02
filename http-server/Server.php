@@ -175,8 +175,8 @@ class Server extends Application
 			}
 		} else {
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
-			if (!empty($settings)) {
-				$newListener->set($settings);
+			if (isset($config['settings']) && is_array($config['settings'])) {
+				$newListener->set($config['settings']);
 			}
 			$this->onListenerBind($config, $this->baseServer, $event);
 		}
@@ -196,20 +196,35 @@ class Server extends Application
 	{
 		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
-			$newListener->on('request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
+			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
 			if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
 				$event->on(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler']);
 			}
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
-			$newListener->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
-			$newListener->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-			$newListener->on('packet', [Snowflake::createObject(OnPacket::class), 'onHandler']);
-			$newListener->on('receive', [Snowflake::createObject(OnReceive::class), 'onHandler']);
+			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
+			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
+			$this->onBind($newListener, 'packet', [Snowflake::createObject(OnPacket::class), 'onHandler']);
+			$this->onBind($newListener, 'receive', [Snowflake::createObject(OnReceive::class), 'onHandler']);
 		} else if ($config['type'] == self::WEBSOCKET) {
 			throw new Exception('Base server must instanceof \Swoole\WebSocket\Server::class.');
 		} else {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
+	}
+
+
+	/**
+	 * @param $server
+	 * @param $name
+	 * @param $callback
+	 */
+	private function onBind($server, $name, $callback)
+	{
+		if (in_array($name, $this->listening)) {
+			return;
+		}
+		$this->listening[] = $name;
+		$server->on($name, $callback);
 	}
 
 

@@ -4,14 +4,30 @@
 namespace HttpServer\Events;
 
 
+use Exception;
 use HttpServer\Events\Abstracts\Callback;
+use Snowflake\Event;
+use Snowflake\Snowflake;
+use Swoole\Server;
 
+/**
+ * Class OnBeforeReload
+ * @package HttpServer\Events
+ */
 class OnBeforeReload extends Callback
 {
 
-	public function onHandler()
+	/**
+	 * @param Server $server
+	 * @throws Exception
+	 */
+	public function onHandler(Server $server)
 	{
-		// TODO: Implement onHandler() method.
+		$event = Snowflake::get()->getEvent();
+		if (!$event->exists(Event::SERVER_BEFORE_RELOAD)) {
+			return;
+		}
+		$event->trigger(Event::SERVER_BEFORE_RELOAD, [$server]);
 	}
 
 }
