@@ -46,13 +46,15 @@ class ServerInotify extends Process
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			Timer::tick(1000, [$this, 'tick']);
+			Timer::tick(10000, [$this, 'tick']);
 		}
 	}
 
 
 	public function tick()
 	{
+		$this->debug('file modify listener.');
+		$this->reload();
 	}
 
 	/**
