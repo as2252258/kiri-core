@@ -76,7 +76,7 @@ class Server extends Application
 		$annotation->register('http', Annotation::class);
 		$annotation->register('websocket', AWebsocket::class);
 
-		$this->enableCoroutine(true);
+		$this->enableCoroutine((bool)Config::get('enable_coroutine'));
 		foreach ($this->sortServers($configs) as $server) {
 			$this->create($server);
 		}
