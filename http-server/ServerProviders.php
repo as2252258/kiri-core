@@ -26,9 +26,7 @@ class ServerProviders extends Providers
 	 */
 	public function onImport(\Snowflake\Application $application)
 	{
-		$application->set('server', [
-			'class' => Server::class
-		]);
+		$application->set('server', ['class' => Server::class]);
 
 //		/** @var \Console\Application $console */
 //		$console = $application->get('console');
