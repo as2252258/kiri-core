@@ -8,6 +8,8 @@ use HttpServer\Events\OnConnect;
 use HttpServer\Events\OnPacket;
 use HttpServer\Events\OnReceive;
 use HttpServer\Events\OnRequest;
+use HttpServer\Route\Annotation\Annotation;
+use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Service\Http;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Packet;
@@ -19,6 +21,7 @@ use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Process;
+use HttpServer\Route\Annotation\Websocket as AWebsocket;
 
 /**
  * Class Server
@@ -62,6 +65,12 @@ class Server extends Application
 		if ($this->baseServer) {
 			return $this->getServer();
 		}
+
+		$annotation = Snowflake::get()->annotation;
+		$annotation->register('tcp',Tcp::class);
+		$annotation->register('http',Annotation::class);
+		$annotation->register('websocket',AWebsocket::class);
+
 		$configs = $this->sortServers($configs);
 		foreach ($configs as $server) {
 			$this->create($server);
