@@ -193,6 +193,7 @@ class Server extends Application
 	 */
 	private function onListenerBind($config, $newListener, $event)
 	{
+		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
 			$newListener->on('request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
 			if (!$event->exists(Event::SERVER_WORKER_START, [$this, 'onLoadHttpHandler'])) {
