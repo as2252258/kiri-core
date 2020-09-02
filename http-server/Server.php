@@ -59,6 +59,9 @@ class Server extends Application
 	 */
 	public function initCore(array $configs)
 	{
+		if ($this->baseServer) {
+			return $this->getServer();
+		}
 		$configs = $this->sortServers($configs);
 		foreach ($configs as $server) {
 			$this->create($server);
