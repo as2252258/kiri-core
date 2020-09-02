@@ -130,7 +130,7 @@ class Server extends Application
 	 */
 	private function create($config)
 	{
-		$settings = $config['settings'] ?? [];
+		$settings = Config::get('settings', false, []);
 		if (!isset($this->server[$config['type']])) {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
