@@ -103,6 +103,7 @@ class Server extends Application
 				continue;
 			}
 
+			$this->debug(sprintf('Process %s', $process));
 			$system = new Process([$class, 'onHandler'], false, null, true);
 			if (Snowflake::isLinux()) {
 				$system->name($name);
