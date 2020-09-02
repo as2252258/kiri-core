@@ -132,15 +132,27 @@ class Component extends BaseObject
 
 	/**
 	 * @param $name
+	 * @param $value
+	 * @throws Exception
+	 */
+	public function __set($name, $value)
+	{
+		if (property_exists($this, $name)) {
+			$this->$name = $value;
+		} else {
+			parent::__set($name, $value);
+		}
+	}
+
+
+	/**
+	 * @param $name
 	 * @return mixed
 	 * @throws Exception
 	 */
 	public function __get($name)
 	{
-		$method = 'get' . ucfirst($name);
-		if (method_exists($this, $method)) {
-			return $this->$method();
-		} else if (property_exists($this, $name)) {
+		if (property_exists($this, $name)) {
 			return $this->$name ?? null;
 		} else {
 			return parent::__get($name);
