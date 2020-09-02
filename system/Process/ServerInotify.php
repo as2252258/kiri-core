@@ -12,6 +12,7 @@ namespace Snowflake\Process;
 use Exception;
 use Snowflake\Snowflake;
 use Swoole\Event;
+use Swoole\Server;
 use Swoole\Timer;
 use swoole_process;
 
@@ -127,7 +128,9 @@ class ServerInotify extends Process
 	 */
 	public function trigger_reload()
 	{
-		Snowflake::reload();
+		/** @var Server $server */
+		$server = Snowflake::get()->get('server')->getServer();
+		$server->reload();
 	}
 
 	/**
