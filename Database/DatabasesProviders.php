@@ -26,20 +26,25 @@ class DatabasesProviders extends Component
 	 */
 	public function get($name)
 	{
+		$name = 'databases.' . $name;
 		$config = Config::get('databases.' . $name, true);
-		if (Snowflake::get()->has($name)) {
-			return Snowflake::get()->get($name);
+
+		$application = Snowflake::get();
+		if (!$application->has($name)) {
+			$generate = [
+				'class'       => Connection::class,
+				'id'          => 'db',
+				'cds'         => $config['cds'],
+				'username'    => $config['username'],
+				'password'    => $config['password'],
+				'tablePrefix' => $config['tablePrefix'],
+				'maxNumber'   => 100,
+				'slaveConfig' => $config['slaveConfig']
+			];
+			return $application->set($name, $generate);
+		} else {
+			return $application->get($name);
 		}
-		return Snowflake::get()->set($name, [
-			'class'       => Connection::class,
-			'id'          => 'db',
-			'cds'         => $config['cds'],
-			'username'    => $config['username'],
-			'password'    => $config['password'],
-			'tablePrefix' => $config['tablePrefix'],
-			'maxNumber'   => 100,
-			'slaveConfig' => $config['slaveConfig']
-		]);
 	}
 
 
