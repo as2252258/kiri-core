@@ -173,17 +173,15 @@ class Server extends Application
 	private function onListenerBind($config, $newListener)
 	{
 		if ($config['type'] == self::HTTP) {
-			$newListener->on('request', [OnRequest::class, 'onHandler']);
+			$newListener->on('request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
-			$newListener->on('connect', [OnConnect::class, 'onHandler']);
-			$newListener->on('close', [OnClose::class, 'onHandler']);
+			$newListener->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
+			$newListener->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
 			if ($config['type'] == self::PACKAGE) {
-				$newListener->on('packet', [OnPacket::class, 'onHandler']);
+				$newListener->on('packet', [Snowflake::createObject(OnPacket::class), 'onHandler']);
 			} else {
-				$newListener->on('receive', [OnReceive::class, 'onHandler']);
+				$newListener->on('receive', [Snowflake::createObject(OnReceive::class), 'onHandler']);
 			}
-			$newListener->on('connect', [OnConnect::class, 'onHandler']);
-			$newListener->on('close', [OnClose::class, 'onHandler']);
 		} else if ($config['type'] == self::WEBSOCKET) {
 			throw new Exception('Base server must instanceof \Swoole\WebSocket\Server::class.');
 		} else {
