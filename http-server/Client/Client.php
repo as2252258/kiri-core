@@ -225,12 +225,12 @@ class Client
 
 		if ($client->send(serialize($params))) {
 			$recv = $this->timeout > 0 ? $client->recv($this->timeout) : $client->recv();
-			$param = ['code' => 0, 'message' => Help::toArray($recv)];
+			$param = $this->structure(Help::toArray($recv), $data, null, 200);
 		} else {
-			$param = ['code' => 500, 'message' => $client->errMsg];
+			$param = new Result(['code' => 500, 'message' => $client->errMsg]);
 		}
 		$client->close();
-		return new Result($param);
+		return $param;
 
 	}
 
