@@ -28,12 +28,17 @@ class OnRequest extends Callback
 	/**
 	 * @param Request $request
 	 * @param Response $response
+	 * @return void
 	 * @throws Exception
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
+			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
+			if ($sRequest->is('favicon.ico')) {
+				return $sResponse->send($sRequest->isNotFound(), 200);
+			}
 			$sResponse->send(Snowflake::get()->router->dispatch(), 200);
 		} catch (Error | \Throwable $exception) {
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
