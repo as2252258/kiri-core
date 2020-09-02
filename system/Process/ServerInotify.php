@@ -51,6 +51,9 @@ class ServerInotify extends Process
 	}
 
 
+	/**
+	 * @throws Exception
+	 */
 	public function tick()
 	{
 		$this->debug('file modify listener.');
