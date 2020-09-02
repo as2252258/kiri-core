@@ -111,7 +111,7 @@ abstract class Callback extends Application
 	{
 		try {
 			$mail = $this->createEmail();
-			$receives = Config::get('email.receives');
+			$receives = Config::get('email.receive');
 			if (empty($receives) || !is_array($receives)) {
 				throw new Exception('接收人信息错误');
 			}
