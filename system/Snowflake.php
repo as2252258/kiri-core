@@ -152,6 +152,9 @@ class Snowflake
 	public static function configure($object, $config)
 	{
 		foreach ($config as $key => $value) {
+			if (!property_exists($object, $key)) {
+				continue;
+			}
 			$object->$key = $value;
 		}
 		return $object;

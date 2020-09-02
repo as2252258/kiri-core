@@ -29,9 +29,9 @@ class BaseObject implements Configure
 	 */
 	public function __construct($config = [])
 	{
-//		if (!empty($config) && is_array($config)) {
-//			Snowflake::configure($this, $config);
-//		}
+		if (!empty($config) && is_array($config)) {
+			Snowflake::configure($this, $config);
+		}
 		$this->init();
 	}
 
