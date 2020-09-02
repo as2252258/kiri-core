@@ -76,6 +76,9 @@ class ServerInotify extends Process
 	private function loadByDir($path, $isReload = false)
 	{
 		$path = rtrim($path, '/');
+		if ($this->isReloading) {
+			return;
+		}
 		foreach (glob($path . '/*') as $value) {
 			if (is_dir($value)) {
 				$this->loadByDir($value, $isReload);
@@ -148,6 +151,8 @@ class ServerInotify extends Process
 	 */
 	public function reload()
 	{
+		$this->isReloading = true;
+
 		//清理所有监听
 		$this->trigger_reload();
 		$this->clearWatch();
@@ -160,6 +165,8 @@ class ServerInotify extends Process
 		$this->int = -1;
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
+
+		$this->loadByDir(APP_PATH . 'app');
 	}
 
 	/**
