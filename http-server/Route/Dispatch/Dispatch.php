@@ -52,7 +52,21 @@ class Dispatch
 	 */
 	protected function bind()
 	{
-		$this->handler = \Closure::bind($this->handler, new Controller());
+		$class = $this->bindRequest(new Controller());
+		$this->handler = \Closure::bind($this->handler, $class);
+	}
+
+
+	/**
+	 * @param $controller
+	 * @return mixed
+	 */
+	protected function bindRequest($controller)
+	{
+		$controller->request = Context::getContext('request');
+		$controller->headers = $controller->request->headers;
+		$controller->input = $controller->request->params;
+		return $controller;
 	}
 
 
@@ -65,9 +79,7 @@ class Dispatch
 			return;
 		}
 		$controller = $this->handler[0];
-		$controller->request = Context::getContext('request');
-		$controller->headers = $controller->request->headers;
-		$controller->input = $controller->request->params;
+		$this->bindRequest($controller);
 	}
 
 }
