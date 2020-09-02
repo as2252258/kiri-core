@@ -26,7 +26,7 @@ class Processes extends Component
 	 */
 	public function initCore()
 	{
-		$manager = Snowflake::get()->server;
+		$manager = Snowflake::get()->get('server');
 
 		$serverConfig = Config::get('servers', true);
 
