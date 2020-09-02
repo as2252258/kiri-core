@@ -162,7 +162,7 @@ class Server extends Application
 			if (!empty($settings)) {
 				$newListener->set($settings);
 			}
-			$this->onListenerBind($config, $newListener);
+			$this->onListenerBind($config, $this->baseServer);
 		}
 		return $this->baseServer;
 	}
