@@ -8,7 +8,6 @@ use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
-use Snowflake\Annotation\Definition\Http;
 use Snowflake\Snowflake;
 
 /**
