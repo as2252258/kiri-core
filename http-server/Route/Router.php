@@ -58,7 +58,6 @@ class Router extends Application implements RouterInterface
 		if ($handler instanceof \Closure) {
 			$handler = Closure::bind($handler, new Controller());
 		}
-
 		if (empty($parent)) {
 			$parent = $this->NodeInstance($first, 0, $method);
 			$this->nodes[$method][$first] = $parent;
@@ -66,9 +65,8 @@ class Router extends Application implements RouterInterface
 		if ($first === '/') {
 			return $parent->bindHandler($handler);
 		}
-
-		$parent = $this->bindNode($parent, $explode, $method);
-		return $parent->bindHandler($handler);
+		return $this->bindNode($parent, $explode, $method)
+			->bindHandler($handler);
 	}
 
 	/**
