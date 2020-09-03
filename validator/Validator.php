@@ -4,6 +4,8 @@
 namespace validator;
 
 
+use Snowflake\Snowflake;
+
 /**
  * Class Validator
  * @package validator
