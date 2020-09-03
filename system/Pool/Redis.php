@@ -88,7 +88,7 @@ class Redis extends Pool
 	{
 		$redis = new SRedis();
 		if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
-			throw new Exception('The Redis Connect Fail.');
+			throw new Exception(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
 		}
 		if (empty($config['auth']) || !$redis->auth($config['auth'])) {
 			throw new Exception(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));

@@ -293,6 +293,7 @@ class Redis extends Component
 
 	/**
 	 * 释放连接池
+	 * @throws ConfigException
 	 */
 	public function release()
 	{
@@ -302,6 +303,7 @@ class Redis extends Component
 
 	/**
 	 * 销毁连接池
+	 * @throws ConfigException
 	 */
 	public function destroy()
 	{
