@@ -22,7 +22,7 @@ class Config extends Component
 
 	const ERROR_MESSAGE = 'The not find :key in app configs.';
 
-	private $data;
+	public $data;
 
 
 	/**
