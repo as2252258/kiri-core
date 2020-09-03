@@ -13,7 +13,7 @@ use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Service\Http;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Packet;
-use HttpServer\Service\WebSocket;
+use HttpServer\Service\Websocket;
 use Exception;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
@@ -51,17 +51,17 @@ class Server extends Application
 		'HTTP'      => [SWOOLE_TCP, Http::class],
 		'TCP'       => [SWOOLE_TCP, Receive::class],
 		'PACKAGE'   => [SWOOLE_UDP, Packet::class],
-		'WEBSOCKET' => [SWOOLE_SOCK_TCP, WebSocket::class],
+		'WEBSOCKET' => [SWOOLE_SOCK_TCP, Websocket::class],
 	];
 
 
-	/** @var Http|WebSocket|Packet|Receive */
+	/** @var Http|Websocket|Packet|Receive */
 	private $baseServer;
 
 
 	/**
 	 * @param array $configs
-	 * @return Http|Packet|Receive|WebSocket
+	 * @return Http|Packet|Receive|Websocket
 	 * @throws Exception
 	 */
 	public function initCore(array $configs)
@@ -149,7 +149,7 @@ class Server extends Application
 
 
 	/**
-	 * @return Http|WebSocket|Packet|Receive
+	 * @return Http|Websocket|Packet|Receive
 	 */
 	public function getServer()
 	{
@@ -220,7 +220,7 @@ class Server extends Application
 	 */
 	private function bindAnnotation()
 	{
-		if ($this->baseServer instanceof WebSocket) {
+		if ($this->baseServer instanceof Websocket) {
 			$this->onLoadWebsocketHandler();
 		}
 		if ($this->baseServer instanceof Http) {
@@ -247,7 +247,7 @@ class Server extends Application
 			$this->onBind($newListener, 'packet', [Snowflake::createObject(OnPacket::class), 'onHandler']);
 			$this->onBind($newListener, 'receive', [Snowflake::createObject(OnReceive::class), 'onHandler']);
 		} else if ($config['type'] == self::WEBSOCKET) {
-			throw new Exception('Base server must instanceof \Swoole\WebSocket\Server::class.');
+			throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
 		} else {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
@@ -314,7 +314,7 @@ class Server extends Application
 	{
 		$default = [
 			self::HTTP      => Http::class,
-			self::WEBSOCKET => WebSocket::class,
+			self::WEBSOCKET => Websocket::class,
 			self::TCP       => Receive::class,
 			self::PACKAGE   => Packet::class
 		];
