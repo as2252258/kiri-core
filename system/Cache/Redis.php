@@ -13,6 +13,7 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\RedisConnectException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -284,6 +285,9 @@ class Redis extends Component
 				$data = $this->proxy()->{$name}(...$arguments);
 			}
 		} catch (\Throwable $exception) {
+			if ($exception instanceof RedisConnectException) {
+				throw new Exception($exception->getMessage());
+			}
 			$this->error(print_r($exception, true));
 			$data = false;
 		} finally {
