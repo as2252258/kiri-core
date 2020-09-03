@@ -59,7 +59,7 @@ class Node extends Application
 		} else {
 			$this->handler = $handler;
 		}
-		return $this->newExec();
+		return $this->restructure();
 	}
 
 
@@ -288,20 +288,21 @@ class Node extends Application
 			return;
 		}
 		$this->middleware = $this->each($middles, $_tmp);
-		$this->newExec();
+		$this->restructure();
 	}
 
 
 	/**
 	 * @throws Exception
 	 */
-	private function newExec()
+	private function restructure()
 	{
-		if (!empty($this->handler)) {
-			$made = new Middleware();
-			$made->setMiddleWares($this->middleware);
-			$made->getGenerate($this);
+		if (empty($this->handler)) {
+			return $this;
 		}
+		$made = Snowflake::createObject(Middleware::class);
+		$made->setMiddleWares($this->middleware);
+		$made->getGenerate($this);
 		return $this;
 	}
 
