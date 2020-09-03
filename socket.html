@@ -36,13 +36,13 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://127.0.0.1:9530/');
+        sock = new WebSocket('ws://127.0.0.1:9530/', ['chat-superchat']);
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
             }
             tick = setInterval(function () {
-                sock.send('tick');
+                sock.send(JSON.stringify({'route': 'getUserPosition', 'tick': new Date().getTime()}));
             }, 3000)
         }
     }

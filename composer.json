@@ -28,9 +28,9 @@
   },
   "autoload": {
     "psr-4": {
-      "Snowflake\\": "./system/",
-      "HttpServer\\": "./http-server/",
-      "validator\\": "./validator/",
+      "Snowflake\\": "System/",
+      "HttpServer\\": "HttpServer/",
+      "validator\\": "Validator/",
       "Console\\": "./Console/",
       "Database\\": "./Database/"
     },
