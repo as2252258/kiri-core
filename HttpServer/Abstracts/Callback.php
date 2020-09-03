@@ -1,14 +1,14 @@
 <?php
 
 
-namespace HttpServer\Events\Abstracts;
+namespace HttpServer\Abstracts;
 
 
 use Exception;
 use HttpServer\Application;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;

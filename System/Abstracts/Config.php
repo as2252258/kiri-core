@@ -6,7 +6,7 @@
  * Time: 11:50
  */
 
-namespace Snowflake;
+namespace Snowflake\Abstracts;
 
 use Exception;
 use Snowflake\Exception\ConfigException;

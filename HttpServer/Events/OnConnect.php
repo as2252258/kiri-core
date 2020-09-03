@@ -5,7 +5,7 @@ namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Events\Abstracts\Callback;
+use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;

@@ -14,10 +14,8 @@ use Database\Mysql\Schema;
 use Database\Orm\Select;
 use Exception;
 use PDO;
-use Snowflake\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 /**

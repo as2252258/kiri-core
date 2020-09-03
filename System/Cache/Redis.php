@@ -10,7 +10,7 @@ namespace Snowflake\Cache;
 
 use Exception;
 use Snowflake\Abstracts\Component;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\RedisConnectException;

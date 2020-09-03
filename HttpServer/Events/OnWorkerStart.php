@@ -5,7 +5,7 @@ namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Events\Abstracts\Callback;
+use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use HttpServer\Service\Http;
 use HttpServer\Service\Websocket;

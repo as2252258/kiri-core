@@ -16,7 +16,7 @@ use HttpServer\Service\Packet;
 use HttpServer\Service\WebSocket;
 use Exception;
 use ReflectionException;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;

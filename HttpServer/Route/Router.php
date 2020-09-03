@@ -11,7 +11,7 @@ use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
 use ReflectionException;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;

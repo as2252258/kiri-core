@@ -8,9 +8,9 @@ use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
-use Snowflake\Config;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Snowflake\Abstracts\Config;
 
 /**
  * Class DatabasesProviders

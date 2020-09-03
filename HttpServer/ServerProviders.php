@@ -8,7 +8,7 @@ use Exception;
 use HttpServer\Server;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Providers;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 

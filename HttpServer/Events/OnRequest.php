@@ -5,7 +5,7 @@ namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Events\Abstracts\Callback;
+use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;

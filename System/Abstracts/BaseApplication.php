@@ -17,7 +17,7 @@ use HttpServer\Server;
 use Snowflake\Annotation\Annotation;
 use Snowflake\Cache\Memcached;
 use Snowflake\Cache\Redis;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;

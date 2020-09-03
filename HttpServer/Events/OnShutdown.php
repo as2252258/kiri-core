@@ -5,10 +5,10 @@ namespace HttpServer\Events;
 
 
 use Exception;
-use HttpServer\Events\Abstracts\Callback;
+use HttpServer\Abstracts\Callback;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Snowflake\Config;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
