@@ -28,11 +28,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Snowflake\\": "./system",
-      "HttpServer\\": "./http-server",
-      "validator\\": "./validator",
-      "Console\\": "./Console",
-      "Database\\": "./Database"
+      "Snowflake\\": "./system/",
+      "HttpServer\\": "./http-server/",
+      "validator\\": "./validator/",
+      "Console\\": "./Console/",
+      "Database\\": "./Database/"
     },
     "files": [
       "error.php",
