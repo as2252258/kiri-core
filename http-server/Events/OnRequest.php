@@ -70,7 +70,7 @@ class OnRequest extends Callback
 
 
 	/**
-	 * @param $exception
+	 * @param Exception $exception
 	 * @return false|int|mixed|string
 	 * @throws Exception
 	 */
@@ -84,8 +84,10 @@ class OnRequest extends Callback
 		$this->error(var_export($errorInfo, true));
 
 		$code = $exception->getCode() ?? 500;
-		$trance = array_slice($exception->getTrace(), 0, 10);
-		Snowflake::app()->logger->write(print_r($trance, true), 'exception');
+
+		$logger = Snowflake::app()->logger;
+		$logger->write($exception->getTraceAsString(), 'exception');
+		$logger->write(jTraceEx($exception), 'exception');
 
 		return JSON::to($code, $errorInfo['message']);
 	}
