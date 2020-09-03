@@ -150,7 +150,7 @@ class Node extends Application
 			}
 
 			/** @var Annotation $annotation */
-			$annotation = Snowflake::get()->annotation->get('http');
+			$annotation = Snowflake::app()->annotation->get('http');
 			if (!empty($annotations = $annotation->getAnnotation(Annotation::class))) {
 				$this->_interceptors = $annotation->read($reflect, $action, $annotations);
 			}
@@ -273,7 +273,7 @@ class Node extends Application
 	 */
 	public function limits(int $limit, int $duration = 60, bool $isBindConsumer = false)
 	{
-		$limits = Snowflake::get()->getLimits();
+		$limits = Snowflake::app()->getLimits();
 		$limits->addLimits($this->path, $limit, $duration, $isBindConsumer);
 		return $this;
 	}

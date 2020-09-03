@@ -33,7 +33,7 @@ class Config extends Component
 	 */
 	public static function get($key, $try = FALSE, $default = null)
 	{
-		$config = Snowflake::get()->config;
+		$config = Snowflake::app()->config;
 
 		if (strpos($key, '.') === false) {
 			if (isset($config->data[$key])) {
@@ -74,7 +74,7 @@ class Config extends Component
 	 */
 	public static function set($key, $value)
 	{
-		$config = Snowflake::get()->config;
+		$config = Snowflake::app()->config;
 		return $config->data[$key] = $value;
 	}
 
@@ -85,7 +85,7 @@ class Config extends Component
 	 */
 	public static function has($key, $must_not_null = false)
 	{
-		$config = Snowflake::get()->config;
+		$config = Snowflake::app()->config;
 		if (!isset($config->data[$key])) {
 			return false;
 		}

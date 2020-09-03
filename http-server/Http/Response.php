@@ -153,7 +153,7 @@ class Response extends Application
 		$string .= 'Command Success!' . PHP_EOL;
 		echo $string;
 
-		$event = Snowflake::get()->event;
+		$event = Snowflake::app()->event;
 		$event->trigger('CONSOLE_END');
 
 		return 'ok';
@@ -198,7 +198,7 @@ class Response extends Application
 	 */
 	public static function create($response = null)
 	{
-		$ciResponse = Snowflake::get()->clone('response');
+		$ciResponse = Snowflake::app()->clone('response');
 		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;

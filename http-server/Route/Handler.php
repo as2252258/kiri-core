@@ -24,7 +24,7 @@ class Handler extends Application
 	 */
 	public function __construct()
 	{
-		$this->router = Snowflake::get()->router;
+		$this->router = Snowflake::app()->router;
 
 		parent::__construct([]);
 	}

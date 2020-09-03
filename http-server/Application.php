@@ -22,7 +22,7 @@ class Application extends HttpService
 	 */
 	protected function write($message, $category = 'app')
 	{
-		$logger = Snowflake::get()->logger;
+		$logger = Snowflake::app()->logger;
 		$logger->write($message, $category);
 		$logger->insert();
 	}

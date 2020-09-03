@@ -78,7 +78,7 @@ class OnReceive extends Callback
 			$client[] = $this->pack(['message' => $exception->getMessage()]);
 			return $server->send(...$client);
 		} finally {
-			$event = Snowflake::get()->event;
+			$event = Snowflake::app()->event;
 			$event->trigger(Event::SERVER_WORKER_STOP);
 		}
 	}

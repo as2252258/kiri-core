@@ -264,7 +264,7 @@ class Redis extends Component
 	 */
 	public function init()
 	{
-		$event = Snowflake::get()->event;
+		$event = Snowflake::app()->event;
 		$event->on(Event::RELEASE_ALL, [$this, 'destroy']);
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'release']);
 	}
@@ -296,7 +296,7 @@ class Redis extends Component
 	 */
 	public function release()
 	{
-		$connections = Snowflake::get()->pool->redis;
+		$connections = Snowflake::app()->pool->redis;
 		$connections->release($this->get_config(), true);
 	}
 
@@ -305,7 +305,7 @@ class Redis extends Component
 	 */
 	public function destroy()
 	{
-		$connections = Snowflake::get()->pool->redis;
+		$connections = Snowflake::app()->pool->redis;
 		$connections->destroy($this->get_config(), true);
 	}
 
@@ -315,7 +315,7 @@ class Redis extends Component
 	 */
 	public function proxy()
 	{
-		$connections = Snowflake::get()->pool->redis;
+		$connections = Snowflake::app()->pool->redis;
 
 		$config = $this->get_config();
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];

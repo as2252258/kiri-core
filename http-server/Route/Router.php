@@ -472,7 +472,7 @@ class Router extends Application implements RouterInterface
 		$prefix = APP_PATH . 'app/Http/';
 
 		/** @var Annotation $annotation */
-		$annotation = Snowflake::get()->annotation;
+		$annotation = Snowflake::app()->annotation;
 		$annotation->register('http', Annotation::class);
 
 		$annotation = $annotation->get('http');

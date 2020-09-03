@@ -39,11 +39,11 @@ class OnRequest extends Callback
 			if ($sRequest->is('favicon.ico')) {
 				return $sResponse->send($sRequest->isNotFound(), 200);
 			}
-			$sResponse->send(Snowflake::get()->router->dispatch(), 200);
+			$sResponse->send(Snowflake::app()->router->dispatch(), 200);
 		} catch (Error | \Throwable $exception) {
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		} finally {
-			$events = Snowflake::get()->getEvent();
+			$events = Snowflake::app()->getEvent();
 			if (!$events->exists(Event::EVENT_AFTER_REQUEST)) {
 				return;
 			}
@@ -85,7 +85,7 @@ class OnRequest extends Callback
 
 		$code = $exception->getCode() ?? 500;
 		$trance = array_slice($exception->getTrace(), 0, 10);
-		Snowflake::get()->logger->write(print_r($trance, true), 'exception');
+		Snowflake::app()->logger->write(print_r($trance, true), 'exception');
 
 		return JSON::to($code, $errorInfo['message']);
 	}

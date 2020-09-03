@@ -68,7 +68,7 @@ class Server extends Application
 	 */
 	public function initCore(array $configs)
 	{
-		$annotation = Snowflake::get()->annotation;
+		$annotation = Snowflake::app()->annotation;
 		$annotation->register('tcp', Tcp::class);
 		$annotation->register('http', Annotation::class);
 		$annotation->register('websocket', AWebsocket::class);
@@ -132,7 +132,7 @@ class Server extends Application
 			return;
 		}
 
-		$application = Snowflake::get();
+		$application = Snowflake::app();
 		foreach ($processes as $name => $process) {
 			$class = Snowflake::createObject($process);
 			if (!method_exists($class, 'onHandler')) {
@@ -190,7 +190,7 @@ class Server extends Application
 		if (!is_array($config['events'])) {
 			return;
 		}
-		$event = Snowflake::get()->event;
+		$event = Snowflake::app()->event;
 		foreach ($config['events'] as $name => $_event) {
 			$event->on($name, $_event);
 		}
@@ -284,8 +284,8 @@ class Server extends Application
 	 */
 	public function onLoadHttpHandler()
 	{
-		$event = Snowflake::get()->getEvent();
-		$router = Snowflake::get()->getRouter();
+		$event = Snowflake::app()->getEvent();
+		$router = Snowflake::app()->getRouter();
 		if ($event->exists(Event::SERVER_WORKER_START, [$router, 'loadRouterSetting'])) {
 			return;
 		}
@@ -299,11 +299,11 @@ class Server extends Application
 	public function onLoadWebsocketHandler()
 	{
 		/** @var AWebsocket $websocket */
-		$websocket = Snowflake::get()->annotation->register('websocket', AWebsocket::class);
+		$websocket = Snowflake::app()->annotation->register('websocket', AWebsocket::class);
 		$websocket->namespace = 'App\\Websocket';
 		$websocket->path = APP_PATH . 'app/Websocket';
 
-		$event = Snowflake::get()->event;
+		$event = Snowflake::app()->event;
 		if ($event->exists(Event::SERVER_WORKER_START, [$websocket, 'registration_notes'])) {
 			return;
 		}

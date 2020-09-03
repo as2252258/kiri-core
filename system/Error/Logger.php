@@ -109,7 +109,7 @@ class Logger extends Component
 	public function print_r($message, $category = '')
 	{
 		/** @var Process $logger */
-		$logger = Snowflake::get()->logger;
+		$logger = Snowflake::app()->logger;
 		$logger->write(JSON::encode([$message, $category]));
 	}
 

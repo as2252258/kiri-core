@@ -26,7 +26,7 @@ trait Server
 	 */
 	public function __construct($host, $port = null, $mode = null, $sock_type = null)
 	{
-		$this->application = Snowflake::get();
+		$this->application = Snowflake::app();
 		parent::__construct($host, $port, $mode, $sock_type);
 	}
 
@@ -89,7 +89,7 @@ trait Server
 		if (!class_exists($classPrefix)) {
 			throw new Exception('class not found.');
 		}
-		$class = Snowflake::createObject($classPrefix, [Snowflake::get()]);
+		$class = Snowflake::createObject($classPrefix, [Snowflake::app()]);
 		return [$class, 'onHandler'];
 	}
 

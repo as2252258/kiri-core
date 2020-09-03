@@ -34,7 +34,7 @@ class Snowflake
 	/**
 	 * @return mixed
 	 */
-	public static function get()
+	public static function app()
 	{
 		return static::$service;
 	}

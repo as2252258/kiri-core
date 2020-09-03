@@ -46,7 +46,7 @@ class Db
 	 */
 	public static function commit()
 	{
-		$event = Snowflake::get()->event;
+		$event = Snowflake::app()->event;
 		$event->trigger(Connection::TRANSACTION_COMMIT);
 		$event->offName(Connection::TRANSACTION_COMMIT);
 		static::$isActive = false;
@@ -57,7 +57,7 @@ class Db
 	 */
 	public static function rollback()
 	{
-		$event = Snowflake::get()->event;
+		$event = Snowflake::app()->event;
 		$event->trigger(Connection::TRANSACTION_ROLLBACK);
 		$event->offName(Connection::TRANSACTION_ROLLBACK);
 		static::$isActive = false;
@@ -96,7 +96,7 @@ class Db
 	public function get(Connection $db = NULL)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 		$query = $db->getSchema()->getQueryBuilder();
 		return $db->createCommand($query->getQuery($this))
@@ -120,7 +120,7 @@ class Db
 	public function find(Connection $db = NULL)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 		$query = $db->getSchema()->getQueryBuilder();
 		return $db->createCommand($query->getQuery($this))
@@ -135,7 +135,7 @@ class Db
 	public function count(Connection $db = NULL)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 		$query = $db->getSchema()->getQueryBuilder();
 		return $db->createCommand($query->count($this))
@@ -150,7 +150,7 @@ class Db
 	public function exists(Connection $db = NULL)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 		$query = $db->getSchema()->getQueryBuilder();
 		return $db->createCommand($query->getQuery($this))
@@ -221,7 +221,7 @@ class Db
 	public function delete($db = null)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 
 		$query = $db->getBuild()->builder($this);
@@ -238,7 +238,7 @@ class Db
 	public static function drop($table, $db = null)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 		return $db->createCommand('DROP TABLE ' . $table)->delete();
 	}
@@ -253,7 +253,7 @@ class Db
 	{
 
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 
 		return $db->createCommand('TRUNCATE ' . $table)->exec();
@@ -269,7 +269,7 @@ class Db
 	{
 
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 
 
@@ -289,7 +289,7 @@ class Db
 	public static function desc($table, Connection $db = NULL)
 	{
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 
 		if (empty($table)) {
@@ -313,7 +313,7 @@ class Db
 		}
 
 		if (empty($db)) {
-			$db = Snowflake::get()->database;
+			$db = Snowflake::app()->database;
 		}
 
 		$table = ['	const TABLE = \'select * from %s  where REFERENCED_TABLE_NAME=%s\';'];

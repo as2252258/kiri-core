@@ -431,7 +431,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 */
 	private function getRedis()
 	{
-		return Snowflake::get()->getRedis();
+		return Snowflake::app()->getRedis();
 	}
 
 }

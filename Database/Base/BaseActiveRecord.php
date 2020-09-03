@@ -123,7 +123,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public function getLastError()
 	{
-		return Snowflake::get()->getLogger()->getLastError('mysql');
+		return Snowflake::app()->getLogger()->getLastError('mysql');
 	}
 
 	/**
@@ -768,7 +768,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public static function setDatabaseConnect($bsName)
 	{
-		return Snowflake::get()->db->get($bsName);
+		return Snowflake::app()->db->get($bsName);
 	}
 
 	/**

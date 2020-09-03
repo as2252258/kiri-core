@@ -38,7 +38,7 @@ class DatabasesProviders extends Providers
 	 */
 	public function get($name)
 	{
-		$application = Snowflake::get();
+		$application = Snowflake::app();
 		if ($application->has('databases.' . $name)) {
 			return $application->get('databases.' . $name);
 		}

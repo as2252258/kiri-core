@@ -63,7 +63,7 @@ class Event extends BaseObject
 			$this->_events[$name] = [];
 		}
 		if ($callback instanceof \Closure) {
-			$callback = \Closure::bind($callback, Snowflake::get());
+			$callback = \Closure::bind($callback, Snowflake::app());
 		} else if (is_array($callback) && is_string($callback[0])) {
 			if (!class_exists($callback[0])) {
 				throw new \Exception('Undefined callback class.');

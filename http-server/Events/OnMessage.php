@@ -29,7 +29,7 @@ class OnMessage extends Callback
 			if ($frame->opcode == 0x08) {
 				return;
 			}
-			$event = Snowflake::get()->event;
+			$event = Snowflake::app()->event;
 			if ($event->exists(Event::SERVER_MESSAGE)) {
 				$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
 			} else {
@@ -37,7 +37,7 @@ class OnMessage extends Callback
 			}
 
 			/** @var AWebsocket $manager */
-			$manager = Snowflake::get()->annotation->get('websocket');
+			$manager = Snowflake::app()->annotation->get('websocket');
 			if (!isset($frame->data['route'])) {
 				throw new \Exception('Fromat errr.');
 			}
@@ -47,9 +47,9 @@ class OnMessage extends Callback
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
 		} finally {
-			$event = Snowflake::get()->event;
+			$event = Snowflake::app()->event;
 			$event->trigger(Event::EVENT_AFTER_REQUEST);
-			Snowflake::get()->logger->insert();
+			Snowflake::app()->logger->insert();
 		}
 	}
 

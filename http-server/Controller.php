@@ -83,7 +83,7 @@ class Controller extends Application
 	public function getRequest(): Request
 	{
 		if (!$this->request) {
-			$this->request = Snowflake::get()->request;
+			$this->request = Snowflake::app()->request;
 		}
 		return $this->request;
 	}

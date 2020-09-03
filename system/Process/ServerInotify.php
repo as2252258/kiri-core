@@ -173,7 +173,7 @@ class ServerInotify extends Process
 	public function trigger_reload()
 	{
 		/** @var Server $server */
-		$server = Snowflake::get()->get('server')->getServer();
+		$server = Snowflake::app()->get('server')->getServer();
 		$server->reload();
 	}
 

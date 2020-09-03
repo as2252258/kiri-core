@@ -20,7 +20,7 @@ class Pool extends \Snowflake\Abstracts\Pool
 	 */
 	public function getRedis()
 	{
-		return Snowflake::get()->redis_connections;
+		return Snowflake::app()->redis_connections;
 	}
 
 	/**
@@ -28,7 +28,7 @@ class Pool extends \Snowflake\Abstracts\Pool
 	 */
 	public function getDb()
 	{
-		return Snowflake::get()->connections;
+		return Snowflake::app()->connections;
 	}
 
 }

@@ -24,7 +24,7 @@ class OnManagerStop extends Callback
 	{
 		$this->warning('manager stop.');
 
-		$events = Snowflake::get()->event;
+		$events = Snowflake::app()->event;
 		if ($events->exists(Event::SERVER_MANAGER_STOP)) {
 			$events->trigger(Event::SERVER_MANAGER_STOP, [$server]);
 		}

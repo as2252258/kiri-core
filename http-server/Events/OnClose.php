@@ -38,10 +38,10 @@ class OnClose extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage());
 		} finally {
-			$event = Snowflake::get()->event;
+			$event = Snowflake::app()->event;
 			$event->trigger(Event::RELEASE_ALL);
 
-			$logger = Snowflake::get()->getLogger();
+			$logger = Snowflake::app()->getLogger();
 			$logger->insert();
 		}
 	}
@@ -59,13 +59,13 @@ class OnClose extends Callback
 			if (!$server->isEstablished($fd)) {
 				return [null, null];
 			}
-			$manager = Snowflake::get()->annotation->get('websocket');
+			$manager = Snowflake::app()->annotation->get('websocket');
 			$name = $manager->getName(AWebsocket::CLOSE);
 		} else if ($server instanceof HServer) {
-			$manager = Snowflake::get()->annotation->get('http');
+			$manager = Snowflake::app()->annotation->get('http');
 			$name = $manager->getName(Annotation::CLOSE);
 		} else {
-			$manager = Snowflake::get()->annotation->get('tcp');
+			$manager = Snowflake::app()->annotation->get('tcp');
 			$name = $manager->getName(Tcp::CLOSE);
 		}
 		return [$manager, $name];

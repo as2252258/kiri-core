@@ -21,7 +21,7 @@ class OnManagerStart extends Callback
 		$this->debug('manager start.');
 		Snowflake::setProcessId($server->manager_pid);
 
-		$events = Snowflake::get()->event;
+		$events = Snowflake::app()->event;
 		if ($events->exists(Event::SERVER_MANAGER_START)) {
 			$events->trigger(Event::SERVER_MANAGER_START, null, $server);
 		}

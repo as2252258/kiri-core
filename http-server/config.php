@@ -21,7 +21,7 @@ return [
 			],
 			'events'   => [
 				Event::SERVER_WORKER_START => function () {
-					$router = Snowflake::get()->router;
+					$router = Snowflake::app()->router;
 					$router->loadRouterSetting();
 				},
 			]
@@ -81,7 +81,7 @@ return [
 			'events'   => [
 				Event::SERVER_WORKER_START => function () {
 					$path = APP_PATH . 'app/Websocket';
-					$websocket = Snowflake::get()->annotation->websocket;
+					$websocket = Snowflake::app()->annotation->websocket;
 					$websocket->registration_notes($path, 'App\\Sockets\\');
 				},
 				Event::SERVER_HANDSHAKE    => function (Request $request, Response $response) {
@@ -94,7 +94,7 @@ return [
 					if (is_null($json = json_decode($frame->data, true))) {
 						return $server->push($frame->fd, 'format error~');
 					}
-					$websocket = Snowflake::get()->annotation->websocket;
+					$websocket = Snowflake::app()->annotation->websocket;
 					if ($websocket->has($json['path'])) {
 						return $websocket->runWith($json['path'], [$frame->fd, $json]);
 					} else {
