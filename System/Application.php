@@ -15,6 +15,7 @@ use Exception;
 use HttpServer\Server;
 use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
+use Snowflake\Abstracts\Config;
 use Snowflake\Exception\NotFindClassException;
 
 /**
