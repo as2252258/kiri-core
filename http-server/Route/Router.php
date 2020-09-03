@@ -52,21 +52,16 @@ class Router extends Application implements RouterInterface
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
 		}
-
 		list($first, $explode) = $this->split($path);
 		$parent = $this->nodes[$method][$first] ?? null;
-		if ($handler instanceof \Closure) {
-			$handler = Closure::bind($handler, new Controller());
-		}
 		if (empty($parent)) {
 			$parent = $this->NodeInstance($first, 0, $method);
 			$this->nodes[$method][$first] = $parent;
 		}
-		if ($first === '/') {
-			return $parent->bindHandler($handler);
+		if ($first !== '/') {
+			$parent = $this->bindNode($parent, $explode, $method);
 		}
-		return $this->bindNode($parent, $explode, $method)
-			->bindHandler($handler);
+		return $parent->bindHandler($handler);
 	}
 
 	/**
