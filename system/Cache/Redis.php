@@ -278,22 +278,12 @@ class Redis extends Component
 	 */
 	public function __call($name, $arguments)
 	{
-		try {
-			if (method_exists($this, $name)) {
-				$data = $this->{$name}(...$arguments);
-			} else {
-				$data = $this->proxy()->{$name}(...$arguments);
-			}
-		} catch (\Throwable $exception) {
-			$this->error(print_r([
-				$exception->getMessage(),
-				$exception->getFile(),
-				$exception->getLine()
-			], true));
-			$data = false;
-		} finally {
-			return $data;
+		if (method_exists($this, $name)) {
+			$data = $this->{$name}(...$arguments);
+		} else {
+			$data = $this->proxy()->{$name}(...$arguments);
 		}
+		return $data;
 	}
 
 	/**
