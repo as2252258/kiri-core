@@ -11,6 +11,7 @@ namespace Snowflake\Abstracts;
 use Exception;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Snowflake;
 
 
 /**
