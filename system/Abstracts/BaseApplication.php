@@ -15,6 +15,7 @@ use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 use Snowflake\Annotation\Annotation;
+use Snowflake\Cache\Memcached;
 use Snowflake\Cache\Redis;
 use Snowflake\Config;
 use Snowflake\Di\Service;
@@ -24,7 +25,7 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\InitException;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\Connection;
-use Snowflake\Pool\RedisClient;
+use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Snowflake\Event;
 use Snowflake\Pool\Pool as SPool;
@@ -41,6 +42,7 @@ use Database\DatabasesProviders;
  * @property Server $server
  * @property DatabasesProviders $db
  * @property Connection $connections
+ * @property Memcached $memcached
  * @property Logger $logger
  * @property Jwt $jwt
  */
@@ -335,7 +337,7 @@ abstract class BaseApplication extends Service
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
 			'connections'       => ['class' => Connection::class],
-			'redis_connections' => ['class' => RedisClient::class],
+			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],

@@ -5,7 +5,7 @@ namespace Snowflake\Pool;
 
 
 use HttpServer\Http\Context;
-use Redis;
+use Redis as SRedis;
 use RedisException;
 use Swoole\Coroutine;
 use Exception;
@@ -14,7 +14,7 @@ use Exception;
  * Class RedisClient
  * @package Snowflake\Snowflake\Pool
  */
-class RedisClient extends Pool
+class Redis extends Pool
 {
 
 	/**
@@ -81,12 +81,12 @@ class RedisClient extends Pool
 
 	/**
 	 * @param array $config
-	 * @return Redis
+	 * @return SRedis
 	 * @throws Exception
 	 */
 	private function createConnect(array $config)
 	{
-		$redis = new Redis();
+		$redis = new SRedis();
 		if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
 			throw new Exception('The Redis Connect Fail.');
 		}
@@ -97,8 +97,8 @@ class RedisClient extends Pool
 			$config['read_timeout'] = 10;
 		}
 		$redis->select($config['databases']);
-		$redis->setOption(Redis::OPT_READ_TIMEOUT, -1);
-		$redis->setOption(Redis::OPT_PREFIX, $config['prefix']);
+		$redis->setOption(SRedis::OPT_READ_TIMEOUT, -1);
+		$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
 		return $redis;
 	}
 
@@ -154,7 +154,7 @@ class RedisClient extends Pool
 		if ($time + 60 * 10 < time()) {
 			return false;
 		}
-		if (!($client instanceof Redis)) {
+		if (!($client instanceof SRedis)) {
 			return false;
 		}
 		if (!$client->isConnected() || !$client->ping('connect.')) {

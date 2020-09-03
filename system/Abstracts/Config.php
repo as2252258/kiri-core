@@ -22,7 +22,16 @@ class Config extends Component
 
 	const ERROR_MESSAGE = 'The not find :key in app configs.';
 
-	public $data;
+	private $data;
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getData()
+	{
+		return $this->data;
+	}
 
 	/**
 	 * @param $key
@@ -33,37 +42,22 @@ class Config extends Component
 	 */
 	public static function get($key, $try = FALSE, $default = null)
 	{
-		$config = Snowflake::app()->config;
+		$explode = explode('.', $key);
 
-		if (strpos($key, '.') === false) {
-			if (isset($config->data[$key])) {
-				return $config->data[$key];
-			} else if ($default !== null) {
-				return $default;
-			} else if ($try) {
+		$instance = Snowflake::app()->getConfig()->getData();
+		foreach ($explode as $index => $value) {
+			if (!isset($instance[$value]) && $try) {
 				throw new ConfigException(str_replace(':key', $key, self::ERROR_MESSAGE));
 			}
-			return NULL;
+			$instance = $instance[$value];
+			if (!is_array($instance) && $index + 1 < count($explode)) {
+				throw new ConfigException(str_replace(':key', $key, self::ERROR_MESSAGE));
+			}
 		}
-		$keys = explode('.', $key);
-
-		$parent = $config->data[array_shift($keys)] ?? null;
-		if (empty($parent)) {
+		if (empty($instance)) {
 			return $default;
 		}
-		if (empty($keys) || !is_array($parent)) {
-			return $parent;
-		}
-		foreach ($keys as $key) {
-			if (!isset($parent[$key])) {
-				return $parent;
-			}
-			$parent = $parent[$key];
-			if (empty($keys) || !is_array($parent)) {
-				return $parent;
-			}
-		}
-		return $parent;
+		return $instance;
 	}
 
 	/**

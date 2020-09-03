@@ -5,6 +5,10 @@ namespace Snowflake\Cache;
 
 use Exception;
 use Snowflake\Abstracts\Component;
+use Snowflake\Config;
+use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Snowflake;
 
 /**
  * Class Memcached
@@ -22,17 +26,50 @@ class Memcached extends Component implements ICache
 
 	public $timeout = 60;
 
+
 	/**
 	 * @throws Exception
 	 */
 	public function init()
 	{
-		$this->_memcached = new \Memcached();
-		$isConnected = $this->_memcached->addServer(
-			env('cache.memcached.host', $this->host),
-			env('cache.memcached.port', $this->port),
-			env('cache.memcached.timeout', $this->timeout)
-		);
+		$event = Snowflake::app()->event;
+		$event->on(Event::RELEASE_ALL, [$this, 'destroy']);
+		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'release']);
+
+		$id = Config::get('id', false, 'system');
+		$this->_memcached = new \Memcached($id);
+		$this->addServer();
+	}
+
+	/**
+	 * @return \Memcached
+	 * @throws Exception
+	 */
+	public function getConnect()
+	{
+		return $this->_memcached;
+	}
+
+
+	/**
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	private function addServer()
+	{
+		$array = [];
+		$memcached = Config::get('cache.memcached');
+		if (isset($memcached[0])) {
+			foreach ($memcached as $value) {
+				$array[] = [$value['host'], $value['port'], $value['weight']];
+			}
+			$isConnected = $this->_memcached->addServers($array);
+		} else {
+			$array[] = Config::get('cache.memcached.host', true);
+			$array[] = Config::get('cache.memcached.port', true);
+			$array[] = Config::get('cache.memcached.weight', true);
+			$isConnected = $this->_memcached->addServer(...$array);
+		}
 		if (!$isConnected) {
 			throw new Exception('Cache Memcache Host 127.0.0.1 Connect Fail.');
 		}
