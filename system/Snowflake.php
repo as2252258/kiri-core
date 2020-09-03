@@ -131,16 +131,16 @@ class Snowflake
 	/**
 	 * @param $fileName
 	 * @param $content
-	 * @param int $is_append
+	 * @param null $is_append
 	 * @return false|int|mixed
 	 */
-	public static function writeFile($fileName, $content, $is_append = FILE_APPEND)
+	public static function writeFile($fileName, $content, $is_append = null)
 	{
-		if (self::inCoroutine()) {
-			return Coroutine::writeFile($fileName, $content, $is_append);
-		} else {
-			return file_put_contents($fileName, $content, $is_append);
+		$params = [$fileName, $content];
+		if ($is_append !== null) {
+			$params[] = $is_append;
 		}
+		return !self::inCoroutine() ? file_put_contents(...$params) : Coroutine::writeFile(...$params);
 	}
 
 
