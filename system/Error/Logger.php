@@ -145,7 +145,7 @@ class Logger extends Component
 		}
 		$fileName = 'server-' . date('Y-m-d') . '.log';
 		$dirName = 'log/' . (empty($category) ? 'app' : $category);
-		$logFile = '[' . date('Y-m-d H:i:s') . ']' . $messages . PHP_EOL;
+		$logFile = '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL;
 		Snowflake::writeFile(storage($fileName, $dirName), $logFile, FILE_APPEND);
 	}
 
