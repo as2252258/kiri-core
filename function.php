@@ -19,9 +19,9 @@ if (!function_exists('make')) {
 	function make($name, $default)
 	{
 		if (Snowflake::has($name)) {
-			$class = Snowflake::get()->$name;
+			$class = Snowflake::app()->$name;
 		} else if (Snowflake::has($default)) {
-			$class = Snowflake::get()->$default;
+			$class = Snowflake::app()->$default;
 		} else {
 			$class = Snowflake::createObject($default);
 			Snowflake::setAlias($name, $default);
