@@ -55,7 +55,7 @@ class Middleware
 		$middleWares = $this->annotation($node);
 		$data = array_reduce(array_reverse($middleWares), $this->core(), $last);
 		$this->middleWares = [];
-		return $data;
+		return $node->callback = $data;
 	}
 
 

@@ -287,20 +287,7 @@ class Node extends Application
 		if (empty($middles)) {
 			return;
 		}
-		foreach ($middles as $middle) {
-			if (empty($middle)) {
-				continue;
-			}
-			try {
-				if (is_array($middle)) {
-					$_tmp = $this->each($middle, $_tmp);
-				} else {
-					$_tmp[] = Snowflake::createObject($middle);
-				}
-			} catch (Exception $exception) {
-			}
-		}
-		$this->middleware = $_tmp;
+		$this->middleware = $this->each($middles, $_tmp);
 		$this->newExec();
 	}
 
@@ -313,7 +300,7 @@ class Node extends Application
 		if (!empty($this->handler)) {
 			$made = new Middleware();
 			$made->setMiddleWares($this->middleware);
-			$this->callback = $made->getGenerate($this);
+			$made->getGenerate($this);
 		}
 		return $this;
 	}
