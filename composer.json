@@ -16,7 +16,6 @@
     "psr/log": "^1.0",
     "ext-json": "*",
     "phpmailer/phpmailer": "^6.1",
-    "ext-exif": "*",
     "ext-fileinfo": "*",
     "ext-pdo": "*",
     "ext-redis": "*",
@@ -24,7 +23,8 @@
     "ext-libxml": "*",
     "ext-iconv": "*",
     "ext-mbstring": "*",
-    "ext-xml": "*"
+    "ext-xml": "*",
+    "ext-memcached": "*"
   },
   "autoload": {
     "psr-4": {
