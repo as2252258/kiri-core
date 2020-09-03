@@ -170,9 +170,6 @@ class Server extends Application
 		if (!isset($this->server[$config['type']])) {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
-		if (isset($config['settings'])) {
-			$settings = ArrayAccess::merge($settings, $config['settings']);
-		}
 		$server = $this->dispatchCreate($config, $settings);
 		if (isset($config['events'])) {
 			$this->createEventListen($config);
