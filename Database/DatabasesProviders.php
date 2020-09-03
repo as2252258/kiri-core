@@ -45,7 +45,7 @@ class DatabasesProviders extends Providers
 		$config = $this->getConfig($name);
 		return $application->set('databases.' . $name, [
 			'class'       => Connection::class,
-			'id'          => 'db',
+			'id'          => $config['id'],
 			'cds'         => $config['cds'],
 			'username'    => $config['username'],
 			'password'    => $config['password'],
