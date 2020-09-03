@@ -87,7 +87,10 @@ class OnRequest extends Callback
 
 		$logger = Snowflake::app()->logger;
 
-		$string = 'Exception: ' . var_export($errorInfo, true).PHP_EOL;
+		$string = 'Exception: ' . PHP_EOL;
+		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
+		$string .= '#.  file: ' . $errorInfo['file'] . PHP_EOL;
+		$string .= '#.  line: ' . $errorInfo['line'] . PHP_EOL;
 
 		$logger->write($string . $exception->getTraceAsString(), 'trace');
 		$logger->write(jTraceEx($exception), 'exception');
