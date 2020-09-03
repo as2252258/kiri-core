@@ -22,7 +22,7 @@ class Config extends Component
 
 	const ERROR_MESSAGE = 'The not find %s in app configs.';
 
-	public $data;
+	protected $data;
 
 
 	/**
@@ -31,6 +31,17 @@ class Config extends Component
 	public function getData()
 	{
 		return $this->data;
+	}
+
+
+	/**
+	 * @param $key
+	 * @param $value
+	 * @return mixed
+	 */
+	public function setData($key, $value)
+	{
+		return $this->data[$key] = $value;
 	}
 
 	/**
@@ -43,17 +54,20 @@ class Config extends Component
 	public static function get($key, $try = FALSE, $default = null)
 	{
 		$explode = explode('.', $key);
-		$instance = Snowflake::app()->getConfig()->getData();
+		$instance = Snowflake::app()->config->getData();
 		foreach ($explode as $index => $value) {
 			if (empty($value)) {
 				continue;
 			}
-			if (!isset($instance[$value]) && $try) {
-				throw new ConfigException(sprintf(self::ERROR_MESSAGE, $value));
+			if (!isset($instance[$value])) {
+				if ($try) {
+					throw new ConfigException(sprintf(self::ERROR_MESSAGE, $key));
+				}
+				return $default;
 			}
 			$instance = $instance[$value];
 			if (!is_array($instance) && $index + 1 < count($explode)) {
-				throw new ConfigException(sprintf(self::ERROR_MESSAGE, $value));
+				throw new ConfigException(sprintf(self::ERROR_MESSAGE, $key));
 			}
 		}
 		return empty($instance) ? $default : $instance;
@@ -68,7 +82,7 @@ class Config extends Component
 	public static function set($key, $value)
 	{
 		$config = Snowflake::app()->config;
-		return $config->data[$key] = $value;
+		return $config->setData($key, $value);
 	}
 
 	/**
