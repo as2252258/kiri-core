@@ -20,7 +20,7 @@ use Snowflake\Abstracts\Component;
 class Config extends Component
 {
 
-	const ERROR_MESSAGE = 'The not find :key in app configs.';
+	const ERROR_MESSAGE = 'The not find %s in app configs.';
 
 	public $data;
 
@@ -43,21 +43,20 @@ class Config extends Component
 	public static function get($key, $try = FALSE, $default = null)
 	{
 		$explode = explode('.', $key);
-
 		$instance = Snowflake::app()->getConfig()->getData();
 		foreach ($explode as $index => $value) {
+			if (empty($value)) {
+				continue;
+			}
 			if (!isset($instance[$value]) && $try) {
-				throw new ConfigException(str_replace(':key', $key, self::ERROR_MESSAGE));
+				throw new ConfigException(sprintf(self::ERROR_MESSAGE, $value));
 			}
 			$instance = $instance[$value];
 			if (!is_array($instance) && $index + 1 < count($explode)) {
-				throw new ConfigException(str_replace(':key', $key, self::ERROR_MESSAGE));
+				throw new ConfigException(sprintf(self::ERROR_MESSAGE, $value));
 			}
 		}
-		if (empty($instance)) {
-			return $default;
-		}
-		return $instance;
+		return empty($instance) ? $default : $instance;
 	}
 
 	/**
