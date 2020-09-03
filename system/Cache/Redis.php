@@ -284,7 +284,7 @@ class Redis extends Component
 			} else {
 				$data = $this->proxy()->{$name}(...$arguments);
 			}
-		} catch (\Throwable $exception) {
+		} catch (RedisConnectException|\Throwable $exception) {
 			if ($exception instanceof RedisConnectException) {
 				throw new Exception($exception->getMessage());
 			}
