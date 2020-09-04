@@ -254,7 +254,6 @@ class Connection extends Pool
 		}
 		$this->push($coroutineName, $client);
 		$this->remove($coroutineName);
-		$this->desc($coroutineName);
 	}
 
 
