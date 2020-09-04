@@ -158,42 +158,9 @@ class Connection extends Pool
 		}
 		if ($this->size($coroutineName) < 1 && $this->hasCreate[$coroutineName] < $this->max) {
 			$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
-			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
+			$this->push($coroutineName, $this->nowClient($coroutineName, $config));
 		}
-		return $this->getByChannel($coroutineName, $config);
-	}
-
-
-	/**
-	 * @param $name
-	 * @param $config
-	 * @return Connection
-	 * @throws Exception
-	 */
-	public function fill($name, $config)
-	{
-		if ($this->size($name) >= 10) {
-			return $this;
-		}
-		for ($i = 0; $i < 10 - $this->size($name); $i++) {
-			$this->push($name, $this->createConnect($config['cds'], $config['username'], $config['password']));
-		}
-		return $this;
-	}
-
-	/**
-	 * @param $coroutineName
-	 * @param $config
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function getByChannel($coroutineName, $config)
-	{
-		[$time, $client] = $this->get($coroutineName);
-		if ($client instanceof PDO) {
-			return $this->saveClient($coroutineName, $client);
-		}
-		return $this->getByChannel($coroutineName, $config);
+		return $this->get($coroutineName)[1];
 	}
 
 
@@ -343,7 +310,7 @@ class Connection extends Pool
 				$this->addError($cds . '  ->  ' . $exception->getMessage());
 				throw new Exception($exception->getMessage());
 			}
-			$this->addError($cds . '  ->  ' . $exception->getMessage());
+			$this->error($cds . '  ->  ' . $exception->getMessage());
 			return $this->createConnect($coroutineName, $cds, $username, $password);
 		}
 	}
