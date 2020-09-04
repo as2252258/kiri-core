@@ -215,6 +215,9 @@ class Connection extends Pool
 	private function nowClient($coroutineName, $config)
 	{
 		$client = $this->createConnect($config['cds'], $config['username'], $config['password']);
+		if ($this->hasLength($coroutineName)) {
+			return $this->getByChannel($coroutineName, $config);
+		}
 		$this->success('create db client -> ' . $config['cds'] . ':' . $this->hasLength($coroutineName));
 		if (isset(Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()])) {
 			$number = Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()];
