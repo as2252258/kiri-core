@@ -1,6 +1,5 @@
 <?php
 
-use HttpServer\Route\Router;
 use HttpServer\Server;
 use Snowflake\Snowflake;
 use Snowflake\Event;
