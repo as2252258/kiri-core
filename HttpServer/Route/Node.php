@@ -310,9 +310,15 @@ class Node extends Application
 	 */
 	public function addMiddleware(string $class)
 	{
-//		if (in_array($class, $this->middleware)) {
-//			return;
-//		}
+		if (is_string($class)) {
+			$class = Snowflake::createObject($class);
+			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
+				return;
+			}
+			$class = [$class, 'handler'];
+		} else if (!is_callable($class, true)) {
+			return;
+		}
 		$this->middleware[] = $class;
 		$this->restructure();
 	}

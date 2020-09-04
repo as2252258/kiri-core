@@ -76,11 +76,11 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			case 'Method':
 				$this->bindMethod($node, $annotation);
 				break;
-			case 'Middleware':
-				$this->bindMiddleware($node, $this->pop($this->getName(...$annotation)));
-				break;
 			case'Interceptor':
-				$this->bindInterceptors($node, $this->pop($this->getName(...$annotation)));
+				$this->bindInterceptors($node, $annotation);
+				break;
+			case 'Middleware':
+				$this->bindMiddleware($node, $annotation);
 				break;
 		}
 	}
@@ -102,6 +102,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	}
 
 
+
 	/**
 	 * @param Node $node
 	 * @param $annotation
@@ -112,16 +113,14 @@ class Annotation extends \Snowflake\Annotation\Annotation
 		if (!isset($annotation[1][2])) {
 			return;
 		}
-
-//		$explode = explode(',', $annotation[1][2]);
-//		foreach ($explode as $middleware) {
-//			$middleware = 'App\Http\Interceptor\\' . $middleware;
-//			if (!class_exists($middleware)) {
-//				continue;
-//			}
-//		}
-		$node->addMiddleware($annotation);
-
+		$explode = explode(',', $annotation[1][2]);
+		foreach ($explode as $middleware) {
+			$middleware = 'App\Http\Middleware\\' . $middleware;
+			if (!class_exists($middleware)) {
+				continue;
+			}
+			$node->addMiddleware($middleware);
+		}
 	}
 
 
@@ -136,13 +135,14 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			return;
 		}
 
-//		$explode = explode(',', $annotation[1][2]);
-//		foreach ($explode as $middleware) {
-//		}
-		$node->addInterceptor($annotation);
+		$explode = explode(',', $annotation[1][2]);
 
+		[$keyName, $matchs] = $annotation;
+		foreach ($explode as $middleware) {
+			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
+			$node->addInterceptor($this->pop($this->getName(...$params)));
+		}
 	}
-
 
 	/**
 	 * @param $controller
