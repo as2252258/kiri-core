@@ -150,10 +150,14 @@ class Connection extends Pool
 	public function getConnection(array $config, $isMaster = false)
 	{
 		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
+		if (!isset($this->hasCreate[$coroutineName])) {
+			$this->hasCreate[$coroutineName] = 0;
+		}
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		}
 		if ($this->size($coroutineName) < 1) {
+			$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
 		return $this->getByChannel($coroutineName, $config);
@@ -187,7 +191,6 @@ class Connection extends Pool
 	public function getByChannel($coroutineName, $config)
 	{
 		[$time, $client] = $this->get($coroutineName, -1);
-		$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}
