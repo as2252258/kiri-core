@@ -194,10 +194,6 @@ class Connection extends Pool
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}
-		unset($client);
-		if ($this->hasCreate[$coroutineName] > $this->max) {
-			return $this->get($coroutineName)[1];
-		}
 		return $this->getByChannel($coroutineName, $config);
 	}
 
