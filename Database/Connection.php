@@ -36,7 +36,7 @@ class Connection extends Component
 
 	public $timeout = 1900;
 
-	public $maxNumber = 100;
+	public $maxNumber = 200;
 
 	/**
 	 * @var bool
