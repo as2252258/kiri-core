@@ -227,7 +227,7 @@ class Connection extends Pool
 	 */
 	private function nowClient($coroutineName, $config)
 	{
-		if ($this->hasItem($coroutineName)) {
+		if ($this->size($coroutineName) > 0) {
 			return $this->getByChannel($coroutineName, $config);
 		}
 		$client = $this->createConnect($config['cds'], $config['username'], $config['password']);
