@@ -50,7 +50,7 @@ class DatabasesProviders extends Providers
 			'username'    => $config['username'],
 			'password'    => $config['password'],
 			'tablePrefix' => $config['tablePrefix'],
-			'maxNumber'   => 200,
+			'maxNumber'   => $config['maxNumber'],
 			'slaveConfig' => $config['slaveConfig']
 		]);
 	}
