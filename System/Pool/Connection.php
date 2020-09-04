@@ -189,7 +189,7 @@ class Connection extends Pool
 		$this->info('client has :' . $this->size($coroutineName));
 		[$time, $client] = $this->get($coroutineName, -1);
 
-		$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0));
+		$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}

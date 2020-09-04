@@ -20,8 +20,6 @@ abstract class Pool extends Component
 
 	protected $max = 60;
 
-	private $is_ticker = false;
-
 	/**
 	 * @param $name
 	 * @param false $isMaster
@@ -46,9 +44,6 @@ abstract class Pool extends Component
 	 */
 	protected function get($name, $timeout = -1)
 	{
-		if ($this->is_ticker) {
-			Coroutine::sleep(1);
-		}
 		if ($timeout != -1) {
 			$client = $this->_items[$name]->pop($timeout);
 		} else {
