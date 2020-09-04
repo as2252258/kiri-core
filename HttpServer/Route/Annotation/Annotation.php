@@ -48,7 +48,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param ReflectionClass $reflect
 	 * @param $method
 	 * @param $annotations
-	 * @return mixed|null
 	 * @throws ReflectionException
 	 */
 	public function read($node, $reflect, $method, $annotations)
@@ -57,25 +56,34 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 		$_annotations = $this->getDocCommentAnnotation($annotations, $method->getDocComment());
 
-		$array = [];
 		foreach ($_annotations as $keyName => $annotation) {
 			if (!in_array($keyName, $annotations)) {
 				continue;
 			}
-
-			if ($keyName == 'Method') {
-				$this->bindMethod($node, $annotation);
-			} else if ($keyName == 'Middleware') {
-				$this->bindMiddleware($node, $annotation);
-			} else if ($keyName == 'Interceptors') {
-				$this->bindInterceptors($node, $annotation);
-			}
-
-			$array[$keyName] = $this->pop($this->getName(...$annotation));
+			$this->bind($keyName, $node, $annotation);
 		}
-		return $array;
 	}
 
+
+	/**
+	 * @param $keyName
+	 * @param $node
+	 * @param $annotation
+	 */
+	private function bind($keyName, $node, $annotation)
+	{
+		switch ($keyName) {
+			case 'Method':
+				$this->bindMethod($node, $annotation);
+				break;
+			case 'Middleware':
+				$this->bindMiddleware($node, $this->pop($this->getName(...$annotation)));
+				break;
+			case'Interceptor':
+				$this->bindInterceptors($node, $this->pop($this->getName(...$annotation)));
+				break;
+		}
+	}
 
 	/**
 	 * @param $node

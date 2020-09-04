@@ -468,6 +468,7 @@ class Router extends Application implements RouterInterface
 		$annotation = $annotation->get('http');
 		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
 		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
+		$annotation->registration_notes($prefix . 'Middleware', 'App\Http\Middleware');
 
 		$this->loadRouteDir(APP_PATH . '/routes');
 	}
