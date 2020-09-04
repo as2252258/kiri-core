@@ -177,7 +177,6 @@ class Connection extends Pool
 		}
 		for ($i = 0; $i < 10 - $this->size($name); $i++) {
 			$this->push($name, $this->createConnect($config['cds'], $config['username'], $config['password']));
-			$this->incr($name);
 		}
 		return $this;
 	}
@@ -218,12 +217,11 @@ class Connection extends Pool
 	private function nowClient($coroutineName, $config)
 	{
 		$this->success('create db client -> ' . $config['cds'] . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
-		$client = $this->createConnect($config['cds'], $config['username'], $config['password']);
+		$client = $this->createConnect($coroutineName, $config['cds'], $config['username'], $config['password']);
 		if (isset(Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()])) {
 			$number = Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()];
 			$number > 0 && $client->beginTransaction();
 		}
-		$this->incr($coroutineName);
 		return $client;
 	}
 
@@ -319,13 +317,14 @@ class Connection extends Pool
 
 
 	/**
+	 * @param $coroutineName
 	 * @param $cds
 	 * @param $username
 	 * @param $password
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function createConnect($cds, $username, $password)
+	public function createConnect($coroutineName, $cds, $username, $password)
 	{
 		try {
 			$link = new PDO($cds, $username, $password, [
@@ -337,6 +336,7 @@ class Connection extends Pool
 			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
+			$this->incr($coroutineName);
 			return $link;
 		} catch (\Throwable $exception) {
 			if ($exception->getCode() !== 2006) {
@@ -344,7 +344,7 @@ class Connection extends Pool
 				throw new Exception($exception->getMessage());
 			}
 			$this->addError($cds . '  ->  ' . $exception->getMessage());
-			return $this->createConnect($cds, $username, $password);
+			return $this->createConnect($coroutineName, $cds, $username, $password);
 		}
 	}
 
