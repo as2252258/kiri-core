@@ -59,7 +59,7 @@ class Router extends Application implements RouterInterface
 		if ($first !== '/') {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
-		return $parent->bindHandler($handler);
+		return $parent->bindHandler($handler, $method);
 	}
 
 	/**
@@ -429,7 +429,7 @@ class Router extends Application implements RouterInterface
 		if (!in_array($request->getMethod(), $node->method)) {
 			return JSON::to(405, 'Method not allowed.');
 		}
-		if (empty($node->callback)) {
+		if (empty($node->callback) || isset($node->callback[$request->getMethod()])) {
 			return JSON::to(404, 'Method does not exist.');
 		}
 		return call_user_func($node->callback, $request);
