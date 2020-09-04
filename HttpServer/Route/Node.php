@@ -20,7 +20,7 @@ class Node extends Application
 
 	public $path;
 	public $index = 0;
-	public $method = [];
+	public $method;
 
 	/** @var Node[] $childes */
 	public $childes = [];
@@ -31,7 +31,7 @@ class Node extends Application
 	private $_error = '';
 
 	public $rules = [];
-	public $handler = [];
+	public $handler;
 	public $htmlSuffix = '.html';
 	public $enableHtmlSuffix = false;
 	public $namespace = [];
@@ -42,24 +42,23 @@ class Node extends Application
 
 	/**
 	 * @param $handler
-	 * @param $method
 	 * @return Node
-	 * @throws Exception
+	 * @throws
 	 */
-	public function bindHandler($handler, $method)
+	public function bindHandler($handler)
 	{
 		if ($handler instanceof Closure) {
-			$this->handler[$method] = $handler;
+			$this->handler = $handler;
 		} else if (is_string($handler) && strpos($handler, '@') !== false) {
 			list($controller, $action) = explode('@', $handler);
 			if (!empty($this->namespace)) {
 				$controller = implode('\\', $this->namespace) . '\\' . $controller;
 			}
-			$this->handler[$method] = $this->getReflect($controller, $action);
+			$this->handler = $this->getReflect($controller, $action);
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
 		} else {
-			$this->handler[$method] = $handler;
+			$this->handler = $handler;
 		}
 		return $this->restructure();
 	}
