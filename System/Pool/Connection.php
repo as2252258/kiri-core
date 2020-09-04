@@ -156,7 +156,7 @@ class Connection extends Pool
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		}
-		if ($this->size($coroutineName) < 1) {
+		if ($this->size($coroutineName) < 1 && $this->hasCreate[$coroutineName] < $this->max) {
 			$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
