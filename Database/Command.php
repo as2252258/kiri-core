@@ -62,7 +62,7 @@ class Command extends Component
 		if (empty($this->sql)) {
 			return;
 		}
-		if (($connect = $this->getConnection()) === false) {
+		if (!(($connect = $this->getConnection()) instanceof PDO)) {
 			throw new Exception('数据库繁忙, 请稍后再试!');
 		}
 		$this->prepare = $connect->prepare($this->sql);
