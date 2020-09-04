@@ -3,6 +3,7 @@
 
 namespace HttpServer\Route\Annotation;
 
+use HttpServer\Route\Node;
 use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\BaseAnnotation;
@@ -29,19 +30,28 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 */
 	private $Limits = 'required|not empty';
 
+
+	private $Method = 'post';
+
+
+	private $Middleware = '';
+
+
+//	private $Route = '';
+
+
 	protected $_annotations = [];
 
 
-
-
 	/**
+	 * @param Node $node
 	 * @param ReflectionClass $reflect
 	 * @param $method
 	 * @param $annotations
 	 * @return mixed|null
 	 * @throws ReflectionException
 	 */
-	public function read($reflect, $method, $annotations)
+	public function read($node, $reflect, $method, $annotations)
 	{
 		$method = $reflect->getMethod($method);
 
@@ -52,9 +62,77 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			if (!in_array($keyName, $annotations)) {
 				continue;
 			}
+
+			if ($keyName == 'Method') {
+				$this->bindMethod($node, $annotation);
+			} else if ($keyName == 'Middleware') {
+				$this->bindMiddleware($node, $annotation);
+			} else if ($keyName == 'Interceptors') {
+				$this->bindInterceptors($node, $annotation);
+			}
+
 			$array[$keyName] = $this->pop($this->getName(...$annotation));
 		}
 		return $array;
+	}
+
+
+	/**
+	 * @param $node
+	 * @param $annotation
+	 */
+	private function bindMethod($node, $annotation)
+	{
+		if (!isset($annotation[1][2])) {
+			return;
+		}
+		$explode = explode(',', $annotation[1][2]);
+		if (in_array('any', $explode)) {
+			$explode = ['*'];
+		}
+		$node->method = $explode;
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $annotation
+	 * @throws
+	 */
+	private function bindMiddleware($node, $annotation)
+	{
+		if (!isset($annotation[1][2])) {
+			return;
+		}
+
+		$explode = explode(',', $annotation[1][2]);
+		foreach ($explode as $middleware) {
+			$middleware = 'App\Http\Interceptor\\' . $middleware;
+			if (!class_exists($middleware)) {
+				continue;
+			}
+			$node->addMiddleware($middleware);
+		}
+
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $annotation
+	 * @throws
+	 */
+	private function bindInterceptors($node, $annotation)
+	{
+		if (!isset($annotation[1][2])) {
+			return;
+		}
+
+		$explode = explode(',', $annotation[1][2]);
+		foreach ($explode as $middleware) {
+			$node->addInterceptor($middleware);
+		}
+
 	}
 
 
@@ -69,8 +147,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	{
 		return Snowflake::createObject($events[2]);
 	}
-
-
 
 
 	/**

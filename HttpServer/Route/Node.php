@@ -4,6 +4,7 @@
 namespace HttpServer\Route;
 
 
+use Closure;
 use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
@@ -19,7 +20,7 @@ class Node extends Application
 
 	public $path;
 	public $index = 0;
-	public $method;
+	public $method = [];
 
 	/** @var Node[] $childes */
 	public $childes = [];
@@ -46,7 +47,7 @@ class Node extends Application
 	 */
 	public function bindHandler($handler)
 	{
-		if ($handler instanceof \Closure) {
+		if ($handler instanceof Closure) {
 			$this->handler = $handler;
 		} else if (is_string($handler) && strpos($handler, '@') !== false) {
 			list($controller, $action) = explode('@', $handler);
@@ -151,7 +152,7 @@ class Node extends Application
 			/** @var Annotation $annotation */
 			$annotation = Snowflake::app()->annotation->get('http');
 			if (!empty($annotations = $annotation->getAnnotation(Annotation::class))) {
-				$this->_interceptors = $annotation->read($reflect, $action, $annotations);
+				$annotation->read($this, $reflect, $action, $annotations);
 			}
 			return [$reflect->newInstance(), $action];
 		} catch (Exception $exception) {
@@ -159,6 +160,17 @@ class Node extends Application
 			$this->error($exception->getMessage(), 'router');
 			return null;
 		}
+	}
+
+
+	/**
+	 * @param Closure|array|string $handler
+	 * @throws Exception
+	 */
+	public function addInterceptor($handler)
+	{
+		$this->_interceptors[] = $handler;
+		$this->restructure();
 	}
 
 
@@ -293,6 +305,20 @@ class Node extends Application
 
 
 	/**
+	 * @param string $class
+	 * @throws Exception
+	 */
+	public function addMiddleware(string $class)
+	{
+//		if (in_array($class, $this->middleware)) {
+//			return;
+//		}
+		$this->middleware[] = $class;
+		$this->restructure();
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	private function restructure()
@@ -319,10 +345,10 @@ class Node extends Application
 			return $_temp;
 		}
 		foreach ($array as $class) {
-			if (is_array($class)) {
-				$_temp = $this->each($class, $_temp);
-			} else {
+			if (!is_array($class)) {
 				$_temp[] = Snowflake::createObject($class);
+			} else {
+				$_temp = $this->each($class, $_temp);
 			}
 		}
 		return $_temp;
