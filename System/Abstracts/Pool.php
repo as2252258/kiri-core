@@ -28,8 +28,7 @@ abstract class Pool extends Component
 	public function initConnections($name, $isMaster = false, $max = 60)
 	{
 		$name = $this->name($name, $isMaster);
-		if (isset($this->_items[$name]) &&
-			$this->_items[$name] instanceof Channel) {
+		if (isset($this->_items[$name]) && $this->_items[$name] instanceof Channel) {
 			return;
 		}
 		$this->_items[$name] = new Channel($max);
@@ -127,7 +126,7 @@ abstract class Pool extends Component
 	{
 		$this->_items[$name]->push([time(), $client]);
 		unset($client);
-		$this->debug('release connect.' . $this->size($name));
+		$this->debug('release connect.' . $this->max . ':' . $this->size($name));
 	}
 
 
