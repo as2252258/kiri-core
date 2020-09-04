@@ -200,7 +200,8 @@ class Connection extends Pool
 
 			return $client;
 		}
-		if ($this->hasItem($coroutineName) < 1) {
+
+		if ($this->size($coroutineName) < 1) {
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
 		return $this->getByChannel($coroutineName, $config);
