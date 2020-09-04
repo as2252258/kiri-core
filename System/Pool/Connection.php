@@ -51,10 +51,10 @@ class Connection extends Pool
 	public function inTransaction($cds)
 	{
 		[$coroutineId, $coroutineName] = $this->getIndex($cds, true);
-		if (!Context::hasContext('begin_' . $coroutineName, $coroutineId)) {
+		if (!Context::hasContext('begin_' . $coroutineName)) {
 			return false;
 		}
-		return Context::getContext('begin_' . $coroutineName, $coroutineId) == 0;
+		return Context::getContext('begin_' . $coroutineName) == 0;
 	}
 
 	/**
@@ -63,16 +63,16 @@ class Connection extends Pool
 	public function beginTransaction($coroutineName)
 	{
 		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, true);
-		if (!Context::hasContext('begin_' . $coroutineName, $coroutineId)) {
-			Context::setContext('begin_' . $coroutineName, 0, $coroutineId);
+		if (!Context::hasContext('begin_' . $coroutineName)) {
+			Context::setContext('begin_' . $coroutineName, 0);
 		}
-		if (Context::getContext('begin_' . $coroutineName, $coroutineId) === 0) {
+		if (Context::getContext('begin_' . $coroutineName) === 0) {
 			$connection = Context::getContext($coroutineName);
 			if ($connection instanceof PDO && !$connection->inTransaction()) {
 				$connection->beginTransaction();
 			}
 		}
-		Context::autoIncr('begin_' . $coroutineName, $coroutineId);
+		Context::autoIncr('begin_' . $coroutineName);
 	}
 
 	/**
@@ -81,10 +81,10 @@ class Connection extends Pool
 	public function commit($coroutineName)
 	{
 		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, true);
-		if (!Context::hasContext('begin_' . $coroutineName, $coroutineId)) {
+		if (!Context::hasContext('begin_' . $coroutineName)) {
 			return;
 		}
-		if (Context::autoDecr('begin_' . $coroutineName, $coroutineId) > 0) {
+		if (Context::autoDecr('begin_' . $coroutineName) > 0) {
 			return;
 		}
 		$connection = Context::getContext($coroutineName);
@@ -93,7 +93,7 @@ class Connection extends Pool
 				$this->info('connection commit.');
 				$connection->commit();
 			}
-			Context::setContext('begin_' . $coroutineName, 0, $coroutineId);
+			Context::setContext('begin_' . $coroutineName, 0);
 		}
 	}
 
@@ -123,10 +123,10 @@ class Connection extends Pool
 	public function rollback($coroutineName)
 	{
 		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, true);
-		if (!Context::hasContext('begin_' . $coroutineName, $coroutineId)) {
+		if (!Context::hasContext('begin_' . $coroutineName)) {
 			return;
 		}
-		if (Context::autoDecr('begin_' . $coroutineName, $coroutineId) > 0) {
+		if (Context::autoDecr('begin_' . $coroutineName) > 0) {
 			return;
 		}
 		if ($this->hasClient($coroutineName)) {
@@ -137,7 +137,7 @@ class Connection extends Pool
 				$connection->rollBack();
 			}
 		}
-		Context::setContext('begin_' . $coroutineName, 0, $coroutineId);
+		Context::setContext('begin_' . $coroutineName, 0);
 	}
 
 
