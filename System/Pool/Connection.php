@@ -152,11 +152,11 @@ class Connection extends Pool
 		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
-		} else if ($this->size($coroutineName) < 1) {
-			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
-		} else {
-			return $this->getByChannel($coroutineName, $config);
 		}
+		if ($this->size($coroutineName) < 1) {
+			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
+		}
+		return $this->getByChannel($coroutineName, $config);
 	}
 
 
@@ -186,23 +186,14 @@ class Connection extends Pool
 	 */
 	public function getByChannel($coroutineName, $config)
 	{
-		$this->info('client has :' . $this->size($coroutineName));
 		[$time, $client] = $this->get($coroutineName, -1);
-
 		$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}
-
 		unset($client);
-		if (($this->hasCreate[$coroutineName] ?? 0) >= $this->max) {
-			[$time, $client] = $this->get($coroutineName, -1);
-
-			return $client;
-		}
-
-		if ($this->size($coroutineName) < 1) {
-			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
+		if ($this->hasCreate[$coroutineName] > $this->max) {
+			return $this->get($coroutineName)[1];
 		}
 		return $this->getByChannel($coroutineName, $config);
 	}
@@ -227,11 +218,8 @@ class Connection extends Pool
 	 */
 	private function nowClient($coroutineName, $config)
 	{
-		if ($this->size($coroutineName) > 0) {
-			return $this->getByChannel($coroutineName, $config);
-		}
-		$client = $this->createConnect($config['cds'], $config['username'], $config['password']);
 		$this->success('create db client -> ' . $config['cds'] . ':' . $this->size($coroutineName));
+		$client = $this->createConnect($config['cds'], $config['username'], $config['password']);
 		if (isset(Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()])) {
 			$number = Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()];
 			$number > 0 && $client->beginTransaction();
