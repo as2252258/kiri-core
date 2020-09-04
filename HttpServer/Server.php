@@ -71,7 +71,7 @@ class Server extends Application
 		$annotation->register('http', Annotation::class);
 		$annotation->register('websocket', AWebsocket::class);
 
-		$this->enableCoroutine((bool)Config::get('enable_coroutine'));
+		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
 		foreach ($this->sortServers($configs) as $server) {
 			$this->create($server);
 		}
@@ -101,7 +101,7 @@ class Server extends Application
 	 */
 	private function enableCoroutine($isEnable = true)
 	{
-		if ($isEnable !== true) {
+		if (!$isEnable) {
 			return;
 		}
 		Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
