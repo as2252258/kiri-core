@@ -128,7 +128,7 @@ abstract class Pool extends Component
 	public function push($name, $client)
 	{
 		$this->_items[$name]->push([time(), $client]);
-		unset($client);
+		$this->debug('release connect.' . $this->hasItem($name));
 	}
 
 
