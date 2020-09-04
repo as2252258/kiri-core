@@ -60,7 +60,7 @@ class Redis extends Pool
 			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
 			return $this->saveClient($coroutineName, $this->createConnect($config));
 		}
-		[$time, $client] = $this->get($coroutineName, -1);
+		[$time, $client] = $this->get($coroutineName);
 		if ($client === null) {
 			return $this->getByChannel($coroutineName, $config);
 		}

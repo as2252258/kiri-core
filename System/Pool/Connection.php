@@ -190,7 +190,7 @@ class Connection extends Pool
 	 */
 	public function getByChannel($coroutineName, $config)
 	{
-		[$time, $client] = $this->get($coroutineName, -1);
+		[$time, $client] = $this->get($coroutineName);
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}
