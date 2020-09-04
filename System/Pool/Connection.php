@@ -160,10 +160,10 @@ class Connection extends Pool
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
 		[$timeout, $connection] = $client = $this->get($coroutineName);
-		if (!($connection instanceof PDO)) {
-			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
+		if ($connection instanceof PDO) {
+			return $this->saveClient($coroutineName, $connection);
 		}
-		return $this->saveClient($coroutineName, $connection);
+		return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 	}
 
 

@@ -219,7 +219,6 @@ class Command extends Component
 	private function execute($type, $isInsert = null, $hasAutoIncrement = true)
 	{
 		try {
-			$time = microtime(true);
 			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
@@ -228,8 +227,6 @@ class Command extends Component
 			if ($this->prepare instanceof PDOStatement) {
 				$this->prepare->closeCursor();
 			}
-			$time = round(microtime(true) - $time, 6);
-			$this->debug($this->sql . ' Run-Time:' . $time);
 		} catch (\Throwable | Exception $exception) {
 			$this->error($this->sql . '. error: ' . $exception->getMessage());
 			$result = null;
