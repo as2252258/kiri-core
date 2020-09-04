@@ -54,7 +54,8 @@ abstract class Pool extends Component
 		} else {
 			$client = $this->_items[$name]->pop();
 		}
-		if (!$this->checkCanUse($name, ...$client)) {
+		[$timeout, $connection] = $client;
+		if (!$this->checkCanUse($name, $timeout, $connection)) {
 			unset($client);
 			return [0, null];
 		} else {
