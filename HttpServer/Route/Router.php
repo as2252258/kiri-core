@@ -6,6 +6,7 @@ namespace HttpServer\Route;
 use Closure;
 use Exception;
 use HttpServer\Http\Context;
+use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
@@ -46,14 +47,14 @@ class Router extends Application implements RouterInterface
 	 */
 	public function addRoute($path, $handler, $method = 'any')
 	{
-		if (!isset($this->nodes[$method])) {
-			$this->nodes[$method] = [];
+		if (!isset($this->nodes[$path])) {
+			$this->nodes[$path] = [];
 		}
 		list($first, $explode) = $this->split($path);
-		$parent = $this->nodes[$method][$first] ?? null;
+		$parent = $this->nodes[$first] ?? null;
 		if (empty($parent)) {
 			$parent = $this->NodeInstance($first, 0, $method);
-			$this->nodes[$method][$first] = $parent;
+			$this->nodes[$first] = $parent;
 		}
 		if ($first !== '/') {
 			$parent = $this->bindNode($parent, $explode, $method);
@@ -220,7 +221,7 @@ class Router extends Application implements RouterInterface
 		$node->childes = [];
 		$node->path = $value;
 		$node->index = $index;
-		$node->method = $method;
+		$node->method = [$method];
 
 		$name = array_column($this->groupTacks, 'namespace');
 
@@ -294,17 +295,16 @@ class Router extends Application implements RouterInterface
 
 	/**
 	 * @param array $explode
-	 * @param $method
 	 * @return Node|null
 	 * 查找指定路由
 	 */
-	public function tree_search($explode, $method)
+	public function tree_search($explode)
 	{
 		if (empty($explode)) {
-			return $this->nodes[$method]['/'] ?? null;
+			return $this->nodes['/'] ?? null;
 		}
 		$first = array_shift($explode);
-		if (!($parent = $this->nodes[$method][$first] ?? null)) {
+		if (!($parent = $this->nodes[$first] ?? null)) {
 			return null;
 		}
 		if (empty($explode)) {
@@ -357,7 +357,7 @@ class Router extends Application implements RouterInterface
 				if ($_node->path == '/') {
 					continue;
 				}
-				$path = strtoupper($_node->method) . ' : ' . $_node->path;
+				$path = strtoupper(implode('_', $_node->method)) . ' : ' . $_node->path;
 				if (!empty($_node->childes)) {
 					$path = $this->readByChild($_node->childes, $path);
 				}
@@ -408,7 +408,7 @@ class Router extends Application implements RouterInterface
 			} else {
 				[$first, $route] = explode(' : ', $paths);
 
-				$newPath[] = strtoupper($item->method) . ' : ' . $route . '/' . $item->path;
+				$newPath[] = strtoupper(implode('_', $item->method)) . ' : ' . $route . '/' . $item->path;
 			}
 
 		}
@@ -421,14 +421,15 @@ class Router extends Application implements RouterInterface
 	 */
 	public function dispatch()
 	{
+		/** @var Request $request */
 		$request = Context::getContext('request');
 		if (!($node = $this->find_path($request))) {
 			return JSON::to(404, 'Page not found.');
 		}
+		if (!in_array($request->getMethod(), $node->method)) {
+			return JSON::to(405, 'Page not found.');
+		}
 		if (empty($node->callback)) {
-			if (!empty($node->getError())) {
-				return JSON::to(500, $node->getError());
-			}
 			return JSON::to(404, 'Page not found.');
 		}
 		return call_user_func($node->callback, $request);
@@ -440,14 +441,14 @@ class Router extends Application implements RouterInterface
 	 */
 	private function find_path($request)
 	{
-		$node = $this->tree_search($request->getExplode(), $request->getMethod());
+		$node = $this->tree_search($request->getExplode());
 		if ($node instanceof Node) {
 			return $node;
 		}
 		if (!$request->isOption) {
 			return null;
 		}
-		$node = $this->tree_search(['*'], $request->getMethod());
+		$node = $this->tree_search(['*']);
 		if (!($node instanceof Node)) {
 			return null;
 		}
