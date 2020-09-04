@@ -427,10 +427,10 @@ class Router extends Application implements RouterInterface
 			return JSON::to(404, 'Page not found.');
 		}
 		if (!in_array($request->getMethod(), $node->method)) {
-			return JSON::to(405, 'Page not found.');
+			return JSON::to(405, 'Method not allowed.');
 		}
 		if (empty($node->callback)) {
-			return JSON::to(404, 'Page not found.');
+			return JSON::to(404, 'Method does not exist.');
 		}
 		return call_user_func($node->callback, $request);
 	}
