@@ -266,7 +266,7 @@ class Connection extends Pool
 	{
 		try {
 			if ($time + 60 * 10 > time()) {
-				return $result = false;
+				return $result = true;
 			}
 			if (empty($connect) || !($connect instanceof PDO)) {
 				return $result = false;
