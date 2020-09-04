@@ -113,14 +113,14 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			return;
 		}
 
-		$explode = explode(',', $annotation[1][2]);
-		foreach ($explode as $middleware) {
-			$middleware = 'App\Http\Interceptor\\' . $middleware;
-			if (!class_exists($middleware)) {
-				continue;
-			}
-			$node->addMiddleware($middleware);
-		}
+//		$explode = explode(',', $annotation[1][2]);
+//		foreach ($explode as $middleware) {
+//			$middleware = 'App\Http\Interceptor\\' . $middleware;
+//			if (!class_exists($middleware)) {
+//				continue;
+//			}
+//		}
+		$node->addMiddleware($annotation);
 
 	}
 
@@ -136,10 +136,10 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			return;
 		}
 
-		$explode = explode(',', $annotation[1][2]);
-		foreach ($explode as $middleware) {
-			$node->addInterceptor($middleware);
-		}
+//		$explode = explode(',', $annotation[1][2]);
+//		foreach ($explode as $middleware) {
+//		}
+		$node->addInterceptor($annotation);
 
 	}
 
