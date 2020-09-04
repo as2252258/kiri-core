@@ -157,10 +157,12 @@ class Connection extends Pool
 			return Context::getContext($coroutineName);
 		}
 		if ($this->size($coroutineName) < 1 && $this->hasCreate[$coroutineName] < $this->max) {
-			$this->info('client has create :' . ($this->hasCreate[$coroutineName] ?? 0) . ':' . $this->max);
 			$this->push($coroutineName, $this->nowClient($coroutineName, $config));
 		}
-		return $this->get($coroutineName)[1];
+		if (!(($client = $this->get($coroutineName)[1]) instanceof PDO)) {
+			throw new Exception('Connection pool overflow.');
+		}
+		return $this->saveClient($coroutineName, $this->get($coroutineName)[1]);
 	}
 
 
