@@ -40,7 +40,7 @@ class Redis extends Pool
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		} else if (!$this->hasItem($coroutineName)) {
-			$this->success('create redis client -> ' . $config['host'] . ':' . $this->hasLength($coroutineName));
+			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
 			return $this->saveClient($coroutineName, $this->createConnect($config));
 		}
 		return $this->getByChannel($coroutineName, $config);
@@ -55,9 +55,9 @@ class Redis extends Pool
 	 */
 	public function getByChannel($coroutineName, $config)
 	{
-		$this->info('redis client has :' . $this->hasLength($coroutineName));
+		$this->info('redis client has :' . $this->size($coroutineName));
 		if (!$this->hasItem($coroutineName)) {
-			$this->success('create redis client -> ' . $config['host'] . ':' . $this->hasLength($coroutineName));
+			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
 			return $this->saveClient($coroutineName, $this->createConnect($config));
 		}
 		[$time, $client] = $this->get($coroutineName, -1);

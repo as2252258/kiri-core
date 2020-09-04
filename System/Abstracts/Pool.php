@@ -109,7 +109,7 @@ abstract class Pool extends Component
 	 */
 	public function hasItem($name)
 	{
-		return $this->hasLength($name) > 0;
+		return $this->size($name) > 0;
 	}
 
 
@@ -117,7 +117,7 @@ abstract class Pool extends Component
 	 * @param $name
 	 * @return mixed
 	 */
-	public function hasLength($name)
+	public function size($name)
 	{
 		if (!isset($this->_items[$name])) {
 			return 0;

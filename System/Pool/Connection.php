@@ -149,7 +149,7 @@ class Connection extends Pool
 		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
-		} else if (!$this->hasItem($coroutineName)) {
+		} else if ($this->size($coroutineName) < 1) {
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		} else {
 			return $this->getByChannel($coroutineName, $config);
@@ -165,10 +165,10 @@ class Connection extends Pool
 	 */
 	public function fill($name, $config)
 	{
-		if ($this->hasLength($name) >= 10) {
+		if ($this->size($name) >= 10) {
 			return $this;
 		}
-		for ($i = 0; $i < 10 - $this->hasLength($name); $i++) {
+		for ($i = 0; $i < 10 - $this->size($name); $i++) {
 			$this->push($name, $this->createConnect($config['cds'], $config['username'], $config['password']));
 		}
 		return $this;
@@ -182,13 +182,13 @@ class Connection extends Pool
 	 */
 	public function getByChannel($coroutineName, $config)
 	{
-		$this->info('client has :' . $this->hasLength($coroutineName));
+		$this->info('client has :' . $this->size($coroutineName));
 		[$time, $client] = $this->get($coroutineName, -1);
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}
 		unset($client);
-		if (!$this->hasItem($coroutineName)) {
+		if ($this->hasItem($coroutineName) < 1) {
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
 		return $this->getByChannel($coroutineName, $config);
@@ -215,7 +215,7 @@ class Connection extends Pool
 	private function nowClient($coroutineName, $config)
 	{
 		$client = $this->createConnect($config['cds'], $config['username'], $config['password']);
-		$this->success('create db client -> ' . $config['cds'] . ':' . $this->hasLength($coroutineName));
+		$this->success('create db client -> ' . $config['cds'] . ':' . $this->size($coroutineName));
 		if (isset(Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()])) {
 			$number = Context::getContext('begin_' . $coroutineName)[Coroutine::getCid()];
 			$number > 0 && $client->beginTransaction();
