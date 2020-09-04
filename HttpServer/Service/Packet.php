@@ -4,13 +4,9 @@
 namespace HttpServer\Service;
 
 
-use Exception;
 use HttpServer\Service\Abstracts\Tcp;
 use ReflectionException;
-use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
-use Swoole\Server;
 
 /**
  * Class OnPacket
