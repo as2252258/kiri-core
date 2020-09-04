@@ -265,9 +265,9 @@ class Connection extends Pool
 	public function checkCanUse($name, $time, $connect)
 	{
 		try {
-//			if ($time + 60 * 10 < time()) {
-//				return $result = false;
-//			}
+			if ($time + 60 * 10 > time()) {
+				return $result = false;
+			}
 			if (empty($connect) || !($connect instanceof PDO)) {
 				return $result = false;
 			}
