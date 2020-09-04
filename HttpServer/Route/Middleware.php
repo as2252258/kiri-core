@@ -49,16 +49,13 @@ class Middleware
 	 */
 	public function getGenerate($node)
 	{
-		foreach ($node->handler as $key => $value) {
-			$last = function ($passable) use ($node) {
-				return Dispatch::create($node->handler, $passable)->dispatch();
-			};
-			$middleWares = $this->annotation($node);
-			$data = array_reduce(array_reverse($middleWares), $this->core(), $last);
-			$this->middleWares = [];
-			$node->callback[$key] = $data;
-		}
-		return $node;
+		$last = function ($passable) use ($node) {
+			return Dispatch::create($node->handler, $passable)->dispatch();
+		};
+		$middleWares = $this->annotation($node);
+		$data = array_reduce(array_reverse($middleWares), $this->core(), $last);
+		$this->middleWares = [];
+		return $node->callback = $data;
 	}
 
 

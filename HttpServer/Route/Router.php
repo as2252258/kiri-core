@@ -103,32 +103,6 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @param int $port
-	 * @return Node|mixed|null
-	 */
-	public function gRpc($route, $handler, $port = 33007)
-	{
-		$route = ltrim($route, '/');
-		if (!empty($port)) {
-			$route = $port . '/' . $route;
-		}
-		return $this->addRoute($route, $handler, 'grpc');
-	}
-
-
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|mixed|null
-	 */
-	public function task($route, $handler)
-	{
-		return $this->addRoute($route, $handler, 'Task');
-	}
-
-	/**
-	 * @param $route
-	 * @param $handler
 	 * @return mixed|Node|null
 	 * @throws
 	 */
