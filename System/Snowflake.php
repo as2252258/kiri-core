@@ -6,6 +6,7 @@ namespace Snowflake;
 
 use Exception;
 use ReflectionException;
+use Snowflake\Abstracts\Config;
 use Snowflake\Di\Container;
 use Snowflake\Exception\NotFindClassException;
 use Swoole\Coroutine;
@@ -91,7 +92,8 @@ class Snowflake
 	 */
 	public static function getStoragePath()
 	{
-		$path = realpath(static::$service->storage);
+		$default = APP_PATH . 'storage' . DIRECTORY_SEPARATOR;
+		$path = Config::get('storage', false, $default);
 		if (!is_dir($path)) {
 			mkdir($path);
 		}
