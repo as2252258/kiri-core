@@ -18,7 +18,7 @@ abstract class Pool extends Component
 	/** @var Channel[] */
 	private $_items = [];
 
-	public $max = 60;
+	protected $max = 60;
 
 	private $is_ticker = false;
 
@@ -35,6 +35,7 @@ abstract class Pool extends Component
 			return;
 		}
 		$this->_items[$name] = new Channel($max);
+		$this->max = $max;
 	}
 
 	/**
@@ -53,7 +54,7 @@ abstract class Pool extends Component
 		} else {
 			$client = $this->_items[$name]->pop();
 		}
-		if (!$this->checkCanUse(...$client)) {
+		if (!$this->checkCanUse($name, ...$client)) {
 			unset($client);
 			return [0, null];
 		} else {
@@ -73,13 +74,14 @@ abstract class Pool extends Component
 
 
 	/**
+	 * @param $name
 	 * @param $time
 	 * @param $client
 	 * @return mixed
 	 * 检查连接可靠性
 	 * @throws Exception
 	 */
-	public function checkCanUse($time, $client)
+	public function checkCanUse($name, $time, $client)
 	{
 		throw new Exception('Undefined system processing function.');
 	}

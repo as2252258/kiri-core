@@ -22,6 +22,9 @@ class Connection extends Pool
 	/** @var PDO[] */
 	protected $connections = [];
 
+
+	private $creates = 0;
+
 	/**
 	 * @param $timeout
 	 */
@@ -170,6 +173,7 @@ class Connection extends Pool
 		}
 		for ($i = 0; $i < 10 - $this->size($name); $i++) {
 			$this->push($name, $this->createConnect($config['cds'], $config['username'], $config['password']));
+			$this->incr($name);
 		}
 		return $this;
 	}
@@ -187,7 +191,13 @@ class Connection extends Pool
 		if ($client instanceof PDO) {
 			return $this->saveClient($coroutineName, $client);
 		}
+
 		unset($client);
+		if (($this->hasCreate[$coroutineName] ?? 0) >= $this->max) {
+			[$time, $client] = $this->get($coroutineName, -1);
+
+			return $client;
+		}
 		if ($this->hasItem($coroutineName) < 1) {
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
@@ -243,6 +253,7 @@ class Connection extends Pool
 		}
 		$this->push($coroutineName, $client);
 		$this->remove($coroutineName);
+		$this->desc($coroutineName);
 	}
 
 
@@ -274,6 +285,7 @@ class Connection extends Pool
 			$this->push($name, $connection);
 			$this->remove($name);
 		}
+		$this->hasCreate = [];
 	}
 
 
@@ -286,25 +298,30 @@ class Connection extends Pool
 	}
 
 	/**
+	 * @param $name
 	 * @param $time
 	 * @param $connect
 	 * @return bool
 	 */
-	public function checkCanUse($time, $connect)
+	public function checkCanUse($name, $time, $connect)
 	{
 		try {
 			if ($time + 60 * 10 < time()) {
-				return false;
+				return $result = false;
 			}
 			if (empty($connect) || !($connect instanceof PDO)) {
-				return false;
+				return $result = false;
 			}
 			if (!$connect->getAttribute(PDO::ATTR_SERVER_INFO)) {
-				return false;
+				return $result = false;
 			}
-			return true;
+			return $result = true;
 		} catch (\Swoole\Error | \Throwable $exception) {
-			return false;
+			return $result = false;
+		} finally {
+			if (!$result) {
+				$this->desc($name);
+			}
 		}
 	}
 

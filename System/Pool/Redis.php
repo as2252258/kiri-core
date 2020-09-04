@@ -145,23 +145,32 @@ class Redis extends Pool
 	}
 
 	/**
+	 * @param $name
 	 * @param $time
 	 * @param $client
 	 * @return bool|mixed
-	 * @throws RedisException
+	 * @throws Exception
 	 */
-	public function checkCanUse($time, $client)
+	public function checkCanUse($name, $time, $client)
 	{
-		if ($time + 60 * 10 < time()) {
-			return false;
+		try {
+			if ($time + 60 * 10 < time()) {
+				return $result = false;
+			}
+			if (!($client instanceof SRedis)) {
+				return $result = false;
+			}
+			if (!$client->isConnected() || !$client->ping('connect.')) {
+				return $result = false;
+			}
+			return $result = true;
+		} catch (Exception $exception) {
+			return $result = false;
+		} finally {
+			if (!$result) {
+				$this->desc($name);
+			}
 		}
-		if (!($client instanceof SRedis)) {
-			return false;
-		}
-		if (!$client->isConnected() || !$client->ping('connect.')) {
-			return false;
-		}
-		return true;
 	}
 
 	public function desc($name)
