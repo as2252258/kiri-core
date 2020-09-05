@@ -27,15 +27,6 @@ class Connection extends Pool
 	private $creates = 0;
 
 
-	public function init()
-	{
-		if ($this->creates) {
-			Timer::clear($this->creates);
-		}
-		Timer::tick(10000, [$this, 'Heartbeat_detection']);
-	}
-
-
 	public $lastTime = 0;
 
 	/**
@@ -197,6 +188,9 @@ class Connection extends Pool
 	 */
 	public function getConnection(array $config, $isMaster = false)
 	{
+		if ($this->creates === 0) {
+			Timer::tick(10000, [$this, 'Heartbeat_detection']);
+		}
 		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
 		if (!isset($this->hasCreate[$coroutineName])) {
 			$this->hasCreate[$coroutineName] = 0;
