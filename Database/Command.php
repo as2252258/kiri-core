@@ -240,7 +240,7 @@ class Command extends Component
 		if (!($connection = $this->initPDOStatement())) {
 			return false;
 		}
-		if (($result = $this->prepare->execute($this->prepare)) === false) {
+		if (($result = $this->prepare->execute($this->params)) === false) {
 			return $this->addError($connection->errorInfo()[2]);
 		}
 		if (!$isInsert) {
