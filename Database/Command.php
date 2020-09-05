@@ -41,24 +41,6 @@ class Command extends Component
 	/** @var PDOStatement */
 	private $prepare;
 
-	/**
-	 * 重新构建
-	 * @throws
-	 */
-	private function initPDOStatement()
-	{
-		if (empty($this->sql)) {
-			return null;
-		}
-		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
-			return null;
-		}
-		$this->prepare = $connect->prepare($this->sql);
-		if (!($this->prepare instanceof PDOStatement)) {
-			return $this->addError($this->sql . ':' . $this->getError());
-		}
-		return $this->prepare;
-	}
 
 	/**
 	 * @return bool|PDOStatement
@@ -255,21 +237,41 @@ class Command extends Component
 	 */
 	private function insert_or_change($isInsert, $hasAutoIncrement)
 	{
-		if (!$this->initPDOStatement()) {
+		if (!($connection = $this->initPDOStatement())) {
 			return false;
 		}
-		$this->bind($this->prepare);
-		if (($result = $this->prepare->execute()) === false) {
-			return $this->addErrorLog();
+		if (($result = $this->prepare->execute($this->prepare)) === false) {
+			return $this->addError($connection->errorInfo()[2]);
 		}
 		if (!$isInsert) {
 			return true;
 		}
-		$result = $this->connection->lastInsertId();
+		$result = $connection->lastInsertId();
 		if ($result == 0 && $hasAutoIncrement) {
-			return $this->addErrorLog();
+			return $this->addError($connection->errorInfo()[2]);
 		}
 		return $result;
+	}
+
+
+
+	/**
+	 * 重新构建
+	 * @throws
+	 */
+	private function initPDOStatement()
+	{
+		if (empty($this->sql)) {
+			return null;
+		}
+		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
+			return null;
+		}
+		$this->prepare = $connect->prepare($this->sql);
+		if (!($this->prepare instanceof PDOStatement)) {
+			return $this->addError($this->sql . ':' . $this->getError());
+		}
+		return $connect;
 	}
 
 	/**
