@@ -49,23 +49,25 @@ class Connection extends Pool
 			return;
 		}
 		if ($this->lastTime + 600 < time()) {
-			$channels = $this->getChannels();
-			foreach ($channels as $name => $channel) {
-				while ($channel->length() > 0) {
-					$channel->pop();
-					$this->desc($name);
-				}
-			}
+			$this->flush(1);
 		} else if ($this->lastTime + 500 < time()) {
-			$channels = $this->getChannels();
-			foreach ($channels as $name => $channel) {
-				while ($channel->length() > 5) {
-					$channel->pop();
-					$this->desc($name);
-				}
+			$this->flush(5);
+		}
+	}
+
+
+	/**
+	 * @param $retain_number
+	 */
+	protected function flush($retain_number)
+	{
+		$channels = $this->getChannels();
+		foreach ($channels as $name => $channel) {
+			while ($channel->length() > $retain_number) {
+				$channel->pop();
+				$this->desc($name);
 			}
 		}
-
 	}
 
 
