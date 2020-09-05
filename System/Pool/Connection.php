@@ -189,7 +189,7 @@ class Connection extends Pool
 	public function getConnection(array $config, $isMaster = false)
 	{
 		if ($this->creates === 0) {
-			Timer::tick(10000, [$this, 'Heartbeat_detection']);
+			$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
 		}
 		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
 		if (!isset($this->hasCreate[$coroutineName])) {
