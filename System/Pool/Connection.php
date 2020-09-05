@@ -32,7 +32,7 @@ class Connection extends Pool
 		if ($this->creates) {
 			Timer::clear($this->creates);
 		}
-		Timer::tick(30000, [$this, 'Heartbeat_detection']);
+		Timer::tick(10000, [$this, 'Heartbeat_detection']);
 	}
 
 
@@ -44,6 +44,7 @@ class Connection extends Pool
 	public function Heartbeat_detection($timer)
 	{
 		$this->creates = $timer;
+		$this->debug('Db Heartbeat detection ' . var_export($this->hasCreate, true));
 		if ($this->lastTime == 0) {
 			return;
 		}
