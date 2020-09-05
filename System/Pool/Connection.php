@@ -41,7 +41,7 @@ class Connection extends Pool
 		}
 		if ($this->lastTime + 600 < time()) {
 			$this->flush(1);
-		} else if ($this->lastTime + 500 < time()) {
+		} else if ($this->lastTime + 300 < time()) {
 			$this->flush(5);
 		}
 	}
