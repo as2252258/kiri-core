@@ -40,9 +40,9 @@ class Connection extends Pool
 			return;
 		}
 		if ($this->lastTime + 600 < time()) {
-			$this->flush(1);
+			$this->flush(0);
 		} else if ($this->lastTime + 300 < time()) {
-			$this->flush(5);
+			$this->flush(2);
 		}
 	}
 
@@ -55,7 +55,10 @@ class Connection extends Pool
 		$channels = $this->getChannels();
 		foreach ($channels as $name => $channel) {
 			while ($channel->length() > $retain_number) {
-				$channel->pop();
+				[$timer, $connection] = $channel->pop();
+				if ($connection) {
+					unset($connection);
+				}
 				$this->desc($name);
 			}
 		}
