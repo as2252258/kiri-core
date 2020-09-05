@@ -66,13 +66,14 @@ class Connection extends Pool
 		if (!Context::hasContext('begin_' . $coroutineName)) {
 			Context::setContext('begin_' . $coroutineName, 0);
 		}
-		if (Context::getContext('begin_' . $coroutineName) === 0) {
-			$connection = Context::getContext($coroutineName);
-			if ($connection instanceof PDO && !$connection->inTransaction()) {
-				$connection->beginTransaction();
-			}
-		}
 		Context::autoIncr('begin_' . $coroutineName);
+		if (!Context::getContext('begin_' . $coroutineName) !== 0) {
+			return;
+		}
+		$connection = Context::getContext($coroutineName);
+		if ($connection instanceof PDO && !$connection->inTransaction()) {
+			$connection->beginTransaction();
+		}
 	}
 
 	/**
@@ -88,12 +89,13 @@ class Connection extends Pool
 			return;
 		}
 		$connection = Context::getContext($coroutineName);
-		if ($connection instanceof PDO) {
-			if ($connection->inTransaction()) {
-				$this->info('connection commit.');
-				$connection->commit();
-			}
-			Context::setContext('begin_' . $coroutineName, 0);
+		if (!($connection instanceof PDO)) {
+			return;
+		}
+		Context::setContext('begin_' . $coroutineName, 0);
+		if ($connection->inTransaction()) {
+			$this->info('connection commit.');
+			$connection->commit();
 		}
 	}
 
