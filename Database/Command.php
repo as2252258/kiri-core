@@ -41,18 +41,6 @@ class Command extends Component
 	/** @var PDOStatement */
 	private $prepare;
 
-	/** @var PDO $connection */
-	private $connection;
-
-	/**
-	 * @return PDO
-	 * @throws Exception
-	 */
-	private function getConnection()
-	{
-		return $this->connection = $this->db->getConnect($this->sql);
-	}
-
 	/**
 	 * 重新构建
 	 * @throws
@@ -60,15 +48,16 @@ class Command extends Component
 	private function initPDOStatement()
 	{
 		if (empty($this->sql)) {
-			return;
+			return null;
 		}
-		if (!(($connect = $this->getConnection()) instanceof PDO)) {
-			throw new Exception('数据库繁忙, 请稍后再试!');
+		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
+			return null;
 		}
 		$this->prepare = $connect->prepare($this->sql);
 		if (!($this->prepare instanceof PDOStatement)) {
-			throw new Exception($this->sql . ':' . $this->getError());
+			return $this->addError($this->sql . ':' . $this->getError());
 		}
+		return $this->prepare;
 	}
 
 	/**
@@ -242,15 +231,18 @@ class Command extends Component
 	 */
 	private function search($type)
 	{
-		$connect = $this->getConnection()->query($this->sql);
+		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
+			return null;
+		}
+		if (!($query = $connect->query($this->sql))) return null;
 		if ($type === static::ROW_COUNT) {
-			$result = $connect->rowCount();
+			$result = $query->rowCount();
 		} else if ($type === static::FETCH_COLUMN) {
-			$result = $connect->fetchColumn();
+			$result = $query->fetchColumn();
 		} else if ($type === static::FETCH_ALL) {
-			$result = $connect->fetchAll(PDO::FETCH_ASSOC);
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 		} else {
-			$result = $connect->fetch(PDO::FETCH_ASSOC);
+			$result = $query->fetch(PDO::FETCH_ASSOC);
 		}
 		return $result;
 	}
@@ -263,7 +255,9 @@ class Command extends Component
 	 */
 	private function insert_or_change($isInsert, $hasAutoIncrement)
 	{
-		$this->initPDOStatement();
+		if (!$this->initPDOStatement()) {
+			return false;
+		}
 		$this->bind($this->prepare);
 		if (($result = $this->prepare->execute()) === false) {
 			return $this->addErrorLog();
