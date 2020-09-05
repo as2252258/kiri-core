@@ -126,7 +126,6 @@ abstract class Pool extends Component
 	{
 		$this->_items[$name]->push([time(), $client]);
 		unset($client);
-		$this->debug('release connect.' . $this->max . ':' . $this->size($name));
 	}
 
 
@@ -138,9 +137,20 @@ abstract class Pool extends Component
 		if (!isset($this->_items[$name])) {
 			return;
 		}
-		while ([$time, $client] = $this->_items[$name]->pop(0.001)) {
+		$channel = $this->_items[$name];
+		while ([$time, $client] = $channel->pop(0.001)) {
 			unset($client);
 		}
 	}
+
+
+	/**
+	 * @return Channel[]
+	 */
+	protected function getChannels()
+	{
+		return $this->_items;
+	}
+
 
 }

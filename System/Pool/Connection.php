@@ -7,6 +7,7 @@ use PDO;
 use Exception;
 use Swoole\Coroutine;
 use Snowflake\Abstracts\Pool;
+use Swoole\Timer;
 
 /**
  * Class Connection
@@ -24,6 +25,48 @@ class Connection extends Pool
 
 
 	private $creates = 0;
+
+
+	public function init()
+	{
+		if ($this->creates) {
+			Timer::clear($this->creates);
+		}
+		Timer::tick(30000, [$this, 'Heartbeat_detection']);
+	}
+
+
+	public $lastTime = 0;
+
+	/**
+	 * @param $timer
+	 */
+	public function Heartbeat_detection($timer)
+	{
+		$this->creates = $timer;
+		if ($this->lastTime == 0) {
+			return;
+		}
+		if ($this->lastTime + 600 < time()) {
+			$channels = $this->getChannels();
+			foreach ($channels as $name => $channel) {
+				while ($channel->length() > 0) {
+					$channel->pop();
+					$this->desc($name);
+				}
+			}
+		} else if ($this->lastTime + 500 < time()) {
+			$channels = $this->getChannels();
+			foreach ($channels as $name => $channel) {
+				while ($channel->length() > 5) {
+					$channel->pop();
+					$this->desc($name);
+				}
+			}
+		}
+
+	}
+
 
 	/**
 	 * @param $timeout
@@ -158,7 +201,6 @@ class Connection extends Pool
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		}
-//		if ($this->size($coroutineName) < 1) {
 		if ($this->size($coroutineName) < 1 && $this->hasCreate[$coroutineName] < $this->max) {
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
@@ -216,6 +258,7 @@ class Connection extends Pool
 		}
 		$this->push($coroutineName, $client);
 		$this->remove($coroutineName);
+		$this->lastTime = time();
 	}
 
 
