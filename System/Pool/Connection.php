@@ -54,13 +54,27 @@ class Connection extends Pool
 	{
 		$channels = $this->getChannels();
 		foreach ($channels as $name => $channel) {
-			while ($channel->length() > $retain_number) {
-				[$timer, $connection] = $channel->pop();
-				if ($connection) {
-					unset($connection);
-				}
-				$this->desc($name);
+			$this->pop($channel, $name, $retain_number);
+		}
+		if ($retain_number == 0) {
+			Timer::clear($this->creates);
+		}
+	}
+
+
+	/**
+	 * @param $channel
+	 * @param $name
+	 * @param $retain_number
+	 */
+	protected function pop($channel, $name, $retain_number)
+	{
+		while ($channel->length() > $retain_number) {
+			[$timer, $connection] = $channel->pop();
+			if ($connection) {
+				unset($connection);
 			}
+			$this->desc($name);
 		}
 	}
 
