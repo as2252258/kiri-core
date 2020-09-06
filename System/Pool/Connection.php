@@ -307,6 +307,7 @@ class Connection extends Pool
 			$this->remove($name);
 		}
 		$this->hasCreate = [];
+		$this->creates = 0;
 	}
 
 
