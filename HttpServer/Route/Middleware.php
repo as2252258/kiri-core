@@ -63,13 +63,30 @@ class Middleware
 	 * @param Node $node
 	 * @return array
 	 */
-	public function annotation($node)
+	protected function annotation($node)
 	{
 		$middleWares = $this->middleWares;
 		if (!$node->hasInterceptor()) {
-			return $middleWares;
+			return $this->annotation_limit($node, $middleWares);
 		}
 		foreach ($node->getInterceptor() as $item) {
+			$middleWares[] = $item[0];
+		}
+		return $this->annotation_limit($node, $middleWares);
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $middleWares
+	 * @return array
+	 */
+	protected function annotation_limit($node, $middleWares)
+	{
+		if (!$node->hasLimits()) {
+			return $middleWares;
+		}
+		foreach ($node->getLimits() as $item) {
 			$middleWares[] = $item[0];
 		}
 		return $middleWares;

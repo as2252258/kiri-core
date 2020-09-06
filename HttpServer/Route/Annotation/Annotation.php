@@ -82,6 +82,9 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			case 'Middleware':
 				$this->bindMiddleware($node, $annotation);
 				break;
+			case 'Limits':
+				$this->bindLimits($node, $annotation);
+				break;
 		}
 	}
 
@@ -141,6 +144,27 @@ class Annotation extends \Snowflake\Annotation\Annotation
 		foreach ($explode as $middleware) {
 			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
 			$node->addInterceptor($this->pop($this->getName(...$params)));
+		}
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $annotation
+	 * @throws
+	 */
+	private function bindLimits($node, $annotation)
+	{
+		if (!isset($annotation[1][2])) {
+			return;
+		}
+
+		$explode = explode(',', $annotation[1][2]);
+
+		[$keyName, $matchs] = $annotation;
+		foreach ($explode as $middleware) {
+			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
+			$node->addLimits($this->pop($this->getName(...$params)));
 		}
 	}
 
