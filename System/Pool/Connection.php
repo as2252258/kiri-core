@@ -58,6 +58,7 @@ class Connection extends Pool
 		}
 		if ($retain_number == 0) {
 			Timer::clear($this->creates);
+			$this->creates = 0;
 		}
 	}
 
