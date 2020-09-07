@@ -130,9 +130,8 @@ class ServerInotify extends Process
 			if ($ev['mask'] == IN_IGNORED || !in_array($ev['mask'], $eventList)) {
 				continue;
 			}
-			$fileType = strstr($ev['name'], '.');
 			//非重启类型
-			if ($fileType !== '.php') {
+			if (strstr($ev['name'], '.') !== '.php') {
 				continue;
 			}
 
@@ -212,7 +211,7 @@ class ServerInotify extends Process
 
 		$files = scandir($dir);
 		foreach ($files as $f) {
-			if ($f == '.' || $f == '..' || $f == 'runtime' || !preg_match('/\.php$/', $f)) {
+			if ($f == '.' || $f == '..' || $f == 'runtime' || !preg_match('/.*\.php/', $f)) {
 				continue;
 			}
 			$path = $dir . '/' . $f;
