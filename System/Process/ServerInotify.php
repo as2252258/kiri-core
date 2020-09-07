@@ -188,7 +188,7 @@ class ServerInotify extends Process
 			try {
 				inotify_rm_watch($this->inotify, $wd);
 			} catch (\Throwable $exception) {
-				$this->debug($exception->getMessage());
+				$this->application->debug($exception->getMessage());
 			} finally {
 				$this->watchFiles = [];
 			}
@@ -200,8 +200,8 @@ class ServerInotify extends Process
 	protected function onErrorHandler()
 	{
 		[$code, $message, $file, $line, $args] = func_get_args();
-		$this->debug('Error:' . $message);
-		$this->debug($file . ':' . $line);
+		$this->application->debug('Error:' . $message);
+		$this->application->debug($file . ':' . $line);
 	}
 
 
