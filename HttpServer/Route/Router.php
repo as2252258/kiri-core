@@ -436,7 +436,7 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		$methods = $this->nodes[$method];
-		$uri = ltrim('/', $request->headers->getHeader('request_uri'));
+		$uri = ltrim($request->headers->getHeader('request_uri'), '/');
 		if (!isset($methods[$uri])) {
 			return null;
 		}
