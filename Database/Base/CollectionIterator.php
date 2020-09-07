@@ -30,7 +30,7 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	public function current()
 	{
-		return $this->model::populate(parent::current());
+		return (clone $this->model)->setAttributes(parent::current());
 	}
 
 
