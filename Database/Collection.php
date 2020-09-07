@@ -192,23 +192,39 @@ class Collection extends AbstractCollection
 	 */
 	public function filter(array $condition)
 	{
+		$_filters = [];
 		if (empty($condition)) {
 			return $this;
 		}
-		$_filters = [];
 		foreach ($this as $value) {
-			$_value = $value;
-			if ($_value instanceof ActiveRecord) {
-				$_value = $_value->toArray();
-			}
-			$_tmp = array_intersect_key($_value, $condition);
-			if (count(array_diff_assoc($_tmp, $condition)) > 0) {
+			if (!$this->filterCheck($value, $condition)) {
 				continue;
 			}
 			$_filters[] = $value;
 		}
 		return new Collection($this->query, $_filters, $this->model);
 	}
+
+
+	/**
+	 * @param $value
+	 * @param $condition
+	 * @return bool
+	 * @throws Exception
+	 */
+	private function filterCheck($value, $condition)
+	{
+		$_value = $value;
+		if ($_value instanceof ActiveRecord) {
+			$_value = $_value->toArray();
+		}
+		$_tmp = array_intersect_key($_value, $condition);
+		if (count(array_diff_assoc($_tmp, $condition)) > 0) {
+			return false;
+		}
+		return true;
+	}
+
 
 	/**
 	 * @param $key
