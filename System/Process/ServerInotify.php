@@ -29,7 +29,6 @@ class ServerInotify extends Process
 	private $watchFiles = [];
 	private $dirs = [];
 	private $events;
-	private $outListener = [APP_PATH . '/config', APP_PATH . '/commands', APP_PATH . '/.git', APP_PATH . '/.gitee'];
 
 	private $int = -1;
 
@@ -65,14 +64,13 @@ class ServerInotify extends Process
 	public function tick()
 	{
 		$this->loadByDir(APP_PATH . 'app', true);
-		$this->loadByDir(APP_PATH . 'routes', true);
 	}
 
 
 	/**
 	 * @param $path
 	 * @param bool $isReload
-	 * @return array|void
+	 * @return void
 	 * @throws Exception
 	 */
 	private function loadByDir($path, $isReload = false)
@@ -90,15 +88,13 @@ class ServerInotify extends Process
 			$mTime = filectime($value);
 			if (!isset($this->md5Map[$md5])) {
 				if ($isReload) {
-					$this->isReloading = true;
-					return [$this, 'reload'];
+					return Timer::after(2000, [$this, 'reload']);
 				}
 				$this->md5Map[$md5] = $mTime;
 			} else {
 				if ($this->md5Map[$md5] != $mTime) {
 					if ($isReload) {
-						$this->isReloading = true;
-						return [$this, 'reload'];
+						return Timer::after(2000, [$this, 'reload']);
 					}
 					$this->md5Map[$md5] = $mTime;
 				}
@@ -127,18 +123,22 @@ class ServerInotify extends Process
 			if (empty($ev['name'])) {
 				continue;
 			}
-			if ($ev['mask'] == IN_IGNORED || !in_array($ev['mask'], $eventList)) {
+			if ($ev['mask'] == IN_IGNORED) {
 				continue;
 			}
+			if (!in_array($ev['mask'], $eventList)) {
+				continue;
+			}
+			$fileType = strstr($ev['name'], '.');
 			//非重启类型
-			if (strstr($ev['name'], '.') !== '.php') {
+			if ($fileType !== '.php') {
 				continue;
 			}
-
 			if ($this->int !== -1) {
 				return;
 			}
 			$this->int = @swoole_timer_after(2000, [$this, 'reload']);
+
 			$this->isReloading = true;
 		}
 	}
@@ -197,21 +197,29 @@ class ServerInotify extends Process
 	 */
 	public function watch($dir, $root = TRUE)
 	{
+		//目录不存在
 		if (!is_dir($dir)) {
+			throw new Exception("[$dir] is not a directory.");
+		}
+		//避免重复监听
+		if (isset($this->watchFiles[$dir])) {
 			return FALSE;
 		}
-		if (isset($this->watchFiles[$dir]) || in_array($dir, $this->outListener)) {
-			return FALSE;
-		}
+		//根目录
 		if ($root) {
 			$this->dirs[] = $dir;
 		}
+
+		if (in_array($dir, [APP_PATH . '/config', APP_PATH . '/commands', APP_PATH . '/.git', APP_PATH . '/.gitee'])) {
+			return FALSE;
+		}
+
 		$wd = @inotify_add_watch($this->inotify, $dir, $this->events);
 		$this->watchFiles[$dir] = $wd;
 
 		$files = scandir($dir);
 		foreach ($files as $f) {
-			if ($f == '.' || $f == '..' || $f == 'runtime' || !preg_match('/.*\.php/', $f)) {
+			if ($f == '.' or $f == '..' or $f == 'runtime' or preg_match('/\.txt/', $f) or preg_match('/\.sql/', $f) or preg_match('/\.log/', $f)) {
 				continue;
 			}
 			$path = $dir . '/' . $f;
@@ -220,8 +228,11 @@ class ServerInotify extends Process
 				$this->watch($path, FALSE);
 			}
 
-			$wd = @inotify_add_watch($this->inotify, $path, $this->events);
-			$this->watchFiles[$path] = $wd;
+			//检测文件类型
+			if (strstr($f, '.') == '.php') {
+				$wd = @inotify_add_watch($this->inotify, $path, $this->events);
+				$this->watchFiles[$path] = $wd;
+			}
 		}
 		return TRUE;
 	}
