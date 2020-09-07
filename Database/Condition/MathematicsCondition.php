@@ -17,57 +17,62 @@ class MathematicsCondition extends Condition
 	 */
 	public function builder()
 	{
-		$this->value = (float)$this->value;
-		return $this->{strtolower($this->type)}();
+		return $this->{strtolower($this->type)}((float)$this->value);
 	}
 
 	/**
+	 * @param $value
 	 * @return string
 	 */
-	public function eq()
+	public function eq($value)
 	{
-		return $this->column . ' = ' . $this->value;
+		return $this->column . ' = ' . $value;
 	}
 
 	/**
+	 * @param $value
 	 * @return string
 	 */
-	public function neq()
+	public function neq($value)
 	{
-		return $this->column . ' <> ' . $this->value;
+		return $this->column . ' <> ' . $value;
 	}
 
 	/**
+	 * @param $value
 	 * @return string
 	 */
-	public function gt()
+	public function gt($value)
 	{
-		return $this->column . ' > ' . $this->value;
+		return $this->column . ' > ' . $value;
 	}
 
 	/**
+	 * @param $value
 	 * @return string
 	 */
-	public function egt()
+	public function egt($value)
 	{
-		return $this->column . ' >= ' . $this->value;
+		return $this->column . ' >= ' . $value;
 	}
 
 
 	/**
+	 * @param $value
 	 * @return string
 	 */
-	public function lt()
+	public function lt($value)
 	{
-		return $this->column . ' < ' . $this->value;
+		return $this->column . ' < ' . $value;
 	}
 
 	/**
+	 * @param $value
 	 * @return string
 	 */
-	public function elt()
+	public function elt($value)
 	{
-		return $this->column . ' <= ' . $this->value;
+		return $this->column . ' <= ' . $value;
 	}
 
 }
