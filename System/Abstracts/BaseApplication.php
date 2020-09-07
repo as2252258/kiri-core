@@ -69,6 +69,7 @@ abstract class BaseApplication extends Service
 
 		$this->moreComponents();
 		$this->parseInt($config);
+		$this->parseEvents($config);
 		$this->initErrorHandler();
 		$this->enableEnvConfig();
 
@@ -160,6 +161,31 @@ abstract class BaseApplication extends Service
 			if (!is_dir($storage) || !is_writeable($storage)) {
 				throw new InitException("Directory {$storage} does not have write permission");
 			}
+		}
+	}
+
+
+	/**
+	 * @param $config
+	 *
+	 * @throws
+	 */
+	public function parseEvents($config)
+	{
+		if (!isset($config['events']) || !is_array($config['events'])) {
+			return;
+		}
+		$event = Snowflake::app()->event;
+		foreach ($config['events'] as $key => $value) {
+			if (is_string($value)) {
+				if (!class_exists($value)) {
+					throw new InitException("Class {$value} does not exists.");
+				}
+				$value = Snowflake::createObject($value);
+			} else if (is_array($value) && !is_callable($value, true)) {
+				throw new InitException("Class does not hav callback.");
+			}
+			$event->on($key, $value);
 		}
 	}
 
