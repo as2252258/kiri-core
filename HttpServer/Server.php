@@ -94,11 +94,22 @@ class Server extends Application
 		$configs = Config::get('servers', true);
 		foreach ($configs as $config) {
 			if ($this->isUse($config['port'])) {
-				return $this->error('Port ' . $config['host'] . '::' . $config['port'] . ' is already.');
+				return $this->error_stop($config['host'], $config['port']);
 			}
 		}
 		$baseServer = $this->initCore($configs);
 		$baseServer->start();
+	}
+
+
+	/**
+	 * @param $host
+	 * @param $Port
+	 * @throws Exception
+	 */
+	public function error_stop($host, $Port)
+	{
+		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
 	}
 
 
