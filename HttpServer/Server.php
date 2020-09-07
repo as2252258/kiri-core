@@ -184,18 +184,10 @@ class Server extends Application
 
 		$application = Snowflake::app();
 		foreach ($processes as $name => $process) {
-			$class = Snowflake::createObject($process);
-			if (!method_exists($class, 'onHandler')) {
-				continue;
-			}
-
 			$this->debug(sprintf('Process %s', $process));
-			$system = new Process([$class, 'onHandler'], ...[false, 1, true]);
-			if (Snowflake::isLinux()) {
-				$system->name($name);
-			}
+			$system = new $process(Snowflake::app(), $name);
 			$this->baseServer->addProcess($system);
-			$application->set(get_class($class), $system);
+			$application->set(get_class($process), $system);
 		}
 	}
 
