@@ -197,12 +197,11 @@ class ServerInotify extends Process
 	}
 
 	/**
-	 *
+	 * @param $error
 	 */
-	protected function onErrorHandler()
+	protected function onErrorHandler($error)
 	{
-		$error = func_get_args();
-		print_r($error[1] . ' ' . $error[2] . ':' . $error[3]);
+		$this->debug($error[1] . ' ' . $error[2] . ':' . $error[3]);
 	}
 
 
