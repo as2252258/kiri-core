@@ -59,6 +59,7 @@ trait Action
 				$this->close($server);
 			}
 		}
+		Snowflake::clearWorkerId();
 	}
 
 	/**
