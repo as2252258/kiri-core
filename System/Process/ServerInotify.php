@@ -212,7 +212,7 @@ class ServerInotify extends Process
 
 		$files = scandir($dir);
 		foreach ($files as $f) {
-			if ($f == '.' || $f == '..' || $f == 'runtime' || !preg_match('/\.php/', $f)) {
+			if ($f == '.' || $f == '..' || $f == 'runtime' || !preg_match('/\.php$/', $f)) {
 				continue;
 			}
 			$path = $dir . '/' . $f;
