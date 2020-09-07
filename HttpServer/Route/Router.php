@@ -49,16 +49,25 @@ class Router extends Application implements RouterInterface
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
 		}
-		list($first, $explode) = $this->split($path);
-		$parent = $this->nodes[$method][$first] ?? null;
-		if (empty($parent)) {
-			$parent = $this->NodeInstance($first, 0, $method);
-			$this->nodes[$method][$first] = $parent;
-		}
-		if ($first !== '/') {
-			$parent = $this->bindNode($parent, $explode, $method);
-		}
-		return $parent->bindHandler($handler);
+//		list($first, $explode) = $this->split($path);
+
+		$paths = array_column($this->groupTacks, 'prefix');
+		$path = implode('/', $paths) . '/' . ltrim($path, '/');
+
+
+//		$parent = $this->nodes[$method][$first] ?? null;
+
+		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
+
+
+//		if (empty($parent)) {
+//			$parent = $this->NodeInstance($first, 0, $method);
+//			$this->nodes[$method][$first] = $parent;
+//		}
+//		if ($first !== '/') {
+//			$parent = $this->bindNode($parent, $explode, $method);
+//		}
+		return $this->nodes[$method][$path]->bindHandler($handler);
 	}
 
 	/**
@@ -411,6 +420,16 @@ class Router extends Application implements RouterInterface
 	 */
 	private function find_path($request)
 	{
+		$method = $request->getMethod();
+		if (!isset($this->nodes[$method])) {
+			return null;
+		}
+		$methods = $this->nodes[$method];
+		$uri = implode('/', $request->getExplode());
+		if (!isset($methods[$uri])) {
+			return null;
+		}
+		return $this->nodes[$method][$uri];
 		$node = $this->tree_search($request->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {
 			return $node;
