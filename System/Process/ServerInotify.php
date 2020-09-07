@@ -201,6 +201,7 @@ class ServerInotify extends Process
 	 */
 	protected function onErrorHandler($error)
 	{
+		var_dump($error);
 		$this->debug($error[1] . ' ' . $error[2] . ':' . $error[3]);
 	}
 
