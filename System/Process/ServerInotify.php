@@ -177,15 +177,21 @@ class ServerInotify extends Process
 		$server->reload();
 	}
 
+
 	/**
 	 * 清理所有inotify监听
 	 */
 	public function clearWatch()
 	{
-		foreach ($this->watchFiles as $wd) {
-			@inotify_rm_watch($this->inotify, $wd);
+		try {
+			foreach ($this->watchFiles as $wd) {
+				@inotify_rm_watch($this->inotify, $wd);
+			}
+		} catch (Exception $exception) {
+			$this->debug($exception->getMessage());
+		} finally {
+			$this->watchFiles = [];
 		}
-		$this->watchFiles = [];
 	}
 
 
