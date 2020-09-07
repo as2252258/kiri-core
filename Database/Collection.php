@@ -187,13 +187,13 @@ class Collection extends AbstractCollection
 
 	/**
 	 * @param array $condition
-	 * @return Filters
+	 * @return Collection
 	 * @throws
 	 */
 	public function filter(array $condition)
 	{
 		if (empty($condition)) {
-			return new Filters($this);
+			return $this;
 		}
 		$_filters = [];
 		foreach ($this as $value) {
@@ -207,7 +207,7 @@ class Collection extends AbstractCollection
 			}
 			$_filters[] = $value;
 		}
-		return new Filters($_filters);
+		return new Collection($this->query, $_filters);
 	}
 
 	/**

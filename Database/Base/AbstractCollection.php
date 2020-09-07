@@ -27,14 +27,18 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/** @var ActiveRecord */
 	protected $model;
 
+	protected $query;
+
 	/**
 	 * Collection constructor.
 	 *
+	 * @param $query
 	 * @param array $array
 	 */
-	public function __construct(array $array = [])
+	public function __construct($query, array $array = [])
 	{
 		$this->_item = $array;
+		$this->query = $query;
 
 		parent::__construct([]);
 	}

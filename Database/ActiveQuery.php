@@ -222,7 +222,7 @@ class ActiveQuery extends Component
 			->createCommand($this->queryBuilder())
 			->all();
 
-		$collect = new Collection();
+		$collect = new Collection($this);
 		$collect->setModel($this->modelClass);
 		$collect->setItems($data);
 		if ($this->asArray) {
