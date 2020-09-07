@@ -251,6 +251,9 @@ class Server extends Application
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
+			if (!isset($settings['pid_file'])) {
+				$settings['pid_file'] = APP_PATH . 'storage/server.pid';
+			}
 			$this->baseServer->set($settings);
 			$this->bindAnnotation();
 		} else {

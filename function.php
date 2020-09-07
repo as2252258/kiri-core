@@ -158,11 +158,11 @@ if (!function_exists('storage')) {
 	{
 		$basePath = Snowflake::getStoragePath();
 		if (empty($path)) {
-			$fileName = $basePath . '/' . $fileName;
+			$fileName = rtrim($basePath, '/') . '/' . $fileName;
 		} else if (empty($fileName)) {
-			$fileName = initDir($basePath, $path);
+			$fileName = rtrim(initDir($basePath, $path));
 		} else {
-			$fileName = initDir($basePath, $path) . '/' . $fileName;
+			$fileName = rtrim(initDir($basePath, $path)) . '/' . $fileName;
 		}
 		if (!file_exists($fileName)) {
 			touch($fileName);
@@ -299,7 +299,6 @@ if (!function_exists('merge')) {
 	}
 
 }
-
 
 
 if (!function_exists('jTraceEx')) {
