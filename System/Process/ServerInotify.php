@@ -183,14 +183,14 @@ class ServerInotify extends Process
 	 */
 	public function clearWatch()
 	{
-		try {
-			foreach ($this->watchFiles as $wd) {
+		foreach ($this->watchFiles as $wd) {
+			try {
 				@inotify_rm_watch($this->inotify, $wd);
+			} catch (Exception $exception) {
+				$this->debug($exception->getMessage());
+			} finally {
+				$this->watchFiles = [];
 			}
-		} catch (Exception $exception) {
-			$this->debug($exception->getMessage());
-		} finally {
-			$this->watchFiles = [];
 		}
 	}
 
