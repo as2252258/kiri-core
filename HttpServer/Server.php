@@ -77,8 +77,10 @@ class Server extends Application
 		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
 		foreach ($this->sortServers($configs) as $server) {
 			$this->create($server);
+			if (!$this->baseServer) {
+				return null;
+			}
 		}
-
 		$this->onProcessListener();
 		return $this->getServer();
 	}
@@ -96,6 +98,9 @@ class Server extends Application
 		$configs = Config::get('servers', true);
 		Snowflake::clearWorkerId();
 		$baseServer = $this->initCore($configs);
+		if (!$baseServer) {
+			return;
+		}
 		$baseServer->start();
 	}
 
