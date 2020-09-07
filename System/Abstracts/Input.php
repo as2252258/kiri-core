@@ -68,7 +68,7 @@ class Input
 	{
 		$arrays = [];
 		$parameters = array_slice($parameters, 1);
-		$this->_command = array_shift($parameters);
+//		$this->_command = array_shift($parameters);
 		foreach ($parameters as $parameter) {
 			$explode = explode('=', $parameter);
 			if (count($explode) < 2) {

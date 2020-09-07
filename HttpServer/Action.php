@@ -16,38 +16,6 @@ trait Action
 {
 
 	/**
-	 * @param $argv
-	 * @return Server
-	 * @throws
-	 */
-	public function getSwooleServer($argv)
-	{
-		/** @var \HttpServer\Server $socket */
-		$socket = Snowflake::app()->get('server');
-//		if (isset($argv[2])) {
-//			$this->modify($argv, $socket);
-//		}
-
-		if (!isset($argv[1])) $argv[1] = 'start';
-
-		return $this->checkAction($argv, $socket);
-	}
-
-	/**
-	 * @param $argv
-	 * @param $socket
-	 * @return Server
-	 * @throws Exception
-	 */
-	private function checkAction($argv, $socket)
-	{
-		if (!in_array($argv[1], ['stop', 'start', 'restart'])) {
-			exit($this->error('action not exists.'));
-		}
-		return $this->{$argv[1]}($socket);
-	}
-
-	/**
 	 * @param \HttpServer\Server $socket
 	 * @return mixed
 	 * @throws Exception
@@ -134,7 +102,11 @@ trait Action
 		if (empty($port)) {
 			return false;
 		}
-		exec('netstat -tunlp | grep ' . $port, $output);
+		if (Snowflake::isLinux()) {
+			exec('netstat -tunlp | grep ' . $port, $output);
+		} else {
+			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
+		}
 		if (empty($output)) {
 			return false;
 		}
