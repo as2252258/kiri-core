@@ -94,11 +94,6 @@ class Server extends Application
 	public function start()
 	{
 		$configs = Config::get('servers', true);
-		foreach ($configs as $config) {
-			if ($this->isUse($config['port'])) {
-				return $this->error_stop($config['host'], $config['port']);
-			}
-		}
 		Snowflake::clearWorkerId();
 		$baseServer = $this->initCore($configs);
 		$baseServer->start();
@@ -113,6 +108,9 @@ class Server extends Application
 	public function error_stop($host, $Port)
 	{
 		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
+		if ($this->baseServer) {
+			$this->baseServer->shutdown();
+		}
 	}
 
 
@@ -260,6 +258,9 @@ class Server extends Application
 	{
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$class = $this->dispatch($config['type']);
+			if ($this->isUse($config['port'])) {
+				return $this->error_stop($config['host'], $config['port']);
+			}
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$settings['daemonize'] = $this->daemon;
 			if (!isset($settings['pid_file'])) {
@@ -301,6 +302,9 @@ class Server extends Application
 	 */
 	private function onListenerBind($config, $newListener)
 	{
+		if ($this->isUse($config['port'])) {
+			return $this->error_stop($config['host'], $config['port']);
+		}
 		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
