@@ -115,11 +115,15 @@ class HttpHeaders
 
 	/**
 	 * @param $name
+	 * @param null $default
 	 * @return mixed|string|null
 	 */
-	public function get($name)
+	public function get($name, $default = null)
 	{
-		return $this->getHeader($name);
+		if (empty($value = $this->getHeader($name))) {
+			return $default;
+		}
+		return $value;
 	}
 
 

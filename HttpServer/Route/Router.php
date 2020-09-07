@@ -54,16 +54,14 @@ class Router extends Application implements RouterInterface
 
 		$paths = array_column($this->groupTacks, 'prefix');
 		if (empty($paths)) {
-			$path = ltrim($path, '/');
+			$path = '/' . ltrim($path, '/');
 		} else {
 			if ($path !== '/') {
 				$path = implode('/', $paths) . '/' . ltrim($path, '/');
 			} else {
 				$path = implode('/', $paths);
 			}
-		}
-		if (empty($path)) {
-			$path = '/';
+			$path = '/' . $path;
 		}
 
 //		$parent = $this->nodes[$method][$first] ?? null;
@@ -438,10 +436,7 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		$methods = $this->nodes[$method];
-		$uri = ltrim($request->headers->getHeader('request_uri'), '/');
-		if (empty($uri)) {
-			$uri = '/';
-		}
+		$uri = $request->headers->get('request_uri', '/');
 		if (!isset($methods[$uri])) {
 			if ($request->isOption) {
 				return $this->search_options($request);
