@@ -92,14 +92,12 @@ class Server extends Application
 	public function start()
 	{
 		$configs = Config::get('servers', true);
-		$baseServer = $this->initCore($configs);
-
 		foreach ($configs as $config) {
-			var_dump($this->isUse($config['port']));
 			if ($this->isUse($config['port'])) {
 				return $this->error('Port ' . $config['host'] . '::' . $config['port'] . ' is already.');
 			}
 		}
+		$baseServer = $this->initCore($configs);
 		$baseServer->start();
 	}
 
