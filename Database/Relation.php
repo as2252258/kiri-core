@@ -8,7 +8,7 @@ use Snowflake\Abstracts\Component;
 
 /**
  * Class Relation
- * @package BeReborn\db
+ * @package Snowflake\db
  */
 class Relation extends Component
 {
