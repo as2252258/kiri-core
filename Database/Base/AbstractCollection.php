@@ -79,7 +79,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 */
 	public function getIterator()
 	{
-		return new \ArrayIterator($this->_item);
+		return new CollectionIterator($this->model, $this->_item);
 	}
 
 	/**

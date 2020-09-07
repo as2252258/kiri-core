@@ -219,21 +219,12 @@ class ActiveQuery extends Component
 	public function all()
 	{
 		$data = $this->modelClass::getDb()
-			->createCommand($this->getBuild()->count($this))
+			->createCommand($this->queryBuilder())
 			->all();
 
 		$collect = new Collection();
 		$collect->setModel($this->modelClass);
-		if (empty($data) || !is_array($data)) {
-			return $this->asArray ? [] : $collect;
-		}
-
-		$_tmp = [];
-		$model = Snowflake::createObject($this->modelClass);
-		foreach ($data as $key => $val) {
-			$_tmp[] = $this->populate(clone $model, $val);
-		}
-		$collect->setItems($_tmp);
+		$collect->setItems($data);
 		if ($this->asArray) {
 			return $collect->toArray();
 		}
