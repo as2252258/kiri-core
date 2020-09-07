@@ -70,7 +70,7 @@ class Middleware
 			return $this->annotation_limit($node, $middleWares);
 		}
 		foreach ($node->getInterceptor() as $item) {
-			$middleWares[] = $item[0];
+			$middleWares[] = $item;
 		}
 		return $this->annotation_limit($node, $middleWares);
 	}
@@ -87,7 +87,7 @@ class Middleware
 			return $middleWares;
 		}
 		foreach ($node->getLimits() as $item) {
-			$middleWares[] = $item[0];
+			$middleWares[] = $item;
 		}
 		return $middleWares;
 	}

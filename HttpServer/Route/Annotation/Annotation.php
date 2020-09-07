@@ -3,6 +3,8 @@
 
 namespace HttpServer\Route\Annotation;
 
+use HttpServer\IInterface\Interceptor;
+use HttpServer\IInterface\Limits;
 use HttpServer\Route\Node;
 use ReflectionClass;
 use ReflectionException;
@@ -105,7 +107,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	}
 
 
-
 	/**
 	 * @param Node $node
 	 * @param $annotation
@@ -142,6 +143,17 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 		[$keyName, $matchs] = $annotation;
 		foreach ($explode as $middleware) {
+			$middleware = 'App\Http\Interceptor\\' . $middleware;
+			if (!class_exists($middleware)) {
+				continue;
+			}
+			$middleware = Snowflake::createObject($middleware);
+			if (!($middleware instanceof Interceptor)) {
+				continue;
+			}
+			$node->addInterceptor([$middleware, 'Interceptor']);
+			continue;
+
 			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
 			$node->addInterceptor($this->pop($this->getName(...$params)));
 		}
@@ -163,6 +175,17 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 		[$keyName, $matchs] = $annotation;
 		foreach ($explode as $middleware) {
+			$middleware = 'App\Http\Limits\\' . $middleware;
+			if (!class_exists($middleware)) {
+				continue;
+			}
+			$middleware = Snowflake::createObject($middleware);
+			if (!($middleware instanceof Limits)) {
+				continue;
+			}
+			$node->addLimits([$middleware, 'next']);
+			continue;
+
 			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
 			$node->addLimits($this->pop($this->getName(...$params)));
 		}
