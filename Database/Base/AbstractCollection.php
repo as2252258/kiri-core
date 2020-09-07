@@ -9,8 +9,11 @@
 namespace Database\Base;
 
 
+use ArrayIterator;
+use Exception;
 use Snowflake\Abstracts\Component;
 use Database\ActiveRecord;
+use Traversable;
 
 /**
  * Class AbstractCollection
@@ -79,7 +82,8 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	}
 
 	/**
-	 * @return \ArrayIterator|\Traversable
+	 * @return ArrayIterator|Traversable
+	 * @throws Exception
 	 */
 	public function getIterator()
 	{

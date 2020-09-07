@@ -5,6 +5,7 @@ namespace Database\Base;
 
 
 use Database\ActiveRecord;
+use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -25,7 +26,7 @@ class CollectionIterator extends \ArrayIterator
 	 * @param $model
 	 * @param array $array
 	 * @param int $flags
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
 	public function __construct($model, $array = array(), $flags = 0)
@@ -39,11 +40,25 @@ class CollectionIterator extends \ArrayIterator
 
 
 	/**
+	 * @param $current
+	 * @return ActiveRecord
+	 */
+	protected function newModel($current)
+	{
+		return (clone $this->model)->setAttributes($current);
+	}
+
+
+	/**
 	 * @return ActiveRecord|mixed
 	 */
 	public function current()
 	{
-		return (clone $this->model)->setAttributes(parent::current());
+		$current = parent::current();
+		if ($current instanceof ActiveRecord) {
+			return $current;
+		}
+		return $this->newModel($current);
 	}
 
 
