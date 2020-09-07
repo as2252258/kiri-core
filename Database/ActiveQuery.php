@@ -132,7 +132,10 @@ class ActiveQuery extends Component
 	 */
 	public function first()
 	{
-		$data = $this->command($this->oneLimit()->adaptation())->one();
+		$data = $this->modelClass::getDb()
+			->createCommand($this->oneLimit()->queryBuilder())
+			->one();
+
 		if (empty($data)) {
 			return NULL;
 		}
@@ -215,7 +218,10 @@ class ActiveQuery extends Component
 	 */
 	public function all()
 	{
-		$data = $this->command($this->adaptation())->all();
+		$data = $this->modelClass::getDb()
+			->createCommand($this->getBuild()->count($this))
+			->all();
+
 		$collect = new Collection();
 		$collect->setModel($this->modelClass);
 		if (empty($data) || !is_array($data)) {
@@ -262,7 +268,9 @@ class ActiveQuery extends Component
 	 */
 	public function count()
 	{
-		$data = $this->command($this->getBuild()->count($this))->one();
+		$data = $this->modelClass::getDb()
+			->createCommand($this->getBuild()->count($this))
+			->one();
 		if ($data && is_array($data)) {
 			return (int)array_shift($data);
 		}
@@ -312,7 +320,9 @@ class ActiveQuery extends Component
 	 */
 	public function exists()
 	{
-		return (bool)$this->command($this->adaptation())->fetchColumn();
+		return (bool)$this->modelClass::getDb()
+			->createCommand($this->queryBuilder())
+			->fetchColumn();
 	}
 
 	/**
@@ -321,7 +331,9 @@ class ActiveQuery extends Component
 	 */
 	public function deleteAll()
 	{
-		return $this->command($this->getChange()->delete($this))->delete();
+		return $this->modelClass::getDb()
+			->createCommand($this->queryBuilder())
+			->delete();
 	}
 
 	/**
@@ -346,7 +358,7 @@ class ActiveQuery extends Component
 	 * @return string
 	 * @throws Exception
 	 */
-	public function adaptation()
+	public function queryBuilder()
 	{
 		return $this->getBuild()->getQuery($this);
 	}
