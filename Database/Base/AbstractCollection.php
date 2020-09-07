@@ -37,11 +37,13 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 *
 	 * @param $query
 	 * @param array $array
+	 * @param null $model
 	 */
-	public function __construct($query, array $array = [])
+	public function __construct($query, array $array = [], $model = null)
 	{
 		$this->_item = $array;
 		$this->query = $query;
+		$this->model = $model;
 
 		parent::__construct([]);
 	}

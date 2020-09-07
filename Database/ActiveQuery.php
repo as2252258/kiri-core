@@ -218,13 +218,10 @@ class ActiveQuery extends Component
 	 */
 	public function all()
 	{
-		$data = $this->modelClass::getDb()
-			->createCommand($this->queryBuilder())
-			->all();
-
-		$collect = new Collection($this);
-		$collect->setModel($this->modelClass);
-		$collect->setItems($data);
+		$collect = new Collection($this,
+			$this->modelClass::getDb()->createCommand($this->queryBuilder())->all()
+			, $this->modelClass
+		);
 		if ($this->asArray) {
 			return $collect->toArray();
 		}

@@ -207,7 +207,7 @@ class Collection extends AbstractCollection
 			}
 			$_filters[] = $value;
 		}
-		return new Collection($this->query, $_filters);
+		return new Collection($this->query, $_filters, $this->model);
 	}
 
 	/**
