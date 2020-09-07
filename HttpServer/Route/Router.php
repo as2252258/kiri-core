@@ -425,9 +425,11 @@ class Router extends Application implements RouterInterface
 		return call_user_func($node->callback, $request);
 	}
 
+
 	/**
 	 * @param Request $request
 	 * @return Node|false|int|mixed|string|null
+	 * 树干搜索
 	 */
 	private function find_path($request)
 	{
@@ -441,6 +443,17 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		return $this->nodes[$method][$uri];
+
+	}
+
+
+	/**
+	 * @param $request
+	 * @return Node|null
+	 * 树杈搜索
+	 */
+	private function Branch_search($request)
+	{
 		$node = $this->tree_search($request->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {
 			return $node;
@@ -454,6 +467,7 @@ class Router extends Application implements RouterInterface
 		}
 		return $node;
 	}
+
 
 	/**
 	 * @throws
