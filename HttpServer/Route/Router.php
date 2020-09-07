@@ -440,10 +440,35 @@ class Router extends Application implements RouterInterface
 		$methods = $this->nodes[$method];
 		$uri = ltrim($request->headers->getHeader('request_uri'), '/');
 		if (!isset($methods[$uri])) {
+			if ($request->isOption) {
+				return $this->search_options($request);
+			}
 			return null;
 		}
 		return $this->nodes[$method][$uri];
 
+	}
+
+
+	/**
+	 * @param $request
+	 * @return Node|null
+	 */
+	private function search_options($request)
+	{
+		$method = $request->getMethod();
+		if (!isset($this->nodes[$method])) {
+			return null;
+		}
+		if (!isset($this->nodes[$method]['*'])) {
+			return null;
+		}
+		return $this->nodes[$method]['*'];
+		$node = $this->tree_search(['*'], $request->getMethod());
+		if (!($node instanceof Node)) {
+			return null;
+		}
+		return $node;
 	}
 
 
