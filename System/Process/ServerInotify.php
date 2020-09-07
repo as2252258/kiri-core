@@ -184,6 +184,7 @@ class ServerInotify extends Process
 	 */
 	public function clearWatch()
 	{
+		set_error_handler([$this, 'onErrorHandler']);
 		foreach ($this->watchFiles as $wd) {
 			try {
 				inotify_rm_watch($this->inotify, $wd);
@@ -193,6 +194,15 @@ class ServerInotify extends Process
 				$this->watchFiles = [];
 			}
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected function onErrorHandler()
+	{
+		$error = func_get_args();
+		print_r($error[1] . ' ' . $error[2] . ':' . $error[3]);
 	}
 
 

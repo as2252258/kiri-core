@@ -99,7 +99,7 @@ class ErrorHandler extends Component implements ErrorInterface
 			$error[0] = 500;
 		}
 
-		$data = JSON::to(500, 'Error : ' . $error[1], $path);
+		$data = JSON::to(500, $error[1], $path);
 
 		Snowflake::app()->getLogger()->error($data, 'error');
 
