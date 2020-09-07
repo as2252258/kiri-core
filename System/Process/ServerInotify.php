@@ -12,6 +12,7 @@ namespace Snowflake\Process;
 use Exception;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
+use Swoole\Error;
 use Swoole\Event;
 use Swoole\Server;
 use Swoole\Timer;
@@ -185,8 +186,8 @@ class ServerInotify extends Process
 	{
 		foreach ($this->watchFiles as $wd) {
 			try {
-				@inotify_rm_watch($this->inotify, $wd);
-			} catch (\Error|Exception $exception) {
+				inotify_rm_watch($this->inotify, $wd);
+			} catch (\Throwable $exception) {
 				$this->debug($exception->getMessage());
 			} finally {
 				$this->watchFiles = [];
