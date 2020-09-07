@@ -9,8 +9,10 @@ use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use HttpServer\Service\Http;
 use HttpServer\Service\Websocket;
+use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Server;
 
@@ -66,10 +68,11 @@ class OnWorkerStart extends Callback
 	 * @param $socket
 	 * @param $worker_id
 	 * @return string
+	 * @throws ConfigException
 	 */
 	private function get_process_name($socket, $worker_id)
 	{
-		$prefix = 'system:';
+		$prefix = rtrim(Config::get('id', 'system:'), ':');
 		if ($worker_id >= $socket->setting['worker_num']) {
 			return $prefix . ': Task: No.' . $worker_id;
 		} else {
