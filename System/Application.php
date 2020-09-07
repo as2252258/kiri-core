@@ -16,6 +16,7 @@ use HttpServer\Server;
 use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
+use Snowflake\Abstracts\Input;
 use Snowflake\Exception\NotFindClassException;
 
 /**
@@ -67,10 +68,20 @@ class Application extends BaseApplication
 	 * @param $argv
 	 * @throws
 	 */
-	public function start($argv)
+	public function start(Input $argv)
 	{
 		$manager = Snowflake::app()->server;
-		$manager->start();
+		switch ($argv->get('action')) {
+			case 'stop':
+				$manager->shutdown();
+				break;
+			case 'restart':
+				$manager->shutdown();
+				$manager->start();
+				break;
+			default:
+				$manager->start();
+		}
 	}
 
 
