@@ -5,32 +5,32 @@
 //
 //use Snowflake\Application;
 //
-require_once __DIR__ . '/vendor/autoload.php';
-
-\Swoole\Coroutine\run(function (){
-	$client = HttpServer\Client\Client::NewRequest();
-	$client->setHost('47.92.194.207');
-	$client->setPort(9528);
-	$client->setErrorField('code');
-	$client->setErrorMsgField('message');
-	var_dump($client->sendTo('', [],SWOOLE_UDP));
-
-	$client = HttpServer\Client\Client::NewRequest();
-	$client->setHost('47.92.194.207');
-	$client->setPort(9529);
-	$client->setErrorField('code');
-	$client->setErrorMsgField('message');
-	var_dump($client->sendTo('', [],SWOOLE_TCP));
-
-	$client = HttpServer\Client\Client::NewRequest();
-	$client->setHost('47.92.194.207');
-	$client->setPort(9529);
-	$client->setTimeout(1);
-	$client->setUseSwoole(1);
-	$client->setErrorField('code');
-	$client->setErrorMsgField('message');
-	var_dump($client->send('', []));
-});
+//require_once __DIR__ . '/vendor/autoload.php';
+//
+//\Swoole\Coroutine\run(function (){
+//	$client = HttpServer\Client\Client::NewRequest();
+//	$client->setHost('47.92.194.207');
+//	$client->setPort(9528);
+//	$client->setErrorField('code');
+//	$client->setErrorMsgField('message');
+//	var_dump($client->sendTo('', [],SWOOLE_UDP));
+//
+//	$client = HttpServer\Client\Client::NewRequest();
+//	$client->setHost('47.92.194.207');
+//	$client->setPort(9529);
+//	$client->setErrorField('code');
+//	$client->setErrorMsgField('message');
+//	var_dump($client->sendTo('', [],SWOOLE_TCP));
+//
+//	$client = HttpServer\Client\Client::NewRequest();
+//	$client->setHost('47.92.194.207');
+//	$client->setPort(9529);
+//	$client->setTimeout(1);
+//	$client->setUseSwoole(1);
+//	$client->setErrorField('code');
+//	$client->setErrorMsgField('message');
+//	var_dump($client->send('', []));
+//});
 //$mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
 //try {
@@ -106,4 +106,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 //var_dump($new, $qa);
 //
 
+//$explode = explode('/', '/header/<cate:\d+>/<page:\d+>/<size:\d+>/<index:\d+>');
+//
+//$match = preg_replace_callback('/\d+/', function ($match) {
+//	return '<*:\d+>';
+//}, '/header/123/3242353/435345435/123123');
+//
+//var_dump($match);
+//
 
