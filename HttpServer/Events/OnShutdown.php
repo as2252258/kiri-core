@@ -15,6 +15,7 @@ use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Server;
 use Closure;
 
@@ -32,7 +33,7 @@ class OnShutdown extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
-		$this->system_mail('server shutdown~');
+		Coroutine::create([$this,'system_mail'],'server shutdown~');
 		$event = Snowflake::app()->getEvent();
 		if (!$event->exists(Event::SERVER_SHUTDOWN)) {
 			return;

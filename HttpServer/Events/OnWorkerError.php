@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
+use Swoole\Coroutine;
 use Swoole\Server;
 
 class OnWorkerError extends Callback
@@ -27,7 +28,7 @@ class OnWorkerError extends Callback
 		if (!Config::has('email')) {
 			return;
 		}
-		$this->system_mail(print_r([
+		Coroutine::create([$this,'system_mail'],print_r([
 			'$worker_pid' => $worker_pid,
 			'$worker_id'  => $worker_id,
 			'$exit_code'  => $exit_code,
