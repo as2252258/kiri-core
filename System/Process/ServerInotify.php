@@ -186,7 +186,7 @@ class ServerInotify extends Process
 		foreach ($this->watchFiles as $wd) {
 			try {
 				@inotify_rm_watch($this->inotify, $wd);
-			} catch (Exception $exception) {
+			} catch (\Error|Exception $exception) {
 				$this->debug($exception->getMessage());
 			} finally {
 				$this->watchFiles = [];
