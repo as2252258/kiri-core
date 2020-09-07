@@ -104,7 +104,6 @@ class Server extends Application
 		if (!$isEnable) {
 			return;
 		}
-		$this->debug('Runtime::enableCoroutine...');
 		Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
 			SWOOLE_HOOK_UNIX |
 			SWOOLE_HOOK_UDP |
