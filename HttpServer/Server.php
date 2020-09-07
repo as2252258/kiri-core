@@ -170,9 +170,7 @@ class Server extends Application
 
 
 	/**
-	 * @throws ReflectionException
 	 * @throws ConfigException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
 	public function onProcessListener()

@@ -439,6 +439,9 @@ class Router extends Application implements RouterInterface
 		}
 		$methods = $this->nodes[$method];
 		$uri = ltrim($request->headers->getHeader('request_uri'), '/');
+		if (empty($uri)) {
+			$uri = '/';
+		}
 		if (!isset($methods[$uri])) {
 			if ($request->isOption) {
 				return $this->search_options($request);
