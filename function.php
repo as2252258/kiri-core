@@ -164,6 +164,9 @@ if (!function_exists('storage')) {
 		} else {
 			$fileName = rtrim(initDir($basePath, $path)) . '/' . $fileName;
 		}
+		if (empty($fileName)) {
+			return $path;
+		}
 		if (!file_exists($fileName)) {
 			touch($fileName);
 		}

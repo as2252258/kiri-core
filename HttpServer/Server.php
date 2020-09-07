@@ -97,6 +97,7 @@ class Server extends Application
 				return $this->error_stop($config['host'], $config['port']);
 			}
 		}
+		Snowflake::clearWorkerId();
 		$baseServer = $this->initCore($configs);
 		$baseServer->start();
 	}

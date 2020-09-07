@@ -142,6 +142,18 @@ class Snowflake
 
 
 	/**
+	 * @throws Exception
+	 */
+	public static function clearWorkerId()
+	{
+		$dir = storage(null, 'worker');
+		foreach (glob($dir . '/*') as $file) {
+			@unlink($file);
+		}
+	}
+
+
+	/**
 	 * @param $fileName
 	 * @param $content
 	 * @param null $is_append
