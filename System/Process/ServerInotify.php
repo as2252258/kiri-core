@@ -40,6 +40,7 @@ class ServerInotify extends Process
 	public function onHandler(\Swoole\Process $process)
 	{
 		Snowflake::setProcessId($process->pid);
+		set_error_handler([$this, 'onErrorHandler']);
 		if (extension_loaded('inotify')) {
 			$this->inotify = inotify_init();
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
@@ -184,7 +185,6 @@ class ServerInotify extends Process
 	 */
 	public function clearWatch()
 	{
-		set_error_handler([$this, 'onErrorHandler']);
 		foreach ($this->watchFiles as $wd) {
 			try {
 				inotify_rm_watch($this->inotify, $wd);
