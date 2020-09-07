@@ -200,7 +200,8 @@ class ServerInotify extends Process
 	 */
 	protected function onErrorHandler()
 	{
-		$this->debug(var_export(func_get_args(), true));
+		[$code, $message, $file, $line, $args] = func_get_args();
+		$this->debug($message . ' ' . $file . ':' . $line);
 	}
 
 
