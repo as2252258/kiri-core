@@ -134,7 +134,7 @@ trait Action
 		if (empty($port)) {
 			return false;
 		}
-		exec('netstat -tunlp tcp | grep ' . $port, $output);
+		exec('netstat -tunlp | grep ' . $port, $output);
 		if (empty($output)) {
 			return false;
 		}
