@@ -6,6 +6,7 @@ namespace HttpServer;
 
 use Console\Dtl;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 /**
@@ -28,7 +29,8 @@ class Command extends \Console\Command
 
 	/**
 	 * @param Dtl $dtl
-	 * @throws ComponentException
+	 * @throws ComponentException|ConfigException
+	 * @throws \Exception
 	 */
 	public function handler(Dtl $dtl)
 	{
@@ -36,7 +38,18 @@ class Command extends \Console\Command
 
 		/** @var Server $server */
 		$server = Snowflake::app()->get('server');
-		$server->start();
+		switch ($action) {
+			case 'restart':
+				$server->shutdown();
+				$server->start();
+				break;
+			case 'stop':
+				$server->shutdown();
+				break;
+			case 'start':
+			default:
+				$server->start();
+		}
 	}
 
 }

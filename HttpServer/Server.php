@@ -41,6 +41,8 @@ use Swoole\Runtime;
  */
 class Server extends Application
 {
+	use Action;
+
 	const HTTP = 'HTTP';
 	const TCP = 'TCP';
 	const PACKAGE = 'PACKAGE';
@@ -57,7 +59,6 @@ class Server extends Application
 
 	/** @var Http|Websocket|Packet|Receive */
 	private $baseServer;
-
 
 	/**
 	 * @param array $configs
@@ -92,7 +93,45 @@ class Server extends Application
 	{
 		$configs = Config::get('servers', true);
 		$baseServer = $this->initCore($configs);
+
+		foreach ($configs as $config) {
+			if ($this->isUse($config['port'])) {
+				return $this->error('Port ' . $config['host'] . '::' . $config['port'] . ' is already.');
+			}
+		}
 		$baseServer->start();
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isRunner()
+	{
+		if (empty($this->port)) {
+			return false;
+		}
+		if (Snowflake::isLinux()) {
+			exec('netstat -tunlp | grep ' . $this->port, $output);
+		} else {
+			exec('lsof -i :' . $this->port . ' | grep -i "LISTEN"', $output);
+		}
+		if (!empty($output)) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * @return void
+	 *
+	 * start server
+	 * @throws Exception
+	 */
+	public function shutdown()
+	{
+		$this->stop($this);
 	}
 
 
