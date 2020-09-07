@@ -10,6 +10,7 @@ namespace Snowflake\Error;
 
 use Exception;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
 use Swoole\Process;
@@ -81,6 +82,7 @@ class Logger extends Component
 	 */
 	private function writer($message, $category = 'app')
 	{
+		$this->print_r($message, $category);
 		if ($message instanceof \Throwable) {
 			$message = $message->getMessage();
 		} else {
@@ -108,9 +110,13 @@ class Logger extends Component
 	 */
 	public function print_r($message, $category = '')
 	{
-		/** @var Process $logger */
-		$logger = Snowflake::app()->logger;
-		$logger->write(JSON::encode([$message, $category]));
+		$debug = (bool)Config::get('debug', false, ['enable' => false]);
+		if ($debug['enable'] === true) {
+			if (!is_callable($debug['callback'], true)) {
+				return;
+			}
+			call_user_func($debug['callback'], $message, $category);
+		}
 	}
 
 
