@@ -3,6 +3,8 @@
 
 namespace Console;
 
+use Snowflake\Abstracts\Input;
+
 /**
  * Interface CommandInterface
  * @package Console
@@ -10,6 +12,6 @@ namespace Console;
 interface CommandInterface
 {
 
-	public function handler(Dtl $dtl);
+	public function onHandler(Input $dtl);
 
 }

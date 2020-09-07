@@ -4,7 +4,8 @@
 namespace HttpServer;
 
 
-use Console\Dtl;
+use Exception;
+use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -22,33 +23,28 @@ class Command extends \Console\Command
 	public $description = 'server start|stop|reload|restart';
 
 
-	private $actions = [
-		'start', 'stop', 'reload', 'restart'
-	];
-
-
 	/**
-	 * @param Dtl $dtl
-	 * @throws ComponentException|ConfigException
-	 * @throws \Exception
+	 * @param Input $dtl
+	 * @throws ConfigException
+	 * @throws Exception
 	 */
-	public function handler(Dtl $dtl)
+	public function onHandler(Input $dtl)
 	{
-		$action = $dtl->get('action', 3);
-
-		/** @var Server $server */
-		$server = Snowflake::app()->get('server');
-		switch ($action) {
-			case 'restart':
-				$server->shutdown();
-				$server->start();
-				break;
+		$manager = Snowflake::app()->server;
+		$manager->setDaemon($dtl->get('daemon', 0));
+		switch ($dtl->get('action')) {
 			case 'stop':
-				$server->shutdown();
+				$manager->shutdown();
+				break;
+			case 'restart':
+				$manager->shutdown();
+				$manager->start();
 				break;
 			case 'start':
+				$manager->start();
+				break;
 			default:
-				$server->start();
+				$this->error('only start|stop|reload|restart');
 		}
 	}
 

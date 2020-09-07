@@ -3,6 +3,8 @@
 
 namespace Console;
 
+use Snowflake\Abstracts\Input;
+
 /**
  * Class DefaultCommand
  * @package Console
@@ -13,7 +15,7 @@ class DefaultCommand extends Command
 
 	public $description = 'help';
 
-	public function handler(Dtl $dtl)
+	public function onHandler(Input $dtl)
 	{
 		$param = $dtl->get('commandList');
 

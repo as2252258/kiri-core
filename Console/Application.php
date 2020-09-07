@@ -27,23 +27,17 @@ class Application extends Component
 	 */
 	public $id = 'uniqueId';
 
+	/** @var Console */
 	private $console;
 
-	/** @var Channel */
-	private $channel;
-
 	/**
-	 * Application constructor.
-	 * @param array $config
-	 * @throws
+	 *
 	 */
-	public function __construct(array $config = [])
+	public function init()
 	{
-		parent::__construct($config);
-
-		$this->channel = new Channel(1);
-		$this->console = new Console($config);
+		$this->console = new Console();
 	}
+
 
 	/**
 	 * @param $class

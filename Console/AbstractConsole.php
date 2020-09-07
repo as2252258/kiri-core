@@ -5,6 +5,7 @@ namespace Console;
 
 
 use Exception;
+use Snowflake\Abstracts\Input;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Channel;
 
@@ -20,7 +21,7 @@ abstract class AbstractConsole
 	 */
 	public $commands = [];
 
-	/** @var Dtl $parameters */
+	/** @var Input $parameters */
 	private $parameters;
 
 	/** @var array */
@@ -47,10 +48,11 @@ abstract class AbstractConsole
 
 	/**
 	 * @return $this
+	 * @throws Exception
 	 */
 	public function setParameters()
 	{
-		$this->parameters = new Dtl($_SERVER['argv']);
+		$this->parameters = new Input($_SERVER['argv']);
 		return $this;
 	}
 
@@ -60,7 +62,7 @@ abstract class AbstractConsole
 	 */
 	public function execCommand(Command $command)
 	{
-		return $command->handler($this->parameters);
+		return $command->onHandler($this->parameters);
 	}
 
 	/**

@@ -18,6 +18,7 @@ use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Exception\ComponentException;
 
 /**
  * Class Init
@@ -61,6 +62,18 @@ class Application extends BaseApplication
 			$class->onImport($this);
 		}
 		return $this;
+	}
+
+
+	/**
+	 * @param string $command
+	 * @throws ComponentException
+	 */
+	public function command(string $command)
+	{
+		/** @var \Console\Application $abstracts */
+		$abstracts = $this->get('console');
+		$abstracts->register($command);
 	}
 
 

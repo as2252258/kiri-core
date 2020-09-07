@@ -4,9 +4,11 @@
 namespace Console;
 
 
+use Snowflake\Abstracts\Input;
+
 interface ICommand
 {
 
-	public function handler();
+	public function onHandler(Input $dtl);
 
 }
