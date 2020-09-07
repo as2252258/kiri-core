@@ -60,6 +60,8 @@ class Server extends Application
 	/** @var Http|Websocket|Packet|Receive */
 	private $baseServer;
 
+	public $daemon = 0;
+
 	/**
 	 * @param array $configs
 	 * @return Http|Packet|Receive|Websocket
@@ -199,6 +201,20 @@ class Server extends Application
 
 
 	/**
+	 * @param $daemon
+	 * @return Server
+	 */
+	public function setDaemon($daemon)
+	{
+		if (!in_array($daemon, [0, 1])) {
+			return $this;
+		}
+		$this->daemon = $daemon;
+		return $this;
+	}
+
+
+	/**
 	 * @return Http|Websocket|Packet|Receive
 	 */
 	public function getServer()
@@ -252,6 +268,7 @@ class Server extends Application
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$class = $this->dispatch($config['type']);
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
+			$settings['daemonize'] = $this->daemon;
 			if (!isset($settings['pid_file'])) {
 				$settings['pid_file'] = APP_PATH . 'storage/server.pid';
 			}

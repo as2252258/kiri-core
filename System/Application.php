@@ -71,6 +71,7 @@ class Application extends BaseApplication
 	public function start(Input $argv)
 	{
 		$manager = Snowflake::app()->server;
+		$manager->setDaemon($argv->get('daemon', 0));
 		switch ($argv->get('action')) {
 			case 'stop':
 				$manager->shutdown();
