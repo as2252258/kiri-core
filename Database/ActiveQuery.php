@@ -234,9 +234,18 @@ class ActiveQuery extends Component
 	 * @return ActiveRecord
 	 * @throws Exception
 	 */
-	private function populate($model, $data)
+	public function populate($model, $data)
 	{
-		$model = $model::populate($data);
+		return $this->getWith($model::populate($data));
+	}
+
+
+	/**
+	 * @param $model
+	 * @return mixed
+	 */
+	public function getWith($model)
+	{
 		if (empty($this->with) || !is_array($this->with)) {
 			return $model;
 		}

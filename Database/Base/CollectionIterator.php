@@ -4,6 +4,7 @@
 namespace Database\Base;
 
 
+use Database\ActiveQuery;
 use Database\ActiveRecord;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
@@ -21,20 +22,26 @@ class CollectionIterator extends \ArrayIterator
 	private $model;
 
 
+	/** @var ActiveQuery */
+	private $query;
+
+
 	/**
 	 * CollectionIterator constructor.
 	 * @param $model
+	 * @param $query
 	 * @param array $array
 	 * @param int $flags
-	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function __construct($model, $array = array(), $flags = 0)
+	public function __construct($model, $query, $array = array(), $flags = 0)
 	{
 		$this->model = $model;
 		if (is_string($model)) {
 			$this->model = Snowflake::createObject($model);
 		}
+		$this->query = $query;
 		parent::__construct($array, $flags);
 	}
 
@@ -46,6 +53,7 @@ class CollectionIterator extends \ArrayIterator
 	protected function newModel($current)
 	{
 		return (clone $this->model)->setAttributes($current);
+
 	}
 
 
@@ -55,10 +63,10 @@ class CollectionIterator extends \ArrayIterator
 	public function current()
 	{
 		$current = parent::current();
-		if ($current instanceof ActiveRecord) {
-			return $current;
+		if (!($current instanceof ActiveRecord)) {
+			$current = $this->newModel($current);
 		}
-		return $this->newModel($current);
+		return $this->query->getWith($current);
 	}
 
 
