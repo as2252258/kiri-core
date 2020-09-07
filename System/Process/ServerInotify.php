@@ -39,7 +39,6 @@ class ServerInotify extends Process
 	 */
 	public function onHandler(\Swoole\Process $process)
 	{
-		Snowflake::setWorkerId($process->pid);
 		set_error_handler([$this, 'onErrorHandler']);
 		if (extension_loaded('inotify')) {
 			$this->inotify = inotify_init();
