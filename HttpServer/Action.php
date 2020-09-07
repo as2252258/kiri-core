@@ -60,6 +60,7 @@ trait Action
 	}
 
 
+
 	/**
 	 * @param \HttpServer\Server $socket
 	 * @throws Exception
