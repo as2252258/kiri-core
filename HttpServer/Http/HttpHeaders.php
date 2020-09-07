@@ -120,7 +120,7 @@ class HttpHeaders
 	 */
 	public function get($name, $default = null)
 	{
-		if (empty($value = $this->getHeader($name))) {
+		if (($value = $this->getHeader($name)) === null) {
 			return $default;
 		}
 		return $value;
