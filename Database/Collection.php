@@ -152,7 +152,7 @@ class Collection extends AbstractCollection
 	public function toArray()
 	{
 		$array = [];
-		foreach ($this->_item as $value) {
+		foreach ($this as $value) {
 			if (!is_object($value)) {
 				continue;
 			}
@@ -173,7 +173,7 @@ class Collection extends AbstractCollection
 			return false;
 		}
 		$ids = [];
-		foreach ($this->_item as $item) {
+		foreach ($this as $item) {
 			$ids[] = $item->{$model::getPrimary()};
 		}
 		$ids = array_filter($ids);
@@ -193,10 +193,10 @@ class Collection extends AbstractCollection
 	public function filter(array $condition)
 	{
 		if (empty($condition)) {
-			return new Filters($this->_item);
+			return new Filters($this);
 		}
 		$_filters = [];
-		foreach ($this->_item as $value) {
+		foreach ($this as $value) {
 			$_value = $value;
 			if ($_value instanceof ActiveRecord) {
 				$_value = $_value->toArray();
@@ -217,7 +217,7 @@ class Collection extends AbstractCollection
 	 */
 	public function exists($key, $value)
 	{
-		foreach ($this->_item as $item) {
+		foreach ($this as $item) {
 			if ($item->$key === $value) {
 				return $item;
 			}
