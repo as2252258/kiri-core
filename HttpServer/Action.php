@@ -63,6 +63,7 @@ trait Action
 		Snowflake::clearWorkerId();
 	}
 
+
 	/**
 	 * @param \HttpServer\Server $server
 	 * @return void
