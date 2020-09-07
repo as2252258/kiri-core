@@ -430,7 +430,7 @@ class Request extends Application
 			$headers = array_merge($headers, $request->header);
 		}
 		$sRequest->headers = new HttpHeaders($headers);
-		$sRequest->parseUri();
+//		$sRequest->parseUri();
 		return $sRequest;
 	}
 

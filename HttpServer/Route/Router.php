@@ -6,6 +6,7 @@ namespace HttpServer\Route;
 use Closure;
 use Exception;
 use HttpServer\Http\Context;
+use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
@@ -425,7 +426,7 @@ class Router extends Application implements RouterInterface
 	}
 
 	/**
-	 * @param $request
+	 * @param Request $request
 	 * @return Node|false|int|mixed|string|null
 	 */
 	private function find_path($request)
@@ -435,7 +436,7 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		$methods = $this->nodes[$method];
-		$uri = implode('/', $request->getExplode());
+		$uri = implode('/', $request->headers->getHeader('request_uri'));
 		if (!isset($methods[$uri])) {
 			return null;
 		}
