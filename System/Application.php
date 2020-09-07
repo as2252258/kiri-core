@@ -64,9 +64,10 @@ class Application extends BaseApplication
 
 
 	/**
+	 * @param $argv
 	 * @throws
 	 */
-	public function start()
+	public function start($argv)
 	{
 		$manager = Snowflake::app()->server;
 		$manager->start();
