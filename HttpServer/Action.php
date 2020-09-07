@@ -5,6 +5,8 @@ namespace HttpServer;
 
 
 use Exception;
+use Snowflake\Abstracts\Input;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
 
@@ -26,7 +28,6 @@ trait Action
 
 		return $this->start();
 	}
-
 
 
 	/**
@@ -97,9 +98,15 @@ trait Action
 	/**
 	 * @param $port
 	 * @return bool|array
+	 * @throws ComponentException
 	 */
 	private function isUse($port)
 	{
+		/** @var Input $input */
+		$input = Snowflake::app()->get('input');
+		if (in_array($input->get('action'), ['start', 'restart'])) {
+			return true;
+		}
 		if (empty($port)) {
 			return false;
 		}

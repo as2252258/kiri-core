@@ -83,6 +83,7 @@ class Application extends BaseApplication
 	 */
 	public function start(Input $argv)
 	{
+		$this->set('input', $argv);
 		$manager = Snowflake::app()->server;
 		$manager->setDaemon($argv->get('daemon', 0));
 		switch ($argv->get('action')) {
