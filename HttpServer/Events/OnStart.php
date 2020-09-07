@@ -18,9 +18,8 @@ class OnStart extends Callback
 	 */
 	public function onHandler($server)
 	{
-		$time = storage('socket.sock');
-		Snowflake::writeFile($time, $server->master_pid);
-
+		Snowflake::setProcessId($server->master_pid);
+		
 		$event = Snowflake::app()->event;
 		if ($event->exists(Event::SERVER_EVENT_START)) {
 			$event->trigger(Event::SERVER_EVENT_START, null, $server);

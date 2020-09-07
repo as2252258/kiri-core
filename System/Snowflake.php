@@ -131,6 +131,17 @@ class Snowflake
 
 
 	/**
+	 * @param $workerId
+	 * @return false|int|mixed
+	 * @throws Exception
+	 */
+	public static function setWorkerId($workerId)
+	{
+		return self::writeFile(storage($workerId . '.sock', 'worker'), $workerId);
+	}
+
+
+	/**
 	 * @param $fileName
 	 * @param $content
 	 * @param null $is_append
