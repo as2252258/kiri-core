@@ -185,9 +185,12 @@ class Server extends Application
 		$application = Snowflake::app();
 		foreach ($processes as $name => $process) {
 			$this->debug(sprintf('Process %s', $process));
+			if (!is_string($process)) {
+				continue;
+			}
 			$system = new $process(Snowflake::app(), $name);
 			$this->baseServer->addProcess($system);
-			$application->set(get_class($process), $system);
+			$application->set($process, $system);
 		}
 	}
 
