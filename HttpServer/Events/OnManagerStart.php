@@ -19,7 +19,7 @@ class OnManagerStart extends Callback
 	public function onHandler(Server $server)
 	{
 		$this->debug('manager start.');
-		Snowflake::setProcessId($server->manager_pid);
+		Snowflake::setWorkerId($server->manager_pid);
 
 		$events = Snowflake::app()->event;
 		if ($events->exists(Event::SERVER_MANAGER_START)) {
