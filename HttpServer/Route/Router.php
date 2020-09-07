@@ -52,8 +52,18 @@ class Router extends Application implements RouterInterface
 //		list($first, $explode) = $this->split($path);
 
 		$paths = array_column($this->groupTacks, 'prefix');
-		$path = implode('/', $paths) . '/' . ltrim($path, '/');
-
+		if (empty($paths)) {
+			$path = ltrim($path, '/');
+		} else {
+			if ($path !== '/') {
+				$path = implode('/', $paths) . '/' . ltrim($path, '/');
+			} else {
+				$path = implode('/', $paths);
+			}
+		}
+		if (empty($path)) {
+			$path = '/';
+		}
 
 //		$parent = $this->nodes[$method][$first] ?? null;
 
