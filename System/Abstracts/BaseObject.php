@@ -81,25 +81,6 @@ class BaseObject implements Configure
 		}
 	}
 
-	/**
-	 * @param $name
-	 * @param $arguments
-	 *
-	 * @return mixed
-	 * @throws Exception
-	 */
-//	public function __call($name, $arguments)
-//	{
-//		if (!method_exists($this, $name)) {
-//			throw new Exception("Not find " . get_called_class() . "::($name)");
-//		} else {
-//			$result = $this->$name(...$arguments);
-//			if (method_exists($this, 'defer')) {
-//				$this->defer();
-//			}
-//			return $result;
-//		}
-//	}
 
 	/**
 	 * @param $message
