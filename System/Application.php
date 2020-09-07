@@ -77,7 +77,6 @@ class Application extends BaseApplication
 	}
 
 
-
 	/**
 	 * @param $argv
 	 * @throws
@@ -95,8 +94,11 @@ class Application extends BaseApplication
 				$manager->shutdown();
 				$manager->start();
 				break;
-			default:
+			case 'start':
 				$manager->start();
+				break;
+			default:
+				$this->error('I don\'t know what I want to do.');
 		}
 	}
 
