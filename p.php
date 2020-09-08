@@ -115,3 +115,59 @@
 //var_dump($match);
 //
 
+
+class Arrays extends ArrayIterator
+{
+
+
+	public function __construct($array = array(), $flags = 0)
+	{
+		parent::__construct($array, $flags);
+	}
+
+
+	public function current()
+	{
+		$parent = parent::current();
+		$class = new stdClass();
+		$class->value = $parent;
+		$class->key = $this->key();
+
+		return $class;
+	}
+
+
+	public function next()
+	{
+		$this->offsetSet($this->key(), new stdClass());
+
+
+		parent::next();
+	}
+
+
+}
+
+
+class ETa implements \IteratorAggregate
+{
+
+	public $array = [];
+
+
+	public function getIterator()
+	{
+		return new Arrays($this->array);
+	}
+
+
+}
+
+
+$eta = new ETa();
+$eta->array = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
+
+
+foreach ($eta as $value) {
+	var_dump($value);
+}
