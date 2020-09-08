@@ -295,12 +295,15 @@ class Redis extends Component
 	 */
 	public function lock($key, $timeout = 5)
 	{
-		$redis = $this->proxy();
-		if (!$redis->setnx($key, 1)) {
-			return false;
-		}
-		$redis->expire($key, $timeout);
-		return true;
+		$script = <<<SCRIPT
+local _nx = redis.call('setnx',KEYS[1], ARGV[1])
+if (_nx ~= 0) then
+	redis.call('expire',KEYS[1], ARGV[1])
+	return 1
+end
+return 0
+SCRIPT;
+		return $this->proxy()->eval($script, [$key, $timeout], 1);
 	}
 
 
