@@ -5,6 +5,7 @@ namespace Snowflake;
 
 
 use Exception;
+use HttpServer\IInterface\Task;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Di\Container;
@@ -187,7 +188,29 @@ class Snowflake
 
 	public static function clearProcessId($worker_pid)
 	{
+	}
 
+
+	/**
+	 * @param string $class
+	 * @param array $params
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	public static function async(string $class, array $params = [])
+	{
+		$server = static::app()->server->getServer();
+		if (!isset($server->setting['task_worker_num'])) {
+			return;
+		}
+		$randWorkerId = random_int(0, $server->setting['task_worker_num']);
+
+		/** @var Task $class */
+		$class = static::createObject($class);
+		$class->setParams($params);
+
+		$server->task(serialize($class), $randWorkerId);
 	}
 
 
