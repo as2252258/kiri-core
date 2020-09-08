@@ -21,7 +21,6 @@ abstract class AbstractConsole extends Component
 	 * @var Command[]
 	 */
 	public $commands = [
-		DefaultCommand::class
 	];
 
 	/** @var Input $parameters */

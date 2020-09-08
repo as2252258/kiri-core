@@ -91,10 +91,10 @@ class Application extends BaseApplication
 		$this->set('input', $argv);
 		try {
 			$manager = Snowflake::app()->get('console');
-			$manager->setParameters();
+			$manager->setParameters($argv);
 			$class = $manager->search();
 			$params = response()->send($manager->execCommand($class));
-		} catch (\Exception $exception) {
+		} catch (\Throwable $exception) {
 			$params = response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
