@@ -1,19 +1,24 @@
 <?php
 
 
-namespace Snowflake\Gii;
+namespace Gii;
 
 
 use Database\Connection;
+use Snowflake\Abstracts\Input;
 
 /**
  * Class GiiBase
- * @package Snowflake\Gii
+ * @package Gii
  */
 abstract class GiiBase
 {
 
 	public $fileList = [];
+
+
+	/** @var Input */
+	protected $input;
 
 	public $modelPath = APP_PATH . '/models/';
 	public $modelNamespace = 'models\\';
@@ -77,6 +82,15 @@ abstract class GiiBase
 	public function setControllerNamespace(string $controllerNamespace): void
 	{
 		$this->controllerNamespace = $controllerNamespace;
+	}
+
+
+	/**
+	 * @param Input $input
+	 */
+	public function setInput(Input $input)
+	{
+		$this->input = $input;
 	}
 
 

@@ -6,11 +6,12 @@
  * Time: 17:43
  */
 
-namespace Snowflake\Gii;
+namespace Gii;
 
 use Database\Connection;
 use Database\Db;
 use Exception;
+use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -26,6 +27,9 @@ class Gii
 
 	/** @var Connection */
 	private $db;
+
+	/** @var Input */
+	private $input;
 
 	public $modelPath = APP_PATH . '/models/';
 	public $modelNamespace = 'models\\';
@@ -45,34 +49,35 @@ class Gii
 	/**
 	 * @param Connection|null $db
 	 *
+	 * @param $input
 	 * @return array
 	 * @throws ComponentException
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public static function run(Connection $db = NULL)
+	public function run($db, $input)
 	{
-		$gii = new Gii();
-		if (!empty($db)) $gii->db = $db;
-		if (!$gii->db) {
-			$db = Input()->get('databases', 'db');
-			$gii->db = Snowflake::app()->db->get($db);
+		$this->input = $input;
+		if (!empty($db)) $this->db = $db;
+		if (!$this->db) {
+			$db = $this->input->get('databases', 'db');
+			$this->db = Snowflake::app()->db->get($db);
 		}
 		$redis = Snowflake::app()->getRedis();
-		if (!empty(Input()->get('t'))) {
-			$gii->tableName = Input()->get('t');
-			$redis->del('column:' . $gii->tableName);
+		if (!empty($input->get('t'))) {
+			$this->tableName = $input->get('t');
+			$redis->del('column:' . $this->tableName);
 		}
-		if (Input()->get('m', NULL)) {
+		if ($input->get('m', NULL)) {
 			$model = 1;
 		}
-		if (Input()->get('c', NULL)) {
+		if ($input->get('c', NULL)) {
 			$c = 1;
 		}
-		if (Input()->get('isUpdate') == 1) {
-			$gii->isUpdate = TRUE;
+		if ($input->get('isUpdate') == 1) {
+			$this->isUpdate = TRUE;
 		}
-		return $gii->getTable($c, $model);
+		return $this->getTable($c, $model);
 	}
 
 	/**
@@ -113,7 +118,8 @@ class Gii
 		$controller->setConnection($this->db);
 		$controller->setModelPath($this->modelPath);
 		$controller->setModelNamespace($this->modelNamespace);
-		$controller->setModule(Input()->get('module', null));
+		$controller->setInput($this->input);
+		$controller->setModule($this->input->get('module', null));
 		$controller->setControllerPath($this->controllerPath);
 		$controller->setControllerNamespace($this->controllerNamespace);
 		return $controller->generate();
@@ -129,9 +135,10 @@ class Gii
 		$controller = new GiiController($data['classFileName'], $data['fields']);
 		$controller->setConnection($this->db);
 		$controller->setModelPath($this->modelPath);
+		$controller->setInput($this->input);
 		$controller->setModelNamespace($this->modelNamespace);
 		$controller->setControllerPath($this->controllerPath);
-		$controller->setModule(Input()->get('module', null));
+		$controller->setModule($this->input->get('module', null));
 		$controller->setControllerNamespace($this->controllerNamespace);
 		return $controller->generate();
 	}

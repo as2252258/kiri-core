@@ -6,7 +6,6 @@ namespace HttpServer;
 
 use Exception;
 use Snowflake\Abstracts\Input;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -17,7 +16,7 @@ use Snowflake\Snowflake;
 class Command extends \Console\Command
 {
 
-	public $command = 'server';
+	public $command = 'sw:server';
 
 
 	public $description = 'server start|stop|reload|restart';

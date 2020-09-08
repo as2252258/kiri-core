@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Snowflake\Gii;
+namespace Gii;
 
 use Snowflake\Snowflake;
 
 /**
  * Class GiiController
- * @package Snowflake\Gii
+ * @package Gii
  */
 class GiiController extends GiiBase
 {
@@ -100,7 +100,7 @@ class {$controllerName}Controller extends ActiveController
 				$html .= $this->getFuncLineContent($class, $classFileName, $val->name) . "\n";
 			}
 		}
-		if (!Input()->get('--controller-empty', false)) {
+		if (!$this->input->get('--controller-empty', false)) {
 			$default = ['actionLoadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];
 
 			foreach ($default as $key => $val) {

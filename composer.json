@@ -33,7 +33,8 @@
       "HttpServer\\": "HttpServer/",
       "validator\\": "Validator/",
       "Console\\": "./Console/",
-      "Database\\": "./Database/"
+      "Database\\": "./Database/",
+      "Gii\\": "./Gii/"
     },
     "files": [
       "error.php",

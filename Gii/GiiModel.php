@@ -1,15 +1,14 @@
 <?php
 
 
-namespace Snowflake\Gii;
+namespace Gii;
 
 use Database\Db;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\System;
 
 /**
  * Class GiiModel
- * @package Snowflake\Gii
+ * @package Gii
  */
 class GiiModel extends GiiBase
 {
