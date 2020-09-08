@@ -56,7 +56,10 @@ trait Action
 			if (empty($pathId)) {
 				$this->close($server);
 			} else {
-				exec("kill -TERM $pathId");
+				exec('ps -ef 15132 | grep 15132', $output);
+				if (!empty($output)) {
+					exec("kill -TERM $pathId");
+				}
 				$this->close($server);
 			}
 		}
