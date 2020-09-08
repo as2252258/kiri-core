@@ -58,13 +58,12 @@ class GiiController extends GiiBase
 namespace {$namespace};
 
 use Snowflake;
-use Code;
 use exception;
 use Snowflake\Core\Str;
 use Snowflake\Core\JSON;
-use Snowflake\Http\Request;
-use Snowflake\Http\Response;
-use components\ActiveController;
+use HttpServer\Http\Request;
+use HttpServer\Http\Response;
+use HttpServer\Controller;
 use {$model_namespace}\\{$managerName};
 ";
 		}
@@ -81,7 +80,7 @@ use {$model_namespace}\\{$managerName};
  *
  * @package controller
  */
-class {$controllerName}Controller extends ActiveController
+class {$controllerName}Controller extends Controller
 {
 
 ";
@@ -173,7 +172,7 @@ class {$controllerName}Controller extends ActiveController
 		if (!$model->save()) {
 			return JSON::to(500, $model->getLastError());
 		}
-		return JSON::to(Code::SUCCESS, $model->toArray());
+		return JSON::to(0, $model->toArray());
 	}';
 	}
 
@@ -223,7 +222,7 @@ class {$controllerName}Controller extends ActiveController
 		if (!$model->save()) {
 			return JSON::to(500, $model->getLastError());
 		}
-		return JSON::to(Code::SUCCESS, $model->toArray());
+		return JSON::to(0, $model->toArray());
 	}';
 	}
 
@@ -258,7 +257,7 @@ class {$controllerName}Controller extends ActiveController
         if(!$model->delete()){
 			return JSON::to(500, \'系统繁忙, 请稍后再试!\');
         }
-        return JSON::to(Code::SUCCESS, $model->toArray());
+        return JSON::to(0, $model->toArray());
 	}';
 	}
 
@@ -282,7 +281,7 @@ class {$controllerName}Controller extends ActiveController
         if(empty($model)){
             return JSON::to(404, \'Data Not Exists\');
         }
-        return JSON::to(Code::SUCCESS, $model->toArray());
+        return JSON::to(0, $model->toArray());
     }';
 	}
 
@@ -317,7 +316,7 @@ class {$controllerName}Controller extends ActiveController
         if(!$model->delete()){
 			return JSON::to(500, $model->getLastError());
         }
-        return JSON::to(Code::SUCCESS, $model);
+        return JSON::to(0, $model);
     }';
 	}
 
@@ -361,7 +360,7 @@ class {$controllerName}Controller extends ActiveController
 	    
 		$data = $model->all()->toArray();
 		
-        return JSON::to(Code::SUCCESS, $data, $count);
+        return JSON::to(0, $data, $count);
     }
     ';
 	}
