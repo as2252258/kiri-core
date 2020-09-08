@@ -43,13 +43,14 @@ use HttpServer\IInterface\Task;
 
 ';
 
+		$managerName = ucfirst($managerName);
 		$html .= '
 
 /**
- * Class ' . ucfirst($managerName) . '
+ * Class ' . $managerName . '
  * @package App\Async
  */
-class ' . ucfirst($managerName) . ' implements Task
+class ' . $managerName . ' implements Task
 {
 	
 	protected $params = [];
