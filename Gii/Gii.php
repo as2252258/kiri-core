@@ -63,6 +63,7 @@ class Gii
 		switch ($make) {
 			case 'task':
 				$task = new GiiTask();
+				$task->setInput($this->input);
 				return $task->generate();
 			default:
 				return $this->getModel($make, $input);
