@@ -85,6 +85,27 @@ class Node extends Application
 
 
 	/**
+	 * @return bool
+	 */
+	public function hasAfter()
+	{
+		return count($this->_after) > 0;
+	}
+
+
+	/**
+	 * @param $response
+	 * @return mixed|null
+	 */
+	public function afterDispatch($response)
+	{
+		return Reduce::reduce(function () use ($response) {
+			return $response;
+		}, $this->_after);
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function getInterceptor()
@@ -100,7 +121,6 @@ class Node extends Application
 	{
 		return $this->_after;
 	}
-
 
 
 	/**
@@ -388,6 +408,15 @@ class Node extends Application
 		$made->setMiddleWares($this->middleware);
 		$made->getGenerate($this);
 		return $this;
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function dispatch()
+	{
+		return call_user_func($this->callback, \request());
 	}
 
 

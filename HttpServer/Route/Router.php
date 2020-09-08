@@ -420,7 +420,7 @@ class Router extends Application implements RouterInterface
 		if (empty($node->callback)) {
 			return JSON::to(404, 'Page not found.');
 		}
-		return call_user_func($node->callback, $request);
+		return $node;
 	}
 
 

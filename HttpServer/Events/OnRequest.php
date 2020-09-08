@@ -9,6 +9,7 @@ use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
+use HttpServer\Route\Node;
 use HttpServer\Service\Http;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
@@ -39,7 +40,14 @@ class OnRequest extends Callback
 			if ($sRequest->is('favicon.ico')) {
 				return $sResponse->send($sRequest->isNotFound(), 200);
 			}
-			$sResponse->send(Snowflake::app()->router->dispatch(), 200);
+			$node = Snowflake::app()->router->dispatch();
+			if (!($node instanceof Node)) {
+				return $sResponse->send($node, 200);
+			}
+			$sResponse->send($content = $node->dispatch(), 200);
+			if ($node->hasAfter()) {
+				$node->afterDispatch($content);
+			}
 		} catch (Error | \Throwable $exception) {
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		} finally {
