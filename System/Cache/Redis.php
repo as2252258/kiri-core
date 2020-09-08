@@ -286,6 +286,36 @@ class Redis extends Component
 		return $data;
 	}
 
+
+	/**
+	 * @param $key
+	 * @param int $timeout
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function lock($key, $timeout = 5)
+	{
+		$redis = $this->proxy();
+		if (!$redis->setnx($key, 1)) {
+			return false;
+		}
+		$redis->expire($key, $timeout);
+		return true;
+	}
+
+
+	/**
+	 * @param $key
+	 * @return int
+	 * @throws Exception
+	 */
+	public function unlock($key)
+	{
+		$redis = $this->proxy();
+		return $redis->del($key);
+	}
+
+
 	/**
 	 * 释放连接池
 	 * @throws ConfigException
