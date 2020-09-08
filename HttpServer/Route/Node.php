@@ -39,6 +39,7 @@ class Node extends Application
 	public $callback = [];
 
 	private $_interceptors = [];
+	private $_after = [];
 	private $_limits = [];
 
 	/**
@@ -89,6 +90,15 @@ class Node extends Application
 	public function getInterceptor()
 	{
 		return $this->_interceptors;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getAfters()
+	{
+		return $this->_after;
 	}
 
 
@@ -190,6 +200,17 @@ class Node extends Application
 	public function addInterceptor($handler)
 	{
 		$this->_interceptors[] = $handler;
+		$this->restructure();
+	}
+
+
+	/**
+	 * @param Closure|array|string $handler
+	 * @throws Exception
+	 */
+	public function addAfter($handler)
+	{
+		$this->_after[] = $handler;
 		$this->restructure();
 	}
 

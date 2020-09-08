@@ -52,10 +52,19 @@ class Middleware
 		$last = function ($passable) use ($node) {
 			return Dispatch::create($node->handler, $passable)->dispatch();
 		};
-		$middleWares = $this->annotation($node);
-		$data = array_reduce(array_reverse($middleWares), $this->core(), $last);
-		$this->middleWares = [];
+		$data = $this->reduce($last, $this->annotation($node));
 		return $node->callback = $data;
+	}
+
+
+	/**
+	 * @param $last
+	 * @param $middleWares
+	 * @return mixed|null
+	 */
+	private function reduce($last, $middleWares)
+	{
+		return array_reduce(array_reverse($middleWares), $this->core(), $last);
 	}
 
 
@@ -66,6 +75,7 @@ class Middleware
 	protected function annotation($node)
 	{
 		$middleWares = $this->middleWares;
+		$this->middleWares = [];
 		if (!$node->hasInterceptor()) {
 			return $this->annotation_limit($node, $middleWares);
 		}
