@@ -71,7 +71,7 @@ class Application extends BaseApplication
 
 	/**
 	 * @param string $command
-	 * @throws ComponentException
+	 * @throws
 	 */
 	public function register(string $command)
 	{

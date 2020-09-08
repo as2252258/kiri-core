@@ -18,7 +18,7 @@ class Input
 	/**
 	 * Input constructor.
 	 * @param $argv
-	 * @throws Exception
+	 * @throws
 	 */
 	public function __construct($argv)
 	{
