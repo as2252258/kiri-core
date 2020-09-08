@@ -5,9 +5,11 @@ namespace Snowflake\Jwt;
 use Exception;
 use HttpServer\Http\HttpHeaders;
 use Redis;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\Str;
 use Snowflake\Exception\AuthException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 class Jwt extends Component
@@ -64,6 +66,21 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 	/** @var Jwt */
 	private static $instance;
+
+
+	/**
+	 * @throws ConfigException
+	 */
+	public function init()
+	{
+		if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
+			return;
+		}
+		$this->public = Config::get('ssl.public', false, $this->public);
+		$this->private = Config::get('ssl.private', false, $this->private);
+		$this->timeout = Config::get('ssl.timeout', false, 7200);
+	}
+
 
 	/**
 	 * @param string $publicKey
