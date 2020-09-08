@@ -9,6 +9,7 @@ use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
+use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
 
 /**
@@ -415,6 +416,9 @@ class Node extends Application
 	 */
 	public function dispatch()
 	{
+		if (empty($node->callback)) {
+			return JSON::to(404, 'Page not found.');
+		}
 		return call_user_func($this->callback, \request());
 	}
 

@@ -417,9 +417,6 @@ class Router extends Application implements RouterInterface
 		if (!($node = $this->find_path($request))) {
 			return JSON::to(404, 'Page not found or method not allowed.');
 		}
-		if (empty($node->callback)) {
-			return JSON::to(404, 'Page not found.');
-		}
 		return $node->dispatch();
 	}
 
