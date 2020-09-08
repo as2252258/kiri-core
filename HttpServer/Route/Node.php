@@ -231,7 +231,6 @@ class Node extends Application
 	public function addAfter($handler)
 	{
 		$this->_after[] = $handler;
-		$this->restructure();
 	}
 
 
