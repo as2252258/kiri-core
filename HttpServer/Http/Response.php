@@ -148,9 +148,9 @@ class Response extends Application
 	{
 		$result = Help::toString($result);
 
-		$string = 'Command Result: ' . PHP_EOL. PHP_EOL. PHP_EOL;
-		$string .= empty($result) ? 'success!' : $result . PHP_EOL. PHP_EOL. PHP_EOL;
-		$string .= 'Command Success!' . PHP_EOL;
+		$string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
+		$string .= empty($result) ? 'success!' : $result . PHP_EOL . PHP_EOL;
+		$string .= 'Command Success!' . PHP_EOL . PHP_EOL;
 		echo $string;
 
 		$event = Snowflake::app()->event;
