@@ -110,8 +110,13 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 		if (!$this->offsetExists($offset)) {
 			return NULL;
 		}
+
+		if ($this->_item[$offset] instanceof ActiveRecord) {
+			return $this->_item[$offset];
+		}
+
 		/** @var ActiveRecord $model */
-		return $this->_item[$offset];
+		return $this->model::populate($this->_item[$offset]);
 	}
 
 	/**
