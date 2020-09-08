@@ -47,9 +47,7 @@ use HttpServer\IInterface\Task;
 
 /**
  * Class ' . ucfirst($managerName) . '
- * @package Inter\mysql
- *' . implode('', $this->visible) . '
- * @sql
+ * @package App\Async
  */
 class ' . ucfirst($managerName) . ' implements Task
 {
