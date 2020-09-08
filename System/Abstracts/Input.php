@@ -31,7 +31,7 @@ class Input
 	 */
 	public function getCommandName()
 	{
-		return '';
+		return $this->_command;
 	}
 
 
