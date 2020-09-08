@@ -5,7 +5,6 @@ namespace Database;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
 use Snowflake\Exception\ConfigException;
