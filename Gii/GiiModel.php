@@ -68,8 +68,8 @@ namespace ' . $namespace . ';
 
 use Exception;
 use Snowflake\Core\JSON;
-use Snowflake\Database\Connection;
-use Snowflake\Database\ActiveRecord;';
+use Database\Connection;
+use Database\ActiveRecord;';
 		}
 
 		$createSql = $this->setCreateSql($this->tableName);

@@ -64,14 +64,14 @@ class Gii
 			$this->db = Snowflake::app()->db->get($db);
 		}
 		$redis = Snowflake::app()->getRedis();
-		if (!empty($input->get('t'))) {
-			$this->tableName = $input->get('t');
+		if (!empty($input->get('table'))) {
+			$this->tableName = $input->get('table');
 			$redis->del('column:' . $this->tableName);
 		}
-		if ($input->get('m', NULL)) {
+		if ($input->get('model', NULL)) {
 			$model = 1;
 		}
-		if ($input->get('c', NULL)) {
+		if ($input->get('controller', NULL)) {
 			$c = 1;
 		}
 		if ($input->get('isUpdate') == 1) {
