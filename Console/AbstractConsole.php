@@ -20,8 +20,7 @@ abstract class AbstractConsole extends Component
 	/**
 	 * @var Command[]
 	 */
-	public $commands = [
-	];
+	public $commands = [];
 
 	/** @var Input $parameters */
 	private $parameters;
