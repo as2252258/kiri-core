@@ -201,7 +201,7 @@ class Snowflake
 	public static function async(string $class, array $params = [])
 	{
 		$server = static::app()->server->getServer();
-		if (!isset($server->setting['task_worker_num'])) {
+		if (!isset($server->setting['task_worker_num']) || !class_exists($class)) {
 			return;
 		}
 		$randWorkerId = random_int(0, $server->setting['task_worker_num']);
