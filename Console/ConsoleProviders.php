@@ -21,8 +21,7 @@ class ConsoleProviders extends Providers
 	public function onImport(Application $application)
 	{
 		/** @var Console $console */
-		$console = $application->set('console', ['class' => Console::class]);
-		$console->register(DefaultCommand::class);
+		$application->set('console', ['class' => Console::class]);
 	}
 
 
