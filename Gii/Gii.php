@@ -72,22 +72,22 @@ class Gii
 			$model = 1;
 		}
 		if ($input->get('controller', NULL)) {
-			$c = 1;
+			$controller = 1;
 		}
 		if ($input->get('isUpdate') == 1) {
 			$this->isUpdate = TRUE;
 		}
-		return $this->getTable($c, $model);
+		return $this->getTable($controller, $model);
 	}
 
 	/**
-	 * @param $m
-	 * @param $c
+	 * @param $controller
+	 * @param $model
 	 * @return array
 	 *
 	 * @throws Exception
 	 */
-	private function getTable(&$c, &$m)
+	private function getTable(&$controller, &$model)
 	{
 		$tables = $this->getFields($this->getTables());
 		if (empty($tables)) {
@@ -97,10 +97,10 @@ class Gii
 		$fileList = [];
 		foreach ($tables as $key => $val) {
 			$data = $this->createModelFile($key, $val);
-			if ($m == 1) {
+			if ($controller == 1) {
 				$fileList[] = $this->generateModel($data);
 			}
-			if ($c == 1) {
+			if ($model == 1) {
 				$fileList[] = $this->generateController($data);
 			}
 		}
