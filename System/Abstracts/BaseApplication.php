@@ -17,7 +17,6 @@ use HttpServer\Server;
 use Snowflake\Annotation\Annotation;
 use Snowflake\Cache\Memcached;
 use Snowflake\Cache\Redis;
-use Snowflake\Abstracts\Config;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
@@ -39,6 +38,7 @@ use Database\DatabasesProviders;
  * @property Event $event
  * @property Router $router
  * @property SPool $pool
+ * @property \Redis|Redis $redis
  * @property Server $server
  * @property DatabasesProviders $db
  * @property Connection $connections
@@ -237,7 +237,7 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return \Redis
+	 * @return \Redis|Redis
 	 * @throws ComponentException
 	 */
 	public function getRedis()

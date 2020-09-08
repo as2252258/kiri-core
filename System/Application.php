@@ -11,7 +11,6 @@ namespace Snowflake;
 
 use Console\Console;
 use Console\ConsoleProviders;
-use Console\Kernel;
 use Database\DatabasesProviders;
 use Exception;
 use HttpServer\Server;
