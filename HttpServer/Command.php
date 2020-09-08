@@ -44,7 +44,7 @@ class Command extends \Console\Command
 				$manager->start();
 				break;
 			default:
-				$this->error('only start|stop|reload|restart');
+				$this->error('I don\'t know what I want to do.');
 		}
 	}
 

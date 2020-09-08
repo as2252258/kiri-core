@@ -9,7 +9,9 @@
 namespace Snowflake;
 
 
+use Console\Console;
 use Console\ConsoleProviders;
+use Console\Kernel;
 use Database\DatabasesProviders;
 use Exception;
 use HttpServer\Server;
@@ -19,6 +21,8 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Exception\ComponentException;
+use Swoole\Runtime;
+use Swoole\Timer;
 
 /**
  * Class Init
@@ -69,9 +73,9 @@ class Application extends BaseApplication
 	 * @param string $command
 	 * @throws ComponentException
 	 */
-	public function command(string $command)
+	public function register(string $command)
 	{
-		/** @var \Console\Application $abstracts */
+		/** @var Console $abstracts */
 		$abstracts = $this->get('console');
 		$abstracts->register($command);
 	}
@@ -79,26 +83,26 @@ class Application extends BaseApplication
 
 	/**
 	 * @param $argv
+	 * @return bool|string
 	 * @throws
 	 */
 	public function start(Input $argv)
 	{
 		$this->set('input', $argv);
-		$manager = Snowflake::app()->server;
-		$manager->setDaemon($argv->get('daemon', 0));
-		switch ($argv->get('action')) {
-			case 'stop':
-				$manager->shutdown();
-				break;
-			case 'restart':
-				$manager->shutdown();
-				$manager->start();
-				break;
-			case 'start':
-				$manager->start();
-				break;
-			default:
-				$this->error('I don\'t know what I want to do.');
+		try {
+			$manager = Snowflake::app()->get('console');
+			$manager->setParameters();
+			$class = $manager->search();
+			$params = response()->send($manager->execCommand($class));
+		} catch (\Exception $exception) {
+			$params = response()->send(implode("\n", [
+				'Msg: ' . $exception->getMessage(),
+				'Line: ' . $exception->getLine(),
+				'File: ' . $exception->getFile()
+			]));
+		} finally {
+			Timer::clearAll();
+			return $params;
 		}
 	}
 

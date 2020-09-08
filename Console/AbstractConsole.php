@@ -5,6 +5,7 @@ namespace Console;
 
 
 use Exception;
+use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Input;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Channel;
@@ -13,13 +14,15 @@ use Swoole\Coroutine\Channel;
  * Class AbstractConsole
  * @package Console
  */
-abstract class AbstractConsole
+abstract class AbstractConsole extends Component
 {
 
 	/**
 	 * @var Command[]
 	 */
-	public $commands = [];
+	public $commands = [
+		DefaultCommand::class
+	];
 
 	/** @var Input $parameters */
 	private $parameters;
@@ -36,23 +39,17 @@ abstract class AbstractConsole
 	{
 		$this->_config = $config;
 		$this->signCommand(Snowflake::createObject(DefaultCommand::class));
+
+		parent::__construct($config);
 	}
 
 	/**
-	 * @return array
-	 */
-	public function getConfig()
-	{
-		return $this->_config;
-	}
-
-	/**
+	 * @param Input $input
 	 * @return $this
-	 * @throws Exception
 	 */
-	public function setParameters()
+	public function setParameters(Input $input)
 	{
-		$this->parameters = new Input($_SERVER['argv']);
+		$this->parameters = $input;
 		return $this;
 	}
 

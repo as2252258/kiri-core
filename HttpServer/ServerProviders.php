@@ -4,6 +4,7 @@
 namespace HttpServer;
 
 
+use Console\Console;
 use Exception;
 use HttpServer\Server;
 use Snowflake\Abstracts\Component;
@@ -28,8 +29,8 @@ class ServerProviders extends Providers
 	{
 		$application->set('server', ['class' => Server::class]);
 
-//		/** @var \Console\Application $console */
-//		$console = $application->get('console');
-//		$console->register(Command::class);
+		/** @var Console $console */
+		$console = $application->get('console');
+		$console->register(Command::class);
 	}
 }
