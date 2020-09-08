@@ -39,7 +39,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	private $Middleware = '';
 
 
-//	private $After = '';
+	private $After = '';
 
 
 	protected $_annotations = [];
@@ -87,9 +87,9 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			case 'Limits':
 				$this->bindLimits($node, $annotation);
 				break;
-//			case 'After':
-//				$this->bindAfter($node, $annotation);
-//				break;
+			case 'After':
+				$this->bindAfter($node, $annotation);
+				break;
 		}
 	}
 
@@ -161,38 +161,34 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			$node->addInterceptor($this->pop($this->getName(...$params)));
 		}
 	}
-//
-//
-//	/**
-//	 * @param Node $node
-//	 * @param $annotation
-//	 * @throws
-//	 */
-//	private function bindAfter($node, $annotation)
-//	{
-//		if (!isset($annotation[1][2])) {
-//			return;
-//		}
-//
-//		$explode = explode(',', $annotation[1][2]);
-//
-//		[$keyName, $matchs] = $annotation;
-//		foreach ($explode as $middleware) {
-//			$middleware = 'App\Http\Interceptor\\' . $middleware;
-//			if (!class_exists($middleware)) {
-//				continue;
-//			}
-//			$middleware = Snowflake::createObject($middleware);
-//			if (!($middleware instanceof Interceptor)) {
-//				continue;
-//			}
-//			$node->addAfter([$middleware, 'Interceptor']);
-//			continue;
-//
-//			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
-//			$node->addInterceptor($this->pop($this->getName(...$params)));
-//		}
-//	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $annotation
+	 * @throws
+	 */
+	private function bindAfter($node, $annotation)
+	{
+		if (!isset($annotation[1][2])) {
+			return;
+		}
+
+		$explode = explode(',', $annotation[1][2]);
+
+		[$keyName, $matchs] = $annotation;
+		foreach ($explode as $middleware) {
+			$middleware = 'App\Http\Interceptor\\' . $middleware;
+			if (!class_exists($middleware)) {
+				continue;
+			}
+			$middleware = Snowflake::createObject($middleware);
+			if (!($middleware instanceof Interceptor)) {
+				continue;
+			}
+			$node->addAfter([$middleware, 'Interceptor']);
+		}
+	}
 
 
 	/**
