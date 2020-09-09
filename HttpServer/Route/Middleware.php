@@ -11,6 +11,7 @@ namespace HttpServer\Route;
 use Closure;
 use Exception;
 use HttpServer\Route\Dispatch\Dispatch;
+use Swoole\Coroutine;
 
 /**
  * Class Middleware
@@ -50,7 +51,11 @@ class Middleware
 	public function getGenerate($node)
 	{
 		$last = function ($passable) use ($node) {
-			return Dispatch::create($node->handler, $passable)->dispatch();
+			$responseData = Dispatch::create($node->handler, $passable)->dispatch();
+			response()->send($responseData, 200);
+			Coroutine::create(function () use ($responseData, $node) {
+				$node->afterDispatch($responseData);
+			});
 		};
 		$data = Reduce::reduce($last, $this->annotation($node));
 		return $node->callback = $data;
