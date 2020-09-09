@@ -234,11 +234,7 @@ class Node extends Application
 	 */
 	public function addAfter($handler)
 	{
-		$event = Snowflake::app()->getEvent();
-		if ($event->exists(Event::EVENT_AFTER_REQUEST, $handler)) {
-			return;
-		}
-		$event->on(Event::EVENT_AFTER_REQUEST, $handler);
+		$this->_after[] = $handler;
 	}
 
 
