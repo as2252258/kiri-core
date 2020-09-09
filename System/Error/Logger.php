@@ -221,6 +221,37 @@ class Logger extends Component
 		return implode(PHP_EOL, $_tmp);
 	}
 
+
+	/**
+	 * @param Exception $exception
+	 * @return false|int|mixed|string
+	 * @throws Exception
+	 */
+	public function exception($exception)
+	{
+		$errorInfo = [
+			'message' => $exception->getMessage(),
+			'file'    => $exception->getFile(),
+			'line'    => $exception->getLine()
+		];
+		$this->error(var_export($errorInfo, true));
+
+		$code = $exception->getCode() ?? 500;
+
+		$logger = Snowflake::app()->logger;
+
+		$string = 'Exception: ' . PHP_EOL;
+		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
+		$string .= '#.  file: ' . $errorInfo['file'] . PHP_EOL;
+		$string .= '#.  line: ' . $errorInfo['line'] . PHP_EOL;
+
+		$logger->write($string . $exception->getTraceAsString(), 'trace');
+		$logger->write(jTraceEx($exception), 'exception');
+
+		return JSON::to($code, $errorInfo['message']);
+	}
+
+
 	/**
 	 * @param Exception $exception
 	 * @return array

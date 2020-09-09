@@ -425,11 +425,7 @@ class Router extends Application implements RouterInterface
 				$response = send($node->dispatch(), 200);
 			}
 		} catch (\Throwable $exception) {
-			$trance = JSON::to(500, $exception->getMessage(), [
-				'file' => $exception->getFile(),
-				'line' => $exception->getLine()
-			]);
-			$response = send($trance, 200);
+			$response = send(Snowflake::app()->getLogger()->exception($exception), 200);
 		} finally {
 			if (!($node instanceof Node) || !$node->hasAfter()) {
 				return;

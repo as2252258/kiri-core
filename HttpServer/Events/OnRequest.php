@@ -63,42 +63,12 @@ class OnRequest extends Callback
 	 */
 	protected function sendErrorMessage($sResponse, $exception, $response)
 	{
-		$params = $this->format($exception);
+		$params = Snowflake::app()->getLogger()->exception($exception);
 		if (empty($sResponse)) {
 			$sResponse = \response();
 			$sResponse->response = $response;
 		}
 		return $sResponse->send($params, 200);
-	}
-
-
-	/**
-	 * @param Exception $exception
-	 * @return false|int|mixed|string
-	 * @throws Exception
-	 */
-	public function format($exception)
-	{
-		$errorInfo = [
-			'message' => $exception->getMessage(),
-			'file'    => $exception->getFile(),
-			'line'    => $exception->getLine()
-		];
-		$this->error(var_export($errorInfo, true));
-
-		$code = $exception->getCode() ?? 500;
-
-		$logger = Snowflake::app()->logger;
-
-		$string = 'Exception: ' . PHP_EOL;
-		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
-		$string .= '#.  file: ' . $errorInfo['file'] . PHP_EOL;
-		$string .= '#.  line: ' . $errorInfo['line'] . PHP_EOL;
-
-		$logger->write($string . $exception->getTraceAsString(), 'trace');
-		$logger->write(jTraceEx($exception), 'exception');
-
-		return JSON::to($code, $errorInfo['message']);
 	}
 
 
