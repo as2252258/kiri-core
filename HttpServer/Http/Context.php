@@ -64,14 +64,13 @@ class Context extends BaseContext
 		if (!static::hasContext($id)) {
 			Coroutine::getContext()[$id] = [];
 		}
-		if (!empty($key)) {
-			if (!is_array(Coroutine::getContext()[$id])) {
-				Coroutine::getContext()[$id] = [$key => $context];
-			} else {
-				Coroutine::getContext()[$id][$key] = $context;
-			}
+		if (empty($key)) {
+			return Coroutine::getContext()[$id] = $context;
+		}
+		if (!is_array(Coroutine::getContext()[$id])) {
+			Coroutine::getContext()[$id] = [$key => $context];
 		} else {
-			Coroutine::getContext()[$id] = $context;
+			Coroutine::getContext()[$id][$key] = $context;
 		}
 		return $context;
 	}
