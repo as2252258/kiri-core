@@ -53,7 +53,7 @@ class Middleware
 	{
 		$last = function ($passable) use ($node) {
 			$responseData = Dispatch::create($node->handler, $passable)->dispatch();
-			defer(function () use ($node, $responseData) {
+			Coroutine::defer(function () use ($node, $responseData) {
 				if ($node->hasAfter()) {
 					$node->afterDispatch($responseData);
 				}
