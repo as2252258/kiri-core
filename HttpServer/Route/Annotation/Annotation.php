@@ -178,7 +178,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 		[$keyName, $matchs] = $annotation;
 		foreach ($explode as $middleware) {
-			$middleware = 'App\Http\Interceptor\\' . $middleware;
+			$middleware = 'App\Http\After\\' . $middleware;
 			if (!class_exists($middleware)) {
 				continue;
 			}
@@ -186,7 +186,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 			if (!($middleware instanceof Interceptor)) {
 				continue;
 			}
-			$node->addAfter([$middleware, 'Interceptor']);
+			$node->addAfter([$middleware, 'onHandler']);
 		}
 	}
 
