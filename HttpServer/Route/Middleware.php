@@ -58,7 +58,8 @@ class Middleware
 					$node->afterDispatch($responseData);
 				}
 			});
-			response()->send($responseData, 200);
+			return $responseData;
+//			response()->send($responseData, 200);
 		};
 		return $node->callback = Reduce::reduce($last, $this->annotation($node));
 	}
