@@ -14,6 +14,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 
 /**
  * Class Router
@@ -25,6 +26,8 @@ class Router extends Application implements RouterInterface
 	public $nodes = [];
 	public $groupTacks = [];
 	public $dir = 'App\\Http\\Controllers';
+
+	const NOT_FOUND = 'Page not found or method not allowed.';
 
 	/** @var string[] */
 	public $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
@@ -407,17 +410,36 @@ class Router extends Application implements RouterInterface
 		return $newPath;
 	}
 
+
 	/**
-	 * @return mixed
+	 * @return mixed|void
 	 * @throws
 	 */
 	public function dispatch()
 	{
 		$request = Context::getContext('request');
 		if (!($node = $this->find_path($request))) {
-			return JSON::to(404, 'Page not found or method not allowed.');
+			$response = JSON::to(404, self::NOT_FOUND);
+			response()->send($response, 200);
+		} else {
+			response()->send($response = $node->dispatch(), 200);
 		}
-		return $node->dispatch();
+		$this->onAfter($response, $node);
+	}
+
+
+	/**
+	 * @param $data
+	 * @param null|Node $node
+	 */
+	private function onAfter($data, $node = null)
+	{
+		Coroutine::defer(function () use ($node, $data) {
+			if (!$node->hasAfter()) {
+				return;
+			}
+			$node->afterDispatch($data);
+		});
 	}
 
 

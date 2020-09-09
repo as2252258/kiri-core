@@ -142,10 +142,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 		if (!isset($annotation[1][2])) {
 			return;
 		}
-
 		$explode = explode(',', $annotation[1][2]);
-
-		[$keyName, $matchs] = $annotation;
 		foreach ($explode as $middleware) {
 			$middleware = 'App\Http\Interceptor\\' . $middleware;
 			if (!class_exists($middleware)) {
@@ -156,10 +153,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 				continue;
 			}
 			$node->addInterceptor([$middleware, 'Interceptor']);
-			continue;
-
-			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
-			$node->addInterceptor($this->pop($this->getName(...$params)));
 		}
 	}
 
@@ -176,8 +169,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 		}
 
 		$explode = explode(',', $annotation[1][2]);
-
-		[$keyName, $matchs] = $annotation;
 		foreach ($explode as $middleware) {
 			$middleware = 'App\Http\After\\' . $middleware;
 			if (!class_exists($middleware)) {
@@ -204,8 +195,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 		}
 
 		$explode = explode(',', $annotation[1][2]);
-
-		[$keyName, $matchs] = $annotation;
 		foreach ($explode as $middleware) {
 			$middleware = 'App\Http\Limits\\' . $middleware;
 			if (!class_exists($middleware)) {
@@ -216,10 +205,6 @@ class Annotation extends \Snowflake\Annotation\Annotation
 				continue;
 			}
 			$node->addLimits([$middleware, 'next']);
-			continue;
-
-			$params = [$keyName, [$matchs[0], $matchs[1], $middleware]];
-			$node->addLimits($this->pop($this->getName(...$params)));
 		}
 	}
 

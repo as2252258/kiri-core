@@ -14,6 +14,7 @@ use HttpServer\Service\Http;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -40,7 +41,7 @@ class OnRequest extends Callback
 			if ($sRequest->is('favicon.ico')) {
 				return $sResponse->send($sRequest->isNotFound(), 200);
 			}
-			$sResponse->send(Snowflake::app()->router->dispatch(), 200);
+			return Snowflake::app()->getRouter()->dispatch();
 		} catch (Error | \Throwable $exception) {
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		} finally {

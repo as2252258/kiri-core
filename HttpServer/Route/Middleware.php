@@ -52,14 +52,7 @@ class Middleware
 	public function getGenerate($node)
 	{
 		$last = function ($passable) use ($node) {
-			$responseData = Dispatch::create($node->handler, $passable)->dispatch();
-			Coroutine::defer(function () use ($node, $responseData) {
-				if ($node->hasAfter()) {
-					$node->afterDispatch($responseData);
-				}
-			});
-			return $responseData;
-//			response()->send($responseData, 200);
+			return Dispatch::create($node->handler, $passable)->dispatch();
 		};
 		return $node->callback = Reduce::reduce($last, $this->annotation($node));
 	}
