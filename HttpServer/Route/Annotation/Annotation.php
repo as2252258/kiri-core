@@ -3,6 +3,7 @@
 
 namespace HttpServer\Route\Annotation;
 
+use HttpServer\IInterface\After;
 use HttpServer\IInterface\Interceptor;
 use HttpServer\IInterface\Limits;
 use HttpServer\Route\Node;
@@ -183,7 +184,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 				continue;
 			}
 			$middleware = Snowflake::createObject($middleware);
-			if (!($middleware instanceof Interceptor)) {
+			if (!($middleware instanceof After)) {
 				continue;
 			}
 			$node->addAfter([$middleware, 'onHandler']);
