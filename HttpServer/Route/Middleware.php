@@ -53,10 +53,12 @@ class Middleware
 	{
 		$last = function ($passable) use ($node) {
 			$responseData = Dispatch::create($node->handler, $passable)->dispatch();
+			defer(function () use ($node, $responseData) {
+				if ($node->hasAfter()) {
+					$node->afterDispatch($responseData);
+				}
+			});
 			response()->send($responseData, 200);
-			if ($node->hasAfter()) {
-				$node->afterDispatch($responseData);
-			}
 		};
 		return $node->callback = Reduce::reduce($last, $this->annotation($node));
 	}
