@@ -12,6 +12,7 @@ use HttpServer\Route\Annotation\Annotation;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 
 /**
  * Class Node
@@ -87,11 +88,42 @@ class Node extends Application
 
 
 	/**
+	 * @param $response
+	 * @return mixed|null
+	 */
+	public function afterDispatch($response)
+	{
+		return Coroutine::create(function ($response) {
+			$callback = Reduce::after($this->_after);
+			$callback(\request(), $response);
+		}, [$response]);
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function getInterceptor()
 	{
 		return $this->_interceptors;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getAfters()
+	{
+		return $this->_after;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasAfter()
+	{
+		return count($this->_after) > 0;
 	}
 
 

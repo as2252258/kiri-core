@@ -239,6 +239,21 @@ if (!function_exists('response')) {
 
 }
 
+if (!function_exists('send')) {
+
+	/**
+	 * @param $context
+	 * @param $statusCode
+	 * @return bool|Response|stdClass|string
+	 * @throws Exception
+	 */
+	function send($context, $statusCode = 200)
+	{
+		return \response()->send($context, $statusCode);
+	}
+
+}
+
 if (!function_exists('redirect')) {
 
 	function redirect($url)
