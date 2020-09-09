@@ -432,7 +432,7 @@ class Router extends Application implements RouterInterface
 			]);
 			$response = send($trance, 200);
 		} finally {
-			if (!$node->hasAfter()) {
+			if (!($node instanceof Node) || !$node->hasAfter()) {
 				return;
 			}
 			$node->afterDispatch($response);
