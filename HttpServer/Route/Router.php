@@ -417,16 +417,26 @@ class Router extends Application implements RouterInterface
 	 */
 	public function dispatch()
 	{
-		/** @var Node $node */
-		$request = Context::getContext('request');
-		if (!($node = $this->find_path($request))) {
-			return send(JSON::to(404, self::NOT_FOUND));
-		}
-		$response = send($node->dispatch(), 200);
-		if ($node->hasAfter()) {
+		try {
+			/** @var Node $node */
+			$request = Context::getContext('request');
+			if (!($node = $this->find_path($request))) {
+				$response = send(JSON::to(404, self::NOT_FOUND), 404);
+			} else {
+				$response = send($node->dispatch(), 200);
+			}
+		} catch (\Throwable $exception) {
+			$trance = JSON::to(500, $exception->getMessage(), [
+				'file' => $exception->getFile(),
+				'line' => $exception->getLine()
+			]);
+			$response = send($trance, 200);
+		} finally {
+			if (!$node->hasAfter()) {
+				return;
+			}
 			$node->afterDispatch($response);
 		}
-		return $response;
 	}
 
 
