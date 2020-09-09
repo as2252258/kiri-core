@@ -93,10 +93,9 @@ class Node extends Application
 	 */
 	public function afterDispatch($response)
 	{
-		return Coroutine::create(function ($response) {
-			$callback = Reduce::after($this->_after);
-			$callback(\request(), $response);
-		}, [$response]);
+		return Coroutine::create(function ($request, $response) {
+			(Reduce::after($this->_after))($request, $response);
+		}, [\request(), $response]);
 	}
 
 
