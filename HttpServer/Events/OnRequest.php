@@ -38,17 +38,13 @@ class OnRequest extends Callback
 		try {
 			register_shutdown_function(function () use ($response) {
 				$error = error_get_last();
-				switch ($error['type'] ?? null) {
-					case E_ERROR :
-					case E_PARSE :
-					case E_CORE_ERROR :
-					case E_COMPILE_ERROR :
-						// log or send:
-						// error_log($message);
-						// $server->send($fd, $error['message']);
-						$response->status(500);
-						$response->end($error['message']);
-						break;
+				if (!isset($error['type'])) {
+					return;
+				}
+				$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
+				if (in_array($error['type'], $types)) {
+					$response->status(500);
+					$response->end($error['message']);
 				}
 			});
 			/** @var HRequest $sRequest */
