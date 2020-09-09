@@ -42,10 +42,11 @@ class OnRequest extends Callback
 					return;
 				}
 				$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
-				if (in_array($error['type'], $types)) {
-					$response->status(500);
-					$response->end($error['message']);
+				if (!in_array($error['type'], $types)) {
+					return;
 				}
+				$response->status(500);
+				$response->end($error['message']);
 			});
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
