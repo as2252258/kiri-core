@@ -112,6 +112,9 @@ abstract class Callback extends Application
 	protected function system_mail($message)
 	{
 		try {
+			if (!Config::get('email.enable', false, false)) {
+				return;
+			}
 			$mail = $this->createEmail();
 			$receives = Config::get('email.receive');
 			if (empty($receives) || !is_array($receives)) {
