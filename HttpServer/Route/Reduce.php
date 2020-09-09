@@ -29,11 +29,11 @@ class Reduce
 	public static function after($middleWares)
 	{
 		return array_reduce(array_reverse($middleWares), function ($stack, $pipe) {
-			return function ($passable) use ($stack, $pipe) {
+			return function ($request, $passable) use ($stack, $pipe) {
 				if ($pipe instanceof After) {
-					return $pipe->onHandler($passable, $stack);
+					return $pipe->onHandler($request, $passable, $stack);
 				} else {
-					return $pipe($passable, $stack);
+					return $pipe($request, $passable, $stack);
 				}
 			};
 		});

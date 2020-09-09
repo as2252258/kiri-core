@@ -172,5 +172,49 @@
 //	var_dump($value);
 //}
 
-exec('ps -ef 15132 | grep 15132', $output);
-var_dump($output);
+//exec('ps -ef 15132 | grep 15132', $output);
+//var_dump($output);
+
+//
+//Swoole\Coroutine::create(function () {
+//	var_dump(\Swoole\Coroutine::getCid());
+////
+////	Swoole\Coroutine::create(function () {
+////		var_dump(\Swoole\Coroutine::getPcid());
+////		Swoole\Coroutine::create(function () {
+////			var_dump(\Swoole\Coroutine::getPcid());
+////			Swoole\Coroutine::create(function () {
+////				var_dump(\Swoole\Coroutine::getPcid());
+////				Swoole\Coroutine::create(function () {
+////					var_dump(\Swoole\Coroutine::getPcid());
+////				});
+////			});
+////		});
+////	});
+//	Swoole\Coroutine::create(function () {
+//		var_dump(\Swoole\Coroutine::getPcid());
+//	});
+//	Swoole\Coroutine::create(function () {
+//		var_dump(\Swoole\Coroutine::getPcid());
+//	});
+//	Swoole\Coroutine::create(function () {
+//		var_dump(\Swoole\Coroutine::getPcid());
+//	});
+//});
+
+
+Swoole\Coroutine::create(function () {
+
+	class b
+	{
+		public function et()
+		{
+			var_dump(\Swoole\Coroutine::getPcid(), microtime(true));
+			\Swoole\Coroutine::sleep(0.01);
+		}
+	}
+
+	for ($a = 0; $a < 10; $a++) {
+		Swoole\Coroutine::create([new b(), 'et']);
+	}
+});
