@@ -41,7 +41,7 @@ class OnRequest extends Callback
 			if ($sRequest->is('favicon.ico')) {
 				$params = $sResponse->send($sRequest->isNotFound(), 200);
 			} else {
-				$params = Snowflake::app()->getRouter()->dispatch();
+				$params = $sResponse->send(Snowflake::app()->getRouter()->dispatch(), 200);
 			}
 		} catch (Error | \Throwable $exception) {
 			$params = $this->sendErrorMessage($sResponse ?? null, $exception, $response);
