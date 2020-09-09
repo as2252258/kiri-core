@@ -28,12 +28,12 @@ class OnWorkerError extends Callback
 		if (!Config::has('email')) {
 			return;
 		}
-//		Coroutine::create([$this,'system_mail'],print_r([
-//			'$worker_pid' => $worker_pid,
-//			'$worker_id'  => $worker_id,
-//			'$exit_code'  => $exit_code,
-//			'$signal'     => $signal,
-//		], true));
+		$this->system_mail(print_r([
+			'$worker_pid' => $worker_pid,
+			'$worker_id'  => $worker_id,
+			'$exit_code'  => $exit_code,
+			'$signal'     => $signal,
+		], true));
 	}
 
 }
