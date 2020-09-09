@@ -100,7 +100,8 @@ class Node extends Application
 	 */
 	public function afterDispatch($response)
 	{
-		return call_user_func($this->_after, $response);
+		$callback = Reduce::after($this->_after);
+		return $callback($response);
 	}
 
 

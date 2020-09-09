@@ -4,9 +4,17 @@
 namespace HttpServer\IInterface;
 
 
+use Closure;
+
 interface After
 {
 
-	public function onHandler($params);
+
+	/**
+	 * @param $params
+	 * @param Closure|null $next
+	 * @return mixed
+	 */
+	public function onHandler($params, $next);
 
 }

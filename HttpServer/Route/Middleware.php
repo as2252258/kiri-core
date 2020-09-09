@@ -11,6 +11,7 @@ namespace HttpServer\Route;
 use Closure;
 use Exception;
 use HttpServer\Route\Dispatch\Dispatch;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
 /**
@@ -53,12 +54,11 @@ class Middleware
 		$last = function ($passable) use ($node) {
 			$responseData = Dispatch::create($node->handler, $passable)->dispatch();
 			response()->send($responseData, 200);
-			Coroutine::create(function () use ($responseData, $node) {
+			if ($node->hasAfter()) {
 				$node->afterDispatch($responseData);
-			});
+			}
 		};
-		$data = Reduce::reduce($last, $this->annotation($node));
-		return $node->callback = $data;
+		return $node->callback = Reduce::reduce($last, $this->annotation($node));
 	}
 
 
