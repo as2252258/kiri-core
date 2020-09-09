@@ -419,9 +419,8 @@ class Router extends Application implements RouterInterface
 	{
 		try {
 			/** @var Node $node */
-			$request = Context::getContext('request');
-			if (!($node = $this->find_path($request))) {
-				$response = send(JSON::to(404, self::NOT_FOUND), 404);
+			if (!($node = $this->find_path(\request()))) {
+				$response = send(self::NOT_FOUND, 404);
 			} else {
 				$response = send($node->dispatch(), 200);
 			}
