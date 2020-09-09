@@ -421,6 +421,7 @@ class Request extends Application
 		$sRequest = new Request();
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
+		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
 		$sRequest->params = new HttpParams(Help::toArray($request->rawContent()), $request->get, $request->files);
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
