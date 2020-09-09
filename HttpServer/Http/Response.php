@@ -156,7 +156,7 @@ class Response extends Application
 		$event = Snowflake::app()->event;
 		$event->trigger('CONSOLE_END');
 
-		return 'ok';
+		return $result;
 	}
 
 	/**
@@ -171,7 +171,8 @@ class Response extends Application
 		$response->header('Content-Type', $this->getContentType());
 		$response->header('Access-Control-Allow-Origin', '*');
 		$response->header('Run-Time', $this->getRuntime());
-		return $response->end($sendData);
+		$response->end($sendData);
+		return $sendData;
 	}
 
 	/**

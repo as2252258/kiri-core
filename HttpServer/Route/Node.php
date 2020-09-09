@@ -10,6 +10,7 @@ use Exception;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
 use Snowflake\Core\JSON;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 
 /**
@@ -86,40 +87,11 @@ class Node extends Application
 
 
 	/**
-	 * @return bool
-	 */
-	public function hasAfter()
-	{
-		return count($this->_after) > 0;
-	}
-
-
-	/**
-	 * @param $response
-	 * @return mixed|null
-	 */
-	public function afterDispatch($response)
-	{
-		$callback = Reduce::after($this->_after);
-		return $callback(\request(), $response);
-	}
-
-
-	/**
 	 * @return array
 	 */
 	public function getInterceptor()
 	{
 		return $this->_interceptors;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getAfters()
-	{
-		return $this->_after;
 	}
 
 
@@ -230,7 +202,11 @@ class Node extends Application
 	 */
 	public function addAfter($handler)
 	{
-		$this->_after[] = $handler;
+		$event = Snowflake::app()->getEvent();
+		if ($event->exists(Event::EVENT_AFTER_REQUEST, $handler)) {
+			return;
+		}
+		$event->on(Event::EVENT_AFTER_REQUEST, $handler);
 	}
 
 

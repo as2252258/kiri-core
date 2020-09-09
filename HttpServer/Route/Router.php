@@ -419,27 +419,9 @@ class Router extends Application implements RouterInterface
 	{
 		$request = Context::getContext('request');
 		if (!($node = $this->find_path($request))) {
-			$response = JSON::to(404, self::NOT_FOUND);
-			response()->send($response, 200);
-		} else {
-			response()->send($response = $node->dispatch(), 200);
+			return JSON::to(404, self::NOT_FOUND);
 		}
-		$this->onAfter($response, $node);
-	}
-
-
-	/**
-	 * @param $data
-	 * @param null|Node $node
-	 */
-	private function onAfter($data, $node = null)
-	{
-		Coroutine::defer(function () use ($node, $data) {
-			if (!$node->hasAfter()) {
-				return;
-			}
-			$node->afterDispatch($data);
-		});
+		return $node->dispatch();
 	}
 
 
