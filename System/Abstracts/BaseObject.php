@@ -169,7 +169,7 @@ class BaseObject implements Configure
 	 * @param string $message
 	 * @param string|null $method
 	 * @param string|null $file
-	 * @throws Exception
+	 * @throws
 	 */
 	public function error($message, $method = null, $file = null)
 	{

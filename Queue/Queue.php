@@ -81,7 +81,13 @@ class Queue extends \Snowflake\Process\Process
 	 */
 	public function delivery(Consumer $consumer, $score = 0)
 	{
-		$this->waiting->add($consumer, $score);
+		try {
+			$consumer->onWaiting();
+		} catch (\Throwable $exception) {
+			$this->application->error($exception->getMessage());
+		} finally {
+			$this->waiting->add($consumer, $score);
+		}
 	}
 
 
