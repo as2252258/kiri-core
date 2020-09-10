@@ -17,6 +17,7 @@ class BaseGoto extends Component
 	/**
 	 * @param $message
 	 * @param int $statusCode
+	 * @return mixed|void
 	 * @throws Exception
 	 */
 	public function end($message, $statusCode = 200)
