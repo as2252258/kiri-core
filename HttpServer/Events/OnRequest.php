@@ -36,7 +36,7 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
-			register_shutdown_function(function () use ($response) {
+			register_shutdown_function(function ($response) {
 				$error = error_get_last();
 				if (!isset($error['type'])) {
 					return;
@@ -45,9 +45,12 @@ class OnRequest extends Callback
 				if (!in_array($error['type'], $types)) {
 					return;
 				}
-				$response->status(500);
-				$response->end($error['message']);
-			});
+				if ($response instanceof Response) {
+					$response->status(500);
+					$response->end($error['message']);
+				}
+				unset($response);
+			}, $response);
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
 			if ($sRequest->is('favicon.ico')) {
