@@ -40,6 +40,7 @@ class Redis extends Pool
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		} else if (!$this->hasItem($coroutineName)) {
+			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
 			return $this->saveClient($coroutineName, $this->createConnect($config));
 		}
 		return $this->getByChannel($coroutineName, $config);
