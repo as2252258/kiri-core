@@ -188,11 +188,8 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool|static
 	 * @throws Exception
 	 */
-	public static function insertOrUpdate(array $params, array $condition = [])
+	public static function insertOrUpdate(array $condition, array $params)
 	{
-		if (empty($condition)) {
-			$condition = $params;
-		}
 		$first = static::findOrCreate($condition, $params);
 		$first->attributes = $params;
 		if (!$first->save()) {
