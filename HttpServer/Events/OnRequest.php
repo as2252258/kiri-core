@@ -36,26 +36,13 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
+			register_shutdown_function(OnRequest::class . '::shutdown', $response);
+
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
 			if ($sRequest->is('favicon.ico')) {
 				return $params = $sResponse->send($sRequest->isNotFound(), 200);
 			}
-			register_shutdown_function(function ($response) {
-				$error = error_get_last();
-				if (!isset($error['type'])) {
-					return;
-				}
-				$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
-				if (!in_array($error['type'], $types)) {
-					return;
-				}
-				if ($response instanceof Response) {
-					$response->status(500);
-					$response->end($error['message']);
-				}
-				unset($response);
-			}, $response);
 			return $params = Snowflake::app()->getRouter()->dispatch();
 		} catch (Error | \Throwable $exception) {
 			$params = $this->sendErrorMessage($sResponse ?? null, $exception, $response);
@@ -68,6 +55,32 @@ class OnRequest extends Callback
 		}
 	}
 
+	/**
+	 * @param $response
+	 * @throws Exception
+	 */
+	public static function shutdown($response)
+	{
+		$error = error_get_last();
+		if (!isset($error['type'])) {
+			return;
+		}
+		$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
+		if (!in_array($error['type'], $types)) {
+			return;
+		}
+		try {
+			$message = $error['message'] . ':' . microtime(true);
+			if ($response instanceof Response) {
+				$response->status(500);
+				$response->end($message);
+			}
+		} catch (\ErrorException $exception) {
+			$logger = Snowflake::app()->logger;
+			$logger->write($exception->getMessage(), 'shutdown');
+		}
+		unset($response);
+	}
 
 	/**
 	 * @param $sResponse
