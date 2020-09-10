@@ -48,6 +48,7 @@ class OnRequest extends Callback
 			$params = $this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		} finally {
 			unset($sResponse, $response);
+			Context::deleteId('response');
 			$events = Snowflake::app()->getEvent();
 			if (!$events->exists(Event::EVENT_AFTER_REQUEST)) {
 				return;
