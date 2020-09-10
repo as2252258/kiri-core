@@ -13,6 +13,7 @@ use HttpServer\Application;
 use HttpServer\Route\Annotation\Annotation;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -425,15 +426,27 @@ class Router extends Application implements RouterInterface
 				$response = send($node->dispatch(), 200);
 			}
 		} catch (ExitException $exception) {
-			$response = send(Snowflake::app()->getLogger()->exception($exception), 200);
+			$response = send($this->exception($exception), $exception->getCode());
 		} catch (\Throwable $exception) {
-			$response = send(Snowflake::app()->getLogger()->exception($exception), 200);
+			$response = send($this->exception($exception), 200);
 		} finally {
 			if (!($node instanceof Node) || !$node->hasAfter()) {
 				return;
 			}
 			$node->afterDispatch($response);
 		}
+	}
+
+
+	/**
+	 * @param $exception
+	 * @return false|int|mixed|string
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	private function exception($exception)
+	{
+		return Snowflake::app()->getLogger()->exception($exception);
 	}
 
 
