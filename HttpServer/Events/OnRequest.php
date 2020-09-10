@@ -36,7 +36,7 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
-			register_shutdown_function([static::class, 'shutdown'], $response);
+			register_shutdown_function(OnRequest::class . '::shutdown', $response);
 
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
