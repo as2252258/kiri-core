@@ -15,6 +15,7 @@ use Snowflake\Snowflake;
  * Class WebController
  * @package Snowflake\Snowflake\Web
  * @property BaseGoto $goto
+ * @property \Snowflake\Application $app
  */
 class Controller extends Application
 {
@@ -29,6 +30,21 @@ class Controller extends Application
 
 	/** @var Request */
 	public $request;
+
+
+	public $goto;
+
+
+	public $app;
+
+
+	public function __construct($config = [])
+	{
+		$this->app = Snowflake::app();
+		$this->goto = $this->app->goto;
+
+		parent::__construct($config);
+	}
 
 	/**
 	 * @param HttpParams $input
@@ -97,16 +113,11 @@ class Controller extends Application
 	 */
 	public function __get($name)
 	{
-		$method = 'get' . ucfirst($name);
-		if (method_exists($this, $method)) {
-			return $this->$method();
+		if (property_exists($this, $name)) {
+			return $this->$name;
+		} else if (method_exists($this, $name)) {
+			return $this->$name();
 		}
-
-		$app = Snowflake::app();
-		if ($app->has($name)) {
-			return $app->get($name);
-		}
-
 		return parent::__get($name);
 	}
 
