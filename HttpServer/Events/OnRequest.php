@@ -36,13 +36,13 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
-			register_shutdown_function(OnRequest::class . '::shutdown', $response);
-
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
 			if ($sRequest->is('favicon.ico')) {
 				return $params = $sResponse->send($sRequest->isNotFound(), 200);
 			}
+			register_shutdown_function(OnRequest::class . '::shutdown', $response);
+
 			return $params = Snowflake::app()->getRouter()->dispatch();
 		} catch (Error | \Throwable $exception) {
 			$params = $this->sendErrorMessage($sResponse ?? null, $exception, $response);
