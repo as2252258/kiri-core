@@ -8,11 +8,13 @@ use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use Exception;
+use Snowflake\Abstracts\BaseGoto;
 use Snowflake\Snowflake;
 
 /**
  * Class WebController
  * @package Snowflake\Snowflake\Web
+ * @property BaseGoto $goto
  */
 class Controller extends Application
 {
