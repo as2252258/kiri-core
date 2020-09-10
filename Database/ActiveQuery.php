@@ -317,9 +317,10 @@ class ActiveQuery extends Component
 	 */
 	public function exists()
 	{
-		return (bool)$this->modelClass::getDb()
+		$column = $this->modelClass::getDb()
 			->createCommand($this->queryBuilder())
 			->fetchColumn();
+		return $column !== false;
 	}
 
 	/**
