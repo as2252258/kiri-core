@@ -426,7 +426,7 @@ class Router extends Application implements RouterInterface
 				$response = send($node->dispatch(), 200);
 			}
 		} catch (ExitException $exception) {
-			$response = send($this->exception($exception), $exception->getCode());
+			$response = send($exception->getMessage(), $exception->getCode());
 		} catch (\Throwable $exception) {
 			$response = send($this->exception($exception), 200);
 		} finally {
