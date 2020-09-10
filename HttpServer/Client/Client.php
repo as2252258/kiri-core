@@ -45,6 +45,25 @@ class Client
 	private $_message = '';
 	private $_data = '';
 
+	private $connect_timeout = 1;
+
+	/**
+	 * @return int
+	 */
+	public function getConnectTimeout(): int
+	{
+		return $this->connect_timeout;
+	}
+
+	/**
+	 * @param int $connect_timeout
+	 */
+	public function setConnectTimeout(int $connect_timeout): void
+	{
+		$this->connect_timeout = $connect_timeout;
+	}
+
+
 	/**
 	 * @return string
 	 */
@@ -212,7 +231,7 @@ class Client
 		if (empty($this->host) || empty($this->port)) {
 			return new Result(['code' => 500, 'message' => 'Host and port is null']);
 		}
-		if (!$client->connect($this->host, $this->port)) {
+		if (!$client->connect($this->host, $this->port, $this->connect_timeout)) {
 			return new Result(['code' => 500, 'message' => $client->errMsg]);
 		}
 
@@ -601,8 +620,8 @@ class Client
 		$sslCa = $this->getCa();
 
 		$params = [];
-		if ($this->timeout > 0) {
-			$params['timeout'] = $this->timeout;
+		if ($this->connect_timeout > 0) {
+			$params['timeout'] = $this->connect_timeout;
 		}
 		if (empty($sslCert) || empty($sslKey) || empty($sslCa)) {
 			return $params;

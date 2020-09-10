@@ -36,21 +36,8 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
-			register_shutdown_function(function ($response) {
-				$error = error_get_last();
-				if (!isset($error['type'])) {
-					return;
-				}
-				$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
-				if (!in_array($error['type'], $types)) {
-					return;
-				}
-				if ($response instanceof Response) {
-					$response->status(500);
-					$response->end($error['message']);
-				}
-				unset($response);
-			}, $response);
+			register_shutdown_function([static::class, 'shutdown'], $response);
+
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = static::setContext($request, $response);
 			if ($sRequest->is('favicon.ico')) {
@@ -66,6 +53,27 @@ class OnRequest extends Callback
 			}
 			$events->trigger(Event::EVENT_AFTER_REQUEST, [$sRequest, $params]);
 		}
+	}
+
+
+	/**
+	 * @param $response
+	 */
+	public static function shutdown($response)
+	{
+		$error = error_get_last();
+		if (!isset($error['type'])) {
+			return;
+		}
+		$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
+		if (!in_array($error['type'], $types)) {
+			return;
+		}
+		if ($response instanceof Response) {
+			$response->status(500);
+			$response->end($error['message']);
+		}
+		unset($response);
 	}
 
 
