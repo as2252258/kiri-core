@@ -215,8 +215,9 @@ class Server extends Application
 			if (!is_string($process)) {
 				continue;
 			}
-			$system = $application->set($process, new $process(Snowflake::app(), $name));
+			$system = new $process(Snowflake::app(), $name);
 			$this->baseServer->addProcess($system);
+			$application->set($process, $system);
 		}
 	}
 

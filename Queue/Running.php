@@ -38,12 +38,8 @@ class Running extends \Queue\Abstracts\Queue
 	 * @return false|int
 	 * @throws ComponentException
 	 */
-	public function del(string $consumer)
+	public function del(Consumer $consumer)
 	{
-		$consumer = unserialize($consumer);
-		if (!($consumer instanceof Consumer)) {
-			return true;
-		}
 		return $this->pop(self::QUEUE_RUNNING, $consumer);
 	}
 
