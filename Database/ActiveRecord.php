@@ -193,16 +193,8 @@ class ActiveRecord extends BaseActiveRecord
 		if (empty($condition)) {
 			$condition = $params;
 		}
-		$first = static::find()->where($condition)->first();
-		if (empty($first)) {
-			$model = new static();
-			$model->attributes = $params;
-			return $model->save();
-		}
-
-		foreach ($params as $key => $param) {
-			$first->{$key} = $param;
-		}
+		$first = static::findOrCreate($condition, $params);
+		$first->attributes = $params;
 		if (!$first->save()) {
 			return false;
 		}
