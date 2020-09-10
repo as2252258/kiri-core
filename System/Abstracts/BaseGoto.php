@@ -6,6 +6,7 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 use HttpServer\Exception\ExitException;
+use Snowflake\Core\JSON;
 
 /**
  * Class BaseGoto
@@ -20,9 +21,9 @@ class BaseGoto extends Component
 	 * @return mixed|void
 	 * @throws Exception
 	 */
-	public function end($message, $statusCode = 200)
+	public function end(string $message, $statusCode = 200)
 	{
-		throw new ExitException($message, $statusCode);
+		throw new ExitException(JSON::to(12350, $message), $statusCode);
 	}
 
 }
