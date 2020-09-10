@@ -188,9 +188,9 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool|static
 	 * @throws Exception
 	 */
-	public static function insertOrUpdate(array $condition, array $params)
+	public static function insertOrUpdate(array $params, array $condition)
 	{
-		$first = static::findOrCreate($condition, $params);
+		$first = static::findOrCreate($params, $condition);
 		$first->attributes = $params;
 		if (!$first->save()) {
 			return false;
