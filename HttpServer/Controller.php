@@ -42,7 +42,6 @@ class Controller extends Application
 	{
 		$this->app = Snowflake::app();
 		$this->goto = $this->app->goto;
-
 		parent::__construct($config);
 	}
 
@@ -106,19 +105,5 @@ class Controller extends Application
 		return $this->request;
 	}
 
-	/**
-	 * @param $name
-	 * @return mixed|null
-	 * @throws Exception
-	 */
-	public function __get($name)
-	{
-		if (property_exists($this, $name)) {
-			return $this->$name;
-		} else if (method_exists($this, $name)) {
-			return $this->$name();
-		}
-		return parent::__get($name);
-	}
 
 }
