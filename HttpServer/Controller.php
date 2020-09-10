@@ -99,6 +99,12 @@ class Controller extends Application
 		if (method_exists($this, $method)) {
 			return $this->$method();
 		}
+
+		$app = Snowflake::app();
+		if ($app->has($name)) {
+			return $app->get($name);
+		}
+
 		return parent::__get($name);
 	}
 

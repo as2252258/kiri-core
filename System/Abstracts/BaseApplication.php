@@ -45,6 +45,7 @@ use Database\DatabasesProviders;
  * @property Memcached $memcached
  * @property Logger $logger
  * @property Jwt $jwt
+ * @property BaseGoto $goto
  */
 abstract class BaseApplication extends Service
 {
@@ -371,7 +372,8 @@ abstract class BaseApplication extends Service
 			'logger'            => ['class' => Logger::class],
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
-			'jwt'               => ['class' => Jwt::class]
+			'jwt'               => ['class' => Jwt::class],
+			'goto'              => ['class' => BaseGoto::class]
 		]);
 	}
 }
