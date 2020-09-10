@@ -12,6 +12,8 @@ namespace Database;
 use Exception;
 use Database\Base\BaseActiveRecord;
 use Snowflake\Core\ArrayAccess;
+use Snowflake\Error\Logger;
+use Snowflake\Snowflake;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
 
@@ -98,6 +100,28 @@ class ActiveRecord extends BaseActiveRecord
 			$this->$key -= $attribute;
 		}
 		return $this;
+	}
+
+
+	/**
+	 * @param $attributes
+	 * @param $condition
+	 * @return bool|ActiveRecord|mixed
+	 * @throws Exception
+	 */
+	public static function findOrCreate(array $condition, array $attributes = [])
+	{
+		$select = static::find()->where($condition)->first();
+		if (!empty($select)) {
+			return $select;
+		}
+		if (empty($attributes)) {
+			$message = 'Create a new model, but the data cannot be empty.';
+			return Snowflake::app()->logger->addError($message, 'mysql');
+		}
+		$select = new static();
+		$select->attributes = $attributes;
+		return $select->save();
 	}
 
 
