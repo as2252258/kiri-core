@@ -14,10 +14,12 @@ use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
 use HttpServer\ServerProviders;
+use Queue\QueueProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Exception\ConfigException;
 use Swoole\Timer;
 
 /**
@@ -37,6 +39,7 @@ class Application extends BaseApplication
 
 
 	/**
+	 * @throws ConfigException
 	 * @throws NotFindClassException
 	 */
 	public function init()
@@ -44,6 +47,9 @@ class Application extends BaseApplication
 		$this->import(ConsoleProviders::class);
 		$this->import(DatabasesProviders::class);
 		$this->import(ServerProviders::class);
+		if (Config::get('queue.enable', false, false)) {
+			$this->import(QueueProviders::class);
+		}
 	}
 
 

@@ -10,6 +10,7 @@ use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Di\Container;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Process\Process;
 use Swoole\Coroutine;
 
 class Snowflake
@@ -214,6 +215,23 @@ class Snowflake
 	}
 
 
+	/**
+	 * @param $process
+	 * @return mixed|void
+	 */
+	public static function shutdown($process)
+	{
+		static::app()->server->getServer()->shutdown();
+		if ($process instanceof Process) {
+			$process->exit(0);
+		}
+	}
+
+
+	/**
+	 * @param $tmp
+	 * @return string
+	 */
 	public static function rename($tmp)
 	{
 		$hash = md5_file($tmp['tmp_name']);

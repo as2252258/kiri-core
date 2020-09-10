@@ -142,7 +142,7 @@ class Logger extends Component
 	/**
 	 * @param $messages
 	 * @param string $category
-	 * @throws Exception
+	 * @throws
 	 */
 	public function write(string $messages, $category = 'app')
 	{

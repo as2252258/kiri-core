@@ -62,6 +62,20 @@ class Server extends Application
 
 	public $daemon = 0;
 
+
+	private $process = [];
+
+
+	/**
+	 * @param $name
+	 * @param $process
+	 */
+	public function addProcess($name, $process)
+	{
+		$this->process[$name] = $process;
+	}
+
+
 	/**
 	 * @param array $configs
 	 * @return Http|Packet|Receive|Websocket
@@ -172,7 +186,6 @@ class Server extends Application
 	}
 
 
-
 	/**
 	 * @throws ConfigException
 	 * @throws Exception
@@ -180,11 +193,23 @@ class Server extends Application
 	public function onProcessListener()
 	{
 		$processes = Config::get('processes');
+		if (!empty($processes) && is_array($processes)) {
+			return $this->deliveryProcess(merge($processes, $this->process));
+		}
+		return $this->deliveryProcess($this->process);
+	}
+
+
+	/**
+	 * @param $processes
+	 * @throws Exception
+	 */
+	private function deliveryProcess($processes)
+	{
+		$application = Snowflake::app();
 		if (empty($processes) || !is_array($processes)) {
 			return;
 		}
-
-		$application = Snowflake::app();
 		foreach ($processes as $name => $process) {
 			$this->debug(sprintf('Process %s', $process));
 			if (!is_string($process)) {
