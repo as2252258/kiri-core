@@ -5,6 +5,7 @@ namespace HttpServer\Route;
 
 use Closure;
 use Exception;
+use HttpServer\Exception\ExitException;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
@@ -405,7 +406,6 @@ class Router extends Application implements RouterInterface
 
 				$newPath[] = strtoupper($item->method) . ' : ' . $route . '/' . $item->path;
 			}
-
 		}
 		return $newPath;
 	}
@@ -424,6 +424,8 @@ class Router extends Application implements RouterInterface
 			} else {
 				$response = send($node->dispatch(), 200);
 			}
+		} catch (ExitException $exception) {
+			$response = send(Snowflake::app()->getLogger()->exception($exception), 200);
 		} catch (\Throwable $exception) {
 			$response = send(Snowflake::app()->getLogger()->exception($exception), 200);
 		} finally {

@@ -199,7 +199,7 @@ class Command extends Component
 				$this->prepare->closeCursor();
 			}
 		} catch (\Throwable | Exception $exception) {
-			$this->error($this->sql . '. error: ' . $exception->getMessage());
+			$this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
 			$result = null;
 		} finally {
 			return $result;
@@ -241,18 +241,17 @@ class Command extends Component
 			return false;
 		}
 		if (($result = $this->prepare->execute($this->params)) === false) {
-			return $this->addError($connection->errorInfo()[2]);
+			return $this->addError($connection->errorInfo()[2],'mysql');
 		}
 		if (!$isInsert) {
 			return true;
 		}
 		$result = $connection->lastInsertId();
 		if ($result == 0 && $hasAutoIncrement) {
-			return $this->addError($connection->errorInfo()[2]);
+			return $this->addError($connection->errorInfo()[2],'mysql');
 		}
 		return $result;
 	}
-
 
 
 	/**
@@ -269,7 +268,7 @@ class Command extends Component
 		}
 		$this->prepare = $connect->prepare($this->sql);
 		if (!($this->prepare instanceof PDOStatement)) {
-			return $this->addError($this->sql . ':' . $this->getError());
+			return $this->addError($this->sql . ':' . $this->getError(),'mysql');
 		}
 		return $connect;
 	}
