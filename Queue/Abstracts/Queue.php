@@ -29,15 +29,19 @@ abstract class Queue extends Component implements Relyon
 	protected function push(string $key, Consumer $consumer, $score = 0)
 	{
 		$redis = Snowflake::app()->getRedis();
-		$serialize = serialize($consumer);
-		if (!$redis->lock($hash = md5($serialize))) {
-			return false;
+		try {
+			$serialize = serialize($consumer);
+			if (!$redis->lock($hash = md5($serialize))) {
+				return false;
+			}
+			$isExists = $redis->zRevRank($key, $serialize);
+			if ($isExists !== null) {
+				$redis->zAdd($key, $score, $serialize);
+			}
+			return $redis->unlink($hash);
+		} finally {
+			$redis->release();
 		}
-		$isExists = $redis->zRevRank($key, $serialize);
-		if ($isExists !== null) {
-			$redis->zAdd($key, $score, $serialize);
-		}
-		return $redis->unlink($hash);
 	}
 
 
@@ -50,17 +54,21 @@ abstract class Queue extends Component implements Relyon
 	 */
 	protected function pop($key, Consumer $consumer)
 	{
-		$serialize = serialize($consumer);
 		$redis = Snowflake::app()->getRedis();
-		if (!$redis->lock($hash = md5($serialize))) {
-			return false;
-		}
-		$isExists = $redis->zRevRank($key, $serialize);
-		if ($isExists === null) {
+		try {
+			$serialize = serialize($consumer);
+			if (!$redis->lock($hash = md5($serialize))) {
+				return false;
+			}
+			$isExists = $redis->zRevRank($key, $serialize);
+			if ($isExists === null) {
+				return $redis->unlink($hash);
+			}
+			$redis->zRem($key, $serialize);
 			return $redis->unlink($hash);
+		} finally {
+			$redis->release();
 		}
-		$redis->zRem($key, $serialize);
-		return $redis->unlink($hash);
 	}
 
 

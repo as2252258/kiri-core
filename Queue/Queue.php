@@ -7,6 +7,7 @@ namespace Queue;
 use Exception;
 use ReflectionException;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -56,20 +57,29 @@ class Queue extends \Snowflake\Process\Process
 
 	/**
 	 * @param Process $process
+	 * @throws ComponentException
+	 * @throws ConfigException
 	 */
 	public function onHandler(Process $process)
 	{
-		Timer::tick(50, function ($timerId) {
+		do {
 			$redis = Snowflake::app()->getRedis();
-			if ($this->shutdown) {
-				return Timer::clear($timerId);
+			try {
+				if ($this->shutdown) {
+					return;
+				}
+				$data = $redis->zRevRange(Waiting::QUEUE_WAITING, 0, 20);
+				if (empty($data)) {
+					Coroutine::sleep(0.05);
+				} else {
+					$this->scheduler($data);
+				}
+			} catch (\Throwable $exception) {
+				$this->application->error($exception->getMessage());
+			} finally {
+				$redis->release();
 			}
-			$data = $redis->zRevRange(Waiting::QUEUE_WAITING, 0, 20);
-			if (empty($data)) {
-				return 1;
-			}
-			return $this->scheduler($data);
-		});
+		} while (true);
 	}
 
 
