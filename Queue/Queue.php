@@ -53,12 +53,10 @@ class Queue extends \Snowflake\Process\Process
 
 	/**
 	 * @param Process $process
-	 * @throws ComponentException
-	 * @throws ConfigException
 	 */
 	public function onHandler(Process $process)
 	{
-		do {
+		Timer::tick(50, function () {
 			$redis = Snowflake::app()->getRedis();
 			try {
 				if ($this->shutdown) {
@@ -75,7 +73,7 @@ class Queue extends \Snowflake\Process\Process
 			} finally {
 				$redis->release();
 			}
-		} while (true);
+		});
 	}
 
 
