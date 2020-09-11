@@ -135,21 +135,20 @@ class Server extends Application
 
 	/**
 	 * @return bool
+	 * @throws ConfigException
 	 */
 	public function isRunner()
 	{
-		if (empty($this->port)) {
+		$port = $this->sortServers(Config::get('servers'));
+		if (empty($port)) {
 			return false;
 		}
 		if (Snowflake::isLinux()) {
-			exec('netstat -tunlp | grep ' . $this->port, $output);
+			exec('netstat -tunlp | grep ' . $port[0]['port'], $output);
 		} else {
-			exec('lsof -i :' . $this->port . ' | grep -i "LISTEN"', $output);
+			exec('lsof -i :' . $port[0]['port'] . ' | grep -i "LISTEN"', $output);
 		}
-		if (!empty($output)) {
-			return true;
-		}
-		return false;
+		return !empty($output);
 	}
 
 
