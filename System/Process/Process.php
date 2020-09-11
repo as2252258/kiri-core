@@ -38,5 +38,4 @@ abstract class Process extends \Swoole\Process
 		Snowflake::setWorkerId($this->pid);
 	}
 
-
 }

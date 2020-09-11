@@ -48,10 +48,6 @@ class Queue extends \Snowflake\Process\Process
 		$this->waiting = Snowflake::createObject(Waiting::class);
 		$this->running = Snowflake::createObject(Running::class);
 		$this->complete = Snowflake::createObject(Complete::class);
-
-		Process::signal(9 | 15, function () {
-			$this->shutdown = true;
-		});
 	}
 
 

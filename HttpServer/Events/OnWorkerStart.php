@@ -31,7 +31,7 @@ class OnWorkerStart extends Callback
 	 * @return mixed|void
 	 * @throws Exception
 	 */
-	public function onHandler(Server $server, $worker_id)
+	public function onHandler(Server $server, int $worker_id)
 	{
 		Snowflake::setWorkerId($server->worker_pid);
 
@@ -42,15 +42,14 @@ class OnWorkerStart extends Callback
 		if ($worker_id >= $server->setting['worker_num']) {
 			return;
 		}
-		$this->setWorkerAction($server, $worker_id);
+		$this->setWorkerAction($worker_id);
 	}
 
 	/**
 	 * @param $worker_id
-	 * @param  $socket
 	 * @throws Exception
 	 */
-	private function setWorkerAction($socket, $worker_id)
+	private function setWorkerAction($worker_id)
 	{
 		try {
 			$this->debug(sprintf('Worker #%d is start.....', $worker_id));
@@ -58,7 +57,7 @@ class OnWorkerStart extends Callback
 			if (!$event->exists(Event::SERVER_WORKER_START)) {
 				return;
 			}
-			$event->trigger(Event::SERVER_WORKER_START);
+			$event->trigger(Event::SERVER_WORKER_START, [$worker_id]);
 		} catch (\Throwable $exception) {
 			Snowflake::app()->getLogger()->write($exception->getMessage(), 'worker');
 		}
