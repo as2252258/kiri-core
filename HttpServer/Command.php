@@ -26,25 +26,22 @@ class Command extends \Console\Command
 	 * @param Input $dtl
 	 * @throws ConfigException
 	 * @throws Exception
+	 * @return mixed|void
 	 */
 	public function onHandler(Input $dtl)
 	{
 		$manager = Snowflake::app()->server;
 		$manager->setDaemon($dtl->get('daemon', 0));
-		switch ($dtl->get('action')) {
-			case 'stop':
-				$manager->shutdown();
-				break;
-			case 'restart':
-				$manager->shutdown();
-				$manager->start();
-				break;
-			case 'start':
-				$manager->start();
-				break;
-			default:
-				$this->error('I don\'t know what I want to do.');
+		if ($manager->isRunner()) {
+			$manager->shutdown();
 		}
+		if ($dtl->get('action') == 'stop') {
+			return;
+		}
+		if (!in_array($dtl->get('action'), ['start', 'restart'])) {
+			return $this->error('I don\'t know what I want to do.');
+		}
+		$manager->start();
 	}
 
 }
