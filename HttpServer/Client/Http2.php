@@ -35,7 +35,7 @@ class Http2 extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function query($domain, $path, $params = [], $timeout = -1)
+	public function get($domain, $path, $params = [], $timeout = -1)
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'GET', $params));
@@ -51,10 +51,44 @@ class Http2 extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function push($domain, $path, $params = [], $timeout = -1)
+	public function post($domain, $path, $params = [], $timeout = -1)
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'POST', $params));
+		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
+	}
+
+
+
+	/**
+	 * @param $domain
+	 * @param $path
+	 * @param array $params
+	 * @param int $timeout
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function delete($domain, $path, $params = [], $timeout = -1)
+	{
+		$client = $this->getClient($domain, $path, $timeout);
+		$client->send($this->getRequest($domain, $path, 'DELETE', $params));
+		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
+	}
+
+
+
+	/**
+	 * @param $domain
+	 * @param $path
+	 * @param array $params
+	 * @param int $timeout
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function put($domain, $path, $params = [], $timeout = -1)
+	{
+		$client = $this->getClient($domain, $path, $timeout);
+		$client->send($this->getRequest($domain, $path, 'PUT', $params));
 		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
 	}
 

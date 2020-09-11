@@ -16,6 +16,7 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client as SClient;
 use Swoole\Coroutine\System;
+use Swoole\Coroutine\Client as SCClient;
 
 /**
  * Class Client
@@ -234,21 +235,17 @@ class Client
 	 */
 	public function sendTo($path, array $data, $type = SWOOLE_TCP)
 	{
-		$client = new \Swoole\Coroutine\Client($type);
+		$client = new SCClient($type);
 		if (empty($this->host) || empty($this->port)) {
 			return new Result(['code' => 500, 'message' => 'Host and port is null']);
 		}
 		if (!$client->connect($this->host, $this->port, $this->connect_timeout)) {
 			return new Result(['code' => 500, 'message' => $client->errMsg]);
 		}
-
-		$path = '/' . $this->port . '/' . ltrim($path, '/');
-
 		$params['body'] = $data;
-		$params['path'] = $path;
-		$params['header']['request_uri'] = $path;
+		$params['path'] = '/' . $this->port . '/' . ltrim($path, '/');
+		$params['header']['request_uri'] = $params['path'];
 		$params['header']['request_method'] = 'receive';
-
 		if ($client->send(serialize($params))) {
 			$recv = $this->timeout > 0 ? $client->recv($this->timeout) : $client->recv();
 			$param = $this->structure(Help::toArray($recv), $data, null, 200);
