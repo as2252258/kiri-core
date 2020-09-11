@@ -72,12 +72,12 @@ trait Action
 	 * @return void
 	 * @throws Exception
 	 */
-	private function close($server)
+	private function close(\HttpServer\Server $server)
 	{
 		echo 'waite.';
 		while ($server->isRunner()) {
 			echo '.';
-			$pods = glob(storage('workerIds') . '/*');
+			$pods = glob(storage('worker') . '/*');
 			if (count($pods) < 1) {
 				break;
 			}
