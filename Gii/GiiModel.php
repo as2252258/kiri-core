@@ -414,7 +414,7 @@ class ' . $managerName . ' extends ActiveRecord
 			return null;
 		}
 		return '
-	public static $primary = \'' . $field . '\';';
+	public $primary = \'' . $field . '\';';
 	}
 
 	/**
