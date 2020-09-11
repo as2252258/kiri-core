@@ -46,7 +46,7 @@ class Pagination extends Component
 
 
 	/**
-	 * @param Closure $callback
+	 * @param Closure|array $callback
 	 * @throws Exception
 	 */
 	public function setCallback($callback)

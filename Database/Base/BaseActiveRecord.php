@@ -47,7 +47,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	protected $_relate = [];
 
 	/** @var null|string */
-	protected static $primary = NULL;
+	protected $primary = NULL;
 
 	/**
 	 * @var bool
@@ -130,14 +130,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function hasPrimary()
+	public function hasPrimary()
 	{
-		if (static::$primary !== NULL) {
+		if ($this->primary !== NULL) {
 			return true;
 		}
 		$primary = static::getColumns()->getPrimaryKeys();
 		if (!empty($primary)) {
-			return true;
+			return $this->primary = current($primary);
 		}
 		return false;
 	}
@@ -163,19 +163,24 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return null|string
 	 * @throws Exception
 	 */
-	public static function getPrimary()
+	public function getPrimary()
 	{
-		if (!static::hasPrimary()) {
+		if (!$this->hasPrimary()) {
 			return null;
 		}
-		if (!empty(static::$primary)) {
-			return static::$primary;
+		return $this->primary;
+	}
+
+	/**
+	 * @return null|string
+	 * @throws Exception
+	 */
+	public function getPrimaryValue()
+	{
+		if (!$this->hasPrimary()) {
+			return null;
 		}
-		$primary = static::getColumns()->getPrimaryKeys();
-		if (!empty($primary)) {
-			return is_array($primary) ? current($primary) : $primary;
-		}
-		return null;
+		return $this->getAttribute($this->primary);
 	}
 
 	/**
@@ -186,10 +191,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public static function findOne($condition, $db = NULL)
 	{
-		if (empty($condition) || !is_numeric($condition)) {
-			return NULL;
+		if (is_numeric($condition)) {
+			$primary = static::getColumns()->getPrimaryKeys();
+			if (empty($primary)) {
+				throw new Exception('Primary key cannot be empty.');
+			}
+			$condition = [current($primary) => $condition];
 		}
-		return static::find()->where([static::getPrimary() => $condition])->first();
+		return static::find()->where($condition)->first();
 	}
 
 	/**
@@ -200,15 +209,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public static function max($field = null)
 	{
+		$columns = static::getColumns();
 		if (empty($field)) {
-			$field = self::getPrimary();
+			$field = $columns->getFirstPrimary();
 		}
-
-		$columns = static::getColumns()->get_fields();
+		$columns = $columns->get_fields();
 		if (!isset($columns[$field])) {
 			return null;
 		}
-
 		$first = static::find()->max($field)->first();
 		if (empty($first)) {
 			return null;
@@ -288,9 +296,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @param array $param
 	 * @return $this
-	 * @throws
+	 * @throws Exception
 	 */
-	public function setAttributes($param)
+	public function setAttributes(array $param)
 	{
 		if (empty($param) || !is_array($param)) {
 			return $this;
@@ -305,6 +313,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 		return $this;
 	}
 
+	/**
+	 * @param $param
+	 * @return $this
+	 */
 	public function setOldAttributes($param)
 	{
 		if (empty($param) || !is_array($param)) {
@@ -348,8 +360,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			}
 			if ($this->hasAutoIncrement()) {
 				$this->setAttribute($this->getAutoIncrement(), (int)$lastId);
-			} else if (static::hasPrimary()) {
-				$primary = static::getPrimary();
+			} else if ($this->hasPrimary()) {
+				$primary = $this->getPrimary();
 				if (!isset($param[$primary]) || empty($param[$primary])) {
 					$this->setAttribute($primary, (int)$lastId);
 				}
@@ -411,8 +423,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 		static::getDb()->enablingTransactions();
 
 		[$attributes, $condition, $param] = $this->filtration_and_separation();
-		if (($primary = static::getPrimary()) !== null) {
-			$condition = [$primary => $this->getPrValue()];
+		if (($primary = $this->getPrimary()) !== null) {
+			$condition = [$primary => $this->getPrimaryValue()];
 		}
 
 		if (!$this->getIsCreate()) {
@@ -427,7 +439,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function validator($rule)
+	public function validator(array $rule)
 	{
 		if (empty($rule)) return true;
 		$validate = $this->resolve($rule);
@@ -605,15 +617,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	public static function getDb()
 	{
 		return static::setDatabaseConnect('db');
-	}
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function getPrValue()
-	{
-		return $this->getAttribute(static::getPrimary());
 	}
 
 	/**

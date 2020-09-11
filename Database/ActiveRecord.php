@@ -135,7 +135,7 @@ class ActiveRecord extends BaseActiveRecord
 	private function mathematics($action, $columns, $condition = [])
 	{
 		if (empty($condition)) {
-			$condition = [static::getPrimary() => $this->{static::getPrimary()}];
+			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
 		}
 		return static::getDb()->createCommand()
 			->mathematics(self::getTable(), [$action => $columns], $condition)
@@ -223,7 +223,7 @@ class ActiveRecord extends BaseActiveRecord
 		if (empty($conditions)) {
 			return $this->addError("Delete condition do not empty.", 'mysql');
 		}
-		$primary = static::getPrimary();
+		$primary = $this->getPrimary();
 
 		if (!empty($primary)) {
 			$sul = static::deleteAll([$primary => $this->getAttribute($primary)]);
@@ -401,10 +401,10 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function afterDelete()
 	{
-		if (!static::hasPrimary()) {
+		if (!$this->hasPrimary()) {
 			return TRUE;
 		}
-		$value = $this->{static::getPrimary()};
+		$value = $this->getPrimaryValue();
 		if (empty($value)) {
 			return TRUE;
 		}
@@ -417,10 +417,10 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function beforeDelete()
 	{
-		if (!static::hasPrimary()) {
+		if (!$this->hasPrimary()) {
 			return TRUE;
 		}
-		$value = $this->{static::getPrimary()};
+		$value = $this->getPrimaryValue();
 		if (empty($value)) {
 			return TRUE;
 		}

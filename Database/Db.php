@@ -10,7 +10,6 @@ namespace Database;
 
 use Database\Traits\QueryTrait;
 use Exception;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**

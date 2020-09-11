@@ -190,6 +190,22 @@ class Columns extends Component
 	}
 
 	/**
+	 * @return array|null|string
+	 *
+	 * @throws Exception
+	 */
+	public function getFirstPrimary()
+	{
+		if (isset($this->_auto_increment[$this->table])) {
+			return $this->_auto_increment[$this->table];
+		}
+		if (isset($this->_primary[$this->table])) {
+			return current($this->_primary[$this->table]);
+		}
+		return null;
+	}
+
+	/**
 	 * @param $name
 	 * @param null $index
 	 * @return array

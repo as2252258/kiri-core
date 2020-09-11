@@ -410,6 +410,6 @@ class ActiveQuery extends Component
 	 */
 	public function getPrimary()
 	{
-		return $this->modelClass::getPrimary();
+		return $this->modelClass->getPrimary();
 	}
 }

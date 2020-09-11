@@ -170,19 +170,19 @@ class Collection extends AbstractCollection
 	public function delete()
 	{
 		$model = $this->model;
-		if (!$model::hasPrimary()) {
+		if (!$model->hasPrimary()) {
 			return false;
 		}
 		$ids = [];
 		foreach ($this as $item) {
-			$ids[] = $item->{$model::getPrimary()};
+			$ids[] = $item->getPrimaryValue();
 		}
 		$ids = array_filter($ids);
 		if (empty($ids)) {
 			return false;
 		}
 		return $this->model::find()
-			->in($model::getPrimary(), $ids)
+			->in($model->getPrimary(), $ids)
 			->deleteAll();
 	}
 
