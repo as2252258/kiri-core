@@ -116,19 +116,18 @@ class Queue extends \Snowflake\Process\Process
 	 */
 	private function runner(string $class)
 	{
-		$logger = $this->application->getLogger();
 		try {
 			$rely_on = unserialize($class);
-			$this->waiting->del($rely_on);
+			$this->waiting->del($class);
 			if (!($rely_on instanceof Consumer)) {
 				return;
 			}
 			$this->running->add($rely_on);
 			$rely_on->onRunning();
 		} catch (\Throwable $exception) {
-			$logger->write($exception->getMessage(), 'queue');
+			logger()->write($exception->getMessage(), 'queue');
 		} finally {
-			$this->running->del($rely_on);
+			$this->running->del($class);
 			if (isset($rely_on) && $rely_on instanceof Consumer) {
 				$rely_on->onComplete();
 				$this->complete->add($rely_on);

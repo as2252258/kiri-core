@@ -47,24 +47,23 @@ abstract class Queue extends Component implements Relyon
 
 	/**
 	 * @param $key
-	 * @param Consumer $consumer
+	 * @param string $consumer
 	 * @return false|int
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	protected function pop($key, Consumer $consumer)
+	protected function pop($key, string $consumer)
 	{
 		$redis = Snowflake::app()->getRedis();
 		try {
-			$serialize = serialize($consumer);
-			if (!$redis->lock($hash = md5($serialize))) {
+			if (!$redis->lock($hash = md5($consumer))) {
 				return false;
 			}
-			$isExists = $redis->zRevRank($key, $serialize);
+			$isExists = $redis->zRevRank($key, $consumer);
 			if ($isExists === null) {
 				return $redis->unlink($hash);
 			}
-			$redis->zRem($key, $serialize);
+			$redis->zRem($key, $consumer);
 			return $redis->unlink($hash);
 		} finally {
 			$redis->release();

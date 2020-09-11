@@ -3,6 +3,8 @@
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
 
 use HttpServer\Http\Response;
+use Snowflake\Error\Logger;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use HttpServer\Http\Context;
 use Snowflake\Core\ArrayAccess;
@@ -42,6 +44,20 @@ if (!function_exists('exif_imagetype')) {
 	function exif_imagetype($name)
 	{
 		return get_file_extension($name);
+	}
+}
+
+
+if (!function_exists('logger')) {
+
+
+	/**
+	 * @return Logger
+	 * @throws ComponentException
+	 */
+	function logger()
+	{
+		return Snowflake::app()->getLogger();
 	}
 }
 

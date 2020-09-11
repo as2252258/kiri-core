@@ -38,7 +38,7 @@ class Running extends \Queue\Abstracts\Queue
 	 * @return false|int
 	 * @throws ComponentException
 	 */
-	public function del(Consumer $consumer)
+	public function del(string $consumer)
 	{
 		return $this->pop(self::QUEUE_RUNNING, $consumer);
 	}
