@@ -147,9 +147,12 @@ class Response extends Application
 	private function printResult($result)
 	{
 		$result = Help::toString($result);
-
 		$string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
-		$string .= empty($result) ? 'success!' : $result . PHP_EOL . PHP_EOL;
+		if (empty($result)) {
+			$string .= 'success!' . PHP_EOL . PHP_EOL;
+		} else {
+			$string .= $result . PHP_EOL . PHP_EOL;
+		}
 		$string .= 'Command End!' . PHP_EOL . PHP_EOL;
 		echo $string;
 
