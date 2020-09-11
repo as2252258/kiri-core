@@ -25,7 +25,8 @@
     "ext-mbstring": "*",
     "ext-xml": "*",
     "ext-memcached": "*",
-    "ext-inotify": "*"
+    "ext-inotify": "*",
+    "ext-curl": "*"
   },
   "autoload": {
     "psr-4": {

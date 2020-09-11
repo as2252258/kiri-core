@@ -6,6 +6,7 @@ namespace HttpServer\Client;
 
 use Exception;
 use Snowflake\Abstracts\Component;
+use Snowflake\Core\Help;
 use Snowflake\Core\JSON;
 use Swoole\Http2\Request;
 use \Swoole\Coroutine\Http2\Client as H2Client;
@@ -38,7 +39,7 @@ class Http2 extends Component
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'GET', $params));
-		return $client->recv();
+		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
 	}
 
 
@@ -54,7 +55,7 @@ class Http2 extends Component
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'POST', $params));
-		return $client->recv();
+		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
 	}
 
 

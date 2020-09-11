@@ -50,6 +50,12 @@ class Client
 
 	private $connect_timeout = 1;
 
+	const GET = 'get';
+	const PUT = 'put';
+	const POST = 'post';
+	const DELETE = 'delete';
+	const OPTIONS = 'option';
+
 	/**
 	 * @return int
 	 */
@@ -98,19 +104,6 @@ class Client
 	public function setPort(string $port): void
 	{
 		$this->port = $port;
-	}
-
-	const POST = 'post';
-	const GET = 'get';
-	const PUT = 'put';
-	const DELETE = 'delete';
-	const OPTIONS = 'option';
-
-	/**
-	 * HttpClient constructor.
-	 */
-	private function __construct()
-	{
 	}
 
 
@@ -264,7 +257,6 @@ class Client
 		}
 		$client->close();
 		return $param;
-
 	}
 
 	/**

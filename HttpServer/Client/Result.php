@@ -28,7 +28,6 @@ class Result extends Application
 	public $requestTime = 0;
 	public $runTime = 0;
 
-	public $statusCode = [100, 101, 200, 201, 202, 203, 204, 205, 206];
 
 
 	/**
@@ -132,7 +131,7 @@ class Result extends Application
 	 */
 	public function httpIsOk()
 	{
-		return in_array($this->httpStatus, $this->statusCode);
+		return in_array($this->httpStatus, [100, 101, 200, 201, 202, 203, 204, 205, 206]);
 	}
 
 	/**
@@ -153,7 +152,6 @@ class Result extends Application
 			case 'application/json';
 			case 'text/plain';
 				return json_decode($this->data, true);
-				break;
 		}
 		return $this->data;
 	}
