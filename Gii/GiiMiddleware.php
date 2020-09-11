@@ -66,7 +66,7 @@ class ' . $managerName . 'Middleware implements Middleware
 
 }';
 
-		$file = APP_PATH . 'app/Middleware/' . $managerName . 'Middleware.php';
+		$file = APP_PATH . 'app/Http/Middleware/' . $managerName . 'Middleware.php';
 		if (file_exists($file)) {
 			unlink($file);
 		}
