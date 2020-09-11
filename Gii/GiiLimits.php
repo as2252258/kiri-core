@@ -45,8 +45,6 @@ use HttpServer\IInterface\Limits;
 
 		$managerName = ucfirst($managerName);
 		$html .= '
-
-
  /**
  * Class ' . $managerName . 'Limits
  * @package App\Http\Limits

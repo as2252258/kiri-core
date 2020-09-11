@@ -45,8 +45,6 @@ use HttpServer\IInterface\Interceptor;
 
 		$managerName = ucfirst($managerName);
 		$html .= '
-
-
  /**
  * Class ' . $managerName . 'Interceptor
  * @package App\Http\Interceptor

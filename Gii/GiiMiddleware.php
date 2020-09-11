@@ -44,8 +44,6 @@ use HttpServer\IInterface\Middleware;
 
 		$managerName = ucfirst($managerName);
 		$html .= '
-
-
  /**
  * Class ' . $managerName . 'Middleware
  * @package App\Http\Middleware
