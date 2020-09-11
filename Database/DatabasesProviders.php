@@ -31,7 +31,7 @@ class DatabasesProviders extends Providers
 
 	/**
 	 * @param $name
-	 * @return DatabasesProviders
+	 * @return Connection
 	 * @throws ConfigException
 	 * @throws Exception
 	 */

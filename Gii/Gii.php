@@ -51,7 +51,7 @@ class Gii
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function run($db, $input)
+	public function run(?Connection $db, $input)
 	{
 		$this->input = $input;
 		if (!empty($db)) $this->db = $db;
@@ -63,6 +63,18 @@ class Gii
 		switch ($make) {
 			case 'task':
 				$task = new GiiTask();
+				$task->setInput($this->input);
+				return $task->generate();
+			case 'interceptor':
+				$task = new GiiInterceptor();
+				$task->setInput($this->input);
+				return $task->generate();
+			case 'limits':
+				$task = new GiiLimits();
+				$task->setInput($this->input);
+				return $task->generate();
+			case 'middleware':
+				$task = new GiiMiddleware();
 				$task->setInput($this->input);
 				return $task->generate();
 			default:
