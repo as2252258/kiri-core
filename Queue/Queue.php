@@ -66,7 +66,7 @@ class Queue extends \Snowflake\Process\Process
 				if (empty($data)) {
 					Coroutine::sleep(0.05);
 				} else {
-					$this->scheduler($data);
+					Coroutine::create([$this, 'scheduler'], $data);
 				}
 			} catch (\Throwable $exception) {
 				$this->application->error($exception->getMessage());
@@ -98,11 +98,13 @@ class Queue extends \Snowflake\Process\Process
 	 * @param array $data
 	 * @throws Exception
 	 */
-	private function scheduler($data)
+	private function scheduler(array $data)
 	{
+		$redis = Snowflake::app()->getRedis();
 		foreach ($data as $datum) {
 			$this->runner($datum);
 		}
+		$redis->release();
 		if ($this->shutdown === true) {
 			Snowflake::shutdown($this);
 		}
