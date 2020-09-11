@@ -64,9 +64,6 @@ kIHG5j+Qga2CgXqI2Y5URXGz5XlsNbMNFUrnWcbpqEbW5O6/BgHLLSDEyQgwbygN
 mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 -----END RSA PRIVATE KEY-----';
 
-	/** @var Jwt */
-	private static $instance;
-
 
 	/**
 	 * @throws ConfigException
@@ -106,16 +103,6 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		$this->private = $privateKey;
 	}
 
-	/**
-	 * @return Jwt
-	 */
-	private static function getInstance()
-	{
-		if (!(static::$instance instanceof Jwt)) {
-			static::$instance = new Jwt();
-		}
-		return static::$instance;
-	}
 
 	/**
 	 * @param int|string $unionId
@@ -272,7 +259,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return string
 	 * @throws Exception
 	 */
-	private function authKey($_source, $token)
+	private function authKey(string $_source, string $token)
 	{
 		$source = $this->getSource();
 		if (!empty($_source)) $source = $_source;
@@ -297,7 +284,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 *
 	 * @return string
 	 */
-	private function token($user, $param = [], $requestTime = NULL)
+	private function token(int $user, $param = [], $requestTime = NULL)
 	{
 		$str = '';
 
@@ -319,7 +306,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return mixed
 	 * 将字符串替换成指定格式
 	 */
-	private function preg($str)
+	private function preg(string $str)
 	{
 		$preg = '/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/';
 		return preg_replace($preg, '$1-$2-$3-$4-$5', $str);
@@ -328,9 +315,9 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @param int $user
 	 * @return string[]
-	 * @throws
+	 * @throws Exception
 	 */
-	public function clear($user)
+	public function clear(int $user)
 	{
 		$this->user = $user;
 		$redis = $this->getRedis();
@@ -353,9 +340,9 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @param array $data
 	 * @param int $user
 	 * @return bool
-	 * @throws
+	 * @throws AuthException
 	 */
-	public function check($data, $user)
+	public function check(array $data, int $user)
 	{
 		$this->data = $data;
 		$this->user = $user;
@@ -382,16 +369,13 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		$this->data = request()->headers->getHeaders();
 		$model = $this->getUserModel();
 		if (empty($model)) {
-			return '授权信息已过期！';
-//			throw new AuthException('授权信息已过期！');
+			throw new AuthException('授权信息已过期！');
 		}
 		if (!isset($model['user'])) {
-			return '授权信息错误！';
-//			throw new AuthException('授权信息错误！');
+			throw new AuthException('授权信息错误！');
 		}
 		if (!$this->check($this->data, $model['user'])) {
-			return '授权信息不合法！';
-//			throw new AuthException('授权信息不合法！');
+			throw new AuthException('授权信息不合法！');
 		}
 		$this->expireRefresh();
 
@@ -400,11 +384,12 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 	/**
 	 * @param array $header
+	 * @return false|mixed
 	 * @throws Exception
 	 */
 	public static function checkAuth(array $header = [])
 	{
-		$instance = static::getInstance();
+		$instance = Snowflake::app()->getJwt();
 		if (empty($header)) {
 			$header = request()->headers->getHeaders();
 		}
