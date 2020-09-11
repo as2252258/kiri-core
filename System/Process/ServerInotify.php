@@ -89,12 +89,14 @@ class ServerInotify extends Process
 			$mTime = filectime($value);
 			if (!isset($this->md5Map[$md5])) {
 				if ($isReload) {
+					$this->isReloading = true;
 					return Timer::after(2000, [$this, 'reload']);
 				}
 				$this->md5Map[$md5] = $mTime;
 			} else {
 				if ($this->md5Map[$md5] != $mTime) {
 					if ($isReload) {
+						$this->isReloading = true;
 						return Timer::after(2000, [$this, 'reload']);
 					}
 					$this->md5Map[$md5] = $mTime;
