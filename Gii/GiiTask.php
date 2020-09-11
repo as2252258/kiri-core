@@ -3,10 +3,7 @@
 
 namespace Gii;
 
-use App\Async\UserOnline;
-use Database\Db;
 use Exception;
-use HttpServer\IInterface\Task;
 use Snowflake\Snowflake;
 
 /**
@@ -45,7 +42,6 @@ use HttpServer\IInterface\Task;
 
 		$managerName = ucfirst($managerName);
 		$html .= '
-
 /**
  * Class ' . $managerName . '
  * @package App\Async
