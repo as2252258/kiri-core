@@ -112,7 +112,7 @@ class Db
 	}
 
 	/**
-	 * @param Connection $db
+	 * @param Connection|null $db
 	 * @return array|mixed
 	 * @throws Exception
 	 */
