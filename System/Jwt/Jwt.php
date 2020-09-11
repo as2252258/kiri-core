@@ -26,6 +26,8 @@ class Jwt extends Component
 
 	private $timeout = 7200;
 
+	private $key = 'www.xshucai.com';
+
 	private $public = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6BuML3gtLGde7QKNuNST
 UCB9gdHC7XIpOc7Wx2I64Esj3UxWHTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6Xad
@@ -93,6 +95,14 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	public function setTimeout(int $timeout)
 	{
 		$this->timeout = $timeout;
+	}
+
+	/**
+	 * @param $timeout
+	 */
+	public function setKey(string $timeout)
+	{
+		$this->key = $timeout;
 	}
 
 	/**
@@ -291,7 +301,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		$_user = str_split(md5($user . md5($user)));
 		ksort($_user);
 		foreach ($_user as $key => $val) {
-			$str .= md5(sha1($key . $val . 'www.xshucai.com'));
+			$str .= md5(sha1($key . $val . $this->key));
 		}
 		foreach ($param as $key => $val) {
 			$str .= md5($str . sha1($key . md5($val)));
