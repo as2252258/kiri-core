@@ -30,11 +30,13 @@ abstract class Process extends \Swoole\Process
 	 */
 	public function __construct($application, $name)
 	{
-		parent::__construct([$this, 'onHandler'], false, 1, true);
+		parent::__construct(function (\Swoole\Process $process) use ($name) {
+			if (Snowflake::isLinux()) {
+				$this->name($name);
+			}
+			$this->onHandler($process);
+		}, false, 1, true);
 		$this->application = $application;
-		if (Snowflake::isLinux()) {
-			$this->name($name);
-		}
 		Snowflake::setWorkerId($this->pid);
 	}
 
