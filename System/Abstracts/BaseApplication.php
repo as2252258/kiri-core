@@ -10,6 +10,8 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
+use HttpServer\Client\Client;
+use HttpServer\Client\Http2;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
@@ -46,6 +48,7 @@ use Database\DatabasesProviders;
  * @property Logger $logger
  * @property Jwt $jwt
  * @property BaseGoto $goto
+ * @property Client $client
  */
 abstract class BaseApplication extends Service
 {
@@ -104,7 +107,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return array
 	 */
-	protected function readLinesFromFile($filePath)
+	protected function readLinesFromFile(string $filePath)
 	{
 		// Read file into an array of lines with auto-detected line endings
 		$autodetect = ini_get('auto_detect_line_endings');
@@ -122,7 +125,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return bool
 	 */
-	protected function isComment($line)
+	protected function isComment(string $line)
 	{
 		$line = ltrim($line);
 
@@ -136,7 +139,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return bool
 	 */
-	protected function looksLikeSetter($line)
+	protected function looksLikeSetter(string $line)
 	{
 		return strpos($line, '=') !== false;
 	}
@@ -363,6 +366,8 @@ abstract class BaseApplication extends Service
 			'error'             => ['class' => ErrorHandler::class],
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
+			'client'            => ['class' => Client::class],
+			'http2'             => ['class' => Http2::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],

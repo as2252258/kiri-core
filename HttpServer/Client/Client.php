@@ -11,6 +11,8 @@ namespace HttpServer\Client;
 
 use Snowflake\Core\Help;
 use Exception;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client as SClient;
 use Swoole\Coroutine\System;
@@ -18,6 +20,7 @@ use Swoole\Coroutine\System;
 /**
  * Class Client
  * @package Snowflake\Snowflake\Http
+ * @property Http2 $http2
  */
 class Client
 {
@@ -109,6 +112,17 @@ class Client
 	private function __construct()
 	{
 	}
+
+
+	/**
+	 * @return Http2
+	 * @throws ComponentException
+	 */
+	public function getHttp2()
+	{
+		return Snowflake::app()->get('http2');
+	}
+
 
 	/**
 	 * @param $data
