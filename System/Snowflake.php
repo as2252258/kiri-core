@@ -139,6 +139,9 @@ class Snowflake
 	 */
 	public static function setWorkerId($workerId)
 	{
+		if (empty($workerId)) {
+			return $workerId;
+		}
 		return self::writeFile(storage($workerId . '.sock', 'worker'), $workerId);
 	}
 
