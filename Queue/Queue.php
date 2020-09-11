@@ -59,12 +59,9 @@ class Queue extends \Snowflake\Process\Process
 		Timer::tick(50, function () {
 			$redis = Snowflake::app()->getRedis();
 			try {
-				if ($this->shutdown) {
-					return;
-				}
 				$data = $redis->zRevRange(Waiting::QUEUE_WAITING, 0, 20);
 				if (empty($data)) {
-					Coroutine::sleep(0.05);
+					return;
 				} else {
 					Coroutine::create(function ($params) {
 						$this->scheduler($params);
