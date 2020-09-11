@@ -218,10 +218,9 @@ class ActiveQuery extends Component
 	 */
 	public function all()
 	{
-		$collect = new Collection($this,
-			$this->modelClass::getDb()->createCommand($this->queryBuilder())->all()
-			, $this->modelClass
-		);
+		$collect = new Collection($this, $this->modelClass::getDb()
+			->createCommand($this->queryBuilder())
+			->all(), $this->modelClass);
 		if ($this->asArray) {
 			return $collect->toArray();
 		}
@@ -234,7 +233,7 @@ class ActiveQuery extends Component
 	 * @return ActiveRecord
 	 * @throws Exception
 	 */
-	public function populate($model, $data)
+	public function populate(ActiveRecord $model, $data)
 	{
 		return $this->getWith($model::populate($data));
 	}
