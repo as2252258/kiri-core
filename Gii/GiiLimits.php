@@ -67,7 +67,7 @@ class ' . $managerName . 'Limits implements Limits
 
 }';
 
-		$file = APP_PATH . '/app/Interceptor/' . $managerName . 'Limits.php';
+		$file = APP_PATH . 'app/Limits/' . $managerName . 'Limits.php';
 		if (file_exists($file)) {
 			unlink($file);
 		}

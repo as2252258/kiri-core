@@ -67,7 +67,7 @@ class ' . $managerName . 'Interceptor implements Interceptor
 
 }';
 
-		$file = APP_PATH . '/app/Interceptor/' . $managerName . 'Interceptor.php';
+		$file = APP_PATH . 'app/Interceptor/' . $managerName . 'Interceptor.php';
 		if (file_exists($file)) {
 			unlink($file);
 		}
