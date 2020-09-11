@@ -26,7 +26,7 @@ class Change extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function update($model, $attributes, $condition, &$params)
+	public function update(string $model, $attributes, $condition, &$params)
 	{
 		if (empty($params)) {
 			throw new Exception("Not has update values.");
@@ -109,7 +109,7 @@ class Change extends BaseObject
 	 * @return array
 	 * @throws Exception
 	 */
-	private function assemble($params, $op, $_tmp)
+	private function assemble($params, $op, array $_tmp)
 	{
 		$message = 'Incr And Decr action. The value must a numeric.';
 		foreach ($params as $key => $val) {
@@ -247,7 +247,7 @@ class Change extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function delete($query)
+	public function delete(ActiveQuery $query)
 	{
 		if (empty($query->from)) {
 			$query->from = $query->getTable();
@@ -265,9 +265,8 @@ class Change extends BaseObject
 	/**
 	 * @param string $tableName
 	 * @return string
-	 * @throws
 	 */
-	public function truncate($tableName)
+	public function truncate(string $tableName)
 	{
 		return 'TRUNCATE ' . $tableName;
 	}

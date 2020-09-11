@@ -310,16 +310,6 @@ class Command extends Component
 	}
 
 	/**
-	 * @param PDOStatement $prepare
-	 * @param $name
-	 * @param $value
-	 */
-	public function bindParam($prepare, $name, $value)
-	{
-		$prepare->bindParam($name, $value);
-	}
-
-	/**
 	 * @param array|null $data
 	 * @return $this
 	 */
@@ -353,34 +343,4 @@ class Command extends Component
 		return $this->prepare->errorInfo()[2] ?? 'Db 驱动错误.';
 	}
 
-	/**
-	 * @return bool
-	 * @throws Exception
-	 */
-	public function addErrorLog()
-	{
-		if ($this->prepare->errorCode() === '00000') {
-			return true;
-		}
-		return $this->addError($this->getError(), 'mysql');
-	}
-
-	/**
-	 * @param PDOStatement $prepare
-	 * @return PDOStatement
-	 * @throws Exception
-	 */
-	private function bind($prepare)
-	{
-		if (empty($this->params)) {
-			return $prepare;
-		}
-		foreach ($this->params as $key => $val) {
-			if (is_array($val)) {
-				throw new Exception("Save data cannot have array");
-			}
-			$this->bindParam($prepare, ':' . ltrim($key, ':'), $val);
-		}
-		return $prepare;
-	}
 }

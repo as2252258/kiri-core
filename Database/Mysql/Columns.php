@@ -229,20 +229,51 @@ class Columns extends Component
 		if (empty($column)) {
 			throw new Exception("The table " . $table . " not exists.");
 		}
-		foreach ($column as $key => $item) {
-			$column[$key]['Type'] = $this->clean($item['Type']);
-			if ($item['Key'] === 'PRI') {
-				if (!isset($this->_primary[$table])) {
-					$this->_primary[$table] = [];
-				}
-				$this->_primary[$table][] = $item['Field'];
-			}
-			if ($item['Extra'] === 'auto_increment') {
-				$this->_auto_increment[$table] = $item['Field'];
-			}
-		}
-		$this->columns[$table] = $column;
+		$this->columns[$table] = $this->resolve($column, $table);
 		return $this;
+	}
+
+
+	/**
+	 * @param $column
+	 * @param $table
+	 * @return mixed
+	 */
+	private function resolve(array $column, $table)
+	{
+		foreach ($column as $key => $item) {
+			$this->addPrimary($item, $table);
+			$column[$key]['Type'] = $this->clean($item['Type']);
+		}
+		return $column;
+	}
+
+	/**
+	 * @param $item
+	 * @param $table
+	 */
+	private function addPrimary($item, $table)
+	{
+		if (!isset($this->_primary[$table])) {
+			$this->_primary[$table] = [];
+		}
+		if ($item['Key'] === 'PRI') {
+			$this->_primary[$table][] = $item['Field'];
+		}
+		$this->addIncrement($item, $table);
+	}
+
+
+	/**
+	 * @param $item
+	 * @param $table
+	 */
+	private function addIncrement($item, $table)
+	{
+		if ($item['Extra'] !== 'auto_increment') {
+			return;
+		}
+		$this->_auto_increment[$table] = $item['Field'];
 	}
 
 
@@ -255,7 +286,6 @@ class Columns extends Component
 		if (strpos($type, ')') === false) {
 			return $type;
 		}
-
 		$replace = preg_replace('/\(\d+(,\d+)?\)(\s+\w+)*/', '', $type);
 		if (strpos(' ', $replace) !== FALSE) {
 			$replace = explode(' ', $replace)[1];
