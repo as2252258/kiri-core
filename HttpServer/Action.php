@@ -77,7 +77,7 @@ trait Action
 		echo 'waite.';
 		while ($server->isRunner()) {
 			echo '.';
-			$pods = glob(storage('worker') . '/*');
+			$pods = glob(storage(null, 'worker') . '/*');
 			if (count($pods) < 1) {
 				break;
 			}
