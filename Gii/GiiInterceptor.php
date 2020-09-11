@@ -48,7 +48,7 @@ use HttpServer\IInterface\Interceptor;
 
 
  /**
- * Class ' . $managerName . '
+ * Class ' . $managerName . 'Interceptor
  * @package App\Http\Interceptor
  */
 class ' . $managerName . 'Interceptor implements Interceptor
