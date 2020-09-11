@@ -66,7 +66,9 @@ class Queue extends \Snowflake\Process\Process
 				if (empty($data)) {
 					Coroutine::sleep(0.05);
 				} else {
-					Coroutine::create([$this, 'scheduler'], $data);
+					Coroutine::create(function ($params) {
+						$this->scheduler($params);
+					}, $data);
 				}
 			} catch (\Throwable $exception) {
 				$this->application->error($exception->getMessage());
