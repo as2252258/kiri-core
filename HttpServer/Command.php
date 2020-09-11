@@ -37,16 +37,16 @@ class Command extends \Console\Command
 		$manager->setDaemon($dtl->get('daemon', 0));
 
 		if (!in_array($dtl->get('action'), self::ACTIONS)) {
-			return $this->error('I don\'t know what I want to do.');
+			return 'I don\'t know what I want to do.';
 		}
 
 		if ($manager->isRunner() && $dtl->get('action') == 'start') {
-			return $this->error('Service is running. Please use restart.');
+			return 'Service is running. Please use restart.';
 		}
 
 		$manager->shutdown();
 		if ($dtl->get('action') == 'stop') {
-			return;
+			return 'shutdown success.';
 		}
 		$manager->start();
 	}
