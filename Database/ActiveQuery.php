@@ -49,9 +49,13 @@ class ActiveQuery extends Component
 	 * Comply constructor.
 	 * @param $model
 	 * @param array $config
+	 * @throws
 	 */
 	public function __construct($model, $config = [])
 	{
+		if (!is_object($model)) {
+			$model = Snowflake::createObject($model);
+		}
 		$this->modelClass = $model;
 		parent::__construct($config);
 	}
@@ -139,7 +143,7 @@ class ActiveQuery extends Component
 		if (empty($data)) {
 			return NULL;
 		}
-		$newModel = Snowflake::createObject($this->modelClass);
+		$newModel = $this->modelClass;
 		$newModel = $this->populate($newModel, $data);
 		if ($this->asArray) {
 			return $newModel->toArray();
