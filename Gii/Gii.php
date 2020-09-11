@@ -60,7 +60,7 @@ class Gii
 		if (empty($make)) {
 			throw new Exception('构建类型不能为空~');
 		}
-		switch ($make) {
+		switch (strtolower($make)) {
 			case 'task':
 				$task = new GiiTask();
 				$task->setInput($this->input);
