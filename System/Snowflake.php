@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\IInterface\Task;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\JSON;
 use Snowflake\Di\Container;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Process;
@@ -191,8 +192,14 @@ class Snowflake
 		return $object;
 	}
 
+
+	/**
+	 * @param $worker_pid
+	 * @throws Exception
+	 */
 	public static function clearProcessId($worker_pid)
 	{
+		@unlink(storage("{$worker_pid}.sock",'worker'));
 	}
 
 
@@ -202,11 +209,30 @@ class Snowflake
 	 */
 	public static function getWebSocket()
 	{
-		$server = static::app()->get('server')->getServer();
+		$server = static::app()->server->getServer();
 		if (!($server instanceof Server)) {
 			return null;
 		}
 		return $server;
+	}
+
+
+	/**
+	 * @param int $fd
+	 * @param $data
+	 * @return false|mixed
+	 * @throws Exception
+	 */
+	public static function push(int $fd, $data)
+	{
+		$server = static::getWebSocket();
+		if (empty($server)) {
+			return false;
+		}
+		if (!is_string($data)) {
+			$data = JSON::encode($data);
+		}
+		return $server->push($fd, $data);
 	}
 
 
