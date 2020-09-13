@@ -65,6 +65,7 @@ class ServerInotify extends Process
 	public function tick()
 	{
 		$this->loadByDir(APP_PATH . 'app', true);
+		$this->loadByDir(APP_PATH . 'routes', true);
 	}
 
 
