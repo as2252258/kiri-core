@@ -12,6 +12,7 @@ use Snowflake\Di\Container;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Process;
 use Swoole\Coroutine;
+use Swoole\WebSocket\Server;
 
 class Snowflake
 {
@@ -192,6 +193,16 @@ class Snowflake
 
 	public static function clearProcessId($worker_pid)
 	{
+	}
+
+
+	/**
+	 * @return Server|\Swoole\Http\Server
+	 * @throws
+	 */
+	public static function getWebSocket()
+	{
+		return static::app()->get('server')->getServer();
 	}
 
 
