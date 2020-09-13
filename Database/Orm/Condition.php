@@ -193,7 +193,7 @@ trait Condition
 	 * @param bool $isSearch
 	 * @return int|string
 	 */
-	public function valueEncode($value, $isSearch = false)
+	public function  valueEncode($value, $isSearch = false)
 	{
 		if ($isSearch) {
 			return $value;
