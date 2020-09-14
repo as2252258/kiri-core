@@ -131,17 +131,9 @@ class Pagination extends Component
 	private function runner($data, $param)
 	{
 		if (Snowflake::inCoroutine()) {
-			if ($param !== null) {
-				Coroutine::create($this->_callback, $data, $param);
-			} else {
-				Coroutine::create($this->_callback, $data);
-			}
+			Coroutine::create($this->_callback, $data, $param);
 		} else {
-			if ($param !== null) {
-				call_user_func($this->_callback, $data, $param);
-			} else {
-				call_user_func($this->_callback, $data);
-			}
+			call_user_func($this->_callback, $data, $param);
 		}
 	}
 
