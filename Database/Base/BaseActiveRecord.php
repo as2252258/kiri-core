@@ -367,6 +367,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 				}
 			}
 			$trance->commit();
+			var_dump($param, $attributes);
 			$this->setAttributes($param);
 			$this->afterSave($attributes, $param);
 			$this->refresh();
