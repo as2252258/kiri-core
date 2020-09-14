@@ -300,7 +300,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public function setAttributes(array $param)
 	{
-		if (empty($param) || !is_array($param)) {
+		if (empty($param)) {
 			return $this;
 		}
 		foreach ($param as $key => $val) {
