@@ -41,19 +41,20 @@ class ServerInotify extends Process
 	public function onHandler(\Swoole\Process $process)
 	{
 		set_error_handler([$this, 'onErrorHandler']);
+		$this->dirs = Config::get('inotify', false, [APP_PATH]);
 		if (extension_loaded('inotify')) {
 			$this->inotify = inotify_init();
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 			$process->name('event: file change.');
-			$this->dirs = Config::get('inotify', false, [APP_PATH]);
 			foreach ($this->dirs as $dir) {
 				$this->watch($dir);
 			}
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			$this->loadByDir(APP_PATH . 'app');
-			$this->loadByDir(APP_PATH . 'routes');
+			foreach ($this->dirs as $dir) {
+				$this->loadByDir($dir);
+			}
 			Timer::tick(2000, [$this, 'tick']);
 		}
 	}
@@ -67,8 +68,9 @@ class ServerInotify extends Process
 	 */
 	public function tick()
 	{
-		$this->loadByDir(APP_PATH . 'app', true);
-		$this->loadByDir(APP_PATH . 'routes', true);
+		foreach ($this->dirs as $dir) {
+			$this->loadByDir($dir, true);
+		}
 	}
 
 
