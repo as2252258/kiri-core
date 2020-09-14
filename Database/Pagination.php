@@ -60,6 +60,7 @@ class Pagination extends Component
 
 	/**
 	 * @param int $number
+	 * @return Pagination
 	 */
 	public function setOffset(int $number)
 	{
@@ -67,11 +68,13 @@ class Pagination extends Component
 			$number = 0;
 		}
 		$this->_offset = $number;
+		return $this;
 	}
 
 
 	/**
 	 * @param int $number
+	 * @return Pagination
 	 */
 	public function setLimit(int $number)
 	{
@@ -81,18 +84,21 @@ class Pagination extends Component
 			$number = 5000;
 		}
 		$this->_limit = $number;
+		return $this;
 	}
 
 
 	/**
 	 * @param int $number
+	 * @return Pagination|void
 	 */
 	public function setMax(int $number)
 	{
 		if ($number < 0) {
-			return;
+			return $this;
 		}
 		$this->_max = $number;
+		return $this;
 	}
 
 
