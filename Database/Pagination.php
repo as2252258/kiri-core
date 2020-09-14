@@ -99,12 +99,12 @@ class Pagination extends Component
 	/**
 	 * @param array $param
 	 */
-	public function search($param = [])
+	public function plunk($param = [])
 	{
 		if ($this->_length >= $this->_max) {
 			return;
 		}
-		[$length, $data] = $this->load();
+		[$length, $data] = $this->get();
 		if ($param !== null) {
 			call_user_func($this->_callback, $data, $param);
 		} else {
@@ -114,14 +114,14 @@ class Pagination extends Component
 		if ($length < $this->_limit) {
 			return;
 		}
-		$this->search($param);
+		$this->plunk($param);
 	}
 
 
 	/**
 	 * @return array|Collection
 	 */
-	private function load()
+	private function get()
 	{
 		if ($this->_length + $this->_limit > $this->_max) {
 			$this->_limit = $this->_length + $this->_limit - $this->_max;
