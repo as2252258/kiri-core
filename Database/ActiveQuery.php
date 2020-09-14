@@ -177,14 +177,6 @@ class ActiveQuery extends Component
 	 * @param int $offset
 	 * @param int $total
 	 * @throws Exception
-	 *
-	 *
-	 * $pagination = new Pagination($this);
-	 * $pagination->setOffset($offset);
-	 * $pagination->setLimit($size);
-	 * $pagination->setMax($total);
-	 * $pagination->setCallback($callback);
-	 * $pagination->search($param);
 	 */
 	public function plunk(int $size, callable $callback, $param = null, $offset = 0, $total = -1)
 	{
