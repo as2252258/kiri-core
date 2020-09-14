@@ -172,15 +172,14 @@ class ActiveQuery extends Component
 
 	/**
 	 * @param int $size
-	 * @param int $offset
 	 * @param callable $callback
 	 * @return Pagination
 	 * @throws Exception
 	 */
-	public function page(int $size, int $offset, callable $callback)
+	public function page(int $size, callable $callback)
 	{
 		$pagination = new Pagination($this);
-		$pagination->setOffset($offset);
+		$pagination->setOffset(0);
 		$pagination->setLimit($size);
 		$pagination->setCallback($callback);
 		return $pagination;
