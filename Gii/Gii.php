@@ -130,10 +130,10 @@ class Gii
 		foreach ($tables as $key => $val) {
 			$data = $this->createModelFile($key, $val);
 			if ($controller == 1) {
-				$fileList[] = $this->generateModel($data);
+				$fileList[] = $this->generateController($data);
 			}
 			if ($model == 1) {
-				$fileList[] = $this->generateController($data);
+				$fileList[] = $this->generateModel($data);
 			}
 		}
 		return $fileList;
