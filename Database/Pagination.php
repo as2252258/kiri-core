@@ -7,6 +7,8 @@ namespace Database;
 use Snowflake\Abstracts\Component;
 use Closure;
 use Exception;
+use Snowflake\Snowflake;
+use Swoole\Coroutine;
 
 /**
  * Class Pagination
@@ -111,16 +113,36 @@ class Pagination extends Component
 			return;
 		}
 		[$length, $data] = $this->get();
-		if ($param !== null) {
-			call_user_func($this->_callback, $data, $param);
-		} else {
-			call_user_func($this->_callback, $data);
-		}
+
+		$this->runner($data, $param);
+
 		unset($data);
 		if ($length < $this->_limit) {
 			return;
 		}
 		$this->plunk($param);
+	}
+
+
+	/**
+	 * @param $data
+	 * @param $param
+	 */
+	private function runner($data, $param)
+	{
+		if (Snowflake::inCoroutine()) {
+			if ($param !== null) {
+				Coroutine::create($this->_callback, $data, $param);
+			} else {
+				Coroutine::create($this->_callback, $data, $param);
+			}
+		} else {
+			if ($param !== null) {
+				call_user_func($this->_callback, $data, $param);
+			} else {
+				call_user_func($this->_callback, $data);
+			}
+		}
 	}
 
 
