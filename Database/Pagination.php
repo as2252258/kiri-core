@@ -35,6 +35,9 @@ class Pagination extends Component
 	/** @var Closure */
 	private $_callback;
 
+	/** @var Coroutine\Channel */
+	private $_channel;
+
 	/**
 	 * PaginationIteration constructor.
 	 * @param ActiveQuery $activeQuery
@@ -44,6 +47,7 @@ class Pagination extends Component
 	{
 		parent::__construct($config);
 		$this->activeQuery = $activeQuery;
+//		$this->_channel = new Coroutine\Channel();
 	}
 
 
@@ -106,11 +110,12 @@ class Pagination extends Component
 
 	/**
 	 * @param array $param
+	 * @return array
 	 */
 	public function plunk($param = [])
 	{
 		if ($this->_max > 0 && $this->_length >= $this->_max) {
-			return;
+			return $this->output();
 		}
 		[$length, $data] = $this->get();
 
@@ -118,9 +123,22 @@ class Pagination extends Component
 
 		unset($data);
 		if ($length < $this->_limit) {
-			return;
+			return $this->output();
 		}
-		$this->plunk($param);
+		return $this->plunk($param);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function output()
+	{
+		//		while ($this->_channel->length() > 0) {
+//			$array[] = $this->_channel->pop();
+//		}
+//		$this->_channel->close();
+		return [];
 	}
 
 
