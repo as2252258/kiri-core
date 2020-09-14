@@ -107,7 +107,7 @@ class Pagination extends Component
 	 */
 	public function plunk($param = [])
 	{
-		if ($this->_length >= $this->_max) {
+		if ($this->_max > 0 && $this->_length >= $this->_max) {
 			return;
 		}
 		[$length, $data] = $this->get();
