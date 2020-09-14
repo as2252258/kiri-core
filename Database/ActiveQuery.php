@@ -177,7 +177,7 @@ class ActiveQuery extends Component
 	 * @return Pagination
 	 * @throws Exception
 	 */
-	public function plunk(int $size, int $offset, callable $callback)
+	public function page(int $size, int $offset, callable $callback)
 	{
 		$pagination = new Pagination($this);
 		$pagination->setOffset($offset);
