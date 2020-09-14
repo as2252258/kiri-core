@@ -134,7 +134,7 @@ class Pagination extends Component
 			if ($param !== null) {
 				Coroutine::create($this->_callback, $data, $param);
 			} else {
-				Coroutine::create($this->_callback, $data, $param);
+				Coroutine::create($this->_callback, $data);
 			}
 		} else {
 			if ($param !== null) {
