@@ -10,6 +10,7 @@ namespace Snowflake\Process;
 
 
 use Exception;
+use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Error;
@@ -44,8 +45,10 @@ class ServerInotify extends Process
 			$this->inotify = inotify_init();
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 			$process->name('event: file change.');
-
-			$this->watch(APP_PATH);
+			$this->dirs = Config::get('inotify', false, [APP_PATH]);
+			foreach ($this->dirs as $dir) {
+				$this->watch($dir);
+			}
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
@@ -168,17 +171,15 @@ class ServerInotify extends Process
 		$this->isReloadingOut = FALSE;
 
 		$this->loadByDir(APP_PATH . 'app');
+		$this->loadByDir(APP_PATH . 'routes');
 	}
 
 	/**
 	 * 重启
-	 * @throws ComponentException
 	 */
 	public function trigger_reload()
 	{
-		/** @var Server $server */
-		$server = Snowflake::app()->get('server')->getServer();
-		$server->reload();
+		Snowflake::reload();
 	}
 
 
@@ -210,11 +211,10 @@ class ServerInotify extends Process
 
 	/**
 	 * @param $dir
-	 * @param bool $root
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function watch($dir, $root = TRUE)
+	public function watch($dir)
 	{
 		//目录不存在
 		if (!is_dir($dir)) {
@@ -223,10 +223,6 @@ class ServerInotify extends Process
 		//避免重复监听
 		if (isset($this->watchFiles[$dir])) {
 			return FALSE;
-		}
-		//根目录
-		if ($root) {
-			$this->dirs[] = $dir;
 		}
 
 		if (in_array($dir, [APP_PATH . '/config', APP_PATH . '/commands', APP_PATH . '/.git', APP_PATH . '/.gitee'])) {
@@ -244,7 +240,7 @@ class ServerInotify extends Process
 			$path = $dir . '/' . $f;
 			//递归目录
 			if (is_dir($path)) {
-				$this->watch($path, FALSE);
+				$this->watch($path);
 			}
 
 			//检测文件类型

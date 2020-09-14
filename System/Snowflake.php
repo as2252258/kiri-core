@@ -10,6 +10,7 @@ use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Di\Container;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Process;
 use Swoole\Coroutine;
@@ -199,7 +200,7 @@ class Snowflake
 	 */
 	public static function clearProcessId($worker_pid)
 	{
-		@unlink(storage("{$worker_pid}.sock",'worker'));
+		@unlink(storage("{$worker_pid}.sock", 'worker'));
 	}
 
 
@@ -316,8 +317,12 @@ class Snowflake
 		}
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public static function reload()
 	{
+		return Snowflake::app()->server->getServer()->reload();
 	}
 
 }
