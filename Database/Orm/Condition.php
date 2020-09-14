@@ -70,7 +70,6 @@ trait Condition
 	 * @param $where
 	 * @return string
 	 * @throws Exception
-	 * ['id=1', 'a'=>2, ['in', 'a', 'b']]
 	 */
 	private function builderWhere($where)
 	{
