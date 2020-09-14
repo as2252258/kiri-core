@@ -367,7 +367,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 				}
 			}
 			$trance->commit();
-			var_dump($param, $attributes);
 			$this->setAttributes($param);
 			$this->afterSave($attributes, $param);
 			$this->refresh();
@@ -414,7 +413,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public function save($data = NULL)
 	{
-		$this->setAttributes($data);
+		if (is_array($data)) {
+			$this->setAttributes($data);
+		}
 		if (!$this->validator($this->rules()) || !$this->beforeSave()) {
 			return false;
 		}
