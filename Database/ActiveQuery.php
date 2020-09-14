@@ -188,20 +188,12 @@ class ActiveQuery extends Component
 	 */
 	public function plunk(int $size, callable $callback, $param = null, $offset = 0, $total = -1)
 	{
-		if (!is_callable($callback, true)) {
-			return;
-		}
-		$data = $this->limit($offset, $size)->get();
-		if ($param !== null) {
-			call_user_func($callback, $data, $param);
-		} else {
-			call_user_func($callback, $data);
-		}
-		if ($data->size() < $size) {
-			return;
-		}
-		unset($data);
-		$this->plunk($size, $callback, $param, $offset + $size, $total);
+		$pagination = new Pagination($this);
+		$pagination->setOffset($offset);
+		$pagination->setLimit($size);
+		$pagination->setMax($total);
+		$pagination->setCallback($callback);
+		$pagination->search($param);
 	}
 
 	/**
