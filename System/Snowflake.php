@@ -349,6 +349,7 @@ class Snowflake
 	public static function autoload($className)
 	{
 		if (!isset(static::$_autoload[$className])) {
+			var_dump($className);
 			return;
 		}
 		$file = static::$_autoload[$className];
