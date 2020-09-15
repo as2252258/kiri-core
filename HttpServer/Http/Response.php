@@ -117,16 +117,8 @@ class Response extends Application
 		if ($response instanceof SResponse) {
 			$this->response = $response;
 		}
-		Coroutine::defer(function () {
-			unset($this->response);
-		});
 		if ($this->response instanceof SResponse) {
-			$this->response->status($statusCode);
-			$this->response->header('Content-Type', $this->getContentType());
-			$this->response->header('Access-Control-Allow-Origin', '*');
-			$this->response->header('Run-Time', $this->getRuntime());
-			$this->response->end($sendData);
-			return $sendData;
+			return $this->sendData($sendData, $statusCode);
 		} else {
 			return $this->printResult($sendData);
 		}
@@ -172,13 +164,17 @@ class Response extends Application
 	}
 
 	/**
-	 * @param $response
 	 * @param $sendData
 	 * @param $status
 	 * @return mixed
 	 */
-	private function sendData($response, $sendData, $status)
+	private function sendData($sendData, $status)
 	{
+		$this->response->status($status);
+		$this->response->header('Content-Type', $this->getContentType());
+		$this->response->header('Access-Control-Allow-Origin', '*');
+		$this->response->header('Run-Time', $this->getRuntime());
+		$this->response->end($sendData);
 		return $sendData;
 	}
 
