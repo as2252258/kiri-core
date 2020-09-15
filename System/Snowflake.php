@@ -338,5 +338,6 @@ class Snowflake
 
 
 }
+//scandir();
 //spl_autoload_register([Snowflake::class, 'autoload'], true, true);
 Snowflake::$container = new Container();
