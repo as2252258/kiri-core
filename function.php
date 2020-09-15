@@ -47,7 +47,7 @@ if (!function_exists('loadByDir')) {
 		foreach (glob($path . '/*') as $value) {
 			$value = realpath($value);
 			if (is_dir($value)) {
-				classAutoload($namespace . '\\' . implode('\\', $first), $value);
+				classAutoload($namespace, $value);
 			} else {
 				$pos = strpos($value, '.php');
 				if ($pos === false || strlen($value) - 4 != $pos) {
