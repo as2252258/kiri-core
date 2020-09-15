@@ -119,18 +119,6 @@ class Application extends BaseApplication
 		}
 	}
 
-
-	/**
-	 *
-	 */
-	private function scanning()
-	{
-		$this->debug('start scanning...');
-		loadByDir(__DIR__ . '/../');
-		$this->debug('scanning end...');
-	}
-
-
 	/**
 	 * @param $className
 	 * @param null $abstracts
