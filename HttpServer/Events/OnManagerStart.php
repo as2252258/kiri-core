@@ -28,9 +28,9 @@ class OnManagerStart extends Callback
 		if (Snowflake::isLinux()) {
 			name('Server Manager.');
 		}
-		$this->debug('start scanning...');
-		loadByDir(__DIR__ . '/../../');
-		$this->debug('scanning end...');
+//		$this->debug('start scanning...');
+//		loadByDir(__DIR__ . '/../../');
+//		$this->debug('scanning end...');
 	}
 
 }
