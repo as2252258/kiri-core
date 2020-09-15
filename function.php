@@ -53,7 +53,7 @@ if (!function_exists('loadByDir')) {
 					continue;
 				}
 				var_dump($value);
-				include_once "$value";
+				require_once "$value";
 			}
 		}
 	}
