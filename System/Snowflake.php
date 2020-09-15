@@ -335,7 +335,11 @@ class Snowflake
 	 */
 	public static function setAutoload($class, $file)
 	{
+		if (isset(static::$_autoload[$class])) {
+			return;
+		}
 		static::$_autoload[$class] = $file;
+		include_once "$file";
 	}
 
 
@@ -355,12 +359,5 @@ class Snowflake
 
 }
 
-$content = json_decode(file_get_contents(__DIR__ . '/../composer.json'), true);
-if (isset($content['autoload']) && isset($content['autoload']['psr-4'])) {
-	$psr4 = $content['autoload']['psr-4'];
-	foreach ($psr4 as $namespace => $dirname) {
-		classAutoload($namespace, __DIR__ . '/' . $dirname);
-	}
-}
 spl_autoload_register([Snowflake::class, 'autoload'], true, true);
 Snowflake::$container = new Container();

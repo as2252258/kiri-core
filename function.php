@@ -69,6 +69,22 @@ if (!function_exists('loadByDir')) {
 }
 
 
+if (!function_exists('instance_load')) {
+
+	function instance_load()
+	{
+		$content = json_decode(file_get_contents(__DIR__ . '/../composer.json'), true);
+		if (isset($content['autoload']) && isset($content['autoload']['psr-4'])) {
+			$psr4 = $content['autoload']['psr-4'];
+			foreach ($psr4 as $namespace => $dirname) {
+				classAutoload($namespace, __DIR__ . '/' . $dirname);
+			}
+		}
+	}
+
+}
+
+
 if (!function_exists('exif_imagetype')) {
 
 	/**
