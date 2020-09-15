@@ -165,9 +165,15 @@ class Context extends BaseContext
 	public static function hasContext($id, $key = null)
 	{
 		if (static::inCoroutine()) {
-			$data = Coroutine::getContext()[$id] ?? null;
+			if (!isset(Coroutine::getContext()[$id])) {
+				return false;
+			}
+			$data = Coroutine::getContext()[$id];
 		} else {
-			$data = static::$_requests[$id] ?? null;
+			if (!isset(static::$_requests[$id])) {
+				return false;
+			}
+			$data = static::$_requests[$id];
 		}
 		if (empty($data)) {
 			return false;
