@@ -67,12 +67,13 @@ class Context extends BaseContext
 		if (empty($key)) {
 			return Coroutine::getContext()[$id] = $context;
 		}
-		if (!is_array(Coroutine::getContext()[$id])) {
-			Coroutine::getContext()[$id] = [$key => $context];
+		$oldData = Coroutine::getContext()[$id];
+		if (!is_array($oldData)) {
+			$oldData = [$key => $context];
 		} else {
-			Coroutine::getContext()[$id][$key] = $context;
+			$oldData[$key] = $context;
 		}
-		return $context;
+		return Coroutine::getContext()[$id] = $oldData;
 	}
 
 	/**
@@ -98,10 +99,11 @@ class Context extends BaseContext
 	 */
 	public static function autoDecr($id, $key = null)
 	{
-		if (!static::inCoroutine()) {
+		if (!static::inCoroutine() || !static::hasContext($id)) {
 			return false;
 		}
-		if (!isset(Coroutine::getContext()[$id][$key])) {
+		$context = Coroutine::getContext()[$id];
+		if (!isset($context[$key])) {
 			return false;
 		}
 		return Coroutine::getContext()[$id][$key] -= 1;
@@ -114,10 +116,13 @@ class Context extends BaseContext
 	 */
 	public static function getContext($id, $key = null)
 	{
+		if (!static::hasContext($id)) {
+			return null;
+		}
 		if (static::inCoroutine()) {
-			$array = Coroutine::getContext()[$id] ?? null;
+			$array = Coroutine::getContext()[$id];
 		} else {
-			$array = static::$_requests[$id] ?? null;
+			$array = static::$_requests[$id];
 		}
 		if (empty($key) || !is_array($array)) {
 			return $array;
@@ -148,9 +153,9 @@ class Context extends BaseContext
 		}
 		if (static::inCoroutine()) {
 			if (!empty($key)) {
-				Coroutine::getContext()[$id][$key] = null;
+				unset(Coroutine::getContext()[$id][$key]);
 			} else {
-				Coroutine::getContext()[$id] = null;
+				unset(Coroutine::getContext()[$id]);
 			}
 		} else {
 			unset(static::$_requests[$id]);
@@ -165,10 +170,11 @@ class Context extends BaseContext
 	public static function hasContext($id, $key = null)
 	{
 		if (static::inCoroutine()) {
-			if (!isset(Coroutine::getContext()[$id])) {
+			$context = Coroutine::getContext();
+			if (!isset($context[$id])) {
 				return false;
 			}
-			$data = Coroutine::getContext()[$id];
+			$data = $context[$id];
 		} else {
 			if (!isset(static::$_requests[$id])) {
 				return false;
