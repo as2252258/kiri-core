@@ -36,6 +36,9 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
+			if (function_exists('trackerHookMalloc')) {
+				trackerHookMalloc();
+			}
 			register_shutdown_function(OnRequest::class . '::shutdown', $response);
 
 			/** @var HRequest $sRequest */
