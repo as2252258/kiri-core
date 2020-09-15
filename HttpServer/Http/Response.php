@@ -198,11 +198,10 @@ class Response extends Application
 	/**
 	 * @param null $response
 	 * @return mixed
-	 * @throws ComponentException
 	 */
 	public static function create($response = null)
 	{
-		$ciResponse = Snowflake::app()->clone('response');
+		$ciResponse = Context::setContext('response',new Response());
 		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;

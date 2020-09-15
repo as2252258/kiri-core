@@ -418,7 +418,7 @@ class Request extends Application
 	 */
 	public static function create($request)
 	{
-		$sRequest = new Request();
+		$sRequest = Context::setContext('request', new Request());
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
 		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
@@ -431,7 +431,6 @@ class Request extends Application
 			$headers = array_merge($headers, $request->header);
 		}
 		$sRequest->headers = new HttpHeaders($headers);
-		unset($request);
 		return $sRequest;
 	}
 
