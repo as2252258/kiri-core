@@ -403,7 +403,6 @@ class Request extends Application
 	}
 
 	/**
-	 * @param $router
 	 * @return bool
 	 */
 	public function isNotFound()
