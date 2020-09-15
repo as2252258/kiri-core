@@ -354,8 +354,7 @@ class Snowflake
 
 }
 
-$content = json_decode(file_get_contents(__DIR__ . '/../composer.json'));
-
+$content = json_decode(file_get_contents(__DIR__ . '/../composer.json'), true);
 if (isset($content['autoload']) && isset($content['autoload']['psr-4'])) {
 	$psr4 = $content['autoload']['psr-4'];
 	foreach ($psr4 as $namespace => $dirname) {
