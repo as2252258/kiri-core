@@ -35,7 +35,6 @@ class Connection extends Pool
 	public function Heartbeat_detection($timer)
 	{
 		$this->creates = $timer;
-		$this->debug('Db Heartbeat detection ' . var_export($this->hasCreate, true));
 		if ($this->lastTime == 0) {
 			return;
 		}
@@ -207,9 +206,9 @@ class Connection extends Pool
 	 */
 	public function getConnection(array $config, $isMaster = false)
 	{
-//		if ($this->creates === 0) {
-//			$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
-//		}
+		if ($this->creates === 0) {
+			$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
+		}
 		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
 		if (!isset($this->hasCreate[$coroutineName])) {
 			$this->hasCreate[$coroutineName] = 0;
