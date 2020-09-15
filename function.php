@@ -44,6 +44,7 @@ if (!function_exists('loadByDir')) {
 	{
 		$path = rtrim($path, '/');
 		foreach (glob($path . '/*') as $value) {
+			$value = realpath($value);
 			if (is_dir($value)) {
 				loadByDir($value);
 			} else {
