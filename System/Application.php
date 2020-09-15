@@ -44,7 +44,6 @@ class Application extends BaseApplication
 	 */
 	public function __construct(array $config = [])
 	{
-		$this->scanning();
 		parent::__construct($config);
 	}
 
