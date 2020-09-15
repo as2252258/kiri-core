@@ -325,6 +325,19 @@ class Snowflake
 		return Snowflake::app()->server->getServer()->reload();
 	}
 
+
+	/**
+	 * @param $className
+	 */
+	public static function autoload($className)
+	{
+
+		var_dump($className);
+
+	}
+
+
 }
 
 Snowflake::$container = new Container();
+spl_autoload_register(['Snowflake\Snowflake::autoload'], true, true);
