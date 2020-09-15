@@ -431,6 +431,7 @@ class Request extends Application
 			$headers = array_merge($headers, $request->header);
 		}
 		$sRequest->headers = new HttpHeaders($headers);
+		unset($request);
 		return $sRequest;
 	}
 
