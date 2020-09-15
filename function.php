@@ -38,21 +38,29 @@ if (!function_exists('loadByDir')) {
 
 
 	/**
-	 * @param $path
+	 * @param $namespace
+	 * @param $dirname
 	 */
-	function loadByDir($path)
+	function classAutoload($namespace, $dirname)
 	{
-		$path = rtrim($path, '/');
+		$path = rtrim(__DIR__ . '/' . $dirname, '/');
 		foreach (glob($path . '/*') as $value) {
 			$value = realpath($value);
 			if (is_dir($value)) {
-				loadByDir($value);
+				classAutoload($namespace . '\\' . implode('\\', $first), $value);
 			} else {
 				$pos = strpos($value, '.php');
 				if ($pos === false || strlen($value) - 4 != $pos) {
 					continue;
 				}
-				include_once "$value";
+
+				$replace = ltrim(str_replace(__DIR__, '', $value), '/');
+				$replace = str_replace('.php', '', $replace);
+
+				$first = explode(DIRECTORY_SEPARATOR, $replace);
+				array_shift($first);
+
+				Snowflake::setAutoload($namespace . '\\' . implode('\\', $first), $value);
 			}
 		}
 	}

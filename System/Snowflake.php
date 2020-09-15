@@ -326,18 +326,41 @@ class Snowflake
 	}
 
 
+	private static $_autoload = [];
+
+
+	/**
+	 * @param $class
+	 * @param $file
+	 */
+	public static function setAutoload($class, $file)
+	{
+		static::$_autoload[$class] = $file;
+	}
+
+
 	/**
 	 * @param $className
 	 */
 	public static function autoload($className)
 	{
-
-		var_dump($className);
-
+		if (!isset(static::$_autoload[$className])) {
+			return;
+		}
+		$file = static::$_autoload[$className];
+		include_once "$file";
 	}
 
 
 }
-//scandir();
-//spl_autoload_register([Snowflake::class, 'autoload'], true, true);
+
+$content = json_decode(file_get_contents(__DIR__ . '/../composer.json'));
+
+if (isset($content['autoload']) && isset($content['autoload']['psr-4'])) {
+	$psr4 = $content['autoload']['psr-4'];
+	foreach ($psr4 as $namespace => $dirname) {
+		classAutoload($namespace, __DIR__ . '/' . $dirname);
+	}
+}
+spl_autoload_register([Snowflake::class, 'autoload'], true, true);
 Snowflake::$container = new Container();
