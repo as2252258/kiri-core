@@ -175,6 +175,7 @@ class Response extends Application
 		$response->header('Access-Control-Allow-Origin', '*');
 		$response->header('Run-Time', $this->getRuntime());
 		$response->end($sendData);
+		unset($response);
 		return $sendData;
 	}
 
