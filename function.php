@@ -52,7 +52,7 @@ if (!function_exists('loadByDir')) {
 				if ($pos === false || strlen($value) - 4 != $pos) {
 					continue;
 				}
-				include "$value";
+				include_once "$value";
 			}
 		}
 	}
