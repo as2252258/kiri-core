@@ -42,7 +42,7 @@ class OnRequest extends Callback
 			register_shutdown_function(OnRequest::class . '::shutdown', $response);
 
 			/** @var HRequest $sRequest */
-			[$sRequest, $sResponse] = static::setContext($request, $response);
+			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
 				return $params = $sResponse->send($sRequest->isNotFound(), 200);
 			}
@@ -103,20 +103,5 @@ class OnRequest extends Callback
 		}
 		return $sResponse->send($params, 200);
 	}
-
-
-	/**
-	 * @param $request
-	 * @param $response
-	 * @return array
-	 * @throws Exception
-	 */
-	public static function setContext($request, $response): array
-	{
-		$request = Context::setContext('request', HRequest::create($request));
-		$response = Context::setContext('response', HResponse::create($response));
-		return [$request, $response];
-	}
-
 
 }
