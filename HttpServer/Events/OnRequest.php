@@ -35,12 +35,8 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
+		function_exists('trackerHookMalloc') && trackerHookMalloc();
 		try {
-			if (function_exists('trackerHookMalloc')) {
-				trackerHookMalloc();
-			}
-			register_shutdown_function(OnRequest::class . '::shutdown', $response);
-
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
