@@ -16,6 +16,7 @@ use Exception;
 use Snowflake\Core\Help;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Http\Response as SResponse;
 
 /**
@@ -116,6 +117,9 @@ class Response extends Application
 		if ($response instanceof SResponse) {
 			$this->response = $response;
 		}
+		Coroutine::defer(function () {
+			unset($this->response);
+		});
 		if ($this->response instanceof SResponse) {
 			return $this->sendData($this->response, $sendData, $statusCode);
 		} else {
@@ -175,7 +179,6 @@ class Response extends Application
 		$response->header('Access-Control-Allow-Origin', '*');
 		$response->header('Run-Time', $this->getRuntime());
 		$response->end($sendData);
-		unset($response);
 		return $sendData;
 	}
 
