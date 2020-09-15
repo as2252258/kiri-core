@@ -34,10 +34,10 @@
       "Snowflake\\": "System/",
       "HttpServer\\": "HttpServer/",
       "validator\\": "Validator/",
-      "Console\\": "./Console/",
-      "Database\\": "./Database/",
-      "Queue\\": "./Queue/",
-      "Gii\\": "./Gii/"
+      "Console\\": "Console/",
+      "Database\\": "Database/",
+      "Queue\\": "Queue/",
+      "Gii\\": "Gii/"
     },
     "files": [
       "error.php",

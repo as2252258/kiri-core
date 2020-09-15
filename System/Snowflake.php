@@ -352,8 +352,8 @@ class Snowflake
 			var_dump($className);
 			return;
 		}
-		$file = static::$_autoload[$className];
-		include_once "$file";
+//		$file = static::$_autoload[$className];
+//		include_once "$file";
 	}
 
 
