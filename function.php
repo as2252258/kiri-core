@@ -34,6 +34,27 @@ if (!function_exists('make')) {
 
 }
 
+if (!function_exists('loadByDir')) {
+
+
+	/**
+	 * @param $path
+	 */
+	function loadByDir($path)
+	{
+		$path = rtrim($path, '/');
+		foreach (glob($path . '/*') as $value) {
+			if (is_dir($value)) {
+				loadByDir($value);
+			}else{
+				include_once "$value";
+			}
+		}
+	}
+
+
+}
+
 
 if (!function_exists('exif_imagetype')) {
 

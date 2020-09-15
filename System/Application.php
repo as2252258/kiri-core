@@ -39,6 +39,17 @@ class Application extends BaseApplication
 
 
 	/**
+	 * Application constructor.
+	 * @param array $config
+	 */
+	public function __construct(array $config = [])
+	{
+		$this->scanning();
+		parent::__construct($config);
+	}
+
+
+	/**
 	 * @throws ConfigException
 	 * @throws NotFindClassException
 	 */
@@ -106,6 +117,17 @@ class Application extends BaseApplication
 			Timer::clearAll();
 			return $params;
 		}
+	}
+
+
+	/**
+	 *
+	 */
+	private function scanning()
+	{
+		$this->debug('start scanning...');
+		loadByDir(__DIR__ . '/../');
+		$this->debug('scanning end...');
 	}
 
 
