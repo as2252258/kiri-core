@@ -340,4 +340,4 @@ class Snowflake
 }
 
 Snowflake::$container = new Container();
-spl_autoload_register('Snowflake\Snowflake::autoload', true, true);
+spl_autoload_register('Snowflake::autoload', true, true);
