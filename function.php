@@ -46,7 +46,8 @@ if (!function_exists('loadByDir')) {
 		foreach (glob($path . '/*') as $value) {
 			if (is_dir($value)) {
 				loadByDir($value);
-			}else{
+			} else {
+				var_dump($value);
 				include_once "$value";
 			}
 		}
