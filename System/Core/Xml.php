@@ -32,17 +32,16 @@ class Xml
 
 	/**
 	 * @param $str
-	 * @return bool
+	 * @return array|bool|object
 	 */
-	public static function isXml(&$str)
+	public static function isXml($str)
 	{
 		$xml_parser = xml_parser_create();
 		if (!xml_parse($xml_parser, $str, true)) {
 			xml_parser_free($xml_parser);
 			return false;
 		} else {
-			$str = self::toArray($str);
-			return true;
+			return self::toArray($str);
 		}
 	}
 
