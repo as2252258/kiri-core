@@ -326,38 +326,5 @@ class Snowflake
 	}
 
 
-	private static $_autoload = [];
-
-
-	/**
-	 * @param $class
-	 * @param $file
-	 */
-	public static function setAutoload($class, $file)
-	{
-		if (isset(static::$_autoload[$class])) {
-			return;
-		}
-		static::$_autoload[$class] = $file;
-		include_once "$file";
-	}
-
-
-	/**
-	 * @param $className
-	 */
-	public static function autoload($className)
-	{
-		if (!isset(static::$_autoload[$className])) {
-			var_dump($className);
-			return;
-		}
-//		$file = static::$_autoload[$className];
-//		include_once "$file";
-	}
-
-
 }
-
-spl_autoload_register([Snowflake::class, 'autoload'], true, true);
 Snowflake::$container = new Container();

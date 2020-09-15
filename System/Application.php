@@ -44,7 +44,7 @@ class Application extends BaseApplication
 	 */
 	public function __construct(array $config = [])
 	{
-		instance_load();
+//		instance_load();
 		parent::__construct($config);
 	}
 
