@@ -47,6 +47,10 @@ if (!function_exists('loadByDir')) {
 			if (is_dir($value)) {
 				loadByDir($value);
 			} else {
+				$pos = strpos($value, '.php');
+				if ($pos === false || strlen($value) - 4 != $pos) {
+					continue;
+				}
 				var_dump($value);
 				include_once "$value";
 			}
