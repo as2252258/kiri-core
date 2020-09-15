@@ -121,7 +121,12 @@ class Response extends Application
 			unset($this->response);
 		});
 		if ($this->response instanceof SResponse) {
-			return $this->sendData($this->response, $sendData, $statusCode);
+			$this->response->status($statusCode);
+			$this->response->header('Content-Type', $this->getContentType());
+			$this->response->header('Access-Control-Allow-Origin', '*');
+			$this->response->header('Run-Time', $this->getRuntime());
+			$this->response->end($sendData);
+			return $sendData;
 		} else {
 			return $this->printResult($sendData);
 		}
@@ -174,11 +179,6 @@ class Response extends Application
 	 */
 	private function sendData($response, $sendData, $status)
 	{
-		$response->status($status);
-		$response->header('Content-Type', $this->getContentType());
-		$response->header('Access-Control-Allow-Origin', '*');
-		$response->header('Run-Time', $this->getRuntime());
-		$response->end($sendData);
 		return $sendData;
 	}
 
