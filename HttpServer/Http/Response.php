@@ -18,6 +18,7 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Http\Response as SResponse;
+use Swoole\Http2\Response as S2Response;
 
 /**
  * Class Response
@@ -105,7 +106,10 @@ class Response extends Application
 		if (!$response) {
 			return;
 		}
-		if (!($response->response instanceof \Swoole\Http\Response)) {
+		if (
+			!($response->response instanceof SResponse) ||
+			!($response->response instanceof S2Response)
+		) {
 			return;
 		}
 		$response->response->header($key, $value);
