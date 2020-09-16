@@ -178,6 +178,7 @@ class Response extends Application
 	{
 		$this->response->status($status);
 		$this->response->header('Content-Type', $this->getContentType());
+		$this->response->header('Access-Control-Allow-Origin', '*');
 		$this->response->header('Run-Time', $this->getRuntime());
 		if (empty($sendData)) {
 			$sendData = '';
