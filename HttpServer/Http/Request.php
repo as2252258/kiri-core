@@ -7,6 +7,7 @@ use Exception;
 use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
 use Snowflake\Core\JSON;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
@@ -413,15 +414,18 @@ class Request extends Application
 
 	/**
 	 * @param $request
-	 * @return Request
+	 * @return mixed
+	 * @throws \ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public static function create($request)
 	{
-		$sRequest = Context::setContext('request', new Request());
+		$sRequest = Context::setContext('request', Snowflake::createObject(Request::class));
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
 		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
-		$sRequest->params = Context::setContext('HttpParams', new HttpParams(Help::toArray($request->rawContent()), $request->get, $request->files));
+
+		$sRequest->params = Snowflake::createObject(HttpParams::class,[Help::toArray($request->rawContent()), $request->get, $request->files]);
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
@@ -429,7 +433,7 @@ class Request extends Application
 		if (!empty($request->header)) {
 			$headers = array_merge($headers, $request->header);
 		}
-		$sRequest->headers = Context::setContext('HttpHeaders', new HttpHeaders($headers));
+		$sRequest->headers = Snowflake::createObject(HttpHeaders::class,[$headers]);
 		return $sRequest;
 	}
 
