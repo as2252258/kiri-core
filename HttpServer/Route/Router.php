@@ -455,7 +455,7 @@ class Router extends Application implements RouterInterface
 	 * @return Node|false|int|mixed|string|null
 	 * 树干搜索
 	 */
-	private function find_path($request)
+	private function find_path(Request $request)
 	{
 		$method = $request->getMethod();
 		if (!isset($this->nodes[$method])) {
@@ -463,13 +463,13 @@ class Router extends Application implements RouterInterface
 		}
 		$methods = $this->nodes[$method];
 		$uri = $request->headers->get('request_uri', '/');
-		if (!isset($methods[$uri])) {
-			if ($request->isOption && !isset($methods['/'])) {
-				return null;
-			}
-			return $this->nodes[$method]['/'];
+		if (isset($methods[$uri])) {
+			return $methods[$uri];
 		}
-		return $this->nodes[$method][$uri];
+		if (!$request->isOption || !isset($methods['/'])) {
+			return null;
+		}
+		return $methods['/'];
 
 	}
 
