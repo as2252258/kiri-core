@@ -485,6 +485,7 @@ class Router extends Application implements RouterInterface
 		if (!isset($this->nodes[$method])) {
 			return null;
 		}
+		var_dump($this->nodes[$method]);
 		if (!isset($this->nodes[$method]['*'])) {
 			return null;
 		}
