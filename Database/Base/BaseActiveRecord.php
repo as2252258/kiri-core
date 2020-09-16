@@ -137,7 +137,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 		}
 		$primary = static::getColumns()->getPrimaryKeys();
 		if (!empty($primary)) {
-			return $this->primary = current($primary);
+			return $this->primary = is_array($primary) ? current($primary) : $primary;
 		}
 		return false;
 	}
@@ -196,7 +196,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			if (empty($primary)) {
 				throw new Exception('Primary key cannot be empty.');
 			}
-			$condition = [current($primary) => $condition];
+			if (is_array($primary)) {
+				$primary = current($primary);
+			}
+			$condition = [$primary => $condition];
 		}
 		return static::find()->where($condition)->first();
 	}
