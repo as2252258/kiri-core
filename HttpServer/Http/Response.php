@@ -101,17 +101,7 @@ class Response extends Application
 	 */
 	public function addHeader($key, $value)
 	{
-		/** @var Response $response */
-		if (!($response = Context::getContext('response'))) {
-			return;
-		}
-		if (
-			!($response->response instanceof SResponse) ||
-			!($response->response instanceof S2Response)
-		) {
-			return;
-		}
-		$response->response->header($key, $value);
+		$this->response->header($key, $value);
 	}
 
 	/**
