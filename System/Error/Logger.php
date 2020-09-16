@@ -153,6 +153,17 @@ class Logger extends Component
 		$dirName = 'log/' . (empty($category) ? 'app' : $category);
 		$logFile = '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL;
 		Snowflake::writeFile(storage($fileName, $dirName), $logFile, FILE_APPEND);
+
+		$files = glob(storage(null, $dirName) . '/*');
+		if (count($files) >= 5) {
+			$time = strtotime(date('Y-m-d', strtotime('-10days')));
+			foreach ($files as $file) {
+				if (filectime($file) < $time) {
+					continue;
+				}
+				@unlink($file);
+			}
+		}
 	}
 
 	/**
