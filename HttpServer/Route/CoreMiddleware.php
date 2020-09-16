@@ -26,7 +26,6 @@ class CoreMiddleware implements \HttpServer\IInterface\Middleware
 	 */
 	public function handler(Request $request, Closure $next)
 	{
-
 		$headers = $request->headers;
 
 		/** @var Response $response */
