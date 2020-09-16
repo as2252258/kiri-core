@@ -101,6 +101,12 @@ class Response extends Application
 	 */
 	public function addHeader($key, $value)
 	{
+		if (
+			!($this->response instanceof SResponse) ||
+			!($this->response instanceof S2Response)
+		) {
+			return;
+		}
 		$this->response->header($key, $value);
 	}
 
