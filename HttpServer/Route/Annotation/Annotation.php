@@ -116,14 +116,16 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param $annotation
 	 * @throws
 	 */
-	private function bindMiddleware($node, $annotation)
+	private function bindMiddleware(Node $node, $annotation)
 	{
 		if (!isset($annotation[1][2])) {
 			return;
 		}
 		$explode = explode(',', $annotation[1][2]);
 		foreach ($explode as $middleware) {
-			$middleware = 'App\Http\Middleware\\' . $middleware;
+			if (strpos($middleware, '\\') !== 0) {
+				$middleware = 'App\Http\Middleware\\' . $middleware;
+			}
 			if (!class_exists($middleware)) {
 				continue;
 			}
@@ -137,14 +139,16 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param $annotation
 	 * @throws
 	 */
-	private function bindInterceptors($node, $annotation)
+	private function bindInterceptors(Node $node, $annotation)
 	{
 		if (!isset($annotation[1][2])) {
 			return;
 		}
 		$explode = explode(',', $annotation[1][2]);
 		foreach ($explode as $middleware) {
-			$middleware = 'App\Http\Interceptor\\' . $middleware;
+			if (strpos($middleware, '\\') !== 0) {
+				$middleware = 'App\Http\Interceptor\\' . $middleware;
+			}
 			if (!class_exists($middleware)) {
 				continue;
 			}
@@ -162,7 +166,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param $annotation
 	 * @throws
 	 */
-	private function bindAfter($node, $annotation)
+	private function bindAfter(Node $node, $annotation)
 	{
 		if (!isset($annotation[1][2])) {
 			return;
@@ -170,7 +174,9 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 		$explode = explode(',', $annotation[1][2]);
 		foreach ($explode as $middleware) {
-			$middleware = 'App\Http\After\\' . $middleware;
+			if (strpos($middleware, '\\') !== 0) {
+				$middleware = 'App\Http\After\\' . $middleware;
+			}
 			if (!class_exists($middleware)) {
 				continue;
 			}
@@ -188,7 +194,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param $annotation
 	 * @throws
 	 */
-	private function bindLimits($node, $annotation)
+	private function bindLimits(Node $node, $annotation)
 	{
 		if (!isset($annotation[1][2])) {
 			return;
@@ -196,7 +202,9 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 		$explode = explode(',', $annotation[1][2]);
 		foreach ($explode as $middleware) {
-			$middleware = 'App\Http\Limits\\' . $middleware;
+			if (strpos($middleware, '\\') !== 0) {
+				$middleware = 'App\Http\Limits\\' . $middleware;
+			}
 			if (!class_exists($middleware)) {
 				continue;
 			}
