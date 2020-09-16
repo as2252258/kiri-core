@@ -467,6 +467,7 @@ class Router extends Application implements RouterInterface
 			if ($request->isOption && !isset($methods['*'])) {
 				return null;
 			}
+			return $this->nodes[$method]['*'];
 		}
 		return $this->nodes[$method][$uri];
 
