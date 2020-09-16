@@ -183,6 +183,7 @@ class Response extends Application
 			$sendData = '';
 		}
 		$this->response->end($sendData);
+		$this->response = null;
 		return $sendData;
 	}
 
