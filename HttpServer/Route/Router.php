@@ -481,6 +481,7 @@ class Router extends Application implements RouterInterface
 	private function search_options($request)
 	{
 		$method = $request->getMethod();
+		var_dump($method);
 		if (!isset($this->nodes[$method])) {
 			return null;
 		}
