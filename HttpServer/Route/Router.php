@@ -464,10 +464,10 @@ class Router extends Application implements RouterInterface
 		$methods = $this->nodes[$method];
 		$uri = $request->headers->get('request_uri', '/');
 		if (!isset($methods[$uri])) {
-			if ($request->isOption && !isset($methods['*'])) {
+			if ($request->isOption && !isset($methods['/'])) {
 				return null;
 			}
-			return $this->nodes[$method]['*'];
+			return $this->nodes[$method]['/'];
 		}
 		return $this->nodes[$method][$uri];
 
