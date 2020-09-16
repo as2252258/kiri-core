@@ -464,10 +464,9 @@ class Router extends Application implements RouterInterface
 		$methods = $this->nodes[$method];
 		$uri = $request->headers->get('request_uri', '/');
 		if (!isset($methods[$uri])) {
-			if ($request->isOption) {
-				return $this->search_options($request);
+			if ($request->isOption && !isset($methods['*'])) {
+				return null;
 			}
-			return null;
 		}
 		return $this->nodes[$method][$uri];
 
@@ -481,11 +480,9 @@ class Router extends Application implements RouterInterface
 	private function search_options($request)
 	{
 		$method = $request->getMethod();
-		var_dump($method);
 		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		var_dump($this->nodes[$method]);
 		if (!isset($this->nodes[$method]['*'])) {
 			return null;
 		}
