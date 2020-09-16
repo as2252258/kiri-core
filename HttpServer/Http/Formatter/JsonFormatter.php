@@ -51,6 +51,7 @@ class JsonFormatter extends Application implements IFormatter
 
 	public function clear()
 	{
+		$this->data = null;
 		unset($this->data);
 	}
 }

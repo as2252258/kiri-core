@@ -421,7 +421,7 @@ class Request extends Application
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
 		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
-		$sRequest->params = new HttpParams(Help::toArray($request->rawContent()), $request->get, $request->files);
+		$sRequest->params = Context::setContext('HttpParams', new HttpParams(Help::toArray($request->rawContent()), $request->get, $request->files));
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
@@ -429,7 +429,7 @@ class Request extends Application
 		if (!empty($request->header)) {
 			$headers = array_merge($headers, $request->header);
 		}
-		$sRequest->headers = new HttpHeaders($headers);
+		$sRequest->headers = Context::setContext('HttpHeaders', new HttpHeaders($headers));
 		return $sRequest;
 	}
 
