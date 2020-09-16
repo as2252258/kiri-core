@@ -59,7 +59,7 @@ class OnWorkerStart extends Callback
 			}
 			$event->trigger(Event::SERVER_WORKER_START, [$worker_id]);
 		} catch (\Throwable $exception) {
-			Snowflake::app()->getLogger()->write($exception->getMessage(), 'worker');
+			write($exception->getMessage(), 'worker');
 		}
 	}
 

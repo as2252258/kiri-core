@@ -488,11 +488,11 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		return $this->nodes[$method]['*'];
-		$node = $this->tree_search(['*'], $request->getMethod());
-		if (!($node instanceof Node)) {
-			return null;
-		}
-		return $node;
+//		$node = $this->tree_search(['*'], $request->getMethod());
+//		if (!($node instanceof Node)) {
+//			return null;
+//		}
+//		return $node;
 	}
 
 

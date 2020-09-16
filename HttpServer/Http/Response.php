@@ -100,8 +100,15 @@ class Response extends Application
 	 */
 	public function addHeader($key, $value)
 	{
+		/** @var Response $response */
 		$response = Context::getContext('response');
-		$response->header($key, $value);
+		if (!$response) {
+			return;
+		}
+		if (!($response->response instanceof \Swoole\Http\Response)) {
+			return;
+		}
+		$response->response->header($key, $value);
 	}
 
 	/**
@@ -201,7 +208,7 @@ class Response extends Application
 	 */
 	public static function create($response = null)
 	{
-		$ciResponse = Context::setContext('response',new Response());
+		$ciResponse = Context::setContext('response', new Response());
 		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;

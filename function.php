@@ -69,6 +69,22 @@ if (!function_exists('loadByDir')) {
 }
 
 
+if (!function_exists('write')) {
+
+
+	/**
+	 * @param string $messages
+	 * @param string $category
+	 * @throws ComponentException
+	 */
+	function write(string $messages, $category = 'app')
+	{
+		$logger = Snowflake::app()->getLogger();
+		$logger->write($messages, $category);
+	}
+}
+
+
 if (!function_exists('instance_load')) {
 
 	function instance_load()
