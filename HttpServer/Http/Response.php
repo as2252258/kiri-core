@@ -101,13 +101,18 @@ class Response extends Application
 	 */
 	public function addHeader($key, $value)
 	{
-		if (
-			!($this->response instanceof SResponse) ||
-			!($this->response instanceof S2Response)
-		) {
+		if ($this->isClient()) {
 			return;
 		}
 		$this->response->header($key, $value);
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function isClient()
+	{
+		return !($this->response instanceof SResponse) && !($this->response instanceof S2Response);
 	}
 
 	/**
