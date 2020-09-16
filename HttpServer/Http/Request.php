@@ -429,11 +429,7 @@ class Request extends Application
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
-		$headers = $request->server;
-		if (!empty($request->header)) {
-			$headers = array_merge($headers, $request->header);
-		}
-		$sRequest->headers = Snowflake::createObject(HttpHeaders::class,[$headers]);
+		$sRequest->headers = Snowflake::createObject(HttpHeaders::class,[array_merge($request->server, $request->header ??  [])]);
 		return $sRequest;
 	}
 
