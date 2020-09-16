@@ -43,8 +43,7 @@ if (!function_exists('loadByDir')) {
 	 */
 	function classAutoload($namespace, $dirname)
 	{
-		$path = rtrim(__DIR__ . '/' . $dirname, '/');
-		foreach (glob($path . '/*') as $value) {
+		foreach (glob(rtrim($dirname, '/') . '/*') as $value) {
 			$value = realpath($value);
 			if (is_dir($value)) {
 				classAutoload($namespace, $value);
