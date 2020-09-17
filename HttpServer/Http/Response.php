@@ -98,13 +98,12 @@ class Response extends Application
 	/**
 	 * @param $key
 	 * @param $value
+	 * @return Response
 	 */
 	public function addHeader($key, $value)
 	{
-		if ($this->isClient()) {
-			return;
-		}
-		$this->response->header($key, $value);
+		$this->headers[$key] = $value;
+		return $this;
 	}
 
 	/**
@@ -184,6 +183,12 @@ class Response extends Application
 		$this->response->status($status);
 		$this->response->header('Content-Type', $this->getContentType());
 		$this->response->header('Run-Time', $this->getRuntime());
+		if (!empty($this->headers)) {
+			foreach ($this->headers as $key => $header) {
+				$this->response->header($key, $header);
+			}
+			$this->headers = [];
+		}
 		if (empty($sendData)) {
 			$sendData = '';
 		}
