@@ -109,7 +109,10 @@ class HttpHeaders
 	 */
 	public function getHeader($name)
 	{
-		return $this->headers[$name] ?? null;
+		if (!isset($this->headers[$name])) {
+			return null;
+		}
+		return $this->headers[$name];
 	}
 
 

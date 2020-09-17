@@ -38,13 +38,14 @@ class JSON
 	 */
 	private static function filter($data)
 	{
-		array_walk_recursive($data, function (&$value, $key) {
+		array_walk_recursive($data, function ($value, $key) use ($data) {
 			if (!is_numeric($value)) {
 				return;
 			}
 			if (is_int(+$value)) {
 				$value = +$value;
 			}
+			$data[$key] = $value;
 		});
 		return json_encode($data, JSON_UNESCAPED_UNICODE);
 	}

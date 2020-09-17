@@ -321,7 +321,11 @@ class Request extends Application
 	 */
 	public function getMethod()
 	{
-		return strtolower($this->headers->getHeader('request_method'));
+		$method = $this->headers->getHeader('request_method');
+		if (empty($method)) {
+			return 'get';
+		}
+		return strtolower($method);
 	}
 
 	/**
@@ -428,7 +432,7 @@ class Request extends Application
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
-		$sRequest->headers = Snowflake::createObject(HttpHeaders::class,[array_merge($request->server, $request->header ??  [])]);
+		$sRequest->headers = Snowflake::createObject(HttpHeaders::class, [array_merge($request->server, $request->header ?? [])]);
 		return $sRequest;
 	}
 
