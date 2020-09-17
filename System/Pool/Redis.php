@@ -97,7 +97,7 @@ class Redis extends Pool
 			$config['read_timeout'] = 10;
 		}
 		$redis->select($config['databases']);
-		$redis->setOption(SRedis::OPT_READ_TIMEOUT, -1);
+		$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
 		$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
 		return $redis;
 	}

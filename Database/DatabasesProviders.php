@@ -56,6 +56,34 @@ class DatabasesProviders extends Providers
 
 
 	/**
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public function createPool()
+	{
+		$databases = Config::get('databases', false, []);
+		if (empty($databases)) {
+			return;
+		}
+		$application = Snowflake::app();
+		foreach ($databases as $name => $database) {
+			/** @var Connection $connection */
+			$connection = $application->set('databases.' . $name, [
+				'class'       => Connection::class,
+				'id'          => $database['id'],
+				'cds'         => $database['cds'],
+				'username'    => $database['username'],
+				'password'    => $database['password'],
+				'tablePrefix' => $database['tablePrefix'],
+				'maxNumber'   => $database['maxNumber'],
+				'slaveConfig' => $database['slaveConfig']
+			]);
+			$connection->fill();
+		}
+	}
+
+
+	/**
 	 * @param $name
 	 * @return array|mixed|null
 	 * @throws ConfigException

@@ -58,7 +58,7 @@ abstract class Pool extends Component
 	 */
 	public function name($cds, $isMaster = false)
 	{
-		return hash('sha1', $cds . ($isMaster ? 'master' : 'slave'));
+		return md5($cds . ($isMaster ? 'master' : 'slave'));
 	}
 
 

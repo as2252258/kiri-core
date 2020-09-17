@@ -39,17 +39,6 @@ class Application extends BaseApplication
 
 
 	/**
-	 * Application constructor.
-	 * @param array $config
-	 */
-	public function __construct(array $config = [])
-	{
-//		instance_load();
-		parent::__construct($config);
-	}
-
-
-	/**
 	 * @throws ConfigException
 	 * @throws NotFindClassException
 	 */

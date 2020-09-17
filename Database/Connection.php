@@ -101,6 +101,18 @@ class Connection extends Component
 		return $this->getPdo($sql);
 	}
 
+
+	/**
+	 * 初始化 Channel
+	 */
+	public function fill()
+	{
+		$connections = Snowflake::app()->connections;
+		$connections->initConnections($this->cds, true, $this->maxNumber);
+		$connections->initConnections($this->slaveConfig['cds'], false, $this->maxNumber);
+	}
+
+
 	/**
 	 * @param $sql
 	 * @return PDO

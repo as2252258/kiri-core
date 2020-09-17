@@ -366,24 +366,15 @@ SCRIPT;
 	 */
 	public function get_config(): array
 	{
-		$config = Config::get('cache.redis', false, [
+		return Config::get('cache.redis', false, [
 			'host'         => '127.0.0.1',
 			'port'         => '6379',
 			'prefix'       => Config::get('id'),
 			'auth'         => '',
 			'databases'    => '0',
 			'read_timeout' => -1,
-			'conn_timeout' => -1,
+			'timeout'      => -1,
 		]);
-		return [
-			'host'         => $config['host'],
-			'port'         => $config['port'],
-			'auth'         => $config['auth'],
-			'timeout'      => $config['conn_timeout'],
-			'databases'    => $config['databases'],
-			'read_timeout' => $config['read_timeout'],
-			'prefix'       => $config['prefix'],
-		];
 	}
 
 }

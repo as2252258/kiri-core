@@ -66,14 +66,13 @@ class Context extends BaseContext
 		}
 		if (!empty($key)) {
 			if (!is_array(Coroutine::getContext()[$id])) {
-				Coroutine::getContext()[$id] = [$key => $context];
+				return Coroutine::getContext()[$id] = [$key => $context];
 			} else {
-				Coroutine::getContext()[$id][$key] = $context;
+				return Coroutine::getContext()[$id][$key] = $context;
 			}
 		} else {
-			Coroutine::getContext()[$id] = $context;
+			return Coroutine::getContext()[$id] = $context;
 		}
-		return $context;
 	}
 
 	/**
@@ -102,8 +101,7 @@ class Context extends BaseContext
 		if (!static::inCoroutine() || !static::hasContext($id)) {
 			return false;
 		}
-		$context = Coroutine::getContext()[$id];
-		if (!isset($context[$key])) {
+		if (!isset(Coroutine::getContext()[$id][$key])) {
 			return false;
 		}
 		return Coroutine::getContext()[$id][$key] -= 1;
@@ -120,14 +118,18 @@ class Context extends BaseContext
 			return null;
 		}
 		if (static::inCoroutine()) {
-			$array = Coroutine::getContext()[$id];
+			if ($key === null) {
+				return Coroutine::getContext()[$id];
+			} else {
+				return Coroutine::getContext()[$id][$key] ?? null;
+			}
 		} else {
-			$array = static::$_requests[$id];
+			if ($key === null) {
+				return static::$_requests[$id];
+			} else {
+				return static::$_requests[$id][$key] ?? null;
+			}
 		}
-		if (empty($key) || !is_array($array)) {
-			return $array;
-		}
-		return $array[$key];
 	}
 
 	/**
@@ -169,27 +171,19 @@ class Context extends BaseContext
 	 */
 	public static function hasContext($id, $key = null)
 	{
-		if (static::inCoroutine()) {
-			$context = Coroutine::getContext();
-			if (!isset($context[$id])) {
-				return false;
-			}
-			$data = $context[$id];
-		} else {
-			if (!isset(static::$_requests[$id])) {
-				return false;
-			}
-			$data = static::$_requests[$id];
-		}
-		if (empty($data)) {
+		if (!static::inCoroutine()) {
 			return false;
 		}
-		if (empty($key)) {
-			return true;
-		} else if (!is_array($data)) {
+		if (!isset(Coroutine::getContext()[$id])) {
 			return false;
 		}
-		return isset($data[$key]);
+		if (Coroutine::getContext()[$id] !== null) {
+			if ($key === null) {
+				return true;
+			}
+			return isset(Coroutine::getContext()[$id][$key]);
+		}
+		return false;
 	}
 
 

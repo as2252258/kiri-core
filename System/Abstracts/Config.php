@@ -54,9 +54,11 @@ class Config extends Component
 	 */
 	public static function get($key, $try = FALSE, $default = null)
 	{
-		$explode = explode('.', $key);
 		$instance = Snowflake::app()->config->getData();
-		foreach ($explode as $index => $value) {
+		if (strpos($key, '.') === false) {
+			return isset($instance[$key]) ? $instance[$key] : $default;
+		}
+		foreach (explode('.', $key) as $index => $value) {
 			if (empty($value)) {
 				continue;
 			}
@@ -66,10 +68,10 @@ class Config extends Component
 				}
 				return $default;
 			}
-			$instance = $instance[$value];
-			if (!is_array($instance) && $index + 1 < count($explode)) {
-				throw new ConfigException(sprintf(self::ERROR_MESSAGE, $key));
+			if (!is_array($instance[$value]) ) {
+				return $instance[$value];
 			}
+			$instance = $instance[$value];
 		}
 		return empty($instance) ? $default : $instance;
 	}

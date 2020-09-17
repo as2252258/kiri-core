@@ -189,6 +189,7 @@ class Response extends Application
 		}
 		$this->response->end($sendData);
 		$this->response = null;
+		unset($this->response);
 		return $sendData;
 	}
 
