@@ -58,7 +58,7 @@ class Config extends Component
 		if (strpos($key, '.') === false) {
 			return isset($instance[$key]) ? $instance[$key] : $default;
 		}
-		foreach (explode('.', $key) as $index => $value) {
+		foreach (explode('.', $key) as $value) {
 			if (empty($value)) {
 				continue;
 			}
