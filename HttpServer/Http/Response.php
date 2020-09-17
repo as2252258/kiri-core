@@ -183,7 +183,7 @@ class Response extends Application
 		$this->response->status($status);
 		$this->response->header('Content-Type', $this->getContentType());
 		$this->response->header('Run-Time', $this->getRuntime());
-		if (!empty($this->headers)) {
+		if (!empty($this->headers) && is_array($this->headers)) {
 			foreach ($this->headers as $key => $header) {
 				$this->response->header($key, $header);
 			}
