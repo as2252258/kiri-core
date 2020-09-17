@@ -36,7 +36,7 @@ class Redis extends Pool
 	public function getConnection(array $config, $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		[$coroutineId, $coroutineName] = $this->getIndex('redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis:' . $name, $isMaster);
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		} else if (!$this->hasItem($coroutineName)) {
@@ -59,11 +59,11 @@ class Redis extends Pool
 			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
 			return $this->saveClient($coroutineName, $this->createConnect($config));
 		}
-		[$time, $client] = $this->get($coroutineName);
-		if ($client === null) {
+		$clients = $this->get($coroutineName);
+		if ($clients[1] === null) {
 			return $this->getByChannel($coroutineName, $config);
 		}
-		return $this->saveClient($coroutineName, $client);
+		return $this->saveClient($coroutineName, $clients[1]);
 	}
 
 
@@ -109,7 +109,7 @@ class Redis extends Pool
 	public function release(array $config, $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		[$coroutineId, $coroutineName] = $this->getIndex('redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis:' . $name, $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
@@ -127,7 +127,7 @@ class Redis extends Pool
 	public function destroy(array $config, $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		[$coroutineId, $coroutineName] = $this->getIndex('redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis:' . $name, $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
@@ -175,16 +175,6 @@ class Redis extends Pool
 	public function desc($name)
 	{
 		// TODO: Implement desc() method.
-	}
-
-	/**
-	 * @param $name
-	 * @param false $isMaster
-	 * @return array
-	 */
-	private function getIndex($name, $isMaster = false)
-	{
-		return [Coroutine::getCid(), $this->name($name, $isMaster)];
 	}
 
 

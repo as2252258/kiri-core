@@ -424,7 +424,7 @@ class Request extends Application
 		$sRequest->startTime = microtime(true);
 		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
 
-		$sRequest->params = Snowflake::createObject(HttpParams::class,[Help::toArray($request->rawContent()), $request->get, $request->files]);
+		$sRequest->params = new HttpParams($request->rawContent(), $request->get, $request->files);
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}

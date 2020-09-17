@@ -105,7 +105,7 @@ class Connection extends Pool
 	 */
 	public function inTransaction($cds)
 	{
-		[$coroutineId, $coroutineName] = $this->getIndex($cds, true);
+		$coroutineName = $this->name($cds, true);
 		if (!Context::hasContext('begin_' . $coroutineName)) {
 			return false;
 		}
@@ -117,7 +117,7 @@ class Connection extends Pool
 	 */
 	public function beginTransaction($coroutineName)
 	{
-		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, true);
+		$coroutineName = $this->name($coroutineName, true);
 		if (!Context::hasContext('begin_' . $coroutineName)) {
 			Context::setContext('begin_' . $coroutineName, 0);
 		}
@@ -136,7 +136,7 @@ class Connection extends Pool
 	 */
 	public function commit($coroutineName)
 	{
-		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, true);
+		$coroutineName = $this->name($coroutineName, true);
 		if (!Context::hasContext('begin_' . $coroutineName)) {
 			return;
 		}
@@ -170,7 +170,7 @@ class Connection extends Pool
 	 */
 	public function rollback($coroutineName)
 	{
-		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, true);
+		$coroutineName = $this->name($coroutineName, true);
 		if (!Context::hasContext('begin_' . $coroutineName)) {
 			return;
 		}
@@ -200,7 +200,7 @@ class Connection extends Pool
 		if ($this->creates === 0) {
 			$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
 		}
-		[$coroutineId, $coroutineName] = $this->getIndex($config['cds'], $isMaster);
+		$coroutineName = $this->name($config['cds'], $isMaster);
 		if (!isset($this->hasCreate[$coroutineName])) {
 			$this->hasCreate[$coroutineName] = 0;
 		}
@@ -210,9 +210,9 @@ class Connection extends Pool
 		if ($this->size($coroutineName) < 1 && $this->hasCreate[$coroutineName] < $this->max) {
 			return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 		}
-		[$timeout, $connection] = $client = $this->get($coroutineName);
-		if ($connection instanceof PDO) {
-			return $this->saveClient($coroutineName, $connection);
+		$connections = $client = $this->get($coroutineName);
+		if ($connections[1] instanceof PDO) {
+			return $this->saveClient($coroutineName, $connections[1]);
 		}
 		return $this->saveClient($coroutineName, $this->nowClient($coroutineName, $config));
 	}
@@ -252,7 +252,7 @@ class Connection extends Pool
 	 */
 	public function release($coroutineName, $isMaster)
 	{
-		[$coroutineId, $coroutineName] = $this->getIndex($coroutineName, $isMaster);
+		$coroutineName = $this->name($coroutineName, $isMaster);
 		if (!$this->hasClient($coroutineName)) {
 			return;
 		}
