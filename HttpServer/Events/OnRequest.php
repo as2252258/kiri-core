@@ -11,6 +11,7 @@ use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use HttpServer\Route\Node;
 use HttpServer\Service\Http;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -35,8 +36,10 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
-		function_exists('trackerHookMalloc') && trackerHookMalloc();
 		try {
+			if (Config::get('debug.enable', false, false)) {
+				function_exists('trackerHookMalloc') && trackerHookMalloc();
+			}
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {

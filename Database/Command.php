@@ -13,6 +13,7 @@ use Snowflake\Abstracts\Component;
 use Exception;
 use PDO;
 use PDOStatement;
+use Snowflake\Abstracts\Config;
 
 /**
  * Class Command
@@ -190,6 +191,7 @@ class Command extends Component
 	private function execute($type, $isInsert = null, $hasAutoIncrement = true)
 	{
 		try {
+			$time = microtime(true);
 			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
@@ -197,6 +199,9 @@ class Command extends Component
 			}
 			if ($this->prepare instanceof PDOStatement) {
 				$this->prepare->closeCursor();
+			}
+			if (Config::get('debug.enable', false, false)) {
+				$this->debug($this->sql . '。 Run-time: ' . (microtime(true) - $time));
 			}
 		} catch (\Throwable | Exception $exception) {
 			$this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
@@ -241,14 +246,14 @@ class Command extends Component
 			return false;
 		}
 		if (($result = $this->prepare->execute($this->params)) === false) {
-			return $this->addError($connection->errorInfo()[2],'mysql');
+			return $this->addError($connection->errorInfo()[2], 'mysql');
 		}
 		if (!$isInsert) {
 			return true;
 		}
 		$result = $connection->lastInsertId();
 		if ($result == 0 && $hasAutoIncrement) {
-			return $this->addError($connection->errorInfo()[2],'mysql');
+			return $this->addError($connection->errorInfo()[2], 'mysql');
 		}
 		return $result;
 	}
@@ -268,7 +273,7 @@ class Command extends Component
 		}
 		$this->prepare = $connect->prepare($this->sql);
 		if (!($this->prepare instanceof PDOStatement)) {
-			return $this->addError($this->sql . ':' . $this->getError(),'mysql');
+			return $this->addError($this->sql . ':' . $this->getError(), 'mysql');
 		}
 		return $connect;
 	}
