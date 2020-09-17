@@ -154,15 +154,6 @@ class Connection extends Pool
 		}
 	}
 
-	/**
-	 * @param $coroutineId
-	 * @param $coroutineName
-	 * @return array
-	 */
-	private function instanceTrance($coroutineId, $coroutineName)
-	{
-		return [$coroutineId, $coroutineName];
-	}
 
 	/**
 	 * @param $name
@@ -171,7 +162,7 @@ class Connection extends Pool
 	 */
 	private function getIndex($name, $isMaster = false)
 	{
-		return $this->instanceTrance(Coroutine::getCid(), $this->name($name, $isMaster));
+		return [Coroutine::getCid(), $this->name($name, $isMaster)];
 	}
 
 	/**
