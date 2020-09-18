@@ -93,6 +93,7 @@ class Annotation extends BaseAnnotation
 				if (!$this->isLegitimate($events)) {
 					continue;
 				}
+				var_dump($this->getName($annotation, $events));
 				$this->push($this->getName($annotation, $events), [$controller, $methodName]);
 			}
 		}
