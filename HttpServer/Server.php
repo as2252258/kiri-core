@@ -391,7 +391,7 @@ class Server extends Application
 	public function onLoadWebsocketHandler()
 	{
 		/** @var AWebsocket $websocket */
-		$websocket = Snowflake::app()->annotation->register('websocket', AWebsocket::class);
+		$websocket = Snowflake::app()->annotation->get('websocket');
 		$websocket->namespace = 'App\\Websocket';
 		$websocket->path = APP_PATH . 'app/Websocket';
 
