@@ -380,8 +380,10 @@ class Server extends Application
 	public function onLoadHttpHandler()
 	{
 		$event = Snowflake::app()->getEvent();
-		$router = Snowflake::app()->getRouter();
-		$event->on(Event::SERVER_WORKER_START, [$router, 'loadRouterSetting']);
+		$event->on(Event::SERVER_WORKER_START, function () {
+			$router = Snowflake::app()->getRouter();
+			$router->loadRouterSetting();
+		});
 	}
 
 
@@ -394,7 +396,7 @@ class Server extends Application
 		$event->on(Event::SERVER_WORKER_START, function () {
 			/** @var AWebsocket $websocket */
 			$websocket = Snowflake::app()->annotation->get('websocket');
-			$websocket->registration_notes(APP_PATH . 'app/Websocket','App\\Websocket');
+			$websocket->registration_notes(APP_PATH . 'app/Websocket', 'App\\Websocket');
 		});
 	}
 
