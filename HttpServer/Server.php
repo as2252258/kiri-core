@@ -302,8 +302,8 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $settings
-	 * @throws Exception
 	 * @return void
+	 * @throws Exception
 	 */
 	private function parseServer($config, $settings)
 	{
@@ -390,13 +390,12 @@ class Server extends Application
 	 */
 	public function onLoadWebsocketHandler()
 	{
-		/** @var AWebsocket $websocket */
-		$websocket = Snowflake::app()->annotation->get('websocket');
-		$websocket->namespace = 'App\\Websocket';
-		$websocket->path = APP_PATH . 'app/Websocket';
-
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_START, [$websocket, 'registration_notes']);
+		$event->on(Event::SERVER_WORKER_START, function () {
+			/** @var AWebsocket $websocket */
+			$websocket = Snowflake::app()->annotation->get('websocket');
+			$websocket->registration_notes(APP_PATH . 'app/Websocket','App\\Websocket');
+		});
 	}
 
 
