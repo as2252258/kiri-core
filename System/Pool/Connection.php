@@ -5,6 +5,7 @@ namespace Snowflake\Pool;
 use HttpServer\Http\Context;
 use PDO;
 use Exception;
+use Snowflake\Abstracts\Config;
 use Swoole\Coroutine;
 use Snowflake\Abstracts\Pool;
 use Swoole\Timer;
@@ -238,11 +239,21 @@ class Connection extends Pool
 	private function nowClient($coroutineName, $config)
 	{
 		$this->success('create db client -> ' . $config['cds'] . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
-		$client = $this->createConnect($coroutineName, $config['cds'], $config['username'], $config['password']);
+		$client = $this->createConnect($coroutineName, ...$this->parseConfig($config));
 		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 			$number > 0 && $client->beginTransaction();
 		}
 		return $client;
+	}
+
+
+	/**
+	 * @param $config
+	 * @return array
+	 */
+	private function parseConfig($config)
+	{
+		return [$config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4'];
 	}
 
 
@@ -343,10 +354,11 @@ class Connection extends Pool
 	 * @param $cds
 	 * @param $username
 	 * @param $password
+	 * @param string $charset
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function createConnect($coroutineName, $cds, $username, $password)
+	public function createConnect($coroutineName, $cds, $username, $password, $charset = 'utf8mb4')
 	{
 		try {
 			$link = new PDO($cds, $username, $password, [
@@ -358,15 +370,18 @@ class Connection extends Pool
 			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
+			if (!empty($charset)) {
+				$link->query('SET NAMES ' . $charset);
+			}
 			$this->incr($coroutineName);
 			return $link;
 		} catch (\Throwable $exception) {
-			if ($exception->getCode() !== 2006) {
-				$this->addError($cds . '  ->  ' . $exception->getMessage());
-				throw new Exception($exception->getMessage());
-			}
 			$this->error($cds . '  ->  ' . $exception->getMessage());
-			return $this->createConnect($coroutineName, $cds, $username, $password);
+			if ($exception->getCode() === 2006) {
+				return $this->createConnect($coroutineName, $cds, $username, $password, $charset);
+			}
+			$this->addError($cds . '  ->  ' . $exception->getMessage());
+			throw new Exception($exception->getMessage());
 		}
 	}
 
