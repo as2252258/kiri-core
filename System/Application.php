@@ -20,6 +20,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Exception\ConfigException;
+use Swoole\Coroutine;
 use Swoole\Timer;
 
 /**
@@ -85,7 +86,7 @@ class Application extends BaseApplication
 
 	/**
 	 * @param $argv
-	 * @return bool|string
+	 * @return bool|string|void
 	 * @throws
 	 */
 	public function start(Input $argv)
@@ -95,16 +96,17 @@ class Application extends BaseApplication
 			$manager = Snowflake::app()->get('console');
 			$manager->setParameters($argv);
 			$class = $manager->search();
-			$params = response()->send($manager->execCommand($class));
+			Coroutine::create(function ($manager, $class) {
+				response()->send($manager->execCommand($class));
+			}, $manager, $class);
 		} catch (\Throwable $exception) {
-			$params = response()->send(implode("\n", [
+			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
 				'File: ' . $exception->getFile()
 			]));
 		} finally {
 			Timer::clearAll();
-			return $params;
 		}
 	}
 
