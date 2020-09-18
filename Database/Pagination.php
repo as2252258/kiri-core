@@ -179,18 +179,16 @@ class Pagination extends Component
 	private function executed($callback, $data, $param)
 	{
 		$this->_group->add(1);
-		return Coroutine::create(function ($callback, $data, $param) {
+		return Coroutine::create(function ($callback, $data, $param): void {
+			Coroutine::defer([$this, 'done']);
 			try {
 				call_user_func($callback, $data, $param);
 			} catch (\Throwable $exception) {
 				$this->addError($exception->getMessage());
 			} finally {
-				$this->_group->done();
 				$event = Snowflake::app()->getEvent();
-				if (!$event->exists(Event::EVENT_AFTER_REQUEST)) {
-					return;
-				}
 				$event->trigger(Event::EVENT_AFTER_REQUEST);
+				$this->_group->done();
 			}
 		}, $callback, $data, $param);
 	}
