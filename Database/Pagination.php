@@ -38,6 +38,9 @@ class Pagination extends Component
 	/** @var Coroutine\Channel */
 	private $_channel;
 
+	/** @var Coroutine\WaitGroup */
+	private $_group;
+
 	/**
 	 * PaginationIteration constructor.
 	 * @param ActiveQuery $activeQuery
@@ -110,9 +113,22 @@ class Pagination extends Component
 
 	/**
 	 * @param array $param
-	 * @return array
+	 * @return void
 	 */
 	public function plunk($param = [])
+	{
+		$this->_group = new Coroutine\WaitGroup();
+		$this->loop($param);
+		$this->_group->wait();
+	}
+
+
+	/**
+	 * 轮训
+	 * @param $param
+	 * @return array
+	 */
+	public function loop($param)
 	{
 		if ($this->_max > 0 && $this->_length >= $this->_max) {
 			return $this->output();
@@ -125,7 +141,7 @@ class Pagination extends Component
 		if ($length < $this->_limit) {
 			return $this->output();
 		}
-		return $this->plunk($param);
+		return $this->loop($param);
 	}
 
 
@@ -134,10 +150,6 @@ class Pagination extends Component
 	 */
 	public function output()
 	{
-		//		while ($this->_channel->length() > 0) {
-//			$array[] = $this->_channel->pop();
-//		}
-//		$this->_channel->close();
 		return [];
 	}
 
@@ -149,10 +161,27 @@ class Pagination extends Component
 	private function runner($data, $param)
 	{
 		if (Snowflake::inCoroutine()) {
-			Coroutine::create($this->_callback, $data, $param);
+			$this->executed($this->_callback, $data, $param);
 		} else {
 			call_user_func($this->_callback, $data, $param);
 		}
+	}
+
+
+	/**
+	 * @param $callback
+	 * @param $data
+	 * @param $param
+	 * @return Closure
+	 * 解释器
+	 */
+	private function executed($callback, $data, $param)
+	{
+		$this->_group->add(1);
+		return Coroutine::create(function ($callback, $data, $param) {
+			call_user_func($callback, $data, $param);
+			$this->_group->done();
+		}, $callback, $data, $param);
 	}
 
 
