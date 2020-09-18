@@ -96,9 +96,7 @@ class Application extends BaseApplication
 			$manager = Snowflake::app()->get('console');
 			$manager->setParameters($argv);
 			$class = $manager->search();
-			Coroutine::create(function ($manager, $class) {
-				response()->send($manager->execCommand($class));
-			}, $manager, $class);
+			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
 			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
