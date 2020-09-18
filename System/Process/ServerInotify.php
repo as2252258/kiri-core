@@ -158,22 +158,21 @@ class ServerInotify extends Process
 	public function reload()
 	{
 		$this->isReloading = true;
-
-		//清理所有监听
 		$this->trigger_reload();
-		$this->clearWatch();
-
-		//重新监听
-		foreach ($this->dirs as $root) {
-			$this->watch($root);
+		if (Snowflake::isLinux()) {
+			$this->clearWatch();
+			foreach ($this->dirs as $root) {
+				$this->watch($root);
+			}
 		}
-
 		$this->int = -1;
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
-
-		$this->loadByDir(APP_PATH . 'app');
-		$this->loadByDir(APP_PATH . 'routes');
+		$this->md5Map = [];
+		if (Snowflake::isMac()) {
+			$this->loadByDir(APP_PATH . 'app');
+			$this->loadByDir(APP_PATH . 'routes');
+		}
 	}
 
 	/**
