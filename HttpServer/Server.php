@@ -291,15 +291,15 @@ class Server extends Application
 			if ($this->isUse($config['port'])) {
 				return $this->error_stop($config['host'], $config['port']);
 			}
-			if ($class instanceof Websocket) {
-				$this->onLoadWebsocketHandler();
-			} else if ($class instanceof Http) {
-				$this->onLoadHttpHandler();
-			}
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$settings['daemonize'] = $this->daemon;
 			if (!isset($settings['pid_file'])) {
 				$settings['pid_file'] = APP_PATH . 'storage/server.pid';
+			}
+			if ($this->baseServer instanceof Websocket) {
+				$this->onLoadWebsocketHandler();
+			} else if ($this->baseServer instanceof Http) {
+				$this->onLoadHttpHandler();
 			}
 			$this->baseServer->set($settings);
 		} else {
