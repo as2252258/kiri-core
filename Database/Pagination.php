@@ -118,7 +118,7 @@ class Pagination extends Component
 	public function plunk($param = [])
 	{
 		$this->_group = new Coroutine\WaitGroup();
-		$this->loop($param);
+		Coroutine::create([$this, 'loop'], $param);
 		$this->_group->wait();
 	}
 
@@ -172,16 +172,15 @@ class Pagination extends Component
 	 * @param $callback
 	 * @param $data
 	 * @param $param
-	 * @return Closure
 	 * 解释器
 	 */
 	private function executed($callback, $data, $param)
 	{
 		$this->_group->add(1);
-		return Coroutine::create(function ($callback, $data, $param) {
+		go(function () use ($callback, $data, $param) {
 			call_user_func($callback, $data, $param);
 			$this->_group->done();
-		}, $callback, $data, $param);
+		});
 	}
 
 

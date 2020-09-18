@@ -8,6 +8,7 @@ use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Input;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**
