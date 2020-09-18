@@ -205,7 +205,7 @@ class Command extends Component
 			}
 		} catch (\Throwable | Exception $exception) {
 			$this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
-			$result = null;
+			$result = [];
 		} finally {
 			return $result;
 		}
