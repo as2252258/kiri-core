@@ -53,7 +53,7 @@ class OnHandshake extends Callback
 		}
 
 		/** @var AWebsocket $manager */
-		$manager = Snowflake::app()->getAnnotation()->get('websocket');
+		$manager = Snowflake::app()->getAnnotation();
 		var_dump($manager);
 		if ($manager->has($manager->getName(AWebsocket::HANDSHAKE))) {
 			$manager->runWith($manager->getName(AWebsocket::HANDSHAKE), [$request, $response]);
