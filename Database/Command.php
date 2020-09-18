@@ -218,7 +218,8 @@ class Command extends Component
 	 */
 	private function search($type)
 	{
-		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
+		$connect = $this->db->getConnect($this->sql);
+		if (!($connect instanceof PDO)) {
 			return null;
 		}
 		if (!($query = $connect->query($this->sql))) return null;

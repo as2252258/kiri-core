@@ -198,9 +198,6 @@ class Connection extends Pool
 	 */
 	public function getConnection(array $config, $isMaster = false)
 	{
-		if ($this->creates === 0) {
-			$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
-		}
 		$coroutineName = $this->name($config['cds'], $isMaster);
 		if (!isset($this->hasCreate[$coroutineName])) {
 			$this->hasCreate[$coroutineName] = 0;
@@ -242,6 +239,9 @@ class Connection extends Pool
 		$client = $this->createConnect($coroutineName, ...$this->parseConfig($config));
 		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 			$number > 0 && $client->beginTransaction();
+		}
+		if ($this->creates === 0) {
+			$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
 		}
 		return $client;
 	}
