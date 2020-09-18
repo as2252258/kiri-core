@@ -291,13 +291,15 @@ class Server extends Application
 			if ($this->isUse($config['port'])) {
 				return $this->error_stop($config['host'], $config['port']);
 			}
+			if ($class instanceof Websocket) {
+				$this->onLoadWebsocketHandler();
+			}
 			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 			$settings['daemonize'] = $this->daemon;
 			if (!isset($settings['pid_file'])) {
 				$settings['pid_file'] = APP_PATH . 'storage/server.pid';
 			}
 			$this->baseServer->set($settings);
-			$this->bindAnnotation();
 		} else {
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 			if (isset($config['settings']) && is_array($config['settings'])) {
@@ -310,25 +312,12 @@ class Server extends Application
 
 
 	/**
-	 * @throws Exception
-	 */
-	private function bindAnnotation()
-	{
-		if ($this->baseServer instanceof Websocket) {
-			$this->onLoadWebsocketHandler();
-		}
-		if ($this->baseServer instanceof Http) {
-			$this->onLoadHttpHandler();
-		}
-	}
-
-
-	/**
 	 * @param $config
 	 * @param $newListener
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
+	 * @return void
 	 */
 	private function onListenerBind($config, $newListener)
 	{
@@ -338,6 +327,7 @@ class Server extends Application
 		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
+			$this->onLoadHttpHandler();
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
 			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
 			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
