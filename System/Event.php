@@ -70,6 +70,9 @@ class Event extends BaseObject
 			}
 			$callback[0] = Snowflake::createObject($callback[0]);
 		}
+		if ($this->exists($name, $callback)) {
+			return;
+		}
 		if (!empty($this->_events[$name]) && $isAppend === true) {
 			array_unshift($this->_events[$name], [$callback, $parameter]);
 		} else {

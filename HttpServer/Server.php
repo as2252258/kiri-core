@@ -287,21 +287,7 @@ class Server extends Application
 	private function dispatchCreate($config, $settings)
 	{
 		if (!($this->baseServer instanceof \Swoole\Server)) {
-			$class = $this->dispatch($config['type']);
-			if ($this->isUse($config['port'])) {
-				return $this->error_stop($config['host'], $config['port']);
-			}
-			$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
-			$settings['daemonize'] = $this->daemon;
-			if (!isset($settings['pid_file'])) {
-				$settings['pid_file'] = APP_PATH . 'storage/server.pid';
-			}
-			if ($this->baseServer instanceof Websocket) {
-				$this->onLoadWebsocketHandler();
-			} else if ($this->baseServer instanceof Http) {
-				$this->onLoadHttpHandler();
-			}
-			$this->baseServer->set($settings);
+			$this->parseServer($config, $settings);
 		} else {
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 			if (isset($config['settings']) && is_array($config['settings'])) {
@@ -310,6 +296,32 @@ class Server extends Application
 			$this->onListenerBind($config, $this->baseServer);
 		}
 		return $this->baseServer;
+	}
+
+
+	/**
+	 * @param $config
+	 * @param $settings
+	 * @throws Exception
+	 * @return void
+	 */
+	private function parseServer($config, $settings)
+	{
+		$class = $this->dispatch($config['type']);
+		if ($this->isUse($config['port'])) {
+			return $this->error_stop($config['host'], $config['port']);
+		}
+		$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
+		$settings['daemonize'] = $this->daemon;
+		if (!isset($settings['pid_file'])) {
+			$settings['pid_file'] = APP_PATH . 'storage/server.pid';
+		}
+		if ($this->baseServer instanceof Websocket) {
+			$this->onLoadWebsocketHandler();
+		} else if ($this->baseServer instanceof Http) {
+			$this->onLoadHttpHandler();
+		}
+		$this->baseServer->set($settings);
 	}
 
 
@@ -369,9 +381,6 @@ class Server extends Application
 	{
 		$event = Snowflake::app()->getEvent();
 		$router = Snowflake::app()->getRouter();
-		if ($event->exists(Event::SERVER_WORKER_START, [$router, 'loadRouterSetting'])) {
-			return;
-		}
 		$event->on(Event::SERVER_WORKER_START, [$router, 'loadRouterSetting']);
 	}
 
@@ -386,10 +395,7 @@ class Server extends Application
 		$websocket->namespace = 'App\\Websocket';
 		$websocket->path = APP_PATH . 'app/Websocket';
 
-		$event = Snowflake::app()->event;
-		if ($event->exists(Event::SERVER_WORKER_START, [$websocket, 'registration_notes'])) {
-			return;
-		}
+		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, [$websocket, 'registration_notes']);
 	}
 
