@@ -363,7 +363,6 @@ class Connection extends Pool
 		try {
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
-				//                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => TRUE,
 				PDO::ATTR_CASE             => PDO::CASE_NATURAL,
 				PDO::ATTR_TIMEOUT          => $this->timeout,
 			]);
@@ -376,11 +375,10 @@ class Connection extends Pool
 			$this->incr($coroutineName);
 			return $link;
 		} catch (\Throwable $exception) {
-			$this->error($cds . '  ->  ' . $exception->getMessage());
+			$this->addError($cds . '  ->  ' . $exception->getMessage());
 			if ($exception->getCode() === 2006) {
 				return $this->createConnect($coroutineName, $cds, $username, $password, $charset);
 			}
-			$this->addError($cds . '  ->  ' . $exception->getMessage());
 			throw new Exception($exception->getMessage());
 		}
 	}
