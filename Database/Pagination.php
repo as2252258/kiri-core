@@ -180,7 +180,6 @@ class Pagination extends Component
 	{
 		$this->_group->add(1);
 		return Coroutine::create(function ($callback, $data, $param): void {
-			Coroutine::defer([$this, 'done']);
 			try {
 				call_user_func($callback, $data, $param);
 			} catch (\Throwable $exception) {
