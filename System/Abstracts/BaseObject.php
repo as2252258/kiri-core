@@ -166,7 +166,7 @@ class BaseObject implements Configure
 
 
 	/**
-	 * @param string $message
+	 * @param mixed $message
 	 * @param string|null $method
 	 * @param string|null $file
 	 * @throws
