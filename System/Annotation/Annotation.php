@@ -152,7 +152,7 @@ class Annotation extends BaseAnnotation
 	 * @param $className
 	 * @throws ReflectionException
 	 */
-	protected function scanning($path, $namespace, $className)
+	protected function scanning(string $path, $namespace, $className)
 	{
 		$di = Snowflake::getDi();
 		foreach (glob($path . '/*') as $file) {
