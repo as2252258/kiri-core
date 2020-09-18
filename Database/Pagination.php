@@ -178,7 +178,7 @@ class Pagination extends Component
 	private function executed($callback, $data, $param)
 	{
 		$this->_group->add(1);
-		return go(function () use ($callback, $data, $param) {
+		return \go(function () use ($callback, $data, $param) {
 			call_user_func($callback, $data, $param);
 			$this->_group->done();
 		});
