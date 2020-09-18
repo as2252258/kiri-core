@@ -55,27 +55,19 @@ abstract class Callback extends Application
 
 	/**
 	 * @param $message
-	 * @param $event
+	 * @param Event $event
+	 * @throws Exception
 	 */
-	private function eventNotify($message, $event)
+	private function eventNotify($message, Event $event)
 	{
 		switch ($message) {
 			case self::EVENT_ERROR:
-				if (!$event->exists(Event::SERVER_WORKER_ERROR)) {
-					return;
-				}
 				$event->trigger(Event::SERVER_WORKER_ERROR);
 				break;
 			case self::EVENT_EXIT:
-				if (!$event->exists(Event::SERVER_WORKER_EXIT)) {
-					return;
-				}
 				$event->trigger(Event::SERVER_WORKER_EXIT);
 				break;
 			case self::EVENT_STOP:
-				if (!$event->exists(Event::SERVER_WORKER_STOP)) {
-					return;
-				}
 				$event->trigger(Event::SERVER_WORKER_STOP);
 				break;
 		}

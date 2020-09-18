@@ -29,9 +29,6 @@ class OnPipeMessage extends Callback
 	{
 		// TODO: Implement onHandler() method.
 		$events = Snowflake::app()->getEvent();
-		if (!$events->exists(Event::PIPE_MESSAGE)) {
-			return;
-		}
 		$events->trigger(Event::PIPE_MESSAGE, [$server, $src_worker_id, $message]);
 	}
 

@@ -27,9 +27,6 @@ class OnAfterReload extends Callback
 	public function onHandler(Server $server)
 	{
 		$event = Snowflake::app()->getEvent();
-		if (!$event->exists(Event::SERVER_AFTER_RELOAD)) {
-			return;
-		}
 		$event->trigger(Event::SERVER_AFTER_RELOAD, [$server]);
 	}
 

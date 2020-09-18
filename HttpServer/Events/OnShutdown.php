@@ -35,9 +35,6 @@ class OnShutdown extends Callback
 	{
 		$this->system_mail('server shutdown~');
 		$event = Snowflake::app()->getEvent();
-		if (!$event->exists(Event::SERVER_SHUTDOWN)) {
-			return;
-		}
 		$event->trigger(Event::SERVER_SHUTDOWN);
 	}
 
