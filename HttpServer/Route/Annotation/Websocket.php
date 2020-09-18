@@ -48,18 +48,6 @@ class Websocket extends Annotation
 
 
 	/**
-	 * @param string $path
-	 * @param string $namespace
-	 * @throws \ReflectionException
-	 */
-	public function registration_notes($path = '', $namespace = '')
-	{
-		var_dump(get_called_class());
-		parent::registration_notes($path, $namespace);
-	}
-
-
-	/**
 	 * @param $events
 	 * @param $comment
 	 * @return false|string
