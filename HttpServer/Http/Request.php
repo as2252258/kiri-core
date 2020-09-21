@@ -321,7 +321,8 @@ class Request extends Application
 	 */
 	public function getMethod()
 	{
-		$method = $this->headers->getHeader('request_method');
+		$method = $this->headers->get('request_method');
+		var_dump($this->headers);
 		if (empty($method)) {
 			return 'get';
 		}

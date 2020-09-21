@@ -52,6 +52,7 @@ class Router extends Application implements RouterInterface
 	 */
 	public function addRoute($path, $handler, $method = 'any')
 	{
+		$method = strtolower($method);
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
 		}
