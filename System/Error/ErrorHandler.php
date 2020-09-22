@@ -71,7 +71,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	 *
 	 * @throws Exception
 	 */
-	public function exceptionHandler($exception)
+	public function exceptionHandler(Exception $exception)
 	{
 		$this->category = 'exception';
 
@@ -101,7 +101,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = JSON::to(500, $error[1], $path);
 
-		Snowflake::app()->getLogger()->error($data, 'error');
+		logger()->error($data, 'error');
 
 		$event = Snowflake::app()->event;
 		$event->trigger(Event::RELEASE_ALL);
@@ -123,7 +123,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = JSON::to($code, $this->category . ': ' . $message, $path);
 
-		Snowflake::app()->getLogger()->trance($data, $this->category);
+		logger()->trance($data, $this->category);
 
 		return response()->send($data);
 	}
@@ -154,6 +154,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function writer($message, $category = 'app')
 	{
-		Snowflake::app()->getLogger()->debug($message, $category);
+		logger()->debug($message, $category);
 	}
 }

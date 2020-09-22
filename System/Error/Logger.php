@@ -238,7 +238,7 @@ class Logger extends Component
 	 * @return false|int|mixed|string
 	 * @throws Exception
 	 */
-	public function exception($exception)
+	public function exception(Exception $exception)
 	{
 		$errorInfo = [
 			'message' => $exception->getMessage(),
@@ -267,7 +267,7 @@ class Logger extends Component
 	 * @param Exception $exception
 	 * @return array
 	 */
-	private function getException($exception)
+	private function getException(Exception $exception)
 	{
 		$_tmp = [$exception->getMessage()];
 		$_tmp[] = $exception->getFile() . ' on line ' . $exception->getLine();
