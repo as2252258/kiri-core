@@ -372,7 +372,7 @@ class Curl
 	 */
 	public function get($path, $params = [])
 	{
-		return $this->request($path, self::GET, $params);
+		return $this->request($this->joinGetParams($path, $params), self::GET);
 	}
 
 
@@ -467,7 +467,7 @@ class Curl
 			return $this->curl_multi[$hash];
 		}
 
-		$resource = $this->do(curl_init($host . $path), $host . $path, $method, $params);
+		$resource = $this->do(curl_init($host . $path), $host . $path, $method);
 		if ($method === self::POST && !empty($params)) {
 			curl_setopt($resource, CURLOPT_POSTFIELDS, HttpParse::parse($params));
 		}
@@ -476,6 +476,26 @@ class Curl
 			return $this->curl_multi[$hash] = $this->curlHandlerSslSet($resource);
 		}
 		return $this->curl_multi[$hash] = $resource;
+	}
+
+
+	/**
+	 * @param $path
+	 * @param $params
+	 * @return mixed|resource
+	 * @throws Exception
+	 */
+	public function upload($path, $params)
+	{
+		[$host, $isHttps, $path] = $this->matchHost($path);
+		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
+
+		@curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
+
+		if ($isHttps !== false) {
+			return $this->execute($this->curlHandlerSslSet($resource));
+		}
+		return $this->execute($resource);
 	}
 
 
@@ -506,11 +526,10 @@ class Curl
 	 * @param $resource
 	 * @param $path
 	 * @param $method
-	 * @param array $params
 	 * @return resource
 	 * @throws Exception
 	 */
-	private function do($resource, $path, $method, $params = [])
+	private function do($resource, $path, $method)
 	{
 		curl_setopt($resource, CURLOPT_TIMEOUT, $this->timeout);                     // 超时设置
 		curl_setopt($resource, CURLOPT_CONNECTTIMEOUT, $this->connection_timeout);   // 超时设置
@@ -531,11 +550,6 @@ class Curl
 		curl_setopt($resource, CURLOPT_RETURNTRANSFER, TRUE);//返回内容
 		curl_setopt($resource, CURLOPT_FOLLOWLOCATION, TRUE);// 跟踪重定向
 		curl_setopt($resource, CURLOPT_ENCODING, 'gzip,deflate');
-
-		$method = strtoupper($method);
-		if ($method === self::GET) {
-			$path = $this->joinGetParams($path, $params);
-		}
 
 		if ($method === self::POST) {
 			curl_setopt($resource, CURLOPT_POST, 1);

@@ -34,6 +34,113 @@ if (!function_exists('make')) {
 
 }
 
+
+if (!function_exists('isUrl')) {
+
+
+	/**
+	 * @param $url
+	 * @param bool $get_info
+	 * @return false|array
+	 */
+	function isUrl($url, $get_info = true)
+	{
+		$queryMatch = '/((http[s]?):\/\/)?(([\w-_]+\.)+\w+(:\d+)?)(\/.*)?/';
+		if (!preg_match($queryMatch, $url, $outPut)) {
+			return false;
+		}
+
+		$port = str_replace(':', '', $outPut[5]);
+
+		[$isHttps, $domain, $port, $path] = [$outPut[2] == 'https', $outPut[3], $port, $outPut[6] ?? ''];
+		if ($isHttps && empty($port)) {
+			$port = 443;
+		}
+
+		unset($outPut);
+
+		return [$isHttps == 'https', $domain, $port, $path];
+	}
+
+}
+
+
+if (!function_exists('split_request_uri')) {
+
+
+	/**
+	 * @param $url
+	 * @return false|array
+	 */
+	function split_request_uri($url)
+	{
+		if (($parse = isUrl($url, null)) === false) {
+			return false;
+		}
+
+		[$isHttps, $domain, $port, $path] = $parse;
+		$uri = $isHttps ? 'https://' . $domain : 'http://' . $domain;
+		if (!empty($port)) {
+			$uri .= ':' . $port;
+		}
+		return [$uri, $path];
+	}
+
+}
+
+
+if (!function_exists('hadDomain')) {
+
+
+	/**
+	 * @param $url
+	 * @return false|array
+	 */
+	function hadDomain($url)
+	{
+		if (($parse = isUrl($url, null)) === false) {
+			return false;
+		}
+		[$isHttps, $domain, $port, $path] = $parse;
+		$uri = $isHttps ? 'https://' . $domain : 'http://' . $domain;
+		if (!empty($port)) {
+			$uri .= ':' . $port;
+		}
+		return $uri;
+	}
+
+}
+
+
+if (!function_exists('isDomain')) {
+
+
+	/**
+	 * @param $url
+	 * @param $replace
+	 * @return false|array
+	 */
+	function isDomain($url)
+	{
+		return !isIp($url);
+	}
+
+}
+if (!function_exists('isIp')) {
+
+
+	/**
+	 * @param $url
+	 * @return false|array
+	 */
+	function isIp($url)
+	{
+		return preg_match('/(\d{1,3}\.){3}\.\d{1,3}(:\d{1,5})?/', $url);
+	}
+
+}
+
+
 if (!function_exists('loadByDir')) {
 
 
