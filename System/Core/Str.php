@@ -147,7 +147,7 @@ class Str
 	{
 		$res = [];
 		$add = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-		$len = strlen($key) < 0 ? 1 : strlen($key) + 5 > strlen($add) ? strlen($add) - 5 : strlen($key);
+		$len = strlen($key) < 0 ? 1 : (strlen($key) + 5 > strlen($add) ? strlen($add) - 5 : strlen($key));
 		if ($number < 1) $number = 10;
 		$array = str_split($str);
 		asort($array);
