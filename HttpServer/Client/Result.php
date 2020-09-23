@@ -15,7 +15,7 @@ use Exception;
  * @property $count
  * @property $data
  */
-class Result extends Application
+class Result
 {
 	public $code;
 	public $message;
@@ -29,20 +29,31 @@ class Result extends Application
 	public $runTime = 0;
 
 
-
 	/**
 	 * Result constructor.
 	 * @param array $data
-	 * @param array $config
 	 */
-	public function __construct(array $data, $config = [])
+	public function __construct(array $data)
 	{
-		parent::__construct($config);
+		$this->setAssignment($data);
+	}
 
+
+	/**
+	 * @param $data
+	 * @return $this
+	 */
+	public function setAssignment($data)
+	{
 		foreach ($data as $key => $val) {
+			if (!property_exists($this, $key)) {
+				continue;
+			}
 			$this->$key = $val;
 		}
+		return $this;
 	}
+
 
 	/**
 	 * @param $name
@@ -139,32 +150,7 @@ class Result extends Application
 	 */
 	public function getResponse()
 	{
-		$headers = $this->getHeaders();
-		if (!isset($headers['content-type'])) {
-			return $this->data;
-		}
-		if (!is_string($this->data)) {
-			return $this->data;
-		}
-		switch (trim($headers['content-type'])) {
-			case 'application/json; encoding=utf-8';
-			case 'application/json;';
-			case 'application/json';
-			case 'text/plain';
-				return json_decode($this->data, true);
-		}
 		return $this->data;
-	}
-
-	/**
-	 * @param $key
-	 * @param $data
-	 * @return $this
-	 */
-	public function append($key, $data)
-	{
-		$this->data[$key] = $data;
-		return $this;
 	}
 
 	/**
