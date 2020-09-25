@@ -16,6 +16,7 @@ use Snowflake\Error\Logger;
 use Snowflake\Snowflake;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
+defined('FIND_OR_CREATE_MESSAGE') or define('FIND_OR_CREATE_MESSAGE', 'Create a new model, but the data cannot be empty.');
 
 /**
  * Class Orm
@@ -116,8 +117,7 @@ class ActiveRecord extends BaseActiveRecord
 			return $select;
 		}
 		if (empty($attributes)) {
-			$message = 'Create a new model, but the data cannot be empty.';
-			return Snowflake::app()->logger->addError($message, 'mysql');
+			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
 		$select = new static();
 		$select->attributes = $attributes;

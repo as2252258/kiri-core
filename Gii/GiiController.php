@@ -215,7 +215,7 @@ class {$controllerName}Controller extends Controller
 	{
 		$model = ' . $className . '::findOne(Input()->post(\'id\', 0));
 		if (empty($model)) {
-			return JSON::to(500, \'指定数据不存在\');
+			return JSON::to(500, SELECT_IS_NULL);
 		}
 		$model->attributes = $this->loadParam();
 		
@@ -245,7 +245,7 @@ class {$controllerName}Controller extends Controller
 		$_key = Input()->array(\'ids\');
 		$pass = Input()->string(\'password\', true, 32);		
 		if (empty($_key)) {
-			return JSON::to(500, \'IDS集合不能为空\');
+			return JSON::to(500, PARAMS_IS_NULL);
 		}
 		
 		$user = $this->request->identity;
@@ -255,7 +255,7 @@ class {$controllerName}Controller extends Controller
 		
 		$model = ' . $className . '::find()->in(\'id\', $_key);
         if(!$model->delete()){
-			return JSON::to(500, \'系统繁忙, 请稍后再试!\');
+			return JSON::to(500, DB_ERROR_BUSY);
         }
         return JSON::to(0, $model->toArray());
 	}';
@@ -279,7 +279,7 @@ class {$controllerName}Controller extends Controller
     {
         $model = ' . $managerName . '::findOne(Input()->get(\'id\'));
         if(empty($model)){
-            return JSON::to(404, \'Data Not Exists\');
+            return JSON::to(404, SELECT_IS_NULL);
         }
         return JSON::to(0, $model->toArray());
     }';
@@ -311,7 +311,7 @@ class {$controllerName}Controller extends Controller
 		
 		$model = ' . $managerName . '::findOne($_key);
 		if (empty($model)) {
-			return JSON::to(500, \'指定数据不存在\');
+			return JSON::to(500, SELECT_IS_NULL);
 		}
         if(!$model->delete()){
 			return JSON::to(500, $model->getLastError());
