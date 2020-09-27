@@ -200,12 +200,12 @@ class Snowflake
 
 
 	/**
-	 * @param $worker_pid
+	 * @param $workerId
 	 * @throws Exception
 	 */
-	public static function clearProcessId($worker_pid)
+	public static function clearProcessId($workerId)
 	{
-		@unlink(storage("{$worker_pid}.sock", 'worker'));
+		@unlink(storage($workerId . '.sock', 'worker'));
 	}
 
 
