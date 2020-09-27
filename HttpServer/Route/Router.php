@@ -434,7 +434,7 @@ class Router extends Application implements RouterInterface
 			if (!($node instanceof Node) || !$node->hasAfter()) {
 				return;
 			}
-			$node->afterDispatch($response);
+			$node->afterDispatch($response ?? null);
 		}
 	}
 

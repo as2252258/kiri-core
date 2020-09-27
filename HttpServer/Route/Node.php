@@ -91,7 +91,7 @@ class Node extends Application
 	 * @param $response
 	 * @return mixed|null
 	 */
-	public function afterDispatch($response)
+	public function afterDispatch($response = null)
 	{
 		return Coroutine::create(function ($request, $response) {
 			(Reduce::after($this->_after))($request, $response);
