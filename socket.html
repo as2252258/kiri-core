@@ -36,7 +36,7 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://127.0.0.1:9530/', ['chat-superchat']);
+        sock = new WebSocket('ws://47.92.194.207:9530');
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
