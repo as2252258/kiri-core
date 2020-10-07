@@ -52,7 +52,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function shutdown()
 	{
 		$lastError = error_get_last();
-		if ($lastError['type'] !== E_ERROR) {
+		if (empty($lastError) || $lastError['type'] !== E_ERROR) {
 			return;
 		}
 
