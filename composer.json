@@ -11,7 +11,6 @@
   "require": {
     "php": ">= 7.1",
     "swoole/ide-helper": "@dev",
-    "amphp/amp": "^2.0.3",
     "lcobucci/clock": "^1.0",
     "psr/log": "^1.0",
     "ext-json": "*",
