@@ -240,8 +240,8 @@ class Socket
 			throw new \Kafka\Exception($error);
 		}
 
-		stream_set_blocking($this->stream, 0);
-		stream_set_read_buffer($this->stream, 0);
+//		stream_set_blocking($this->stream->getpeername(), 0);
+//		stream_set_read_buffer($this->stream, 0);
 
 		$this->readWatcher = \Amp\onReadable($this->stream, function () {
 			do {
@@ -324,9 +324,7 @@ class Socket
 	{
 		\Amp\cancel($this->readWatcher);
 		\Amp\cancel($this->writeWatcher);
-		if (is_resource($this->stream)) {
-			fclose($this->stream);
-		}
+		$this->stream->close();
 		$this->readBuffer = '';
 		$this->writeBuffer = '';
 		$this->readNeedLength = 0;
@@ -399,14 +397,12 @@ class Socket
 			$this->writeBuffer .= $data;
 		}
 		$bytesToWrite = strlen($this->writeBuffer);
-		$bytesWritten = @fwrite($this->stream, $this->writeBuffer);
+		$bytesWritten = $this->stream->send($this->writeBuffer);
 
 		if ($bytesToWrite === $bytesWritten) {
 			\Amp\disable($this->writeWatcher);
 		} elseif ($bytesWritten >= 0) {
 			\Amp\enable($this->writeWatcher);
-		} elseif ($this->isSocketDead($this->stream)) {
-			$this->reconnect();
 		}
 		$this->writeBuffer = substr($this->writeBuffer, $bytesWritten);
 	}
