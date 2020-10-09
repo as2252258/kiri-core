@@ -36,6 +36,7 @@ class Kafka extends \Snowflake\Process\Process
 		$consumer->setLogger(new Logger());
 		$consumer->start(function ($topic, $part, $message) {
 			$namespace = 'App\Kafka\\' . ucfirst($topic);
+			var_dump($topic, $part, $message);
 			if (!class_exists($namespace) || !($namespace instanceof ConsumerInterface)) {
 				return;
 			}
