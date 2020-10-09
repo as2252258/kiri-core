@@ -18,66 +18,67 @@ use function Amp\run;
 
 /**
  * +------------------------------------------------------------------------------
-* Kafka protocol since Kafka v0.8
-* +------------------------------------------------------------------------------
-*
-* @package
-* @version $_SWANBR_VERSION_$
-* @copyright Copyleft
-* @author $_SWANBR_AUTHOR_$
-* +------------------------------------------------------------------------------
-*/
-
+ * Kafka protocol since Kafka v0.8
+ * +------------------------------------------------------------------------------
+ *
+ * @package
+ * @version $_SWANBR_VERSION_$
+ * @copyright Copyleft
+ * @author $_SWANBR_AUTHOR_$
+ * +------------------------------------------------------------------------------
+ */
 class Consumer
 {
-    use \Psr\Log\LoggerAwareTrait;
-    use \Kafka\LoggerTrait;
+	use \Psr\Log\LoggerAwareTrait;
+	use \Kafka\LoggerTrait;
 
-    // {{{ consts
-    // }}}
-    // {{{ members
-    
-    private $isRunning = false;
+	// {{{ consts
+	// }}}
+	// {{{ members
 
-    // }}}
-    // {{{ functions
-    // {{{ public function __construct()
+	private $isRunning = false;
 
-    /**
-     * __construct
-     *
-     * @access public
-     * @param $hostList
-     * @param null $timeout
-     */
-    public function __construct()
-    {
-    }
+	// }}}
+	// {{{ functions
+	// {{{ public function __construct()
 
-    // }}}
-    // {{{ public function start()
+	/**
+	 * __construct
+	 *
+	 * @access public
+	 * @param $hostList
+	 * @param null $timeout
+	 */
+	public function __construct()
+	{
+	}
 
-    /**
-     * start consumer
-     *
-     * @access public
-     * @return void
-     */
-    public function start(\Closure $consumer = null, $isBlock = true)
-    {
-        if ($this->isRunning) {
-            $this->error('Has start consumer');
-            return;
-        }
-        $process = new \Kafka\Consumer\Process($consumer);
-        if ($this->logger) {
-            $process->setLogger($this->logger);
-        }
-        $process->start();
-        $this->isRunning = true;
-        run();
-    }
+	// }}}
+	// {{{ public function start()
 
-    // }}}
-    // }}}
+	/**
+	 * start consumer
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function start(\Closure $consumer = null, $isBlock = true)
+	{
+		if ($this->isRunning) {
+			$this->error('Has start consumer');
+			return;
+		}
+		$process = new \Kafka\Consumer\Process($consumer);
+		if ($this->logger) {
+			$process->setLogger($this->logger);
+		}
+		$process->start();
+		$this->isRunning = true;
+		if ($isBlock) {
+			run();
+		}
+	}
+
+	// }}}
+	// }}}
 }
