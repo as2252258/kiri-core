@@ -25,7 +25,8 @@
     "ext-inotify": "*",
     "ext-curl": "*",
     "ext-openssl": "*",
-    "amphp/amp": "v1.2.2"
+    "amphp/amp": "v1.2.2",
+    "psr/log": "1.*"
   },
   "autoload": {
     "psr-4": {
