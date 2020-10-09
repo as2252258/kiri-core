@@ -24,7 +24,8 @@
     "ext-memcached": "*",
     "ext-inotify": "*",
     "ext-curl": "*",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "amphp/amp": "^2.5"
   },
   "autoload": {
     "psr-4": {
@@ -34,7 +35,8 @@
       "Console\\": "Console/",
       "Database\\": "Database/",
       "Queue\\": "Queue/",
-      "Gii\\": "Gii/"
+      "Gii\\": "Gii/",
+      "Kafka\\": "Kafka/"
     },
     "files": [
       "error.php",
