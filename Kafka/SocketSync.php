@@ -345,10 +345,10 @@ class SocketSync
 		while ($written < $buflen) {
 			if ($buflen - $written > self::MAX_WRITE_BUFFER) {
 				// write max buffer size
-				$wrote = $this->stream->send(substr($buf, $written, self::MAX_WRITE_BUFFER));
+				$wrote = $this->stream->send(substr($buf, $written, self::MAX_WRITE_BUFFER), 1);
 			} else {
 				// write remaining buffer bytes to stream
-				$wrote = $this->stream->send(substr($buf, $written));
+				$wrote = $this->stream->send(substr($buf, $written), 1);
 			}
 			if ($wrote === -1 || $wrote === false) {
 				throw new \Kafka\Exception\Socket('Could not write ' . strlen($buf) . ' bytes to stream, completed writing only ' . $written . ' bytes');
