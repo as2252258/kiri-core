@@ -243,27 +243,27 @@ class Socket
 //		stream_set_blocking($this->stream->getpeername(), 0);
 //		stream_set_read_buffer($this->stream, 0);
 
-		$this->readWatcher = \Amp\onReadable($this->stream, function () {
-			do {
-				try {
-					if (!$this->isSocketDead($this->stream)) {
-						$newData = $this->stream->recv(self::READ_MAX_LEN);
-					} else {
-						$this->reconnect();
-						return;
-					}
-					if ($newData) {
-						$this->read($newData);
-					}
-				} catch (\Exception $exception) {
-					var_dump($exception->getMessage());
-				}
-			} while ($newData);
-		});
-
-		$this->writeWatcher = \Amp\onWritable($this->stream, function () {
-			$this->write();
-		}, array('enable' => false)); // <-- let's initialize the watcher as "disabled"
+//		$this->readWatcher = \Amp\onReadable($this->stream, function () {
+//			do {
+//				try {
+//					if (!$this->isSocketDead($this->stream)) {
+//						$newData = $this->stream->recv(self::READ_MAX_LEN);
+//					} else {
+//						$this->reconnect();
+//						return;
+//					}
+//					if ($newData) {
+//						$this->read($newData);
+//					}
+//				} catch (\Exception $exception) {
+//					var_dump($exception->getMessage());
+//				}
+//			} while ($newData);
+//		});
+//
+//		$this->writeWatcher = \Amp\onWritable($this->stream, function () {
+//			$this->write();
+//		}, array('enable' => false)); // <-- let's initialize the watcher as "disabled"
 	}
 
 	// }}}

@@ -15,232 +15,233 @@
 namespace Kafka;
 
 /**
-+------------------------------------------------------------------------------
-* Kafka Broker info manager
-+------------------------------------------------------------------------------
-*
-* @package
-* @version $_SWANBR_VERSION_$
-* @copyright Copyleft
-* @author $_SWANBR_AUTHOR_$
-+------------------------------------------------------------------------------
-*/
-
+ * +------------------------------------------------------------------------------
+ * Kafka Broker info manager
+ * +------------------------------------------------------------------------------
+ *
+ * @package
+ * @version $_SWANBR_VERSION_$
+ * @copyright Copyleft
+ * @author $_SWANBR_AUTHOR_$
+ * +------------------------------------------------------------------------------
+ */
 class Broker
 {
-    use SingletonTrait;
-    // {{{ consts
-    // }}}
-    // {{{ members
+	use SingletonTrait;
 
-    private $groupBrokerId = null;
+	// {{{ consts
+	// }}}
+	// {{{ members
 
-    private $topics = array();
+	private $groupBrokerId = null;
 
-    private $brokers = array();
+	private $topics = array();
 
-    private $metaSockets = array();
+	private $brokers = array();
 
-    private $dataSockets = array();
+	private $metaSockets = array();
 
-    private $process;
+	private $dataSockets = array();
 
-    private $socket;
+	private $process;
 
-    // }}}
-    // {{{ functions
-    // {{{ public function setProcess()
+	private $socket;
 
-    public function setProcess(\Closure $process)
-    {
-        $this->process = $process;
-    }
+	// }}}
+	// {{{ functions
+	// {{{ public function setProcess()
 
-    // }}}
-    // {{{ public function setGroupBrokerId()
+	public function setProcess(\Closure $process)
+	{
+		$this->process = $process;
+	}
 
-    public function setGroupBrokerId($brokerId)
-    {
-        $this->groupBrokerId = $brokerId;
-    }
+	// }}}
+	// {{{ public function setGroupBrokerId()
 
-    // }}}
-    // {{{ public function getGroupBrokerId()
+	public function setGroupBrokerId($brokerId)
+	{
+		$this->groupBrokerId = $brokerId;
+	}
 
-    public function getGroupBrokerId()
-    {
-        return $this->groupBrokerId;
-    }
+	// }}}
+	// {{{ public function getGroupBrokerId()
 
-    // }}}
-    // {{{ public function setData()
+	public function getGroupBrokerId()
+	{
+		return $this->groupBrokerId;
+	}
 
-    public function setData($topics, $brokersResult)
-    {
-        $brokers = array();
-        foreach ($brokersResult as $value) {
-            $key = $value['nodeId'];
-            $hostname = $value['host'] . ':' . $value['port'];
-            $brokers[$key] = $hostname;
-        }
+	// }}}
+	// {{{ public function setData()
 
-        $change = false;
-        if (serialize($this->brokers) != serialize($brokers)) {
-            $this->brokers = $brokers;
-            $change = true;
-        }
+	public function setData($topics, $brokersResult)
+	{
+		$brokers = array();
+		foreach ($brokersResult as $value) {
+			$key = $value['nodeId'];
+			$hostname = $value['host'] . ':' . $value['port'];
+			$brokers[$key] = $hostname;
+		}
 
-        $newTopics = array();
-        foreach ($topics as $topic) {
-            if ($topic['errorCode'] != \Kafka\Protocol::NO_ERROR) {
-                $this->error('Parse metadata for topic is error, error:' . \Kafka\Protocol::getError($topic['errorCode']));
-                continue;
-            }
-            $item = array();
-            foreach ($topic['partitions']  as $part) {
-                $item[$part['partitionId']] = $part['leader'];
-            }
-            $newTopics[$topic['topicName']] = $item;
-        }
+		$change = false;
+		if (serialize($this->brokers) != serialize($brokers)) {
+			$this->brokers = $brokers;
+			$change = true;
+		}
 
-        if (serialize($this->topics) != serialize($newTopics)) {
-            $this->topics = $newTopics;
-            $change = true;
-        }
+		$newTopics = array();
+		foreach ($topics as $topic) {
+			if ($topic['errorCode'] != \Kafka\Protocol::NO_ERROR) {
+				$this->error('Parse metadata for topic is error, error:' . \Kafka\Protocol::getError($topic['errorCode']));
+				continue;
+			}
+			$item = array();
+			foreach ($topic['partitions'] as $part) {
+				$item[$part['partitionId']] = $part['leader'];
+			}
+			$newTopics[$topic['topicName']] = $item;
+		}
 
-        return $change;
-    }
+		if (serialize($this->topics) != serialize($newTopics)) {
+			$this->topics = $newTopics;
+			$change = true;
+		}
 
-    // }}}
-    // {{{ public function getTopics()
+		return $change;
+	}
 
-    public function getTopics()
-    {
-        return $this->topics;
-    }
+	// }}}
+	// {{{ public function getTopics()
 
-    // }}}
-    // {{{ public function getBrokers()
+	public function getTopics()
+	{
+		return $this->topics;
+	}
 
-    public function getBrokers()
-    {
-        return $this->brokers;
-    }
+	// }}}
+	// {{{ public function getBrokers()
 
-    // }}}
-    // {{{ public function getMetaConnect()
+	public function getBrokers()
+	{
+		return $this->brokers;
+	}
 
-    public function getMetaConnect($key, $modeSync = false)
-    {
-        return $this->getConnect($key, 'metaSockets', $modeSync);
-    }
+	// }}}
+	// {{{ public function getMetaConnect()
 
-    // }}}
-    // {{{ public function getRandConnect()
+	public function getMetaConnect($key, $modeSync = false)
+	{
+		return $this->getConnect($key, 'metaSockets', $modeSync);
+	}
 
-    public function getRandConnect($modeSync = false)
-    {
-        $nodeIds = array_keys($this->brokers);
-        shuffle($nodeIds);
-        if (!isset($nodeIds[0])) {
-            return false;
-        }
-        return $this->getMetaConnect($nodeIds[0], $modeSync);
-    }
+	// }}}
+	// {{{ public function getRandConnect()
 
-    // }}}
-    // {{{ public function getDataConnect()
-    
-    public function getDataConnect($key, $modeSync = false)
-    {
-        return $this->getConnect($key, 'dataSockets', $modeSync);
-    }
+	public function getRandConnect($modeSync = false)
+	{
+		$nodeIds = array_keys($this->brokers);
+		shuffle($nodeIds);
+		if (!isset($nodeIds[0])) {
+			return false;
+		}
+		return $this->getMetaConnect($nodeIds[0], $modeSync);
+	}
 
-    // }}}
-    // {{{ public function getConnect()
+	// }}}
+	// {{{ public function getDataConnect()
 
-    public function getConnect($key, $type, $modeSync = false)
-    {
-        if (isset($this->{$type}[$key])) {
-            return $this->{$type}[$key];
-        }
+	public function getDataConnect($key, $modeSync = false)
+	{
+		return $this->getConnect($key, 'dataSockets', $modeSync);
+	}
 
-        if (isset($this->brokers[$key])) {
-            $hostname = $this->brokers[$key];
-            if (isset($this->{$type}[$hostname])) {
-                return $this->{$type}[$hostname];
-            }
-        }
+	// }}}
+	// {{{ public function getConnect()
 
-        $host = null;
-        $port = null;
-        if (isset($this->brokers[$key])) {
-            $hostname = $this->brokers[$key];
-            list($host, $port) = explode(':', $hostname);
-        }
+	public function getConnect($key, $type, $modeSync = false)
+	{
+		if (isset($this->{$type}[$key])) {
+			return $this->{$type}[$key];
+		}
 
-        if (strpos($key, ':') !== false) {
-            list($host, $port) = explode(':', $key);
-        }
+		if (isset($this->brokers[$key])) {
+			$hostname = $this->brokers[$key];
+			if (isset($this->{$type}[$hostname])) {
+				return $this->{$type}[$hostname];
+			}
+		}
 
-        if ($host && $port) {
-            try {
-                $socket = $this->getSocket($host, $port, $modeSync);
+		$host = null;
+		$port = null;
+		if (isset($this->brokers[$key])) {
+			$hostname = $this->brokers[$key];
+			list($host, $port) = explode(':', $hostname);
+		}
+
+		if (strpos($key, ':') !== false) {
+			list($host, $port) = explode(':', $key);
+		}
+
+		if ($host && $port) {
+			try {
+				$socket = $this->getSocket($host, $port, $modeSync);
 //                if (!$modeSync) {
 //                    $socket->SetonReadable($this->process);
 //                }
-                $socket->connect();
-                $this->{$type}[$key] = $socket;
-                return $socket;
-            } catch (\Exception $e) {
-                $this->error($e->getMessage());
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
+				$socket->connect();
+				$this->{$type}[$key] = $socket;
+				return $socket;
+			} catch (\Exception $e) {
+				$this->error($e->getMessage());
+				$this->error($e->getFile() . ':' . $e->getLine());
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 
-    // }}}
-    // {{{ public function clear()
+	// }}}
+	// {{{ public function clear()
 
-    public function clear()
-    {
-        foreach ($this->metaSockets as $key => $socket) {
-            $socket->close();
-        }
-        foreach ($this->dataSockets as $key => $socket) {
-            $socket->close();
-        }
-        $this->brokers = [];
-    }
+	public function clear()
+	{
+		foreach ($this->metaSockets as $key => $socket) {
+			$socket->close();
+		}
+		foreach ($this->dataSockets as $key => $socket) {
+			$socket->close();
+		}
+		$this->brokers = [];
+	}
 
-    // }}}
-    // {{{ public function getSocket()
+	// }}}
+	// {{{ public function getSocket()
 
-    public function getSocket($host, $port, $modeSync)
-    {
-        if ($this->socket != null) {
-            return $this->socket;
-        }
+	public function getSocket($host, $port, $modeSync)
+	{
+		if ($this->socket != null) {
+			return $this->socket;
+		}
 
-        if ($modeSync) {
-            $socket = new \Kafka\SocketSync($host, $port);
-        } else {
-            $socket = new \Kafka\Socket($host, $port);
-        }
-        return $socket;
-    }
+		if ($modeSync) {
+			$socket = new \Kafka\SocketSync($host, $port);
+		} else {
+			$socket = new \Kafka\Socket($host, $port);
+		}
+		return $socket;
+	}
 
-    // }}}
-    // {{{ public function setSocket()
+	// }}}
+	// {{{ public function setSocket()
 
-    // use unit test
-    public function setSocket($socket)
-    {
-        $this->socket = $socket;
-    }
+	// use unit test
+	public function setSocket($socket)
+	{
+		$this->socket = $socket;
+	}
 
-    // }}}
-    // }}}
+	// }}}
+	// }}}
 }
