@@ -43,16 +43,7 @@ class Kafka extends \Snowflake\Process\Process
 				}
 				$class = Snowflake::createObject($namespace);
 				if ($class instanceof ConsumerInterface) {
-					$class->onHandler(
-						$message['offset'],
-						$part,
-						$message['message']['crc'],
-						$message['message']['magic'],
-						$message['message']['attr'],
-						$message['message']['timestamp'],
-						$message['message']['key'],
-						$message['message']['value']
-					);
+					$class->onHandler(new Struct($topic, $part, $message));
 				}
 			} catch (\Throwable $exception) {
 				$this->application->error($exception->getMessage());
