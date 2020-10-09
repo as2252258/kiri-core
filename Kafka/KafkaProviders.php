@@ -46,7 +46,7 @@ class KafkaProviders extends Providers
 		if (!is_array($kafka['topics'])) {
 			throw new Exception('Add kafka topics must is array.');
 		}
-		$server->addProcess('kafka', [Kafka::class, false]);
+		$server->addProcess('kafka', Kafka::class);
 	}
 
 }
