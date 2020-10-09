@@ -186,10 +186,10 @@ class Broker
         if ($host && $port) {
             try {
                 $socket = $this->getSocket($host, $port, $modeSync);
-                if (!$modeSync) {
-                    $socket->SetonReadable($this->process);
-                }
-                $socket->connect();
+//                if (!$modeSync) {
+//                    $socket->SetonReadable($this->process);
+//                }
+//                $socket->connect();
                 $this->{$type}[$key] = $socket;
                 return $socket;
             } catch (\Exception $e) {
