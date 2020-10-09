@@ -254,6 +254,7 @@ class SocketSync
 	{
 		if ($this->stream instanceof \Swoole\Coroutine\Socket) {
 			$this->stream->close();
+			$this->stream = null;
 		}
 	}
 
