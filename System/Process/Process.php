@@ -26,9 +26,10 @@ abstract class Process extends \Swoole\Process
 	 * Process constructor.
 	 * @param $application
 	 * @param $name
+	 * @param bool $enable_coroutine
 	 * @throws \Exception
 	 */
-	public function __construct($application, $name)
+	public function __construct($application, $name, $enable_coroutine = true)
 	{
 		$class = get_called_class();
 		parent::__construct(function ($process) use ($name, $class) {
@@ -36,7 +37,7 @@ abstract class Process extends \Swoole\Process
 				$this->name('Processes: ' . $class . '::class');
 			}
 			$this->onHandler($process);
-		}, false, 1, true);
+		}, false, 1, $enable_coroutine);
 		$this->application = $application;
 		Snowflake::setWorkerId($this->pid);
 	}

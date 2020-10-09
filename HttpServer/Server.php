@@ -214,7 +214,11 @@ class Server extends Application
 			if (!is_string($process)) {
 				continue;
 			}
-			$system = new $process(Snowflake::app(), $name);
+			$is_enable_coroutine = true;
+			if (is_array($process)) {
+				[$process, $is_enable_coroutine] = $process;
+			}
+			$system = new $process(Snowflake::app(), $name, $is_enable_coroutine);
 			$this->baseServer->addProcess($system);
 			$application->set($process, $system);
 		}
