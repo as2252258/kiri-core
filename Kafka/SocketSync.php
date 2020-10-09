@@ -14,6 +14,8 @@
 
 namespace Kafka;
 
+use Snowflake\Event;
+use Snowflake\Snowflake;
 use Swoole\Coroutine\Client;
 
 /**
@@ -342,6 +344,11 @@ class SocketSync
 		$failedWriteAttempts = 0;
 		$written = 0;
 		$buflen = strlen($buf);
+
+
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'close']);
+
 		while ($written < $buflen) {
 			if ($buflen - $written > self::MAX_WRITE_BUFFER) {
 				// write max buffer size
