@@ -417,7 +417,7 @@ class Socket
 	 */
 	protected function isSocketDead()
 	{
-		return $this->stream instanceof \Swoole\Coroutine\Socket && $this->stream->checkLiveness();
+		return !$this->stream instanceof \Swoole\Coroutine\Socket || !$this->stream->checkLiveness();
 	}
 
 	// }}}
