@@ -210,13 +210,13 @@ class Server extends Application
 			return;
 		}
 		foreach ($processes as $name => $process) {
-			$this->debug(sprintf('Process %s', $process));
-			if (!is_string($process)) {
-				continue;
-			}
 			$is_enable_coroutine = true;
 			if (is_array($process)) {
 				[$process, $is_enable_coroutine] = $process;
+			}
+			$this->debug(sprintf('Process %s', $process));
+			if (!is_string($process)) {
+				continue;
 			}
 			$system = new $process(Snowflake::app(), $name, $is_enable_coroutine);
 			$this->baseServer->addProcess($system);
