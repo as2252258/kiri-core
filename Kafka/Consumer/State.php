@@ -136,13 +136,13 @@ class State
 				continue;
 			}
 			$interval = isset($option['interval']) ? $option['interval'] : 200;
-			Timer::tick($msInterval = $interval, function ($watcherId) use ($request, $option) {
+			\Amp\repeat(function ($watcherId) use ($request, $option) {
 				if ($this->checkRun($request) && $option['func'] != null) {
 					$context = call_user_func($option['func']);
 					$this->processing($request, $context);
 				}
 				$this->requests[$request]['watcher'] = $watcherId;
-			});
+			}, $msInterval = $interval);
 		}
 
 		// start sync metadata
@@ -150,9 +150,9 @@ class State
 			$context = call_user_func($this->requests[self::REQUEST_METADATA]['func']);
 			$this->processing($request, $context);
 		}
-		Timer::tick($msInterval = 1000, function ($watcherId) {
+		\Amp\repeat(function ($watcherId) {
 			$this->report();
-		});
+		}, $msInterval = 1000);
 	}
 
 	// }}}
