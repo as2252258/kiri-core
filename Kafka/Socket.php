@@ -247,7 +247,7 @@ class Socket
 			do {
 				try {
 					if (!$this->isSocketDead($this->stream)) {
-						$newData = @fread($this->stream, self::READ_MAX_LEN);
+						$newData = $this->stream->recv(self::READ_MAX_LEN);
 					} else {
 						$this->reconnect();
 						return;
