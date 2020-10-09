@@ -35,27 +35,27 @@ class Kafka extends \Snowflake\Process\Process
 		$consumer = new \Kafka\Consumer();
 		$consumer->setLogger(new Logger());
 		$consumer->start(function ($topic, $part, $message) {
-			$namespace = 'App\Kafka\\' . ucfirst($topic) . 'Consumer';
 			var_dump($topic, $part, $message);
-			if (!class_exists($namespace) || !($namespace instanceof ConsumerInterface)) {
-				return;
-			}
-			try {
-				/** @var ConsumerInterface $class */
-				$class = Snowflake::createObject($namespace);
-				$class->onHandler(
-					$message['offset'],
-					$part,
-					$message['message']['crc'],
-					$message['message']['magic'],
-					$message['message']['attr'],
-					$message['message']['timestamp'],
-					$message['message']['key'],
-					$message['message']['value']
-				);
-			} catch (\Throwable $exception) {
-				$this->application->error($exception->getMessage());
-			}
+//			$namespace = 'App\Kafka\\' . ucfirst($topic) . 'Consumer';
+//			if (!class_exists($namespace) || !($namespace instanceof ConsumerInterface)) {
+//				return;
+//			}
+//			try {
+//				/** @var ConsumerInterface $class */
+//				$class = Snowflake::createObject($namespace);
+//				$class->onHandler(
+//					$message['offset'],
+//					$part,
+//					$message['message']['crc'],
+//					$message['message']['magic'],
+//					$message['message']['attr'],
+//					$message['message']['timestamp'],
+//					$message['message']['key'],
+//					$message['message']['value']
+//				);
+//			} catch (\Throwable $exception) {
+//				$this->application->error($exception->getMessage());
+//			}
 		});
 
 	}
