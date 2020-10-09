@@ -248,15 +248,19 @@ class Socket
 
         $this->readWatcher = \Amp\onReadable($this->stream, function () {
             do {
-                if(!$this->isSocketDead($this->stream)){
-                    $newData = @fread($this->stream, self::READ_MAX_LEN);
-                }else{
-                    $this->reconnect();
-                    return;
-                }
-                if ($newData) {
-                    $this->read($newData);
-                }
+	            try {
+		            if(!$this->isSocketDead($this->stream)){
+			            $newData = @fread($this->stream, self::READ_MAX_LEN);
+		            }else{
+			            $this->reconnect();
+			            return;
+		            }
+		            if ($newData) {
+			            $this->read($newData);
+		            }
+	            }catch (\Exception $exception){
+	            	var_dump($exception->getMessage());
+	            }
             } while ($newData);
         });
 
