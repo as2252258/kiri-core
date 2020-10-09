@@ -399,11 +399,11 @@ class Socket
 		$bytesToWrite = strlen($this->writeBuffer);
 		$bytesWritten = $this->stream->send($this->writeBuffer);
 
-		if ($bytesToWrite === $bytesWritten) {
-			\Amp\disable($this->writeWatcher);
-		} elseif ($bytesWritten >= 0) {
-			\Amp\enable($this->writeWatcher);
-		}
+//		if ($bytesToWrite === $bytesWritten) {
+//			\Amp\disable($this->writeWatcher);
+//		} elseif ($bytesWritten >= 0) {
+//			\Amp\enable($this->writeWatcher);
+//		}
 		$this->writeBuffer = substr($this->writeBuffer, $bytesWritten);
 	}
 
