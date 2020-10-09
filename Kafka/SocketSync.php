@@ -346,6 +346,9 @@ class SocketSync
 		$written = 0;
 		$buflen = strlen($buf);
 
+		if (!$this->stream) {
+			$this->connect();
+		}
 
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'close']);
