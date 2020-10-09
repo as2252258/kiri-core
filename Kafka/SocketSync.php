@@ -76,7 +76,12 @@ class SocketSync
 	 */
 	private $recvTimeoutUsec = 750000;
 
-	/** @var Client|mixed */
+	/**
+	 * Stream resource
+	 *
+	 * @var \Swoole\Coroutine\Socket
+	 * @access private
+	 */
 	private $stream = null;
 
 	/**
@@ -211,7 +216,7 @@ class SocketSync
 	 */
 	public function connect()
 	{
-		if ($this->stream instanceof Client) {
+		if ($this->stream instanceof \Swoole\Coroutine\Socket) {
 			return;
 		}
 
@@ -222,7 +227,7 @@ class SocketSync
 			throw new \Kafka\Exception('Cannot open without port.');
 		}
 
-		$this->stream = new Client(SWOOLE_SOCK_TCP);
+		$this->stream = new \Swoole\Coroutine\Socket(AF_INET, SOCK_STREAM);
 
 		if (!$this->stream->connect($this->host, $this->port)) {
 			$error = 'Could not connect to '
@@ -245,7 +250,7 @@ class SocketSync
 	 */
 	public function close()
 	{
-		if ($this->stream instanceof Client) {
+		if ($this->stream instanceof \Swoole\Coroutine\Socket) {
 			$this->stream->close();
 		}
 	}
@@ -258,7 +263,7 @@ class SocketSync
 	 */
 	public function isResource()
 	{
-		return $this->stream instanceof Client && $this->stream->connected;
+		return $this->stream instanceof \Swoole\Coroutine\Socket && $this->stream->checkLiveness();
 	}
 
 	// }}}
@@ -289,22 +294,12 @@ class SocketSync
 		$remainingBytes = $len;
 		$data = $chunk = '';
 		while ($remainingBytes > 0) {
-			$chunk = $this->stream->recv();
+			$chunk = $this->stream->recv($remainingBytes);
 			if ($chunk === false) {
 				$this->close();
 				throw new \Kafka\Exception('Could not read ' . $len . ' bytes from stream (no data)');
 			}
 			if (strlen($chunk) === 0) {
-//				// Zero bytes because of EOF?
-//				if (feof($this->stream)) {
-//					$this->close();
-//					throw new \Kafka\Exception('Unexpected EOF while reading ' . $len . ' bytes from stream (no data)');
-//				}
-//				// Otherwise wait for bytes
-//				$readable = @stream_select($read, $null, $null, $this->recvTimeoutSec, $this->recvTimeoutUsec);
-//				if ($readable !== 1) {
-//					throw new \Kafka\Exception('Timed out reading socket while reading ' . $len . ' bytes with ' . $remainingBytes . ' bytes to go');
-//				}
 				continue; // attempt another read
 			}
 			$data .= $chunk;
@@ -338,14 +333,12 @@ class SocketSync
 	 * @param string $buf The data to write
 	 *
 	 * @return integer
-	 * @throws Exception
+	 * @throws \Kafka\Exception
 	 */
-	public function write(string $buf)
+	public function write($buf)
 	{
 		$null = null;
 
-		// fwrite to a socket may be partial, so loop until we
-		// are done with the entire buffer
 		$failedWriteAttempts = 0;
 		$written = 0;
 		$buflen = strlen($buf);
