@@ -238,7 +238,6 @@ class Process
         $broker = \Kafka\Broker::getInstance();
         foreach ($brokerHost as $host) {
             $socket = $broker->getMetaConnect($host);
-            var_dump($socket);
             if ($socket) {
                 $params = \Kafka\ConsumerConfig::getInstance()->getTopics();
                 $this->debug('Start sync metadata request params:' . json_encode($params));

@@ -15,16 +15,17 @@
 namespace Kafka;
 
 /**
- * +------------------------------------------------------------------------------
++------------------------------------------------------------------------------
  * Kafka broker socket
- * +------------------------------------------------------------------------------
++------------------------------------------------------------------------------
  *
  * @package
  * @version $_SWANBR_VERSION_$
  * @copyright Copyleft
  * @author $_SWANBR_AUTHOR_$
- * +------------------------------------------------------------------------------
++------------------------------------------------------------------------------
  */
+
 class Socket
 {
 	// {{{ consts
@@ -77,7 +78,7 @@ class Socket
 	/**
 	 * Stream resource
 	 *
-	 * @var \Swoole\Coroutine\Socket
+	 * @var mixed
 	 * @access private
 	 */
 	private $stream = null;
@@ -227,43 +228,41 @@ class Socket
 			throw new \Kafka\Exception('Cannot open without port.');
 		}
 
-		$this->stream = new \Swoole\Coroutine\Socket(AF_INET, SOCK_STREAM);;
-
-		if (!$this->stream->connect(
+		$this->stream = @fsockopen(
 			$this->host,
 			$this->port,
+			$errno,
+			$errstr,
 			$this->sendTimeoutSec + ($this->sendTimeoutUsec / 1000000)
-		)) {
+		);
+
+		if ($this->stream == false) {
 			$error = 'Could not connect to '
 				. $this->host . ':' . $this->port
-				. ' (' . $this->stream->errMsg . ' [' . $this->stream->errCode . '])';
+				. ' ('.$errstr.' ['.$errno.'])';
 			throw new \Kafka\Exception($error);
 		}
 
-//		stream_set_blocking($this->stream->getpeername(), 0);
-//		stream_set_read_buffer($this->stream, 0);
+		stream_set_blocking($this->stream, 0);
+		stream_set_read_buffer($this->stream, 0);
 
-//		$this->readWatcher = \Amp\onReadable($this->stream, function () {
-//			do {
-//				try {
-//					if (!$this->isSocketDead($this->stream)) {
-//						$newData = $this->stream->recv(self::READ_MAX_LEN);
-//					} else {
-//						$this->reconnect();
-//						return;
-//					}
-//					if ($newData) {
-//						$this->read($newData);
-//					}
-//				} catch (\Exception $exception) {
-//					var_dump($exception->getMessage());
-//				}
-//			} while ($newData);
-//		});
-//
-//		$this->writeWatcher = \Amp\onWritable($this->stream, function () {
-//			$this->write();
-//		}, array('enable' => false)); // <-- let's initialize the watcher as "disabled"
+		$this->readWatcher = \Amp\onReadable($this->stream, function () {
+			do {
+				if(!$this->isSocketDead($this->stream)){
+					$newData = @fread($this->stream, self::READ_MAX_LEN);
+				}else{
+					$this->reconnect();
+					return;
+				}
+				if ($newData) {
+					$this->read($newData);
+				}
+			} while ($newData);
+		});
+
+		$this->writeWatcher = \Amp\onWritable($this->stream, function () {
+			$this->write();
+		}, array('enable' => false)); // <-- let's initialize the watcher as "disabled"
 	}
 
 	// }}}
@@ -299,7 +298,6 @@ class Socket
 	// {{{ public function SetOnReadable()
 
 	public $onReadable;
-
 	/**
 	 * set on readable callback function
 	 *
@@ -324,7 +322,9 @@ class Socket
 	{
 		\Amp\cancel($this->readWatcher);
 		\Amp\cancel($this->writeWatcher);
-		$this->stream->close();
+		if (is_resource($this->stream)) {
+			fclose($this->stream);
+		}
 		$this->readBuffer = '';
 		$this->writeBuffer = '';
 		$this->readNeedLength = 0;
@@ -350,7 +350,7 @@ class Socket
 	 * This method will not wait for all the requested data, it will return as
 	 * soon as any data is received.
 	 *
-	 * @param integer $len Maximum number of bytes to read.
+	 * @param integer $len               Maximum number of bytes to read.
 	 * @param boolean $verifyExactLength Throw an exception if the number of read bytes is less than $len
 	 *
 	 * @return string Binary data
@@ -397,13 +397,15 @@ class Socket
 			$this->writeBuffer .= $data;
 		}
 		$bytesToWrite = strlen($this->writeBuffer);
-		$bytesWritten = $this->stream->send($this->writeBuffer);
+		$bytesWritten = @fwrite($this->stream, $this->writeBuffer);
 
-//		if ($bytesToWrite === $bytesWritten) {
-//			\Amp\disable($this->writeWatcher);
-//		} elseif ($bytesWritten >= 0) {
-//			\Amp\enable($this->writeWatcher);
-//		}
+		if ($bytesToWrite === $bytesWritten) {
+			\Amp\disable($this->writeWatcher);
+		} elseif ($bytesWritten >= 0) {
+			\Amp\enable($this->writeWatcher);
+		} elseif ($this->isSocketDead($this->stream)) {
+			$this->reconnect();
+		}
 		$this->writeBuffer = substr($this->writeBuffer, $bytesWritten);
 	}
 
@@ -417,10 +419,7 @@ class Socket
 	 */
 	protected function isSocketDead()
 	{
-		if (!($this->stream instanceof \Swoole\Coroutine\Socket)) {
-			return true;
-		}
-		return $this->stream->checkLiveness();
+		return !is_resource($this->stream) || @feof($this->stream);
 	}
 
 	// }}}
