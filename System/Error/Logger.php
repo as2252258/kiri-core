@@ -157,12 +157,12 @@ class Logger extends Component
 		$files = glob(storage(null, $dirName) . '/*');
 		if (count($files) >= 5) {
 			$time = strtotime(date('Y-m-d', strtotime('-10days')));
-			foreach ($files as $file) {
-				if (filectime($file) < $time) {
-					continue;
-				}
-				@unlink($file);
-			}
+//			foreach (array_slice($files, 0, count($files) - 5) as $file) {
+//				if (filectime($file) < $time) {
+//					continue;
+//				}
+//				@unlink($file);
+//			}
 		}
 	}
 
