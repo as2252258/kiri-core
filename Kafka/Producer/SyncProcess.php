@@ -113,6 +113,7 @@ class SyncProcess
         $broker = \Kafka\Broker::getInstance();
         foreach ($brokerHost as $host) {
             $socket = $broker->getMetaConnect($host, true);
+            var_dump($socket);
             if ($socket) {
                 $params = array();
                 $this->debug('Start sync metadata request params:' . json_encode($params));
