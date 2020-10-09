@@ -189,7 +189,7 @@ class Broker
 //                if (!$modeSync) {
 //                    $socket->SetonReadable($this->process);
 //                }
-//                $socket->connect();
+                $socket->connect();
                 $this->{$type}[$key] = $socket;
                 return $socket;
             } catch (\Exception $e) {
