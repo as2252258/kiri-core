@@ -16,6 +16,7 @@ namespace Kafka;
 
 use HttpServer\Http\Context;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Client;
@@ -33,9 +34,10 @@ use Swoole\Coroutine\Client;
  */
 class SocketSync
 {
-	// {{{ consts
-
 	const READ_MAX_LEN = 5242880; // read socket max length 5MB
+
+
+	const SOCKET_NAME = 'client_socket';
 
 	/**
 	 * max write socket buffer
@@ -44,9 +46,6 @@ class SocketSync
 	 * unavailable error info
 	 */
 	const MAX_WRITE_BUFFER = 2048;
-
-	// }}}
-	// {{{ members
 
 	/**
 	 * Send timeout in seconds.
@@ -71,6 +70,7 @@ class SocketSync
 	 * @access private
 	 */
 	private $recvTimeoutSec = 0;
+
 
 	/**
 	 * Recv timeout in microseconds
@@ -111,9 +111,6 @@ class SocketSync
 	 */
 	private $maxWriteAttempts = 3;
 
-	// }}}
-	// {{{ functions
-	// {{{ public function __construct()
 
 	/**
 	 * __construct
@@ -139,7 +136,7 @@ class SocketSync
 	/**
 	 * @param float $sendTimeoutSec
 	 */
-	public function setSendTimeoutSec($sendTimeoutSec)
+	public function setSendTimeoutSec(float $sendTimeoutSec)
 	{
 		$this->sendTimeoutSec = $sendTimeoutSec;
 	}
@@ -147,7 +144,7 @@ class SocketSync
 	/**
 	 * @param float $sendTimeoutUsec
 	 */
-	public function setSendTimeoutUsec($sendTimeoutUsec)
+	public function setSendTimeoutUsec(float $sendTimeoutUsec)
 	{
 		$this->sendTimeoutUsec = $sendTimeoutUsec;
 	}
@@ -155,7 +152,7 @@ class SocketSync
 	/**
 	 * @param float $recvTimeoutSec
 	 */
-	public function setRecvTimeoutSec($recvTimeoutSec)
+	public function setRecvTimeoutSec(float $recvTimeoutSec)
 	{
 		$this->recvTimeoutSec = $recvTimeoutSec;
 	}
@@ -163,7 +160,7 @@ class SocketSync
 	/**
 	 * @param float $recvTimeoutUsec
 	 */
-	public function setRecvTimeoutUsec($recvTimeoutUsec)
+	public function setRecvTimeoutUsec(float $recvTimeoutUsec)
 	{
 		$this->recvTimeoutUsec = $recvTimeoutUsec;
 	}
@@ -171,13 +168,11 @@ class SocketSync
 	/**
 	 * @param int $number
 	 */
-	public function setMaxWriteAttempts($number)
+	public function setMaxWriteAttempts(int $number)
 	{
 		$this->maxWriteAttempts = $number;
 	}
 
-	// }}}
-	// {{{ public static function createFromStream()
 
 	/**
 	 * Optional method to set the internal stream handle
@@ -185,7 +180,7 @@ class SocketSync
 	 * @static
 	 * @access public
 	 * @param $stream
-	 * @return Socket
+	 * @return SocketSync
 	 */
 	public static function createFromStream($stream)
 	{
@@ -216,23 +211,23 @@ class SocketSync
 	 */
 	public function connect()
 	{
-		if (Context::hasContext('client_socket')) {
-			return Context::getContext('client_socket');
+		if (Context::hasContext(self::SOCKET_NAME)) {
+			return Context::getContext(self::SOCKET_NAME);
 		}
 		if (empty($this->host)) {
-			throw new \Kafka\Exception('Cannot open null host.');
+			throw new Exception('Cannot open null host.');
 		}
 		if ($this->port <= 0) {
-			throw new \Kafka\Exception('Cannot open without port.');
+			throw new Exception('Cannot open without port.');
 		}
 		$stream = new \Swoole\Coroutine\Socket(AF_INET, SOCK_STREAM);
 		if (!$stream->connect($this->host, $this->port)) {
 			$error = 'Could not connect to '
 				. $this->host . ':' . $this->port
 				. ' (' . $stream->errMsg . ' [' . $stream->errMsg . '])';
-			throw new \Kafka\Exception($error);
+			throw new Exception($error);
 		}
-		return Context::setContext('client_socket', $stream);
+		return Context::setContext(self::SOCKET_NAME, $stream);
 	}
 
 
@@ -255,10 +250,10 @@ class SocketSync
 	 */
 	public function isResource()
 	{
-		if (!Context::hasContext('client_socket')) {
+		if (!Context::hasContext(self::SOCKET_NAME)) {
 			return false;
 		}
-		return Context::getContext('client_socket')->checkLiveness();
+		return Context::getContext(self::SOCKET_NAME)->checkLiveness();
 	}
 
 	/**
@@ -271,14 +266,14 @@ class SocketSync
 	 * @param boolean $verifyExactLength Throw an exception if the number of read bytes is less than $len
 	 *
 	 * @return string Binary data
-	 * @throws \Kafka\Exception
+	 * @throws Exception
 	 */
-	public function read($len, $verifyExactLength = false)
+	public function read(int $len, $verifyExactLength = false)
 	{
 		if ($len > self::READ_MAX_LEN) {
-			throw new \Kafka\Exception('Could not read ' . $len . ' bytes from stream, length too longer.');
+			throw new Exception('Could not read ' . $len . ' bytes from stream, length too longer.');
 		}
-		$stream = Context::getContext('client_socket');
+		$stream = Context::getContext(self::SOCKET_NAME);
 
 		$null = null;
 		$remainingBytes = $len;
@@ -286,7 +281,7 @@ class SocketSync
 		while ($remainingBytes > 0) {
 			$chunk = $stream->recv($remainingBytes);
 			if ($chunk === false) {
-				throw new \Kafka\Exception('Could not read ' . $len . ' bytes from stream (no data)');
+				throw new Exception('Could not read ' . $len . ' bytes from stream (no data)');
 			}
 			if (strlen($chunk) === 0) {
 				continue;
@@ -295,7 +290,7 @@ class SocketSync
 			$remainingBytes -= strlen($chunk);
 		}
 		if ($len === $remainingBytes || ($verifyExactLength && $len !== strlen($data))) {
-			throw new \Kafka\Exception('Read ' . strlen($data) . ' bytes instead of the requested ' . $len . ' bytes');
+			throw new Exception('Read ' . strlen($data) . ' bytes instead of the requested ' . $len . ' bytes');
 		}
 		return $data;
 	}
@@ -306,9 +301,10 @@ class SocketSync
 	 * @param string $buf The data to write
 	 *
 	 * @return integer
-	 * @throws \Kafka\Exception
+	 * @throws Exception
+	 * @throws \Exception
 	 */
-	public function write($buf)
+	public function write(string $buf)
 	{
 		$null = null;
 
@@ -317,10 +313,6 @@ class SocketSync
 		$buflen = strlen($buf);
 
 		$stream = $this->connect();
-
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'close']);
-
 		while ($written < $buflen) {
 			if ($buflen - $written > self::MAX_WRITE_BUFFER) {
 				$wrote = $stream->send(substr($buf, $written, self::MAX_WRITE_BUFFER), 1);
@@ -342,12 +334,4 @@ class SocketSync
 		return $written;
 	}
 
-	/**
-	 * Rewind the stream
-	 *
-	 * @return void
-	 */
-	public function rewind()
-	{
-	}
 }
