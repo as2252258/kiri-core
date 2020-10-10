@@ -15,17 +15,16 @@
 namespace Kafka;
 
 /**
-+------------------------------------------------------------------------------
+ * +------------------------------------------------------------------------------
  * Kafka broker socket
-+------------------------------------------------------------------------------
+ * +------------------------------------------------------------------------------
  *
  * @package
  * @version $_SWANBR_VERSION_$
  * @copyright Copyleft
  * @author $_SWANBR_AUTHOR_$
-+------------------------------------------------------------------------------
+ * +------------------------------------------------------------------------------
  */
-
 class Socket
 {
 	// {{{ consts
@@ -169,7 +168,7 @@ class Socket
 	/**
 	 * @param float $sendTimeoutSec
 	 */
-	public function setSendTimeoutSec($sendTimeoutSec)
+	public function setSendTimeoutSec(float $sendTimeoutSec)
 	{
 		$this->sendTimeoutSec = $sendTimeoutSec;
 	}
@@ -177,7 +176,7 @@ class Socket
 	/**
 	 * @param float $sendTimeoutUsec
 	 */
-	public function setSendTimeoutUsec($sendTimeoutUsec)
+	public function setSendTimeoutUsec(float $sendTimeoutUsec)
 	{
 		$this->sendTimeoutUsec = $sendTimeoutUsec;
 	}
@@ -185,7 +184,7 @@ class Socket
 	/**
 	 * @param float $recvTimeoutSec
 	 */
-	public function setRecvTimeoutSec($recvTimeoutSec)
+	public function setRecvTimeoutSec(float $recvTimeoutSec)
 	{
 		$this->recvTimeoutSec = $recvTimeoutSec;
 	}
@@ -193,7 +192,7 @@ class Socket
 	/**
 	 * @param float $recvTimeoutUsec
 	 */
-	public function setRecvTimeoutUsec($recvTimeoutUsec)
+	public function setRecvTimeoutUsec(float $recvTimeoutUsec)
 	{
 		$this->recvTimeoutUsec = $recvTimeoutUsec;
 	}
@@ -201,13 +200,11 @@ class Socket
 	/**
 	 * @param int $number
 	 */
-	public function setMaxWriteAttempts($number)
+	public function setMaxWriteAttempts(int $number)
 	{
 		$this->maxWriteAttempts = $number;
 	}
 
-	// }}}
-	// {{{ public function connect()
 
 	/**
 	 * Connects the socket
@@ -239,7 +236,7 @@ class Socket
 		if ($this->stream == false) {
 			$error = 'Could not connect to '
 				. $this->host . ':' . $this->port
-				. ' ('.$errstr.' ['.$errno.'])';
+				. ' (' . $errstr . ' [' . $errno . '])';
 			throw new \Kafka\Exception($error);
 		}
 
@@ -248,25 +245,24 @@ class Socket
 
 		$this->readWatcher = \Amp\onReadable($this->stream, function () {
 			do {
-				if(!$this->isSocketDead($this->stream)){
+				if (!$this->isSocketDead()) {
 					$newData = @fread($this->stream, self::READ_MAX_LEN);
-				}else{
+				} else {
 					$this->reconnect();
 					return;
 				}
 				if ($newData) {
 					$this->read($newData);
+					$newData = true;
 				}
 			} while ($newData);
 		});
 
 		$this->writeWatcher = \Amp\onWritable($this->stream, function () {
 			$this->write();
-		}, array('enable' => false)); // <-- let's initialize the watcher as "disabled"
+		}, array('enable' => false));
 	}
 
-	// }}}
-	// {{{ public function reconnect()
 
 	/**
 	 * reconnect the socket
@@ -280,8 +276,6 @@ class Socket
 		$this->connect();
 	}
 
-	// }}}
-	// {{{ public function getSocket()
 
 	/**
 	 * get the socket
@@ -294,14 +288,14 @@ class Socket
 		return $this->stream;
 	}
 
-	// }}}
-	// {{{ public function SetOnReadable()
 
 	public $onReadable;
+
 	/**
 	 * set on readable callback function
 	 *
 	 * @access public
+	 * @param \Closure $read
 	 * @return void
 	 */
 	public function SetOnReadable(\Closure $read)
@@ -309,8 +303,6 @@ class Socket
 		$this->onReadable = $read;
 	}
 
-	// }}}
-	// {{{ public function close()
 
 	/**
 	 * close the socket
@@ -341,8 +333,6 @@ class Socket
 		return is_resource($this->stream);
 	}
 
-	// }}}
-	// {{{ public function read()
 
 	/**
 	 * Read from the socket at most $len bytes.
@@ -350,17 +340,13 @@ class Socket
 	 * This method will not wait for all the requested data, it will return as
 	 * soon as any data is received.
 	 *
-	 * @param integer $len               Maximum number of bytes to read.
-	 * @param boolean $verifyExactLength Throw an exception if the number of read bytes is less than $len
-	 *
-	 * @return string Binary data
-	 * @throws \Kafka\Exception\SocketEOF
+	 * @param $data
 	 */
 	public function read($data)
 	{
 		$this->readBuffer .= $data;
 		do {
-			if ($this->readNeedLength == 0) { // response start
+			if ($this->readNeedLength == 0) {
 				if (strlen($this->readBuffer) < 4) {
 					return;
 				}
@@ -380,16 +366,11 @@ class Socket
 		} while (strlen($this->readBuffer));
 	}
 
-	// }}}
-	// {{{ public function write()
 
 	/**
 	 * Write to the socket.
 	 *
-	 * @param string $buf The data to write
-	 *
-	 * @return integer
-	 * @throws \Kafka\Exception\SocketEOF
+	 * @param null $data
 	 */
 	public function write($data = null)
 	{
@@ -403,14 +384,12 @@ class Socket
 			\Amp\disable($this->writeWatcher);
 		} elseif ($bytesWritten >= 0) {
 			\Amp\enable($this->writeWatcher);
-		} elseif ($this->isSocketDead($this->stream)) {
+		} elseif ($this->isSocketDead()) {
 			$this->reconnect();
 		}
 		$this->writeBuffer = substr($this->writeBuffer, $bytesWritten);
 	}
 
-	// }}}
-	// {{{ protected function isSocketDead()
 
 	/**
 	 * check the stream is close
@@ -421,7 +400,4 @@ class Socket
 	{
 		return !is_resource($this->stream) || @feof($this->stream);
 	}
-
-	// }}}
-	// }}}
 }
