@@ -28,8 +28,8 @@ namespace Kafka;
 class Socket
 {
 
-	const READ_MAX_LEN = 5242880; // read socket max length 5MB
-//	const READ_MAX_LEN = 2048000; // read socket max length 5MB
+//	const READ_MAX_LEN = 5242880; // read socket max length 5MB
+	const READ_MAX_LEN = 2097152; // read socket max length 5MB
 
 	/**
 	 * max write socket buffer
@@ -136,10 +136,6 @@ class Socket
 	 * @access private
 	 */
 	private $readNeedLength = 0;
-
-	// }}}
-	// {{{ functions
-	// {{{ public function __construct()
 
 	/**
 	 * __construct
