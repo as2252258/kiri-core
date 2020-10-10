@@ -27,9 +27,9 @@ namespace Kafka;
  */
 class Socket
 {
-	// {{{ consts
 
-	const READ_MAX_LEN = 2048000; // read socket max length 2MB
+	const READ_MAX_LEN = 5242880; // read socket max length 5MB
+//	const READ_MAX_LEN = 2048000; // read socket max length 5MB
 
 	/**
 	 * max write socket buffer
@@ -38,9 +38,6 @@ class Socket
 	 * unavailable error info
 	 */
 	const MAX_WRITE_BUFFER = 2048;
-
-	// }}}
-	// {{{ members
 
 	/**
 	 * Send timeout in seconds.
