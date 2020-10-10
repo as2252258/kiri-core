@@ -29,7 +29,7 @@ class Socket
 {
 	// {{{ consts
 
-	const READ_MAX_LEN = 5242880; // read socket max length 5MB
+	const READ_MAX_LEN = 2048000; // read socket max length 2MB
 
 	/**
 	 * max write socket buffer
