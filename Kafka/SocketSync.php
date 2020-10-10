@@ -14,8 +14,10 @@
 
 namespace Kafka;
 
+use HttpServer\Http\Context;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Client;
 
 /**
@@ -192,8 +194,6 @@ class SocketSync
 		return $socket;
 	}
 
-	// }}}
-	// {{{ public function setStream()
 
 	/**
 	 * Optional method to set the internal stream handle
@@ -207,42 +207,34 @@ class SocketSync
 		$this->stream = $stream;
 	}
 
-	// }}}
-	// {{{ public function connect()
 
 	/**
 	 * Connects the socket
 	 *
 	 * @access public
-	 * @return void
+	 * @return Coroutine\Socket
 	 */
 	public function connect()
 	{
-		if ($this->stream instanceof \Swoole\Coroutine\Socket) {
-			return;
+		if (Context::hasContext('client_socket')) {
+			return Context::getContext('client_socket');
 		}
-
 		if (empty($this->host)) {
 			throw new \Kafka\Exception('Cannot open null host.');
 		}
 		if ($this->port <= 0) {
 			throw new \Kafka\Exception('Cannot open without port.');
 		}
-
-		$this->stream = new \Swoole\Coroutine\Socket(AF_INET, SOCK_STREAM);
-
-		if (!$this->stream->connect($this->host, $this->port)) {
+		$stream = new \Swoole\Coroutine\Socket(AF_INET, SOCK_STREAM);
+		if (!$stream->connect($this->host, $this->port)) {
 			$error = 'Could not connect to '
 				. $this->host . ':' . $this->port
-				. ' (' . $this->stream->errMsg . ' [' . $this->stream->errMsg . '])';
+				. ' (' . $stream->errMsg . ' [' . $stream->errMsg . '])';
 			throw new \Kafka\Exception($error);
 		}
-
-//		stream_set_blocking($this->stream, 0);
+		return Context::setContext('client_socket', $stream);
 	}
 
-	// }}}
-	// {{{ public function close()
 
 	/**
 	 * close the socket
@@ -252,10 +244,7 @@ class SocketSync
 	 */
 	public function close()
 	{
-		if ($this->stream instanceof \Swoole\Coroutine\Socket) {
-			$this->stream->close();
-			$this->stream = null;
-		}
+
 	}
 
 	/**
@@ -266,11 +255,11 @@ class SocketSync
 	 */
 	public function isResource()
 	{
-		return $this->stream instanceof \Swoole\Coroutine\Socket && $this->stream->checkLiveness();
+		if (!Context::hasContext('client_socket')) {
+			return false;
+		}
+		return Context::getContext('client_socket')->checkLiveness();
 	}
-
-	// }}}
-	// {{{ public function read()
 
 	/**
 	 * Read from the socket at most $len bytes.
@@ -289,46 +278,27 @@ class SocketSync
 		if ($len > self::READ_MAX_LEN) {
 			throw new \Kafka\Exception('Could not read ' . $len . ' bytes from stream, length too longer.');
 		}
+		$stream = Context::getContext('client_socket');
 
 		$null = null;
-		$read = array($this->stream);
-//		$readable = @stream_select($read, $null, $null, $this->recvTimeoutSec, $this->recvTimeoutUsec);
-//		if ($readable > 0) {
 		$remainingBytes = $len;
 		$data = $chunk = '';
 		while ($remainingBytes > 0) {
-			$chunk = $this->stream->recv($remainingBytes);
+			$chunk = $stream->recv($remainingBytes);
 			if ($chunk === false) {
-				$this->close();
 				throw new \Kafka\Exception('Could not read ' . $len . ' bytes from stream (no data)');
 			}
 			if (strlen($chunk) === 0) {
-				continue; // attempt another read
+				continue;
 			}
 			$data .= $chunk;
 			$remainingBytes -= strlen($chunk);
 		}
 		if ($len === $remainingBytes || ($verifyExactLength && $len !== strlen($data))) {
-			// couldn't read anything at all OR reached EOF sooner than expected
-			$this->close();
 			throw new \Kafka\Exception('Read ' . strlen($data) . ' bytes instead of the requested ' . $len . ' bytes');
 		}
-
 		return $data;
-//		}
-//		if (false !== $readable) {
-//			$res = stream_get_meta_data($this->stream);
-//			if (!empty($res['timed_out'])) {
-//				$this->close();
-//				throw new \Kafka\Exception('Timed out reading ' . $len . ' bytes from stream');
-//			}
-//		}
-//		$this->close();
-//		throw new \Kafka\Exception('Could not read ' . $len . ' bytes from stream (not readable)');
 	}
-
-	// }}}
-	// {{{ public function write()
 
 	/**
 	 * Write to the socket.
@@ -346,40 +316,31 @@ class SocketSync
 		$written = 0;
 		$buflen = strlen($buf);
 
-		if (!$this->stream) {
-			$this->connect();
-		}
+		$stream = $this->connect();
 
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'close']);
 
 		while ($written < $buflen) {
 			if ($buflen - $written > self::MAX_WRITE_BUFFER) {
-				// write max buffer size
-				$wrote = $this->stream->send(substr($buf, $written, self::MAX_WRITE_BUFFER), 1);
+				$wrote = $stream->send(substr($buf, $written, self::MAX_WRITE_BUFFER), 1);
 			} else {
-				// write remaining buffer bytes to stream
-				$wrote = $this->stream->send(substr($buf, $written), 1);
+				$wrote = $stream->send(substr($buf, $written), 1);
 			}
 			if ($wrote === -1 || $wrote === false) {
 				throw new \Kafka\Exception\Socket('Could not write ' . strlen($buf) . ' bytes to stream, completed writing only ' . $written . ' bytes');
 			} elseif ($wrote === 0) {
-				// Increment the number of times we have failed
 				$failedWriteAttempts++;
 				if ($failedWriteAttempts > $this->maxWriteAttempts) {
 					throw new \Kafka\Exception\Socket('After ' . $failedWriteAttempts . ' attempts could not write ' . strlen($buf) . ' bytes to stream, completed writing only ' . $written . ' bytes');
 				}
 			} else {
-				// If we wrote something, reset our failed attempt counter
 				$failedWriteAttempts = 0;
 			}
 			$written += $wrote;
 		}
 		return $written;
 	}
-
-	// }}}
-	// {{{ public function rewind()
 
 	/**
 	 * Rewind the stream
@@ -388,11 +349,5 @@ class SocketSync
 	 */
 	public function rewind()
 	{
-//		if (is_resource($this->stream)) {
-//			rewind($this->stream);
-//		}
 	}
-
-	// }}}
-	// }}}
 }
