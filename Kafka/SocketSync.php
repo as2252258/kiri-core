@@ -273,7 +273,7 @@ class SocketSync
 		if ($len > self::READ_MAX_LEN) {
 			throw new Exception('Could not read ' . $len . ' bytes from stream, length too longer.');
 		}
-		$stream = Context::getContext(self::SOCKET_NAME);
+		$stream = $this->connect();
 
 		$null = null;
 		$remainingBytes = $len;
