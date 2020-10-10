@@ -60,6 +60,8 @@ class Consumer
 	 * start consumer
 	 *
 	 * @access public
+	 * @param \Closure|null $consumer
+	 * @param bool $isBlock
 	 * @return void
 	 */
 	public function start(\Closure $consumer = null, $isBlock = true)
