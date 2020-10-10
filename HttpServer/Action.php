@@ -116,6 +116,7 @@ trait Action
 		if (empty($output)) {
 			return false;
 		}
+		$this->error(implode(PHP_EOL, $output));
 		return $output;
 	}
 
