@@ -63,29 +63,31 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function initCoroutine()
 	{
-		$group = new WaitGroup();
-		while ([$topic, $part, $message] = $this->channel->pop()) {
-			try {
-				$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
-				if (!class_exists($namespace)) {
-					return;
-				}
-				$class = Snowflake::createObject($namespace);
-				if (!($class instanceof ConsumerInterface)) {
-					continue;
-				}
-				$group->add();
-				go(function () use ($group, $class, $topic, $part, $message) {
-					defer(function () use ($group) {
-						$group->done();
+		go(function () {
+			$group = new WaitGroup();
+			while ([$topic, $part, $message] = $this->channel->pop()) {
+				try {
+					$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
+					if (!class_exists($namespace)) {
+						return;
+					}
+					$class = Snowflake::createObject($namespace);
+					if (!($class instanceof ConsumerInterface)) {
+						continue;
+					}
+					$group->add();
+					go(function () use ($group, $class, $topic, $part, $message) {
+						defer(function () use ($group) {
+							$group->done();
+						});
+						$class->onHandler(new Struct($topic, $part, $message));
 					});
-					$class->onHandler(new Struct($topic, $part, $message));
-				});
-			} catch (\Throwable $exception) {
-				$this->application->error($exception->getMessage());
+				} catch (\Throwable $exception) {
+					$this->application->error($exception->getMessage());
+				}
 			}
-		}
-		$group->wait();
+			$group->wait();
+		});
 	}
 
 
