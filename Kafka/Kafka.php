@@ -38,7 +38,7 @@ class Kafka extends \Snowflake\Process\Process
 		$config->setGroupId($kafka['groupId']);
 		$config->setBrokerVersion($kafka['version']);
 		$config->setTopics($kafka['topics']);
-		$this->channelListener();
+		$this->channelListener($kafka);
 
 		return [new Consumer(), $kafka];
 	}
@@ -62,13 +62,14 @@ class Kafka extends \Snowflake\Process\Process
 
 	/**
 	 * 监听通道数据传递
+	 * @param $config
 	 */
-	public function channelListener()
+	public function channelListener($config)
 	{
-		$this->channel = new Channel(1000);
-		Coroutine::create(function () {
+		$this->channel = new Channel($config['size'] ?? 100);
+		Coroutine::create(function () use ($config) {
 			$group = new WaitGroup();
-			for ($i = 0; $i < 1000; $i++) {
+			for ($i = 0; $i < $config['size'] ?? 100; $i++) {
 				$group->add();
 				go(function () use ($group) {
 					while ([$topic, $part, $message] = $this->channel->pop()) {
