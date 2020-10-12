@@ -66,10 +66,13 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function channelListener($config)
 	{
-		$this->channel = new Channel($config['size'] ?? 100);
+		if (!isset($config['size'])) {
+			$config['size'] = 100;
+		}
+		$this->channel = new Channel($config['size']);
 		Coroutine::create(function () use ($config) {
 			$group = new WaitGroup();
-			for ($i = 0; $i < $config['size'] ?? 100; $i++) {
+			for ($i = 0; $i < $config['size']; $i++) {
 				$group->add();
 				go(function () use ($group) {
 					defer(function () use ($group) {
