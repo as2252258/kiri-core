@@ -125,7 +125,10 @@ trait Action
 	 */
 	private function closeByPid($pid)
 	{
-		shell_exec('kill -TERM ' . $pid);
+		exec("ps -ef $pid | grep $pid", $output);
+		if (!empty($output)) {
+			exec("kill -TERM $pid");
+		}
 	}
 
 
