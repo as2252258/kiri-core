@@ -72,7 +72,7 @@ class Kafka extends \Snowflake\Process\Process
 				$group->add();
 				go(function () use ($group) {
 					while ([$topic, $part, $message] = $this->channel->pop()) {
-						$this->handlerExecute($group, $topic, $part, $message);
+						$this->handlerExecute($topic, $part, $message);
 					}
 				});
 			}
@@ -82,12 +82,11 @@ class Kafka extends \Snowflake\Process\Process
 
 
 	/**
-	 * @param $group
 	 * @param $topic
 	 * @param $part
 	 * @param $message
 	 */
-	protected function handlerExecute($group, $topic, $part, $message)
+	protected function handlerExecute($topic, $part, $message)
 	{
 		try {
 			$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
@@ -98,13 +97,7 @@ class Kafka extends \Snowflake\Process\Process
 			if (!($class instanceof ConsumerInterface)) {
 				return;
 			}
-			$group->add();
-			go(function () use ($group, $class, $topic, $part, $message) {
-				defer(function () use ($group) {
-					$group->done();
-				});
-				$class->onHandler(new Struct($topic, $part, $message));
-			});
+			$class->onHandler(new Struct($topic, $part, $message));
 		} catch (\Throwable $exception) {
 			$this->application->error($exception->getMessage());
 		}
