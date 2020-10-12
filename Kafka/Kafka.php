@@ -51,7 +51,10 @@ class Kafka extends \Snowflake\Process\Process
 		$this->channelListener();
 
 		$consumer = new Consumer();
-		$consumer->setLogger(new Logger());
+		$kafka = SConfig::get('kafka');
+		if ($kafka['debug'] ?? true) {
+			$consumer->setLogger(new Logger());
+		}
 		$consumer->start(function ($topic, $part, $message) {
 			$this->channel->push([$topic, $part, $message]);
 		});
