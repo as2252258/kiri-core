@@ -68,8 +68,13 @@ class Kafka extends \Snowflake\Process\Process
 		$this->channel = new Channel(1000);
 		Coroutine::create(function () {
 			$group = new WaitGroup();
-			while ([$topic, $part, $message] = $this->channel->pop()) {
-				$this->handlerExecute($group, $topic, $part, $message);
+			for ($i = 0; $i < 1000; $i++) {
+				$group->add();
+				go(function () use ($group) {
+					while ([$topic, $part, $message] = $this->channel->pop()) {
+						$this->handlerExecute($group, $topic, $part, $message);
+					}
+				});
 			}
 			$group->wait();
 		});
