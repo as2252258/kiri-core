@@ -72,6 +72,9 @@ class Kafka extends \Snowflake\Process\Process
 			for ($i = 0; $i < $config['size'] ?? 100; $i++) {
 				$group->add();
 				go(function () use ($group) {
+					defer(function () use ($group) {
+						$group->done();
+					});
 					while ([$topic, $part, $message] = $this->channel->pop()) {
 						$this->handlerExecute($topic, $part, $message);
 					}
