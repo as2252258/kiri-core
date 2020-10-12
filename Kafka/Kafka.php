@@ -38,6 +38,9 @@ class Kafka extends \Snowflake\Process\Process
 		$config->setGroupId($kafka['groupId']);
 		$config->setBrokerVersion($kafka['version']);
 		$config->setTopics($kafka['topics']);
+		$this->channelListener();
+
+		return [new Consumer(), $kafka];
 	}
 
 
@@ -47,11 +50,7 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function onHandler(Process $process)
 	{
-		$this->initConfig();
-		$this->channelListener();
-
-		$consumer = new Consumer();
-		$kafka = SConfig::get('kafka');
+		[$consumer, $kafka] = $this->initConfig();
 		if ($kafka['debug'] ?? true) {
 			$consumer->setLogger(new Logger());
 		}
