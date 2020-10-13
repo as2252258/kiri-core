@@ -18,6 +18,9 @@ use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
+defined('ROUTER_TREE') or define('ROUTER_TREE', 1);
+defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
+
 /**
  * Class Router
  * @package Snowflake\Snowflake\Route
@@ -68,7 +71,7 @@ class Router extends Application implements RouterInterface
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
 		}
-		if ($this->useTree) {
+		if (Config::get('router') == ROUTER_TREE) {
 			return $this->tree($path, $handler, $method);
 		} else {
 			return $this->hash($path, $handler, $method);
