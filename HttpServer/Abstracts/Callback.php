@@ -13,6 +13,7 @@ use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine\Server;
 use Swoole\Timer;
 
 abstract class Callback extends Application
@@ -27,14 +28,15 @@ abstract class Callback extends Application
 	 */
 	protected function clear($server, $worker_id, $message)
 	{
-		Timer::clearAll();
 		$event = Snowflake::app()->event;
 
 		$event->offName(Event::EVENT_AFTER_REQUEST);
 		$event->offName(Event::EVENT_BEFORE_REQUEST);
 		$this->eventNotify($message, $event);
 
+		$this->warning($server->worker_pid);
 		Snowflake::clearProcessId($server->worker_pid);
+		Timer::clearAll();
 
 		$logger = Snowflake::app()->getLogger();
 		$logger->write($this->_MESSAGE[$message] . $worker_id);
