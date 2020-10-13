@@ -34,6 +34,9 @@ class Router extends Application implements RouterInterface
 	/** @var string[] */
 	public $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
 
+
+	public $useTree = false;
+
 	/**
 	 * @throws ConfigException
 	 * 初始化函数路径
@@ -42,6 +45,15 @@ class Router extends Application implements RouterInterface
 	{
 		$this->dir = Config::get('http.namespace', false, $this->dir);
 	}
+
+	/**
+	 * @param bool $useTree
+	 */
+	public function setUseTree(bool $useTree): void
+	{
+		$this->useTree = $useTree;
+	}
+
 
 	/**
 	 * @param $path
@@ -56,34 +68,69 @@ class Router extends Application implements RouterInterface
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
 		}
-//		list($first, $explode) = $this->split($path);
-
-		$paths = array_column($this->groupTacks, 'prefix');
-		if (empty($paths)) {
-			$path = '/' . ltrim($path, '/');
+		if ($this->useTree) {
+			return $this->tree($path, $handler, $method);
 		} else {
-			if ($path !== '/') {
-				$path = implode('/', $paths) . '/' . ltrim($path, '/');
-			} else {
-				$path = implode('/', $paths);
-			}
-			$path = '/' . $path;
+			return $this->hash($path, $handler, $method);
 		}
+	}
 
-//		$parent = $this->nodes[$method][$first] ?? null;
+
+	/**
+	 * @param $path
+	 * @param $handler
+	 * @param string $method
+	 * @return mixed
+	 */
+	private function hash($path, $handler, $method = 'any')
+	{
+		$path = $this->resolve($path);
 
 		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
 
-
-//		if (empty($parent)) {
-//			$parent = $this->NodeInstance($first, 0, $method);
-//			$this->nodes[$method][$first] = $parent;
-//		}
-//		if ($first !== '/') {
-//			$parent = $this->bindNode($parent, $explode, $method);
-//		}
 		return $this->nodes[$method][$path]->bindHandler($handler);
 	}
+
+
+	/**
+	 * @param $path
+	 * @return string
+	 */
+	private function resolve($path)
+	{
+		$paths = array_column($this->groupTacks, 'prefix');
+		if (empty($paths)) {
+			return '/' . ltrim($path, '/');
+		}
+		$paths = '/' . implode('/', $paths);
+		if ($path != '/') {
+			return $paths . '/' . ltrim($path, '/');
+		}
+		return $paths . '/';
+	}
+
+
+	/**
+	 * @param $path
+	 * @param $handler
+	 * @param string $method
+	 * @return Node
+	 */
+	private function tree($path, $handler, $method = 'any')
+	{
+		list($first, $explode) = $this->split($path);
+
+		$parent = $this->nodes[$method][$first] ?? null;
+		if (empty($parent)) {
+			$parent = $this->NodeInstance($first, 0, $method);
+			$this->nodes[$method][$first] = $parent;
+		}
+		if ($first !== '/') {
+			$parent = $this->bindNode($parent, $explode, $method);
+		}
+		return $parent->bindHandler($handler);
+	}
+
 
 	/**
 	 * @param Node $parent
@@ -91,7 +138,7 @@ class Router extends Application implements RouterInterface
 	 * @param $method
 	 * @return Node
 	 */
-	private function bindNode($parent, $explode, $method)
+	private function bindNode(Node $parent, array $explode, $method)
 	{
 		$a = 0;
 		if (empty($explode)) {
@@ -291,12 +338,12 @@ class Router extends Application implements RouterInterface
 	}
 
 	/**
-	 * @param array $explode
+	 * @param array|null $explode
 	 * @param $method
 	 * @return Node|null
 	 * 查找指定路由
 	 */
-	public function tree_search($explode, $method)
+	public function tree_search(?array $explode, $method)
 	{
 		if (empty($explode)) {
 			return $this->nodes[$method]['/'] ?? null;
@@ -489,11 +536,6 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		return $this->nodes[$method]['*'];
-//		$node = $this->tree_search(['*'], $request->getMethod());
-//		if (!($node instanceof Node)) {
-//			return null;
-//		}
-//		return $node;
 	}
 
 
