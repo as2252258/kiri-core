@@ -71,7 +71,9 @@ class Router extends Application implements RouterInterface
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
 		}
-		if (Config::get('router', false, ROUTER_HASH) == ROUTER_TREE) {
+
+		$useTree = Config::get('router', false, ROUTER_HASH);
+		if ($useTree == ROUTER_TREE) {
 			return $this->tree($path, $handler, $method);
 		} else {
 			return $this->hash($path, $handler, $method);
