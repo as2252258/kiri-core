@@ -41,6 +41,8 @@ class Node extends Application
 	public $middleware = [];
 	public $callback = [];
 
+	private $_alias = '';
+
 	private $_interceptors = [];
 	private $_after = [];
 	private $_limits = [];
@@ -344,8 +346,17 @@ class Node extends Application
 	 */
 	public function alias(string $alias)
 	{
-		$_alias = $alias;
+		$this->_alias = $alias;
 		return $this;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getAlias()
+	{
+		return $this->_alias;
 	}
 
 
