@@ -28,19 +28,22 @@ abstract class Callback extends Application
 	 */
 	protected function clear($server, $worker_id, $message)
 	{
-		$event = Snowflake::app()->event;
+		try {
+			$this->warning($server->worker_pid);
+			Snowflake::clearProcessId($server->worker_pid);
+			Timer::clearAll();
 
-		$event->offName(Event::EVENT_AFTER_REQUEST);
-		$event->offName(Event::EVENT_BEFORE_REQUEST);
-		$this->eventNotify($message, $event);
+			$logger = Snowflake::app()->getLogger();
+			$logger->write($this->_MESSAGE[$message] . $worker_id);
+			$logger->clear();
 
-		$this->warning($server->worker_pid);
-		Snowflake::clearProcessId($server->worker_pid);
-		Timer::clearAll();
-
-		$logger = Snowflake::app()->getLogger();
-		$logger->write($this->_MESSAGE[$message] . $worker_id);
-		$logger->clear();
+			$event = Snowflake::app()->event;
+			$event->offName(Event::EVENT_AFTER_REQUEST);
+			$event->offName(Event::EVENT_BEFORE_REQUEST);
+			$this->eventNotify($message, $event);
+		} catch (Exception $exception) {
+			$this->error($exception->getMessage());
+		}
 	}
 
 
