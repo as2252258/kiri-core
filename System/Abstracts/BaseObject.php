@@ -103,7 +103,7 @@ class BaseObject implements Configure
 
 
 	/**
-	 * @param string $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
 	 * @throws
@@ -119,7 +119,7 @@ class BaseObject implements Configure
 
 
 	/**
-	 * @param string $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
 	 * @throws
@@ -134,7 +134,7 @@ class BaseObject implements Configure
 	}
 
 	/**
-	 * @param string $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
 	 * @throws
@@ -150,17 +150,16 @@ class BaseObject implements Configure
 
 
 	/**
-	 * @param string $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws
 	 */
 	public function warning($message, string $method = __METHOD__, string $file = __FILE__)
 	{
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		echo "\033[33m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		echo "\033[33m[WARNING][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		echo PHP_EOL;
 	}
 

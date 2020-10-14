@@ -49,15 +49,15 @@ trait Server
 	 */
 	public function onHandlerListener()
 	{
-		$this->on('workerStop', $this->createHandler('workerStop'));
-		$this->on('workerExit', $this->createHandler('workerExit'));
-		$this->on('workerStart', $this->createHandler('workerStart'));
-		$this->on('workerError', $this->createHandler('workerError'));
-		$this->on('managerStart', $this->createHandler('managerStart'));
-		$this->on('managerStop', $this->createHandler('managerStop'));
-		$this->on('pipeMessage', $this->createHandler('pipeMessage'));
-		$this->on('shutdown', $this->createHandler('shutdown'));
-		$this->on('start', $this->createHandler('start'));
+		$this->on('WorkerStop', $this->createHandler('workerStop'));
+		$this->on('WorkerExit', $this->createHandler('workerExit'));
+		$this->on('WorkerStart', $this->createHandler('workerStart'));
+		$this->on('WorkerError', $this->createHandler('workerError'));
+		$this->on('ManagerStart', $this->createHandler('managerStart'));
+		$this->on('ManagerStop', $this->createHandler('managerStop'));
+		$this->on('PipeMessage', $this->createHandler('pipeMessage'));
+		$this->on('Shutdown', $this->createHandler('shutdown'));
+		$this->on('Start', $this->createHandler('start'));
 		$this->addTask();
 	}
 
@@ -70,8 +70,8 @@ trait Server
 	{
 		$settings = $this->setting;
 		if (($taskNumber = $settings['task_worker_num'] ?? 0) > 0) {
-			$this->on('finish', $this->createHandler('finish'));
-			$this->on('task', $this->createHandler('task'));
+			$this->on('Finish', $this->createHandler('finish'));
+			$this->on('Task', $this->createHandler('task'));
 		}
 	}
 
