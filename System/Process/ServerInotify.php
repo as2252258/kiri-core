@@ -177,6 +177,7 @@ class ServerInotify extends Process
 
 	/**
 	 * 重启
+	 * @throws Exception
 	 */
 	public function trigger_reload()
 	{

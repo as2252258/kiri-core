@@ -224,6 +224,16 @@ class Snowflake
 
 
 	/**
+	 * @return false|string
+	 * @throws Exception
+	 */
+	public static function getMasterPid()
+	{
+		return file_get_contents(storage('socket.sock'));
+	}
+
+
+	/**
 	 * @param int $fd
 	 * @param $data
 	 * @return false|mixed
@@ -324,10 +334,11 @@ class Snowflake
 
 	/**
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public static function reload()
 	{
-		return Snowflake::app()->server->getServer()->reload();
+		return Process::kill(Snowflake::getMasterPid(), SIGUSR1);
 	}
 
 
