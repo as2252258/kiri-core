@@ -27,13 +27,13 @@ class OnManagerStop extends Callback
 		$events = Snowflake::app()->event;
 		$events->trigger(Event::SERVER_MANAGER_STOP, [$server]);
 
-//		$runPath = storage(null, 'workerIds');
-//		foreach (glob($runPath . '/*') as $item) {
-//			if (!file_exists($item)) {
-//				continue;
-//			}
-//			@unlink($item);
-//		}
+		$runPath = storage(null, 'worker');
+		foreach (glob($runPath . '/*') as $item) {
+			if (!file_exists($item)) {
+				continue;
+			}
+			@unlink($item);
+		}
 	}
 
 }
