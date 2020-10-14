@@ -32,29 +32,17 @@ class Consumer
 	use \Psr\Log\LoggerAwareTrait;
 	use \Kafka\LoggerTrait;
 
-	// {{{ consts
-	// }}}
-	// {{{ members
-
 	private $isRunning = false;
 
-	// }}}
-	// {{{ functions
-	// {{{ public function __construct()
 
 	/**
 	 * __construct
 	 *
 	 * @access public
-	 * @param $hostList
-	 * @param null $timeout
 	 */
 	public function __construct()
 	{
 	}
-
-	// }}}
-	// {{{ public function start()
 
 	/**
 	 * start consumer
@@ -80,7 +68,4 @@ class Consumer
 			run();
 		}
 	}
-
-	// }}}
-	// }}}
 }
