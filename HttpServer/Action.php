@@ -76,26 +76,38 @@ trait Action
 	{
 		echo 'waite.';
 		while ($server->isRunner()) {
-			echo '.';
-			$pods = glob(storage(null, 'worker') . '/*');
-			if (count($pods) < 1) {
-				break;
-			}
-			foreach ($pods as $pid) {
-				if (!file_exists($pid)) {
-					continue;
-				}
-				$content = file_get_contents($pid);
-				exec("ps -ax | awk '{ print $1 }' | grep -e '^{$content}$'", $output);
-				if (count($output) > 0) {
-					$this->closeByPid($content);
-				} else {
-					file_exists($pid) && @unlink($pid);
-				}
-			}
+			$this->masterIdCheck();
 			usleep(100);
 		}
 		echo PHP_EOL;
+	}
+
+
+	/**
+	 * WorkerId Iterator
+	 */
+	private function masterIdCheck()
+	{
+		echo '.';
+		$files = new \DirectoryIterator($this->getWorkerPath());
+		foreach ($files as $file) {
+			$content = file_get_contents($file->getRealPath());
+			exec("ps -ax | awk '{ print $1 }' | grep -e '^{$content}$'", $output);
+			if (count($output) > 0) {
+				$this->closeByPid($content);
+			} else {
+				@unlink($file->getRealPath());
+			}
+		}
+	}
+
+
+	/**
+	 * @return string
+	 */
+	private function getWorkerPath()
+	{
+		return "glob://" . ltrim(APP_PATH, '/') . '/storage/worker/*.sock';
 	}
 
 
