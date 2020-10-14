@@ -33,8 +33,6 @@ class OnWorkerStart extends Callback
 	 */
 	public function onHandler(Server $server, int $worker_id)
 	{
-		Snowflake::setWorkerId($server->worker_pid);
-
 		$get_name = $this->get_process_name($server, $worker_id);
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
@@ -42,6 +40,7 @@ class OnWorkerStart extends Callback
 		if ($worker_id >= $server->setting['worker_num']) {
 			return;
 		}
+		Snowflake::setWorkerId($server->worker_pid);
 		$this->setWorkerAction($worker_id);
 	}
 
