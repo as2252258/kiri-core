@@ -308,17 +308,6 @@ class Router extends Application implements RouterInterface
 		}
 		$node->bindMiddleware($name);
 
-		$options = array_column($this->groupTacks, 'options');
-		if (!empty($options) && is_array($options)) {
-			$node->bindOptions($options);
-		}
-
-		$rules = array_column($this->groupTacks, 'filter');
-		$rules = array_shift($rules);
-		if (!empty($rules) && is_array($rules)) {
-			$node->filter($rules);
-		}
-
 		return $node;
 	}
 
