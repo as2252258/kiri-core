@@ -303,7 +303,7 @@ class Router extends Application implements RouterInterface
 		}
 
 		$name = array_column($this->groupTacks, 'middleware');
-		if (!empty($this->middleware) && $this->middleware instanceof \Closure) {
+		if ($this->middleware instanceof \Closure) {
 			array_unshift($name, $this->middleware);
 		}
 		$node->bindMiddleware($name);
