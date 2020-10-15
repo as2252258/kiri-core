@@ -38,7 +38,19 @@ class Router extends Application implements RouterInterface
 	public $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
 
 
+	public $middleware = null;
+
 	public $useTree = false;
+
+
+	/**
+	 * @param Closure $middleware
+	 */
+	public function setMiddleware(\Closure $middleware): void
+	{
+		$this->middleware = $middleware;
+	}
+
 
 	/**
 	 * @throws ConfigException
@@ -291,9 +303,10 @@ class Router extends Application implements RouterInterface
 		}
 
 		$name = array_column($this->groupTacks, 'middleware');
-		if (!empty($name) && $name = array_filter($name)) {
-			$node->bindMiddleware($name);
+		if (!empty($this->middleware) && $this->middleware instanceof \Closure) {
+			array_unshift($name, $this->middleware);
 		}
+		$node->bindMiddleware($name);
 
 		$options = array_column($this->groupTacks, 'options');
 		if (!empty($options) && is_array($options)) {

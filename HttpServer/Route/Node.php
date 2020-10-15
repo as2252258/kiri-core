@@ -444,15 +444,19 @@ class Node extends Application
 	 */
 	private function each($array, $_temp)
 	{
-		if (empty($array)) {
+		if (!is_array($array)) {
 			return $_temp;
 		}
 		foreach ($array as $class) {
-			if (!is_array($class)) {
-				$_temp[] = Snowflake::createObject($class);
-			} else {
+			if (is_array($class)) {
 				$_temp = $this->each($class, $_temp);
+				continue;
 			}
+
+			if (!class_exists($class)) {
+				continue;
+			}
+			$_temp[] = Snowflake::createObject($class);
 		}
 		return $_temp;
 	}
