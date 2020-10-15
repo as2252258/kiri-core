@@ -283,24 +283,7 @@ class Router extends Application implements RouterInterface
 		$node->path = $value;
 		$node->index = $index;
 		$node->method = $method;
-
-		$name = array_column($this->groupTacks, 'namespace');
-
-		$dir = array_column($this->groupTacks, 'dir');
-		if (!empty($dir)) {
-			array_unshift($name, implode('\\', $dir));
-		} else {
-			if ($method == 'package' || $method == 'receive') {
-				$dir = 'App\\Listener';
-			} else {
-				$dir = $this->dir;
-			}
-			array_unshift($name, $dir);
-		}
-
-		if (!empty($name) && $name = array_filter($name)) {
-			$node->namespace = $name;
-		}
+		$node->namespace = $this->loadNamespace($method);
 
 		$name = array_column($this->groupTacks, 'middleware');
 		if ($this->middleware instanceof \Closure) {
@@ -309,6 +292,23 @@ class Router extends Application implements RouterInterface
 		$node->bindMiddleware($name);
 
 		return $node;
+	}
+
+
+	/**
+	 * @param $method
+	 * @return array
+	 */
+	private function loadNamespace($method)
+	{
+		$name = array_column($this->groupTacks, 'namespace');
+		if ($method == 'package' || $method == 'receive') {
+			$dir = 'App\\Listener';
+		} else {
+			$dir = $this->dir;
+		}
+		array_unshift($name, $dir);
+		return array_filter($name);
 	}
 
 	/**
