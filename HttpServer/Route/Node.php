@@ -390,19 +390,20 @@ class Node extends Application
 
 
 	/**
-	 * @param string $class
+	 * @param string|\Closure $class
 	 * @throws Exception
 	 */
-	public function addMiddleware(string $class)
+	public function addMiddleware($class)
 	{
+		if (!is_callable($class, true)) {
+			return;
+		}
 		if (is_string($class)) {
 			$class = Snowflake::createObject($class);
 			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
 				return;
 			}
 			$class = [$class, 'handler'];
-		} else if (!is_callable($class, true)) {
-			return;
 		}
 		$this->middleware[] = $class;
 		$this->restructure();
