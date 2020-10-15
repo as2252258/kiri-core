@@ -6,13 +6,12 @@
  * Time: 02:17
  */
 
+// declare(strict_types=1);
+
 namespace HttpServer\Route;
 
-use Closure;
 use Exception;
 use HttpServer\Route\Dispatch\Dispatch;
-use Snowflake\Snowflake;
-use Swoole\Coroutine;
 
 /**
  * Class Middleware
@@ -49,7 +48,7 @@ class Middleware
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getGenerate($node)
+	public function getGenerate(Node $node)
 	{
 		$last = function ($passable) use ($node) {
 			return Dispatch::create($node->handler, $passable)->dispatch();
@@ -62,7 +61,7 @@ class Middleware
 	 * @param Node $node
 	 * @return array
 	 */
-	protected function annotation($node)
+	protected function annotation(Node $node)
 	{
 		$middleWares = $this->middleWares;
 		$this->middleWares = [];
@@ -81,7 +80,7 @@ class Middleware
 	 * @param $middleWares
 	 * @return array
 	 */
-	protected function annotation_limit($node, $middleWares)
+	protected function annotation_limit(Node $node, $middleWares)
 	{
 		if (!$node->hasLimits()) {
 			return $middleWares;
