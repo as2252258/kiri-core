@@ -287,7 +287,7 @@ class Router extends Application implements RouterInterface
 
 		$name = array_column($this->groupTacks, 'middleware');
 		if ($this->middleware instanceof \Closure) {
-			array_unshift($name, $this->middleware);
+			$node->addMiddleware($this->middleware);
 		}
 		$node->bindMiddleware($name);
 
