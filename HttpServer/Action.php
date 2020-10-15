@@ -76,7 +76,9 @@ trait Action
 	{
 		echo 'waite.';
 		while ($server->isRunner()) {
-			$this->masterIdCheck();
+			if (!$this->masterIdCheck()) {
+				break;
+			}
 			usleep(100);
 		}
 		echo PHP_EOL;
@@ -90,6 +92,9 @@ trait Action
 	{
 		echo '.';
 		$files = new \DirectoryIterator($this->getWorkerPath());
+		if ($files->getSize() < 1) {
+			return false;
+		}
 		foreach ($files as $file) {
 			$content = file_get_contents($file->getRealPath());
 			exec("ps -ax | awk '{ print $1 }' | grep -e '^{$content}$'", $output);
@@ -99,6 +104,7 @@ trait Action
 				@unlink($file->getRealPath());
 			}
 		}
+		return true;
 	}
 
 
