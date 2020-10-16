@@ -235,7 +235,6 @@ class Connection extends Pool
 	 */
 	private function nowClient($coroutineName, $config)
 	{
-		$this->success('create db client -> ' . $config['cds'] . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
 		$client = $this->createConnect($coroutineName, ...$this->parseConfig($config));
 		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 			$number > 0 && $client->beginTransaction();
@@ -372,6 +371,7 @@ class Connection extends Pool
 			if (!empty($charset)) {
 				$link->query('SET NAMES ' . $charset);
 			}
+			$this->success('create db client -> ' . $cds . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
 			$this->incr($coroutineName);
 			return $link;
 		} catch (\Throwable $exception) {

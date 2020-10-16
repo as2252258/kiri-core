@@ -40,8 +40,7 @@ class Redis extends Pool
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		} else if (!$this->hasItem($coroutineName)) {
-			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
-			return $this->saveClient($coroutineName, $this->createConnect($config));
+			return $this->saveClient($coroutineName, $this->createConnect($config, $coroutineName));
 		}
 		return $this->getByChannel($coroutineName, $config);
 	}
@@ -56,8 +55,7 @@ class Redis extends Pool
 	public function getByChannel($coroutineName, $config)
 	{
 		if (!$this->hasItem($coroutineName)) {
-			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
-			return $this->saveClient($coroutineName, $this->createConnect($config));
+			return $this->saveClient($coroutineName, $this->createConnect($config, $coroutineName));
 		}
 		$clients = $this->get($coroutineName);
 		if ($clients[1] === null) {
@@ -81,10 +79,11 @@ class Redis extends Pool
 
 	/**
 	 * @param array $config
+	 * @param string $coroutineName
 	 * @return SRedis
-	 * @throws Exception
+	 * @throws RedisConnectException
 	 */
-	private function createConnect(array $config)
+	private function createConnect(array $config, string $coroutineName)
 	{
 		$redis = new SRedis();
 		if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
@@ -93,6 +92,7 @@ class Redis extends Pool
 		if (empty($config['auth']) || !$redis->auth($config['auth'])) {
 			throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
 		}
+		$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
 		if (!isset($config['read_timeout'])) {
 			$config['read_timeout'] = 10;
 		}
