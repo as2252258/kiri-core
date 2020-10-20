@@ -42,6 +42,8 @@ class Router extends Application implements RouterInterface
 
 	public $useTree = false;
 
+	private $reading = false;
+
 
 	/**
 	 * @param Closure $middleware
@@ -474,6 +476,9 @@ class Router extends Application implements RouterInterface
 	public function dispatch()
 	{
 		try {
+			if ($this->reading) {
+				return send(self::NOT_FOUND, 404);
+			}
 			/** @var Node $node */
 			if (!($node = $this->find_path(\request()))) {
 				$response = send(self::NOT_FOUND, 404);
@@ -485,10 +490,12 @@ class Router extends Application implements RouterInterface
 		} catch (\Throwable $exception) {
 			$response = send($this->exception($exception), 200);
 		} finally {
-			if (!($node instanceof Node) || !$node->hasAfter()) {
+			if (!isset($node) || !($node instanceof Node)) {
 				return;
 			}
-			$node->afterDispatch($response ?? null);
+			if ($node->hasAfter()) {
+				$node->afterDispatch($response ?? null);
+			}
 		}
 	}
 
@@ -595,6 +602,7 @@ class Router extends Application implements RouterInterface
 	private function loadRouteDir($path)
 	{
 		$files = glob($path . '/*');
+		$this->reading = true;
 		for ($i = 0; $i < count($files); $i++) {
 			if (is_dir($files[$i])) {
 				$this->loadRouteDir($files[$i]);
@@ -602,6 +610,7 @@ class Router extends Application implements RouterInterface
 				$this->loadRouterFile($files[$i]);
 			}
 		}
+		$this->reading = false;
 	}
 
 
