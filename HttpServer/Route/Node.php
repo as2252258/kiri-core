@@ -29,7 +29,6 @@ class Node extends Application
 	public $childes = [];
 
 	public $group = [];
-	public $options = null;
 
 	private $_error = '';
 
@@ -67,7 +66,7 @@ class Node extends Application
 		} else {
 			$this->handler = $handler;
 		}
-//		return $this->restructure();
+		return $this;
 	}
 
 
@@ -225,7 +224,7 @@ class Node extends Application
 	public function addInterceptor($handler)
 	{
 		$this->_interceptors[] = $handler;
-//		$this->restructure();
+
 	}
 
 
@@ -246,7 +245,7 @@ class Node extends Application
 	public function addLimits($handler)
 	{
 		$this->_limits[] = $handler;
-//		$this->restructure();
+
 	}
 
 
@@ -320,24 +319,6 @@ class Node extends Application
 		return null;
 	}
 
-	/**
-	 * @param $options
-	 * @return $this
-	 */
-	public function bindOptions($options)
-	{
-		if (is_object($options)) {
-			$this->options = $options;
-		} else {
-			$options = array_filter($options);
-			$last = $options[count($options) - 1];
-			if (empty($last)) {
-				return $this;
-			}
-			$this->options = $last;
-		}
-		return $this;
-	}
 
 	/**
 	 * @param string $alias
@@ -374,6 +355,7 @@ class Node extends Application
 		return $this;
 	}
 
+
 	/**
 	 * @param $middles
 	 * @throws
@@ -385,7 +367,6 @@ class Node extends Application
 			return;
 		}
 		$this->middleware = $this->each($middles, $_tmp);
-//		$this->restructure();
 	}
 
 
@@ -406,7 +387,6 @@ class Node extends Application
 			$class = [$class, 'handler'];
 		}
 		$this->middleware[] = $class;
-//		$this->restructure();
 	}
 
 
