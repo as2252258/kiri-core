@@ -67,7 +67,7 @@ class Node extends Application
 		} else {
 			$this->handler = $handler;
 		}
-		return $this->restructure();
+//		return $this->restructure();
 	}
 
 
@@ -225,7 +225,7 @@ class Node extends Application
 	public function addInterceptor($handler)
 	{
 		$this->_interceptors[] = $handler;
-		$this->restructure();
+//		$this->restructure();
 	}
 
 
@@ -246,7 +246,7 @@ class Node extends Application
 	public function addLimits($handler)
 	{
 		$this->_limits[] = $handler;
-		$this->restructure();
+//		$this->restructure();
 	}
 
 
@@ -385,7 +385,7 @@ class Node extends Application
 			return;
 		}
 		$this->middleware = $this->each($middles, $_tmp);
-		$this->restructure();
+//		$this->restructure();
 	}
 
 
@@ -406,7 +406,7 @@ class Node extends Application
 			$class = [$class, 'handler'];
 		}
 		$this->middleware[] = $class;
-		$this->restructure();
+//		$this->restructure();
 	}
 
 
@@ -427,13 +427,15 @@ class Node extends Application
 
 	/**
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public function dispatch()
 	{
-		if (empty($this->callback)) {
-			return JSON::to(404, $this->_error ?? 'Page not found.');
+		$node = $this->restructure();
+		if (empty($node->callback)) {
+			return JSON::to(404, $node->_error ?? 'Page not found.');
 		}
-		return call_user_func($this->callback, \request());
+		return call_user_func($node->callback, \request());
 	}
 
 
