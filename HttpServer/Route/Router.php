@@ -477,10 +477,8 @@ class Router extends Application implements RouterInterface
 	{
 		try {
 			if ($this->reading) {
-				return send(self::NOT_FOUND, 502);
-			}
-			/** @var Node $node */
-			if (!($node = $this->find_path(\request()))) {
+				$response = send(self::NOT_FOUND, 502);
+			} else if (!($node = $this->find_path(\request()))) {
 				$response = send(self::NOT_FOUND, 404);
 			} else {
 				$response = send($node->dispatch(), 200);
