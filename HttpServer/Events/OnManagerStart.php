@@ -29,7 +29,7 @@ class OnManagerStart extends Callback
 		}
 
 		while ($ret = Process::wait()) {
-			$server->stop();
+			$server->shutdown();
 			var_dump($ret);
 		}
 
