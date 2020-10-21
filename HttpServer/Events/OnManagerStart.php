@@ -28,9 +28,6 @@ class OnManagerStart extends Callback
 		if (Snowflake::isLinux()) {
 			name('Server Manager.');
 		}
-		go(function () use ($server) {
-			System::waitPid($server->manager_pid);
-		});
 	}
 
 }
