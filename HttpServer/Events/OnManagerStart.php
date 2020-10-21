@@ -30,11 +30,8 @@ class OnManagerStart extends Callback
 		}
 
 		pcntl_signal(9 | 15, function () use ($server) {
-			$status = 0;
-			while ($ret = pcntl_waitpid($server->manager_pid, $status)) {
-
-				var_dump($ret);
-
+			while (pcntl_wifexited(0)) {
+				var_dump(error_get_last());
 				break;
 			}
 		});
