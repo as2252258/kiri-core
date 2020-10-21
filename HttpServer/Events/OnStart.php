@@ -30,15 +30,24 @@ class OnStart extends Callback
 			name(rtrim(Config::get('id', 'system:'), ':'));
 		}
 
-		Process::signal(9, function () use ($server) {
-			while ($ret = Process::wait()) {
-				if ($ret['signal'] == 9 || $ret['signal'] == 15) {
-					$server->shutdown();
-				} else {
-					$server->reload();
-				}
+		pcntl_signal(9 | 15, function () use ($server) {
+			$status = 0;
+			while (pcntl_waitpid($server->master_pid,$status)) {
+				var_dump('skill');
+				var_dump(error_get_last());
+				break;
 			}
 		});
+
+//		Process::signal(9, function () use ($server) {
+//			while ($ret = Process::wait()) {
+//				if ($ret['signal'] == 9 || $ret['signal'] == 15) {
+//					$server->shutdown();
+//				} else {
+//					$server->reload();
+//				}
+//			}
+//		});
 
 	}
 

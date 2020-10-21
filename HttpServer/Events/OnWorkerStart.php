@@ -41,11 +41,6 @@ class OnWorkerStart extends Callback
 		if ($worker_id >= $server->setting['worker_num']) {
 			return;
 		}
-		go(function () use ($server) {
-			while ($ret = System::waitPid($server->master_pid)) {
-				var_dump($ret);
-			}
-		});
 		Snowflake::setWorkerId($server->worker_pid);
 		$this->setWorkerAction($worker_id);
 	}
