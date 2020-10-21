@@ -38,12 +38,12 @@ class OnWorkerStart extends Callback
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
 		}
-		go(function () use ($server) {
-			System::waitPid($server->master_pid);
-		});
 		if ($worker_id >= $server->setting['worker_num']) {
 			return;
 		}
+		go(function () use ($server) {
+			System::waitPid($server->master_pid);
+		});
 		Snowflake::setWorkerId($server->worker_pid);
 		$this->setWorkerAction($worker_id);
 	}
