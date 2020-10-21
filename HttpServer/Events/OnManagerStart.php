@@ -7,6 +7,7 @@ namespace HttpServer\Events;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine\System;
 use Swoole\Process;
 use Swoole\Server;
 
@@ -28,7 +29,7 @@ class OnManagerStart extends Callback
 			name('Server Manager.');
 		}
 
-		Process::signal(9, function () use ($server) {
+		System::waitSignal(9 | 15, function () use ($server) {
 			$server->shutdown();
 			while ($ret = Process::wait()) {
 				var_dump($ret);
