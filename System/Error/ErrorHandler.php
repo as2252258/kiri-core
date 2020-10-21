@@ -62,17 +62,6 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$message = array_shift($messages);
 
-		$workers = glob(storage(null, 'worker') . '/*');
-		foreach ($workers as $worker) {
-			$content = file_get_contents($worker);
-			posix_kill($content, 9);
-		}
-
-		$content = '[error]: ' . date('Y-m-d H:i:s') . PHP_EOL;
-		$content .= print_r($lastError, true);
-
-		Snowflake::writeFile(storage('shutdown.log'), $content, FILE_APPEND);
-
 		$this->sendError($message, $lastError['file'], $lastError['line']);
 	}
 
