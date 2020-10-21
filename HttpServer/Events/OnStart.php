@@ -8,6 +8,8 @@ use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine\System;
+use Swoole\Process;
 use Swoole\Server;
 
 class OnStart extends Callback
@@ -17,7 +19,7 @@ class OnStart extends Callback
 	 * @param Server $server
 	 * @throws \Exception
 	 */
-	public function onHandler($server)
+	public function onHandler(Server $server)
 	{
 		Snowflake::setProcessId($server->master_pid);
 
@@ -26,6 +28,9 @@ class OnStart extends Callback
 
 		if (Snowflake::isLinux()) {
 			name(rtrim(Config::get('id', 'system:'), ':'));
+		}
+		while ($ret = System::wait()) {
+			var_dump($ret);
 		}
 	}
 
