@@ -53,19 +53,19 @@ class Node extends Application
 	 */
 	public function bindHandler($handler)
 	{
-//		if ($handler instanceof Closure) {
-//			$this->handler = $handler;
-//		} else if (is_string($handler) && strpos($handler, '@') !== false) {
-//			list($controller, $action) = explode('@', $handler);
-//			if (!empty($this->namespace)) {
-//				$controller = implode('\\', $this->namespace) . '\\' . $controller;
-//			}
-//			$this->handler = $this->getReflect($controller, $action);
-//		} else if ($handler != null && !is_callable($handler, true)) {
-//			$this->_error = 'Controller is con\'t exec.';
-//		} else {
-//		}
-		$this->handler = $handler;
+		if ($handler instanceof Closure) {
+			$this->handler = $handler;
+		} else if (is_string($handler) && strpos($handler, '@') !== false) {
+			list($controller, $action) = explode('@', $handler);
+			if (!empty($this->namespace)) {
+				$controller = implode('\\', $this->namespace) . '\\' . $controller;
+			}
+			$this->handler = $this->getReflect($controller, $action);
+		} else if ($handler != null && !is_callable($handler, true)) {
+			$this->_error = 'Controller is con\'t exec.';
+		} else {
+			$this->handler = $handler;
+		}
 		return $this;
 	}
 
@@ -395,36 +395,13 @@ class Node extends Application
 	 */
 	private function restructure()
 	{
-		$this->resolveHandler();
 		if (empty($this->handler)) {
 			return $this;
 		}
-		/** @var Middleware $made */
 		$made = Snowflake::createObject(Middleware::class);
 		$made->setMiddleWares($this->middleware);
 		$made->getGenerate($this);
 		return $this;
-	}
-
-
-	/**
-	 * @throws Exception
-	 * 解析回调函数
-	 */
-	private function resolveHandler()
-	{
-		if ($this->handler instanceof \Closure) {
-			return;
-		}
-		if (is_string($this->handler) && strpos($this->handler, '@') !== false) {
-			list($controller, $action) = explode('@', $this->handler);
-			if (!empty($this->namespace)) {
-				$controller = implode('\\', $this->namespace) . '\\' . $controller;
-			}
-			$this->handler = $this->getReflect($controller, $action);
-		} else if ($this->handler != null && !is_callable($this->handler, true)) {
-			$this->_error = 'Controller is con\'t exec.';
-		}
 	}
 
 
