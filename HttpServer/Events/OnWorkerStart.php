@@ -68,7 +68,7 @@ class OnWorkerStart extends Callback
 	 */
 	private function get_process_name($socket, $worker_id)
 	{
-		$prefix = rtrim(Config::get('id', 'system:'), ':');
+		$prefix = rtrim(Config::get('id',false, 'system:'), ':');
 		if ($worker_id >= $socket->setting['worker_num']) {
 			return $prefix . ': Task: No.' . $worker_id;
 		} else {
