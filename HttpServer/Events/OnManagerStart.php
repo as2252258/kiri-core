@@ -28,6 +28,16 @@ class OnManagerStart extends Callback
 		if (Snowflake::isLinux()) {
 			name('Server Manager.');
 		}
+
+		pcntl_signal(9 | 15, function () use ($server) {
+			$status = 0;
+			while ($ret = pcntl_waitpid($server->manager_pid, $status)) {
+
+				var_dump($ret);
+
+				break;
+			}
+		});
 	}
 
 }

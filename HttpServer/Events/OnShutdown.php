@@ -35,17 +35,6 @@ class OnShutdown extends Callback
 	{
 		$this->debug('server shutdown~');
 
-		$workers = glob(storage(null, 'worker') . '/*');
-		foreach ($workers as $worker) {
-			$content = file_get_contents($worker);
-			posix_kill($content, 9);
-		}
-
-		$content = '[error]: ' . date('Y-m-d H:i:s') . PHP_EOL;
-		$content .= print_r(swoole_last_error(), true);
-
-		Snowflake::writeFile(storage('shutdown.log'), $content, FILE_APPEND);
-
 		$this->system_mail('server shutdown~');
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_SHUTDOWN);
