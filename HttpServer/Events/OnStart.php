@@ -30,7 +30,7 @@ class OnStart extends Callback
 			name(rtrim(Config::get('id', 'system:'), ':'));
 		}
 
-		Process::signal(9 | 15, function () use ($server) {
+		Process::signal(9, function () use ($server) {
 			while ($ret = Process::wait()) {
 				if ($ret['signal'] == 9 || $ret['signal'] == 15) {
 					$server->shutdown();
