@@ -28,14 +28,13 @@ class OnManagerStart extends Callback
 			name('Server Manager.');
 		}
 
-		while ($ret = Process::wait()) {
+		Process::signal(9, function () use ($server) {
 			$server->shutdown();
-			var_dump($ret);
-		}
+			while ($ret = Process::wait()) {
+				var_dump($ret);
+			}
 
-//		$this->debug('start scanning...');
-//		loadByDir(__DIR__ . '/../../');
-//		$this->debug('scanning end...');
+		});
 	}
 
 }
