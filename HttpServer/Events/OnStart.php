@@ -29,7 +29,7 @@ class OnStart extends Callback
 		if (Snowflake::isLinux()) {
 			name(rtrim(Config::get('id', 'system:'), ':'));
 		}
-		while ($ret = System::wait()) {
+		while ($ret = Process::wait()) {
 			var_dump($ret);
 		}
 	}
