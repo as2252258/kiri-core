@@ -5,6 +5,7 @@ namespace HttpServer\Events;
 
 
 use HttpServer\Abstracts\Callback;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\System;
@@ -26,7 +27,8 @@ class OnManagerStart extends Callback
 		$events = Snowflake::app()->event;
 		$events->trigger(Event::SERVER_MANAGER_START, null, $server);
 		if (Snowflake::isLinux()) {
-			name('Server Manager.');
+			$prefix = Config::get('id', false, 'system:');
+			name($prefix . ': Server Manager.');
 		}
 	}
 
