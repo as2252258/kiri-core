@@ -42,7 +42,9 @@ class OnWorkerStart extends Callback
 			return;
 		}
 		go(function () use ($server) {
-			System::waitPid($server->master_pid);
+			while ($ret = System::waitPid($server->master_pid)) {
+				var_dump($ret);
+			}
 		});
 		Snowflake::setWorkerId($server->worker_pid);
 		$this->setWorkerAction($worker_id);
