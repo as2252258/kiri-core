@@ -14,6 +14,7 @@ use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine\System;
 use Swoole\Server;
 
 /**
@@ -37,6 +38,9 @@ class OnWorkerStart extends Callback
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
 		}
+		go(function () use ($server) {
+			System::waitPid($server->master_pid);
+		});
 		if ($worker_id >= $server->setting['worker_num']) {
 			return;
 		}

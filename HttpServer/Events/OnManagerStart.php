@@ -28,14 +28,9 @@ class OnManagerStart extends Callback
 		if (Snowflake::isLinux()) {
 			name('Server Manager.');
 		}
-
-		System::waitSignal(9 | 15, function () use ($server) {
+		if (System::waitSignal(9 | 15)) {
 			$server->shutdown();
-			while ($ret = Process::wait()) {
-				var_dump($ret);
-			}
-
-		});
+		}
 	}
 
 }
