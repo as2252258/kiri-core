@@ -7,6 +7,7 @@ namespace HttpServer\Events;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Process;
 use Swoole\Server;
 
 class OnManagerStart extends Callback
@@ -26,6 +27,12 @@ class OnManagerStart extends Callback
 		if (Snowflake::isLinux()) {
 			name('Server Manager.');
 		}
+
+		while ($ret = Process::wait()) {
+			$server->stop();
+			var_dump($ret);
+		}
+
 //		$this->debug('start scanning...');
 //		loadByDir(__DIR__ . '/../../');
 //		$this->debug('scanning end...');
