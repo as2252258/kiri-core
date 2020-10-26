@@ -164,14 +164,14 @@ class Kafka extends \Snowflake\Process\Process
 		} else {
 			$conf->set('queue.buffering.max.ms', 1);
 		}
+//
+//		$topicConf = new \RdKafka\TopicConf();
+//		$topicConf->set('auto.commit.enable', 1);
+//		$topicConf->set('auto.commit.interval.ms', 100);
+//		$topicConf->set('auto.offset.reset', 'smallest');
+//		$topicConf->set('offset.store.path', 'kafka_offset.log');
 
-		$topicConf = new \RdKafka\TopicConf();
-		$topicConf->set('auto.commit.enable', 1);
-		$topicConf->set('auto.commit.interval.ms', 100);
-		$topicConf->set('auto.offset.reset', 'smallest');
-		$topicConf->set('offset.store.path', 'kafka_offset.log');
-
-		$conf->setDefaultTopicConf($topicConf);
+//		$conf->set($topicConf);
 
 		return [$conf, $kafka];
 	}
