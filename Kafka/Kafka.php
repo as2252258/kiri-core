@@ -56,10 +56,14 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		$this->channelListener();
 		[$config, $conf] = $this->kafkaConfig();
-		$consumer = new KafkaConsumer($config);
-		$consumer->subscribe($conf['topics']);
+		$objRdKafka = new \RdKafka\Consumer($config);
+		$objRdKafka->setLogLevel(LOG_DEBUG);
+		$objRdKafka->addBrokers("localhost:9092");
+
+		$consumer = $objRdKafka->newTopic('test');
+		$consumer->consumeStart(0, RD_KAFKA_OFFSET_END);
 		while (true) {
-			$message = $consumer->consume($conf['metadataRefreshIntervalMs'] ?? 1000);
+			$message = $consumer->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
 			if (empty($message)) {
 				continue;
 			}
@@ -139,7 +143,7 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', uniqid('kafka'));
 
-		$conf->set('metadata.broker.list', 'localhost:9092');
+		$conf->set('metadata.broker.list', '127.0.0.1:9092');
 		$conf->set('auto.offset.reset', 'earliest');
 		$conf->set('socket.timeout.ms', 300000);
 
