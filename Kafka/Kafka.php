@@ -49,20 +49,16 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param Process $process
 	 * @throws ConfigException
-	 * @throws \RdKafka\Exception
 	 * @throws \Exception
 	 */
 	public function onHandler(Process $process)
 	{
 		$this->channelListener();
 		[$config, $conf] = $this->kafkaConfig();
-		$objRdKafka = new \RdKafka\Consumer($config);
-		$objRdKafka->addBrokers("localhost:9092");
-
-		$consumer = $objRdKafka->newTopic('test');
-		$consumer->consumeStart(0, RD_KAFKA_OFFSET_END);
+		$objRdKafka = new KafkaConsumer($config);
+		$objRdKafka->subscribe(['test']);
 		while (true) {
-			$message = $consumer->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
+			$message = $objRdKafka->consume($conf['metadataRefreshIntervalMs'] ?? 1000);
 			if (empty($message)) {
 				continue;
 			}
