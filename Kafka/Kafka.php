@@ -35,7 +35,7 @@ class Kafka extends \Snowflake\Process\Process
 		$this->channelListener();
 		[$config, $conf] = $this->kafkaConfig();
 		$consumer = new \RdKafka\Consumer($config);
-		$consumer->addBrokers($config['brokers']);
+		$consumer->addBrokers($conf['brokers']);
 
 		$topic = $consumer->newTopic("test");
 		while (true) {
