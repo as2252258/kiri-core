@@ -24,8 +24,8 @@ use Snowflake\Snowflake;
 class ErrorHandler extends Component implements ErrorInterface
 {
 
-	/** @var null|IFormatter $message */
-	private null|IFormatter $message = NULL;
+	/** @var ?IFormatter $message */
+	private ?IFormatter $message = NULL;
 
 	public string $category = 'app';
 
