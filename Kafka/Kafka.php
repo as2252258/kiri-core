@@ -22,24 +22,44 @@ use function Amp\stop;
 class Kafka extends \Snowflake\Process\Process
 {
 
-	protected Channel $channel;
+	/** @var Channel */
+	protected $channel;
+
+
+	/**
+	 * @throws ConfigException
+	 */
+//	public function initConfig()
+//	{
+//		$kafka = SConfig::get('kafka');
+//		$config = ConsumerConfig::getInstance();
+//		$config->setMetadataRefreshIntervalMs(
+//			$kafka['metadataRefreshIntervalMs'] ?? 1000
+//		);
+//		$config->setMetadataBrokerList($kafka['brokers']);
+//		$config->setGroupId($kafka['groupId']);
+//		$config->setBrokerVersion($kafka['version']);
+//		$config->setTopics($kafka['topics']);
+//		$this->channelListener($kafka);
+//
+//		return [new Consumer(), $kafka];
+//	}
 
 
 	/**
 	 * @param Process $process
 	 * @throws ConfigException
+	 * @throws \RdKafka\Exception
 	 * @throws \Exception
 	 */
 	public function onHandler(Process $process)
 	{
 		$this->channelListener();
 		[$config, $conf] = $this->kafkaConfig();
-		$consumer = new \RdKafka\Consumer($config);
-		$consumer->addBrokers($conf['brokers']);
-
-		$topic = $consumer->newTopic("test");
+		$consumer = new KafkaConsumer($config);
+		$consumer->subscribe($conf['topics']);
 		while (true) {
-			$message = $topic->consume(0, 1000);
+			$message = $consumer->consume($conf['metadataRefreshIntervalMs'] ?? 1000);
 			if (empty($message)) {
 				continue;
 			}
