@@ -57,7 +57,6 @@ class Kafka extends \Snowflake\Process\Process
 		$this->channelListener();
 		[$config, $conf] = $this->kafkaConfig();
 		$objRdKafka = new \RdKafka\Consumer($config);
-		$objRdKafka->setLogLevel(LOG_DEBUG);
 		$objRdKafka->addBrokers("localhost:9092");
 
 		$consumer = $objRdKafka->newTopic('test');
