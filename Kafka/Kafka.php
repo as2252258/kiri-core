@@ -138,12 +138,9 @@ class Kafka extends \Snowflake\Process\Process
 		$kafka = SConfig::get('kafka');
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', uniqid('kafka'));
-//		$conf->set('group.id', 'myConsumerGroup');
 
 		$conf->set('metadata.broker.list', 'localhost:9092');
-		$conf->set('metadata.broker.list', $kafka['brokers']);
 		$conf->set('auto.offset.reset', 'earliest');
-
 		$conf->set('socket.timeout.ms', 300000);
 
 		//多进程和信号
@@ -153,7 +150,6 @@ class Kafka extends \Snowflake\Process\Process
 		} else {
 			$conf->set('queue.buffering.max.ms', 1);
 		}
-
 		return [$conf, $kafka];
 	}
 
