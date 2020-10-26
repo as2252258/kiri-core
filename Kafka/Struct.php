@@ -4,21 +4,18 @@
 namespace Kafka;
 
 
+use RdKafka\Message;
+
 class Struct
 {
 
-	public $offset;
+	public int $offset;
 
-	public $part;
-	public $topic;
+	public Message $message;
+	public string $topic;
 
-	public $crc;
-	public $magic;
-	public $attr;
-	public $timestamp;
-	public $key;
-	public $value;
-
+	public string $value;
+	public string $part;
 
 	/**
 	 * Struct constructor.
@@ -26,17 +23,13 @@ class Struct
 	 * @param $part
 	 * @param $message
 	 */
-	public function __construct($topic, $part, $message)
+	public function __construct($topic, $part,Message $message)
 	{
 		$this->topic = $topic;
-		$this->offset = $message['offset'];
-		$this->part = $part;
-		$this->crc = $message['message']['crc'];
-		$this->magic = $message['message']['magic'];
-		$this->attr = $message['message']['attr'];
-		$this->timestamp = $message['message']['timestamp'];
-		$this->key = $message['message']['key'];
-		$this->value = $message['message']['value'];
+		$this->offset = $message->offset;
+		$this->part = $message->partition;
+		$this->message = $message;
+		$this->value = $message->payload;
 	}
 
 }
