@@ -135,6 +135,7 @@ class Kafka extends \Snowflake\Process\Process
 
 		$kafka = SConfig::get('kafka');
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
+		$conf->set('group.id', 1001);
 
 		$conf->set('metadata.broker.list', '127.0.0.1:9092');
 		$conf->set('socket.timeout.ms', 300000);
