@@ -24,12 +24,10 @@ use Snowflake\Snowflake;
 class ErrorHandler extends Component implements ErrorInterface
 {
 
-	/** @var IFormatter $message */
-	private $message = NULL;
+	/** @var null|IFormatter $message */
+	private null|IFormatter $message = NULL;
 
-	public $action;
-
-	public $category = 'app';
+	public string $category = 'app';
 
 	/**
 	 * 错误处理注册
