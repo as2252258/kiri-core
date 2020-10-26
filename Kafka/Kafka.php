@@ -112,6 +112,7 @@ class Kafka extends \Snowflake\Process\Process
 	protected function handlerExecute($topic, $part, $message)
 	{
 		try {
+			var_dump($message);
 			$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
 			if (!class_exists($namespace)) {
 				return;
