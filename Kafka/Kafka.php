@@ -22,50 +22,24 @@ use function Amp\stop;
 class Kafka extends \Snowflake\Process\Process
 {
 
-	/** @var Channel */
-	protected $channel;
-
-
-	/**
-	 * @throws ConfigException
-	 */
-	public function initConfig()
-	{
-		$kafka = SConfig::get('kafka');
-		$config = ConsumerConfig::getInstance();
-		$config->setMetadataRefreshIntervalMs(
-			$kafka['metadataRefreshIntervalMs'] ?? 1000
-		);
-		$config->setMetadataBrokerList($kafka['brokers']);
-		$config->setGroupId($kafka['groupId']);
-		$config->setBrokerVersion($kafka['version']);
-		$config->setTopics($kafka['topics']);
-		$this->channelListener($kafka);
-
-		return [new Consumer(), $kafka];
-	}
+	protected Channel $channel;
 
 
 	/**
 	 * @param Process $process
 	 * @throws ConfigException
-	 * @throws \RdKafka\Exception
+	 * @throws \Exception
 	 */
 	public function onHandler(Process $process)
 	{
-//		[$consumer, $kafka] = $this->initConfig();
-//		if ($kafka['debug'] ?? true) {
-//			$consumer->setLogger(new Logger());
-//		}
-//		$consumer->start(function ($topic, $part, $message) {
-//			$this->channel->push([$topic, $part, $message]);
-//		});
 		$this->channelListener();
 		[$config, $conf] = $this->kafkaConfig();
-		$consumer = new KafkaConsumer($config);
-		$consumer->subscribe($conf['topics']);
+		$consumer = new \RdKafka\Consumer($config);
+		$consumer->addBrokers($config['brokers']);
+
+		$topic = $consumer->newTopic("test");
 		while (true) {
-			$message = $consumer->consume($conf['metadataRefreshIntervalMs'] ?? 1000);
+			$message = $topic->consume(0, 1000);
 			if (empty($message)) {
 				continue;
 			}
@@ -74,10 +48,10 @@ class Kafka extends \Snowflake\Process\Process
 					$this->channel->push([$message->topic_name, $message->partition, $message]);
 					break;
 				case RD_KAFKA_RESP_ERR__PARTITION_EOF:
-					echo "No more messages; will wait for more\n";
+					$this->application->error('No more messages; will wait for more');
 					break;
 				case RD_KAFKA_RESP_ERR__TIMED_OUT:
-					echo "Timed out\n";
+					$this->application->error('kafka Timed out');
 					break;
 				default:
 					throw new \Exception($message->errstr(), $message->err);
@@ -164,14 +138,6 @@ class Kafka extends \Snowflake\Process\Process
 		} else {
 			$conf->set('queue.buffering.max.ms', 1);
 		}
-//
-//		$topicConf = new \RdKafka\TopicConf();
-//		$topicConf->set('auto.commit.enable', 1);
-//		$topicConf->set('auto.commit.interval.ms', 100);
-//		$topicConf->set('auto.offset.reset', 'smallest');
-//		$topicConf->set('offset.store.path', 'kafka_offset.log');
-
-//		$conf->set($topicConf);
 
 		return [$conf, $kafka];
 	}
