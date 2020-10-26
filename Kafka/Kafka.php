@@ -155,7 +155,7 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->setRebalanceCb($rdCb);
 		$conf->set('group.id', uniqid('kafka'));
 		$conf->set('metadata.broker.list', $kafka['brokers']);
-		$conf->set('socket.timeout.ms', $kafka['timeout'] ?? 1000);
+		$conf->set('socket.timeout.ms', 3600 * 1000);
 
 		//多进程和信号
 		if (function_exists('pcntl_sigprocmask')) {
