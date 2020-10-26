@@ -71,7 +71,7 @@ class Kafka extends \Snowflake\Process\Process
 					$this->application->error('No more messages; will wait for more');
 					break;
 				case RD_KAFKA_RESP_ERR__TIMED_OUT:
-					$this->application->error('kafka Timed out');
+					$this->application->error('Kafka Timed out');
 					break;
 				default:
 					throw new \Exception($message->errstr(), $message->err);
@@ -136,30 +136,44 @@ class Kafka extends \Snowflake\Process\Process
 		$conf = new Conf();
 
 		$kafka = SConfig::get('kafka');
-
-		$rdCb = function (KafkaConsumer $kafka, $err, array $partitions = null) {
-			if ($err == RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS) {
-				$kafka->assign($partitions);
-			} else if ($err == RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS) {
-				$kafka->assign(NULL);
-			} else {
-				throw new \Exception($err);
-			}
-		};
-		$conf->setRebalanceCb($rdCb);
+		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', uniqid('kafka'));
+		$conf->set('group.id', 'myConsumerGroup');
+
+		$conf->set('metadata.broker.list', '127.0.0.1');
 		$conf->set('metadata.broker.list', $kafka['brokers']);
+		$conf->set('auto.offset.reset', 'earliest');
+
 		$conf->set('socket.timeout.ms', 300000);
 
 		//多进程和信号
-		if (function_exists('pcntl_sigprocmask')) {
-			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
-			$conf->set('internal.termination.signal', SIGIO);
-		} else {
-			$conf->set('queue.buffering.max.ms', 1);
-		}
+//		if (function_exists('pcntl_sigprocmask')) {
+//			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
+//			$conf->set('internal.termination.signal', SIGIO);
+//		} else {
+//			$conf->set('queue.buffering.max.ms', 1);
+//		}
 
 		return [$conf, $kafka];
+	}
+
+
+	/**
+	 * @param KafkaConsumer $kafka
+	 * @param $err
+	 * @param array|null $partitions
+	 * @throws \RdKafka\Exception
+	 * @throws \Exception
+	 */
+	public function rebalanced_cb(KafkaConsumer $kafka, $err, array $partitions = null)
+	{
+		if ($err == RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS) {
+			$kafka->assign($partitions);
+		} else if ($err == RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS) {
+			$kafka->assign(NULL);
+		} else {
+			throw new \Exception($err);
+		}
 	}
 
 
