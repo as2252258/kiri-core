@@ -20,10 +20,9 @@ class Struct
 	/**
 	 * Struct constructor.
 	 * @param $topic
-	 * @param $part
 	 * @param $message
 	 */
-	public function __construct($topic, $part,Message $message)
+	public function __construct($topic, Message $message)
 	{
 		$this->topic = $topic;
 		$this->offset = $message->offset;

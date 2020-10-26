@@ -65,7 +65,7 @@ class Kafka extends \Snowflake\Process\Process
 			}
 			switch ($message->err) {
 				case RD_KAFKA_RESP_ERR_NO_ERROR:
-					$this->channel->push([$message->topic_name, $message->partition, $message]);
+					$this->channel->push([$message->topic_name, $message]);
 					break;
 				case RD_KAFKA_RESP_ERR__PARTITION_EOF:
 					$this->application->error('No more messages; will wait for more');
@@ -95,7 +95,7 @@ class Kafka extends \Snowflake\Process\Process
 						$group->done();
 					});
 					while ($messages = $this->channel->pop()) {
-						$this->handlerExecute($messages[0], $messages[1], $messages[2]);
+						$this->handlerExecute($messages[0], $messages[1]);
 					}
 				});
 			}
@@ -109,7 +109,7 @@ class Kafka extends \Snowflake\Process\Process
 	 * @param $part
 	 * @param $message
 	 */
-	protected function handlerExecute($topic, $part, $message)
+	protected function handlerExecute($topic, $message)
 	{
 		try {
 			$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
@@ -120,7 +120,7 @@ class Kafka extends \Snowflake\Process\Process
 			if (!($class instanceof ConsumerInterface)) {
 				return;
 			}
-			$class->onHandler(new Struct($topic, $part, $message));
+			$class->onHandler(new Struct($topic, $message));
 		} catch (\Throwable $exception) {
 			$this->application->error($exception->getMessage());
 		}
@@ -140,8 +140,8 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->set('group.id', uniqid('kafka'));
 		$conf->set('group.id', 'myConsumerGroup');
 
-		$conf->set('metadata.broker.list', '127.0.0.1:9092');
-//		$conf->set('metadata.broker.list', $kafka['brokers']);
+//		$conf->set('metadata.broker.list', '127.0.0.1:9092');
+		$conf->set('metadata.broker.list', $kafka['brokers']);
 		$conf->set('auto.offset.reset', 'earliest');
 
 		$conf->set('socket.timeout.ms', 300000);
