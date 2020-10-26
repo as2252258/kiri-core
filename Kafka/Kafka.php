@@ -138,7 +138,7 @@ class Kafka extends \Snowflake\Process\Process
 		$kafka = SConfig::get('kafka');
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', uniqid('kafka'));
-		$conf->set('group.id', 'myConsumerGroup');
+//		$conf->set('group.id', 'myConsumerGroup');
 
 //		$conf->set('metadata.broker.list', '127.0.0.1:9092');
 		$conf->set('metadata.broker.list', $kafka['brokers']);
