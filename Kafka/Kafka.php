@@ -140,9 +140,9 @@ class Kafka extends \Snowflake\Process\Process
 //		$conf->set('group.id', uniqid('kafka'));
 		$conf->set('group.id', 'myConsumerGroup');
 
-		$conf->set('metadata.broker.list', 'localhost:9092');
+		$conf->set('metadata.broker.list', 'localhost:2080');
 //		$conf->set('metadata.broker.list', $kafka['brokers']);
-		$conf->set('auto.offset.reset', 'earliest');
+//		$conf->set('auto.offset.reset', 'earliest');
 
 		$conf->set('socket.timeout.ms', 300000);
 
