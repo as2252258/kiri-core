@@ -145,7 +145,7 @@ class Kafka extends \Snowflake\Process\Process
 			}
 		});
 		$conf->set('group.id', uniqid('kafka'));
-		$conf->set('metadata.broker.list', '127.0.0.1:2080');
+		$conf->set('metadata.broker.list', 'tcp://127.0.0.1:2080');
 
 		$topicConf = new TopicConf();
 		$topicConf->set('auto.commit.enable', 1);
