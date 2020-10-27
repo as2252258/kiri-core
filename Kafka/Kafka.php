@@ -137,16 +137,8 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', uniqid('kafka'));
 
-		$conf->set('metadata.broker.list', '127.0.0.1:9092,127.0.0.1:2080');
-		$conf->set('socket.timeout.ms', 300000);
+		$conf->set('metadata.broker.list', '127.0.0.1:9092');
 
-		//多进程和信号
-		if (function_exists('pcntl_sigprocmask')) {
-			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
-			$conf->set('internal.termination.signal', SIGIO);
-		} else {
-			$conf->set('queue.buffering.max.ms', 1);
-		}
 		return [$conf, $kafka];
 	}
 
