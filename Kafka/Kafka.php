@@ -61,7 +61,6 @@ class Kafka extends \Snowflake\Process\Process
 		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 		while (true) {
 			$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
-			var_dump($message);
 			if (empty($message)) {
 				continue;
 			}
@@ -147,15 +146,14 @@ class Kafka extends \Snowflake\Process\Process
 			}
 		});
 		$conf->set('group.id', uniqid('kafka'));
-
 		$conf->set('metadata.broker.list', '127.0.0.1:9092');
 
 		$topicConf = new TopicConf();
+		$topicConf->set('auto.commit.enable', 1);
 		$topicConf->set('auto.commit.interval.ms', 100);
-		$topicConf->set('offset.store.method', 'file');
+		$topicConf->set('offset.store.method', 'broker');
 		$topicConf->set('offset.store.path', sys_get_temp_dir());
 		$topicConf->set('auto.offset.reset', 'smallest');
-
 //		$conf->setDefaultTopicConf($topicConf);
 
 		return [$conf, $topicConf, $kafka];
