@@ -151,7 +151,7 @@ class Kafka extends \Snowflake\Process\Process
 		$topicConf = new TopicConf();
 		$topicConf->set('auto.offset.reset', 'smallest');
 
-		$conf->setDefaultTopicConf($topicConf);
+//		$conf->setDefaultTopicConf($topicConf);
 
 		return [$conf, $kafka];
 	}
