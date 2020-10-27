@@ -146,15 +146,24 @@ class Kafka extends \Snowflake\Process\Process
 			}
 		});
 		$conf->set('group.id', uniqid('kafka'));
-		$conf->set('metadata.broker.list', '127.0.0.1:2080');
+//		$conf->set('metadata.broker.list', '127.0.0.1:2080');
+		$conf->set('metadata.broker.list', '172.26.221.220');
+		$conf->set('socket.timeout.ms', 30000);
+
+		if (function_exists('pcntl_sigprocmask')) {
+			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
+			$conf->set('internal.termination.signal', SIGIO);
+		} else {
+			$conf->set('queue.buffering.max.ms', 1);
+		}
+
 
 		$topicConf = new TopicConf();
 		$topicConf->set('auto.commit.enable', 1);
 		$topicConf->set('auto.commit.interval.ms', 100);
-		$topicConf->set('offset.store.method', 'file');
-		$topicConf->set('offset.store.path', sys_get_temp_dir());
+		//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
 		$topicConf->set('auto.offset.reset', 'smallest');
-//		$conf->setDefaultTopicConf($topicConf);
+		$topicConf->set('offset.store.path', 'kafka_offset.log');
 
 		return [$conf, $topicConf, $kafka];
 	}
