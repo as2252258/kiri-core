@@ -56,11 +56,10 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		$this->channelListener();
 		[$config, $topic, $conf] = $this->kafkaConfig();
-		$objRdKafka = new \RdKafka\Consumer($config);
-		$topic = $objRdKafka->newTopic('test', $topic);
-		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+		$objRdKafka = new KafkaConsumer($config);
+		$objRdKafka->subscribe(['test']);
 		while (true) {
-			$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
+			$message = $objRdKafka->consume($conf['metadataRefreshIntervalMs'] ?? 1000);
 			if (empty($message)) {
 				continue;
 			}
