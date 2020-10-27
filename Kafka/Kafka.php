@@ -55,11 +55,12 @@ class Kafka extends \Snowflake\Process\Process
 	public function onHandler(Process $process)
 	{
 		$this->channelListener();
-		[$config, $conf] = $this->kafkaConfig();
-		$objRdKafka = new KafkaConsumer($config);
-		$objRdKafka->subscribe(['test']);
+		[$config, $topic, $conf] = $this->kafkaConfig();
+		$objRdKafka = new \RdKafka\Consumer($config);
+		$topic = $objRdKafka->newTopic('test', $topic);
+		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 		while (true) {
-			$message = $objRdKafka->consume($conf['metadataRefreshIntervalMs'] ?? 1000);
+			$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
 			if (empty($message)) {
 				continue;
 			}
@@ -149,11 +150,14 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->set('metadata.broker.list', '127.0.0.1:9092');
 
 		$topicConf = new TopicConf();
+		$topicConf->set('auto.commit.interval.ms', 100);
+		$topicConf->set('offset.store.method', 'file');
+		$topicConf->set('offset.store.path', sys_get_temp_dir());
 		$topicConf->set('auto.offset.reset', 'smallest');
 
 //		$conf->setDefaultTopicConf($topicConf);
 
-		return [$conf, $kafka];
+		return [$conf, $topicConf, $kafka];
 	}
 
 
