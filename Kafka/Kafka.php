@@ -145,7 +145,7 @@ class Kafka extends \Snowflake\Process\Process
 				throw new \Exception($err);
 			}
 		});
-		$conf->set('group.id', uniqid('kafka'));
+		$conf->set('group.id', $kafka['groupId']);
 //		$conf->set('metadata.broker.list', '127.0.0.1:2080');
 		$conf->set('metadata.broker.list', '172.26.221.220');
 		$conf->set('socket.timeout.ms', 30000);
