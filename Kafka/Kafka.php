@@ -61,6 +61,7 @@ class Kafka extends \Snowflake\Process\Process
 		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 		while (true) {
 			$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
+			var_dump($message);
 			if (empty($message)) {
 				continue;
 			}
