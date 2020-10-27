@@ -134,7 +134,15 @@ class Kafka extends \Snowflake\Process\Process
 		$conf = new Conf();
 
 		$kafka = SConfig::get('kafka');
-		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
+		$conf->setRebalanceCb(function (KafkaConsumer $kafka, $err, array $partitions = null) {
+			if ($err == RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS) {
+				$kafka->assign($partitions);
+			} else if ($err == RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS) {
+				$kafka->assign(NULL);
+			} else {
+				throw new \Exception($err);
+			}
+		});
 		$conf->set('group.id', uniqid('kafka'));
 
 		$conf->set('metadata.broker.list', '127.0.0.1:9092');
