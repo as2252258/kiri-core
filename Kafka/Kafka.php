@@ -6,6 +6,7 @@ namespace Kafka;
 
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
+use RdKafka\TopicConf;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -146,6 +147,11 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->set('group.id', uniqid('kafka'));
 
 		$conf->set('metadata.broker.list', '127.0.0.1:9092');
+
+		$topicConf = new TopicConf();
+		$topicConf->set('auto.offset.reset', 'smallest');
+
+		$conf->setDefaultTopicConf($topicConf);
 
 		return [$conf, $kafka];
 	}
