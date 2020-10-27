@@ -137,7 +137,7 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', 1001);
 
-		$conf->set('metadata.broker.list', '127.0.0.1:9092');
+		$conf->set('metadata.broker.list', '127.0.0.1:9092,127.0.0.1:2080');
 		$conf->set('socket.timeout.ms', 300000);
 
 		//多进程和信号
