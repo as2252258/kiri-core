@@ -18,6 +18,7 @@ use RdKafka\Conf;
 use RdKafka\TopicConf;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -105,6 +106,10 @@ class Producer extends Component
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$rk->poll($timeout);
-		$rk->flush($timeout);
+
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::EVENT_AFTER_REQUEST, function () use ($rk, $timeout) {
+			$rk->flush($timeout);
+		});
 	}
 }
