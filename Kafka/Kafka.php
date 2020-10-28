@@ -96,7 +96,6 @@ class Kafka extends \Snowflake\Process\Process
 		try {
 			$message = $topic->consume(0, $interval);
 			if (empty($message)) {
-				$this->application->debug('message null.');
 				return;
 			}
 			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
