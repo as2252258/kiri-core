@@ -105,6 +105,7 @@ class Producer extends Component
 		/** @var \RdKafka\Producer $rk */
 		$rk = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		if ($rk->getOutQLen() > 0) {
+			$rk->poll(0);
 			$rk->flush($timeout);
 		}
 
