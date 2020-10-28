@@ -45,9 +45,12 @@ class Producer extends Component
 
 	public function __construct($config = [])
 	{
+		parent::__construct($config);
+		if (!class_exists(Conf::class)) {
+			return;
+		}
 		$this->conf = new Conf();
 		$this->topicConf = new TopicConf();
-		parent::__construct($config);
 	}
 
 
