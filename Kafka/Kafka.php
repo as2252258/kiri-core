@@ -89,11 +89,12 @@ class Kafka extends \Snowflake\Process\Process
 
 	/**
 	 * @param ConsumerTopic $topic
+	 * @param $interval
 	 */
-	private function resolve(ConsumerTopic $topic, $intval)
+	private function resolve(ConsumerTopic $topic, $interval)
 	{
 		try {
-			$message = $topic->consume(0, $intval);
+			$message = $topic->consume(0, $interval);
 			if (empty($message)) {
 				$this->application->debug('message null.');
 				return;
