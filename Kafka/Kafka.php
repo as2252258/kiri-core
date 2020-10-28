@@ -57,19 +57,7 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		$this->channelListener();
 
-		$kafkaServers = SConfig::get('kafka');
-
-		$waite = new WaitGroup();
-		foreach ($kafkaServers as $kafkaServer) {
-			$waite->add();
-			go(function () use ($kafkaServer, $waite) {
-				defer(function () use ($waite) {
-					$waite->done();
-				});
-				$this->waite($kafkaServer);
-			});
-		}
-		$waite->wait();
+		$this->waite(SConfig::get('kafka')[0]);
 	}
 
 
@@ -80,7 +68,6 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
 		$objRdKafka = new \RdKafka\Consumer($config);
-		var_dump($kafkaServer['topic']);
 		$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 		Timer::tick($conf['interval'] ?? 1000, function () use ($topic) {
