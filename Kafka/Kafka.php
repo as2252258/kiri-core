@@ -81,6 +81,7 @@ class Kafka extends \Snowflake\Process\Process
 						$this->application->debug('message null.');
 						continue;
 					}
+					var_dump($message);
 					switch ($message->err) {
 						case RD_KAFKA_RESP_ERR_NO_ERROR:
 							$this->channel->push([$message->topic_name, $message]);
