@@ -106,20 +106,6 @@ class Producer extends Component
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$rk->poll($timeout);
-
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::EVENT_AFTER_REQUEST, [$this,'onFlush'], [$rk, $timeout]);
-	}
-
-
-	/**
-	 * @param $rk
-	 * @param $timeout
-	 */
-	public function onFlush($rk, $timeout)
-	{
-		var_dump($rk, $timeout);
-		$this->debug(Event::EVENT_AFTER_REQUEST);
 		$rk->flush($timeout);
 	}
 }
