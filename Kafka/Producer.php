@@ -37,6 +37,11 @@ class Producer extends Component
 
 	private string $_topic = '';
 
+
+	private Conf $conf;
+	private TopicConf $topicConf;
+
+
 	/**
 	 * @param $servers
 	 * @return Producer
@@ -45,9 +50,11 @@ class Producer extends Component
 	 */
 	public function setBrokers(string $servers)
 	{
-		/** @var Conf $conf */
-		$conf = Snowflake::createObject(Conf::class);
-		$conf->set('metadata.broker.list', $servers);
+		if (!$this->conf) {
+			/** @var Conf $conf */
+			$this->conf = Snowflake::createObject(Conf::class);
+		}
+		$this->conf->set('metadata.broker.list', $servers);
 		return $this;
 	}
 
@@ -60,10 +67,11 @@ class Producer extends Component
 	 */
 	public function setAck(bool $value)
 	{
-		/** @var TopicConf $conf */
-		$conf = Snowflake::createObject(TopicConf::class);
-		$conf->set('request.required.acks', (int)$value);
-
+		if (!$this->topicConf) {
+			/** @var Conf $conf */
+			$this->topicConf = Snowflake::createObject(TopicConf::class);
+		}
+		$this->topicConf->set('request.required.acks', (int)$value);
 		return $this;
 	}
 
@@ -87,16 +95,18 @@ class Producer extends Component
 	 */
 	public function delivery($message, $key = null, $timeout = 5)
 	{
-		$conf = Snowflake::createObject(Conf::class);
-		$conf->setDrmSgCb(function ($kafka, $message) {
+		if (!$this->conf || !$this->topicConf) {
+			throw new \Exception('Error. Please set kafka conf.');
+		}
+		$this->conf->setDrmSgCb(function ($kafka, $message) {
 //				$this->debug(var_export($message, true));
 		});
-		$conf->setErrorCb(function ($kafka, $err, $reason) {
+		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
 
 		$rk = new \RdKafka\Producer();
-		$topic = $rk->newTopic($this->_topic, Snowflake::createObject(TopicConf::class));
+		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		if ($rk->getOutQLen() > 0) {
 			$rk->poll($timeout);
