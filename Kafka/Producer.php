@@ -109,6 +109,7 @@ class Producer extends Component
 
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, function () use ($rk, $timeout) {
+			$this->debug(Event::EVENT_AFTER_REQUEST);
 			$rk->flush($timeout);
 		});
 	}
