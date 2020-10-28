@@ -90,7 +90,7 @@ class Producer extends Component
 	 * @param int $timeout
 	 * @throws
 	 */
-	public function delivery($message, $key = null, $timeout = 5)
+	public function delivery($message, $key = null, $timeout = 10)
 	{
 		if (!$this->conf || !$this->topicConf) {
 			throw new \Exception('Error. Please set kafka conf.');
@@ -105,7 +105,7 @@ class Producer extends Component
 		$rk = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
-		$rk->poll($timeout);
+		$rk->poll(0);
 		$rk->flush($timeout);
 	}
 }
