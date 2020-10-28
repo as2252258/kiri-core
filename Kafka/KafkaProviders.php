@@ -31,7 +31,7 @@ class KafkaProviders extends Providers
 		if (empty($kafka) || !($kafka['enable'] ?? false)) {
 			return;
 		}
-		if (!isset($kafka['topics']) || empty($kafka['topics'])) {
+		if (!isset($kafka['topic']) || empty($kafka['topic'])) {
 			throw new Exception('kafka configure error.');
 		}
 		if (!isset($kafka['version']) || empty($kafka['version'])) {
