@@ -108,9 +108,17 @@ class Producer extends Component
 		$rk->poll($timeout);
 
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::EVENT_AFTER_REQUEST, function () use ($rk, $timeout) {
-			$this->debug(Event::EVENT_AFTER_REQUEST);
-			$rk->flush($timeout);
-		});
+		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'onFlush'], [$rk, $timeout]);
+	}
+
+
+	/**
+	 * @param $rk
+	 * @param $timeout
+	 */
+	public function onFlush($rk, $timeout)
+	{
+		$this->debug(Event::EVENT_AFTER_REQUEST);
+		$rk->flush($timeout);
 	}
 }
