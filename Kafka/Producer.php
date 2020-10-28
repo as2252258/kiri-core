@@ -118,6 +118,7 @@ class Producer extends Component
 	 */
 	public function onFlush($rk, $timeout)
 	{
+		var_dump(func_get_args());
 		$this->debug(Event::EVENT_AFTER_REQUEST);
 		$rk->flush($timeout);
 	}
