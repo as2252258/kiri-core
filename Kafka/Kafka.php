@@ -57,6 +57,7 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		$this->channelListener();
 
+		var_dump(SConfig::get('kafka')[0]);
 		$this->waite(SConfig::get('kafka')[0]);
 	}
 
