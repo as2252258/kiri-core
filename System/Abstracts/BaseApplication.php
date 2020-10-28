@@ -243,6 +243,16 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return Producer
+	 * @throws ComponentException
+	 */
+	public function getKafka()
+	{
+		return $this->get('kafka');
+	}
+
+
+	/**
 	 * @return \Redis|Redis
 	 * @throws ComponentException
 	 */

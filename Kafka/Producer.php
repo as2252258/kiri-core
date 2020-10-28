@@ -108,9 +108,7 @@ class Producer extends Component
 		$rk = new \RdKafka\Producer();
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
-		if ($rk->getOutQLen() > 0) {
-			$rk->poll($timeout);
-		}
+		$rk->poll($timeout);
 		$rk->flush($timeout);
 	}
 }
