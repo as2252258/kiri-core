@@ -5,6 +5,7 @@ namespace Kafka;
 
 
 use RdKafka\Conf;
+use RdKafka\ConsumerTopic;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Snowflake\Exception\ConfigException;
@@ -14,6 +15,7 @@ use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Process;
 use Snowflake\Abstracts\Config as SConfig;
+use Swoole\Timer;
 use function Amp\stop;
 
 /**
@@ -55,30 +57,49 @@ class Kafka extends \Snowflake\Process\Process
 	public function onHandler(Process $process)
 	{
 		$this->channelListener();
-		[$config, $topic, $conf] = $this->kafkaConfig();
-		$objRdKafka = new \RdKafka\Consumer($config);
-		$topic = $objRdKafka->newTopic('test', $topic);
-		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
-		while (true) {
-			$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
-			if (empty($message)) {
-				$this->application->debug('message null.');
-				continue;
-			}
-			switch ($message->err) {
-				case RD_KAFKA_RESP_ERR_NO_ERROR:
-					$this->channel->push([$message->topic_name, $message]);
-					break;
-				case RD_KAFKA_RESP_ERR__PARTITION_EOF:
-					$this->application->error('No more messages; will wait for more');
-					break;
-				case RD_KAFKA_RESP_ERR__TIMED_OUT:
-					$this->application->error('Kafka Timed out');
-					break;
-				default:
-					throw new \Exception($message->errstr(), $message->err);
-			}
+
+		$kafkaServers = SConfig::get('kafka');
+		foreach ($kafkaServers as $kafkaServer) {
+			$this->waite($kafkaServer);
 		}
+	}
+
+
+	/**
+	 * @param array $kafkaServer
+	 */
+	private function waite(array $kafkaServer)
+	{
+		go(function () use ($kafkaServer) {
+			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
+			$objRdKafka = new \RdKafka\Consumer($config);
+			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
+			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+			while (true) {
+				try {
+					$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
+					if (empty($message)) {
+						$this->application->debug('message null.');
+						return;
+					}
+					switch ($message->err) {
+						case RD_KAFKA_RESP_ERR_NO_ERROR:
+							$this->channel->push([$message->topic_name, $message]);
+							break;
+						case RD_KAFKA_RESP_ERR__PARTITION_EOF:
+							$this->application->error('No more messages; will wait for more');
+							break;
+						case RD_KAFKA_RESP_ERR__TIMED_OUT:
+							$this->application->error('Kafka Timed out');
+							break;
+						default:
+							throw new \Exception($message->errstr(), $message->err);
+					}
+				} catch (\Throwable $exception) {
+					$this->application->error($exception->getMessage());
+				}
+			}
+		});
 	}
 
 
@@ -129,14 +150,12 @@ class Kafka extends \Snowflake\Process\Process
 
 
 	/**
+	 * @param $kafka
 	 * @return array
-	 * @throws ConfigException
 	 */
-	private function kafkaConfig()
+	private function kafkaConfig($kafka)
 	{
 		$conf = new Conf();
-
-		$kafka = SConfig::get('kafka');
 		$conf->setRebalanceCb(function (KafkaConsumer $kafka, $err, array $partitions = null) {
 			if ($err == RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS) {
 				$kafka->assign($partitions);
@@ -147,18 +166,14 @@ class Kafka extends \Snowflake\Process\Process
 			}
 		});
 		$conf->set('group.id', $kafka['groupId']);
-//		$conf->set('metadata.broker.list', '127.0.0.1:2080');
-		$conf->set('metadata.broker.list', '172.26.221.220');
+		$conf->set('metadata.broker.list', $kafka['brokers']);
 		$conf->set('socket.timeout.ms', 30000);
-
 		if (function_exists('pcntl_sigprocmask')) {
 			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
 			$conf->set('internal.termination.signal', SIGIO);
 		} else {
 			$conf->set('queue.buffering.max.ms', 1);
 		}
-
-
 		$topicConf = new TopicConf();
 		$topicConf->set('auto.commit.enable', 1);
 		$topicConf->set('auto.commit.interval.ms', 100);
