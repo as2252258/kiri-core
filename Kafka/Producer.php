@@ -102,7 +102,7 @@ class Producer extends Component
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
 
-		$rk = new \RdKafka\Producer($this->conf);
+		$rk = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$rk->poll($timeout);
