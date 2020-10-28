@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": ">= 7.1",
+    "php": ">=7.4",
     "swoole/ide-helper": "@dev",
     "ext-json": "*",
     "phpmailer/phpmailer": "^6.1",
@@ -26,7 +26,11 @@
     "ext-curl": "*",
     "ext-openssl": "*",
     "amphp/amp": "v1.2.2",
-    "psr/log": "1.*"
+    "psr/log": "1.*",
+    "ext-sockets": "*",
+    "ext-pcntl": "*",
+    "ext-posix": "*",
+    "ext-rdkafka": "*"
   },
   "autoload": {
     "psr-4": {
@@ -43,5 +47,8 @@
       "error.php",
       "function.php"
     ]
+  },
+  "require-dev": {
+    "kwn/php-rdkafka-stubs": "^2.0"
   }
 }
