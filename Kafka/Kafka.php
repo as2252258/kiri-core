@@ -166,24 +166,18 @@ class Kafka extends \Snowflake\Process\Process
 	private function kafkaConfig($kafka)
 	{
 		$conf = new Conf();
-		$conf->setRebalanceCb(function (KafkaConsumer $kafka, $err, array $partitions = null) {
-			if ($err == RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS) {
-				$kafka->assign($partitions);
-			} else if ($err == RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS) {
-				$kafka->assign(NULL);
-			} else {
-				throw new \Exception($err);
-			}
-		});
+		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', $kafka['groupId']);
 		$conf->set('metadata.broker.list', $kafka['brokers']);
 		$conf->set('socket.timeout.ms', 30000);
+
 		if (function_exists('pcntl_sigprocmask')) {
 			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
 			$conf->set('internal.termination.signal', SIGIO);
 		} else {
 			$conf->set('queue.buffering.max.ms', 1);
 		}
+
 		$topicConf = new TopicConf();
 		$topicConf->set('auto.commit.enable', 1);
 		$topicConf->set('auto.commit.interval.ms', 100);
