@@ -14,9 +14,9 @@ use Snowflake\Core\ArrayAccess;
 class Event extends BaseObject
 {
 
-	public $isVide = true;
+	public bool $isVide = true;
 
-	private $_events = [];
+	private array $_events = [];
 
 	const EVENT_ERROR = 'WORKER:ERROR';
 	const EVENT_STOP = 'WORKER:STOP';
@@ -191,6 +191,7 @@ class Event extends BaseObject
 			return $result;
 		}
 		foreach ($this->_events[$name] as $event) {
+			var_dump($event);
 			[$handler, $defaultParameter] = $event;
 			try {
 				if (!empty($parameter)) {

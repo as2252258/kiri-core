@@ -109,22 +109,17 @@ class Producer extends Component
 		$rk->flush($timeout);
 
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::EVENT_AFTER_REQUEST, function ($rk, $timeout) {
-			var_dump(func_get_args());
-		}, [$rk, $timeout]);
+		$event->on(Event::EVENT_AFTER_REQUEST, [$this,'onFlush'], [$rk, $timeout]);
 	}
 
 
 	/**
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @param $rk
+	 * @param $timeout
 	 */
-	public function onFlush()
+	public function onFlush($rk, $timeout)
 	{
-		/** @var \RdKafka\Producer $rk */
-		$rk = Snowflake::getDi()->get(\RdKafka\Producer::class);
-
 		$this->debug(Event::EVENT_AFTER_REQUEST);
-		$rk->flush(10);
+		$rk->flush($timeout);
 	}
 }
