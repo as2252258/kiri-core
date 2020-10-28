@@ -104,7 +104,6 @@ class Producer extends Component
 		if ($rk->getOutQLen() > 0) {
 			$this->clean($rk, $timeout);
 		}
-
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$this->clean($rk, $timeout);
@@ -117,7 +116,9 @@ class Producer extends Component
 	 */
 	private function clean($rk, $timeout)
 	{
-		$rk->poll(0);
+		for ($length = 0; $length < $rk->getOutQLen(); $length++) {
+			$rk->poll(0);
+		}
 		$rk->flush($timeout);
 	}
 
