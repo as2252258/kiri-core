@@ -14,116 +14,49 @@
 
 namespace Kafka;
 
+use RdKafka\Conf;
+use RdKafka\TopicConf;
+use Snowflake\Abstracts\Component;
+
 /**
-+------------------------------------------------------------------------------
-* Kafka protocol since Kafka v0.8
-+------------------------------------------------------------------------------
-*
-* @package
-* @version $_SWANBR_VERSION_$
-* @copyright Copyleft
-* @author $_SWANBR_AUTHOR_$
-+------------------------------------------------------------------------------
-*/
-
-class Producer
+ * +------------------------------------------------------------------------------
+ * Kafka protocol since Kafka v0.8
+ * +------------------------------------------------------------------------------
+ *
+ * @package
+ * @version $_SWANBR_VERSION_$
+ * @copyright Copyleft
+ * @author $_SWANBR_AUTHOR_$
+ * +------------------------------------------------------------------------------
+ */
+class Producer extends Component
 {
-    use \Psr\Log\LoggerAwareTrait;
-    use \Kafka\LoggerTrait;
 
-    // {{{ consts
-    // }}}
-    // {{{ members
-    
-    private $process = null;
+	/**
+	 * @param $topic
+	 * @param $brokers
+	 * @param $message
+	 * @param null $key
+	 * @param int $timeout
+	 */
+	public function delivery($topic, $brokers, $message, $key = null, $timeout = 5)
+	{
+		$conf = new Conf();
+		$conf->set('metadata.broker.list', $brokers);
+		$conf->setDrmSgCb(function ($kafka, $message) {
+//				$this->debug(var_export($message, true));
+		});
+		$conf->setErrorCb(function ($kafka, $err, $reason) {
+			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
+		});
 
-    // }}}
-    // {{{ functions
-    // {{{ public function __construct()
+		$cf = new TopicConf();
+		$cf->set('request.required.acks', 1);
 
-    /**
-     * __construct
-     *
-     * @access public
-     * @param $hostList
-     * @param null $timeout
-     */
-    public function __construct(\Closure $producer = null)
-    {
-        if (is_null($producer)) {
-            $this->process = new \Kafka\Producer\SyncProcess();
-        } else {
-            $this->process = new \Kafka\Producer\Process($producer);
-        }
-    }
-
-    // }}}
-    // {{{ public function send()
-
-    /**
-     * start producer
-     *
-     * @access public
-     * @data is data is boolean that is async process, thus it is sync process
-     * @return void
-     */
-    public function send($data = true)
-    {
-        if ($this->logger) {
-            $this->process->setLogger($this->logger);
-        }
-        if (is_bool($data)) {
-            $this->process->start();
-            if ($data) {
-                \Amp\run();
-            }
-        } else {
-            return $this->process->send($data);
-        }
-    }
-
-    // }}}
-    // {{{ public function syncMeta()
-
-    /**
-     * syncMeta producer
-     *
-     * @access public
-     * @return void
-     */
-    public function syncMeta()
-    {
-        return $this->process->syncMeta();
-    }
-
-    // }}}
-    // {{{ public function success()
-
-    /**
-     * producer success
-     *
-     * @access public
-     * @return void
-     */
-    public function success(\Closure $success = null)
-    {
-        $this->process->setSuccess($success);
-    }
-
-    // }}}
-    // {{{ public function error()
-
-    /**
-     * producer error
-     *
-     * @access public
-     * @return void
-     */
-    public function error(\Closure $error = null)
-    {
-        $this->process->setError($error);
-    }
-
-    // }}}
-    // }}}
+		$rk = new \RdKafka\Producer($conf);
+		$topic = $rk->newTopic($topic, $cf);
+		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
+		$rk->poll($timeout);
+		$rk->flush($timeout);
+	}
 }

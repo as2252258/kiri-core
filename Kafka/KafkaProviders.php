@@ -26,6 +26,9 @@ class KafkaProviders extends Providers
 	{
 		/** @var Server $server */
 		$server = $application->get('server');
+		$application->set('kafka', [
+			'class' => Producer::class
+		]);
 
 		$kafka = SConfig::get('kafka');
 		if (empty($kafka) || !($kafka['enable'] ?? false)) {
