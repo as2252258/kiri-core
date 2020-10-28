@@ -42,18 +42,20 @@ class Producer extends Component
 	private TopicConf $topicConf;
 
 
+	public function __construct($config = [])
+	{
+		$this->conf = Snowflake::createObject(Conf::class);
+		$this->topicConf = Snowflake::createObject(TopicConf::class);
+		parent::__construct($config);
+	}
+
+
 	/**
 	 * @param $servers
 	 * @return Producer
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public function setBrokers(string $servers)
 	{
-		if (!$this->conf) {
-			/** @var Conf $conf */
-			$this->conf = Snowflake::createObject(Conf::class);
-		}
 		$this->conf->set('metadata.broker.list', $servers);
 		return $this;
 	}
@@ -62,15 +64,9 @@ class Producer extends Component
 	/**
 	 * @param bool $value
 	 * @return $this
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public function setAck(bool $value)
 	{
-		if (!$this->topicConf) {
-			/** @var Conf $conf */
-			$this->topicConf = Snowflake::createObject(TopicConf::class);
-		}
 		$this->topicConf->set('request.required.acks', (int)$value);
 		return $this;
 	}
