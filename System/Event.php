@@ -193,9 +193,9 @@ class Event extends BaseObject
 		foreach ($this->_events[$name] as $event) {
 			[$handler, $defaultParameter] = $event;
 			try {
-//				if (!empty($parameter)) {
-//					$defaultParameter = ArrayAccess::merge($defaultParameter, $parameter);
-//				}
+				if (!empty($parameter)) {
+					$defaultParameter = ArrayAccess::merge($defaultParameter, $parameter);
+				}
 				if (!is_array($defaultParameter)) {
 					$defaultParameter = [$defaultParameter];
 				}
