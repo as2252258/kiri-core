@@ -44,8 +44,8 @@ class Producer extends Component
 
 	public function __construct($config = [])
 	{
-		$this->conf = Snowflake::createObject(Conf::class);
-		$this->topicConf = Snowflake::createObject(TopicConf::class);
+		$this->conf = new Conf();
+		$this->topicConf = new TopicConf();
 		parent::__construct($config);
 	}
 
