@@ -31,21 +31,6 @@ class KafkaProviders extends Providers
 		if (empty($kafka) || !($kafka['enable'] ?? false)) {
 			return;
 		}
-		if (!isset($kafka['topic']) || empty($kafka['topic'])) {
-			throw new Exception('kafka configure error.');
-		}
-		if (!isset($kafka['version']) || empty($kafka['version'])) {
-			throw new Exception('kafka configure error.');
-		}
-		if (!isset($kafka['brokers']) || empty($kafka['brokers'])) {
-			throw new Exception('kafka configure error.');
-		}
-		if (!isset($kafka['groupId']) || empty($kafka['groupId'])) {
-			throw new Exception('kafka configure error.');
-		}
-		if (!is_array($kafka['topics'])) {
-			throw new Exception('Add kafka topics must is array.');
-		}
 		$server->addProcess('kafka', Kafka::class);
 	}
 

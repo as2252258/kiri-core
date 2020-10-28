@@ -56,9 +56,19 @@ class Kafka extends \Snowflake\Process\Process
 	public function onHandler(Process $process)
 	{
 		$this->channelListener();
+		$kafkaServers = SConfig::get('kafka');
 
-		var_dump(SConfig::get('kafka')[0]);
-		$this->waite(SConfig::get('kafka')[0]);
+		$waite = new WaitGroup();
+		foreach ($kafkaServers as $kafkaServer) {
+			$waite->add();
+			go(function () use ($kafkaServer, $waite) {
+				defer(function () use ($waite) {
+					$waite->done();
+				});
+				$this->waite($kafkaServer);
+			});
+		}
+		$waite->wait();
 	}
 
 
