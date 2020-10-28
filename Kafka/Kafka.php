@@ -25,8 +25,7 @@ use function Amp\stop;
 class Kafka extends \Snowflake\Process\Process
 {
 
-	/** @var Channel */
-	protected $channel;
+	protected Channel $channel;
 
 
 	/**
@@ -80,7 +79,7 @@ class Kafka extends \Snowflake\Process\Process
 					$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
 					if (empty($message)) {
 						$this->application->debug('message null.');
-						return;
+						continue;
 					}
 					switch ($message->err) {
 						case RD_KAFKA_RESP_ERR_NO_ERROR:
