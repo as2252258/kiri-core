@@ -82,9 +82,9 @@ class Kafka extends \Snowflake\Process\Process
 		$objRdKafka = new \RdKafka\Consumer($config);
 		$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
-		while (true) {
+		Timer::tick($conf['interval'] ?? 1000, function () use ($topic) {
 			$this->resolve($topic);
-		}
+		});
 	}
 
 
@@ -94,7 +94,7 @@ class Kafka extends \Snowflake\Process\Process
 	private function resolve(ConsumerTopic $topic)
 	{
 		try {
-			$message = $topic->consume(0, $conf['interval'] ?? 1000);
+			$message = $topic->consume(0, 0);
 			if (empty($message)) {
 				$this->application->debug('message null.');
 				return;
