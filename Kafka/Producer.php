@@ -95,9 +95,6 @@ class Producer extends Component
 		if (!$this->conf || !$this->topicConf) {
 			throw new \Exception('Error. Please set kafka conf.');
 		}
-		$this->conf->setDrmSgCb(function ($kafka, $message) {
-//				$this->debug(var_export($message, true));
-		});
 		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
@@ -105,13 +102,23 @@ class Producer extends Component
 		/** @var \RdKafka\Producer $rk */
 		$rk = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		if ($rk->getOutQLen() > 0) {
-			$rk->poll(0);
-			$rk->flush($timeout);
+			$this->clean($rk, $timeout);
 		}
 
 		$topic = $rk->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
+		$this->clean($rk, $timeout);
+	}
+
+
+	/**
+	 * @param $rk
+	 * @param $timeout
+	 */
+	private function clean($rk, $timeout)
+	{
 		$rk->poll(0);
 		$rk->flush($timeout);
 	}
+
 }
