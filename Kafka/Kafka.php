@@ -83,6 +83,7 @@ class Kafka extends \Snowflake\Process\Process
 		$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 		Timer::tick($conf['interval'] ?? 1000, function () use ($topic) {
+			var_dump($topic);
 			$this->resolve($topic);
 		});
 	}
