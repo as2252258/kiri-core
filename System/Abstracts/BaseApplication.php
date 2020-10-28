@@ -16,6 +16,7 @@ use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use HttpServer\Server;
+use Kafka\Producer;
 use Snowflake\Annotation\Annotation;
 use Snowflake\Cache\Memcached;
 use Snowflake\Cache\Redis;
@@ -49,6 +50,7 @@ use Database\DatabasesProviders;
  * @property Jwt $jwt
  * @property BaseGoto $goto
  * @property Client $client
+ * @property Producer $kafka
  */
 abstract class BaseApplication extends Service
 {

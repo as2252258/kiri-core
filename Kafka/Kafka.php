@@ -6,6 +6,7 @@ namespace Kafka;
 
 use RdKafka\Conf;
 use RdKafka\ConsumerTopic;
+use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Snowflake\Exception\ConfigException;
@@ -193,7 +194,7 @@ class Kafka extends \Snowflake\Process\Process
 	 * @param KafkaConsumer $kafka
 	 * @param $err
 	 * @param array|null $partitions
-	 * @throws \RdKafka\Exception
+	 * @throws Exception
 	 * @throws \Exception
 	 */
 	public function rebalanced_cb(KafkaConsumer $kafka, $err, array $partitions = null)
