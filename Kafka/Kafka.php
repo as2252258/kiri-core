@@ -62,6 +62,7 @@ class Kafka extends \Snowflake\Process\Process
 		while (true) {
 			$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
 			if (empty($message)) {
+				$this->application->debug('message null.');
 				continue;
 			}
 			switch ($message->err) {
@@ -147,7 +148,7 @@ class Kafka extends \Snowflake\Process\Process
 		});
 		$conf->set('group.id', $kafka['groupId']);
 //		$conf->set('metadata.broker.list', '127.0.0.1:2080');
-		$conf->set('metadata.broker.list', '172.26.221.220');
+		$conf->set('metadata.broker.list', '172.26.221.220:2080');
 		$conf->set('socket.timeout.ms', 30000);
 
 		if (function_exists('pcntl_sigprocmask')) {
