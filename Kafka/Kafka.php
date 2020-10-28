@@ -58,9 +58,18 @@ class Kafka extends \Snowflake\Process\Process
 		$this->channelListener();
 
 		$kafkaServers = SConfig::get('kafka');
+
+		$waite = new WaitGroup();
 		foreach ($kafkaServers as $kafkaServer) {
-			$this->waite($kafkaServer);
+			$waite->add();
+			go(function () use ($kafkaServer, $waite) {
+				defer(function () use ($waite) {
+					$waite->done();
+				});
+				$this->waite($kafkaServer);
+			});
 		}
+		$waite->wait();
 	}
 
 
@@ -69,37 +78,39 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	private function waite(array $kafkaServer)
 	{
-		go(function () use ($kafkaServer) {
-			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
-			$objRdKafka = new \RdKafka\Consumer($config);
-			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
-			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
-			while (true) {
-				try {
-					$message = $topic->consume(0, $conf['metadataRefreshIntervalMs'] ?? 1000);
-					if (empty($message)) {
-						$this->application->debug('message null.');
-						continue;
-					}
-					var_dump($message);
-					switch ($message->err) {
-						case RD_KAFKA_RESP_ERR_NO_ERROR:
-							$this->channel->push([$message->topic_name, $message]);
-							break;
-						case RD_KAFKA_RESP_ERR__PARTITION_EOF:
-							$this->application->error('No more messages; will wait for more');
-							break;
-						case RD_KAFKA_RESP_ERR__TIMED_OUT:
-							$this->application->error('Kafka Timed out');
-							break;
-						default:
-							throw new \Exception($message->errstr(), $message->err);
-					}
-				} catch (\Throwable $exception) {
-					$this->application->error($exception->getMessage());
-				}
+		[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
+		$objRdKafka = new \RdKafka\Consumer($config);
+		$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
+		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+		while (true) {
+			$this->resolve($topic);
+		}
+	}
+
+
+	/**
+	 * @param ConsumerTopic $topic
+	 */
+	private function resolve(ConsumerTopic $topic)
+	{
+		try {
+			$message = $topic->consume(0, $conf['interval'] ?? 1000);
+			if (empty($message)) {
+				$this->application->debug('message null.');
+				return;
 			}
-		});
+			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
+				$this->channel->push([$message->topic_name, $message]);
+			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
+				$this->application->error('No more messages; will wait for more');
+			} else if ($message->err == RD_KAFKA_RESP_ERR__TIMED_OUT) {
+				$this->application->error('Kafka Timed out');
+			} else {
+				$this->application->error($message->errstr());
+			}
+		} catch (\Throwable $exception) {
+			$this->application->error($exception->getMessage());
+		}
 	}
 
 
