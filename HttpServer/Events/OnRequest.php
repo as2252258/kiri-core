@@ -54,7 +54,7 @@ class OnRequest extends Callback
 				return;
 			}
 			$sRequest = $sRequest ?? null;
-			$events->trigger(Event::EVENT_AFTER_REQUEST, [$sRequest, $params]);
+			$events->trigger(Event::EVENT_AFTER_REQUEST, [$sRequest, $params ?? null]);
 		}
 	}
 
