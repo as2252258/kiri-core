@@ -82,9 +82,6 @@ class JSON
 		if ((int)$params['count'] == -100) {
 			$params['count'] = 1;
 		}
-
-		ksort($params, SORT_ASC);
-
 		return static::encode($params);
 	}
 
