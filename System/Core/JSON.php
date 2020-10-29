@@ -20,11 +20,11 @@ class JSON
 {
 
 	/**
-	 * @param string|array|mixed $data
+	 * @param $data
 	 * @return false|string
 	 * @throws Exception
 	 */
-	public static function encode(string|array|object $data)
+	public static function encode($data)
 	{
 		if (empty($data)) {
 			return $data;
