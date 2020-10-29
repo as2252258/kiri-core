@@ -34,7 +34,9 @@ class Node extends Application
 	private string $_error = '';
 
 	public array $rules = [];
-	public ?Closure $handler;
+
+	/** @var ?Closure|?array */
+	public $handler;
 	public string $htmlSuffix = '.html';
 	public bool $enableHtmlSuffix = false;
 	public array $namespace = [];
