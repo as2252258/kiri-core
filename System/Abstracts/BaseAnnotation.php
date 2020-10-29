@@ -108,6 +108,9 @@ abstract class BaseAnnotation extends Component
 	{
 		$array = [];
 		foreach ($annotations as $annotation) {
+			if (!$comment) {
+				continue;
+			}
 			preg_match('/@(' . $annotation . ')\((.*?)\)/', $comment, $events);
 			if (!isset($events[1])) {
 				continue;
