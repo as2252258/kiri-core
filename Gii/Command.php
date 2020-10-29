@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Gii;
 
@@ -16,10 +16,10 @@ use Snowflake\Snowflake;
 class Command extends \Console\Command
 {
 
-	public $command = 'sw:gii';
+	public string $command = 'sw:gii';
 
 
-	public $description = 'server start|stop|reload|restart';
+	public string $description = 'server start|stop|reload|restart';
 
 
 	/**
