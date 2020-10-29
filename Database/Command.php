@@ -30,8 +30,8 @@ class Command extends Component
 	/** @var Connection */
 	public Connection $db;
 
-	/** @var string */
-	public string $sql = '';
+	/** @var ?string */
+	public ?string $sql = '';
 
 	/** @var array */
 	public array $params = [];
