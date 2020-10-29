@@ -299,6 +299,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	{
 		$str = '';
 
+		$user = (string)$user;
 		$_user = str_split(md5($user . md5($user)));
 		ksort($_user);
 		foreach ($_user as $key => $val) {
