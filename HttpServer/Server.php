@@ -57,7 +57,7 @@ class Server extends Application
 
 
 	/** @var Http|Websocket|Packet|Receive */
-	private Packet|Receive|Websocket|Http $baseServer;
+	private $baseServer;
 
 	public int $daemon = 0;
 
