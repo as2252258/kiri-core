@@ -191,7 +191,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		asort($param, SORT_STRING);
 		$_tmp = [];
 		foreach ($param as $key => $val) {
-			$_tmp[] = trim($key) . '=>' . trim($val);
+			$_tmp[] = trim($key) . '=>' . trim((string)$val);
 		}
 		$param['sign'] = md5(implode(':', $_tmp));
 		if ($update) {
