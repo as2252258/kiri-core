@@ -38,7 +38,7 @@ class Router extends Application implements RouterInterface
 	public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
 
 
-	public Closure|null $middleware = null;
+	public ?Closure $middleware = null;
 
 	public bool $useTree = false;
 
