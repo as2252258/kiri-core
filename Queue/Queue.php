@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Queue;
 
@@ -31,7 +32,7 @@ class Queue extends \Snowflake\Process\Process
 	private $running;
 
 
-	private $shutdown = false;
+	private bool $shutdown = false;
 
 
 	/**

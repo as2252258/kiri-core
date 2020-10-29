@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Queue;
@@ -13,7 +14,7 @@ use Snowflake\Snowflake;
 class TestQueue implements Consumer
 {
 
-	public $params;
+	public array $params;
 
 
 	/**
