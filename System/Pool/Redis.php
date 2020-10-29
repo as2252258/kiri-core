@@ -87,7 +87,7 @@ class Redis extends Pool
 	private function createConnect(array $config, string $coroutineName)
 	{
 		$redis = new SRedis();
-		if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
+		if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
 			throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
 		}
 		if (empty($config['auth']) || !$redis->auth($config['auth'])) {

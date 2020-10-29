@@ -187,14 +187,14 @@ class Event extends BaseObject
 				$defaultParameter = [$defaultParameter];
 			}
 			$result = call_user_func($handler, ...$defaultParameter);
-			if ($is_remove) {
+			if ($handler instanceof \Closure || $is_remove) {
 				$this->of($name, $handler);
 			}
 			return $result;
 		}
-		foreach ($this->_events[$name] as $event) {
-			[$handler, $defaultParameter] = $event;
+		foreach ($this->_events[$name] as $index => $event) {
 			try {
+				[$handler, $defaultParameter] = $event;
 				if (!empty($parameter)) {
 					$defaultParameter = ArrayAccess::merge($defaultParameter, $parameter);
 				}
@@ -204,6 +204,10 @@ class Event extends BaseObject
 				call_user_func($handler, ...$defaultParameter);
 			} catch (\Throwable $exception) {
 				$this->error($exception->getMessage());
+			} finally {
+				if ($handler instanceof \Closure) {
+					unset($this->_events[$name][$index]);
+				}
 			}
 		}
 		if ($is_remove) {
