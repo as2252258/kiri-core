@@ -35,7 +35,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function register()
 	{
-		ini_set('display_errors', 0);
+		ini_set('display_errors', '0');
 		set_exception_handler([$this, 'exceptionHandler']);
 		if (defined('HHVM_VERSION')) {
 			set_error_handler([$this, 'errorHandler']);
