@@ -60,7 +60,7 @@ class Producer extends Component
 	 */
 	public function setAck(bool $value)
 	{
-		$this->topicConf->set('request.required.acks', (int)$value);
+		$this->topicConf->set('request.required.acks', (string)$value);
 		return $this;
 	}
 
