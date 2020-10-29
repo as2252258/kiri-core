@@ -134,7 +134,7 @@ abstract class Condition extends BaseObject
 			}
 			return $column . ' ' . $oprea . ' ' . $value;
 		} else {
-			$encode = '\'' . Str::encode($value) . '\'';
+			$encode = '\'' . Str::encode((string)$value) . '\'';
 			return $column . ' ' . $oprea . ' ' . $encode;
 		}
 	}
