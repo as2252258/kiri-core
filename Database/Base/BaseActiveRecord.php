@@ -6,6 +6,7 @@
  * Time: 14:39
  */
 declare(strict_types=1);
+
 namespace Database\Base;
 
 
@@ -664,7 +665,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 		}
 
 		if (isset($this->_attributes[$name]) || array_key_exists($name, $this->_attributes)) {
-			return stripcslashes($this->_attributes[$name]);
+			return static::getColumns()->_decode($name, $this->_attributes[$name]);
 		}
 
 		if (isset($this->_relate[$name])) {

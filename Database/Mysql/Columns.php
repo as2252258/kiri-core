@@ -122,6 +122,19 @@ class Columns extends Component
 		}
 	}
 
+
+	/**
+	 * @param $name
+	 * @param $value
+	 * @return float|int|mixed|string
+	 * @throws Exception
+	 */
+	public function _decode(string $name, $value)
+	{
+		return $this->decode($value, $this->get_fields($name));
+	}
+
+
 	/**
 	 * @param $val
 	 * @param $format
