@@ -85,6 +85,9 @@ class Annotation extends BaseAnnotation
 			foreach ($annotations as $annotation) {
 				$comment = $function->getDocComment();
 				$methodName = $function->getName();
+				if (!$comment) {
+					continue;
+				}
 
 				preg_match('/@(' . $annotation . ')\((.*?)\)/', $comment, $events);
 				if (!isset($events[1])) {
