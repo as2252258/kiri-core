@@ -308,7 +308,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		foreach ($param as $key => $val) {
 			$str .= md5($str . sha1($key . md5($val)));
 		}
-		$str .= sha1(base64_encode($requestTime));
+		$str .= sha1(base64_encode((string)$requestTime));
 		return $this->preg(md5($str . $user));
 	}
 
