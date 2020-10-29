@@ -175,7 +175,7 @@ class Snowflake
 	 */
 	public static function writeFile($fileName, $content, $is_append = null)
 	{
-		$params = [$fileName, $content];
+		$params = [$fileName, (string)$content];
 		if ($is_append !== null) {
 			$params[] = $is_append;
 		}

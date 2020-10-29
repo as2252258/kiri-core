@@ -150,18 +150,18 @@ class Kafka extends \Snowflake\Process\Process
 		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
 		$conf->set('group.id', $kafka['groupId']);
 		$conf->set('metadata.broker.list', $kafka['brokers']);
-		$conf->set('socket.timeout.ms', 30000);
+		$conf->set('socket.timeout.ms', '30000');
 
 		if (function_exists('pcntl_sigprocmask')) {
 			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
-			$conf->set('internal.termination.signal', SIGIO);
+			$conf->set('internal.termination.signal', (string)SIGIO);
 		} else {
-			$conf->set('queue.buffering.max.ms', 1);
+			$conf->set('queue.buffering.max.ms', '1');
 		}
 
 		$topicConf = new TopicConf();
-		$topicConf->set('auto.commit.enable', 1);
-		$topicConf->set('auto.commit.interval.ms', 100);
+		$topicConf->set('auto.commit.enable', '1');
+		$topicConf->set('auto.commit.interval.ms', '100');
 		//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
 		$topicConf->set('auto.offset.reset', 'smallest');
 		$topicConf->set('offset.store.path', 'kafka_offset.log');
