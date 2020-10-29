@@ -72,7 +72,7 @@ abstract class Condition extends BaseObject
 			return '';
 		}
 
-		$value = Str::encode($value);
+		$value = Str::encode((string)$value);
 		if (trim($oprea) == 'like') {
 			return $column . ' ' . $oprea . ' \'%' . $value . '%\'';
 		}
