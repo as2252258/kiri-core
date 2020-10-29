@@ -39,8 +39,7 @@ class Command extends Component
 	/** @var string */
 	private string $_modelName;
 
-	/** @var PDOStatement */
-	private PDOStatement $prepare;
+	private ?PDOStatement $prepare;
 
 
 	/**
