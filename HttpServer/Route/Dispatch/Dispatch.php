@@ -19,7 +19,7 @@ class Dispatch
 {
 
 	/** @var Closure|array */
-	protected Closure|array $handler;
+	protected $handler;
 
 	protected Request $request;
 
