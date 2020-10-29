@@ -16,10 +16,10 @@ use Snowflake\Snowflake;
 class Command extends \Console\Command
 {
 
-	public $command = 'sw:server';
+	public string $command = 'sw:server';
 
 
-	public $description = 'server start|stop|reload|restart';
+	public string $description = 'server start|stop|reload|restart';
 
 
 	const ACTIONS = ['start', 'stop', 'restart'];

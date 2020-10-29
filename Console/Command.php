@@ -12,8 +12,8 @@ use Snowflake\Abstracts\BaseObject;
 abstract class Command extends BaseObject implements CommandInterface
 {
 
-	public $command = '';
-	public $description = '';
+	public string $command = '';
+	public string $description = '';
 
 	/**
 	 * @return string
