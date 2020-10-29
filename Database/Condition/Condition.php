@@ -96,10 +96,10 @@ abstract class Condition extends BaseObject
 
 
 	/**
-	 * @param array $param
+	 * @param array|null $param
 	 * @return array
 	 */
-	protected function format($param)
+	protected function format(?array $param)
 	{
 		if (!is_array($param)) {
 			return null;
@@ -109,7 +109,7 @@ abstract class Condition extends BaseObject
 			if ($value === null) {
 				continue;
 			}
-			$value = Str::encode($value);
+			$value = Str::encode((string)$value);
 			if (is_numeric($value)) {
 				$_tmp[] = Str::encode($value);
 			} else {
