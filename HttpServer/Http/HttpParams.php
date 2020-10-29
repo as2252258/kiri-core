@@ -6,6 +6,7 @@
  * Time: 14:54
  */
 declare(strict_types=1);
+
 namespace HttpServer\Http;
 
 use Exception;
@@ -38,13 +39,13 @@ class HttpParams
 	 */
 	public function __construct($body, $get, $files)
 	{
-		$this->body = $body;
 		$this->gets = $get ?? [];
 		$this->files = $files ?? [];
 		if (!is_array($this->body)) {
 			$this->body = Help::toArray($this->body);
+		} else {
+			$this->body = $body;
 		}
-
 	}
 
 	/**
