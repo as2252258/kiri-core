@@ -36,8 +36,7 @@ class Response extends Application
 	/** @var int */
 	public int $statusCode = 200;
 
-	/** @var SResponse */
-	public SResponse $response;
+	public ?SResponse $response = null;
 	public bool $isWebSocket = false;
 	public array $headers = [];
 
