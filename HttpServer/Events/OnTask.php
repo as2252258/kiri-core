@@ -120,7 +120,7 @@ class OnTask extends Callback
 	 * @param $data
 	 * @return ITask|null
 	 */
-	protected function before($data): Task|null
+	protected function before($data): ?Task
 	{
 		if (empty($serialize = unserialize($data))) {
 			return null;
