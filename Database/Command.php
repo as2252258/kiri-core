@@ -39,7 +39,7 @@ class Command extends Component
 	/** @var string */
 	private string $_modelName;
 
-	private ?PDOStatement $prepare;
+	private ?PDOStatement $prepare = null;
 
 
 	/**
@@ -196,7 +196,7 @@ class Command extends Component
 			} else {
 				$result = $this->search($type);
 			}
-			if ($this->prepare instanceof PDOStatement) {
+			if ($this->prepare) {
 				$this->prepare->closeCursor();
 			}
 			if (Config::get('debug.enable', false, false)) {
