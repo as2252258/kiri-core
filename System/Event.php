@@ -187,7 +187,7 @@ class Event extends BaseObject
 				$defaultParameter = [$defaultParameter];
 			}
 			$result = call_user_func($handler, ...$defaultParameter);
-			if ($handler instanceof \Closure || $is_remove) {
+			if ($is_remove) {
 				$this->of($name, $handler);
 			}
 			return $result;
@@ -204,10 +204,6 @@ class Event extends BaseObject
 				call_user_func($handler, ...$defaultParameter);
 			} catch (\Throwable $exception) {
 				$this->error($exception->getMessage());
-			} finally {
-				if ($handler instanceof \Closure) {
-					unset($this->_events[$name][$index]);
-				}
 			}
 		}
 		if ($is_remove) {
