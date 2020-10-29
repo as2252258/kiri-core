@@ -40,7 +40,7 @@ class Response extends Application
 	public bool $isWebSocket = false;
 	public array $headers = [];
 
-	private int $startTime = 0;
+	private float $startTime = 0;
 
 	private array $_format_maps = [
 		self::JSON => JsonFormatter::class,
