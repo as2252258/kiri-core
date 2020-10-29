@@ -52,7 +52,7 @@ class Node extends Application
 	 * @return Node
 	 * @throws
 	 */
-	public function bindHandler(Closure|array $handler)
+	public function bindHandler($handler)
 	{
 		if ($handler instanceof Closure) {
 			$this->handler = $handler;
@@ -222,7 +222,7 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addInterceptor(Closure|string|array $handler)
+	public function addInterceptor($handler)
 	{
 		$this->_interceptors[] = $handler;
 
@@ -233,7 +233,7 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addAfter(Closure|string|array $handler)
+	public function addAfter($handler)
 	{
 		$this->_after[] = $handler;
 	}
@@ -243,7 +243,7 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addLimits(Closure|string|array $handler)
+	public function addLimits($handler)
 	{
 		$this->_limits[] = $handler;
 
@@ -375,7 +375,7 @@ class Node extends Application
 	 * @param string|\Closure $class
 	 * @throws Exception
 	 */
-	public function addMiddleware(Closure|string $class)
+	public function addMiddleware($class)
 	{
 		if (!is_callable($class, true)) {
 			return;
