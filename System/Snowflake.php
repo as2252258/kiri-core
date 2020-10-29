@@ -339,11 +339,11 @@ class Snowflake
 	 */
 	public static function reload()
 	{
-		return Process::kill(Snowflake::getMasterPid(), SIGUSR1);
+		return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
 	}
 
 
-	private static $_autoload = [];
+	private static array $_autoload = [];
 
 
 	/**
