@@ -388,7 +388,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		if (!isset($model['user'])) {
 			return $this->addError('授权信息错误！');
 		}
-		if (!$this->check($this->data, $model['user'])) {
+		if (!$this->check($this->data, (int)$model['user'])) {
 			return $this->addError('授权信息不合法！');
 		}
 		$this->expireRefresh();
