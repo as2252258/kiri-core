@@ -332,7 +332,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	{
 		$this->user = $user;
 		$redis = $this->getRedis();
-		if ($refresh = $redis->get('refresh:' . $this->user)) {
+		if (is_bool($refresh = $redis->get('refresh:' . $this->user))) {
 			return [];
 		};
 		openssl_public_decrypt(base64_decode($refresh), $info, $this->public);
