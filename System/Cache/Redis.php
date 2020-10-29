@@ -5,6 +5,7 @@
  * Date: 2018/4/27 0027
  * Time: 11:00
  */
+declare(strict_types=1);
 
 namespace Snowflake\Cache;
 
@@ -253,12 +254,12 @@ use Swoole\Coroutine;
  */
 class Redis extends Component
 {
-	public $host = '127.0.0.1';
-	public $auth = 'xl.2005113426';
-	public $port = 6973;
-	public $databases = 0;
-	public $timeout = -1;
-	public $prefix = 'idd';
+	public string $host = '127.0.0.1';
+	public string $auth = 'xl.2005113426';
+	public int $port = 6973;
+	public int $databases = 0;
+	public int $timeout = -1;
+	public string $prefix = 'idd';
 
 	/**
 	 * @throws Exception

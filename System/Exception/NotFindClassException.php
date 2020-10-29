@@ -5,6 +5,7 @@
  * Date: 2018/4/24 0024
  * Time: 17:32
  */
+declare(strict_types=1);
 
 namespace Snowflake\Exception;
 

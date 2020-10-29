@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Database\Condition;
 
@@ -14,15 +14,15 @@ use Snowflake\Core\Str;
 abstract class Condition extends BaseObject
 {
 
-	protected $column = '';
-	protected $opera = '=';
+	protected string $column = '';
+	protected string $opera = '=';
 
 	/** @var array|mixed */
 	protected $value;
 
 	const INT_TYPE = ['bit', 'bool', 'tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'float', 'double', 'decimal', 'timestamp'];
 
-	protected $attributes = [];
+	protected array $attributes = [];
 
 	abstract public function builder();
 

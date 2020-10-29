@@ -5,19 +5,16 @@
  * Date: 2019-03-22
  * Time: 19:09
  */
+declare(strict_types=1);
 
 namespace Snowflake\Process;
 
 
 use Exception;
 use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
-use Swoole\Error;
 use Swoole\Event;
-use Swoole\Server;
 use Swoole\Timer;
-use swoole_process;
 
 /**
  * Class ServerInotify
@@ -26,13 +23,13 @@ use swoole_process;
 class ServerInotify extends Process
 {
 	private $inotify;
-	private $isReloading = false;
-	private $isReloadingOut = false;
-	private $watchFiles = [];
-	private $dirs = [];
-	private $events;
+	private bool $isReloading = false;
+	private bool $isReloadingOut = false;
+	private array $watchFiles = [];
+	private ?array $dirs = [];
+	private int $events;
 
-	private $int = -1;
+	private int $int = -1;
 
 	/**
 	 * @param \Swoole\Process $process
@@ -60,7 +57,7 @@ class ServerInotify extends Process
 	}
 
 
-	private $md5Map = [];
+	private array $md5Map = [];
 
 
 	/**

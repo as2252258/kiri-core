@@ -5,7 +5,7 @@
  * Date: 2018/4/8 0008
  * Time: 17:51
  */
-
+declare(strict_types=1);
 namespace HttpServer\Http\Formatter;
 
 

@@ -5,6 +5,7 @@
  * Date: 2018/4/25 0025
  * Time: 18:29
  */
+declare(strict_types=1);
 
 namespace Snowflake\Di;
 
@@ -21,13 +22,13 @@ use Snowflake\Snowflake;
 class Service extends Component
 {
 
-	private $_components = [];
+	private array $_components = [];
 
 
-	private $_definition = [];
+	private array $_definition = [];
 
 
-	protected $_alias = [];
+	protected array $_alias = [];
 
 	/**
 	 * @param $id

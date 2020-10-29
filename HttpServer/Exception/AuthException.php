@@ -5,7 +5,7 @@
  * Date: 2018/5/25 0025
  * Time: 10:14
  */
-
+declare(strict_types=1);
 namespace HttpServer\Exception;
 
 

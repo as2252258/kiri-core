@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace HttpServer\Route\Filter;
@@ -15,9 +16,9 @@ use validator\Validator;
 abstract class Filter extends Application
 {
 
-	public $rules = [];
+	public array $rules = [];
 
-	public $params = [];
+	public array $params = [];
 
 	abstract public function check();
 

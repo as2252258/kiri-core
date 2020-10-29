@@ -5,6 +5,7 @@
  * Date: 2019-03-20
  * Time: 10:25
  */
+declare(strict_types=1);
 
 namespace Snowflake\Error;
 

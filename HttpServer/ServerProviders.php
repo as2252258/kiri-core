@@ -1,17 +1,12 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer;
 
 
 use Console\Console;
 use Exception;
-use HttpServer\Server;
-use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Providers;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
 
 /**
  * Class DatabasesProviders

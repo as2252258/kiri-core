@@ -1,10 +1,8 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Snowflake\Abstracts;
 
-
-use Snowflake\Application;
 
 /**
  * Class Providers

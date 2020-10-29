@@ -5,6 +5,7 @@
  * Date: 2018/4/26 0026
  * Time: 10:00
  */
+declare(strict_types=1);
 
 namespace Snowflake\Error;
 

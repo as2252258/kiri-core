@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace HttpServer\Client;
 
@@ -19,14 +20,14 @@ class Result
 {
 	public $code;
 	public $message;
-	public $count = 0;
-	public $data;
-	public $header;
-	public $httpStatus = 200;
+	public int $count = 0;
+	public array|string $data;
+	public array $header;
+	public int $httpStatus = 200;
 
-	public $startTime = 0;
-	public $requestTime = 0;
-	public $runTime = 0;
+	public int $startTime = 0;
+	public int $requestTime = 0;
+	public float $runTime = 0;
 
 
 	/**

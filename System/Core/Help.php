@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Snowflake\Core;
@@ -45,23 +46,6 @@ class Help
 			$xml = JSON::decode($xml);
 		}
 		return $xml;
-
-		/*        $matchQuote = '/(<\?xml.*?\?>)?<([a-zA-Z_]+)>(<([a-zA-Z_]+)><!.*?><\/\4>)+<\/\2>/';*/
-//        if (!preg_match($matchQuote, $xml)) {
-//            return self::jsonToArray($xml);
-//        }
-//        try {
-//            $data = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
-//            if ($data !== false) {
-//                $data = json_decode(json_encode($data), TRUE);
-//            } else {
-//                $data = $xml;
-//            }
-//        } catch (\Exception $exception) {
-//            $data = $xml;
-//        } finally {
-//            return $data;
-//        }
 	}
 
 

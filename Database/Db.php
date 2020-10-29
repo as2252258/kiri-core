@@ -5,7 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 15:40
  */
-
+declare(strict_types=1);
 namespace Database;
 
 use Database\Traits\QueryTrait;
@@ -20,9 +20,7 @@ class Db
 {
 	use QueryTrait;
 
-	private static $db;
-
-	private static $isActive = false;
+	private static bool $isActive = false;
 
 	/**
 	 * @return bool

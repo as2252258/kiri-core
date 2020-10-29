@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Snowflake\Pool;
 
@@ -17,18 +18,18 @@ use Swoole\Timer;
 class Connection extends Pool
 {
 
-	public $hasCreate = [];
+	public array $hasCreate = [];
 
-	public $timeout = 1900;
+	public int $timeout = 1900;
 
 	/** @var PDO[] */
-	protected $connections = [];
+	protected array $connections = [];
 
 
-	private $creates = 0;
+	private int $creates = 0;
 
 
-	public $lastTime = 0;
+	public int $lastTime = 0;
 
 	/**
 	 * @param $timer

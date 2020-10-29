@@ -1,10 +1,11 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Kafka;
 
 
 use RdKafka\Conf;
+use RdKafka\Consumer;
 use RdKafka\ConsumerTopic;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
@@ -16,8 +17,7 @@ use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Process;
 use Snowflake\Abstracts\Config as SConfig;
-use Swoole\Timer;
-use function Amp\stop;
+use Throwable;
 
 /**
  * Class Queue
@@ -27,26 +27,6 @@ class Kafka extends \Snowflake\Process\Process
 {
 
 	protected Channel $channel;
-
-
-	/**
-	 * @throws ConfigException
-	 */
-//	public function initConfig()
-//	{
-//		$kafka = SConfig::get('kafka');
-//		$config = ConsumerConfig::getInstance();
-//		$config->setMetadataRefreshIntervalMs(
-//			$kafka['metadataRefreshIntervalMs'] ?? 1000
-//		);
-//		$config->setMetadataBrokerList($kafka['brokers']);
-//		$config->setGroupId($kafka['groupId']);
-//		$config->setBrokerVersion($kafka['version']);
-//		$config->setTopics($kafka['topics']);
-//		$this->channelListener($kafka);
-//
-//		return [new Consumer(), $kafka];
-//	}
 
 
 	/**
@@ -79,7 +59,7 @@ class Kafka extends \Snowflake\Process\Process
 	private function waite(array $kafkaServer)
 	{
 		[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
-		$objRdKafka = new \RdKafka\Consumer($config);
+		$objRdKafka = new Consumer($config);
 		$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 		while (true) {
@@ -108,7 +88,7 @@ class Kafka extends \Snowflake\Process\Process
 			} else {
 				$this->application->error($message->errstr());
 			}
-		} catch (\Throwable $exception) {
+		} catch (Throwable $exception) {
 			$this->application->error($exception->getMessage());
 		}
 	}
@@ -154,7 +134,7 @@ class Kafka extends \Snowflake\Process\Process
 				return;
 			}
 			$class->onHandler(new Struct($topic, $message));
-		} catch (\Throwable $exception) {
+		} catch (Throwable $exception) {
 			$this->application->error($exception->getMessage());
 		}
 	}

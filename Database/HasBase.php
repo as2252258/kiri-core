@@ -5,6 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 15:47
  */
+declare(strict_types=1);
 
 namespace Database;
 
@@ -22,28 +23,30 @@ abstract class HasBase
 	/** @var ActiveRecord|Collection */
 	protected $data;
 
-	/** @var ActiveRecord */
-	protected $model;
+	/**
+	 * @var string 
+	 */
+	protected string $model;
 
 	/** @var */
 	protected $primaryId;
 
 	/** @var array */
-	protected $value = [];
+	protected array $value = [];
 
 
 	/** @var Relation $_relation */
-	protected $_relation;
+	protected Relation $_relation;
 
 	/**
 	 * HasBase constructor.
-	 * @param ActiveRecord $model
+	 * @param $model
 	 * @param $primaryId
 	 * @param $value
 	 * @param Relation $relation
 	 * @throws Exception
 	 */
-	public function __construct($model, $primaryId, $value, $relation)
+	public function __construct($model, $primaryId, $value, Relation $relation)
 	{
 		if (is_array($value)) {
 			if (empty($value)) $value = [];

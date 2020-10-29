@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 14:28
  */
-
+declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 
@@ -22,7 +22,7 @@ class Component extends BaseObject
 	/**
 	 * @var array
 	 */
-	private $_events = [];
+	private array $_events = [];
 
 
 	/**

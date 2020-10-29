@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace HttpServer\Route\Annotation;
@@ -25,25 +26,25 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @var string
 	 * @Interceptor(LoginInterceptor)
 	 */
-	private $Interceptor = 'required|not empty';
+	private string $Interceptor = 'required|not empty';
 
 
 	/**
 	 * @var string
 	 */
-	private $Limits = 'required|not empty';
+	private string $Limits = 'required|not empty';
 
 
-	private $Method = 'post';
+	private string $Method = 'post';
 
 
-	private $Middleware = '';
+	private string $Middleware = '';
 
 
-	private $After = '';
+	private string $After = '';
 
 
-	protected $_annotations = [];
+	protected array $_annotations = [];
 
 
 	/**
@@ -53,7 +54,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param $annotations
 	 * @throws ReflectionException
 	 */
-	public function read($node, $reflect, $method, $annotations)
+	public function read(Node $node, ReflectionClass $reflect, $method, $annotations)
 	{
 		$method = $reflect->getMethod($method);
 

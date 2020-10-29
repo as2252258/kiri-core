@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Database\Condition;
 
@@ -17,7 +17,7 @@ use Snowflake\Snowflake;
 class ArrayCondition extends Condition
 {
 
-	private $math = ['like', 'in', 'or', 'eq', 'neq', 'gt', 'ngt', 'lt', 'nlt'];
+	private array $math = ['like', 'in', 'or', 'eq', 'neq', 'gt', 'ngt', 'lt', 'nlt'];
 
 	/**
 	 * @return mixed

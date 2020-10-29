@@ -5,7 +5,7 @@
  * Date: 2018/5/24 0024
  * Time: 11:50
  */
-
+declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;

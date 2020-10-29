@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Snowflake\Abstracts;
 
@@ -12,7 +12,7 @@ namespace Snowflake\Abstracts;
 abstract class Listener extends Component implements IListener
 {
 
-	protected $trigger = '';
+	protected string $trigger = '';
 
 
 	/**

@@ -5,6 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 14:57
  */
+declare(strict_types=1);
 
 namespace Snowflake\Core;
 

@@ -1,11 +1,15 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Events;
 
 
 use HttpServer\Abstracts\Callback;
 
+/**
+ * Class OnWorkerStop
+ * @package HttpServer\Events
+ */
 class OnWorkerStop extends Callback
 {
 

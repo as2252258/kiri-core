@@ -5,6 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 18:44
  */
+declare(strict_types=1);
 
 namespace validator;
 
@@ -20,11 +21,11 @@ class TypesOfValidator extends BaseValidator
 	const INTEGER = 'integer';
 	const SERIALIZE = 'serialize';
 
-	private $min = null;
-	private $max = null;
+	private ?int $min = null;
+	private ?int $max = null;
 
 	/** @var array */
-	public $types = [
+	public array $types = [
 		self::JSON      => 'json',
 		self::FLOAT     => 'float',
 		self::ARRAY     => 'array',
@@ -34,7 +35,7 @@ class TypesOfValidator extends BaseValidator
 	];
 
 	/** @var string */
-	public $method;
+	public string $method;
 
 
 	/**

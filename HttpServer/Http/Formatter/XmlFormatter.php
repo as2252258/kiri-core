@@ -5,7 +5,7 @@
  * Date: 2018/4/8 0008
  * Time: 17:29
  */
-
+declare(strict_types=1);
 namespace HttpServer\Http\Formatter;
 
 
@@ -22,12 +22,12 @@ use HttpServer\IInterface\IFormatter;
 class XmlFormatter extends Application implements IFormatter
 {
 
-	public $data = '';
+	public ?string $data = '';
 
 	/** @var Response */
-	public $status;
+	public Response $status;
 
-	public $header = [];
+	public array $header = [];
 
 	/**
 	 * @param $data
@@ -61,7 +61,7 @@ class XmlFormatter extends Application implements IFormatter
 	 * @param SimpleXMLElement $dom
 	 * @param $data
 	 */
-	public function toXml($dom, $data)
+	public function toXml(SimpleXMLElement $dom, $data)
 	{
 		foreach ($data as $key => $val) {
 			if (is_numeric($key)) {

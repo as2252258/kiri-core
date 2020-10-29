@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Events;
 
@@ -31,7 +31,7 @@ class OnClose extends Callback
 	public function onHandler(Server $server, int $fd)
 	{
 		try {
-			[$manager, $name] = $this->resovle($server, $fd);
+			[$manager, $name] = $this->resolve($server, $fd);
 			if ($manager !== null && !$manager->has($name)) {
 				$manager->runWith($name, [$fd]);
 			}
@@ -53,7 +53,7 @@ class OnClose extends Callback
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function resovle($server, $fd)
+	public function resolve($server, $fd)
 	{
 		if ($server instanceof WServer) {
 			if (!$server->isEstablished($fd)) {

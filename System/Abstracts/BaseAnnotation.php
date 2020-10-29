@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Snowflake\Abstracts;
 
@@ -27,7 +27,7 @@ abstract class BaseAnnotation extends Component
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function instance($reflect, $method = '', $annotations = [])
+	public function instance(ReflectionClass $reflect, $method = '', $annotations = [])
 	{
 		$classMethods = $reflect->getMethods(ReflectionMethod::IS_PUBLIC);
 		if (!$reflect->isInstantiable()) {
@@ -55,7 +55,7 @@ abstract class BaseAnnotation extends Component
 	 * @return array
 	 * @throws
 	 */
-	protected function resolveDocComment($function, $object, $annotations, $array)
+	protected function resolveDocComment(ReflectionMethod $function, $object, $annotations, $array)
 	{
 		$comment = $function->getDocComment();
 		$array = $this->getDocCommentAnnotation($annotations, $comment);

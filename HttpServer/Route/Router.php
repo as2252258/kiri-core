@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Route;
 
@@ -28,21 +28,21 @@ defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
 class Router extends Application implements RouterInterface
 {
 	/** @var Node[] $nodes */
-	public $nodes = [];
-	public $groupTacks = [];
-	public $dir = 'App\\Http\\Controllers';
+	public array $nodes = [];
+	public array $groupTacks = [];
+	public ?string $dir = 'App\\Http\\Controllers';
 
 	const NOT_FOUND = 'Page not found or method not allowed.';
 
 	/** @var string[] */
-	public $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
+	public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
 
 
-	public $middleware = null;
+	public Closure|null $middleware = null;
 
-	public $useTree = false;
+	public bool $useTree = false;
 
-	private $reading = false;
+	private bool $reading = false;
 
 
 	/**

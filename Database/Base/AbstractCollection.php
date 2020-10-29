@@ -5,11 +5,12 @@
  * Date: 2018/4/9 0009
  * Time: 9:44
  */
-
+declare(strict_types=1);
 namespace Database\Base;
 
 
 use ArrayIterator;
+use Database\ActiveQuery;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Database\ActiveRecord;
@@ -25,12 +26,11 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/**
 	 * @var ActiveRecord[]
 	 */
-	protected $_item = [];
+	protected array $_item = [];
 
-	/** @var ActiveRecord */
-	protected $model;
+	protected ?ActiveRecord $model;
 
-	protected $query;
+	protected ActiveQuery $query;
 
 	/**
 	 * Collection constructor.

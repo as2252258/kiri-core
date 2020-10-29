@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 14:39
  */
-
+declare(strict_types=1);
 namespace Database;
 
 

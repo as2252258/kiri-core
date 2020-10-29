@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Snowflake\Cache;
 
 
@@ -18,13 +18,13 @@ class Memcached extends Component implements ICache
 {
 
 	/** @var \Memcached */
-	private $_memcached;
+	private \Memcached $_memcached;
 
-	public $host = '127.0.0.1';
+	public string $host = '127.0.0.1';
 
-	public $port = 11211;
+	public int $port = 11211;
 
-	public $timeout = 60;
+	public int $timeout = 60;
 
 
 	/**

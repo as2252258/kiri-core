@@ -3,6 +3,7 @@
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
 
 use HttpServer\Http\Response;
+use HttpServer\Route\Router;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -405,7 +406,7 @@ if (!function_exists('name')) {
 	/**
 	 * @param string $name
 	 */
-	function name($name)
+	function name(string $name)
 	{
 		swoole_set_process_name($name);
 	}
@@ -500,6 +501,21 @@ if (!function_exists('merge')) {
 	function merge($param, $param1)
 	{
 		return ArrayAccess::merge($param, $param1);
+	}
+
+}
+
+
+if (!function_exists('router')) {
+
+
+	/**
+	 * @return Router
+	 * @throws ComponentException
+	 */
+	function router()
+	{
+		return Snowflake::app()->getRouter();
 	}
 
 }

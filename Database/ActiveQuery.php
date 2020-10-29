@@ -5,7 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 14:42
  */
-
+declare(strict_types=1);
 namespace Database;
 
 use Snowflake\Abstracts\Component;
@@ -24,26 +24,28 @@ class ActiveQuery extends Component
 	use QueryTrait;
 
 	/** @var array */
-	public $with = [];
+	public array $with = [];
 
 	/** @var bool */
-	public $asArray = FALSE;
+	public bool $asArray = FALSE;
 
 	/** @var bool */
-	public $useCache = FALSE;
+	public bool $useCache = FALSE;
 
-	/** @var Connection $db */
-	public $db = NULL;
+	/**
+	 * @var Connection|null
+	 */
+	public ?Connection $db = NULL;
 
 	/**
 	 * @var array
 	 * 参数绑定
 	 */
-	public $attributes = [];
+	public array $attributes = [];
 
 
 	/** @var ActiveRecord */
-	public $modelClass;
+	public ActiveRecord $modelClass;
 
 	/**
 	 * Comply constructor.

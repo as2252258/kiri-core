@@ -5,6 +5,7 @@
  * Date: 2018/4/3 0003
  * Time: 15:42
  */
+declare(strict_types=1);
 
 namespace validator;
 
@@ -35,16 +36,12 @@ class DateTimeValidator extends BaseValidator
 		switch (strtolower($this->method)) {
 			case self::DATE:
 				return $this->validatorDate($value);
-				break;
 			case self::DATE_TIME:
 				return $this->validateDatetime($value);
-				break;
 			case self::TIME:
 				return $this->validatorTime($value);
-				break;
 			case self::STR_TO_TIME:
 				return $this->validatorTimestamp($value);
-				break;
 			default:
 				return true;
 		}

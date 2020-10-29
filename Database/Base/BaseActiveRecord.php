@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 14:39
  */
-
+declare(strict_types=1);
 namespace Database\Base;
 
 
@@ -38,23 +38,23 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 {
 
 	/** @var array */
-	protected $_attributes = [];
+	protected array $_attributes = [];
 
 	/** @var array */
-	protected $_oldAttributes = [];
+	protected array $_oldAttributes = [];
 
 	/** @var array */
-	protected $_relate = [];
+	protected array $_relate = [];
 
 	/** @var null|string */
-	protected $primary = NULL;
+	protected ?string $primary = NULL;
 
 	/**
 	 * @var bool
 	 */
-	protected $isNewExample = TRUE;
+	protected bool $isNewExample = TRUE;
 
-	protected $actions = [];
+	protected array $actions = [];
 
 	/** @var Relation */
 	protected $_relation = [];

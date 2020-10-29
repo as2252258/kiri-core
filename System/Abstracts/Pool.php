@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Snowflake\Abstracts;
 
@@ -16,9 +16,9 @@ abstract class Pool extends Component
 {
 
 	/** @var Channel[] */
-	private $_items = [];
+	private array $_items = [];
 
-	protected $max = 60;
+	protected int $max = 60;
 
 	/**
 	 * @param $name

@@ -5,6 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 18:44
  */
+declare(strict_types=1);
 
 namespace validator;
 
@@ -15,8 +16,8 @@ class IntegerValidator extends BaseValidator
 	const MIN = 'min';
 	const MAX = 'max';
 
-	public $value = null;
-	private $type = '';
+	public ?int $value = null;
+	private string $type = '';
 
 	/**
 	 * @return bool

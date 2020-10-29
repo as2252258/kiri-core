@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace validator;
 
@@ -12,7 +13,7 @@ abstract class BaseValidator
 
 	public $rules;
 
-	public $method;
+	public string $method;
 
 	protected $isFail = TRUE;
 

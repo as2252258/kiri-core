@@ -5,12 +5,13 @@
  * Date: 2019-03-18
  * Time: 14:54
  */
-
+declare(strict_types=1);
 namespace HttpServer\Http;
 
 use Exception;
 use HttpServer\Exception\RequestException;
 use Snowflake\Core\Help;
+use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
 
 /**
@@ -21,13 +22,13 @@ class HttpParams
 {
 
 	/** @var array */
-	private $body = [];
+	private array $body = [];
 
 	/** @var array */
-	private $gets = [];
+	private array $gets = [];
 
 	/** @var array */
-	private $files = [];
+	private array $files = [];
 
 	/**
 	 * HttpParams constructor.

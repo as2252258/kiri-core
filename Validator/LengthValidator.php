@@ -5,6 +5,7 @@
  * Date: 2018/4/3 0003
  * Time: 17:04
  */
+declare(strict_types=1);
 
 namespace validator;
 
@@ -17,7 +18,7 @@ class LengthValidator extends BaseValidator
 
 	public $method;
 
-	public $value;
+	public int $value;
 
 	/**
 	 * @return bool
@@ -39,10 +40,8 @@ class LengthValidator extends BaseValidator
 		switch (strtolower($this->method)) {
 			case self::MAX_LENGTH:
 				return $this->maxLength($value);
-				break;
 			case self::MIN_LENGTH:
 				return $this->minLength($value);
-				break;
 			default:
 				return $this->defaultLength($value);
 		}

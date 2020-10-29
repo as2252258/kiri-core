@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 14:56
  */
-
+declare(strict_types=1);
 namespace Database\Traits;
 
 
@@ -20,21 +20,23 @@ use Exception;
  */
 trait QueryTrait
 {
-	public $where = [];
-	public $select = [];
-	public $join = [];
-	public $order = [];
-	public $offset = NULL;
-	public $limit = NULL;
-	public $group = '';
-	public $from = '';
-	public $alias = 't1';
-	public $filter = [];
+	public array $where = [];
+	public array $select = [];
+	public array $join = [];
+	public array $order = [];
+	public ?int $offset = NULL;
+	public ?int $limit = NULL;
+	public string $group = '';
+	public string $from = '';
+	public string $alias = 't1';
+	public array $filter = [];
 
-	public $ifNotWhere = false;
+	public bool $ifNotWhere = false;
 
-	/** @var ActiveRecord */
-	public $modelClass;
+	/**
+	 * @var ActiveRecord
+	 */
+	public ActiveRecord $modelClass;
 
 	/**
 	 * clear

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
 
 namespace HttpServer\Events;
 
 
 use HttpServer\Abstracts\Callback;
+use HttpServer\IInterface\Task;
 use HttpServer\IInterface\Task as ITask;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -40,10 +42,9 @@ class OnTask extends Callback
 	 * @param string $data
 	 *
 	 * @return mixed|void
-	 * @throws Exception
-	 * 异步任务
+	 * @throws Exception 异步任务
 	 */
-	public function onTask(Server $server, $task_id, $from_id, $data)
+	public function onTask(Server $server, int $task_id, int $from_id, string $data)
 	{
 		$time = microtime(TRUE);
 		if (empty($data)) {
@@ -102,7 +103,7 @@ class OnTask extends Callback
 			$finish['class'] = get_class($serialize);
 			$finish['params'] = $params;
 			$finish['status'] = 'success';
-			$finish['info'] = $serialize->handler();
+			$finish['info'] = $serialize->onHandler();
 		} catch (\Throwable $exception) {
 			$finish['status'] = 'error';
 			$finish['info'] = $this->format($exception);
@@ -119,7 +120,7 @@ class OnTask extends Callback
 	 * @param $data
 	 * @return ITask|null
 	 */
-	protected function before($data)
+	protected function before($data): Task|null
 	{
 		if (empty($serialize = unserialize($data))) {
 			return null;

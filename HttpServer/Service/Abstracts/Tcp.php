@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Service\Abstracts;
 
@@ -14,11 +14,11 @@ abstract class Tcp extends Server implements Service
 	use \HttpServer\Service\Abstracts\Server;
 
 	/** @var Closure|array */
-	public $unpack;
+	public Closure|array $unpack;
 
 
 	/** @var Closure|array */
-	public $pack;
+	public Closure|array $pack;
 
 
 }

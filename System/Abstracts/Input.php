@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Snowflake\Abstracts;
 
@@ -9,10 +9,10 @@ use Exception;
 class Input
 {
 
-	private $_argv = [];
+	private array $_argv = [];
 
 
-	private $_command = '';
+	private string $_command = '';
 
 
 	/**

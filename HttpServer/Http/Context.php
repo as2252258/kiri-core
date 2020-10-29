@@ -13,9 +13,9 @@ use Swoole\Coroutine;
 class Context extends BaseContext
 {
 
-	protected static $_requests = [];
+	protected static array $_requests = [];
 
-	protected static $_response = [];
+	protected static array $_response = [];
 
 
 	/**

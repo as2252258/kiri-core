@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace HttpServer\Route\Annotation;
 
@@ -16,13 +17,13 @@ class Websocket extends Annotation
 	const HANDSHAKE = 'Handshake';
 	const CLOSE = 'Close';
 
-	private $Message = 'required|not empty';
+	private string $Message = 'required|not empty';
 
 
-	private $Handshake;
+	private string $Handshake;
 
 
-	private $Close;
+	private string $Close;
 
 
 	/**

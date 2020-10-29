@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Http;
 
@@ -12,14 +12,14 @@ use Snowflake\Snowflake;
 class File
 {
 
-	public $name = '';
-	public $tmp_name = '';
-	public $error = '';
-	public $type = '';
-	public $size = '';
+	public string $name = '';
+	public string $tmp_name = '';
+	public string $error = '';
+	public string $type = '';
+	public string $size = '';
 
-	private $newName = '';
-	private $errorInfo = [
+	private string $newName = '';
+	private array $errorInfo = [
 		0 => 'UPLOAD_ERR_OK.',
 		1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
 		2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',

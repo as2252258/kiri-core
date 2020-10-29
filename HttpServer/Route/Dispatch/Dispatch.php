@@ -1,11 +1,14 @@
 <?php
+declare(strict_types=1);
 
 
 namespace HttpServer\Route\Dispatch;
 
 
+use Closure;
 use HttpServer\Controller;
 use HttpServer\Http\Context;
+use HttpServer\Http\Request;
 use Snowflake\Snowflake;
 
 /**
@@ -15,9 +18,10 @@ use Snowflake\Snowflake;
 class Dispatch
 {
 
-	protected $handler;
+	/** @var Closure|array */
+	protected Closure|array $handler;
 
-	protected $request;
+	protected Request $request;
 
 	/**
 	 * @param $handler
@@ -29,7 +33,7 @@ class Dispatch
 		$class = new static();
 		$class->handler = $handler;
 		$class->request = $request;
-		if ($handler instanceof \Closure) {
+		if ($handler instanceof Closure) {
 			$class->bind();
 		}
 		$class->bindParam();
@@ -53,7 +57,7 @@ class Dispatch
 	protected function bind()
 	{
 		$class = $this->bindRequest(new Controller());
-		$this->handler = \Closure::bind($this->handler, $class);
+		$this->handler = Closure::bind($this->handler, $class);
 	}
 
 
@@ -75,7 +79,7 @@ class Dispatch
 	 */
 	protected function bindParam()
 	{
-		if ($this->handler instanceof \Closure) {
+		if ($this->handler instanceof Closure) {
 			return;
 		}
 		$controller = $this->handler[0];

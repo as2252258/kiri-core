@@ -6,6 +6,8 @@
  * Time: 17:22
  */
 
+declare(strict_types=1);
+
 namespace Database\Mysql;
 
 
@@ -21,20 +23,42 @@ use Snowflake\Core\JSON;
 class Columns extends Component
 {
 
-	private $columns = [];
+	/**
+	 * @var array
+	 * field types
+	 */
+	private array $columns = [];
 
-	/** @var Connection $db */
-	public $db;
-	public $table = '';
-	private $_primary = [];
-	private $_auto_increment = [];
+	/**
+	 * @var Connection
+	 * Mysql client
+	 */
+	public Connection $db;
+
+	/**
+	 * @var string
+	 * tableName
+	 */
+	public string $table = '';
+
+	/**
+	 * @var array
+	 * field primary key
+	 */
+	private array $_primary = [];
+
+	/**
+	 * @var array
+	 * by mysql field auto_increment
+	 */
+	private array $_auto_increment = [];
 
 	/**
 	 * @param string $table
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function table($table)
+	public function table(string $table)
 	{
 		return $this->structure($this->table = $table);
 	}

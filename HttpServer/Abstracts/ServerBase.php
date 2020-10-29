@@ -5,7 +5,7 @@
  * Date: 2018/11/8 0008
  * Time: 18:37
  */
-
+declare(strict_types=1);
 namespace HttpServer\Abstracts;
 
 
@@ -20,7 +20,7 @@ abstract class ServerBase extends Application
 {
 
 	/** @var Server */
-	protected $server;
+	protected Server $server;
 
 	/**
 	 * @return Server

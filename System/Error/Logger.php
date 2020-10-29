@@ -5,6 +5,7 @@
  * Date: 2019-03-22
  * Time: 14:36
  */
+declare(strict_types=1);
 
 namespace Snowflake\Error;
 
@@ -22,9 +23,9 @@ use Swoole\Process;
 class Logger extends Component
 {
 
-	private $logs = [];
+	private array $logs = [];
 
-	public $worker_id;
+	public int $worker_id;
 
 	/**
 	 * @param $message

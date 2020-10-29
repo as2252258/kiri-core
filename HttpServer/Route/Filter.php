@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace HttpServer\Route;
@@ -21,10 +22,10 @@ class Filter extends Application
 {
 
 	/** @var Filter\Filter[] */
-	private $_filters = [];
+	private array $_filters = [];
 
 	/** @var array */
-	public $grant = [];
+	public array $grant = [];
 
 	/**
 	 * @param array $value

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Snowflake\Jwt;
 
@@ -16,19 +17,19 @@ class Jwt extends Component
 {
 
 	/** @var int $user */
-	private $user;
+	private int $user;
 
-	private $data;
+	private array $data;
 
-	private $source = ['browser', 'android', 'iphone', 'pc', 'mingame'];
+	private array $source = ['browser', 'android', 'iphone', 'pc', 'mingame'];
 
-	private $config = ['token' => ''];
+	private array $config = ['token' => ''];
 
-	private $timeout = 7200;
+	private ?int $timeout = 7200;
 
-	private $key = 'www.xshucai.com';
+	private string $key = 'www.xshucai.com';
 
-	private $public = '-----BEGIN PUBLIC KEY-----
+	private ?string $public = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6BuML3gtLGde7QKNuNST
 UCB9gdHC7XIpOc7Wx2I64Esj3UxWHTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6Xad
 jqfjEWpTy4WwGYsOfH0tFl3wAmse0lebF4NFsS9pzrikQT6c9qsVm88pCjvg4i5t
@@ -38,7 +39,7 @@ WlQhpQrA5/wKd76dCzjvqw9M32OiZl2lCKT73cV8GUvt7BNsM1SiPhqfY7nhO6y3
 cwIDAQAB
 -----END PUBLIC KEY-----';
 
-	private $private = '-----BEGIN RSA PRIVATE KEY-----
+	private ?string $private = '-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEA6BuML3gtLGde7QKNuNSTUCB9gdHC7XIpOc7Wx2I64Esj3UxW
 HTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6XadjqfjEWpTy4WwGYsOfH0tFl3wAmse
 0lebF4NFsS9pzrikQT6c9qsVm88pCjvg4i5tWhTMEnpTFDYoDR0KXlLXltQMudBB

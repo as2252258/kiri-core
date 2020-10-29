@@ -24,52 +24,115 @@
 //var_dump($events);
 
 
-require_once __DIR__ . '/function.php';
-require_once __DIR__ . '/HttpServer/Client/Result.php';
-require_once __DIR__ . '/HttpServer/Client/HttpParse.php';
-require_once __DIR__ . '/HttpServer/Client/Curl.php';
-
-\Swoole\Coroutine::create(function () {
-	$curl = \HttpServer\Client\Curl::NewRequest();
-//	$curl->setCallback(function ($body) {
-//		return $body;
-//	});
-//	var_dump($curl->get('https://www.baidu.com'));
-//	$curl->setHost('www.baidu.com');
-//	$curl->setIsSsl(true);
-//	$curl->setCallback(function ($body) {
-//		return $body;
-//	});
-
-//	var_dump($curl->get('https://test-api.zhuangb123.com/'));
-//	var_dump($curl->post('https://test-api.zhuangb123.com/test'));
-//	var_dump($curl->get('https://test-api.zhuangb123.com/2'));
-//	var_dump($curl->get('https://test-api.zhuangb123.com/test'));
-//	var_dump($curl->get('https://test-api.zhuangb123.com/'));
-//	var_dump($curl->get('https://test-api.zhuangb123.com/test'));
+//require_once __DIR__ . '/function.php';
+//require_once __DIR__ . '/HttpServer/Client/Result.php';
+//require_once __DIR__ . '/HttpServer/Client/HttpParse.php';
+//require_once __DIR__ . '/HttpServer/Client/Curl.php';
 //
-//	$curl->clean('/test', [$curl::GET, $curl::POST]);
-//	$curl->clean('/', [$curl::GET]);
+//\Swoole\Coroutine::create(function () {
+//	$curl = \HttpServer\Client\Curl::NewRequest();
+////	$curl->setCallback(function ($body) {
+////		return $body;
+////	});
+////	var_dump($curl->get('https://www.baidu.com'));
+////	$curl->setHost('www.baidu.com');
+////	$curl->setIsSsl(true);
+////	$curl->setCallback(function ($body) {
+////		return $body;
+////	});
 //
-//
-	$curl->setHost('47.92.194.207');
-	$curl->setPort(6602);
-	var_dump($curl->get('/'));
-//	var_dump($curl->post('/test'));
+////	var_dump($curl->get('https://test-api.zhuangb123.com/'));
+////	var_dump($curl->post('https://test-api.zhuangb123.com/test'));
+////	var_dump($curl->get('https://test-api.zhuangb123.com/2'));
+////	var_dump($curl->get('https://test-api.zhuangb123.com/test'));
+////	var_dump($curl->get('https://test-api.zhuangb123.com/'));
+////	var_dump($curl->get('https://test-api.zhuangb123.com/test'));
+////
+////	$curl->clean('/test', [$curl::GET, $curl::POST]);
+////	$curl->clean('/', [$curl::GET]);
+////
+////
+//	$curl->setHost('47.92.194.207');
+//	$curl->setPort(6602);
 //	var_dump($curl->get('/'));
-//	var_dump($curl->get('/test'));
-//	var_dump($curl->get('/'));
-//	var_dump($curl->get('/test'));
-//	var_dump();
-});
-
+////	var_dump($curl->post('/test'));
+////	var_dump($curl->get('/'));
+////	var_dump($curl->get('/test'));
+////	var_dump($curl->get('/'));
+////	var_dump($curl->get('/test'));
+////	var_dump();
+//});
+//
+//
+////
+//
+////(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})
+////preg_match('/((http[s]?):\/\/)?(([\w-_]+\.)+\w+(:\d+)?)/', 'asdas.asd:4554/asdhagsdahsjs/asdassd/asdasd/as/d?id=akjsda&sdjkd=asdjasd', $out);
+////var_dump($out);
+//
+//
+////[$uri, $host, $isHttps, $domain, $_1, $_2, $path] = $out;
+//// $out[0],$out[1],$out[3],$out[4],$out[7]
 
 //
+//$process = new \Swoole\Process(function (\Swoole\Process $process) {
+//	try {
+//		Swoole\Process::signal(9 | 15, function ($signo) {
+//			var_dump($signo);
+//			echo "shutdown.";
+//			file_put_contents(__DIR__ . '/log', __DIR__);
+//		});
+//		Swoole\Event::wait();
+//	}catch (Throwable $exception){
+//		var_dump($exception);
+//	}
+//	var_dump($process->pid);
+//
+//
+//	while (true) {
+//		Swoole\Coroutine::sleep(1);
+//	}
+//
+//}, false, 1, true);
+//$process->start();
+//
 
-//(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})
-//preg_match('/((http[s]?):\/\/)?(([\w-_]+\.)+\w+(:\d+)?)/', 'asdas.asd:4554/asdhagsdahsjs/asdassd/asdasd/as/d?id=akjsda&sdjkd=asdjasd', $out);
-//var_dump($out);
+//$client = function ($name, callable $createCallback, callable $check, callable $release) {
+//	static $null = null;
+//	if (empty($null)) {
+//		$null = call_user_func($createCallback);
+//	}
+//	if (!call_user_func($check, $null)) {
+//		throw new Exception('check error.');
+//	}
+//	return $null;
+//};
+//
+//
+//$client(
+//	'MyBuy',
+//	function () {
+//		return new stdClass();
+//	},
+//	function ($class) {
+//		return $class ? true : false;
+//	},
+//	function ($class) {
+//		unset($class);
+//	}
+//);
+//
+//
 
 
-//[$uri, $host, $isHttps, $domain, $_1, $_2, $path] = $out;
-// $out[0],$out[1],$out[3],$out[4],$out[7]
+error_reporting(E_ALL);
+
+$a['hello'] = base64_encode(random_bytes(1000));
+$a['world'] = 'hello';
+$a['int'] = rand(1, 999999);
+$a['list'] = ['a,', 'b', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'];
+
+$val = serialize($a);
+$str = pack('N', strlen($val)) . $val . "\r\n";
+
+var_dump($str, pack('N', strlen($val)));

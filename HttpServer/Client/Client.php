@@ -5,6 +5,7 @@
  * Date: 2018/5/24 0024
  * Time: 11:34
  */
+declare(strict_types=1);
 
 namespace HttpServer\Client;
 
@@ -25,31 +26,31 @@ use Swoole\Coroutine\Client as SCClient;
  */
 class Client
 {
-	private $host = '';
+	private string $host = '';
 
-	private $header = [];
+	private array $header = [];
 
-	private $timeout = 0;
+	private int $timeout = 0;
 
-	private $callback = null;
-	private $method = 'get';
+	private ?\Closure $callback = null;
+	private string $method = 'get';
 
-	private $isSSL = false;
-	private $agent = '';
-	private $errorCodeField = '';
-	private $errorMsgField = '';
-	private $use_swoole = false;
+	private bool $isSSL = false;
+	private string $agent = '';
+	private string $errorCodeField = '';
+	private string $errorMsgField = '';
+	private bool $use_swoole = false;
 
-	private $ssl_cert_file = '';
-	private $ssl_key_file = '';
-	private $ca = '';
-	private $port = '';
+	private string $ssl_cert_file = '';
+	private string $ssl_key_file = '';
+	private string $ca = '';
+	private int $port = 80;
 
 	/** @var string $_message 错误信息 */
-	private $_message = '';
-	private $_data = '';
+	private string $_message = '';
+	private string $_data = '';
 
-	private $connect_timeout = 1;
+	private int $connect_timeout = 1;
 
 	const GET = 'get';
 	const PUT = 'put';
@@ -92,17 +93,17 @@ class Client
 
 
 	/**
-	 * @return string
+	 * @return int
 	 */
-	public function getPort(): string
+	public function getPort(): int
 	{
 		return $this->port;
 	}
 
 	/**
-	 * @param string $port
+	 * @param int $port
 	 */
-	public function setPort(string $port): void
+	public function setPort(int $port): void
 	{
 		$this->port = $port;
 	}
@@ -135,17 +136,17 @@ class Client
 	}
 
 	/**
-	 * @return string
+	 * @return bool
 	 */
-	public function hasSslCertFile(): string
+	public function hasSslCertFile(): bool
 	{
 		return !empty($this->ssl_cert_file) && file_exists($this->ssl_cert_file);
 	}
 
 	/**
-	 * @return string
+	 * @return bool
 	 */
-	public function hasSslKeyFile(): string
+	public function hasSslKeyFile(): bool
 	{
 		return !empty($this->ssl_key_file) && file_exists($this->ssl_key_file);
 	}

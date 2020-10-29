@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Client;
 
@@ -20,11 +20,11 @@ class Http2 extends Component
 {
 
 	/** @var H2Client[] */
-	private $_clients = [];
+	private array $_clients = [];
 
 
 	/** @var Request[] */
-	private $_requests = [];
+	private array $_requests = [];
 
 
 	/**

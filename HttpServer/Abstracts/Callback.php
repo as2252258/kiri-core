@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Abstracts;
 
@@ -52,7 +52,7 @@ abstract class Callback extends Application
 	const EVENT_EXIT = 'WORKER:EXIT';
 
 
-	private $_MESSAGE = [
+	private array $_MESSAGE = [
 		self::EVENT_ERROR => 'The server error. at No.',
 		self::EVENT_STOP  => 'The server stop. at No.',
 		self::EVENT_EXIT  => 'The server exit. at No.',

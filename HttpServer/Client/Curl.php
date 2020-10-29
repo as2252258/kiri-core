@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Client;
 
@@ -26,55 +26,55 @@ class Curl
 	const PUT = 'put';
 
 
-	private $curl_multi = [];
+	private array $curl_multi = [];
 
-	private $headers = [
+	private array $headers = [
 		'Connection' => 'Keep-Alive',
 		'Keep-Alive' => '300'
 	];
 
-	/** @var Closure|array */
-	private $callback;
+	/** @var ?Closure */
+	private ?\Closure $callback;
 
 	/** @var string */
-	private $errorCodeField = '';
+	private string $errorCodeField = '';
 
 	/** @var string */
-	private $errorMsgField = '';
+	private string $errorMsgField = '';
 
 	/** @var int */
-	private $timeout = -1;
+	private int $timeout = -1;
 
 	/** @var int */
-	private $connection_timeout = 2;
+	private int $connection_timeout = 2;
 
 	/** @var bool */
-	private $useKeepAlive = true;
+	private bool $useKeepAlive = true;
 
 	/** @var string */
-	private $agent = '';
+	private string $agent = '';
 
 	/** @var string */
-	private $ssl_key = '';
+	private string $ssl_key = '';
 
 	/** @var string */
-	private $ssl_cert = '';
+	private string $ssl_cert = '';
 
 	/** @var string */
-	private $ssl_ca = '';
+	private string $ssl_ca = '';
 
 	/** @var string */
-	private $host = '127.0.0.1';
+	private string $host = '127.0.0.1';
 
-	/** @var string */
-	private $port = '9958';
+	/** @var int */
+	private int $port = 9958;
 
 	/** @var bool */
-	private $isSsl = true;
+	private bool $isSsl = true;
 
 
 	/** @var Curl */
-	private static $instance;
+	private static Curl $instance;
 
 	/**
 	 * @return array|Closure
@@ -85,9 +85,9 @@ class Curl
 	}
 
 	/**
-	 * @param array|Closure $callback
+	 * @param Closure $callback
 	 */
-	public function setCallback($callback): void
+	public function setCallback(Closure $callback): void
 	{
 		$this->callback = $callback;
 	}
@@ -306,7 +306,7 @@ class Curl
 	/**
 	 * @return string
 	 */
-	public function getPort(): string
+	public function getPort(): int
 	{
 		if (empty($this->port)) {
 			return 80;
@@ -315,9 +315,9 @@ class Curl
 	}
 
 	/**
-	 * @param string $port
+	 * @param int $port
 	 */
-	public function setPort(string $port): void
+	public function setPort(int $port): void
 	{
 		$this->port = $port;
 	}

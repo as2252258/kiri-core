@@ -1,14 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace HttpServer\Http;
 
-use Snowflake\Core\Help;
 use Exception;
 use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use function router;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
 defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
@@ -32,26 +33,26 @@ class Request extends Application
 {
 
 	/** @var int $fd */
-	public $fd = 0;
+	public int $fd = 0;
 
 	/** @var HttpParams */
-	public $params;
+	public HttpParams $params;
 
 	/** @var HttpHeaders */
-	public $headers;
+	public HttpHeaders $headers;
 
 	/** @var bool */
-	public $isCli = FALSE;
+	public bool $isCli = FALSE;
 
 	/** @var float */
-	public $startTime;
+	public float $startTime;
 
-	public $uri = '';
+	public string $uri = '';
 
-	public $statusCode = 200;
+	public int $statusCode = 200;
 
 	/** @var string[] */
-	private $explode = [];
+	private array $explode = [];
 
 	const PLATFORM_MAC_OX = 'mac';
 	const PLATFORM_IPHONE = 'iphone';
@@ -62,7 +63,7 @@ class Request extends Application
 	/**
 	 * @var AuthIdentity|null
 	 */
-	private $_grant = null;
+	private ?AuthIdentity $_grant = null;
 
 
 	/**
@@ -212,7 +213,7 @@ class Request extends Application
 	public function adapter()
 	{
 		if (!$this->isHead()) {
-			return router()->runHandler();
+			return router()->dispatch();
 		}
 		return '';
 	}

@@ -5,6 +5,7 @@
  * Date: 2018/4/3 0003
  * Time: 15:28
  */
+declare(strict_types=1);
 
 namespace validator;
 

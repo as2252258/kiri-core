@@ -5,7 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 13:38
  */
-
+declare(strict_types=1);
 namespace Database;
 
 use Database\Base\AbstractCollection;

@@ -16,6 +16,9 @@
 <script type="text/javascript">
     let sock, tick, format = document.getElementById('format');
 
+    console.log(new Date().getTime());
+    console.log(Date.parse(new Date()));
+
     function message(message) {
         let div = document.createElement('div');
         div.innerHTML = message.data;

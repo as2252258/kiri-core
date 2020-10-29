@@ -5,7 +5,7 @@
  * Date: 2018/4/4 0004
  * Time: 13:58
  */
-
+declare(strict_types=1);
 namespace Database;
 
 use Exception;

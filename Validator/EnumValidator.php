@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace validator;
 
@@ -10,7 +11,7 @@ namespace validator;
 class EnumValidator extends BaseValidator
 {
 
-	public $value = [];
+	public array $value = [];
 
 	/**
 	 * @return bool

@@ -5,7 +5,7 @@
  * Date: 2018/11/8 0008
  * Time: 16:35
  */
-
+declare(strict_types=1);
 namespace Snowflake\Cache;
 
 /**

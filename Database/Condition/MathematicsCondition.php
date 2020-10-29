@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Database\Condition;
 
@@ -10,7 +10,7 @@ namespace Database\Condition;
 class MathematicsCondition extends Condition
 {
 
-	public $type = '';
+	public string $type = '';
 
 	/**
 	 * @return mixed

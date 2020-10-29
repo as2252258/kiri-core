@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Kafka;
 
@@ -15,7 +15,7 @@ class Struct
 	public string $topic;
 
 	public string $value;
-	public string $part;
+	public int $part;
 
 	/**
 	 * Struct constructor.

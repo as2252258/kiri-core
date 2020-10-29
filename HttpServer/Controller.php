@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer;
 
@@ -21,18 +21,18 @@ class Controller extends Application
 {
 
 	/** @var HttpParams $input */
-	public $input;
+	public HttpParams $input;
 
 
 	/** @var HttpHeaders */
-	public $headers;
+	public HttpHeaders $headers;
 
 
 	/** @var Request */
-	public $request;
+	public Request $request;
 
 
-	public $goto;
+	public BaseGoto $goto;
 
 
 	public $app;

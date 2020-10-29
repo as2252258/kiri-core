@@ -5,7 +5,7 @@
  * Date: 2019-03-18
  * Time: 14:54
  */
-
+declare(strict_types=1);
 namespace HttpServer\Http;
 
 /**
@@ -18,12 +18,12 @@ class HttpHeaders
 	/**
 	 * @var string[]
 	 */
-	private $headers = [];
+	private array $headers = [];
 
 	/**
 	 * @var string[]
 	 */
-	private $response = [];
+	private array $response = [];
 
 	/**
 	 * HttpHeaders constructor.

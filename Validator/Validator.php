@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 
 namespace validator;
 
 
+use Exception;
 use Snowflake\Snowflake;
 
 /**
@@ -14,12 +16,12 @@ class Validator extends BaseValidator
 {
 
 	/** @var BaseValidator[] */
-	private $validators = [];
+	private array $validators = [];
 
-	/** @var Validator */
-	private static $instance = null;
+	/** @var ?Validator */
+	private static ?Validator $instance = null;
 
-	protected $classMap = [
+	protected array $classMap = [
 		'not empty' => [
 			'class'  => 'validator\EmptyValidator',
 			'method' => EmptyValidator::CAN_NOT_EMPTY,
@@ -31,7 +33,7 @@ class Validator extends BaseValidator
 		'required'  => [
 			'class' => 'validator\RequiredValidator',
 		],
-		'enums'  => [
+		'enums'     => [
 			'class' => 'validator\EnumValidator',
 		],
 		'unique'    => [
@@ -116,7 +118,7 @@ class Validator extends BaseValidator
 	 * @param $field
 	 * @param $rules
 	 * @return $this
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function make($field, $rules)
 	{
@@ -138,7 +140,7 @@ class Validator extends BaseValidator
 	 * @param $rule
 	 * @param $model
 	 * @param $param
-	 * @throws \Exception
+	 * @throws Exception
 	 * ['maxLength'=>150, 'required', 'minLength' => 100]
 	 */
 	public function createRule($field, $rule, $model, $param)
@@ -172,7 +174,7 @@ class Validator extends BaseValidator
 
 	/**
 	 * @return bool
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function validation()
 	{

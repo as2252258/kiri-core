@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Database;
 
@@ -19,28 +19,25 @@ class Pagination extends Component
 {
 
 	/** @var ActiveQuery */
-	private $activeQuery;
+	private ActiveQuery $activeQuery;
 
 	/** @var int 从第几个开始查 */
-	private $_offset = 0;
+	private int $_offset = 0;
 
 	/** @var int 每页数量 */
-	private $_limit = 100;
+	private int $_limit = 100;
 
 	/** @var int 最大查询数量 */
-	private $_max = 0;
+	private int $_max = 0;
 
 	/** @var int 当前已查询数量 */
-	private $_length = 0;
+	private int $_length = 0;
 
 	/** @var Closure */
-	private $_callback;
-
-	/** @var Coroutine\Channel */
-	private $_channel;
+	private Closure $_callback;
 
 	/** @var Coroutine\WaitGroup */
-	private $_group;
+	private Coroutine\WaitGroup $_group;
 
 	/**
 	 * PaginationIteration constructor.
@@ -51,7 +48,6 @@ class Pagination extends Component
 	{
 		parent::__construct($config);
 		$this->activeQuery = $activeQuery;
-//		$this->_channel = new Coroutine\Channel();
 	}
 
 

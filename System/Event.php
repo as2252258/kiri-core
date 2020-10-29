@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Snowflake;
 
 
+use Exception;
 use Snowflake\Abstracts\BaseObject;
 use Snowflake\Core\ArrayAccess;
 
@@ -55,7 +57,7 @@ class Event extends BaseObject
 	 * @param $callback
 	 * @param array $parameter
 	 * @param bool $isAppend
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function on($name, $callback, $parameter = [], $isAppend = true)
 	{
@@ -66,7 +68,7 @@ class Event extends BaseObject
 			$callback = \Closure::bind($callback, Snowflake::app());
 		} else if (is_array($callback) && is_string($callback[0])) {
 			if (!class_exists($callback[0])) {
-				throw new \Exception('Undefined callback class.');
+				throw new Exception('Undefined callback class.');
 			}
 			$callback[0] = Snowflake::createObject($callback[0]);
 		}
@@ -169,7 +171,7 @@ class Event extends BaseObject
 	 * @param null $parameter
 	 * @param false $is_remove
 	 * @return bool|mixed
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function trigger($name, $parameter = null, $handler = null, $is_remove = false)
 	{

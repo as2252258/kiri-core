@@ -1,6 +1,6 @@
 <?php
 
-
+declare(strict_types=1);
 namespace Database\Base;
 
 
@@ -18,12 +18,11 @@ use Snowflake\Snowflake;
 class CollectionIterator extends \ArrayIterator
 {
 
-	/** @var ActiveRecord */
-	private $model;
+	private ActiveRecord $model;
 
 
 	/** @var ActiveQuery */
-	private $query;
+	private ActiveQuery $query;
 
 
 	/**

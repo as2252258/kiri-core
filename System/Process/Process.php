@@ -1,15 +1,13 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Snowflake\Process;
 
 
-use Snowflake\Abstracts\Component;
+use Exception;
 use Snowflake\Application;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\Socket;
-use Swoole\Process\Pool;
 
 /**
  * Class Process
@@ -19,7 +17,7 @@ abstract class Process extends \Swoole\Process
 {
 
 	/** @var Application $application */
-	protected $application;
+	protected Application $application;
 
 
 	/**
@@ -27,7 +25,7 @@ abstract class Process extends \Swoole\Process
 	 * @param $application
 	 * @param $name
 	 * @param bool $enable_coroutine
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function __construct($application, $name, $enable_coroutine = true)
 	{

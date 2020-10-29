@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Events;
 
@@ -11,6 +11,10 @@ use Snowflake\Exception\ConfigException;
 use Swoole\Coroutine;
 use Swoole\Server;
 
+/**
+ * Class OnWorkerError
+ * @package HttpServer\Events
+ */
 class OnWorkerError extends Callback
 {
 

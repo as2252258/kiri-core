@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Snowflake\Annotation;
 
@@ -20,21 +20,21 @@ use validator\RequiredValidator as NotEmptyValidator;
  */
 class Annotation extends BaseAnnotation
 {
-	public $namespace = '';
+	public string $namespace = '';
 
-	public $prefix = '';
+	public string $prefix = '';
 
-	public $path = '';
-
-
-	protected $_Scan_directory = [];
-
-	protected $_alias = [];
-
-	protected $params = [];
+	public string $path = '';
 
 
-	private $_classMap = [];
+	protected array $_Scan_directory = [];
+
+	protected array $_alias = [];
+
+	protected array $params = [];
+
+
+	private array $_classMap = [];
 
 	/**
 	 * @param $name

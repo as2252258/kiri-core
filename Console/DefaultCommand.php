@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Console;
 
@@ -11,9 +12,9 @@ use Snowflake\Abstracts\Input;
  */
 class DefaultCommand extends Command
 {
-	public $command = 'list';
+	public string $command = 'list';
 
-	public $description = 'help';
+	public string $description = 'help';
 
 	public function onHandler(Input $dtl)
 	{

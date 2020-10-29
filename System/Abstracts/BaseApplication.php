@@ -5,6 +5,7 @@
  * Date: 2018/10/7 0007
  * Time: 2:13
  */
+declare(strict_types=1);
 
 namespace Snowflake\Abstracts;
 

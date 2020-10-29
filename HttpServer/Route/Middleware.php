@@ -5,6 +5,7 @@
  * Date: 2019-03-20
  * Time: 02:17
  */
+declare(strict_types=1);
 
 // declare(strict_types=1);
 
@@ -21,7 +22,7 @@ class Middleware
 {
 
 	/** @var array */
-	private $middleWares = [];
+	private array $middleWares = [];
 
 	/**
 	 * @param $call

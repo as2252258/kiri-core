@@ -21,7 +21,6 @@ use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Process;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Swoole\Runtime;
 
@@ -48,8 +47,8 @@ class Server extends Application
 	const PACKAGE = 'PACKAGE';
 	const WEBSOCKET = 'WEBSOCKET';
 
-	private $listening = [];
-	private $server = [
+	private array $listening = [];
+	private array $server = [
 		'HTTP'      => [SWOOLE_TCP, Http::class],
 		'TCP'       => [SWOOLE_TCP, Receive::class],
 		'PACKAGE'   => [SWOOLE_UDP, Packet::class],
@@ -58,12 +57,12 @@ class Server extends Application
 
 
 	/** @var Http|Websocket|Packet|Receive */
-	private $baseServer;
+	private Packet|Receive|Websocket|Http $baseServer;
 
-	public $daemon = 0;
+	public int $daemon = 0;
 
 
-	private $process = [];
+	private array $process = [];
 
 
 	/**

@@ -5,6 +5,7 @@
  * Date: 2018/4/24 0024
  * Time: 17:27
  */
+declare(strict_types=1);
 
 namespace Snowflake\Di;
 
@@ -25,28 +26,28 @@ class Container extends BaseObject
 	 *
 	 * instance class by className
 	 */
-	private $_singletons = [];
+	private array $_singletons = [];
 
 	/**
 	 * @var array
 	 *
 	 * class new instance construct parameter
 	 */
-	private $_constructs = [];
+	private array $_constructs = [];
 
 	/**
 	 * @var array
 	 *
 	 * implements \ReflectClass
 	 */
-	private $_reflection = [];
+	private array $_reflection = [];
 
 	/**
 	 * @var array
 	 *
 	 * The construct parameter
 	 */
-	private $_param = [];
+	private array $_param = [];
 
 
 	/**

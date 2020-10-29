@@ -5,7 +5,7 @@
  * Date: 2018/4/8 0008
  * Time: 17:18
  */
-
+declare(strict_types=1);
 namespace HttpServer\Http\Formatter;
 
 use Exception;

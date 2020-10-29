@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 14:10
  */
-
+declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;
@@ -166,9 +166,8 @@ class BaseObject implements Configure
 
 	/**
 	 * @param mixed $message
-	 * @param string|null $method
-	 * @param string|null $file
-	 * @throws
+	 * @param null $method
+	 * @param null $file
 	 */
 	public function error($message, $method = null, $file = null)
 	{

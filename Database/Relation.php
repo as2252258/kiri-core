@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Database;
 
@@ -13,10 +13,10 @@ use Snowflake\Abstracts\Component;
 class Relation extends Component
 {
 
-	private $_relations = [];
+	private array $_relations = [];
 
 	/** @var ActiveQuery[] $_query */
-	private $_query = [];
+	private array $_query = [];
 
 	/**
 	 * @param string $identification

@@ -5,7 +5,7 @@
  * Date: 2018/5/2 0002
  * Time: 14:51
  */
-
+declare(strict_types=1);
 namespace Snowflake\Cache;
 
 
@@ -19,7 +19,7 @@ use Swoole\Coroutine\System;
  */
 class File extends Component implements ICache
 {
-	public $path;
+	public string $path;
 
 	/**
 	 * @throws Exception

@@ -1,6 +1,6 @@
 <?php
 
-
+declare(strict_types=1);
 namespace Database\Base;
 
 
@@ -21,8 +21,7 @@ use Database\Condition\RLikeCondition;
 class ConditionClassMap
 {
 
-	/** @var array */
-	public static $conditionMap = [
+	public static array $conditionMap = [
 		'IN'          => [
 			'class' => InCondition::class
 		],

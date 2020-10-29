@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace HttpServer\Route;
@@ -16,7 +17,7 @@ class Handler extends Application
 {
 
 	/** @var Router */
-	protected $router;
+	protected Router $router;
 
 	/**
 	 * Listen constructor.

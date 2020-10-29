@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 14:39
  */
-
+declare(strict_types=1);
 namespace Database;
 
 
@@ -320,7 +320,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return mixed|ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasOne($modelName, $foreignKey, $localKey)
+	public function hasOne(string $modelName, $foreignKey, $localKey)
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");

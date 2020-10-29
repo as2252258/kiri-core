@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace HttpServer\Route;
@@ -21,37 +22,37 @@ use Swoole\Coroutine;
 class Node extends Application
 {
 
-	public $path;
-	public $index = 0;
-	public $method;
+	public string $path = '';
+	public int $index = 0;
+	public string $method = '';
 
 	/** @var Node[] $childes */
-	public $childes = [];
+	public array $childes = [];
 
-	public $group = [];
+	public array $group = [];
 
-	private $_error = '';
+	private string $_error = '';
 
-	public $rules = [];
-	public $handler;
-	public $htmlSuffix = '.html';
-	public $enableHtmlSuffix = false;
-	public $namespace = [];
-	public $middleware = [];
-	public $callback = [];
+	public array $rules = [];
+	public ?Closure $handler;
+	public string $htmlSuffix = '.html';
+	public bool $enableHtmlSuffix = false;
+	public array $namespace = [];
+	public array $middleware = [];
+	public array $callback = [];
 
-	private $_alias = '';
+	private string $_alias = '';
 
-	private $_interceptors = [];
-	private $_after = [];
-	private $_limits = [];
+	private array $_interceptors = [];
+	private array $_after = [];
+	private array $_limits = [];
 
 	/**
 	 * @param $handler
 	 * @return Node
 	 * @throws
 	 */
-	public function bindHandler($handler)
+	public function bindHandler(Closure|array $handler)
 	{
 		if ($handler instanceof Closure) {
 			$this->handler = $handler;
@@ -221,7 +222,7 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addInterceptor($handler)
+	public function addInterceptor(Closure|string|array $handler)
 	{
 		$this->_interceptors[] = $handler;
 
@@ -232,7 +233,7 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addAfter($handler)
+	public function addAfter(Closure|string|array $handler)
 	{
 		$this->_after[] = $handler;
 	}
@@ -242,7 +243,7 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addLimits($handler)
+	public function addLimits(Closure|string|array $handler)
 	{
 		$this->_limits[] = $handler;
 
@@ -374,7 +375,7 @@ class Node extends Application
 	 * @param string|\Closure $class
 	 * @throws Exception
 	 */
-	public function addMiddleware($class)
+	public function addMiddleware(Closure|string $class)
 	{
 		if (!is_callable($class, true)) {
 			return;

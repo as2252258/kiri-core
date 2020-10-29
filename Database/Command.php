@@ -5,7 +5,7 @@
  * Date: 2018/3/30 0030
  * Time: 15:23
  */
-
+declare(strict_types=1);
 namespace Database;
 
 
@@ -28,19 +28,19 @@ class Command extends Component
 	const FETCH_COLUMN = 'FETCH_COLUMN';
 
 	/** @var Connection */
-	public $db;
+	public Connection $db;
 
 	/** @var string */
-	public $sql = '';
+	public string $sql = '';
 
 	/** @var array */
-	public $params = [];
+	public array $params = [];
 
 	/** @var string */
-	private $_modelName;
+	private string $_modelName;
 
 	/** @var PDOStatement */
-	private $prepare;
+	private PDOStatement $prepare;
 
 
 	/**

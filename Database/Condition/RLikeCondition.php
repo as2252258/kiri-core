@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Database\Condition;
 
@@ -12,7 +12,7 @@ use Snowflake\Core\Str;
 class RLikeCondition extends Condition
 {
 
-	public $pos = '';
+	public string $pos = '';
 
 	/**
 	 * @return string

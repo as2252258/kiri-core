@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Snowflake;
@@ -25,11 +26,11 @@ class Snowflake
 {
 
 	/** @var Container */
-	public static $container;
+	public static Container $container;
 
 
 	/** @var Application */
-	private static $service;
+	private static Application $service;
 
 
 	/**

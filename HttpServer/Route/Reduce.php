@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Route;
 
@@ -14,7 +14,7 @@ class Reduce
 	/**
 	 * @param $last
 	 * @param $middleWares
-	 * @return mixed|null
+	 * @return array
 	 */
 	public static function reduce($last, $middleWares)
 	{
@@ -31,7 +31,7 @@ class Reduce
 		return array_reduce(array_reverse($middleWares), function ($stack, $pipe) {
 			return function ($request, $passable) use ($stack, $pipe) {
 				if ($pipe instanceof After) {
-					return $pipe->onHandler($request, $passable, $stack);
+					return $pipe->onHandler($request, $passable);
 				} else {
 					return $pipe($request, $passable, $stack);
 				}

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Console;
 
@@ -21,13 +21,13 @@ abstract class AbstractConsole extends Component
 	/**
 	 * @var Command[]
 	 */
-	public $commands = [];
+	public array $commands = [];
 
 	/** @var Input $parameters */
-	private $parameters;
+	private Input $parameters;
 
 	/** @var array */
-	private $_config;
+	private array $_config;
 
 	/**
 	 * @param array $config

@@ -5,6 +5,7 @@
  * Date: 2018/4/24 0024
  * Time: 19:39
  */
+declare(strict_types=1);
 
 namespace HttpServer\Http;
 
@@ -14,9 +15,7 @@ use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use Exception;
 use Snowflake\Core\Help;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Http\Response as SResponse;
 use Swoole\Http2\Response as S2Response;
 
@@ -31,20 +30,20 @@ class Response extends Application
 	const XML = 'xml';
 	const HTML = 'html';
 
-	/** @var string */
-	public $format = null;
+	/** @var ?string */
+	public ?string $format = null;
 
 	/** @var int */
-	public $statusCode = 200;
+	public int $statusCode = 200;
 
 	/** @var SResponse */
-	public $response;
-	public $isWebSocket = false;
-	public $headers = [];
+	public SResponse $response;
+	public bool $isWebSocket = false;
+	public array $headers = [];
 
-	private $startTime = 0;
+	private int $startTime = 0;
 
-	private $_format_maps = [
+	private array $_format_maps = [
 		self::JSON => JsonFormatter::class,
 		self::XML  => XmlFormatter::class,
 		self::HTML => HtmlFormatter::class

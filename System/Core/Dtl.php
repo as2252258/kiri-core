@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Snowflake\Core;
@@ -14,7 +15,7 @@ use Snowflake\Abstracts\Component;
 class Dtl extends Component
 {
 
-	protected $params;
+	protected array $params;
 
 
 	/**

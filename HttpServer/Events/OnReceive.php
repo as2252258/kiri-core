@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace HttpServer\Events;
 
@@ -20,12 +20,12 @@ class OnReceive extends Callback
 {
 
 
-	/** @var Closure|array */
-	public $unpack;
+	/** @var Closure */
+	public Closure $unpack;
 
 
-	/** @var Closure|array */
-	public $pack;
+	/** @var Closure */
+	public Closure $pack;
 
 
 	/**

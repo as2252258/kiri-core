@@ -5,6 +5,7 @@
  * Date: 2018/4/25 0025
  * Time: 18:38
  */
+declare(strict_types=1);
 
 namespace Snowflake;
 
@@ -36,7 +37,7 @@ class Application extends BaseApplication
 	/**
 	 * @var string
 	 */
-	public $id = 'uniqueId';
+	public string $id = 'uniqueId';
 
 
 	/**
