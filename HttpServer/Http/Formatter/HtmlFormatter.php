@@ -24,9 +24,9 @@ class HtmlFormatter extends Application implements IFormatter
 	public $data;
 
 	/** @var Response */
-	public $status;
+	public Response $status;
 
-	public $header = [];
+	public array $header = [];
 
 	/**
 	 * @param $data
