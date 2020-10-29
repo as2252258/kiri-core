@@ -6,7 +6,7 @@
  * Time: 01:04
  */
 
-//declare(strict_types=1);
+declare(strict_types=1);
 
 namespace Snowflake\Core;
 
