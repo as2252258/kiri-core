@@ -15,6 +15,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
 use Swoole\Process;
+use Throwable;
 
 /**
  * Class Logger
@@ -84,7 +85,7 @@ class Logger extends Component
 	private function writer($message, $category = 'app')
 	{
 		$this->print_r($message, $category);
-		if ($message instanceof \Throwable) {
+		if ($message instanceof Throwable) {
 			$message = $message->getMessage();
 		} else {
 			if (is_array($message) || is_object($message)) {
@@ -235,11 +236,11 @@ class Logger extends Component
 
 
 	/**
-	 * @param Exception $exception
+	 * @param Throwable $exception
 	 * @return false|int|mixed|string
 	 * @throws Exception
 	 */
-	public function exception(Exception $exception)
+	public function exception(Throwable $exception)
 	{
 		$errorInfo = [
 			'message' => $exception->getMessage(),
