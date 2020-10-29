@@ -41,7 +41,9 @@ class Node extends Application
 	public bool $enableHtmlSuffix = false;
 	public array $namespace = [];
 	public array $middleware = [];
-	public array $callback = [];
+
+	/** @var array|Closure  */
+	public $callback = [];
 
 	private string $_alias = '';
 
