@@ -220,7 +220,7 @@ class HttpParams
 		if (is_null($int)) {
 			$length = 0;
 		} else {
-			$length = strlen(floatval($int));
+			$length = strlen((string)$int);
 		}
 		if (!is_numeric($int) || intval($int) != $int) {
 			throw new RequestException("The request parameter $name must integer.");
