@@ -6,7 +6,11 @@
  * Time: 01:04
  */
 
+declare(strict_types=1);
+
 namespace Snowflake\Core;
+
+use Exception;
 
 /**
  * Class JSON
@@ -16,38 +20,19 @@ class JSON
 {
 
 	/**
-	 * @param $data
+	 * @param string|array|mixed $data
 	 * @return false|string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public static function encode($data)
+	public static function encode(string|array|object $data)
 	{
 		if (empty($data)) {
 			return $data;
 		}
 		if (is_array($data)) {
-			return self::filter(ArrayAccess::toArray($data));
+			return json_encode(ArrayAccess::toArray($data));
 		}
 		return $data;
-	}
-
-
-	/**
-	 * @param $data
-	 * @return mixed
-	 */
-	private static function filter($data)
-	{
-		array_walk_recursive($data, function ($value, $key) use ($data) {
-			if (!is_numeric($value)) {
-				return;
-			}
-			if (is_int(+$value)) {
-				$value = +$value;
-			}
-			$data[$key] = $value;
-		});
-		return json_encode($data, JSON_UNESCAPED_UNICODE);
 	}
 
 
@@ -107,7 +92,7 @@ class JSON
 	 * @param $state
 	 * @param $body
 	 * @return false|int|string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public static function output($state, $body)
 	{

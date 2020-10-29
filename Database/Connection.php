@@ -5,6 +5,8 @@
  * Date: 2018/3/30 0030
  * Time: 14:09
  */
+declare(strict_types=1);
+
 
 namespace Database;
 
@@ -27,23 +29,23 @@ class Connection extends Component
 	const TRANSACTION_COMMIT = 'transaction::commit';
 	const TRANSACTION_ROLLBACK = 'transaction::rollback';
 
-	public $id = 'db';
-	public $cds = '';
-	public $password = '';
-	public $username = '';
-	public $charset = 'utf-8';
-	public $tablePrefix = '';
+	public string $id = 'db';
+	public string $cds = '';
+	public string $password = '';
+	public string $username = '';
+	public string $charset = 'utf-8';
+	public string $tablePrefix = '';
 
-	public $timeout = 1900;
+	public int $timeout = 1900;
 
-	public $maxNumber = 200;
+	public int $maxNumber = 200;
 
 	/**
 	 * @var bool
 	 * enable database cache
 	 */
-	public $enableCache = false;
-	public $cacheDriver = 'redis';
+	public bool $enableCache = false;
+	public string $cacheDriver = 'redis';
 
 	/**
 	 * @var array
@@ -54,10 +56,9 @@ class Connection extends Component
 	 *    'password' => 'root'
 	 * ]
 	 */
-	public $slaveConfig = [];
+	public array $slaveConfig = [];
 
-	/** @var Schema $_schema */
-	private $_schema = null;
+	private ?Schema $_schema = null;
 
 
 	/**
