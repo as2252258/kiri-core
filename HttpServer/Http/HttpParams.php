@@ -44,7 +44,7 @@ class HttpParams
 		if (!is_array($body)) {
 			$this->body = Help::toArray($body);
 		} else {
-			$this->body = $body;
+			$this->body = $body ?? [];
 		}
 	}
 
