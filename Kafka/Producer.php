@@ -31,7 +31,7 @@ class Producer extends Component
 	private Conf $conf;
 	private TopicConf $topicConf;
 
-	private \RdKafka\Producer $producer;
+	private ?\RdKafka\Producer $producer = null;
 
 
 	public function __construct($config = [])
@@ -96,7 +96,7 @@ class Producer extends Component
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'flush']);
 
-		if (!$this->producer) {
+		if ($this->producer === null) {
 			$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		}
 		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
