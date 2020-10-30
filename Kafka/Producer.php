@@ -31,6 +31,8 @@ class Producer extends Component
 	private Conf $conf;
 	private TopicConf $topicConf;
 
+	private \RdKafka\Producer $producer;
+
 
 	public function __construct($config = [])
 	{
@@ -91,27 +93,24 @@ class Producer extends Component
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
 
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'flush']);
+
 		/** @var \RdKafka\Producer $rk */
-		$rk = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
-		if ($rk->getOutQLen() > 0) {
-			$this->clean($rk, $timeout);
-		}
-		$topic = $rk->newTopic($this->_topic, $this->topicConf);
+		$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
+		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
-		$this->clean($rk, $timeout);
+		$this->producer->poll(0);
 	}
 
-
-	/**
-	 * @param $rk
-	 * @param $timeout
-	 */
-	private function clean($rk, $timeout)
+	public function flush()
 	{
-		for ($length = 0; $length < $rk->getOutQLen(); $length++) {
-			$rk->poll(0);
+		while ($this->producer->getOutQLen() > 0) {
+			$result = $this->producer->flush(100);
+			if (RD_KAFKA_RESP_ERR_NO_ERROR === $result) {
+				break;
+			}
 		}
-		$rk->flush($timeout);
 	}
 
 }
