@@ -8,6 +8,7 @@ use RdKafka\TopicConf;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -57,17 +58,6 @@ class Producer extends Component
 
 
 	/**
-	 * @param bool $value
-	 * @return $this
-	 */
-	public function setAck(bool $value)
-	{
-//		$this->topicConf->set('request.required.acks', (string)$value);
-		return $this;
-	}
-
-
-	/**
 	 * @param $servers
 	 * @return Producer
 	 */
@@ -81,10 +71,12 @@ class Producer extends Component
 	/**
 	 * @param $message
 	 * @param null $key
-	 * @param int $timeout
-	 * @throws
+	 * @param bool $isAck
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws ComponentException
 	 */
-	public function delivery($message, $key = null, $timeout = 10)
+	public function delivery($message, $key = null, $isAck = false)
 	{
 		if (!$this->conf || !$this->topicConf) {
 			throw new \Exception('Error. Please set kafka conf.');
@@ -99,6 +91,16 @@ class Producer extends Component
 		if ($this->producer === null) {
 			$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		}
+
+		if ($isAck) {
+			if ($this->producer->getOutQLen()>0) {
+				$this->flush();
+			}
+			$this->topicConf->set('request.required.acks', '1');
+		} else {
+			$this->topicConf->set('request.required.acks', '0');
+		}
+
 		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$this->producer->poll(0);
