@@ -192,6 +192,22 @@ if (!function_exists('write')) {
 	}
 }
 
+if (!function_exists('fire')) {
+
+
+	/**
+	 * @param string $event
+	 * @param array $params
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	function fire(string $event,array $params = [])
+	{
+		$logger = Snowflake::app()->getEvent();
+		$logger->trigger($event, $params);
+	}
+}
+
 
 if (!function_exists('instance_load')) {
 

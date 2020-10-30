@@ -37,24 +37,21 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
+			Coroutine::defer(function () {
+				fire(Event::EVENT_AFTER_REQUEST, [$sRequest ?? null]);
+			});
 			if (Config::get('debug.enable', false, false)) {
 				function_exists('trackerHookMalloc') && trackerHookMalloc();
 			}
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
-				return $params = $sResponse->send($sRequest->isNotFound(), 200);
+				$sResponse->send($sRequest->isNotFound(), 200);
+			} else {
+				Snowflake::app()->getRouter()->dispatch();
 			}
-			return $params = Snowflake::app()->getRouter()->dispatch();
 		} catch (Error | \Throwable $exception) {
-			$params = $this->sendErrorMessage($sResponse ?? null, $exception, $response);
-		} finally {
-			$events = Snowflake::app()->getEvent();
-			if (!$events->exists(Event::EVENT_AFTER_REQUEST)) {
-				return;
-			}
-			$sRequest = $sRequest ?? null;
-			$events->trigger(Event::EVENT_AFTER_REQUEST, [$sRequest, $params ?? null]);
+			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		}
 	}
 
