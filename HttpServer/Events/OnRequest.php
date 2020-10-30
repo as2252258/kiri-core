@@ -39,6 +39,8 @@ class OnRequest extends Callback
 		try {
 			Coroutine::defer(function () {
 				fire(Event::EVENT_AFTER_REQUEST, [$sRequest ?? null]);
+
+				echo 'Event::EVENT_AFTER_REQUEST ~ defer' . PHP_EOL;
 			});
 			if (Config::get('debug.enable', false, false)) {
 				function_exists('trackerHookMalloc') && trackerHookMalloc();
@@ -53,6 +55,8 @@ class OnRequest extends Callback
 		} catch (Error | \Throwable $exception) {
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		}
+
+		echo 'Event::EVENT_AFTER_REQUEST ~~~~~~~~~ defer' . PHP_EOL;
 	}
 
 	/**
