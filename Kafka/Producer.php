@@ -96,7 +96,7 @@ class Producer extends Component
 
 		$this->setTopicAcks($isAck);
 		$this->push($message, $key);
-		if ($isAck) {
+		if ($isAck === true) {
 			$this->flush();
 		}
 	}
