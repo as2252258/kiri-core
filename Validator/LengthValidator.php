@@ -16,7 +16,7 @@ class LengthValidator extends BaseValidator
 	const MAX_LENGTH = 'max';
 	const MIN_LENGTH = 'min';
 
-	public $method;
+	public string $method;
 
 	public int $value;
 

@@ -17,8 +17,8 @@ class DateTimeValidator extends BaseValidator
 	const DATE_TIME = 'datetime';
 	const TIME = 'time';
 	const STR_TO_TIME = 'timestamp';
-	
-	public $method;
+
+	public string $method;
 	
 	/**
 	 * @return bool

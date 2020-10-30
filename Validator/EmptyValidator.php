@@ -20,8 +20,8 @@ class EmptyValidator extends BaseValidator
 	
 	/** @var string [可为空, 不能为null] */
 	const CAN_NOT_NULL = 'not null';
-	
-	public $method;
+
+	public string $method;
 	
 	/**
 	 * @return bool

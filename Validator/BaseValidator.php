@@ -9,20 +9,20 @@ use Database\ActiveRecord;
 abstract class BaseValidator
 {
 
-	public $field;
+	public string $field = '';
 
-	public $rules;
+	public array $rules = [];
 
 	public string $method;
 
-	protected $isFail = TRUE;
+	protected bool $isFail = TRUE;
 
-	protected $message = '';
+	protected string $message = '';
 
-	protected $params = [];
+	protected array $params = [];
 
 	/** @var ActiveRecord */
-	protected $model;
+	protected ActiveRecord $model;
 
 	public function setModel($model)
 	{
