@@ -84,6 +84,40 @@ class Response extends Application
 		}
 	}
 
+
+	/**
+	 * @param $content
+	 * @return mixed
+	 */
+	public function toHtml($content)
+	{
+		$this->format = self::HTML;
+		return $content;
+	}
+
+
+	/**
+	 * @param $content
+	 * @return mixed
+	 */
+	public function toJson($content)
+	{
+		$this->format = self::JSON;
+		return $content;
+	}
+
+
+	/**
+	 * @param $content
+	 * @return mixed
+	 */
+	public function toXml($content)
+	{
+		$this->format = self::XML;
+		return $content;
+	}
+
+
 	/**
 	 * @return mixed
 	 * @throws Exception
