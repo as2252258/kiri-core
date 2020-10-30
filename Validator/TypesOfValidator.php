@@ -123,11 +123,10 @@ class TypesOfValidator extends BaseValidator
 	 */
 	public function integerFormat($value)
 	{
-		$trim = trim($value);
-		if (!is_numeric($trim)) {
+		if (!is_numeric($value)) {
 			return $this->addError('The ' . $this->field . ' not is number data.');
 		}
-		if ($trim != $value || intval($trim) != $value) {
+		if (intval($value) != $value) {
 			return $this->addError('The ' . $this->field . ' not is number data.');
 		}
 
@@ -140,7 +139,7 @@ class TypesOfValidator extends BaseValidator
 	 */
 	public function floatFormat($value)
 	{
-		$trim = floatval(trim($value));
+		$trim = floatval((string)$value);
 		if ($trim != $value || !is_float($trim)) {
 			return $this->addError('The ' . $this->field . ' not is float data.');
 		}
