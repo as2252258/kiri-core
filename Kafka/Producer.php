@@ -96,8 +96,9 @@ class Producer extends Component
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'flush']);
 
-		/** @var \RdKafka\Producer $rk */
-		$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
+		if (!$this->producer) {
+			$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
+		}
 		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
 		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$this->producer->poll(0);
