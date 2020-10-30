@@ -175,7 +175,6 @@ class BaseObject implements Configure
 			echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . "\033[0m";
 			echo PHP_EOL;
 		}
-		var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
