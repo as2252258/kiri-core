@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kafka;
 
+use Exception;
 use RdKafka\Conf;
 use RdKafka\TopicConf;
 use ReflectionException;
@@ -75,11 +76,12 @@ class Producer extends Component
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function delivery($message, $key = null, $isAck = false)
 	{
 		if (!$this->conf || !$this->topicConf) {
-			throw new \Exception('Error. Please set kafka conf.');
+			throw new Exception('Error. Please set kafka conf.');
 		}
 		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
@@ -92,19 +94,34 @@ class Producer extends Component
 			$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
 		}
 
+		$this->setTopicAcks($isAck);
+		$this->push($message, $key);
+	}
+
+
+	private function push($message, $key)
+	{
+		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
+		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
+		$this->producer->poll(0);
+	}
+
+
+	/**
+	 * @param $isAck
+	 */
+	private function setTopicAcks(bool $isAck)
+	{
 		if ($isAck) {
-			if ($this->producer->getOutQLen()>0) {
+			if ($this->producer->getOutQLen() > 0) {
 				$this->flush();
 			}
 			$this->topicConf->set('request.required.acks', '1');
 		} else {
 			$this->topicConf->set('request.required.acks', '0');
 		}
-
-		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
-		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
-		$this->producer->poll(0);
 	}
+
 
 	public function flush()
 	{
