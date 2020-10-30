@@ -44,6 +44,9 @@ class Help
 		}
 		if (!Xml::isXml($xml)) {
 			$xml = JSON::decode($xml);
+			if ($xml === null) {
+				$xml = [];
+			}
 		}
 		return $xml;
 	}
