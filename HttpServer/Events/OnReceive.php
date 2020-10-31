@@ -20,12 +20,12 @@ class OnReceive extends Callback
 {
 
 
-	/** @var Closure */
-	public Closure $unpack;
+	/** @var ?Closure */
+	public ?Closure $unpack = null;
 
 
-	/** @var Closure */
-	public Closure $pack;
+	/** @var ?Closure */
+	public ?Closure $pack = null;
 
 
 	/**
