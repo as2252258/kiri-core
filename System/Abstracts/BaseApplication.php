@@ -12,6 +12,7 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 use HttpServer\Client\Client;
+use HttpServer\Client\Curl;
 use HttpServer\Client\Http2;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -52,6 +53,8 @@ use Database\DatabasesProviders;
  * @property BaseGoto $goto
  * @property Client $client
  * @property Producer $kafka
+ * @property Curl $curl
+ * @property Http2 $http2
  */
 abstract class BaseApplication extends Service
 {
@@ -391,7 +394,8 @@ abstract class BaseApplication extends Service
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
-			'goto'              => ['class' => BaseGoto::class]
+			'goto'              => ['class' => BaseGoto::class],
+			'curl'              => ['class' => Curl::class]
 		]);
 	}
 }
