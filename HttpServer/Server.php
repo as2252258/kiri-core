@@ -300,6 +300,9 @@ class Server extends Application
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$this->parseServer($config, $settings);
 		} else {
+			if ($this->isUse($config['port'])) {
+				return $this->error_stop($config['host'], $config['port']);
+			}
 			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 			if (isset($config['settings']) && is_array($config['settings'])) {
 				$newListener->set($config['settings']);
@@ -346,9 +349,6 @@ class Server extends Application
 	 */
 	private function onListenerBind($config, $newListener)
 	{
-		if ($this->isUse($config['port'])) {
-			return $this->error_stop($config['host'], $config['port']);
-		}
 		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
