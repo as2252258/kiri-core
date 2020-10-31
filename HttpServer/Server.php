@@ -357,8 +357,8 @@ class Server extends Application
 			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
 			$callback = Snowflake::createObject([
 				'class'  => $config['type'] == self::TCP ? OnReceive::class : OnPacket::class,
-				'pack'   => $config['resolve'] ?? $config['resolve']['pack'] ?? null,
-				'unpack' => $config['resolve'] ?? $config['resolve']['unpack'] ?? null
+				'pack'   => $config['resolve']['pack'] ?? null,
+				'unpack' => $config['resolve']['unpack'] ?? null
 			]);
 			$this->onBind($newListener, 'packet', [$callback, 'onHandler']);
 			$this->onBind($newListener, 'receive', [$callback, 'onHandler']);
