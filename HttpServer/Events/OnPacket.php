@@ -57,15 +57,14 @@ class OnPacket extends Callback
 	}
 
 
-
 	/**
 	 * @param Server $server
 	 * @param $data
 	 * @param $clientInfo
 	 * @return mixed
-	 * @throws
+	 * @throws Exception
 	 */
-	public function onHandler($server, $data, $clientInfo)
+	public function onHandler(Server $server,string $data,array $clientInfo)
 	{
 		try {
 			$client = [$clientInfo['address'], $clientInfo['port']];
