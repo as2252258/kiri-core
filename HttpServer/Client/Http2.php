@@ -5,6 +5,7 @@ namespace HttpServer\Client;
 
 
 use Exception;
+use HttpServer\Http\Context;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\JSON;
@@ -18,14 +19,6 @@ use \Swoole\Coroutine\Http2\Client as H2Client;
  */
 class Http2 extends Component
 {
-
-	/** @var H2Client[] */
-	private array $_clients = [];
-
-
-	/** @var Request[] */
-	private array $_requests = [];
-
 
 	/**
 	 * @param $domain
@@ -59,7 +52,6 @@ class Http2 extends Component
 	}
 
 
-
 	/**
 	 * @param $domain
 	 * @param $path
@@ -74,7 +66,6 @@ class Http2 extends Component
 		$client->send($this->getRequest($domain, $path, 'DELETE', $params));
 		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
 	}
-
 
 
 	/**
@@ -103,22 +94,22 @@ class Http2 extends Component
 	 */
 	public function getRequest($domain, $path, $method, $params)
 	{
-		if (isset($this->_requests[$domain . $path])) {
-			$req = $this->_requests[$domain . $path];
+		if (Context::hasContext($domain . $path)) {
+			$req = Context::getContext($domain . $path);
 		} else {
 			$req = new Request();
-			$this->_requests[$domain . $path] = $req;
-		}
-		$req->method = $method;
-		$req->path = $path;
-		$req->headers = [
-			'host'            => $domain,
-			'user-agent'      => 'Chrome/49.0.2587.3',
-			'accept'          => 'text/html,application/json',
-			'accept-encoding' => 'gzip'
-		];
-		if (!is_string($params)) {
-			$params = JSON::encode($params);
+			$req->method = $method;
+			$req->path = $path;
+			$req->headers = [
+				'host'            => $domain,
+				'user-agent'      => 'Chrome/49.0.2587.3',
+				'accept'          => 'text/html,application/json',
+				'accept-encoding' => 'gzip'
+			];
+			if (!is_string($params)) {
+				$params = JSON::encode($params);
+			}
+			Context::setContext($domain . $path, $req);
 		}
 		$req->data = $params;
 		return $req;
@@ -134,8 +125,8 @@ class Http2 extends Component
 	 */
 	private function getClient($domain, $path, $timeout = -1)
 	{
-		if (isset($this->_clients[$path])) {
-			return $this->_clients[$path];
+		if (Context::hasContext($domain)) {
+			return Context::getContext($domain);
 		}
 		$client = new H2Client($domain, 443, true);
 		$client->set([
@@ -145,7 +136,8 @@ class Http2 extends Component
 		if (!$client->connect()) {
 			throw new Exception('Connected fail.');
 		}
-		return $this->_clients[$domain . $path] = $client;
+
+		return Context::setContext($domain, $client);
 	}
 
 
