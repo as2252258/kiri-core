@@ -355,8 +355,13 @@ class Server extends Application
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
 			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
 			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-			$this->onBind($newListener, 'packet', [Snowflake::createObject(OnPacket::class), 'onHandler']);
-			$this->onBind($newListener, 'receive', [Snowflake::createObject(OnReceive::class), 'onHandler']);
+			$callback = Snowflake::createObject([
+				'class'  => $config['type'] == self::TCP ? OnReceive::class : OnPacket::class,
+				'pack'   => $config['resolve'] ?? $config['resolve']['pack'] ?? null,
+				'unpack' => $config['resolve'] ?? $config['resolve']['unpack'] ?? null
+			]);
+			$this->onBind($newListener, 'packet', [$callback, 'onHandler']);
+			$this->onBind($newListener, 'receive', [$callback, 'onHandler']);
 		} else if ($config['type'] == self::WEBSOCKET) {
 			throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
 		} else {
