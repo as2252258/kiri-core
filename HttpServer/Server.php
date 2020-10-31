@@ -353,33 +353,49 @@ class Server extends Application
 	private function onListenerBind($config, $newListener)
 	{
 		$this->debug(sprintf('Listener %s::%d -> %s', $config['host'], $config['port'], $config['mode']));
-		if ($config['type'] == self::HTTP) {
-			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
-		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
-			if (in_array($config['type'], $this->listenTypes)) {
-				return;
-			}
-			$this->listenTypes[] = $config['type'];
-
-			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
-			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-			$class = [
-				'pack'   => $config['resolve']['pack'] ?? null,
-				'unpack' => $config['resolve']['unpack'] ?? null
-			];
-			if ($config['type'] == self::TCP) {
-				$class['class'] = OnReceive::class;
-				$callback = Snowflake::createObject($class);
-				$this->onBind($newListener, 'receive', [$callback, 'onHandler']);
-			} else {
-				$class['class'] = OnPacket::class;
-				$callback = Snowflake::createObject($class);
-				$this->onBind($newListener, 'packet', [$callback, 'onHandler']);
-			}
-		} else if ($config['type'] == self::WEBSOCKET) {
+		if ($config['type'] == self::WEBSOCKET) {
 			throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
-		} else {
+		} else if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
+		}
+		if (in_array($config['type'], $this->listenTypes)) {
+			return;
+		}
+		if ($config['type'] == self::HTTP) {
+			if (in_array($config['type'], $this->listenTypes)) {
+				throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
+			}
+			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
+		} else {
+			$this->noHttp($newListener, $config);
+		}
+		array_push($this->listenTypes, $config['type']);
+	}
+
+
+	/**
+	 * @param $newListener
+	 * @param $config
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function noHttp($newListener, $config)
+	{
+		$class = [
+			'pack'   => $config['resolve']['pack'] ?? null,
+			'unpack' => $config['resolve']['unpack'] ?? null
+		];
+		$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
+		$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
+		if ($config['type'] == self::TCP) {
+			$class['class'] = OnReceive::class;
+			$callback = Snowflake::createObject($class);
+			$this->onBind($newListener, 'receive', [$callback, 'onHandler']);
+		} else {
+			$class['class'] = OnPacket::class;
+			$callback = Snowflake::createObject($class);
+			$this->onBind($newListener, 'packet', [$callback, 'onHandler']);
 		}
 	}
 
