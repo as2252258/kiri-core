@@ -349,7 +349,7 @@ class Server extends Application
 	 */
 	private function onListenerBind($config, $newListener)
 	{
-		$this->debug(sprintf('Listener %s::%d', $config['host'], $config['port']));
+		$this->debug(sprintf('Listener %s::%d -> %s', $config['host'], $config['port'], $config['mode']));
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
