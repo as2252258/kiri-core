@@ -88,14 +88,22 @@ class Server extends Application
 		$annotation->register('websocket', AWebsocket::class);
 
 		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
-		foreach ($this->sortServers($configs) as $server) {
+
+		$this->orders($configs);
+		$this->onProcessListener();
+		return $this->getServer();
+	}
+
+
+	private function orders($configs)
+	{
+		$servers = $this->sortServers($configs);
+		foreach ($servers as $server) {
 			$this->create($server);
 			if (!$this->baseServer) {
 				return null;
 			}
 		}
-		$this->onProcessListener();
-		return $this->getServer();
 	}
 
 

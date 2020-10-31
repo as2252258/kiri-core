@@ -21,8 +21,8 @@ class Result
 	public $code;
 	public $message;
 	public int $count = 0;
-	public array|string $data;
-	public array $header;
+	public ?array $data;
+	public ?array $header;
 	public int $httpStatus = 200;
 
 	public int $startTime = 0;
