@@ -62,6 +62,9 @@ class Server extends Application
 	public int $daemon = 0;
 
 
+	private array $listenTypes = [];
+
+
 	private array $process = [];
 
 
@@ -353,6 +356,11 @@ class Server extends Application
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
+			if (in_array($config['type'], $this->listenTypes)) {
+				return;
+			}
+			$this->listenTypes[] = $config['type'];
+
 			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
 			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
 			$class = [
