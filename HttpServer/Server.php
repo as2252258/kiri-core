@@ -355,11 +355,16 @@ class Server extends Application
 		} else if ($config['type'] == self::TCP || $config['type'] == self::PACKAGE) {
 			$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
 			$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-			$callback = Snowflake::createObject([
-				'class'  => $config['type'] == self::TCP ? OnReceive::class : OnPacket::class,
+			$class = [
 				'pack'   => $config['resolve']['pack'] ?? null,
 				'unpack' => $config['resolve']['unpack'] ?? null
-			]);
+			];
+			if ($config['type'] == self::TCP) {
+				$class['class'] = OnReceive::class;
+			} else {
+				$class['class'] = OnPacket::class;
+			}
+			$callback = Snowflake::createObject($class);
 			$this->onBind($newListener, 'packet', [$callback, 'onHandler']);
 			$this->onBind($newListener, 'receive', [$callback, 'onHandler']);
 		} else if ($config['type'] == self::WEBSOCKET) {
