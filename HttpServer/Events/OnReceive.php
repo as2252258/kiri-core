@@ -65,8 +65,9 @@ class OnReceive extends Callback
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onHandler(\Swoole\Server $server, string $fd, int $reactorId, string $data)
+	public function onHandler(\Swoole\Server $server, $fd, $reactorId, $data)
 	{
+		var_dump(func_get_args());
 		try {
 			$client = [$fd];
 			if (empty($data = $this->unpack($data))) {
