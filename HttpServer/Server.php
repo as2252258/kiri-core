@@ -40,450 +40,450 @@ use Swoole\Runtime;
  */
 class Server extends Application
 {
-	use Action;
+    use Action;
 
-	const HTTP = 'HTTP';
-	const TCP = 'TCP';
-	const PACKAGE = 'PACKAGE';
-	const WEBSOCKET = 'WEBSOCKET';
+    const HTTP = 'HTTP';
+    const TCP = 'TCP';
+    const PACKAGE = 'PACKAGE';
+    const WEBSOCKET = 'WEBSOCKET';
 
-	private array $listening = [];
-	private array $server = [
-		'HTTP'      => [SWOOLE_TCP, Http::class],
-		'TCP'       => [SWOOLE_TCP, Receive::class],
-		'PACKAGE'   => [SWOOLE_UDP, Packet::class],
-		'WEBSOCKET' => [SWOOLE_SOCK_TCP, Websocket::class],
-	];
-
-
-	/** @var Http|Websocket|Packet|Receive */
-	private $baseServer;
-
-	public int $daemon = 0;
+    private array $listening = [];
+    private array $server = [
+        'HTTP' => [SWOOLE_TCP, Http::class],
+        'TCP' => [SWOOLE_TCP, Receive::class],
+        'PACKAGE' => [SWOOLE_UDP, Packet::class],
+        'WEBSOCKET' => [SWOOLE_SOCK_TCP, Websocket::class],
+    ];
 
 
-	private array $listenTypes = [];
+    /** @var Http|Websocket|Packet|Receive */
+    private $baseServer;
+
+    public int $daemon = 0;
 
 
-	private array $process = [];
+    private array $listenTypes = [];
 
 
-	/**
-	 * @param $name
-	 * @param $process
-	 */
-	public function addProcess($name, $process)
-	{
-		$this->process[$name] = $process;
-	}
+    private array $process = [];
 
 
-	/**
-	 * @param array $configs
-	 * @return Http|Packet|Receive|Websocket
-	 * @throws Exception
-	 */
-	public function initCore(array $configs)
-	{
-		$annotation = Snowflake::app()->annotation;
-		$annotation->register('tcp', Tcp::class);
-		$annotation->register('http', Annotation::class);
-		$annotation->register('websocket', AWebsocket::class);
-
-		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
-
-		$this->orders($configs);
-		$this->onProcessListener();
-		return $this->getServer();
-	}
+    /**
+     * @param $name
+     * @param $process
+     */
+    public function addProcess($name, $process)
+    {
+        $this->process[$name] = $process;
+    }
 
 
-	private function orders($configs)
-	{
-		$servers = $this->sortServers($configs);
-		foreach ($servers as $server) {
-			$this->create($server);
-			if (!$this->baseServer) {
-				return null;
-			}
-		}
-	}
+    /**
+     * @param array $configs
+     * @return Http|Packet|Receive|Websocket
+     * @throws Exception
+     */
+    public function initCore(array $configs)
+    {
+        $annotation = Snowflake::app()->annotation;
+        $annotation->register('tcp', Tcp::class);
+        $annotation->register('http', Annotation::class);
+        $annotation->register('websocket', AWebsocket::class);
+
+        $this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
+
+        $this->orders($configs);
+        $this->onProcessListener();
+        return $this->getServer();
+    }
 
 
-	/**
-	 * @return void
-	 *
-	 * start server
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	public function start()
-	{
-		$configs = Config::get('servers', true);
-		Snowflake::clearWorkerId();
-		$baseServer = $this->initCore($configs);
-		if (!$baseServer) {
-			return;
-		}
-		$baseServer->start();
-	}
+    private function orders($configs)
+    {
+        $servers = $this->sortServers($configs);
+        foreach ($servers as $server) {
+            $this->create($server);
+            if (!$this->baseServer) {
+                return null;
+            }
+        }
+    }
 
 
-	/**
-	 * @param $host
-	 * @param $Port
-	 * @throws Exception
-	 */
-	public function error_stop($host, $Port)
-	{
-		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
-		if ($this->baseServer) {
-			$this->baseServer->shutdown();
-		}
-	}
+    /**
+     * @return void
+     *
+     * start server
+     * @throws ConfigException
+     * @throws Exception
+     */
+    public function start()
+    {
+        $configs = Config::get('servers', true);
+        Snowflake::clearWorkerId();
+        $baseServer = $this->initCore($configs);
+        if (!$baseServer) {
+            return;
+        }
+        $baseServer->start();
+    }
 
 
-	/**
-	 * @return bool
-	 * @throws ConfigException
-	 */
-	public function isRunner()
-	{
-		$port = $this->sortServers(Config::get('servers'));
-		if (empty($port)) {
-			return false;
-		}
-		if (Snowflake::isLinux()) {
-			exec('netstat -tunlp | grep ' . $port[0]['port'], $output);
-		} else {
-			exec('lsof -i :' . $port[0]['port'] . ' | grep -i "LISTEN"', $output);
-		}
-		return !empty($output);
-	}
+    /**
+     * @param $host
+     * @param $Port
+     * @throws Exception
+     */
+    public function error_stop($host, $Port)
+    {
+        $this->error(sprintf('Port %s::%d is already.', $host, $Port));
+        if ($this->baseServer) {
+            $this->baseServer->shutdown();
+        }
+    }
 
 
-	/**
-	 * @return void
-	 *
-	 * start server
-	 * @throws Exception
-	 */
-	public function shutdown()
-	{
-		$this->stop($this);
-	}
+    /**
+     * @return bool
+     * @throws ConfigException
+     */
+    public function isRunner()
+    {
+        $port = $this->sortServers(Config::get('servers'));
+        if (empty($port)) {
+            return false;
+        }
+        if (Snowflake::isLinux()) {
+            exec('netstat -tunlp | grep ' . $port[0]['port'], $output);
+        } else {
+            exec('lsof -i :' . $port[0]['port'] . ' | grep -i "LISTEN"', $output);
+        }
+        return !empty($output);
+    }
 
 
-	/**
-	 * @param bool $isEnable
-	 */
-	private function enableCoroutine($isEnable = true)
-	{
-		if (!$isEnable) {
-			return;
-		}
-		Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
-			SWOOLE_HOOK_UNIX |
-			SWOOLE_HOOK_UDP |
-			SWOOLE_HOOK_UDG |
-			SWOOLE_HOOK_SSL |
-			SWOOLE_HOOK_TLS |
-			SWOOLE_HOOK_SLEEP |
-			SWOOLE_HOOK_STREAM_FUNCTION |
-			SWOOLE_HOOK_PROC
-		);
-	}
+    /**
+     * @return void
+     *
+     * start server
+     * @throws Exception
+     */
+    public function shutdown()
+    {
+        $this->stop($this);
+    }
 
 
-	/**
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	public function onProcessListener()
-	{
-		$processes = Config::get('processes');
-		if (!empty($processes) && is_array($processes)) {
-			return $this->deliveryProcess(merge($processes, $this->process));
-		}
-		return $this->deliveryProcess($this->process);
-	}
+    /**
+     * @param bool $isEnable
+     */
+    private function enableCoroutine($isEnable = true)
+    {
+        if (!$isEnable) {
+            return;
+        }
+        Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
+            SWOOLE_HOOK_UNIX |
+            SWOOLE_HOOK_UDP |
+            SWOOLE_HOOK_UDG |
+            SWOOLE_HOOK_SSL |
+            SWOOLE_HOOK_TLS |
+            SWOOLE_HOOK_SLEEP |
+            SWOOLE_HOOK_STREAM_FUNCTION |
+            SWOOLE_HOOK_PROC
+        );
+    }
 
 
-	/**
-	 * @param $processes
-	 * @throws Exception
-	 */
-	private function deliveryProcess($processes)
-	{
-		$application = Snowflake::app();
-		if (empty($processes) || !is_array($processes)) {
-			return;
-		}
-		foreach ($processes as $name => $process) {
-			$is_enable_coroutine = true;
-			if (is_array($process)) {
-				[$process, $is_enable_coroutine] = $process;
-			}
-			$this->debug(sprintf('Process %s', $process));
-			if (!is_string($process)) {
-				continue;
-			}
-			$system = new $process(Snowflake::app(), $name, $is_enable_coroutine);
-			$this->baseServer->addProcess($system);
-			$application->set($process, $system);
-		}
-	}
+    /**
+     * @throws ConfigException
+     * @throws Exception
+     */
+    public function onProcessListener()
+    {
+        $processes = Config::get('processes');
+        if (!empty($processes) && is_array($processes)) {
+            return $this->deliveryProcess(merge($processes, $this->process));
+        }
+        return $this->deliveryProcess($this->process);
+    }
 
 
-	/**
-	 * @param $daemon
-	 * @return Server
-	 */
-	public function setDaemon($daemon)
-	{
-		if (!in_array($daemon, [0, 1])) {
-			return $this;
-		}
-		$this->daemon = $daemon;
-		return $this;
-	}
+    /**
+     * @param $processes
+     * @throws Exception
+     */
+    private function deliveryProcess($processes)
+    {
+        $application = Snowflake::app();
+        if (empty($processes) || !is_array($processes)) {
+            return;
+        }
+        foreach ($processes as $name => $process) {
+            $is_enable_coroutine = true;
+            if (is_array($process)) {
+                [$process, $is_enable_coroutine] = $process;
+            }
+            $this->debug(sprintf('Process %s', $process));
+            if (!is_string($process)) {
+                continue;
+            }
+            $system = new $process(Snowflake::app(), $name, $is_enable_coroutine);
+            $this->baseServer->addProcess($system);
+            $application->set($process, $system);
+        }
+    }
 
 
-	/**
-	 * @return Http|Websocket|Packet|Receive
-	 */
-	public function getServer()
-	{
-		return $this->baseServer;
-	}
+    /**
+     * @param $daemon
+     * @return Server
+     */
+    public function setDaemon($daemon)
+    {
+        if (!in_array($daemon, [0, 1])) {
+            return $this;
+        }
+        $this->daemon = $daemon;
+        return $this;
+    }
 
 
-	/**
-	 * @param $config
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function create($config)
-	{
-		$settings = Config::get('settings', false, []);
-		if (!isset($this->server[$config['type']])) {
-			throw new Exception('Unknown server type(' . $config['type'] . ').');
-		}
-		$server = $this->dispatchCreate($config, $settings);
-		if (isset($config['events'])) {
-			$this->createEventListen($config);
-		}
-		return $server;
-	}
+    /**
+     * @return Http|Websocket|Packet|Receive
+     */
+    public function getServer()
+    {
+        return $this->baseServer;
+    }
 
 
-	/**
-	 * @param $config
-	 * @throws Exception
-	 */
-	protected function createEventListen($config)
-	{
-		if (!is_array($config['events'])) {
-			return;
-		}
-		$event = Snowflake::app()->event;
-		foreach ($config['events'] as $name => $_event) {
-			$event->on($name, $_event);
-		}
-	}
-
-	/**
-	 * @param $config
-	 * @param $settings
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function dispatchCreate($config, $settings)
-	{
-		if (!($this->baseServer instanceof \Swoole\Server)) {
-			$this->parseServer($config, $settings);
-		} else {
-			if ($this->isUse($config['port'])) {
-				return $this->error_stop($config['host'], $config['port']);
-			}
-			$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
-			if (isset($config['settings']) && is_array($config['settings'])) {
-				$newListener->set($config['settings']);
-			}
-			$this->onListenerBind($config, $this->baseServer);
-		}
-		return $this->baseServer;
-	}
+    /**
+     * @param $config
+     * @return mixed
+     * @throws Exception
+     */
+    private function create($config)
+    {
+        $settings = Config::get('settings', false, []);
+        if (!isset($this->server[$config['type']])) {
+            throw new Exception('Unknown server type(' . $config['type'] . ').');
+        }
+        $server = $this->dispatchCreate($config, $settings);
+        if (isset($config['events'])) {
+            $this->createEventListen($config);
+        }
+        return $server;
+    }
 
 
-	/**
-	 * @param $config
-	 * @param $settings
-	 * @return void
-	 * @throws Exception
-	 */
-	private function parseServer($config, $settings)
-	{
-		$class = $this->dispatch($config['type']);
-		if ($this->isUse($config['port'])) {
-			return $this->error_stop($config['host'], $config['port']);
-		}
-		$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
-		$settings['daemonize'] = $this->daemon;
-		if (!isset($settings['pid_file'])) {
-			$settings['pid_file'] = APP_PATH . 'storage/server.pid';
-		}
-		if ($this->baseServer instanceof Websocket) {
-			$this->onLoadWebsocketHandler();
-		} else if ($this->baseServer instanceof Http) {
-			$this->onLoadHttpHandler();
-		}
-		$this->baseServer->set($settings);
-	}
+    /**
+     * @param $config
+     * @throws Exception
+     */
+    protected function createEventListen($config)
+    {
+        if (!is_array($config['events'])) {
+            return;
+        }
+        $event = Snowflake::app()->event;
+        foreach ($config['events'] as $name => $_event) {
+            $event->on($name, $_event);
+        }
+    }
+
+    /**
+     * @param $config
+     * @param $settings
+     * @return mixed
+     * @throws Exception
+     */
+    private function dispatchCreate($config, $settings)
+    {
+        if (!($this->baseServer instanceof \Swoole\Server)) {
+            $this->parseServer($config, $settings);
+        } else {
+            if ($this->isUse($config['port'])) {
+                return $this->error_stop($config['host'], $config['port']);
+            }
+            $newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
+            if (isset($config['settings']) && is_array($config['settings'])) {
+                $newListener->set($config['settings']);
+            }
+            $this->onListenerBind($config, $this->baseServer);
+        }
+        return $this->baseServer;
+    }
 
 
-	/**
-	 * @param $config
-	 * @param $newListener
-	 * @return void
-	 * @throws ReflectionException
-	 * @throws Exception
-	 * @throws NotFindClassException
-	 */
-	private function onListenerBind($config, $newListener)
-	{
-		$this->debug(sprintf('Listener %s::%d -> %s', $config['host'], $config['port'], $config['mode']));
-		if ($config['type'] == self::WEBSOCKET) {
-			throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
-		} else if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
-			throw new Exception('Unknown server type(' . $config['type'] . ').');
-		}
-		if (in_array($config['type'], $this->listenTypes)) {
-			return;
-		}
-		if ($config['type'] == self::HTTP) {
-			if (in_array($config['type'], $this->listenTypes)) {
-				throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
-			}
-			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
-		} else {
-			$this->noHttp($newListener, $config);
-		}
-		array_push($this->listenTypes, $config['type']);
-	}
+    /**
+     * @param $config
+     * @param $settings
+     * @return void
+     * @throws Exception
+     */
+    private function parseServer($config, $settings)
+    {
+        $class = $this->dispatch($config['type']);
+        if ($this->isUse($config['port'])) {
+            return $this->error_stop($config['host'], $config['port']);
+        }
+        $this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
+        $settings['daemonize'] = $this->daemon;
+        if (!isset($settings['pid_file'])) {
+            $settings['pid_file'] = APP_PATH . 'storage/server.pid';
+        }
+        if ($this->baseServer instanceof Websocket) {
+            $this->onLoadWebsocketHandler();
+        } else if ($this->baseServer instanceof Http) {
+            $this->onLoadHttpHandler();
+        }
+        $this->baseServer->set($settings);
+    }
 
 
-	/**
-	 * @param $newListener
-	 * @param $config
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	private function noHttp($newListener, $config)
-	{
-		$class = [
-			'pack'   => $config['resolve']['pack'] ?? null,
-			'unpack' => $config['resolve']['unpack'] ?? null
-		];
-		$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
-		$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-		if ($config['type'] == self::TCP) {
-			$class['class'] = OnReceive::class;
-			$callback = Snowflake::createObject($class);
-			$this->onBind($newListener, 'receive', [$callback, 'onHandler']);
-		} else {
-			$class['class'] = OnPacket::class;
-			$callback = Snowflake::createObject($class);
-			$this->onBind($newListener, 'packet', [$callback, 'onHandler']);
-		}
-	}
+    /**
+     * @param $config
+     * @param $newListener
+     * @return void
+     * @throws ReflectionException
+     * @throws Exception
+     * @throws NotFindClassException
+     */
+    private function onListenerBind($config, $newListener)
+    {
+        $this->debug(sprintf('Listener %s::%d -> %s', $config['host'], $config['port'], $config['mode']));
+        if ($config['type'] == self::WEBSOCKET) {
+            throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
+        } else if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
+            throw new Exception('Unknown server type(' . $config['type'] . ').');
+        }
+        if (in_array($config['type'], $this->listenTypes)) {
+            return;
+        }
+        if ($config['type'] == self::HTTP) {
+            if (in_array($config['type'], $this->listenTypes)) {
+                throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
+            }
+            $this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
+        } else {
+            $this->noHttp($newListener, $config);
+        }
+        array_push($this->listenTypes, $config['type']);
+    }
 
 
-	/**
-	 * @param $server
-	 * @param $name
-	 * @param $callback
-	 * @throws Exception
-	 */
-	private function onBind($server, $name, $callback)
-	{
-		if (in_array($name, $this->listening)) {
-			return;
-		}
-		if ($name === 'request') {
-			$this->onLoadHttpHandler();
-		}
-		array_push($this->listening, $name);
-		$server->on($name, $callback);
-	}
+    /**
+     * @param $newListener
+     * @param $config
+     * @throws NotFindClassException
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    private function noHttp($newListener, $config)
+    {
+        $class = [
+            'pack' => $config['resolve']['pack'] ?? null,
+            'unpack' => $config['resolve']['unpack'] ?? null
+        ];
+        $this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
+        $this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
+        if ($config['type'] == self::TCP) {
+            $class['class'] = OnReceive::class;
+            $callback = Snowflake::createObject($class);
+            $this->onBind($newListener, 'receive', [$callback, 'onHandler']);
+        } else {
+            $class['class'] = OnPacket::class;
+            $callback = Snowflake::createObject($class);
+            $this->onBind($newListener, 'packet', [$callback, 'onHandler']);
+        }
+    }
 
 
-	/**
-	 * Load router handler
-	 * @throws Exception
-	 */
-	public function onLoadHttpHandler()
-	{
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_START, function () {
-			$router = Snowflake::app()->getRouter();
-			$router->loadRouterSetting();
-		});
-	}
+    /**
+     * @param $server
+     * @param $name
+     * @param $callback
+     * @throws Exception
+     */
+    private function onBind($server, $name, $callback)
+    {
+        if (in_array($name, $this->listening)) {
+            return;
+        }
+        if ($name === 'request') {
+            $this->onLoadHttpHandler();
+        }
+        array_push($this->listening, $name);
+        $server->on($name, $callback);
+    }
 
 
-	/**
-	 * @throws Exception
-	 */
-	public function onLoadWebsocketHandler()
-	{
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_START, function () {
-			/** @var AWebsocket $websocket */
-			$websocket = Snowflake::app()->annotation->get('websocket');
-			$websocket->registration_notes(APP_PATH . 'app/Websocket', 'App\\Websocket');
-		});
-	}
+    /**
+     * Load router handler
+     * @throws Exception
+     */
+    public function onLoadHttpHandler()
+    {
+        $event = Snowflake::app()->getEvent();
+        $event->on(Event::SERVER_WORKER_START, function () {
+            $router = Snowflake::app()->getRouter();
+            $router->loadRouterSetting();
+        });
+    }
 
 
-	/**
-	 * @param $type
-	 * @return string
-	 */
-	private function dispatch($type)
-	{
-		$default = [
-			self::HTTP      => Http::class,
-			self::WEBSOCKET => Websocket::class,
-			self::TCP       => Receive::class,
-			self::PACKAGE   => Packet::class
-		];
-		return $default[$type] ?? Receive::class;
-	}
+    /**
+     * @throws Exception
+     */
+    public function onLoadWebsocketHandler()
+    {
+        $event = Snowflake::app()->getEvent();
+        $event->on(Event::SERVER_WORKER_START, function () {
+            /** @var AWebsocket $websocket */
+            $websocket = Snowflake::app()->annotation->get('websocket');
+            $websocket->registration_notes(APP_PATH . 'app/Websocket', 'App\\Websocket');
+        });
+    }
 
-	/**
-	 * @param $servers
-	 * @return array
-	 */
-	private function sortServers($servers)
-	{
-		$array = [];
-		foreach ($servers as $server) {
-			switch ($server['type']) {
-				case self::WEBSOCKET:
-					array_unshift($array, $server);
-					break;
-				case self::HTTP:
-				case self::PACKAGE | self::TCP:
-					$array[] = $server;
-					break;
-				default:
-					$array[] = $server;
-			}
-		}
-		return $array;
-	}
+
+    /**
+     * @param $type
+     * @return string
+     */
+    private function dispatch($type)
+    {
+        $default = [
+            self::HTTP => Http::class,
+            self::WEBSOCKET => Websocket::class,
+            self::TCP => Receive::class,
+            self::PACKAGE => Packet::class
+        ];
+        return $default[$type] ?? Receive::class;
+    }
+
+    /**
+     * @param $servers
+     * @return array
+     */
+    private function sortServers($servers)
+    {
+        $array = [];
+        foreach ($servers as $server) {
+            switch ($server['type']) {
+                case self::WEBSOCKET:
+                    array_unshift($array, $server);
+                    break;
+                case self::HTTP:
+                case self::PACKAGE | self::TCP:
+                    $array[] = $server;
+                    break;
+                default:
+                    $array[] = $server;
+            }
+        }
+        return $array;
+    }
 
 
 }
