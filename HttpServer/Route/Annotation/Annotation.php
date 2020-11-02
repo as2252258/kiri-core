@@ -242,12 +242,16 @@ class Annotation extends \Snowflake\Annotation\Annotation
 
 	/**
 	 * @param $name
-	 * @param $events
+	 * @param $comment
 	 * @return false|string
 	 */
-	public function getName($name, $events)
+	public function getName($name, $comment)
 	{
-		return self::HTTP_EVENT . $name . ':' . $events[2];
+		$prefix = self::HTTP_EVENT . ltrim($name, ':');
+		if (isset($comment[2]) && !empty($comment[2])) {
+			return $prefix . ':' . $comment[2];
+		}
+		return $prefix;
 	}
 
 }
