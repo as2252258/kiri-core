@@ -33,7 +33,7 @@ class OnClose extends Callback
 	{
 		try {
 			[$manager, $name] = $this->resolve($server, $fd);
-			if (!$manager->has($name)) {
+			if (empty($manager) || !$manager->has($name)) {
 				return;
 			}
 			$manager->runWith($name, [$fd]);
@@ -57,14 +57,20 @@ class OnClose extends Callback
 	 */
 	public function resolve($server, $fd)
 	{
-		if (!($server instanceof WServer)) {
-			return [null, null];
+		var_dump($server);
+		if ($server instanceof WServer) {
+			if (!$server->isEstablished($fd)) {
+				return [null, null];
+			}
+			$manager = Snowflake::app()->annotation->get('websocket');
+			$name = $manager->getName(AWebsocket::CLOSE);
+		} else if ($server instanceof HServer) {
+			$manager = Snowflake::app()->annotation->get('http');
+			$name = $manager->getName(Annotation::CLOSE);
+		} else {
+			$manager = Snowflake::app()->annotation->get('tcp');
+			$name = $manager->getName(Tcp::CLOSE);
 		}
-		if (!$server->isEstablished($fd)) {
-			return [null, null];
-		}
-		$manager = Snowflake::app()->annotation->get('websocket');
-		$name = $manager->getName(AWebsocket::CLOSE);
 		return [$manager, $name];
 	}
 
