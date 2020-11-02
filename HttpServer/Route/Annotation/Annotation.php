@@ -245,7 +245,7 @@ class Annotation extends \Snowflake\Annotation\Annotation
 	 * @param $comment
 	 * @return false|string
 	 */
-	public function getName($name, $comment)
+	public function getName($name, $comment = [])
 	{
 		$prefix = self::HTTP_EVENT . ltrim($name, ':');
 		if (isset($comment[2]) && !empty($comment[2])) {
