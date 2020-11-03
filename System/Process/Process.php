@@ -32,7 +32,8 @@ abstract class Process extends \Swoole\Process
 		$class = get_called_class();
 		parent::__construct(function ($process) use ($name, $class) {
 			if (Snowflake::isLinux()) {
-				$this->name('Processes: ' . $class . '::class');
+				$prefix = ucfirst(rtrim(Snowflake::app()->id, ':'));
+				$this->name($prefix . ' processes: ' . $class . '::class');
 			}
 			$this->onHandler($process);
 		}, false, 1, $enable_coroutine);
