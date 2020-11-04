@@ -6,11 +6,11 @@ namespace HttpServer\Events;
 
 use Closure;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
 use Exception;
+use HttpServer\Events\Utility\DataResolve;
 
 /**
  * Class OnPacket
@@ -29,52 +29,24 @@ class OnPacket extends Callback
 
 
 	/**
-	 * @param $data
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function pack($data)
-	{
-		$callback = $this->pack;
-		if (is_callable($callback, true)) {
-			return $callback($data);
-		}
-		return JSON::encode($data);
-	}
-
-
-	/**
-	 * @param $data
-	 * @return mixed
-	 */
-	public function unpack($data)
-	{
-		$callback = $this->unpack;
-		if (is_callable($callback, true)) {
-			return $callback($data);
-		}
-		return JSON::decode($data);
-	}
-
-
-	/**
 	 * @param Server $server
 	 * @param $data
 	 * @param $clientInfo
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onHandler(Server $server,string $data,array $clientInfo)
+	public function onHandler(Server $server, string $data, array $clientInfo)
 	{
 		try {
 			$client = [$clientInfo['address'], $clientInfo['port']];
-			if (empty($data = $this->unpack($data))) {
+			$data = DataResolve::unpack($this->unpack, $clientInfo['address'], $clientInfo['port'], $data);
+			if (empty($data)) {
 				throw new Exception('Format error.');
 			}
-			$client[] = $this->pack($data);
+			$client[] = DataResolve::pack($this->pack, $data);
 			return $server->sendto(...$client);
 		} catch (\Throwable $exception) {
-			$client[] = $this->pack(['message' => $exception->getMessage()]);
+			$client[] = DataResolve::pack($this->pack,['message' => $exception->getMessage()]);
 			return $server->sendto(...$client);
 		} finally {
 			$event = Snowflake::app()->event;

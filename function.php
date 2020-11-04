@@ -201,7 +201,7 @@ if (!function_exists('fire')) {
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	function fire(string $event,array $params = [])
+	function fire(string $event, array $params = [])
 	{
 		$logger = Snowflake::app()->getEvent();
 		$logger->trigger($event, $params);
@@ -582,5 +582,37 @@ if (!function_exists('jTraceEx')) {
 		return $result;
 	}
 
+
+}
+
+
+if (!function_exists('swoole_substr_json_decode')) {
+
+
+	/**
+	 * @param $packet
+	 * @param int $length
+	 * @return mixed
+	 */
+	function swoole_substr_json_decode($packet, $length = 0)
+	{
+		return json_decode($packet, true);
+	}
+
+}
+
+
+if (!function_exists('swoole_substr_unserialize')) {
+
+
+	/**
+	 * @param $packet
+	 * @param int $length
+	 * @return mixed
+	 */
+	function swoole_substr_unserialize($packet, $length = 0)
+	{
+		return unserialize($packet);
+	}
 
 }
