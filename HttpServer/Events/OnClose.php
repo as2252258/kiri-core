@@ -57,7 +57,6 @@ class OnClose extends Callback
 	 */
 	public function resolve($server, $fd)
 	{
-		var_dump($server);
 		if ($server instanceof WServer) {
 			if (!$server->isEstablished($fd)) {
 				return [null, null];
