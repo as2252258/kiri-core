@@ -60,7 +60,8 @@ class Columns extends Component
 	 */
 	public function table(string $table)
 	{
-		return $this->structure($this->table = $table);
+		$this->structure($this->table = $table);
+		return $this;
 	}
 
 	/**
@@ -263,7 +264,7 @@ class Columns extends Component
 	 */
 	private function getColumns()
 	{
-		return $this->structure($this->getTable())->columns[$this->getTable()];
+		return $this->structure($this->getTable());
 	}
 
 
@@ -275,15 +276,14 @@ class Columns extends Component
 	private function structure($table)
 	{
 		if (isset($this->columns[$table])) {
-			return $this;
+			return $this->columns[$table];
 		}
 		$sql = $this->db->getBuild()->getColumn($table);
 		$column = $this->db->createCommand($sql)->all();
 		if (empty($column)) {
 			throw new Exception("The table " . $table . " not exists.");
 		}
-		$this->columns[$table] = $this->resolve($column, $table);
-		return $this;
+		return $this->columns[$table] = $this->resolve($column, $table);
 	}
 
 
