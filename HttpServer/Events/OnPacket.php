@@ -46,6 +46,7 @@ class OnPacket extends Callback
 			$client[] = DataResolve::pack($this->pack, $data);
 			return $server->sendto(...$client);
 		} catch (\Throwable $exception) {
+			var_dump($exception->getMessage());
 			$client[] = DataResolve::pack($this->pack,['message' => $exception->getMessage()]);
 			return $server->sendto(...$client);
 		} finally {
