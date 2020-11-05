@@ -26,9 +26,14 @@ class DataResolve
 	public static function pack($unpack, $data)
 	{
 		if (empty($unpack)) {
-			return JSON::encode($data);
+			$params = JSON::encode($data);
+		} else {
+			$params = self::callbackResolve($unpack, null, null, $data);
 		}
-		return self::callbackResolve($unpack, null, null, $data);
+		if ($params === null) {
+			return 'Format error.';
+		}
+		return $params;
 	}
 
 
@@ -44,9 +49,14 @@ class DataResolve
 	public static function unpack($unpack, $address, $port, $data)
 	{
 		if (empty($unpack)) {
-			return JSON::decode($data);
+			$params = JSON::decode($data);
+		} else {
+			$params = self::callbackResolve($unpack, $address, $port, $data);
 		}
-		return self::callbackResolve($unpack, $address, $port, $data);
+		if ($params === null) {
+			return 'Format error.';
+		}
+		return $params;
 	}
 
 
