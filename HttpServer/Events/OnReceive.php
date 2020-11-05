@@ -39,16 +39,16 @@ class OnReceive extends Callback
 	public function onHandler(\Swoole\Server $server, int $fd, int $reID, string $data)
 	{
 		try {
-			$client = [$fd];
 			$data = DataResolve::unpack($this->unpack, null, null, $data);
 			if (empty($data)) {
 				throw new Exception('Format error.');
 			}
-			$client[] = DataResolve::pack($this->pack, $data);
-			return $server->send(...$client);
+			return $server->send($fd, DataResolve::pack($this->pack, $data));
 		} catch (\Throwable $exception) {
-			$client[] = DataResolve::pack($this->pack, ['message' => $exception->getMessage()]);
-			return $server->send(...$client);
+			$response['message'] = $exception->getMessage();
+			$response['state'] = 500;
+			$response = DataResolve::pack($this->pack, $response);
+			return $server->send($fd, $response);
 		} finally {
 			$event = Snowflake::app()->event;
 			$event->trigger(Event::SERVER_WORKER_STOP);
