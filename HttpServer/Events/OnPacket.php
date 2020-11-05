@@ -48,6 +48,8 @@ class OnPacket extends Callback
 		} catch (\Throwable $exception) {
 			$client = DataResolve::pack($this->pack, $exception->getMessage());
 
+			var_dump($exception->getMessage());
+
 			return $server->sendto($clientInfo['address'], $clientInfo['port'], $client ?? 'Format error');
 		} finally {
 			$event = Snowflake::app()->event;
