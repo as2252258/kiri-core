@@ -46,8 +46,8 @@ class OnPacket extends Callback
 			$client[] = DataResolve::pack($this->pack, $data);
 			return $server->sendto(...$client);
 		} catch (\Throwable $exception) {
-			var_dump($exception->getMessage());
 			$client[] = DataResolve::pack($this->pack,['message' => $exception->getMessage()]);
+			var_dump($client);
 			return $server->sendto(...$client);
 		} finally {
 			$event = Snowflake::app()->event;
