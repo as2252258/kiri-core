@@ -6,6 +6,7 @@ namespace HttpServer\Events;
 
 use Closure;
 use HttpServer\Abstracts\Callback;
+use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
@@ -46,7 +47,7 @@ class OnPacket extends Callback
 			$client[] = DataResolve::pack($this->pack, $data);
 			return $server->sendto(...$client);
 		} catch (\Throwable $exception) {
-			$client[] = DataResolve::pack($this->pack,['message' => $exception->getMessage()]);
+			$client[] = DataResolve::pack($this->pack, JSON::encode(['message' => $exception->getMessage()]));
 			var_dump($client);
 			return $server->sendto(...$client);
 		} finally {
