@@ -276,14 +276,15 @@ class Columns extends Component
 	private function structure($table)
 	{
 		if (isset($this->columns[$table])) {
-			return $this->columns[$table];
+			$sql = $this->db->getBuild()->getColumn($table);
+			$column = $this->db->createCommand($sql)->all();
+			if (empty($column)) {
+				throw new Exception("The table " . $table . " not exists.");
+			}
+			return $this->columns[$table] = $this->resolve($column, $table);
+
 		}
-		$sql = $this->db->getBuild()->getColumn($table);
-		$column = $this->db->createCommand($sql)->all();
-		if (empty($column)) {
-			throw new Exception("The table " . $table . " not exists.");
-		}
-		return $this->columns[$table] = $this->resolve($column, $table);
+		return $this->columns[$table];
 	}
 
 
