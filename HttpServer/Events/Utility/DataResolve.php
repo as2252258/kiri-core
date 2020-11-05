@@ -72,6 +72,9 @@ class DataResolve
 	private static function callbackResolve($callback, $address, $port, $data)
 	{
 		if ($callback instanceof Closure) {
+			if (empty($address) && empty($port)) {
+				return $callback($data);
+			}
 			return $callback($address, $port, $data);
 		}
 		if (is_string($callback)) {
