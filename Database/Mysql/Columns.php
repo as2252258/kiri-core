@@ -275,7 +275,7 @@ class Columns extends Component
 	 */
 	private function structure($table)
 	{
-		if (isset($this->columns[$table])) {
+		if (!isset($this->columns[$table]) || empty($this->columns[$table])) {
 			$sql = $this->db->getBuild()->getColumn($table);
 			$column = $this->db->createCommand($sql)->all();
 			if (empty($column)) {
