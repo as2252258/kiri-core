@@ -19,6 +19,7 @@ use Swoole\WebSocket\Server as WServer;
 /**
  * Class OnClose
  * @package HttpServer\Events
+ *
  */
 class OnClose extends Callback
 {
