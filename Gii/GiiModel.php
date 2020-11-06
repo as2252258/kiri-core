@@ -56,7 +56,7 @@ class GiiModel extends GiiBase
 		if (file_exists($modelPath['path'] . '/' . $managerName . '.php')) {
 			try {
 				$class = new \ReflectionClass($modelPath['namespace'] . '\\' . $managerName);
-			} catch (\Exception $e) {
+			} catch (\Throwable $e) {
 				var_dump($e->getMessage());
 			}
 		}

@@ -202,7 +202,7 @@ class Command extends Component
 			if (Config::get('debug.enable', false, false)) {
 				$this->debug($this->sql . '。 Run-time: ' . (microtime(true) - $time));
 			}
-		} catch (\Throwable | Exception $exception) {
+		} catch (\Throwable $exception) {
 			$this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
 			$result = [];
 		} finally {

@@ -374,7 +374,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			$this->setAttributes($param);
 			$this->afterSave($attributes, $param);
 			$this->refresh();
-		} catch (Exception $exception) {
+		} catch (\Throwable $exception) {
 			$lastId = false;
 			$trance->rollback();
 		}

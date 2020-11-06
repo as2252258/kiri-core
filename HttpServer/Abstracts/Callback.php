@@ -41,7 +41,7 @@ abstract class Callback extends Application
 			$event->offName(Event::EVENT_AFTER_REQUEST);
 			$event->offName(Event::EVENT_BEFORE_REQUEST);
 			$this->eventNotify($message, $event);
-		} catch (Exception $exception) {
+		} catch (\Throwable $exception) {
 			$this->error($exception->getMessage());
 		}
 	}
@@ -125,7 +125,7 @@ abstract class Callback extends Application
 			$mail->Body = $message;
 			$mail->AltBody = $message;
 			$mail->send();
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			$this->addError($e->getMessage(), 'email');
 		}
 	}

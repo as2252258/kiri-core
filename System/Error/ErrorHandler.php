@@ -66,11 +66,11 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
 	/**
-	 * @param Exception $exception
+	 * @param \Throwable $exception
 	 *
 	 * @throws Exception
 	 */
-	public function exceptionHandler(Exception $exception)
+	public function exceptionHandler(\Throwable $exception)
 	{
 		$this->category = 'exception';
 

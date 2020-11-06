@@ -214,7 +214,7 @@ class Node extends Application
 				$annotation->read($this, $reflect, $action, $annotations);
 			}
 			return [$reflect->newInstance(), $action];
-		} catch (Exception $exception) {
+		} catch (\Throwable $exception) {
 			$this->_error = $exception->getMessage();
 			$this->error($exception->getMessage(), 'router');
 			return null;

@@ -217,7 +217,7 @@ class Logger extends Component
 		if (is_string($data)) {
 			return $data;
 		}
-		if ($data instanceof Exception) {
+		if ($data instanceof Throwable) {
 			$data = $this->getException($data);
 		} else if (is_object($data)) {
 			$data = get_object_vars($data);
@@ -266,10 +266,10 @@ class Logger extends Component
 
 
 	/**
-	 * @param Exception $exception
+	 * @param Throwable $exception
 	 * @return array
 	 */
-	private function getException(Exception $exception)
+	private function getException(Throwable $exception)
 	{
 		$_tmp = [$exception->getMessage()];
 		$_tmp[] = $exception->getFile() . ' on line ' . $exception->getLine();

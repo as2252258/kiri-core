@@ -90,7 +90,7 @@ class BaseObject implements Configure
 	 */
 	public function addError($message, $model = 'app')
 	{
-		if ($message instanceof Exception) {
+		if ($message instanceof \Throwable) {
 			$this->error($message->getMessage(), $message->getFile(), $message->getLine());
 		} else {
 			if (!is_string($message)) {

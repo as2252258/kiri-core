@@ -43,7 +43,7 @@ class OnMessage extends Callback
 			}
 			$events = $manager->getName(AWebsocket::MESSAGE, [null, null, $frame->data['route']]);
 			$manager->runWith($events, [$frame, $server]);
-		} catch (\Exception $exception) {
+		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
 		} finally {

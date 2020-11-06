@@ -164,7 +164,7 @@ class Redis extends Pool
 				return $result = false;
 			}
 			return $result = true;
-		} catch (Exception $exception) {
+		} catch (\Throwable $exception) {
 			return $result = false;
 		} finally {
 			if (!$result) {
