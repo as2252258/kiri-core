@@ -19,6 +19,7 @@ use Queue\QueueProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
+use Snowflake\Abstracts\Kernel;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Exception\ConfigException;
 use Swoole\Coroutine;
@@ -68,6 +69,19 @@ class Application extends BaseApplication
 		$class = Snowflake::createObject($service);
 		if (method_exists($class, 'onImport')) {
 			$class->onImport($this);
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param $kernel
+	 * @return $this
+	 */
+	public function commands(Kernel $kernel)
+	{
+		foreach ($kernel->getCommands() as $command) {
+			$this->register($command);
 		}
 		return $this;
 	}
