@@ -15,17 +15,17 @@ use Database\Orm\Select;
 class Schema extends Component
 {
 
-	/** @var Connection */
-	public $db;
+	/** @var ?Connection */
+	public ?Connection $db;
 
-	/** @var Select */
-	private $_builder = null;
+	/** @var ?Select */
+	private ?Select $_builder = null;
 
-	/** @var Columns */
-	private $_column = null;
+	/** @var ?Columns $_column*/
+	private ?Columns $_column = null;
 
-	/** @var Change */
-	private $_change = null;
+	/** @var ?Change */
+	private ?Change $_change = null;
 
 	/**
 	 * @return Select
