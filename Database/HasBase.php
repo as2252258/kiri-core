@@ -24,7 +24,7 @@ abstract class HasBase
 	protected $data;
 
 	/**
-	 * @var string 
+	 * @var string
 	 */
 	protected string $model;
 
@@ -48,6 +48,12 @@ abstract class HasBase
 	 */
 	public function __construct($model, $primaryId, $value, Relation $relation)
 	{
+		if (!class_exists($model)) {
+			throw new Exception('Model must implement ' . ActiveRecord::class);
+		}
+		if (!in_array(ActiveRecord::class, class_implements($model))) {
+			throw new Exception('Model must implement ' . ActiveRecord::class);
+		}
 		if (is_array($value)) {
 			if (empty($value)) $value = [];
 			$_model = $model::find()->in($primaryId, $value);
