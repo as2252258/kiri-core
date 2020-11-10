@@ -414,7 +414,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 			return false;
 		}
 
-		if (!$instance->check($header, $model['user'])) {
+		if (!$instance->check($header, (int)$model['user'])) {
 			return false;
 		}
 		$instance->expireRefresh();
