@@ -14,9 +14,7 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\RedisConnectException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 
 /**
  * Class Redis

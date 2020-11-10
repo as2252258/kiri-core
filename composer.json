@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "swoole/ide-helper": "@dev",
     "ext-json": "*",
     "phpmailer/phpmailer": "^6.1",
@@ -39,7 +39,6 @@
       "validator\\": "Validator/",
       "Console\\": "Console/",
       "Database\\": "Database/",
-      "Queue\\": "Queue/",
       "Gii\\": "Gii/",
       "Kafka\\": "Kafka/"
     },
