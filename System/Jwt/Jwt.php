@@ -116,13 +116,13 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 
 	/**
-	 * @param int|string $unionId
-	 * @param $headers
+	 * @param int $unionId
+	 * @param array $headers
 	 *
 	 * @return array
 	 * @throws Exception
 	 */
-	public function create($unionId, $headers = [])
+	public function create(int $unionId, $headers = [])
 	{
 		$this->user = $unionId;
 		$this->config['time'] = time();
