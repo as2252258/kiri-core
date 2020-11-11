@@ -45,53 +45,6 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * @param string $column
      * @param int $value
-     * @return static|bool
-     * @throws Exception
-     */
-    public function incrBy(string $column, int $value)
-    {
-        if (!$this->mathematics(self::INCR, [$column => $value])) {
-            return false;
-        }
-        $this->{$column} += $value;
-        return $this->refresh();
-    }
-
-    /**
-     * @param $column
-     * @param $value
-     * @return array|Command|bool|int|string
-     * @throws Exception
-     */
-    public function decrBy(string $column, int $value)
-    {
-        if (!$this->mathematics(self::DECR, [$column => $value])) {
-            return false;
-        }
-        $this->{$column} -= $value;
-        return $this->refresh();
-    }
-
-    /**
-     * @param array $attributes
-     * @return bool|self
-     * @throws Exception
-     */
-    public function batchIncrColumn(array $attributes)
-    {
-        if (!$this->mathematics(self::INCR, $attributes)) {
-            return false;
-        }
-        foreach ($attributes as $key => $attribute) {
-            $this->$key += $attribute;
-        }
-        return $this;
-    }
-
-
-    /**
-     * @param string $column
-     * @param int $value
      * @return ActiveRecord|false
      * @throws Exception
      */
@@ -153,24 +106,6 @@ class ActiveRecord extends BaseActiveRecord
         }
         return $this;
     }
-
-
-    /**
-     * @param array $attributes
-     * @return bool|self
-     * @throws Exception
-     */
-    public function batchDescColumn(array $attributes)
-    {
-        if (!$this->mathematics(self::DECR, $attributes)) {
-            return false;
-        }
-        foreach ($attributes as $key => $attribute) {
-            $this->$key -= $attribute;
-        }
-        return $this;
-    }
-
 
     /**
      * @param $attributes
