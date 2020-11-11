@@ -98,6 +98,11 @@ class Server extends Application
 	}
 
 
+	/**
+	 * @param $configs
+	 * @return null
+	 * @throws Exception
+	 */
 	private function orders($configs)
 	{
 		$servers = $this->sortServers($configs);
@@ -107,6 +112,7 @@ class Server extends Application
 				return null;
 			}
 		}
+		return $this->baseServer;
 	}
 
 
@@ -201,6 +207,9 @@ class Server extends Application
 	 */
 	public function onProcessListener()
 	{
+		if (!($this->baseServer instanceof \Swoole\Server)) {
+			return false;
+		}
 		$processes = Config::get('processes');
 		if (!empty($processes) && is_array($processes)) {
 			return $this->deliveryProcess(merge($processes, $this->process));
