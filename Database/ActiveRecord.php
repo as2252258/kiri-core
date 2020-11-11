@@ -277,7 +277,10 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	private function resolveObject($data)
 	{
-		if (is_numeric($data) || !method_exists($this, $data)) {
+		if (is_numeric($data) || !is_string($data)) {
+			return $data;
+		}
+		if (!method_exists($this, $data)) {
 			return $data;
 		}
 		return ArrayAccess::toArray($this->{$data}());
