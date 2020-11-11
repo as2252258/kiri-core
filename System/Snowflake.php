@@ -231,7 +231,7 @@ class Snowflake
 	public static function getMasterPid()
 	{
 		$default = APP_PATH . 'storage/server.pid';
-		$server = Config::get('settings.pid_file', $default);
+		$server = Config::get('settings.pid_file', false, $default);
 		return file_get_contents($server);
 	}
 
