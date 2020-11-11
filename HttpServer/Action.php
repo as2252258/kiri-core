@@ -62,7 +62,6 @@ trait Action
 				$this->close($server);
 			}
 		}
-		clearstatcache(true);
 		Snowflake::clearWorkerId();
 	}
 
@@ -91,7 +90,6 @@ trait Action
 	private function masterIdCheck()
 	{
 		echo '.';
-		clearstatcache(true);
 		$files = new \DirectoryIterator($this->getWorkerPath());
 		if ($files->getSize() < 1) {
 			return false;
