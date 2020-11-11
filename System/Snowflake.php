@@ -230,7 +230,9 @@ class Snowflake
 	 */
 	public static function getMasterPid()
 	{
-		return file_get_contents(storage('socket.sock'));
+		$default = APP_PATH . 'storage/server.pid';
+		$server = Config::get('settings.pid_file', $default);
+		return file_get_contents($server);
 	}
 
 
