@@ -52,7 +52,6 @@ trait Action
 		} else {
 			$pathId = file_get_contents($socket);
 			@unlink($socket);
-			clearstatcache(true, $socket);
 			if (empty($pathId)) {
 				$this->close($server);
 			} else {
@@ -63,6 +62,7 @@ trait Action
 				$this->close($server);
 			}
 		}
+		clearstatcache(true);
 		Snowflake::clearWorkerId();
 	}
 
@@ -91,6 +91,7 @@ trait Action
 	private function masterIdCheck()
 	{
 		echo '.';
+		clearstatcache(true);
 		$files = new \DirectoryIterator($this->getWorkerPath());
 		if ($files->getSize() < 1) {
 			return false;
@@ -102,7 +103,6 @@ trait Action
 				$this->closeByPid($content);
 			} else {
 				@unlink($file->getRealPath());
-				clearstatcache(true, $file->getRealPath());
 			}
 		}
 		return true;
