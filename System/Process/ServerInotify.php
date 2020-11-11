@@ -92,14 +92,16 @@ class ServerInotify extends Process
 			if (!isset($this->md5Map[$md5])) {
 				if ($isReload) {
 					$this->isReloading = true;
-					return Timer::after(2000, [$this, 'reload']);
+					Timer::clearAll();
+					return Timer::after(2000, [$this, 'timerReload']);
 				}
 				$this->md5Map[$md5] = $mTime;
 			} else {
 				if ($this->md5Map[$md5] != $mTime) {
 					if ($isReload) {
 						$this->isReloading = true;
-						return Timer::after(2000, [$this, 'reload']);
+						Timer::clearAll();
+						return Timer::after(2000, [$this, 'timerReload']);
 					}
 					$this->md5Map[$md5] = $mTime;
 				}
@@ -165,10 +167,23 @@ class ServerInotify extends Process
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
 		$this->md5Map = [];
-		if (Snowflake::isMac()) {
-			$this->loadByDir(APP_PATH . 'app');
-			$this->loadByDir(APP_PATH . 'routes');
-		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function timerReload()
+	{
+		$this->isReloading = true;
+		$this->trigger_reload();
+		$this->int = -1;
+		$this->isReloading = FALSE;
+		$this->isReloadingOut = FALSE;
+		$this->md5Map = [];
+		$this->loadByDir(APP_PATH . 'app');
+		$this->loadByDir(APP_PATH . 'routes');
+
+		Timer::tick(2000, [$this, 'tick']);
 	}
 
 	/**
