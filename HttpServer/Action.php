@@ -52,6 +52,7 @@ trait Action
 		} else {
 			$pathId = file_get_contents($socket);
 			@unlink($socket);
+			clearstatcache($socket);
 
 			if (empty($pathId)) {
 				$this->close($server);
@@ -102,6 +103,7 @@ trait Action
 				$this->closeByPid($content);
 			} else {
 				@unlink($file->getRealPath());
+				clearstatcache($file->getRealPath());
 			}
 		}
 		return true;
