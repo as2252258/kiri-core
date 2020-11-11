@@ -23,6 +23,20 @@ interface IOrm
 	 */
 	public static function findOne($param, $db = NULL);
 
+
+    /**
+     * @return string
+     */
+	public static function className();
+
+
+    /**
+     * @return ActiveQuery
+     * return a sql queryBuilder
+     */
+	public static function find();
+
+
 	/**
 	 * @param $dbName
 	 * @return Connection

@@ -24,9 +24,9 @@ abstract class HasBase
 	protected $data;
 
 	/**
-	 * @var string
+	 * @var IOrm
 	 */
-	protected string $model;
+	protected IOrm $model;
 
 	/** @var */
 	protected $primaryId;
@@ -38,20 +38,20 @@ abstract class HasBase
 	/** @var Relation $_relation */
 	protected Relation $_relation;
 
-	/**
-	 * HasBase constructor.
-	 * @param $model
-	 * @param $primaryId
-	 * @param $value
-	 * @param Relation $relation
-	 * @throws Exception
-	 */
-	public function __construct($model, $primaryId, $value, Relation $relation)
+    /**
+     * HasBase constructor.
+     * @param IOrm $model
+     * @param $primaryId
+     * @param $value
+     * @param Relation $relation
+     * @throws Exception
+     */
+	public function __construct(IOrm $model, $primaryId, $value, Relation $relation)
 	{
 		if (!class_exists($model)) {
 			throw new Exception('Model must implement ' . ActiveRecord::class);
 		}
-		if (!in_array(ActiveRecord::class, class_implements($model))) {
+		if (!in_array(IOrm::class, class_implements($model))) {
 			throw new Exception('Model must implement ' . ActiveRecord::class);
 		}
 		if (is_array($value)) {
