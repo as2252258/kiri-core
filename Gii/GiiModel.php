@@ -338,7 +338,7 @@ class ' . $managerName . ' extends ActiveRecord
 		if (empty($data)) return '';
 		$string = [];
 		foreach ($data as $key => $_val) {
-			if (strpos($key, ',') !== false) {
+			if (is_string($key) && strpos($key, ',') !== false) {
 				$key = '[' . $key . ']';
 			}
 			if (count($_val) == 1) {

@@ -38,7 +38,6 @@ use Database\DatabasesProviders;
 /**
  * Class BaseApplication
  * @package Snowflake\Snowflake\Base
- * @property $json
  * @property Annotation $annotation
  * @property Event $event
  * @property Router $router

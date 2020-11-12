@@ -4,18 +4,47 @@ declare(strict_types=1);
 namespace HttpServer;
 
 
+use Database\DatabasesProviders;
+use HttpServer\Client\Client;
+use HttpServer\Client\Curl;
+use HttpServer\Client\Http2;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use Exception;
+use HttpServer\Route\Router;
+use Kafka\Producer;
 use Snowflake\Abstracts\BaseGoto;
+use Snowflake\Annotation\Annotation;
+use Snowflake\Cache\Memcached;
+use Snowflake\Cache\Redis;
+use Snowflake\Error\Logger;
+use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Jwt\Jwt;
+use Snowflake\Pool\Connection;
+use Snowflake\Pool\Pool as SPool;
 use Snowflake\Snowflake;
 
 /**
  * Class WebController
  * @package Snowflake\Snowflake\Web
  * @property BaseGoto $goto
+ * @property Annotation $annotation
+ * @property Event $event
+ * @property Router $router
+ * @property SPool $pool
+ * @property \Redis|Redis $redis
+ * @property Server $server
+ * @property DatabasesProviders $db
+ * @property Connection $connections
+ * @property Memcached $memcached
+ * @property Logger $logger
+ * @property Jwt $jwt
+ * @property Client $client
+ * @property Producer $kafka
+ * @property Curl $curl
+ * @property Http2 $http2
  */
 class Controller extends Application
 {
