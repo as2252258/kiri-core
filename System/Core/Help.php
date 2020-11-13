@@ -42,11 +42,9 @@ class Help
 		} else if (is_array($xml)) {
 			return $xml;
 		}
-		if (!Xml::isXml($xml)) {
-			$xml = JSON::decode($xml);
-			if ($xml === null) {
-				$xml = [];
-			}
+		$xml = Xml::isXml($xml);
+		if (!$xml) {
+			return [];
 		}
 		return $xml;
 	}
