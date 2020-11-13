@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace HttpServer\Client;
 
-use HttpServer\Application;
 use Exception;
 
 /**

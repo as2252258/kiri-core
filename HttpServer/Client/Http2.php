@@ -10,7 +10,7 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\JSON;
 use Swoole\Http2\Request;
-use \Swoole\Coroutine\Http2\Client as H2Client;
+use Swoole\Coroutine\Http2\Client as H2Client;
 
 
 /**
