@@ -39,7 +39,9 @@ class OnReceive extends Callback
 	public function onHandler(\Swoole\Server $server, int $fd, int $reID, string $data)
 	{
 		try {
-			$data = DataResolve::unpack($this->unpack, null, null, $data);
+			$client = $server->getClientInfo($fd, $reID);
+
+			$data = DataResolve::unpack($this->unpack, $client['remote_ip'], $client['remote_port'], $data);
 			if (empty($data)) {
 				throw new Exception('Format error.');
 			}
