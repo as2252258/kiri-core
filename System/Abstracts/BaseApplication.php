@@ -52,8 +52,6 @@ use Database\DatabasesProviders;
  * @property BaseGoto $goto
  * @property Client $client
  * @property Producer $kafka
- * @property Curl $curl
- * @property Http2 $http2
  */
 abstract class BaseApplication extends Service
 {
@@ -382,7 +380,6 @@ abstract class BaseApplication extends Service
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
 			'client'            => ['class' => Client::class],
-			'http2'             => ['class' => Http2::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],
@@ -394,7 +391,6 @@ abstract class BaseApplication extends Service
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
 			'goto'              => ['class' => BaseGoto::class],
-			'curl'              => ['class' => Curl::class]
 		]);
 	}
 }
