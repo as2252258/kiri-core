@@ -12,7 +12,7 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 use HttpServer\Client\Client;
-use HttpServer\Client\ClientDriver;
+use HttpServer\Client\HttpClient;
 use HttpServer\Client\Curl;
 use HttpServer\Client\Http2;
 use HttpServer\Client\IClient;
@@ -54,6 +54,7 @@ use Database\DatabasesProviders;
  * @property BaseGoto $goto
  * @property IClient $client
  * @property Producer $kafka
+ * @property Http2 $http2
  */
 abstract class BaseApplication extends Service
 {
@@ -381,10 +382,11 @@ abstract class BaseApplication extends Service
 			'error'             => ['class' => ErrorHandler::class],
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
-			'client'            => ['class' => ClientDriver::class],
+			'client'            => ['class' => HttpClient::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],
+			'http2'             => ['class' => Http2::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],
 			'config'            => ['class' => Config::class],
