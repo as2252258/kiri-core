@@ -48,7 +48,7 @@ class Response extends Application
 		self::HTML => HtmlFormatter::class
 	];
 
-	public $fd = 0;
+	public int $fd = 0;
 
 	/**
 	 * @param $format
