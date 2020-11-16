@@ -5,6 +5,7 @@ namespace HttpServer\Client;
 
 
 use Snowflake\Abstracts\Component;
+use Swoole\Coroutine;
 
 
 /**
@@ -14,9 +15,17 @@ use Snowflake\Abstracts\Component;
 class ClientDriver extends Component
 {
 
-    public function __call($name)
-    {
-
-    }
+	/**
+	 * @param $name
+	 * @return IClient
+	 */
+	public function __call($name): IClient
+	{
+		if (Coroutine::getCid() > 0) {
+			return Client::NewRequest();
+		} else {
+			return Curl::NewRequest();
+		}
+	}
 
 }
