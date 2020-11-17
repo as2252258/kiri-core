@@ -73,11 +73,8 @@ class ServerInotify extends Process
 		$this->loadByDir(APP_PATH . 'routes', true);
 		$this->loadByDir(__DIR__ . '/../../', true);
 
-		Coroutine::sleep(3);
-
-		$this->tick();
+		Timer::after(2000, [$this, 'tick']);
 	}
-
 
 
 	/**
@@ -101,7 +98,6 @@ class ServerInotify extends Process
 			}
 		}
 	}
-
 
 
 	/**
