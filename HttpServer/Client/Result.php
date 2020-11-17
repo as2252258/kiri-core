@@ -148,7 +148,7 @@ class Result
 	/**
 	 * @return mixed
 	 */
-	public function getResponse()
+	public function getBody()
 	{
 		return $this->data;
 	}
