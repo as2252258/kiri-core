@@ -47,7 +47,7 @@ if (!function_exists('isUrl')) {
 	function isUrl($url, $get_info = true)
 	{
 		try {
-			$queryMatch = '/((http[s]?):\/\/)?(([\w-_]+\.)+\w+(:\d+)?)(\/.*)?/';
+			$queryMatch = '/((http[s]?):\/\/)?(([\w-\_]+\.)+\w+(:\d+)?)(\/.*)?/';
 			if (!preg_match($queryMatch, $url, $outPut)) {
 				return false;
 			}
