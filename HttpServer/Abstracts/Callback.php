@@ -29,7 +29,9 @@ abstract class Callback extends Application
 	protected function clear($server, $worker_id, $message)
 	{
 		try {
-			$this->warning($server->worker_pid);
+			if ($worker_id < $server->settings['worker_num']) {
+				$this->warning($server->worker_pid);
+			}
 			Snowflake::clearProcessId($server->worker_pid);
 			Timer::clearAll();
 
