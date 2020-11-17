@@ -11,7 +11,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function get(string $path, array $params = []);
 
@@ -19,7 +19,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function post(string $path, array $params = []);
 
@@ -27,7 +27,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function delete(string $path, array $params = []);
 
@@ -35,7 +35,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function options(string $path, array $params = []);
 
@@ -43,7 +43,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function upload(string $path, array $params = []);
 
@@ -51,7 +51,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function put(string $path, array $params = []);
 
@@ -59,7 +59,7 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function head(string $path, array $params = []);
 
@@ -68,7 +68,7 @@ interface IClient
 	 * @param string $method
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|Result|int|string
 	 */
 	public function request(string $method, string $path, array $params = []);
 
