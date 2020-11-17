@@ -75,7 +75,7 @@ class XmlFormatter extends Application implements IFormatter
 				$node = $dom->addChild($key);
 				$this->toXml($node, $val);
 			} else {
-				$dom->addChild($key, $val);
+				$dom->addChild($key, htmlspecialchars((string)$val));
 			}
 		}
 	}
