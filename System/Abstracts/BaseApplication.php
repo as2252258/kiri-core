@@ -52,9 +52,7 @@ use Database\DatabasesProviders;
  * @property Logger $logger
  * @property Jwt $jwt
  * @property BaseGoto $goto
- * @property IClient $client
  * @property Producer $kafka
- * @property Http2 $http2
  */
 abstract class BaseApplication extends Service
 {
@@ -382,11 +380,9 @@ abstract class BaseApplication extends Service
 			'error'             => ['class' => ErrorHandler::class],
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
-			'client'            => ['class' => HttpClient::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],
-			'http2'             => ['class' => Http2::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],
 			'config'            => ['class' => Config::class],

@@ -20,8 +20,6 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Abstracts\Kernel;
 use Snowflake\Exception\NotFindClassException;
-use Snowflake\Exception\ConfigException;
-use Swoole\Coroutine;
 use Swoole\Timer;
 
 /**
@@ -41,7 +39,6 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws ConfigException
 	 * @throws NotFindClassException
 	 */
 	public function init()
