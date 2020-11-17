@@ -196,9 +196,9 @@ class ServerInotify extends Process
 		$this->trigger_reload();
 		$this->int = -1;
 		$this->md5Map = [];
-		$this->loadByDir(APP_PATH . 'app');
-		$this->loadByDir(APP_PATH . 'routes');
-
+		foreach ($this->dirs as $dir) {
+			$this->loadByDir($dir);
+		}
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
 
