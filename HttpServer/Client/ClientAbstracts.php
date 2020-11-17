@@ -747,7 +747,6 @@ abstract class ClientAbstracts extends Component implements IClient
 	private function defaultString($string)
 	{
 		$host = $this->getHost();
-		$host .= ':' . $this->getPort();
 		if ($string == '/') {
 			$string = '';
 		} else if (strpos($string, '/') !== 0) {
