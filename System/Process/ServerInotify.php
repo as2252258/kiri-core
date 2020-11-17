@@ -98,6 +98,7 @@ class ServerInotify extends Process
 				break;
 			}
 		}
+		Timer::after(2000, [$this, 'tick']);
 	}
 
 
