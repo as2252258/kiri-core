@@ -8,7 +8,7 @@ use HttpServer\Events\OnConnect;
 use HttpServer\Events\OnPacket;
 use HttpServer\Events\OnReceive;
 use HttpServer\Events\OnRequest;
-use HttpServer\Route\Annotation\Annotation;
+use HttpServer\Route\Annotation\Http as AnnotationHttp;
 use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Service\Http;
 use HttpServer\Service\Receive;
@@ -85,11 +85,6 @@ class Server extends Application
 	 */
 	public function initCore(array $configs)
 	{
-		$annotation = Snowflake::app()->annotation;
-		$annotation->register('tcp', Tcp::class);
-		$annotation->register('http', Annotation::class);
-		$annotation->register('websocket', AWebsocket::class);
-
 		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
 
 		$this->orders($configs);
@@ -443,8 +438,7 @@ class Server extends Application
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
-			/** @var AWebsocket $websocket */
-			$websocket = Snowflake::app()->annotation->get('websocket');
+			$websocket = Snowflake::app()->annotation->websocket;
 			$websocket->registration_notes(APP_PATH . 'app/Websocket', 'App\\Websocket');
 		});
 	}

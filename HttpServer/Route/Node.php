@@ -9,7 +9,7 @@ use Closure;
 use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
-use HttpServer\Route\Annotation\Annotation;
+use HttpServer\Route\Annotation\Http;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -208,9 +208,8 @@ class Node extends Application
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
 
-			/** @var Annotation $annotation */
-			$annotation = Snowflake::app()->annotation->get('http');
-			if (!empty($annotations = $annotation->getAnnotation(Annotation::class))) {
+			$annotation = Snowflake::app()->annotation->http;
+			if (!empty($annotations = $annotation->getAnnotation(Http::class))) {
 				$annotation->read($this, $reflect, $action, $annotations);
 			}
 			return [$reflect->newInstance(), $action];

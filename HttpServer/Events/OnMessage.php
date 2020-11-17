@@ -36,8 +36,7 @@ class OnMessage extends Callback
 				$frame->data = json_decode($frame->data, true);
 			}
 
-			/** @var AWebsocket $manager */
-			$manager = Snowflake::app()->annotation->get('websocket');
+			$manager = Snowflake::app()->annotation->websocket;
 			if (!isset($frame->data['route'])) {
 				throw new \Exception('Fromat errr.');
 			}

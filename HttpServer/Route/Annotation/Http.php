@@ -10,13 +10,13 @@ use HttpServer\IInterface\Limits;
 use HttpServer\Route\Node;
 use ReflectionClass;
 use ReflectionException;
-use Snowflake\Abstracts\BaseAnnotation;
+use Snowflake\Annotation\Annotation;
 use Snowflake\Snowflake;
 
 /**
  * Class Annotation
  */
-class Annotation extends \Snowflake\Annotation\Annotation
+class Http extends Annotation
 {
 
 	const HTTP_EVENT = 'http:event:';

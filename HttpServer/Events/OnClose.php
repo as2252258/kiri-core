@@ -5,7 +5,7 @@ namespace HttpServer\Events;
 
 
 use HttpServer\Abstracts\Callback;
-use HttpServer\Route\Annotation\Annotation;
+use HttpServer\Route\Annotation\Http;
 use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Route\Annotation\Websocket;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
@@ -62,13 +62,13 @@ class OnClose extends Callback
 			if (!$server->isEstablished($fd)) {
 				return [null, null];
 			}
-			$manager = Snowflake::app()->annotation->get('websocket');
+			$manager = Snowflake::app()->annotation->websocket;
 			$name = $manager->getName(AWebsocket::CLOSE);
 		} else if ($server instanceof HServer) {
-			$manager = Snowflake::app()->annotation->get('http');
-			$name = $manager->getName(Annotation::CLOSE);
+			$manager = Snowflake::app()->annotation->http;
+			$name = $manager->getName(Http::CLOSE);
 		} else {
-			$manager = Snowflake::app()->annotation->get('tcp');
+			$manager = Snowflake::app()->annotation->tcp;
 			$name = $manager->getName(Tcp::CLOSE);
 		}
 		return [$manager, $name];

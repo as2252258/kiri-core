@@ -22,13 +22,6 @@ class Tcp extends Annotation
 
 	private string $Message = 'required|not empty';
 
-
-	private string $Handshake;
-
-
-	private string $Close;
-
-
 	/**
 	 * @param $controller
 	 * @param $methodName

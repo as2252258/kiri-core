@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Snowflake\Annotation;
 
 use Exception;
+use HttpServer\Route\Annotation\Http;
+use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Route\Annotation\Websocket;
 use ReflectionClass;
 use ReflectionException;
@@ -11,12 +13,13 @@ use ReflectionMethod;
 use Snowflake\Abstracts\BaseAnnotation;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use validator\RequiredValidator;
-use validator\RequiredValidator as NotEmptyValidator;
 
 /**
  * Class Annotation
  * @package Snowflake\Snowflake\Annotation
+ * @property Http $http
+ * @property Websocket $websocket
+ * @property Tcp $tcp
  */
 class Annotation extends BaseAnnotation
 {
@@ -34,7 +37,11 @@ class Annotation extends BaseAnnotation
 	protected array $params = [];
 
 
-	private array $_classMap = [];
+	private array $_classMap = [
+		'http'      => Http::class,
+		'tcp'       => Tcp::class,
+		'websocket' => Websocket::class
+	];
 
 	/**
 	 * @param $name

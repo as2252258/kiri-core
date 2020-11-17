@@ -79,8 +79,7 @@ class OnHandshake extends Callback
 		try {
 			$this->resolveParse($request, $response);
 
-			/** @var AWebsocket $manager */
-			$manager = Snowflake::app()->annotation->get('websocket');
+			$manager = Snowflake::app()->annotation->websocket;
 			$name = $manager->getName(AWebsocket::HANDSHAKE);
 			if (!$manager->has($name)) {
 				return $this->disconnect($response);

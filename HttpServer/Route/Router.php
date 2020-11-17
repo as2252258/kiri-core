@@ -10,7 +10,7 @@ use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
-use HttpServer\Route\Annotation\Annotation;
+use HttpServer\Route\Annotation\Http;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\ComponentException;
@@ -580,11 +580,10 @@ class Router extends Application implements RouterInterface
 	{
 		$prefix = APP_PATH . 'app/Http/';
 
-		/** @var Annotation $annotation */
+		/** @var Http $annotation */
 		$annotation = Snowflake::app()->annotation;
-		$annotation->register('http', Annotation::class);
 
-		$annotation = $annotation->get('http');
+		$annotation = $annotation->http;
 		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
 		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
 		$annotation->registration_notes($prefix . 'Middleware', 'App\Http\Middleware');
