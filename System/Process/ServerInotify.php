@@ -13,6 +13,7 @@ namespace Snowflake\Process;
 use Exception;
 use Snowflake\Abstracts\Config;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Event;
 use Swoole\Timer;
 
@@ -51,7 +52,8 @@ class ServerInotify extends Process
 			$this->loadByDir(APP_PATH . 'app');
 			$this->loadByDir(APP_PATH . 'routes');
 			$this->loadByDir(__DIR__ . '/../../');
-			Timer::after(2000, [$this, 'tick']);
+
+			$this->tick();
 		}
 	}
 
@@ -70,8 +72,12 @@ class ServerInotify extends Process
 		$this->loadByDir(APP_PATH . 'app', true);
 		$this->loadByDir(APP_PATH . 'routes', true);
 		$this->loadByDir(__DIR__ . '/../../', true);
-		Timer::after(2000, [$this, 'tick']);
+
+		Coroutine::sleep(3);
+
+		$this->tick();
 	}
+
 
 
 	/**
@@ -83,23 +89,19 @@ class ServerInotify extends Process
 	private function loadByDir($path, $isReload = false)
 	{
 		$path = rtrim($path, '/');
-		if ($this->isReloading) {
-			return;
-		}
-		foreach (glob($path . '/*') as $value) {
+		foreach (glob(realpath($path) . '/*') as $value) {
 			if (is_dir($value)) {
 				$this->loadByDir($value, $isReload);
 			}
 			if (is_file($value)) {
-				if (!$this->checkFile($value, $isReload)) {
-					continue;
+				if ($this->checkFile($value, $isReload)) {
+					$this->timerReload();
+					break;
 				}
-				$this->timerReload();
-				break;
 			}
 		}
-		Timer::after(2000, [$this, 'tick']);
 	}
+
 
 
 	/**
@@ -190,13 +192,9 @@ class ServerInotify extends Process
 	 */
 	public function timerReload()
 	{
-		if ($this->isReloading) {
-			return;
-		}
 		$this->isReloading = true;
 		$this->trigger_reload();
 		$this->int = -1;
-		$this->md5Map = [];
 
 		$this->loadByDir(APP_PATH . 'app');
 		$this->loadByDir(APP_PATH . 'routes');
@@ -205,7 +203,7 @@ class ServerInotify extends Process
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
 
-		Timer::after(2000, [$this, 'tick']);
+		$this->tick();
 	}
 
 	/**
