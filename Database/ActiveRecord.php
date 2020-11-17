@@ -125,7 +125,7 @@ class ActiveRecord extends BaseActiveRecord
 		$select = new static();
 		$select->attributes = $attributes;
 		if (!$select->save()) {
-        	throw new Exception($select->getLastError());
+			throw new Exception($select->getLastError());
 		}
 		return $select;
 	}
@@ -196,7 +196,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public static function insertOrUpdate(array $params, array $condition)
 	{
-		$first = static::findOrCreate($params, $condition);
+		$first = static::findOrCreate($condition, $params);
 		$first->attributes = $params;
 		if (!$first->save()) {
 			return false;
