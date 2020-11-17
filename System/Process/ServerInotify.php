@@ -174,11 +174,9 @@ class ServerInotify extends Process
 	{
 		$this->isReloading = true;
 		$this->trigger_reload();
-		if (Snowflake::isLinux()) {
-			$this->clearWatch();
-			foreach ($this->dirs as $root) {
-				$this->watch($root);
-			}
+		$this->clearWatch();
+		foreach ($this->dirs as $root) {
+			$this->watch($root);
 		}
 		$this->int = -1;
 		$this->isReloading = FALSE;
