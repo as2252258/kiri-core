@@ -51,6 +51,7 @@ use Database\DatabasesProviders;
  * @property Memcached $memcached
  * @property Logger $logger
  * @property Jwt $jwt
+ * @property Http2 $http2
  * @property BaseGoto $goto
  * @property Producer $kafka
  */
@@ -391,6 +392,7 @@ abstract class BaseApplication extends Service
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
 			'goto'              => ['class' => BaseGoto::class],
+			'http2'             => ['class' => Http2::class],
 		]);
 	}
 }

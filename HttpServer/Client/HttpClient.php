@@ -17,16 +17,11 @@ class HttpClient extends Component
 {
 
 	/**
-	 * @param $name
 	 * @return IClient
 	 */
 	public static function NewRequest(): IClient
 	{
-		if (Coroutine::getCid() > 0) {
-			return Client::NewRequest();
-		} else {
-			return Curl::NewRequest();
-		}
+		return Coroutine::getCid() > 0 ? Client::NewRequest() : Curl::NewRequest();
 	}
 
 
