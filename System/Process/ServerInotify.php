@@ -48,9 +48,10 @@ class ServerInotify extends Process
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			foreach ($this->dirs as $dir) {
-				$this->loadByDir($dir);
-			}
+			$this->loadByDir(APP_PATH . 'app');
+			$this->loadByDir(APP_PATH . 'routes');
+			$this->loadByDir(__DIR__ . '/../../');
+			Timer::after(2000, [$this, 'tick']);
 		}
 	}
 
@@ -63,8 +64,11 @@ class ServerInotify extends Process
 	 */
 	public function tick()
 	{
-		foreach ($this->dirs as $dir) {
-			$this->loadByDir($dir, true);
+		$this->loadByDir(APP_PATH . 'app', true);
+		$this->loadByDir(APP_PATH . 'routes', true);
+		$this->loadByDir(__DIR__ . '/../../', true);
+		if ($this->isReloading) {
+			return;
 		}
 		Timer::after(2000, [$this, 'tick']);
 	}
@@ -94,7 +98,6 @@ class ServerInotify extends Process
 				break;
 			}
 		}
-		Timer::after(2000, [$this, 'tick']);
 	}
 
 
@@ -186,7 +189,6 @@ class ServerInotify extends Process
 	 */
 	public function timerReload()
 	{
-		Timer::clearAll();
 		if ($this->isReloading) {
 			return;
 		}
@@ -194,9 +196,11 @@ class ServerInotify extends Process
 		$this->trigger_reload();
 		$this->int = -1;
 		$this->md5Map = [];
-		foreach ($this->dirs as $dir) {
-			$this->loadByDir($dir);
-		}
+
+		$this->loadByDir(APP_PATH . 'app');
+		$this->loadByDir(APP_PATH . 'routes');
+		$this->loadByDir(__DIR__ . '/../../');
+
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
 
