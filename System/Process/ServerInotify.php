@@ -64,12 +64,12 @@ class ServerInotify extends Process
 	 */
 	public function tick()
 	{
-		$this->loadByDir(APP_PATH . 'app', true);
-		$this->loadByDir(APP_PATH . 'routes', true);
-		$this->loadByDir(__DIR__ . '/../../', true);
 		if ($this->isReloading) {
 			return;
 		}
+		$this->loadByDir(APP_PATH . 'app', true);
+		$this->loadByDir(APP_PATH . 'routes', true);
+		$this->loadByDir(__DIR__ . '/../../', true);
 		Timer::after(2000, [$this, 'tick']);
 	}
 
