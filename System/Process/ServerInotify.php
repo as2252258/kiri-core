@@ -91,7 +91,7 @@ class ServerInotify extends Process
 				$this->loadByDir($value, $isReload);
 			}
 			if (is_file($value)) {
-				if ($this->checkFile($value, $isReload)) {
+				if (!$this->checkFile($value, $isReload)) {
 					continue;
 				}
 				$this->timerReload();
