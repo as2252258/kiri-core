@@ -51,7 +51,6 @@ class ServerInotify extends Process
 			foreach ($this->dirs as $dir) {
 				$this->loadByDir($dir);
 			}
-			Timer::after(2000, [$this, 'tick']);
 		}
 	}
 
@@ -66,9 +65,6 @@ class ServerInotify extends Process
 	{
 		foreach ($this->dirs as $dir) {
 			$this->loadByDir($dir, true);
-		}
-		if ($this->isReloading) {
-			return;
 		}
 		Timer::after(2000, [$this, 'tick']);
 	}
@@ -98,6 +94,7 @@ class ServerInotify extends Process
 				break;
 			}
 		}
+		Timer::after(2000, [$this, 'tick']);
 	}
 
 
@@ -189,6 +186,7 @@ class ServerInotify extends Process
 	 */
 	public function timerReload()
 	{
+		Timer::clearAll();
 		if ($this->isReloading) {
 			return;
 		}
