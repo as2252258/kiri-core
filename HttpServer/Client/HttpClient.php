@@ -20,7 +20,7 @@ class HttpClient extends Component
 	 * @param $name
 	 * @return IClient
 	 */
-	public static function NewRequest($name): IClient
+	public static function NewRequest(): IClient
 	{
 		if (Coroutine::getCid() > 0) {
 			return Client::NewRequest();
