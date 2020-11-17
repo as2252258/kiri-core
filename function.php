@@ -46,11 +46,14 @@ if (!function_exists('isUrl')) {
 	 */
 	function isUrl($url, $get_info = true)
 	{
-		$queryMatch = '/((http[s]?):\/\/)?(([\w-_]+\.)+\w+(:\d+)?)(\/.*)?/';
-		if (!preg_match($queryMatch, $url, $outPut)) {
+		try {
+			$queryMatch = '/((http[s]?):\/\/)?(([\w-_]+\.)+\w+(:\d+)?)(\/.*)?/';
+			if (!preg_match($queryMatch, $url, $outPut)) {
+				return false;
+			}
+		}catch (Throwable $exception){
 			return false;
 		}
-
 		$port = str_replace(':', '', $outPut[5]);
 
 		[$isHttps, $domain, $port, $path] = [$outPut[2] == 'https', $outPut[3], $port, $outPut[6] ?? ''];
