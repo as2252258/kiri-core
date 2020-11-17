@@ -77,7 +77,7 @@ class ServerInotify extends Process
 	/**
 	 * @param $path
 	 * @param bool $isReload
-	 * @return void
+	 * @return void|mixed
 	 * @throws Exception
 	 */
 	private function loadByDir($path, $isReload = false)
@@ -89,26 +89,41 @@ class ServerInotify extends Process
 		foreach (glob($path . '/*') as $value) {
 			if (is_dir($value)) {
 				$this->loadByDir($value, $isReload);
-				continue;
 			}
-			$md5 = md5($value);
-			$mTime = filectime($value);
-			if (!isset($this->md5Map[$md5])) {
-				if ($isReload) {
-					$this->isReloading = true;
-					return Timer::after(2000, [$this, 'timerReload']);
+			if (is_file($value)) {
+				if ($this->checkFile($value, $isReload)) {
+					continue;
 				}
-				$this->md5Map[$md5] = $mTime;
-			} else {
-				if ($this->md5Map[$md5] != $mTime) {
-					if ($isReload) {
-						$this->isReloading = true;
-						return Timer::after(2000, [$this, 'timerReload']);
-					}
-					$this->md5Map[$md5] = $mTime;
-				}
+				$this->timerReload();
+				break;
 			}
 		}
+	}
+
+
+	/**
+	 * @param $value
+	 * @param $isReload
+	 * @return bool
+	 */
+	private function checkFile($value, $isReload)
+	{
+		$md5 = md5($value);
+		$mTime = filectime($value);
+		if (!isset($this->md5Map[$md5])) {
+			if ($isReload) {
+				return true;
+			}
+			$this->md5Map[$md5] = $mTime;
+		} else {
+			if ($this->md5Map[$md5] != $mTime) {
+				if ($isReload) {
+					return true;
+				}
+				$this->md5Map[$md5] = $mTime;
+			}
+		}
+		return false;
 	}
 
 
@@ -176,6 +191,9 @@ class ServerInotify extends Process
 	 */
 	public function timerReload()
 	{
+		if ($this->isReloading) {
+			return;
+		}
 		$this->isReloading = true;
 		$this->trigger_reload();
 		$this->int = -1;
