@@ -124,7 +124,7 @@ class ActiveRecord extends BaseActiveRecord
 		}
 		$select = new static();
 		$select->attributes = $attributes;
-		if ($select->save()) {
+		if (!$select->save()) {
         	throw new Exception($select->getLastError());
 		}
 		return $select;
