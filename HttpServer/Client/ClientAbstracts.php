@@ -706,6 +706,7 @@ abstract class ClientAbstracts extends Component implements IClient
      */
     protected function matchHost(string $string)
     {
+    	var_dump($string);
         if (($parse = isUrl($string, true)) === false) {
             return $this->defaultString($string);
         }
