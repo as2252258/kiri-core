@@ -149,7 +149,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 */
 	public function upload(string $path, array $params = [])
 	{
-		return $this->request(self::OPTIONS, $path, $params);
+		return $this->request(self::POST, $path, $params);
 	}
 
 
