@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
+use Swoole\Coroutine;
 use Swoole\Coroutine\System;
 
 
@@ -722,7 +723,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		}
 		if (isIp($domain)) {
 			$this->host = $domain;
-		} else {
+		} else if ($this->use_swoole) {
 			$this->host = System::gethostbyname($domain) ?? $domain;
 		}
 
