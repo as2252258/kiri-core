@@ -8,7 +8,6 @@ use Closure;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
-use Swoole\Coroutine;
 use Swoole\Coroutine\System;
 
 
@@ -182,12 +181,12 @@ abstract class ClientAbstracts extends Component implements IClient
 	 */
 	public function setHost(string $host): void
 	{
-		$this->host = $host;
-//		if (!preg_match('/(\d{1,3}\.){4}/', $host . '.')) {
-//			$this->addHeader('Host', $host);
-//			$this->host = System::gethostbyname($host);
-//		} else {
-//		}
+		if (!preg_match('/(\d{1,3}\.){4}/', $host . '.')) {
+			$this->addHeader('Host', $host);
+			$this->host = System::gethostbyname($host);
+		} else {
+			$this->host = $host;
+		}
 	}
 
 	/**
@@ -723,7 +722,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		}
 		if (isIp($domain)) {
 			$this->host = $domain;
-		} else if ($this->use_swoole) {
+		} else {
 			$this->host = System::gethostbyname($domain) ?? $domain;
 		}
 
