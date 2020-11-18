@@ -63,7 +63,11 @@ class Curl extends ClientAbstracts
         [$host, $isHttps, $path] = $this->matchHost($path);
         $resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
 
-        @curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
+	    curl_setopt($resource, CURLOPT_POST, 1);
+	    curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+	    curl_setopt($resource, CURLOPT_SSL_VERIFYPEER, FALSE);
+	    curl_setopt($resource, CURLOPT_SSL_VERIFYHOST, false);
+	    @curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
 
         if ($isHttps !== false) {
             return $this->execute($this->curlHandlerSslSet($resource));
@@ -143,7 +147,6 @@ class Curl extends ClientAbstracts
     private function execute($curl)
     {
         $output = curl_exec($curl);
-        var_dump($output);
         if ($output === false) {
             return $this->fail(400, curl_error($curl));
         }
