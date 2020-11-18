@@ -64,13 +64,13 @@ class Curl extends ClientAbstracts
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
 
-		if ($isHttps) {
-			$host = 'https://' . $host;
+		if ($this->isSSL()) {
+			$host = 'https://' . $host . ':443';
 		} else {
-			$host = 'http://' . $host;
+			$host = 'http://' . $host . ':' . $this->getPort();
 		}
 
-		$resource = $this->do(curl_init($host . $path), $host . ':443' . $path, self::POST);
+		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
 
 		curl_setopt($resource, CURLOPT_SAFE_UPLOAD, true);
 		curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
