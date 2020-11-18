@@ -42,10 +42,10 @@ class Help
 		} else if (is_array($xml)) {
 			return $xml;
 		}
-		if (!($xml = Xml::isXml($xml))) {
+		if (!($_xml = Xml::isXml($xml))) {
 			return static::jsonToArray($xml);
 		}
-		return $xml;
+		return $_xml;
 	}
 
 
