@@ -603,7 +603,9 @@ abstract class ClientAbstracts extends Component implements IClient
 			if (!is_null($json = JSON::decode($body))) {
 				return $json;
 			}
-			return Help::toArray($body);
+			if (!is_null($json = Help::toArray($body))) {
+				return $json;
+			}
 		}
 		return $body;
 	}
