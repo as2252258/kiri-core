@@ -263,7 +263,6 @@ class Connection extends Component
 	 */
 	public function createCommand($sql = null, $attributes = [])
 	{
-		var_dump($sql);
 		$command = new Command(['db' => $this, 'sql' => $sql]);
 		return $command->bindValues($attributes);
 	}
