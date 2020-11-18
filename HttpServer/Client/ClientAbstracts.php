@@ -87,6 +87,15 @@ abstract class ClientAbstracts extends Component implements IClient
 
 
 	/**
+	 * @param string $contentType
+	 */
+	public function setContentType(string $contentType)
+	{
+		$this->header['Content-Type'] = $contentType;
+	}
+
+
+	/**
 	 * @param string $path
 	 * @param array $params
 	 * @return mixed

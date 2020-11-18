@@ -207,4 +207,9 @@ interface IClient
 	public function setConnectTimeout(int $connect_timeout);
 
 
+	/**
+	 * @param string $contentType
+	 * @return mixed
+	 */
+	public function setContentType(string $contentType);
 }
