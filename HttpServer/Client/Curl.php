@@ -65,7 +65,7 @@ class Curl extends ClientAbstracts
 		[$host, $isHttps, $path] = $this->matchHost($path);
 		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
 
-		var_dump($params);
+		curl_setopt($resource, CURLOPT_SAFE_UPLOAD, true);
 		curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
 
 		if ($isHttps !== false) {
