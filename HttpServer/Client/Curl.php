@@ -55,28 +55,28 @@ class Curl extends ClientAbstracts
 		return $resource;
 	}
 
-
-	/**
-	 * @param $path
-	 * @param $params
-	 * @return mixed|resource
-	 * @throws Exception
-	 */
-	public function upload($path, $params = [])
-	{
-		[$host, $isHttps, $path] = $this->matchHost($path);
-
-		$host = $isHttps ? 'https://' . $host : 'http://' . $host;
-
-		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
-
-		curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
-
-		if ($isHttps !== false) {
-			return $this->execute($this->curlHandlerSslSet($resource));
-		}
-		return $this->execute($resource);
-	}
+//
+//	/**
+//	 * @param $path
+//	 * @param $params
+//	 * @return mixed|resource
+//	 * @throws Exception
+//	 */
+//	public function upload($path, $params = [])
+//	{
+//		[$host, $isHttps, $path] = $this->matchHost($path);
+//
+//		$host = $isHttps ? 'https://' . $host : 'http://' . $host;
+//
+//		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
+//
+//		curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
+//
+//		if ($isHttps !== false) {
+//			return $this->execute($this->curlHandlerSslSet($resource));
+//		}
+//		return $this->execute($resource);
+//	}
 
 
 	/**
