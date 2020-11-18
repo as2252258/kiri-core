@@ -190,12 +190,15 @@ abstract class ClientAbstracts extends Component implements IClient
 	 */
 	public function setHost(string $host): void
 	{
-		if (!preg_match('/(\d{1,3}\.){4}/', $host . '.')) {
-			$this->addHeader('Host', $host);
+		$this->host = $host;
+		if ($this->use_swoole) {
 			$this->host = System::gethostbyname($host);
-		} else {
-			$this->host = $host;
 		}
+		$this->addHeader('Host', $host);
+//
+//		if (!preg_match('/(\d{1,3}\.){4}/', $host . '.')) {
+//		} else {
+//		}
 	}
 
 	/**
@@ -762,7 +765,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		} else if (strpos($string, '/') !== 0) {
 			$string = '/' . $string;
 		}
-		return [$host, false, $string];
+		return [$host, $this->isSSL(), $string];
 	}
 
 

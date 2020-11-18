@@ -40,6 +40,8 @@ class Curl extends ClientAbstracts
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
 
+		$host = $isHttps ? 'https://' . $host : 'http://' . $host;
+
 		$resource = $this->do(curl_init($host . $path), $host . $path, $method);
 		if ($method === self::POST && !empty($params)) {
 			curl_setopt($resource, CURLOPT_POSTFIELDS, HttpParse::parse($params));
@@ -63,6 +65,8 @@ class Curl extends ClientAbstracts
 	public function upload($path, $params = [])
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
+
+		$host = $isHttps ? 'https://' . $host : 'http://' . $host;
 
 		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
 
