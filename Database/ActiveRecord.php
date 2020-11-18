@@ -115,14 +115,14 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public static function findOrCreate(array $condition, array $attributes = [])
 	{
-		$select = static::find()->where($condition)->first();
+		$select = self::find()->where($condition)->first();
 		if (!empty($select)) {
 			return $select;
 		}
 		if (empty($attributes)) {
 			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
-		$select = new static();
+		$select = new self();
 		$select->attributes = $attributes;
 		if (!$select->save()) {
 			throw new Exception($select->getLastError());
