@@ -87,7 +87,7 @@ trait Condition
 			} else if (!is_numeric($key)) {
 				$value = $key . '=' . $this->valueEncode($value);
 			}
-			if (empty($value)) {
+			if ($value === null) {
 				continue;
 			}
 			$_tmp[] = $value;
@@ -192,7 +192,7 @@ trait Condition
 	 * @param bool $isSearch
 	 * @return int|string
 	 */
-	public function  valueEncode($value, $isSearch = false)
+	public function valueEncode($value, $isSearch = false)
 	{
 		if ($isSearch) {
 			return $value;
