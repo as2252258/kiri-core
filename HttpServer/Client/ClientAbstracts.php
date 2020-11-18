@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
+use Snowflake\Core\JSON;
 use Swoole\Coroutine\System;
 
 
@@ -599,6 +600,9 @@ abstract class ClientAbstracts extends Component implements IClient
 		} else if (strpos($type, 'xml') !== false) {
 			return Help::xmlToArray($body);
 		} else if (strpos($type, 'plain') !== false) {
+			if (!is_null($json = JSON::decode($body))) {
+				return $json;
+			}
 			return Help::toArray($body);
 		}
 		return $body;
