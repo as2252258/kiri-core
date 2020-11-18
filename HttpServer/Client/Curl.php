@@ -148,7 +148,6 @@ class Curl extends ClientAbstracts
 		if ($output === FALSE) {
 			return $this->fail(500, $output);
 		}
-		var_dump($output);
 		[$header, $body, $status] = $this->explode($output);
 		if ($status != 200 && $status != 201) {
 			$data = $this->fail($status, $body, [], $header);
@@ -179,6 +178,8 @@ class Curl extends ClientAbstracts
 
 		$status = (int)explode(' ', trim($header[0]))[1];
 		$header = $this->headerFormat($header);
+
+		var_dump($this->resolve($header, $body));
 
 		return [$header, $this->resolve($header, $body), $status];
 	}
