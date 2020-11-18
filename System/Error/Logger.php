@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Snowflake\Error;
 
 use Exception;
+use Snowflake\Abstracts\BaseObject;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
@@ -21,7 +22,7 @@ use Throwable;
  * Class Logger
  * @package Snowflake\Snowflake\Error
  */
-class Logger extends Component
+class Logger extends BaseObject
 {
 
 	private array $logs = [];
@@ -36,7 +37,6 @@ class Logger extends Component
 	 */
 	public function debug($message, $category = 'app', $_ = null)
 	{
-		parent::debug($message);
 		$this->writer($message, $category);
 	}
 
@@ -60,7 +60,6 @@ class Logger extends Component
 	 */
 	public function error($message, $category = 'error', $_ = null)
 	{
-		parent::error($message);
 		$this->writer($message, $category);
 	}
 
@@ -72,7 +71,6 @@ class Logger extends Component
 	 */
 	public function success($message, $category = 'app', $_ = null)
 	{
-		parent::success($message);
 		$this->writer($message, $category);
 	}
 

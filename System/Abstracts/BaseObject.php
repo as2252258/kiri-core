@@ -6,6 +6,7 @@
  * Time: 14:10
  */
 declare(strict_types=1);
+
 namespace Snowflake\Abstracts;
 
 use Exception;
@@ -98,6 +99,10 @@ class BaseObject implements Configure
 			}
 			$this->error($message);
 		}
+
+		$logger = Snowflake::app()->getLogger();
+		$logger->error($message, $model);
+
 		return FALSE;
 	}
 
