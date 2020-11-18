@@ -19,6 +19,7 @@ abstract class ClientAbstracts extends Component implements IClient
 {
 
 	const POST = 'post';
+	const UPLOAD = 'upload';
 	const GET = 'get';
 	const DELETE = 'delete';
 	const OPTIONS = 'options';
