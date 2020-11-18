@@ -224,6 +224,7 @@ class Curl extends ClientAbstracts
         foreach ($this->getHeader() as $key => $val) {
             $headers[$key] = $key . ': ' . $val;
         }
+        var_dump($headers);
         return array_values($headers);
     }
 }
