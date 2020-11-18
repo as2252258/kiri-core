@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Snowflake\Error;
 
 use Exception;
-use Snowflake\Abstracts\BaseObject;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
@@ -22,7 +21,7 @@ use Throwable;
  * Class Logger
  * @package Snowflake\Snowflake\Error
  */
-class Logger extends BaseObject
+class Logger extends Component
 {
 
 	private array $logs = [];
