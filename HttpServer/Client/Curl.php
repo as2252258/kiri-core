@@ -63,6 +63,13 @@ class Curl extends ClientAbstracts
 	public function upload($path, $params = [])
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
+
+		if ($isHttps) {
+			$host = 'https://' . $host;
+		} else {
+			$host = 'http://' . $host;
+		}
+
 		$resource = $this->do(curl_init($host . $path), $host . ':443' . $path, self::POST);
 
 		curl_setopt($resource, CURLOPT_SAFE_UPLOAD, true);
