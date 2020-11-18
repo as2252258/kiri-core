@@ -147,6 +147,7 @@ class Curl extends ClientAbstracts
     private function execute($curl)
     {
         $output = curl_exec($curl);
+        var_dump($output);
         if ($output === false) {
             return $this->fail(400, curl_error($curl));
         }
