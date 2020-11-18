@@ -127,9 +127,11 @@ class Curl extends ClientAbstracts
 		curl_setopt($resource, CURLOPT_FOLLOWLOCATION, TRUE);// 跟踪重定向
 		curl_setopt($resource, CURLOPT_ENCODING, 'gzip,deflate');
 		if ($method === self::POST || $method == self::UPLOAD) {
+			var_dump($method);
 			curl_setopt($resource, CURLOPT_POST, 1);
 		}
 
+		var_dump($path);
 		curl_setopt($resource, CURLOPT_URL, $path);
 		curl_setopt($resource, CURLOPT_CUSTOMREQUEST, $method);
 
