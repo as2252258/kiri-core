@@ -168,10 +168,10 @@ trait Condition
 	}
 
 	/**
-	 * @param QueryTrait $query
+	 * @param ActiveQuery $query
 	 * @return string
 	 */
-	private function builderLimit($query)
+	private function builderLimit(ActiveQuery $query)
 	{
 		$limit = $query->limit;
 		if (!is_numeric($limit) || $limit < 1) {
