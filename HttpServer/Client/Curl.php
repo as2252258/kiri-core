@@ -49,10 +49,11 @@ class Curl extends ClientAbstracts
 		if (empty($params)) {
 			return $resource;
 		}
-		var_dump($params);
 		if ($method === self::POST) {
 			curl_setopt($resource, CURLOPT_POSTFIELDS, HttpParse::parse($params));
-		} else if ($method === self::UPLOAD) {
+		}
+		if ($method === self::UPLOAD) {
+			var_dump($method);
 			curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
 		}
 		return $resource;
