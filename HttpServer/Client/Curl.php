@@ -63,7 +63,7 @@ class Curl extends ClientAbstracts
 	public function upload($path, $params = [])
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
-		$resource = $this->do(curl_init($host . $path), $host . $path, self::POST);
+		$resource = $this->do(curl_init($host . $path), $host . ':443' . $path, self::POST);
 
 		curl_setopt($resource, CURLOPT_SAFE_UPLOAD, true);
 		curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
@@ -127,7 +127,6 @@ class Curl extends ClientAbstracts
 		curl_setopt($resource, CURLOPT_FOLLOWLOCATION, TRUE);// 跟踪重定向
 		curl_setopt($resource, CURLOPT_ENCODING, 'gzip,deflate');
 		if ($method === self::POST || $method == self::UPLOAD) {
-			var_dump($method);
 			curl_setopt($resource, CURLOPT_POST, 1);
 		}
 
