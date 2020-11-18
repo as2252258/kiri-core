@@ -733,19 +733,14 @@ abstract class ClientAbstracts extends Component implements IClient
 		if (strpos($domain, ':' . $port) !== false) {
 			$domain = str_replace(':' . $port, '', $domain);
 		}
+		$this->port = $isHttps ? 443 : $this->port;
 		if (isIp($domain)) {
 			$this->host = $domain;
-		} else {
+		} else if ($this->isUseSwoole()) {
 			$this->host = System::gethostbyname($domain) ?? $domain;
+		} else {
+			$this->host = $domain;
 		}
-
-		if (!empty($this->port)) {
-			$port = $this->port;
-		}
-		if (!empty($port) && $port != 443) {
-			$this->host .= ':' . $port;
-		}
-
 		$this->header['Host'] = $domain;
 		if (strpos($path, '/') !== 0) {
 			$path = '/' . $path;

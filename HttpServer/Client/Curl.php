@@ -114,7 +114,7 @@ class Curl extends ClientAbstracts
 		if ($method === self::POST || $method == self::UPLOAD) {
 			curl_setopt($resource, CURLOPT_POST, 1);
 		}
-		curl_setopt($resource, CURLOPT_CUSTOMREQUEST, $method);
+		curl_setopt($resource, CURLOPT_CUSTOMREQUEST, strtoupper($method));
 
 		return $resource;
 	}
@@ -207,7 +207,6 @@ class Curl extends ClientAbstracts
 		foreach ($this->getHeader() as $key => $val) {
 			$headers[$key] = $key . ': ' . $val;
 		}
-		var_dump($headers);
 		return array_values($headers);
 	}
 }

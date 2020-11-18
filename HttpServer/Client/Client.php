@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace HttpServer\Client;
 
 use Exception;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Client as SClient;
 
 /**

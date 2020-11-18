@@ -20,7 +20,9 @@ class Result
 	public $code;
 	public $message;
 	public int $count = 0;
-	public ?array $data;
+
+	/** @var mixed $data */
+	public $data;
 	public ?array $header;
 	public int $httpStatus = 200;
 
