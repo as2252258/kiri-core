@@ -38,13 +38,13 @@ class Help
 	public static function toArray($xml)
 	{
 		if (empty($xml)) {
-			return [];
+			return null;
 		} else if (is_array($xml)) {
 			return $xml;
 		}
 		$xml = Xml::isXml($xml);
 		if (!$xml) {
-			return [];
+			return static::jsonToArray($xml);
 		}
 		return $xml;
 	}

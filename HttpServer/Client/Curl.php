@@ -179,8 +179,6 @@ class Curl extends ClientAbstracts
 		$status = (int)explode(' ', trim($header[0]))[1];
 		$header = $this->headerFormat($header);
 
-		var_dump($this->resolve($header, $body));
-
 		return [$header, $this->resolve($header, $body), $status];
 	}
 

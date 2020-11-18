@@ -600,12 +600,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		} else if (strpos($type, 'xml') !== false) {
 			return Help::xmlToArray($body);
 		} else if (strpos($type, 'plain') !== false) {
-			if (!is_null($json = JSON::decode($body))) {
-				return $json;
-			}
-			if (!is_null($json = Help::toArray($body))) {
-				return $json;
-			}
+			return Help::toArray($body);
 		}
 		return $body;
 	}
