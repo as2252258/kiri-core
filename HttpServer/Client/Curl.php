@@ -146,6 +146,7 @@ class Curl extends ClientAbstracts
         if ($output === false) {
             return $this->fail(400, curl_error($curl));
         }
+        var_dump($output);
         return $this->parseResponse($curl, $output);
     }
 
