@@ -53,7 +53,7 @@ class Help
 	{
 		$_xml = json_decode($xml, true);
 		if (is_null($_xml)) {
-			var_dump($_xml);
+			var_dump($xml, $_xml);
 			return [];
 		}
 		return $_xml;
