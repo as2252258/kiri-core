@@ -30,7 +30,7 @@ class JSON
 			return $data;
 		}
 		if (is_array($data)) {
-			return json_encode(ArrayAccess::toArray($data));
+			return json_encode($data, JSON_UNESCAPED_UNICODE);
 		}
 		return $data;
 	}
