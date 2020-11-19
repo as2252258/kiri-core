@@ -22,8 +22,7 @@ use Snowflake\Snowflake;
 class HttpParams
 {
 
-	/** @var array */
-	private array $body = [];
+	private ?array $body = [];
 
 	/** @var array */
 	private array $gets = [];
