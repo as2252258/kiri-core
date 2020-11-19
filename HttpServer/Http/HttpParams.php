@@ -42,7 +42,6 @@ class HttpParams
 		$this->files = $files ?? [];
 		if (!is_array($body)) {
 			$this->body = Help::toArray($body);
-			var_dump($this->body);
 		} else {
 			$this->body = $body ?? [];
 		}
