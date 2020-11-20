@@ -34,7 +34,6 @@ class OnMessage extends Callback
 			$event = Snowflake::app()->getEvent();
 			Coroutine::defer(function () use ($event) {
 				$event->trigger(Event::EVENT_AFTER_REQUEST);
-				logger()->insert();
 			});
 			$this->resolve($event, $frame, $server);
 			$manager = Snowflake::app()->getAnnotation()->websocket;
@@ -42,6 +41,8 @@ class OnMessage extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
+		} finally {
+			logger()->insert();
 		}
 	}
 
