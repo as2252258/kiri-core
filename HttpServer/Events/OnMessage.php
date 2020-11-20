@@ -8,6 +8,7 @@ use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
@@ -29,6 +30,11 @@ class OnMessage extends Callback
 			if ($frame->opcode == 0x08) {
 				return;
 			}
+			Coroutine::defer(function () {
+				$event = Snowflake::app()->event;
+				$event->trigger(Event::EVENT_AFTER_REQUEST);
+				Snowflake::app()->logger->insert();
+			});
 			$event = Snowflake::app()->event;
 			if ($event->exists(Event::SERVER_MESSAGE)) {
 				$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
@@ -45,10 +51,6 @@ class OnMessage extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
-		} finally {
-			$event = Snowflake::app()->event;
-			$event->trigger(Event::EVENT_AFTER_REQUEST);
-			Snowflake::app()->logger->insert();
 		}
 	}
 
