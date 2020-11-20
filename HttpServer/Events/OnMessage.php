@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
@@ -30,28 +31,47 @@ class OnMessage extends Callback
 			if ($frame->opcode == 0x08) {
 				return;
 			}
-			Coroutine::defer(function () {
-				$event = Snowflake::app()->event;
+			$event = Snowflake::app()->getEvent();
+			Coroutine::defer(function () use ($event) {
 				$event->trigger(Event::EVENT_AFTER_REQUEST);
-				Snowflake::app()->logger->insert();
+				logger()->insert();
 			});
-			$event = Snowflake::app()->event;
-			if ($event->exists(Event::SERVER_MESSAGE)) {
-				$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
-			} else {
-				$frame->data = json_decode($frame->data, true);
-			}
-
-			$manager = Snowflake::app()->annotation->websocket;
-			if (!isset($frame->data['route'])) {
-				throw new \Exception('Fromat errr.');
-			}
-			$events = $manager->getName(AWebsocket::MESSAGE, [null, null, $frame->data['route']]);
-			$manager->runWith($events, [$frame, $server]);
+			$this->resolve($event, $frame, $server);
+			$manager = Snowflake::app()->getAnnotation()->websocket;
+			$manager->runWith($this->name($manager, $frame), [$frame, $server]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
 		}
+	}
+
+	/**
+	 * @param $event
+	 * @param $frame
+	 * @param $server
+	 * @throws Exception
+	 */
+	private function resolve($event, $frame, $server)
+	{
+		if ($event->exists(Event::SERVER_MESSAGE)) {
+			$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
+		} else {
+			$frame->data = json_decode($frame->data, true);
+		}
+		if (!isset($frame->data['route'])) {
+			throw new Exception('Format error.');
+		}
+	}
+
+
+	/**
+	 * @param $manager
+	 * @param $frame
+	 * @return mixed
+	 */
+	private function name($manager, $frame)
+	{
+		return $manager->getName(AWebsocket::MESSAGE, [null, null, $frame->data['route']]);
 	}
 
 
