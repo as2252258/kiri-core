@@ -30,7 +30,7 @@ class Select extends BaseObject
 	}
 
 	/**
-	 * @param ActiveQuery|Db $query
+	 * @param ActiveQuery|Db|mixed $query
 	 * @return string
 	 * @throws Exception
 	 */
@@ -41,7 +41,7 @@ class Select extends BaseObject
 
 	/**
 	 * @param ActiveQuery|Db|Sql $query
-	 * @param $isCount
+	 * @param bool $isCount
 	 * @return string
 	 * @throws Exception
 	 */
