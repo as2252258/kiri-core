@@ -47,7 +47,7 @@ class Relation extends Component
 	 */
 	public function first(string $identification, $localValue)
 	{
-		$_identification = $identification . '_count_' . $localValue;
+		$_identification = $identification . '_first_' . $localValue;
 		if (isset($this->_relations[$_identification]) && $this->_relations[$_identification] !== null) {
 			return $this->_relations[$_identification];
 		}
@@ -69,7 +69,7 @@ class Relation extends Component
 	 */
 	public function count(string $identification, $localValue)
 	{
-		$_identification = $identification . '_' . $localValue;
+		$_identification = $identification . '_count_' . $localValue;
 		if (isset($this->_relations[$_identification]) && $this->_relations[$_identification] !== null) {
 			return $this->_relations[$_identification];
 		}
@@ -92,9 +92,9 @@ class Relation extends Component
 	public function get(string $identification, $localValue)
 	{
 		if (is_array($localValue)) {
-			$_identification = $identification . '_' . implode('_', $localValue);
+			$_identification = $identification . '_get_' . implode('_', $localValue);
 		} else {
-			$_identification = $identification . '_' . $localValue;
+			$_identification = $identification . '_get_' . $localValue;
 		}
 		if (isset($this->_relations[$_identification]) && $this->_relations[$_identification] !== null) {
 			return $this->_relations[$_identification];
