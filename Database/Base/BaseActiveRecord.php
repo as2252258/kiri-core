@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Database\Base;
 
 
+use HttpServer\Http\Context;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\JSON;
 use Database\ActiveQuery;
@@ -57,15 +58,19 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 	protected array $actions = [];
 
-	/** @var Relation */
-	protected $_relation = [];
+	protected ?Relation $_relation;
 
 	/**
 	 * @throws Exception
 	 */
 	public function init()
 	{
-		$this->_relation = Snowflake::createObject(Relation::className());
+		if (!Context::hasContext(Relation::class)) {
+			$relation = Snowflake::createObject(Relation::class);
+			$this->_relation = Context::setContext(Relation::class, $relation);
+		} else {
+			$this->_relation = Context::getContext(Relation::class);
+		}
 	}
 
 	/**
