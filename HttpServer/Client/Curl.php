@@ -41,6 +41,9 @@ class Curl extends ClientAbstracts
 		[$host, $isHttps, $path] = $this->matchHost($path);
 
 		$host = $isHttps ? 'https://' . $host : 'http://' . $host;
+		if ($this->getPort() != 443 && $this->getPort() != 80) {
+			$host .= ':' . $this->getPort();
+		}
 
 		$resource = $this->do(curl_init($host . $path), $host . $path, $method);
 		if ($isHttps !== false) {
@@ -49,8 +52,12 @@ class Curl extends ClientAbstracts
 		if (empty($params)) {
 			return $resource;
 		}
+
+		if ($method === self::GET && !empty($this->getData())) {
+			curl_setopt($resource, CURLOPT_POSTFIELDS, $this->getData());
+		}
 		if ($method === self::POST) {
-			curl_setopt($resource, CURLOPT_POSTFIELDS, HttpParse::parse($params));
+			curl_setopt($resource, CURLOPT_POSTFIELDS, $this->mergeParams($params));
 		}
 		if ($method === self::UPLOAD) {
 			curl_setopt($resource, CURLOPT_POSTFIELDS, $params);
@@ -91,6 +98,7 @@ class Curl extends ClientAbstracts
 	 */
 	private function do($resource, $path, $method)
 	{
+		var_dump($path);
 		curl_setopt($resource, CURLOPT_URL, $path);
 		curl_setopt($resource, CURLOPT_TIMEOUT, $this->getTimeout());                     // 超时设置
 		curl_setopt($resource, CURLOPT_CONNECTTIMEOUT, $this->getConnectTimeout());       // 超时设置
