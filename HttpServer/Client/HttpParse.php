@@ -67,7 +67,10 @@ class HttpParse
 	 */
 	private static function ifElse($t, $qt)
 	{
-		if (is_string($qt) || is_numeric($qt)) {
+		if (is_numeric($qt)) {
+			return $t . '=' . $qt;
+		}
+		if (is_string($qt)) {
 			$string = $t . '=' . urlencode($qt);
 		} else {
 			$string = static::encode($t, $qt);
