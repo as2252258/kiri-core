@@ -288,7 +288,17 @@ class ActiveRecord extends BaseActiveRecord
 		if (!method_exists($this, $data)) {
 			return $data;
 		}
-		return ArrayAccess::toArray($this->{$data}());
+		$resolve = $this->{$data}();
+		if ($resolve instanceof Collection) {
+			return $resolve->toArray();
+		}
+		if ($resolve instanceof ActiveRecord) {
+			return $resolve->toArray();
+		}
+		if (is_object($resolve)) {
+			return get_object_vars($resolve);
+		}
+		return $resolve;
 	}
 
 
