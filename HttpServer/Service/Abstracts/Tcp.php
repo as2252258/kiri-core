@@ -14,11 +14,11 @@ abstract class Tcp extends Server implements Service
 	use \HttpServer\Service\Abstracts\Server;
 
 	/** @var Closure|array */
-	public Closure|array $unpack;
+	public $unpack;
 
 
 	/** @var Closure|array */
-	public Closure|array $pack;
+	public $pack;
 
 
 }

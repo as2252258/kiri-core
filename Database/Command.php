@@ -203,8 +203,7 @@ class Command extends Component
 				$this->debug($this->sql . '。 Run-time: ' . (microtime(true) - $time));
 			}
 		} catch (\Throwable $exception) {
-			$this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
-			$result = [];
+			$result = $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
 		} finally {
 			return $result;
 		}

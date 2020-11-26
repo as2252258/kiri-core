@@ -99,6 +99,8 @@ class BaseObject implements Configure
 			}
 			$this->error($message);
 		}
+		$logger = Snowflake::app()->getLogger();
+		$logger->error($message, $model);
 		return FALSE;
 	}
 
