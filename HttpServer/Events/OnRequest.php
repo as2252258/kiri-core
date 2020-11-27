@@ -39,10 +39,8 @@ class OnRequest extends Callback
 	{
 		Coroutine::defer(function () {
 			fire(Event::EVENT_AFTER_REQUEST);
-			echo 'after onRequest' . PHP_EOL;
 		});
 		$this->onRequest($request, $response);
-		echo 'onRequest' . PHP_EOL;
 	}
 
 
@@ -73,15 +71,15 @@ class OnRequest extends Callback
 	 */
 	public static function shutdown($response)
 	{
-		$error = error_get_last();
-		if (!isset($error['type'])) {
-			return;
-		}
-		$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
-		if (!in_array($error['type'], $types)) {
-			return;
-		}
 		try {
+			$error = error_get_last();
+			if (!isset($error['type'])) {
+				return;
+			}
+			$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
+			if (!in_array($error['type'], $types)) {
+				return;
+			}
 			$message = $error['message'] . ':' . microtime(true);
 			if ($response instanceof Response) {
 				$response->status(500);
@@ -90,8 +88,9 @@ class OnRequest extends Callback
 		} catch (\ErrorException $exception) {
 			$logger = Snowflake::app()->logger;
 			$logger->write($exception->getMessage(), 'shutdown');
+		} finally {
+			unset($response);
 		}
-		unset($response);
 	}
 
 	/**
