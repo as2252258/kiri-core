@@ -40,9 +40,6 @@ class OnRequest extends Callback
 			Coroutine::defer(function () {
 				fire(Event::EVENT_AFTER_REQUEST, [$sRequest ?? null]);
 			});
-			if (Config::get('debug.enable', false, false)) {
-				function_exists('trackerHookMalloc') && trackerHookMalloc();
-			}
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {

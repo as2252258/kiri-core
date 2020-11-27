@@ -10,8 +10,10 @@ use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Http;
+use ReflectionException;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -36,14 +38,14 @@ class Node extends Application
 	public array $rules = [];
 
 	/** @var ?Closure|?array */
-	public $handler;
+	public Closure|array|null $handler;
 	public string $htmlSuffix = '.html';
 	public bool $enableHtmlSuffix = false;
 	public array $namespace = [];
 	public array $middleware = [];
 
-	/** @var array|Closure  */
-	public $callback = [];
+	/** @var array|Closure */
+	public Closure|array $callback = [];
 
 	private string $_alias = '';
 
@@ -71,7 +73,7 @@ class Node extends Application
 		} else {
 			$this->handler = $handler;
 		}
-		return $this;
+		return $this->restructure();
 	}
 
 
@@ -225,10 +227,10 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addInterceptor($handler)
+	public function addInterceptor(Closure|string|array $handler)
 	{
 		$this->_interceptors[] = $handler;
-
+		$this->restructure();
 	}
 
 
@@ -236,9 +238,10 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addAfter($handler)
+	public function addAfter(Closure|string|array $handler)
 	{
 		$this->_after[] = $handler;
+		$this->restructure();
 	}
 
 
@@ -246,10 +249,10 @@ class Node extends Application
 	 * @param Closure|array|string $handler
 	 * @throws Exception
 	 */
-	public function addLimits($handler)
+	public function addLimits(Closure|string|array $handler)
 	{
 		$this->_limits[] = $handler;
-
+		$this->restructure();
 	}
 
 
@@ -356,7 +359,7 @@ class Node extends Application
 	{
 		$limits = Snowflake::app()->getLimits();
 		$limits->addLimits($this->path, $limit, $duration, $isBindConsumer);
-		return $this;
+		return $this->restructure();
 	}
 
 
@@ -371,14 +374,17 @@ class Node extends Application
 			return;
 		}
 		$this->middleware = $this->each($middles, $_tmp);
+		$this->restructure();
 	}
 
 
 	/**
-	 * @param string|\Closure $class
+	 * @param array|Closure|string $class
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function addMiddleware($class)
+	public function addMiddleware(Closure|string|array $class)
 	{
 		if (!is_callable($class, true)) {
 			return;
@@ -391,6 +397,7 @@ class Node extends Application
 			$class = [$class, 'handler'];
 		}
 		$this->middleware[] = $class;
+		$this->restructure();
 	}
 
 
@@ -415,7 +422,6 @@ class Node extends Application
 	 */
 	public function dispatch()
 	{
-		$node = $this->restructure();
 		if (empty($node->callback)) {
 			return JSON::to(404, $node->_error ?? 'Page not found.');
 		}

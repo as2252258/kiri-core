@@ -51,10 +51,9 @@ class Middleware
 	 */
 	public function getGenerate(Node $node)
 	{
-		$last = function ($passable) use ($node) {
+		return $node->callback = Reduce::reduce(function ($passable) use ($node) {
 			return Dispatch::create($node->handler, $passable)->dispatch();
-		};
-		return $node->callback = Reduce::reduce($last, $this->annotation($node));
+		}, $this->annotation($node));
 	}
 
 

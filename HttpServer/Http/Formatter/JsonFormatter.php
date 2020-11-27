@@ -20,9 +20,9 @@ class JsonFormatter extends Application implements IFormatter
 {
 	public $data;
 
-	public $status = 200;
+	public int $status = 200;
 
-	public $header = [];
+	public array $header = [];
 
 	/**
 	 * @param $data
