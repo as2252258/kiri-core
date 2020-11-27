@@ -268,6 +268,8 @@ class Snowflake
 		if (!isset($server->setting['task_worker_num']) || !class_exists($class)) {
 			return;
 		}
+
+		var_dump($server->setting);
 		$randWorkerId = random_int($server->setting['worker_num'], $server->setting['worker_num'] + $server->setting['task_worker_num'] - 1);
 
 		/** @var Task $class */
