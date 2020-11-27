@@ -481,7 +481,6 @@ class Router extends Application implements RouterInterface
 			} else if (!($node = $this->find_path(\request()))) {
 				$response = send(self::NOT_FOUND, 404);
 			} else {
-				var_dump($node);
 				$response = send($node->dispatch(), 200);
 			}
 		} catch (ExitException $exception) {
