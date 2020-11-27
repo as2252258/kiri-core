@@ -79,15 +79,15 @@ trait Condition
 		if (is_string($where)) {
 			return sprintf(' WHERE %s', $where);
 		}
-
 		$_tmp = [];
+		$where = array_filter($where);
 		foreach ($where as $key => $value) {
 			if (is_array($value)) {
 				$value = $this->arrayMap($value);
 			} else if (!is_numeric($key)) {
 				$value = $key . '=' . $this->valueEncode($value);
 			}
-			if (empty($value)) {
+			if ($value === null) {
 				continue;
 			}
 			$_tmp[] = $value;
