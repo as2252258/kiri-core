@@ -37,9 +37,7 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response)
 	{
 		try {
-			Coroutine::defer(function () {
-				fire(Event::EVENT_AFTER_REQUEST, [$sRequest ?? null]);
-			});
+			Coroutine::defer([$this, 'onDefer']);
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
@@ -51,6 +49,16 @@ class OnRequest extends Callback
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		}
 	}
+
+
+	/**
+	 * @throws \Snowflake\Exception\ComponentException
+	 */
+	public function onDefer()
+	{
+		fire(Event::EVENT_AFTER_REQUEST);
+	}
+
 
 	/**
 	 * @param $response
