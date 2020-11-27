@@ -39,8 +39,10 @@ class OnRequest extends Callback
 	{
 		Coroutine::defer(function () {
 			fire(Event::EVENT_AFTER_REQUEST);
+			echo 'after onRequest' . PHP_EOL;
 		});
 		$this->onRequest($request, $response);
+		echo 'onRequest' . PHP_EOL;
 	}
 
 
