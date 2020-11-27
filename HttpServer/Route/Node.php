@@ -422,10 +422,10 @@ class Node extends Application
 	 */
 	public function dispatch()
 	{
-		if (empty($node->callback)) {
+		if (empty($this->callback)) {
 			return JSON::to(404, $node->_error ?? 'Page not found.');
 		}
-		return call_user_func($node->callback, \request());
+		return call_user_func($this->callback, \request());
 	}
 
 
