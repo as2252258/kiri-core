@@ -87,7 +87,7 @@ trait Condition
 			} else if (!is_numeric($key)) {
 				$value = $key . '=' . $this->valueEncode($value);
 			}
-			if ($value === null) {
+			if (empty($value)) {
 				continue;
 			}
 			$_tmp[] = $value;
