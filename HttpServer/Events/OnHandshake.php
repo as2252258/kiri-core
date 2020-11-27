@@ -10,6 +10,7 @@ use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Http\Request as SRequest;
 use Swoole\Http\Response as SResponse;
 use Swoole\WebSocket\Server;
@@ -77,6 +78,9 @@ class OnHandshake extends Callback
 	public function onHandler(SRequest $request, SResponse $response)
 	{
 		try {
+			Coroutine::defer(function () {
+				fire(Event::EVENT_AFTER_REQUEST);
+			});
 			$this->resolveParse($request, $response);
 
 			$manager = Snowflake::app()->annotation->websocket;
