@@ -483,6 +483,7 @@ class Router extends Application implements RouterInterface
 			} else {
 				$response = send($node->dispatch(), 200);
 			}
+			var_dump($response);
 		} catch (ExitException $exception) {
 			$response = send($exception->getMessage(), $exception->getCode());
 		} catch (\Throwable $exception) {
