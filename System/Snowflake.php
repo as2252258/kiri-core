@@ -269,9 +269,7 @@ class Snowflake
 			return;
 		}
 
-		$task_num = $server->setting['task_worker_num'] - 1;
-
-		$randWorkerId = random_int(1, $task_num);
+		$randWorkerId = random_int(0, $server->setting['task_worker_num'] - 1);
 
 		/** @var Task $class */
 		$class = static::createObject($class);
