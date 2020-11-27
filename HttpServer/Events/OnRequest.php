@@ -14,6 +14,7 @@ use HttpServer\Service\Http;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Error;
@@ -36,8 +37,21 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
+		Coroutine::defer(function () {
+			fire(Event::EVENT_AFTER_REQUEST);
+		});
+		$this->onRequest($request, $response);
+	}
+
+
+	/**
+	 * @param Request $request
+	 * @param Response $response
+	 * @throws Exception
+	 */
+	public function onRequest(Request $request, Response $response)
+	{
 		try {
-			Coroutine::defer([$this, 'onDefer']);
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
@@ -48,15 +62,6 @@ class OnRequest extends Callback
 		} catch (Error | \Throwable $exception) {
 			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
 		}
-	}
-
-
-	/**
-	 * @throws \Snowflake\Exception\ComponentException
-	 */
-	public function onDefer()
-	{
-		fire(Event::EVENT_AFTER_REQUEST);
 	}
 
 

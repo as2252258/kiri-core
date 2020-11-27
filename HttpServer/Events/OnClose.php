@@ -10,6 +10,7 @@ use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Route\Annotation\Websocket;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -33,11 +34,22 @@ class OnClose extends Callback
 	 */
 	public function onHandler(Server $server, int $fd)
 	{
+		Coroutine::defer(function () {
+			fire(Event::EVENT_AFTER_REQUEST);
+		});
+		$this->execute($server, $fd);
+	}
+
+
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	private function execute(Server $server, int $fd)
+	{
 		try {
-			$event = Snowflake::app()->getEvent();
-			Coroutine::defer(function () use ($event) {
-				$event->trigger(Event::EVENT_AFTER_REQUEST);
-			});
 			[$manager, $name] = $this->resolve($server, $fd);
 			if (empty($manager) || !$manager->has($name)) {
 				return;

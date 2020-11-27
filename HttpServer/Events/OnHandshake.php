@@ -77,10 +77,22 @@ class OnHandshake extends Callback
 	 */
 	public function onHandler(SRequest $request, SResponse $response)
 	{
+		Coroutine::defer(function () {
+			fire(Event::EVENT_AFTER_REQUEST);
+		});
+		$this->execute($request, $response);
+	}
+
+
+	/**
+	 * @param SRequest $request
+	 * @param SResponse $response
+	 * @return mixed|bool|null
+	 * @throws ComponentException
+	 */
+	private function execute(SRequest $request, SResponse $response)
+	{
 		try {
-			Coroutine::defer(function () {
-				fire(Event::EVENT_AFTER_REQUEST);
-			});
 			$this->resolveParse($request, $response);
 
 			$manager = Snowflake::app()->annotation->websocket;
