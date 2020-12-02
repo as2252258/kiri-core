@@ -476,22 +476,17 @@ class Router extends Application implements RouterInterface
 	public function dispatch()
 	{
 		try {
-			if ($this->reading) {
-				$response = send(self::NOT_FOUND, 502);
-			} else if (!($node = $this->find_path(\request()))) {
-				$response = send(self::NOT_FOUND, 404);
-			} else {
-				$response = send($node->dispatch(), 200);
+			if (!($node = $this->find_path(\request()))) {
+				return send(self::NOT_FOUND, 404);
+			}
+			send($node->dispatch(), 200);
+			if ($node->hasAfter()) {
+				$node->afterDispatch(\request());
 			}
 		} catch (ExitException $exception) {
-			$response = send($exception->getMessage(), $exception->getCode());
+			send($exception->getMessage(), $exception->getCode());
 		} catch (\Throwable $exception) {
-			$response = send($this->exception($exception), 200);
-		} finally {
-			if (!isset($node) || !($node instanceof Node)) {
-				return;
-			}
-			$node->hasAfter() && $node->afterDispatch($response ?? null);
+			send($this->exception($exception), 200);
 		}
 	}
 
