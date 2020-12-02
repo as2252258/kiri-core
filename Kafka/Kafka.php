@@ -155,8 +155,8 @@ class Kafka extends \Snowflake\Process\Process
 		if (function_exists('pcntl_sigprocmask')) {
 			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
 			$conf->set('internal.termination.signal', (string)SIGIO);
-		} else {
-			$conf->set('queue.buffering.max.ms', '1');
+//		} else {
+//			$conf->set('queue.buffering.max.ms', '1');
 		}
 
 		$topicConf = new TopicConf();
