@@ -47,6 +47,7 @@ class OnRequest extends Callback
 	/**
 	 * @param Request $request
 	 * @param Response $response
+	 * @return false|int|mixed|string|void
 	 * @throws Exception
 	 */
 	public function onRequest(Request $request, Response $response)
@@ -55,12 +56,14 @@ class OnRequest extends Callback
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
-				$sResponse->send($sRequest->isNotFound(), 200);
-			} else {
-				Snowflake::app()->getRouter()->dispatch();
+				return $sResponse->send($sRequest->isNotFound(), 200);
 			}
+			return Snowflake::app()->getRouter()->dispatch();
 		} catch (Error | \Throwable $exception) {
-			$this->sendErrorMessage($sResponse ?? null, $exception, $response);
+			return $this->sendErrorMessage($exception);
+		} finally {
+			$logger = Snowflake::app()->getLogger();
+			$logger->write(JSON::encode($request), 'request');
 		}
 	}
 
@@ -94,20 +97,15 @@ class OnRequest extends Callback
 	}
 
 	/**
-	 * @param $sResponse
 	 * @param $exception
-	 * @param $response
 	 * @return false|int|mixed|string
+	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	protected function sendErrorMessage($sResponse, $exception, $response)
+	protected function sendErrorMessage($exception)
 	{
 		$params = Snowflake::app()->getLogger()->exception($exception);
-		if (empty($sResponse)) {
-			$sResponse = \response();
-			$sResponse->response = $response;
-		}
-		return $sResponse->send($params, 200);
+		return \response()->send($params, 200);
 	}
 
 }
