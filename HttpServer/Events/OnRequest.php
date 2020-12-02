@@ -62,8 +62,8 @@ class OnRequest extends Callback
 		} catch (Error | \Throwable $exception) {
 			return $this->sendErrorMessage($exception);
 		} finally {
-			$logger = Snowflake::app()->getLogger();
-			$logger->write(JSON::encode($request), 'request');
+//			$logger = Snowflake::app()->getLogger();
+//			$logger->write(JSON::encode($request), 'request');
 		}
 	}
 
