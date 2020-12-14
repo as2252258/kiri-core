@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use ReflectionAttribute;
+use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
@@ -116,9 +117,9 @@ class Annotation extends Component
 	}
 
 	/**
-	 * @param \ReflectionClass $reflect
+	 * @param ReflectionClass $reflect
 	 */
-	private function targets(\ReflectionClass $reflect)
+	private function targets(ReflectionClass $reflect)
 	{
 		$attributes = $reflect->getAttributes();
 		if (count($attributes) < 1) {
