@@ -51,6 +51,14 @@ class Container extends BaseObject
 
 
 	/**
+	 * @var array
+	 *
+	 * The method attributes
+	 */
+	private array $_attributes = [];
+
+
+	/**
 	 * @param       $class
 	 * @param array $constrict
 	 * @param array $config
@@ -59,7 +67,7 @@ class Container extends BaseObject
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function get($class, $constrict = [], $config = [])
+	public function get($class, $constrict = [], $config = []): mixed
 	{
 		if (isset($this->_singletons[$class])) {
 			return $this->_singletons[$class];
@@ -88,7 +96,7 @@ class Container extends BaseObject
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveDefinition($definition, $class, $config, $constrict)
+	private function resolveDefinition($definition, $class, $config, $constrict): mixed
 	{
 		if (!isset($definition['class'])) {
 			throw new NotFindClassException($class);
@@ -112,11 +120,11 @@ class Container extends BaseObject
 	 * @param $constrict
 	 * @param $config
 	 *
-	 * @return mixed
+	 * @return object
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolve($class, $constrict, $config)
+	private function resolve($class, $constrict, $config): object
 	{
 		/**
 		 * @var ReflectionClass $reflect
@@ -153,7 +161,7 @@ class Container extends BaseObject
 	 * @return array
 	 * @throws ReflectionException
 	 */
-	private function resolveDependencies($class)
+	private function resolveDependencies($class): array
 	{
 		$dependencies = [];
 		if (isset($this->_reflection[$class])) {
@@ -196,6 +204,25 @@ class Container extends BaseObject
 
 
 	/**
+	 * @param string $class
+	 * @return array
+	 * @throws ReflectionException
+	 */
+	public function getAttributes(string $class): array
+	{
+		$reflection = $this->getReflect($class);
+		$methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+		$classAttribute = $reflection->getAttributes();
+
+		foreach ($methods as $method) {
+			$this->_attributes[$reflection->getName()][$method->getName()] = $method->getAttributes();
+		}
+		return $this->_attributes[$reflection->getName()];
+	}
+
+
+	/**
 	 * @param $class
 	 */
 	public function unset($class)
@@ -214,7 +241,7 @@ class Container extends BaseObject
 	/**
 	 * @return $this
 	 */
-	public function flush()
+	public function flush(): static
 	{
 		$this->_reflection = [];
 		$this->_singletons = [];
@@ -229,7 +256,7 @@ class Container extends BaseObject
 	 *
 	 * @return mixed
 	 */
-	private function mergeParam($class, $newParam)
+	private function mergeParam($class, $newParam): array
 	{
 		if (empty($this->_param[$class])) {
 			return $newParam;

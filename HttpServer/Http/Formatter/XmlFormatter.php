@@ -6,6 +6,7 @@
  * Time: 17:29
  */
 declare(strict_types=1);
+
 namespace HttpServer\Http\Formatter;
 
 
@@ -30,17 +31,17 @@ class XmlFormatter extends Application implements IFormatter
 	public array $header = [];
 
 	/**
-	 * @param $data
+	 * @param $context
 	 * @return $this
 	 * @throws \Exception
 	 */
-	public function send($data)
+	public function send($context): static
 	{
-		if (!is_string($data)) {
+		if (!is_string($context)) {
 			// TODO: Implement send() method.
 			$dom = new SimpleXMLElement('<xml/>');
 
-			$this->toXml($dom, $data);
+			$this->toXml($dom, $context);
 
 			$this->data = $dom->saveXML();
 		}
@@ -48,9 +49,9 @@ class XmlFormatter extends Application implements IFormatter
 	}
 
 	/**
-	 * @return string
+	 * @return mixed
 	 */
-	public function getData()
+	public function getData(): mixed
 	{
 		$data = $this->data;
 		$this->clear();
@@ -80,7 +81,7 @@ class XmlFormatter extends Application implements IFormatter
 		}
 	}
 
-	public function clear()
+	public function clear(): void
 	{
 		$this->data = null;
 		unset($this->data);

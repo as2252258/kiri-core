@@ -6,6 +6,7 @@
  * Time: 17:18
  */
 declare(strict_types=1);
+
 namespace HttpServer\Http\Formatter;
 
 use Exception;
@@ -25,23 +26,22 @@ class JsonFormatter extends Application implements IFormatter
 	public array $header = [];
 
 	/**
-	 * @param $data
-	 * @return $this|IFormatter
-	 * @throws Exception
+	 * @param $context
+	 * @return JsonFormatter
 	 */
-	public function send($data)
+	public function send($context): static
 	{
-		if (!is_string($data)) {
-			$data = json_encode($data);
+		if (!is_string($context)) {
+			$context = json_encode($context);
 		}
-		$this->data = $data;
+		$this->data = $context;
 		return $this;
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function getData()
+	public function getData(): mixed
 	{
 		$data = $this->data;
 		$this->clear();
@@ -49,7 +49,7 @@ class JsonFormatter extends Application implements IFormatter
 	}
 
 
-	public function clear()
+	public function clear(): void
 	{
 		$this->data = null;
 		unset($this->data);

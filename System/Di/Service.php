@@ -10,9 +10,11 @@ declare(strict_types=1);
 namespace Snowflake\Di;
 
 
+use ReflectionException;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Abstracts\Component;
 use Exception;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -36,7 +38,7 @@ class Service extends Component
 	 * @return mixed
 	 * @throws
 	 */
-	public function get($id)
+	public function get($id): mixed
 	{
 		if (isset($this->_components[$id])) {
 			return $this->_components[$id];
@@ -69,10 +71,12 @@ class Service extends Component
 	 * @param $id
 	 * @param $definition
 	 *
-	 * @return callable|mixed|void
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	public function set($id, $definition)
+	public function set($id, $definition): mixed
 	{
 		if ($definition === NULL) {
 			return $this->remove($id);
@@ -95,7 +99,7 @@ class Service extends Component
 	 * @param $id
 	 * @return bool
 	 */
-	public function has($id)
+	public function has($id): bool
 	{
 		return isset($this->_definition[$id]) || isset($this->_components[$id]) || isset($this->_alias[$id]);
 	}
@@ -117,7 +121,7 @@ class Service extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		if ($this->has($name)) {
 			return $this->get($name);
@@ -128,8 +132,9 @@ class Service extends Component
 
 	/**
 	 * @param $id
+	 * @return bool
 	 */
-	public function remove($id)
+	public function remove($id): bool
 	{
 		unset($this->_components[$id]);
 		unset($this->_definition[$id]);
@@ -138,5 +143,6 @@ class Service extends Component
 			unset($this->_definition[$this->_alias[$id]]);
 			unset($this->_alias[$id]);
 		}
+		return $this->has($id);
 	}
 }

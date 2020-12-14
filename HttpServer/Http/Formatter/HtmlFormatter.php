@@ -6,6 +6,7 @@
  * Time: 17:51
  */
 declare(strict_types=1);
+
 namespace HttpServer\Http\Formatter;
 
 
@@ -29,30 +30,30 @@ class HtmlFormatter extends Application implements IFormatter
 	public array $header = [];
 
 	/**
-	 * @param $data
+	 * @param $context
 	 * @return $this
 	 * @throws \Exception
 	 */
-	public function send($data)
+	public function send($context): static
 	{
-		if (!is_string($data)) {
-			$data = JSON::encode($data);
+		if (!is_string($context)) {
+			$context = JSON::encode($context);
 		}
-		$this->data = $data;
+		$this->data = $context;
 		return $this;
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function getData()
+	public function getData(): mixed
 	{
 		$data = $this->data;
 		$this->clear();
 		return $data;
 	}
 
-	public function clear()
+	public function clear(): void
 	{
 		$this->data = null;
 		unset($this->data);
