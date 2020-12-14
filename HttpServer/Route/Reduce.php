@@ -6,6 +6,7 @@ namespace HttpServer\Route;
 
 use Closure;
 use HttpServer\IInterface\After;
+use HttpServer\IInterface\Middleware;
 
 class Reduce
 {
@@ -47,7 +48,7 @@ class Reduce
 	{
 		return function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {
-				if ($pipe instanceof \HttpServer\IInterface\Middleware) {
+				if ($pipe instanceof Middleware) {
 					return $pipe->onHandler($passable, $stack);
 				} else {
 					return $pipe($passable, $stack);
