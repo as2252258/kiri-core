@@ -5,25 +5,24 @@ declare(strict_types=1);
 namespace HttpServer\IInterface;
 
 
-
 interface Task
 {
 
 	/**
 	 * @return array
 	 */
-	public function getParams();
+	public function getParams(): array;
 
 	/**
 	 * @param array $params
 	 * @return $this
 	 */
-	public function setParams(array $params);
+	public function setParams(array $params): static;
 
 
 	/**
-	 * @return mixed|void
+	 * @return void
 	 */
-	public function onHandler();
+	public function onHandler(): void;
 
 }
