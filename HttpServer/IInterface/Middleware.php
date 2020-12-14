@@ -21,6 +21,6 @@ interface Middleware
 	 * @param Closure $next
 	 * @return mixed
 	 */
-	public function handler(Request $request, Closure $next): mixed;
+	public function onHandler(Request $request, Closure $next): mixed;
 
 }

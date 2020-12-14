@@ -404,7 +404,7 @@ class Node extends Application
 	/**
 	 * @throws Exception
 	 */
-	private function restructure()
+	private function restructure(): static
 	{
 		if (empty($this->handler)) {
 			return $this;
