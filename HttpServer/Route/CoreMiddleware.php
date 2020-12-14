@@ -25,7 +25,7 @@ class CoreMiddleware implements \HttpServer\IInterface\Middleware
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function handler(Request $request, Closure $next)
+	public function onHandler(Request $request, Closure $next): mixed
 	{
 		$headers = $request->headers;
 
