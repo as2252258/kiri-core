@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": ">=7.4",
+    "php": "=7.4",
     "swoole/ide-helper": "@dev",
     "ext-json": "*",
     "phpmailer/phpmailer": "^6.1",
@@ -40,7 +40,8 @@
       "Console\\": "Console/",
       "Database\\": "Database/",
       "Gii\\": "Gii/",
-      "Kafka\\": "Kafka/"
+      "Kafka\\": "Kafka/",
+      "Annotation\\": "Annotation/"
     },
     "files": [
       "error.php",
