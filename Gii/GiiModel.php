@@ -202,7 +202,8 @@ class ' . $managerName . ' extends ActiveRecord
 	/**
 	 * @param $value
 	 * @return false|string
-	 */
+	 * @throws Exception
+    */
 	public function set' . ucfirst($field['Field']) . 'Attribute($value) 
 	{
 		if ( !is_string($value) ) {
