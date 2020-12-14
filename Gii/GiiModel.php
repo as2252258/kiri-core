@@ -219,7 +219,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 */
 	public function get' . ucfirst($field['Field']) . 'Attribute($value) 
 	{
-		$value = stripcslashes($value)
+		$value = stripcslashes($value);
 		if ( is_string($value) ) {
 			return JSON::decode($value, true); 
 		}
