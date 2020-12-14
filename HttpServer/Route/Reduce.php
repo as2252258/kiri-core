@@ -48,7 +48,7 @@ class Reduce
 		return function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {
 				if ($pipe instanceof \HttpServer\IInterface\Middleware) {
-					return $pipe->handler($passable, $stack);
+					return $pipe->onHandler($passable, $stack);
 				} else {
 					return $pipe($passable, $stack);
 				}
