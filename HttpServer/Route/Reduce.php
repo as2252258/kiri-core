@@ -14,9 +14,9 @@ class Reduce
 	/**
 	 * @param $last
 	 * @param $middleWares
-	 * @return array
+	 * @return mixed
 	 */
-	public static function reduce($last, $middleWares)
+	public static function reduce($last, $middleWares): mixed
 	{
 		return array_reduce(array_reverse($middleWares), static::core(), $last);
 	}
@@ -24,9 +24,9 @@ class Reduce
 
 	/**
 	 * @param $middleWares
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public static function after($middleWares)
+	public static function after($middleWares): mixed
 	{
 		return array_reduce(array_reverse($middleWares), function ($stack, $pipe) {
 			return function ($request, $passable) use ($stack, $pipe) {
@@ -43,7 +43,7 @@ class Reduce
 	/**
 	 * @return Closure
 	 */
-	private static function core()
+	private static function core(): Closure
 	{
 		return function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {

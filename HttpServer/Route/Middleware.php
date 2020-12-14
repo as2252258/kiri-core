@@ -46,10 +46,10 @@ class Middleware
 
 	/**
 	 * @param Node $node
-	 * @return array
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getGenerate(Node $node): array
+	public function getGenerate(Node $node): mixed
 	{
 		return $node->callback = Reduce::reduce(function ($passable) use ($node) {
 			return Dispatch::create($node->handler, $passable)->dispatch();
