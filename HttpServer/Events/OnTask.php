@@ -41,10 +41,10 @@ class OnTask extends Callback
 	 * @param int $from_id
 	 * @param string $data
 	 *
-	 * @return mixed|void
+	 * @return mixed
 	 * @throws Exception 异步任务
 	 */
-	public function onTask(Server $server, int $task_id, int $from_id, string $data)
+	public function onTask(Server $server, int $task_id, int $from_id, string $data): mixed
 	{
 		$time = microtime(TRUE);
 		if (empty($data)) {
@@ -59,17 +59,16 @@ class OnTask extends Callback
 			'runTime'   => microtime(TRUE) - $time,
 			'endTime'   => microtime(TRUE),
 		];
-		$server->finish(json_encode($finish));
+		return $server->finish(json_encode($finish));
 	}
 
 	/**
 	 * @param Server $server
 	 * @param Server\Task $task
-	 * @return mixed|void
-	 * @throws Exception
-	 * 异步任务
+	 * @return mixed
+	 * @throws Exception 异步任务
 	 */
-	public function onContinueTask(Server $server, Server\Task $task)
+	public function onContinueTask(Server $server, Server\Task $task): mixed
 	{
 		$time = microtime(TRUE);
 		if (empty($task->data)) {
@@ -84,7 +83,7 @@ class OnTask extends Callback
 			'runTime'   => microtime(TRUE) - $time,
 			'endTime'   => microtime(TRUE),
 		];
-		$task->finish(json_encode($finish));
+		return $task->finish(json_encode($finish));
 	}
 
 	/**
@@ -92,7 +91,7 @@ class OnTask extends Callback
 	 * @return array|null
 	 * @throws Exception
 	 */
-	private function runTaskHandler($data)
+	private function runTaskHandler($data): ?array
 	{
 		$serialize = $this->before($data);
 		try {
@@ -135,7 +134,7 @@ class OnTask extends Callback
 	 * @param $exception
 	 * @return string
 	 */
-	private function format($exception)
+	private function format($exception): string
 	{
 		return $exception->getMessage() . " on line " . $exception->getLine() . " at file " . $exception->getFile();
 	}

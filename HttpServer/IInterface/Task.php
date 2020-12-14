@@ -21,8 +21,8 @@ interface Task
 
 
 	/**
-	 * @return void
+	 * @return mixed
 	 */
-	public function onHandler(): void;
+	public function onHandler(): mixed;
 
 }

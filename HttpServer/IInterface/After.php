@@ -17,6 +17,6 @@ interface After
 	 * @param $params
 	 * @return mixed
 	 */
-	public function onHandler(Request $request, $params);
+	public function onHandler(Request $request, $params): mixed;
 
 }

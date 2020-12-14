@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HttpServer\IInterface;
 
 
+use Closure;
 use HttpServer\Http\Request;
 
 /**
@@ -14,6 +15,12 @@ use HttpServer\Http\Request;
 interface Middleware
 {
 
-	public function handler(Request $request,\Closure $next);
+
+	/**
+	 * @param Request $request
+	 * @param Closure $next
+	 * @return mixed
+	 */
+	public function handler(Request $request, Closure $next): mixed;
 
 }

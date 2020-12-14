@@ -21,9 +21,13 @@ interface IFormatter
 	 * @param $context
 	 * @return static
 	 */
-	public function send($context);
+	public function send($context): static;
 
-	public function getData();
 
-	public function clear();
+	/**
+	 * @return mixed
+	 */
+	public function getData(): mixed;
+
+	public function clear(): void;
 }

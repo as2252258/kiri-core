@@ -11,6 +11,11 @@ use Closure;
 interface Limits
 {
 
-	public function next(Request $request, Closure $closure);
+	/**
+	 * @param Request $request
+	 * @param Closure $closure
+	 * @return mixed
+	 */
+	public function next(Request $request, Closure $closure): mixed;
 
 }

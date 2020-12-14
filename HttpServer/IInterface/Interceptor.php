@@ -12,6 +12,11 @@ interface Interceptor
 {
 
 
-	public function Interceptor(Request $request, Closure $closure);
+	/**
+	 * @param Request $request
+	 * @param Closure $closure
+	 * @return mixed
+	 */
+	public function Interceptor(Request $request, Closure $closure): mixed;
 
 }
