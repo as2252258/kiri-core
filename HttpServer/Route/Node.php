@@ -394,7 +394,7 @@ class Node extends Application
 			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
 				return;
 			}
-			$class = [$class, 'handler'];
+			$class = [$class, 'onHandler'];
 		}
 		$this->middleware[] = $class;
 		$this->restructure();
@@ -420,7 +420,7 @@ class Node extends Application
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function dispatch()
+	public function dispatch(): mixed
 	{
 		if (empty($this->callback)) {
 			return JSON::to(404, $node->_error ?? 'Page not found.');
@@ -435,7 +435,7 @@ class Node extends Application
 	 * @return array
 	 * @throws Exception
 	 */
-	private function each($array, $_temp)
+	private function each($array, $_temp): array
 	{
 		if (!is_array($array)) {
 			return $_temp;

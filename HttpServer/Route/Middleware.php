@@ -28,7 +28,7 @@ class Middleware
 	 * @param $call
 	 * @return $this
 	 */
-	public function set($call)
+	public function set($call): static
 	{
 		$this->middleWares[] = $call;
 		return $this;
@@ -38,7 +38,7 @@ class Middleware
 	 * @param array $array
 	 * @return $this
 	 */
-	public function setMiddleWares(array $array)
+	public function setMiddleWares(array $array): static
 	{
 		$this->middleWares = $array;
 		return $this;
@@ -46,10 +46,10 @@ class Middleware
 
 	/**
 	 * @param Node $node
-	 * @return mixed
+	 * @return array
 	 * @throws Exception
 	 */
-	public function getGenerate(Node $node)
+	public function getGenerate(Node $node): array
 	{
 		return $node->callback = Reduce::reduce(function ($passable) use ($node) {
 			return Dispatch::create($node->handler, $passable)->dispatch();
@@ -61,7 +61,7 @@ class Middleware
 	 * @param Node $node
 	 * @return array
 	 */
-	protected function annotation(Node $node)
+	protected function annotation(Node $node): array
 	{
 		$middleWares = $this->middleWares;
 		$this->middleWares = [];
@@ -80,7 +80,7 @@ class Middleware
 	 * @param $middleWares
 	 * @return array
 	 */
-	protected function annotation_limit(Node $node, $middleWares)
+	protected function annotation_limit(Node $node, $middleWares): array
 	{
 		if (!$node->hasLimits()) {
 			return $middleWares;
