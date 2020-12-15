@@ -19,6 +19,7 @@ class Reduce
 	 */
 	public static function reduce($last, $middleWares): mixed
 	{
+		var_dump(array_reverse($middleWares));
 		return array_reduce(array_reverse($middleWares), static::core(), $last);
 	}
 
@@ -51,7 +52,7 @@ class Reduce
 				if ($pipe instanceof Middleware) {
 					return $pipe->onHandler($passable, $stack);
 				} else {
-					return call_user_func($pipe[0], $passable, $stack);
+					return call_user_func($pipe, $passable, $stack);
 				}
 			};
 		};
