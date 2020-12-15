@@ -301,10 +301,11 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $settings
-	 * @return \Swoole\Server|Packet|Receive|Http|Websocket
-	 * @throws Exception
+	 * @return \Swoole\Server|Packet|Receive|Http|Websocket|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket
+	private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
 	{
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$this->parseServer($config, $settings);
