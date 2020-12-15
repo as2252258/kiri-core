@@ -132,10 +132,9 @@ class Server extends Application
 	/**
 	 * @param $host
 	 * @param $Port
-	 * @return Http|Packet|Receive|Websocket
-	 * @throws Exception
+	 * @return Packet|Websocket|Receive|Http|null
 	 */
-	public function error_stop($host, $Port): Packet|Websocket|Receive|Http
+	public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
 	{
 		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
 		if ($this->baseServer) {
