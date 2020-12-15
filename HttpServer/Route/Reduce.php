@@ -34,7 +34,7 @@ class Reduce
 				if ($pipe instanceof After) {
 					return $pipe->onHandler($request, $passable);
 				} else {
-					return $pipe($request, $passable, $stack);
+					return call_user_func($pipe, $request, $passable, $stack);
 				}
 			};
 		});
@@ -51,8 +51,7 @@ class Reduce
 				if ($pipe instanceof Middleware) {
 					return $pipe->onHandler($passable, $stack);
 				} else {
-					var_dump($passable, $stack);
-					return $pipe($passable, $stack);
+					return call_user_func($pipe, $passable, $stack);
 				}
 			};
 		};
