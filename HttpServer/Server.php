@@ -56,9 +56,7 @@ class Server extends Application
 		'WEBSOCKET' => [SWOOLE_SOCK_TCP, Websocket::class],
 	];
 
-
-	/** @var Http|Websocket|Packet|Receive */
-	private Packet|Websocket|Receive|Http $baseServer;
+	private Packet|Websocket|Receive|null|Http $baseServer = null;
 
 	public int $daemon = 0;
 
