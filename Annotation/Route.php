@@ -18,18 +18,18 @@ use Snowflake\Snowflake;
 	 * Route constructor.
 	 * @param string $uri
 	 * @param string $method
-	 * @param string|array|null $middleware
-	 * @param string|array|null $interceptor
-	 * @param string|array|null $limits
-	 * @param string|array|null $after
+	 * @param array|null $middleware
+	 * @param array|null $interceptor
+	 * @param array|null $limits
+	 * @param array|null $after
 	 */
 	public function __construct(
 		public string $uri,
 		public string $method,
-		public null|string|array $middleware,
-		public null|string|array $interceptor,
-		public null|string|array $limits,
-		public null|string|array $after
+		public ?array $middleware = null,
+		public ?array $interceptor = null,
+		public ?array $limits = null,
+		public ?array $after = null
 	)
 	{
 	}
