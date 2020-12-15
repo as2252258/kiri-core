@@ -330,10 +330,10 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $settings
-	 * @return Packet|Websocket|Receive|Http
+	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws Exception
 	 */
-	private function parseServer($config, $settings): Packet|Websocket|Receive|Http
+	private function parseServer($config, $settings): Packet|Websocket|Receive|Http|null
 	{
 		$class = $this->dispatch($config['type']);
 		if ($this->isUse($config['port'])) {
