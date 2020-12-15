@@ -26,6 +26,7 @@ class Annotation extends Component
 
 	/**
 	 * @param string $path
+	 * @param string $namespace
 	 * @param string $alias
 	 * @return $this
 	 * @throws ReflectionException
@@ -65,6 +66,7 @@ class Annotation extends Component
 
 	/**
 	 * @param array $paths
+	 * @param string $namespace
 	 * @param string $alias
 	 * @return $this
 	 * @throws ReflectionException
@@ -80,8 +82,11 @@ class Annotation extends Component
 			$explode_pop = array_pop($explode);
 			if (is_file($path)) {
 				$explode_pop = str_replace('.php', '', $explode_pop);
-
-				$this->_annotations[$alias][] = $this->getReflect($namespace . '\\' . $explode_pop);
+				$annotation = $this->getReflect($namespace . '\\' . $explode_pop);
+				if (empty($annotation)) {
+					continue;
+				}
+				$this->_annotations[$alias][] = $annotation;
 			} else {
 				$this->scanDir(glob($path . '/*'), $namespace . '\\' . $explode_pop, $alias);
 			}
