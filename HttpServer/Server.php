@@ -79,10 +79,10 @@ class Server extends Application
 
 	/**
 	 * @param array $configs
-	 * @return Http|Packet|Receive|Websocket
-	 * @throws Exception
+	 * @return Packet|Websocket|Receive|Http|null
+	 * @throws ConfigException
 	 */
-	public function initCore(array $configs): Packet|Websocket|Receive|Http
+	public function initCore(array $configs): Packet|Websocket|Receive|Http|null
 	{
 		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
 
