@@ -208,6 +208,11 @@ class Server extends Application
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			return;
 		}
+
+		$attributes = Snowflake::app()->getAttributes();
+		$attributes->readControllers(CONTROLLER_PATH, 'controllers');
+		$attributes->readControllers(SOCKET_PATH, 'sockets');
+
 		$processes = Config::get('processes');
 		if (!empty($processes) && is_array($processes)) {
 			$this->deliveryProcess(merge($processes, $this->process));
