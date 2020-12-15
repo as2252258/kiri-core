@@ -104,7 +104,7 @@ class OnHandshake extends Callback
 			}
 			return $node->dispatch($request, $response);
 		} catch (\Throwable $exception) {
-			$this->addError($exception->getMessage());
+			$this->addError($exception->getMessage() . ' ' . $exception->getFile() . ' ' . $exception->getLine());
 			return $this->disconnect($response, 500);
 		} finally {
 			$this->eventTrigger($request, $response);
