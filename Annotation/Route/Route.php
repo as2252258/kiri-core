@@ -40,13 +40,12 @@ use Annotation\IAnnotation;
 
 	/**
 	 * @param array|Closure $handler
-	 * @param array $attributes
 	 * @return ?Node
 	 * @throws ComponentException
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function setHandler(array|Closure $handler, array $attributes): ?Node
+	public function setHandler(array|Closure $handler): ?Node
 	{
 		$router = Snowflake::app()->getRouter();
 		// TODO: Implement setHandler() method.
