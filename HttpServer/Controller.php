@@ -112,7 +112,7 @@ class Controller extends Application
 	 */
 	public function getHeaders(): ?HttpHeaders
 	{
-		if (!$this->headers) {
+		if (!$this->headers && $this->getRequest()) {
 			$this->headers = $this->getRequest()->headers;
 		}
 		return $this->headers;
