@@ -121,7 +121,6 @@ class Annotation extends Component
 				$names[$attribute->getName()] = $this->instance($attribute);
 			}
 
-			var_dump($reflect->getName(), $method->getName());
 			$tmp['handler'] = [$object, $method->getName()];
 			$tmp['attributes'] = $names;
 
