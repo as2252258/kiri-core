@@ -21,7 +21,7 @@ class Dispatch
 	/** @var Closure|array */
 	protected array|Closure $handler;
 
-	protected Request|\Swoole\Http\Request $request;
+	protected mixed $request;
 
 	/**
 	 * @param $handler
