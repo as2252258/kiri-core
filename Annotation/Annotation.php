@@ -82,11 +82,7 @@ class Annotation extends Component
 			$explode_pop = array_pop($explode);
 			if (is_file($path)) {
 				$explode_pop = str_replace('.php', '', $explode_pop);
-				$annotation = $this->getReflect($namespace . '\\' . $explode_pop);
-				if (count($annotation) < 1) {
-					continue;
-				}
-				$this->_annotations[$alias][] = $annotation;
+				$this->getReflect($namespace . '\\' . $explode_pop, $alias);
 			} else {
 				$this->scanDir(glob($path . '/*'), $namespace . '\\' . $explode_pop, $alias);
 			}
@@ -96,11 +92,12 @@ class Annotation extends Component
 
 
 	/**
-	 * @param $class
+	 * @param string $class
+	 * @param string $alias
 	 * @return array
 	 * @throws ReflectionException
 	 */
-	private function getReflect($class): array
+	private function getReflect(string $class, string $alias): array
 	{
 		$reflect = Snowflake::getDi()->getReflect($class);
 		if (!$reflect->isInstantiable()) {
@@ -124,7 +121,7 @@ class Annotation extends Component
 			$tmp['handler'] = [$object, $method->getName()];
 			$tmp['attributes'] = $names;
 
-			$annotations[] = $tmp;
+			$this->_annotations[$alias][] = $tmp;
 		}
 		return $annotations;
 	}
