@@ -441,8 +441,13 @@ class Server extends Application
 			$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
 
 			$aliases = $attributes->getAlias('controllers');
+			if (count($aliases) < 1) {
+				return;
+			}
 			foreach ($aliases as $alias) {
-
+				if (!isset($alias['handler'])) {
+					continue;
+				}
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
@@ -465,8 +470,13 @@ class Server extends Application
 			$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
 
 			$aliases = $attributes->getAlias('sockets');
+			if (count($aliases) < 1) {
+				return;
+			}
 			foreach ($aliases as $alias) {
-
+				if (!isset($alias['handler'])) {
+					continue;
+				}
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
