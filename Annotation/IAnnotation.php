@@ -11,10 +11,11 @@ interface IAnnotation
 
 
 	/**
-	 * @param array|Closure $closure
+	 * @param array|Closure $handler
+	 * @param array $attributes
 	 * @return mixed
 	 */
-	public function setHandler(array|Closure $closure): mixed;
+	public function setHandler(array|Closure $handler, array $attributes): mixed;
 
 
 }

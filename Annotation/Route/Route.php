@@ -1,18 +1,21 @@
 <?php
 
 
-namespace Annotation;
+namespace Annotation\Route;
 
 
 use Closure;
+use Exception;
 use HttpServer\Route\Node;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Annotation\IAnnotation;
 
 #[\Attribute(\Attribute::TARGET_METHOD)] class Route implements IAnnotation
 {
 
+	use \Annotation\Route\Node;
 
 	/**
 	 * Route constructor.
@@ -41,6 +44,7 @@ use Snowflake\Snowflake;
 	 * @return ?Node
 	 * @throws ComponentException
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function setHandler(array|Closure $handler, array $attributes): ?Node
 	{
@@ -48,16 +52,8 @@ use Snowflake\Snowflake;
 		// TODO: Implement setHandler() method.
 
 		$node = $router->addRoute($this->uri, $handler, $this->method);
-		foreach ($attributes as $name => $attribute) {
-			$first = 'add' . ucfirst($attribute);
 
-			$_handler = is_array($handler) ? $handler[0] : $handler;
-			if (!method_exists($_handler, $first)) {
-				continue;
-			}
-			$node->$first($attribute);
-		}
-		return $node;
+		return $this->add($node);
 	}
 
 
