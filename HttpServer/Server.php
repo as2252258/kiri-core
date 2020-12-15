@@ -438,7 +438,7 @@ class Server extends Application
 			$router->loadRouterSetting();
 
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->readControllers(CONTROLLER_PATH, 'controllers');
+			$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
 
 			$aliases = $attributes->getAlias('controllers');
 			foreach ($aliases as $alias) {
