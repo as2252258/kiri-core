@@ -61,8 +61,8 @@ use Snowflake\Snowflake;
 		$router = Snowflake::app()->getRouter();
 		// TODO: Implement setHandler() method.
 
-		$method = $this->event . '::' . (empty($this->uri) ? 'event' : $this->uri);
-		var_dump($method);
+		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
+
 		$node = $router->addRoute($method, $handler, 'sw::socket');
 
 		return $this->add($node);
