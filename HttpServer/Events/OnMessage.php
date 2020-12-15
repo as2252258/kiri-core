@@ -64,7 +64,7 @@ class OnMessage extends Callback
 			throw new Exception('Format error.');
 		}
 		$router = Snowflake::app()->getRouter();
-		$node = $router->search(Socket::MESSAGE . '::' . $route, 'sw:socket');
+		$node = $router->search(Socket::MESSAGE . '::' . $route, 'sw::socket');
 		if ($node === null) {
 			throw new Exception('Page not found.');
 		}

@@ -56,7 +56,7 @@ class OnClose extends Callback
 			if (!($server instanceof WServer) || !$server->isEstablished($fd)) {
 				return;
 			}
-			$node = $router->search(Socket::CLOSE . '::event', 'sw:socket');
+			$node = $router->search(Socket::CLOSE . '::event', 'sw::socket');
 			if ($node instanceof Node) {
 				$node->dispatch();
 			}
@@ -82,7 +82,7 @@ class OnClose extends Callback
 				return [null, null];
 			}
 			$router = Snowflake::app()->getRouter();
-			$node = $router->search(Socket::HANDSHAKE . '::' . null, 'sw:socket');
+			$node = $router->search(Socket::HANDSHAKE . '::' . null, 'sw::socket');
 			if ($node === null) {
 				return [null, null];
 			}
