@@ -62,6 +62,7 @@ use Snowflake\Snowflake;
 		// TODO: Implement setHandler() method.
 
 		$method = $this->event . '::' . (empty($this->uri) ? 'event' : $this->uri);
+		var_dump($method);
 		$node = $router->addRoute($method, $handler, 'sw::socket');
 
 		return $this->add($node);
