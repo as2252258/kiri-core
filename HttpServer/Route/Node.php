@@ -58,17 +58,18 @@ class Node extends Application
 	 * @return Node
 	 * @throws
 	 */
-	public function bindHandler($handler)
+	public function bindHandler($handler): static
 	{
 		if ($handler instanceof Closure) {
 			$this->handler = $handler;
-		} else if (is_string($handler) && strpos($handler, '@') !== false) {
+		} else if (is_string($handler) && str_contains($handler, '@')) {
 			list($controller, $action) = explode('@', $handler);
 			if (!empty($this->namespace)) {
 				$controller = implode('\\', $this->namespace) . '\\' . $controller;
 			}
 			$this->handler = $this->getReflect($controller, $action);
 		} else if ($handler != null && !is_callable($handler, true)) {
+			var_dump($handler);
 			$this->_error = 'Controller is con\'t exec.';
 		} else {
 			$this->handler = $handler;

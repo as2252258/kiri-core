@@ -471,7 +471,6 @@ class Server extends Application
 				return;
 			}
 			foreach ($aliases as $alias) {
-				var_dump($alias);
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
