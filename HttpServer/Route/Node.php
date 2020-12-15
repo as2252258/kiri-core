@@ -9,14 +9,14 @@ use Closure;
 use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
-use HttpServer\Route\Annotation\Http;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\JSON;
-use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
+use Throwable;
+use function Input;
 
 /**
  * Class Node
@@ -97,8 +97,8 @@ class Node extends Application
 
 
 	/**
-	 * @param $response
-	 * @return mixed|null
+	 * @param null $response
+	 * @return mixed
 	 */
 	public function afterDispatch($response = null): mixed
 	{
@@ -188,7 +188,7 @@ class Node extends Application
 			$object = Snowflake::createObject($rule);
 			if (!$object->handler()) {
 				return false;
-			};
+			}
 		}
 		return true;
 	}
@@ -210,7 +210,7 @@ class Node extends Application
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
 			return [$reflect->newInstance(), $action];
-		} catch (\Throwable $exception) {
+		} catch (Throwable $exception) {
 			$this->_error = $exception->getMessage();
 			$this->error($exception->getMessage(), 'router');
 			return null;
@@ -329,7 +329,7 @@ class Node extends Application
 		$_searchMatch = '/<(\w+)?:(.+)?>/';
 		foreach ($this->childes as $key => $val) {
 			if (preg_match($_searchMatch, $key, $match)) {
-				\Input()->addGetParam($match[1] ?? '--', $search);
+				Input()->addGetParam($match[1] ?? '--', $search);
 				return $this->childes[$key];
 			}
 		}
