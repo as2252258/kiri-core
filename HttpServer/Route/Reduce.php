@@ -19,7 +19,6 @@ class Reduce
 	 */
 	public static function reduce($last, $middleWares): mixed
 	{
-		var_dump(array_reverse($middleWares));
 		return array_reduce(array_reverse($middleWares), static::core(), $last);
 	}
 
