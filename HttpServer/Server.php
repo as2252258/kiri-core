@@ -208,8 +208,8 @@ class Server extends Application
 		}
 
 		$attributes = Snowflake::app()->getAttributes();
-		$attributes->readControllers(CONTROLLER_PATH, 'controllers');
-		$attributes->readControllers(SOCKET_PATH, 'sockets');
+		$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
+		$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
 
 		$processes = Config::get('processes');
 		if (!empty($processes) && is_array($processes)) {
@@ -461,7 +461,7 @@ class Server extends Application
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->readControllers(SOCKET_PATH, 'sockets');
+			$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
 
 			$aliases = $attributes->getAlias('sockets');
 			foreach ($aliases as $alias) {
