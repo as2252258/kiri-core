@@ -36,7 +36,9 @@ class OnMessage extends Callback
 					$event->trigger(Event::EVENT_AFTER_REQUEST);
 				});
 				$content = $this->resolve($event, $frame, $server);
-				$server->send($frame->fd, $content);
+				if (!empty($content)) {
+					$server->send($frame->fd, $content);
+				}
 			}
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
