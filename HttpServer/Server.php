@@ -445,9 +445,6 @@ class Server extends Application
 				return;
 			}
 			foreach ($aliases as $alias) {
-				if (!isset($alias['handler'])) {
-					continue;
-				}
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
@@ -474,9 +471,6 @@ class Server extends Application
 				return;
 			}
 			foreach ($aliases as $alias) {
-				if (!isset($alias['handler'])) {
-					continue;
-				}
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
