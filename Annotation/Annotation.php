@@ -4,6 +4,7 @@
 namespace Annotation;
 
 
+use HttpServer\Route\Middleware;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -29,11 +30,9 @@ class Annotation extends Component
 	 * @return $this
 	 * @throws ReflectionException
 	 */
-	public function readControllers(string $path, string $alias = 'root'): static
+	public function readControllers(string $path, string $namespace, string $alias = 'root'): static
 	{
-		foreach (glob($path . '/*') as $dir) {
-			$this->scanDir($dir, $alias);
-		}
+		$this->scanDir(glob($path . '*'), $namespace, $alias);
 		return $this;
 	}
 
@@ -70,16 +69,21 @@ class Annotation extends Component
 	 * @return $this
 	 * @throws ReflectionException
 	 */
-	private function scanDir(array $paths, string $alias): static
+	private function scanDir(array $paths, string $namespace, string $alias): static
 	{
 		if (!isset($this->_annotations[$alias])) {
 			$this->_annotations[$alias] = [];
 		}
 		foreach ($paths as $path) {
+			$explode = explode('/', $path);
+
+			$explode_pop = array_pop($explode);
 			if (is_file($path)) {
-				$this->_annotations[$alias][] = $this->getReflect($path);
+				$explode_pop = str_replace('.php', '', $explode_pop);
+
+				$this->_annotations[$alias][] = $this->getReflect($namespace . '\\' . $explode_pop);
 			} else {
-				$this->scanDir($path, $alias);
+				$this->scanDir(glob($path . '/*'), $namespace . '\\' . $explode_pop, $alias);
 			}
 		}
 		return $this;
@@ -94,6 +98,9 @@ class Annotation extends Component
 	private function getReflect($class): array
 	{
 		$reflect = Snowflake::getDi()->getReflect($class);
+		if (!$reflect->isInstantiable()) {
+			return [];
+		}
 
 		$this->targets($reflect);
 
@@ -142,20 +149,7 @@ class Annotation extends Component
 	 */
 	private function instance(ReflectionAttribute $attribute): array|object
 	{
-		$instance = $attribute->newInstance();
-		if ($instance instanceof Middleware) {
-			$instance = [$instance, 'onHandler'];
-		}
-		if ($instance instanceof Interceptor) {
-			$instance = [$instance, 'onHandler'];
-		}
-		if ($instance instanceof Limits) {
-			$instance = [$instance, 'onHandler'];
-		}
-		if ($instance instanceof After) {
-			$instance = [$instance, 'onHandler'];
-		}
-		return $instance;
+		return $attribute->newInstance();
 	}
 
 

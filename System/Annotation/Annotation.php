@@ -1,167 +1,281 @@
 <?php
+declare(strict_types=1);
 
+namespace Snowflake\Annotation;
 
-namespace Annotation;
-
-
-use ReflectionAttribute;
+use Exception;
+use HttpServer\Route\Annotation\Http;
+use HttpServer\Route\Annotation\Tcp;
+use HttpServer\Route\Annotation\Websocket;
 use ReflectionClass;
 use ReflectionException;
-use Snowflake\Abstracts\Component;
+use ReflectionMethod;
+use Snowflake\Abstracts\BaseAnnotation;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
  * Class Annotation
- * @package Annotation
+ * @package Snowflake\Snowflake\Annotation
+ * @property Http $http
+ * @property Websocket $websocket
+ * @property Tcp $tcp
  */
-class Annotation extends Component
+class Annotation extends BaseAnnotation
 {
+	public string $namespace = '';
 
-	private array $_annotations = [];
+	public string $prefix = '';
 
-
-	private array $_targets = [];
-
-
-	/**
-	 * @param string $path
-	 * @param string $alias
-	 * @return $this
-	 * @throws ReflectionException
-	 */
-	public function readControllers(string $path, string $namespace, string $alias = 'root'): static
-	{
-		$this->scanDir(glob($path . '*'), $namespace, $alias);
-		return $this;
-	}
+	public string $path = '';
 
 
-	/**
-	 * @param string $alias
-	 * @return array
-	 */
-	public function getAlias(string $alias = 'root'): array
-	{
-		if (!isset($this->_annotations[$alias])) {
-			return [];
-		}
-		return $this->_annotations[$alias];
-	}
+	protected array $_Scan_directory = [];
 
+	protected array $_alias = [];
+
+	protected array $params = [];
+
+
+	private array $_classMap = [
+		'http'      => Http::class,
+		'tcp'       => Tcp::class,
+		'websocket' => Websocket::class
+	];
 
 	/**
-	 * @param string $target
-	 * @return mixed
-	 */
-	public function getTarget(string $target): mixed
-	{
-		if (!isset($this->_targets[$target])) {
-			return [];
-		}
-		return $this->_targets[$target];
-	}
-
-
-	/**
-	 * @param array $paths
-	 * @param string $alias
-	 * @return $this
-	 * @throws ReflectionException
-	 */
-	private function scanDir(array $paths, string $namespace, string $alias): static
-	{
-		if (!isset($this->_annotations[$alias])) {
-			$this->_annotations[$alias] = [];
-		}
-		foreach ($paths as $path) {
-			$explode = explode('/', $path);
-
-			$explode_pop = array_pop($explode);
-			if (is_file($path)) {
-				$explode_pop = str_replace('.php', '', $explode_pop);
-
-				$this->_annotations[$alias][] = $this->getReflect($namespace . '\\' . $explode_pop);
-			} else {
-				$this->scanDir(glob($path . '/*'), $namespace . '\\' . $explode_pop, $alias);
-			}
-		}
-		return $this;
-	}
-
-
-	/**
+	 * @param $name
 	 * @param $class
-	 * @return array
+	 * @return mixed
+	 * @throws
+	 */
+	public function register($name, $class)
+	{
+		if (!isset($this->_classMap[$name]) || is_string($this->_classMap[$name])) {
+			$this->_classMap[$name] = Snowflake::createObject($class);
+		}
+		return $this->_classMap[$name];
+	}
+
+
+	/**
+	 * @param $path
+	 * @param $namespace
 	 * @throws ReflectionException
 	 */
-	private function getReflect($class): array
+	public function registration_notes($path = '', $namespace = '')
 	{
-		$reflect = Snowflake::getDi()->getReflect($class);
-		if (!$reflect->isInstantiable()) {
-			return [];
+		if (empty($path)) {
+			$path = $this->path;
 		}
-
-		$this->targets($reflect);
-
-		$annotations = [];
-		$object = $reflect->newInstance();
-		foreach ($reflect->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-			$names = [];
-			$attributes = $method->getAttributes();
-			if (count($attributes) < 1) {
-				continue;
-			}
-			foreach ($attributes as $attribute) {
-				$names[$attribute->getName()] = $this->instance($attribute);
-			}
-			$tmp['handler'] = [$object, $method->getName()];
-			$tmp['attributes'] = $names;
-
-			$annotations[] = $tmp;
+		if (empty($namespace)) {
+			$namespace = $this->namespace;
 		}
-		return $annotations;
+		$this->scanning(rtrim($path, '/'), $namespace, get_called_class());
 	}
 
 	/**
 	 * @param ReflectionClass $reflect
+	 * @param string $className
+	 * @throws ReflectionException
+	 * @throws Exception
+	 * @Message(updatePosition)
+	 * 注入注解
 	 */
-	private function targets(ReflectionClass $reflect)
+	private function resolve(ReflectionClass $reflect, string $className)
 	{
-		$attributes = $reflect->getAttributes();
-		if (count($attributes) < 1) {
-			return;
-		}
+		$controller = $reflect->newInstance();
 
-		if (!isset($this->_targets[$reflect->getName()])) {
-			$this->_targets[$reflect->getName()] = [];
-		}
+		$annotations = $this->getAnnotation($className);
+		$methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
+		foreach ($methods as $function) {
+			foreach ($annotations as $annotation) {
+				$comment = $function->getDocComment();
+				$methodName = $function->getName();
+				if (!$comment) {
+					continue;
+				}
 
-		foreach ($attributes as $attribute) {
-			$this->_targets[$reflect->getName()][] = $this->instance($attribute);
+				preg_match('/@(' . $annotation . ')\((.*?)\)/', $comment, $events);
+				if (!isset($events[1])) {
+					continue;
+				}
+				if (!$this->isLegitimate($events)) {
+					continue;
+				}
+				$this->push($this->getName($annotation, $events), [$controller, $methodName]);
+			}
 		}
 	}
 
 
 	/**
-	 * @param ReflectionAttribute $attribute
-	 * @return array|object
+	 * @param $name
+	 * @return mixed
+	 * @throws Exception
 	 */
-	private function instance(ReflectionAttribute $attribute): array|object
+	public function get($name)
 	{
-		$instance = $attribute->newInstance();
-		if ($instance instanceof Middleware) {
-			$instance = [$instance, 'onHandler'];
+		if (!isset($this->_classMap[$name])) {
+			throw new Exception('Undefined analytic class ' . $name . '.');
 		}
-		if ($instance instanceof Interceptor) {
-			$instance = [$instance, 'onHandler'];
+		return $this->_classMap[$name];
+	}
+
+
+	/**
+	 * @param $events
+	 * @throws Exception
+	 */
+	public function isLegitimate($events)
+	{
+		throw new Exception('Undefined analytic function isLegitimate.');
+	}
+
+
+	/**
+	 * @param $function
+	 * @param $events
+	 * @throws Exception
+	 */
+	public function getName($function, $events)
+	{
+		throw new Exception('Undefined analytic function getName.');
+	}
+
+
+	/**
+	 * @param $controller
+	 * @param $methodName
+	 * @param $events
+	 * @throws Exception
+	 */
+	public function createHandler($controller, $methodName, $events)
+	{
+		throw new Exception('Undefined analytic function.');
+	}
+
+
+	/**
+	 * @param string $path
+	 * @param $namespace
+	 * @param $className
+	 * @throws ReflectionException
+	 */
+	protected function scanning(string $path, $namespace, $className)
+	{
+		$di = Snowflake::getDi();
+		foreach (glob($path . '/*') as $file) {
+			if (is_dir($file)) {
+				$this->scanning($path, $namespace, $className);
+			}
+
+			$explode = explode('/', $file);
+
+			$class = str_replace('.php', '', end($explode));
+
+			$this->resolve($di->getReflect($namespace . '\\' . $class), $className);
 		}
-		if ($instance instanceof Limits) {
-			$instance = [$instance, 'onHandler'];
+	}
+
+	/**
+	 * @param $path
+	 * @param array $params
+	 * @return bool|mixed
+	 */
+	public function runWith($path, $params = [])
+	{
+		if (!$this->has($path)) {
+			return null;
 		}
-		if ($instance instanceof After) {
-			$instance = [$instance, 'onHandler'];
+		$callback = $this->_Scan_directory[$path];
+		if (!isset($this->params[$path])) {
+			return $callback(...$params);
 		}
-		return $instance;
+		return $callback(...$this->params[$path]);
+	}
+
+
+	/**
+	 * @param $name
+	 * @param $callback
+	 * @param array $params
+	 */
+	public function push($name, $callback, $params = [])
+	{
+		$this->_Scan_directory[$name] = $callback;
+		if (!empty($params)) {
+			$this->params[$name] = $params;
+		}
+	}
+
+
+	/**
+	 * @param $name
+	 * @return array|null[]
+	 */
+	public function pop($name)
+	{
+		if (isset($this->_Scan_directory[$name])) {
+			return [$this->_Scan_directory[$name], $this->params[$name] ?? []];
+		}
+		return [null, null];
+	}
+
+
+	/**
+	 * @param $path
+	 * @return bool|mixed
+	 */
+	public function has($path)
+	{
+		return isset($this->_Scan_directory[$path]);
+	}
+
+
+	/**
+	 * @param $name
+	 * @return mixed|null
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+	public function __get($name)
+	{
+		if (!isset($this->_classMap[$name])) {
+			return parent::__get($name); // TODO: Change the autogenerated stub
+		}
+		if (!is_object($this->_classMap[$name])) {
+			$this->_classMap[$name] = Snowflake::createObject($this->_classMap[$name]);
+		}
+		return $this->_classMap[$name];
+	}
+
+	/**
+	 * @param ReflectionClass $reflect
+	 * @return array
+	 */
+	protected function getPrivates(ReflectionClass $reflect)
+	{
+		$arrays = [];
+		$properties = $reflect->getProperties(ReflectionMethod::IS_PRIVATE);
+		foreach ($properties as $property) {
+			$arrays[] = $property->getName();
+		}
+		return $arrays;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @return string[]
+	 * @throws ReflectionException
+	 */
+	public function getAnnotation(string $class)
+	{
+		$reflect = Snowflake::getDi()->getReflect($class);
+
+		return $this->getPrivates($reflect);
 	}
 
 
