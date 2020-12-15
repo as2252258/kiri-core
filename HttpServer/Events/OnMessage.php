@@ -7,8 +7,6 @@ namespace HttpServer\Events;
 use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Http\Request;
-use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
