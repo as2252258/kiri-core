@@ -207,10 +207,6 @@ class Server extends Application
 			return;
 		}
 
-//		$attributes = Snowflake::app()->getAttributes();
-//		$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
-//		$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
-
 		$processes = Config::get('processes');
 		if (!empty($processes) && is_array($processes)) {
 			$this->deliveryProcess(merge($processes, $this->process));

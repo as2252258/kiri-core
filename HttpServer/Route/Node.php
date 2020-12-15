@@ -198,21 +198,15 @@ class Node extends Application
 	 * @return null|array
 	 * @throws Exception
 	 */
-	private function getReflect(string $controller, string $action)
+	private function getReflect(string $controller, string $action): ?array
 	{
 		try {
 			$reflect = Snowflake::getDi()->getReflect($controller);
 			if (!$reflect->isInstantiable()) {
 				throw new Exception($controller . ' Class is con\'t Instantiable.');
 			}
-
 			if (!empty($action) && !$reflect->hasMethod($action)) {
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
-			}
-
-			$annotation = Snowflake::app()->annotation->http;
-			if (!empty($annotations = $annotation->getAnnotation(Http::class))) {
-				$annotation->read($this, $reflect, $action, $annotations);
 			}
 			return [$reflect->newInstance(), $action];
 		} catch (\Throwable $exception) {

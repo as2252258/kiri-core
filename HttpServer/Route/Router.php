@@ -588,16 +588,6 @@ class Router extends Application implements RouterInterface
 	 */
 	public function loadRouterSetting()
 	{
-		$prefix = APP_PATH . 'app/Http/';
-
-		/** @var Http $annotation */
-		$annotation = Snowflake::app()->annotation;
-
-		$annotation = $annotation->http;
-		$annotation->registration_notes($prefix . 'Interceptor', 'App\Http\Interceptor');
-		$annotation->registration_notes($prefix . 'Limits', 'App\Http\Limits');
-		$annotation->registration_notes($prefix . 'Middleware', 'App\Http\Middleware');
-
 		$this->loadRouteDir(APP_PATH . '/routes');
 	}
 

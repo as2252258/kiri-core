@@ -67,35 +67,4 @@ class OnClose extends Callback
 			$logger->insert();
 		}
 	}
-
-
-	/**
-	 * @param $server
-	 * @param $fd
-	 * @return array|null
-	 * @throws Exception
-	 */
-	public function resolve($server, $fd): ?array
-	{
-		if ($server instanceof WServer) {
-			if (!$server->isEstablished($fd)) {
-				return [null, null];
-			}
-			$router = Snowflake::app()->getRouter();
-			$node = $router->search(Socket::HANDSHAKE . '::' . null, 'sw::socket');
-			if ($node === null) {
-				return [null, null];
-			}
-			return $node->dispatch();
-		} else if ($server instanceof HServer) {
-			$manager = Snowflake::app()->annotation->http;
-			$name = $manager->getName(Http::CLOSE);
-		} else {
-			$manager = Snowflake::app()->annotation->tcp;
-			$name = $manager->getName(Tcp::CLOSE);
-		}
-		return [$manager, $name];
-	}
-
-
 }
