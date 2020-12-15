@@ -10,6 +10,7 @@ use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
 use HttpServer\Route\Annotation\Http;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
@@ -80,7 +81,7 @@ class Node extends Application
 	/**
 	 * @return bool
 	 */
-	public function hasInterceptor()
+	#[Pure] public function hasInterceptor(): bool
 	{
 		return count($this->_interceptors) > 0;
 	}
@@ -89,7 +90,7 @@ class Node extends Application
 	/**
 	 * @return bool
 	 */
-	public function hasLimits()
+	#[Pure] public function hasLimits(): bool
 	{
 		return count($this->_limits) > 0;
 	}
@@ -99,7 +100,7 @@ class Node extends Application
 	 * @param $response
 	 * @return mixed|null
 	 */
-	public function afterDispatch($response = null)
+	public function afterDispatch($response = null): mixed
 	{
 		return Coroutine::create(function ($request, $response) {
 			(Reduce::after($this->_after))($request, $response);
@@ -110,7 +111,7 @@ class Node extends Application
 	/**
 	 * @return array
 	 */
-	public function getInterceptor()
+	public function getInterceptor(): array
 	{
 		return $this->_interceptors;
 	}
@@ -119,7 +120,7 @@ class Node extends Application
 	/**
 	 * @return array
 	 */
-	public function getAfters()
+	public function getAfters(): array
 	{
 		return $this->_after;
 	}
@@ -128,7 +129,7 @@ class Node extends Application
 	/**
 	 * @return bool
 	 */
-	public function hasAfter()
+	#[Pure] public function hasAfter(): bool
 	{
 		return count($this->_after) > 0;
 	}
@@ -137,7 +138,7 @@ class Node extends Application
 	/**
 	 * @return array
 	 */
-	public function getLimits()
+	public function getLimits(): array
 	{
 		return $this->_limits;
 	}
@@ -146,7 +147,7 @@ class Node extends Application
 	 * @param $request
 	 * @return bool
 	 */
-	public function methodAllow(Request $request)
+	public function methodAllow(Request $request): bool
 	{
 		if ($this->method == $request->getMethod()) {
 			return true;
@@ -158,7 +159,7 @@ class Node extends Application
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function checkSuffix()
+	public function checkSuffix(): bool
 	{
 		if ($this->enableHtmlSuffix) {
 			$url = request()->getUri();
@@ -174,7 +175,7 @@ class Node extends Application
 	 * @return bool
 	 * @throws Exception
 	 */
-	private function checkRule()
+	private function checkRule(): bool
 	{
 		if (empty($this->rules)) {
 			return true;

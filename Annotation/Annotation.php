@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use HttpServer\Route\Middleware;
+use JetBrains\PhpStorm\Pure;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
