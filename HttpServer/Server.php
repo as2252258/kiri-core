@@ -442,9 +442,7 @@ class Server extends Application
 
 			$aliases = $attributes->getAlias('controllers');
 			foreach ($aliases as $alias) {
-				if (empty($alias)) {
-					continue;
-				}
+
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
@@ -468,9 +466,7 @@ class Server extends Application
 
 			$aliases = $attributes->getAlias('sockets');
 			foreach ($aliases as $alias) {
-				if (empty($alias)) {
-					continue;
-				}
+
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
