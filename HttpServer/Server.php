@@ -202,10 +202,6 @@ class Server extends Application
 	 */
 	public function onProcessListener(): void
 	{
-		$attributes = Snowflake::app()->getAttributes();
-		$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
-		$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
-
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			return;
 		}
