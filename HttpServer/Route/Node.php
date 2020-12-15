@@ -223,7 +223,12 @@ class Node extends Application
 	 */
 	public function addInterceptor(Closure|string|array $handler)
 	{
-		$this->_interceptors[] = $handler;
+		if (!is_array($handler) || is_object($handler[0])) {
+			$handler = [$handler];
+		}
+		foreach ($handler as $closure) {
+			$this->_interceptors[] = $closure;
+		}
 		$this->restructure();
 	}
 
@@ -234,7 +239,12 @@ class Node extends Application
 	 */
 	public function addAfter(Closure|string|array $handler)
 	{
-		$this->_after[] = $handler;
+		if (!is_array($handler) || is_object($handler[0])) {
+			$handler = [$handler];
+		}
+		foreach ($handler as $closure) {
+			$this->_after[] = $closure;
+		}
 		$this->restructure();
 	}
 
@@ -245,7 +255,12 @@ class Node extends Application
 	 */
 	public function addLimits(Closure|string|array $handler)
 	{
-		$this->_limits[] = $handler;
+		if (!is_array($handler) || is_object($handler[0])) {
+			$handler = [$handler];
+		}
+		foreach ($handler as $closure) {
+			$this->_limits[] = $closure;
+		}
 		$this->restructure();
 	}
 
@@ -254,7 +269,7 @@ class Node extends Application
 	 * @return string
 	 * 错误信息
 	 */
-	public function getError()
+	public function getError(): string
 	{
 		return $this->_error;
 	}
@@ -264,7 +279,7 @@ class Node extends Application
 	 * @param string $field
 	 * @return Node
 	 */
-	public function addChild(Node $node, string $field)
+	public function addChild(Node $node, string $field): Node
 	{
 		/** @var Node $oLod */
 		$oLod = $this->childes[$field] ?? null;
@@ -279,7 +294,7 @@ class Node extends Application
 	 * @param $rule
 	 * @return $this
 	 */
-	public function filter($rule)
+	public function filter($rule): static
 	{
 		if (empty($rule)) {
 			return $this;
@@ -298,9 +313,9 @@ class Node extends Application
 
 	/**
 	 * @param string $search
-	 * @return Node|mixed
+	 * @return Node|null
 	 */
-	public function findNode(string $search)
+	public function findNode(string $search): ?Node
 	{
 		if (empty($this->childes)) {
 			return null;
@@ -326,7 +341,7 @@ class Node extends Application
 	 * @return $this
 	 * 别称
 	 */
-	public function alias(string $alias)
+	public function alias(string $alias): static
 	{
 		$this->_alias = $alias;
 		return $this;
@@ -336,7 +351,7 @@ class Node extends Application
 	/**
 	 * @return string
 	 */
-	public function getAlias()
+	public function getAlias(): string
 	{
 		return $this->_alias;
 	}
@@ -349,7 +364,7 @@ class Node extends Application
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function limits(int $limit, int $duration = 60, bool $isBindConsumer = false)
+	public function limits(int $limit, int $duration = 60, bool $isBindConsumer = false): static
 	{
 		$limits = Snowflake::app()->getLimits();
 		$limits->addLimits($this->path, $limit, $duration, $isBindConsumer);
