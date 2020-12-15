@@ -45,9 +45,9 @@ class Dispatch
 	 * @return mixed
 	 * 执行函数
 	 */
-	public function dispatch()
+	public function dispatch(): mixed
 	{
-		return call_user_func($this->handler, $this->request);
+		return call_user_func($this->handler, ...$this->request);
 	}
 
 

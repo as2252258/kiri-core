@@ -409,6 +409,7 @@ class Node extends Application
 		if (empty($this->handler)) {
 			return $this;
 		}
+		/** @var Middleware $made */
 		$made = Snowflake::createObject(Middleware::class);
 		$made->setMiddleWares($this->middleware);
 		$made->getGenerate($this);

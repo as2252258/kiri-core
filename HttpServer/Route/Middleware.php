@@ -51,8 +51,8 @@ class Middleware
 	 */
 	public function getGenerate(Node $node): mixed
 	{
-		return $node->callback = Reduce::reduce(function ($passable) use ($node) {
-			return Dispatch::create($node->handler, $passable)->dispatch();
+		return $node->callback = Reduce::reduce(function () use ($node) {
+			return Dispatch::create($node->handler, func_get_args())->dispatch();
 		}, $this->annotation($node));
 	}
 
