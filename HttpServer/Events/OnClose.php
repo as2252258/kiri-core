@@ -4,11 +4,13 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Annotation\Route\Socket;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Annotation\Http;
 use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Route\Annotation\Websocket;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
+use HttpServer\Route\Node;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -47,14 +49,17 @@ class OnClose extends Callback
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	private function execute(Server $server, int $fd)
+	private function execute(Server $server, int $fd): void
 	{
 		try {
-			[$manager, $name] = $this->resolve($server, $fd);
-			if (empty($manager) || !$manager->has($name)) {
+			$router = Snowflake::app()->getRouter();
+			if (!($server instanceof WServer) || !$server->isEstablished($fd)) {
 				return;
 			}
-			$manager->runWith($name, [$fd]);
+			$node = $router->search(Socket::CLOSE . '::event', 'sw:socket');
+			if ($node instanceof Node) {
+				$node->dispatch();
+			}
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 		} finally {
@@ -70,14 +75,18 @@ class OnClose extends Callback
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function resolve($server, $fd)
+	public function resolve($server, $fd): ?array
 	{
 		if ($server instanceof WServer) {
 			if (!$server->isEstablished($fd)) {
 				return [null, null];
 			}
-			$manager = Snowflake::app()->annotation->websocket;
-			$name = $manager->getName(AWebsocket::CLOSE);
+			$router = Snowflake::app()->getRouter();
+			$node = $router->search(Socket::HANDSHAKE . '::' . null, 'sw:socket');
+			if ($node === null) {
+				return [null, null];
+			}
+			return $node->dispatch();
 		} else if ($server instanceof HServer) {
 			$manager = Snowflake::app()->annotation->http;
 			$name = $manager->getName(Http::CLOSE);

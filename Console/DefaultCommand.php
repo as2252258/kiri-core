@@ -16,7 +16,11 @@ class DefaultCommand extends Command
 
 	public string $description = 'help';
 
-	public function onHandler(Input $dtl)
+	/**
+	 * @param Input $dtl
+	 * @return string
+	 */
+	public function onHandler(Input $dtl): string
 	{
 		$param = $dtl->get('commandList');
 

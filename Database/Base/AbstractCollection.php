@@ -6,14 +6,15 @@
  * Time: 9:44
  */
 declare(strict_types=1);
+
 namespace Database\Base;
 
 
 use ArrayIterator;
 use Database\ActiveQuery;
-use Exception;
 use Snowflake\Abstracts\Component;
 use Database\ActiveRecord;
+use Snowflake\Exception\NotFindClassException;
 use Traversable;
 
 /**
@@ -52,7 +53,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/**
 	 * @return int
 	 */
-	public function getLength()
+	public function getLength(): int
 	{
 		return count($this->_item);
 	}
@@ -84,10 +85,11 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	}
 
 	/**
-	 * @return ArrayIterator|Traversable
-	 * @throws Exception
+	 * @return Traversable|CollectionIterator|ArrayIterator
+	 * @throws \ReflectionException
+	 * @throws NotFindClassException
 	 */
-	public function getIterator()
+	public function getIterator(): Traversable|CollectionIterator|ArrayIterator
 	{
 		return new CollectionIterator($this->model, $this->query, $this->_item);
 	}
@@ -96,16 +98,16 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 * @param mixed $offset
 	 * @return bool
 	 */
-	public function offsetExists($offset)
+	public function offsetExists(mixed $offset): bool
 	{
 		return !empty($this->_item) && isset($this->_item[$offset]);
 	}
 
 	/**
 	 * @param mixed $offset
-	 * @return mixed|null|ActiveRecord
+	 * @return ActiveRecord|null
 	 */
-	public function offsetGet($offset)
+	public function offsetGet(mixed $offset): ?ActiveRecord
 	{
 		if (!$this->offsetExists($offset)) {
 			return NULL;
@@ -123,7 +125,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 * @param mixed $offset
 	 * @param mixed $value
 	 */
-	public function offsetSet($offset, $value)
+	public function offsetSet(mixed $offset, mixed $value)
 	{
 		$this->_item[$offset] = $value;
 	}
@@ -132,7 +134,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/**
 	 * @param mixed $offset
 	 */
-	public function offsetUnset($offset)
+	public function offsetUnset(mixed $offset)
 	{
 		if ($this->offsetExists($offset)) {
 			unset($this->_item[$offset]);

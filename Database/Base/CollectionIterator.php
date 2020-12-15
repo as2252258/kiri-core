@@ -6,6 +6,7 @@ namespace Database\Base;
 
 use Database\ActiveQuery;
 use Database\ActiveRecord;
+use Exception;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -48,8 +49,9 @@ class CollectionIterator extends \ArrayIterator
 	/**
 	 * @param $current
 	 * @return ActiveRecord
+	 * @throws Exception
 	 */
-	protected function newModel($current)
+	protected function newModel($current): ActiveRecord
 	{
 		return (clone $this->model)->setAttributes($current);
 
@@ -57,9 +59,10 @@ class CollectionIterator extends \ArrayIterator
 
 
 	/**
-	 * @return ActiveRecord|mixed
+	 * @return mixed
+	 * @throws Exception
 	 */
-	public function current()
+	public function current(): mixed
 	{
 		$current = parent::current();
 		if (!($current instanceof ActiveRecord)) {

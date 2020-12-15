@@ -3,6 +3,7 @@
 
 namespace HttpServer;
 
+use Annotation\IAnnotation;
 use HttpServer\Events\OnClose;
 use HttpServer\Events\OnConnect;
 use HttpServer\Events\OnPacket;
@@ -57,7 +58,7 @@ class Server extends Application
 
 
 	/** @var Http|Websocket|Packet|Receive */
-	private $baseServer;
+	private Packet|Websocket|Receive|Http $baseServer;
 
 	public int $daemon = 0;
 
@@ -83,7 +84,7 @@ class Server extends Application
 	 * @return Http|Packet|Receive|Websocket
 	 * @throws Exception
 	 */
-	public function initCore(array $configs)
+	public function initCore(array $configs): Packet|Websocket|Receive|Http
 	{
 		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
 
@@ -95,10 +96,10 @@ class Server extends Application
 
 	/**
 	 * @param $configs
-	 * @return null
+	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws Exception
 	 */
-	private function orders($configs)
+	private function orders($configs): Packet|Websocket|Receive|Http|null
 	{
 		$servers = $this->sortServers($configs);
 		foreach ($servers as $server) {
@@ -133,14 +134,16 @@ class Server extends Application
 	/**
 	 * @param $host
 	 * @param $Port
+	 * @return Http|Packet|Receive|Websocket
 	 * @throws Exception
 	 */
-	public function error_stop($host, $Port)
+	public function error_stop($host, $Port): Packet|Websocket|Receive|Http
 	{
 		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
 		if ($this->baseServer) {
 			$this->baseServer->shutdown();
 		}
+		return $this->baseServer;
 	}
 
 
@@ -148,7 +151,7 @@ class Server extends Application
 	 * @return bool
 	 * @throws ConfigException
 	 */
-	public function isRunner()
+	public function isRunner(): bool
 	{
 		$port = $this->sortServers(Config::get('servers'));
 		if (empty($port)) {
@@ -200,16 +203,17 @@ class Server extends Application
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function onProcessListener()
+	public function onProcessListener(): void
 	{
 		if (!($this->baseServer instanceof \Swoole\Server)) {
-			return false;
+			return;
 		}
 		$processes = Config::get('processes');
 		if (!empty($processes) && is_array($processes)) {
-			return $this->deliveryProcess(merge($processes, $this->process));
+			$this->deliveryProcess(merge($processes, $this->process));
+		} else {
+			$this->deliveryProcess($this->process);
 		}
-		return $this->deliveryProcess($this->process);
 	}
 
 
@@ -243,7 +247,7 @@ class Server extends Application
 	 * @param $daemon
 	 * @return Server
 	 */
-	public function setDaemon($daemon)
+	public function setDaemon($daemon): static
 	{
 		if (!in_array($daemon, [0, 1])) {
 			return $this;
@@ -256,7 +260,7 @@ class Server extends Application
 	/**
 	 * @return Http|Websocket|Packet|Receive
 	 */
-	public function getServer()
+	public function getServer(): Packet|Websocket|Receive|Http
 	{
 		return $this->baseServer;
 	}
@@ -267,7 +271,7 @@ class Server extends Application
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function create($config)
+	private function create($config): mixed
 	{
 		$settings = Config::get('settings', false, []);
 		if (!isset($this->server[$config['type']])) {
@@ -299,10 +303,10 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $settings
-	 * @return mixed
+	 * @return \Swoole\Server|Packet|Receive|Http|Websocket
 	 * @throws Exception
 	 */
-	private function dispatchCreate($config, $settings)
+	private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket
 	{
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			$this->parseServer($config, $settings);
@@ -323,10 +327,10 @@ class Server extends Application
 	/**
 	 * @param $config
 	 * @param $settings
-	 * @return void
+	 * @return Packet|Websocket|Receive|Http
 	 * @throws Exception
 	 */
-	private function parseServer($config, $settings)
+	private function parseServer($config, $settings): Packet|Websocket|Receive|Http
 	{
 		$class = $this->dispatch($config['type']);
 		if ($this->isUse($config['port'])) {
@@ -342,7 +346,7 @@ class Server extends Application
 		} else if ($this->baseServer instanceof Http) {
 			$this->onLoadHttpHandler();
 		}
-		$this->baseServer->set($settings);
+		return $this->baseServer->set($settings);
 	}
 
 
@@ -427,6 +431,19 @@ class Server extends Application
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$router = Snowflake::app()->getRouter();
 			$router->loadRouterSetting();
+
+			$attributes = Snowflake::app()->getAttributes();
+			$attributes->readControllers(CONTROLLER_PATH, 'controllers');
+
+			$aliases = $attributes->getAlias('controllers');
+			foreach ($aliases as $alias) {
+				$handler = $alias['handler'];
+				foreach ($alias['attributes'] as $key => $attribute) {
+					if ($attribute instanceof IAnnotation) {
+						$attribute->setHandler($handler);
+					}
+				}
+			}
 		});
 	}
 
@@ -438,8 +455,18 @@ class Server extends Application
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
-			$websocket = Snowflake::app()->annotation->websocket;
-			$websocket->registration_notes(APP_PATH . 'app/Websocket', 'App\\Websocket');
+			$attributes = Snowflake::app()->getAttributes();
+			$attributes->readControllers(SOCKET_PATH, 'sockets');
+
+			$aliases = $attributes->getAlias('sockets');
+			foreach ($aliases as $alias) {
+				$handler = $alias['handler'];
+				foreach ($alias['attributes'] as $key => $attribute) {
+					if ($attribute instanceof IAnnotation) {
+						$attribute->setHandler($handler);
+					}
+				}
+			}
 		});
 	}
 
@@ -448,7 +475,7 @@ class Server extends Application
 	 * @param $type
 	 * @return string
 	 */
-	private function dispatch($type)
+	private function dispatch($type): string
 	{
 		$default = [
 			self::HTTP      => Http::class,
@@ -463,7 +490,7 @@ class Server extends Application
 	 * @param $servers
 	 * @return array
 	 */
-	private function sortServers($servers)
+	private function sortServers($servers): array
 	{
 		$array = [];
 		foreach ($servers as $server) {

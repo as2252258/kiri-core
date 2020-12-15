@@ -7,6 +7,7 @@ namespace Snowflake;
 
 use Exception;
 use HttpServer\IInterface\Task;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
@@ -21,6 +22,8 @@ use Swoole\WebSocket\Server;
 defined('DB_ERROR_BUSY') or define('DB_ERROR', 'The database is busy. Please try again later.');
 defined('SELECT_IS_NULL') or define('SELECT_IS_NULL', 'Query data does not exist, please check the relevant conditions.');
 defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be empty, please add.');
+defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/Controllers/');
+defined('SOCKET_PATH') or define('SOCKET_PATH', APP_PATH . 'app/Websocket/');
 
 class Snowflake
 {
@@ -46,16 +49,16 @@ class Snowflake
 	/**
 	 * @return mixed
 	 */
-	public static function app()
+	public static function app(): Application
 	{
 		return static::$service;
 	}
 
 	/**
 	 * @param $name
-	 * @return mixed
+	 * @return bool
 	 */
-	public static function has($name)
+	public static function has($name): bool
 	{
 		return static::$service->has($name);
 	}
@@ -67,7 +70,7 @@ class Snowflake
 	 */
 	public static function setAlias($className, $id)
 	{
-		return static::$service->setAlias($className, $id);
+		static::$service->setAlias($className, $id);
 	}
 
 
@@ -79,7 +82,7 @@ class Snowflake
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function createObject($className, $construct = [])
+	public static function createObject($className, $construct = []): mixed
 	{
 		if (is_string($className)) {
 			return static::$container->get($className, $construct);
@@ -101,7 +104,7 @@ class Snowflake
 	 * @return string
 	 * @throws Exception
 	 */
-	public static function getStoragePath()
+	public static function getStoragePath(): string
 	{
 		$default = APP_PATH . 'storage' . DIRECTORY_SEPARATOR;
 		$path = Config::get('storage', false, $default);
@@ -115,7 +118,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function inCoroutine()
+	public static function inCoroutine(): bool
 	{
 		return Coroutine::getCid() > 0;
 	}
@@ -124,7 +127,7 @@ class Snowflake
 	/**
 	 * @return Container
 	 */
-	public static function getDi()
+	public static function getDi(): Container
 	{
 		return static::$container;
 	}
@@ -135,7 +138,7 @@ class Snowflake
 	 * @return false|int|mixed
 	 * @throws Exception
 	 */
-	public static function setProcessId($workerId)
+	public static function setProcessId($workerId): mixed
 	{
 		return self::writeFile(storage('socket.sock'), $workerId);
 	}
@@ -146,7 +149,7 @@ class Snowflake
 	 * @return false|int|mixed
 	 * @throws Exception
 	 */
-	public static function setWorkerId($workerId)
+	public static function setWorkerId($workerId): mixed
 	{
 		if (empty($workerId)) {
 			return $workerId;
@@ -171,9 +174,9 @@ class Snowflake
 	 * @param $fileName
 	 * @param $content
 	 * @param null $is_append
-	 * @return false|int|mixed
+	 * @return mixed
 	 */
-	public static function writeFile($fileName, $content, $is_append = null)
+	public static function writeFile($fileName, $content, $is_append = null): mixed
 	{
 		$params = [$fileName, (string)$content];
 		if ($is_append !== null) {
@@ -188,7 +191,7 @@ class Snowflake
 	 * @param $config
 	 * @return mixed
 	 */
-	public static function configure($object, $config)
+	public static function configure($object, $config): mixed
 	{
 		foreach ($config as $key => $value) {
 			if (!property_exists($object, $key)) {
@@ -214,7 +217,7 @@ class Snowflake
 	 * @return Server|null
 	 * @throws
 	 */
-	public static function getWebSocket()
+	#[Pure] public static function getWebSocket(): ?Server
 	{
 		$server = static::app()->server->getServer();
 		if (!($server instanceof Server)) {
@@ -228,7 +231,7 @@ class Snowflake
 	 * @return false|string
 	 * @throws Exception
 	 */
-	public static function getMasterPid()
+	public static function getMasterPid(): bool|string
 	{
 		$default = APP_PATH . 'storage/server.pid';
 		$server = Config::get('settings.pid_file', false, $default);
@@ -239,10 +242,10 @@ class Snowflake
 	/**
 	 * @param int $fd
 	 * @param $data
-	 * @return false|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function push(int $fd, $data)
+	public static function push(int $fd, $data): mixed
 	{
 		$server = static::getWebSocket();
 		if (empty($server)) {
@@ -281,9 +284,8 @@ class Snowflake
 
 	/**
 	 * @param $process
-	 * @return mixed|void
 	 */
-	public static function shutdown($process)
+	public static function shutdown($process): void
 	{
 		static::app()->server->getServer()->shutdown();
 		if ($process instanceof Process) {
@@ -296,7 +298,7 @@ class Snowflake
 	 * @param $tmp
 	 * @return string
 	 */
-	public static function rename($tmp)
+	public static function rename($tmp): string
 	{
 		$hash = md5_file($tmp['tmp_name']);
 
@@ -315,9 +317,9 @@ class Snowflake
 	public static function isMac()
 	{
 		$output = strtolower(PHP_OS | PHP_OS_FAMILY);
-		if (strpos('mac', $output) !== false) {
+		if (str_contains('mac', $output)) {
 			return true;
-		} else if (strpos('darwin', $output) !== false) {
+		} else if (str_contains('darwin', $output)) {
 			return true;
 		} else {
 			return false;
@@ -327,7 +329,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isLinux()
+	public static function isLinux(): bool
 	{
 		if (!static::isMac()) {
 			return true;
@@ -340,7 +342,7 @@ class Snowflake
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function reload()
+	public static function reload(): mixed
 	{
 		return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
 	}

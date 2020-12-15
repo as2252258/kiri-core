@@ -4,6 +4,7 @@
 namespace Annotation\Route;
 
 
+use Annotation\IAnnotation;
 use Closure;
 use Exception;
 use HttpServer\Route\Node;
@@ -17,7 +18,7 @@ use Snowflake\Snowflake;
  * Class Socket
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Socket
+#[\Attribute(\Attribute::TARGET_METHOD)] class Socket implements IAnnotation
 {
 
 	const CLOSE = 'CLOSE';
@@ -38,7 +39,7 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(
 		public string $event,
-		public ?string $uri,
+		public ?string $uri = null,
 		public ?array $middleware = null,
 		public ?array $interceptor = null,
 		public ?array $limits = null,
@@ -50,18 +51,17 @@ use Snowflake\Snowflake;
 
 	/**
 	 * @param array|Closure $handler
-	 * @param array $attributes
 	 * @return Node|null
 	 * @throws ComponentException
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function setHandler(array|Closure $handler, array $attributes): ?Node
+	public function setHandler(array|Closure $handler): ?Node
 	{
 		$router = Snowflake::app()->getRouter();
 		// TODO: Implement setHandler() method.
 
-		$method = $this->event . '::' . ($this->uri ?? 'event');
+		$method = $this->event . '::' . (empty($this->uri) ? 'event' : $this->uri);
 		$node = $router->addRoute($method, $handler, 'sw::socket');
 
 		return $this->add($node);

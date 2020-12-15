@@ -8,8 +8,6 @@ use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Input;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Channel;
 
 /**
  * Class AbstractConsole
@@ -46,7 +44,7 @@ abstract class AbstractConsole extends Component
 	 * @param Input $input
 	 * @return $this
 	 */
-	public function setParameters(Input $input)
+	public function setParameters(Input $input): static
 	{
 		$this->parameters = $input;
 		return $this;
@@ -56,7 +54,7 @@ abstract class AbstractConsole extends Component
 	 * @param Command $command
 	 * @return mixed
 	 */
-	public function execCommand(Command $command)
+	public function execCommand(Command $command): mixed
 	{
 		return $command->onHandler($this->parameters);
 	}
@@ -64,7 +62,7 @@ abstract class AbstractConsole extends Component
 	/**
 	 * @return Command|null
 	 */
-	public function search()
+	public function search(): ?Command
 	{
 		$name = $this->parameters->getCommandName();
 		$this->parameters->set('commandList', $this->getCommandList());
@@ -132,7 +130,7 @@ abstract class AbstractConsole extends Component
 	/**
 	 * @return array
 	 */
-	private function getCommandList()
+	private function getCommandList(): array
 	{
 		$_tmp = [];
 		foreach ($this->commands as $command) {

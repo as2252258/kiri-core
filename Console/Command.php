@@ -19,7 +19,7 @@ abstract class Command extends BaseObject implements CommandInterface
 	 * @return string
 	 * 返回执行的命令名称
 	 */
-	public function getName()
+	public function getName(): string
 	{
 		return $this->command;
 	}
@@ -30,7 +30,7 @@ abstract class Command extends BaseObject implements CommandInterface
 	 *
 	 * 返回命令描述
 	 */
-	public function getDescription()
+	public function getDescription(): string
 	{
 		return $this->description;
 	}

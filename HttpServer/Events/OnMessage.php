@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Http\Request;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -28,16 +30,14 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
-			if ($frame->opcode == 0x08) {
-				return;
+			if ($frame->opcode != 0x08) {
+				$event = Snowflake::app()->getEvent();
+				Coroutine::defer(function () use ($event) {
+					$event->trigger(Event::EVENT_AFTER_REQUEST);
+				});
+				$content = $this->resolve($event, $frame, $server);
+				$server->send($frame->fd, $content);
 			}
-			$event = Snowflake::app()->getEvent();
-			Coroutine::defer(function () use ($event) {
-				$event->trigger(Event::EVENT_AFTER_REQUEST);
-			});
-			$this->resolve($event, $frame, $server);
-			$manager = Snowflake::app()->getAnnotation()->websocket;
-			$manager->runWith($this->name($manager, $frame), [$frame, $server]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
@@ -50,30 +50,25 @@ class OnMessage extends Callback
 	 * @param $event
 	 * @param $frame
 	 * @param $server
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function resolve($event, $frame, $server)
+	private function resolve($event, $frame, $server): mixed
 	{
 		if ($event->exists(Event::SERVER_MESSAGE)) {
 			$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
 		} else {
 			$frame->data = json_decode($frame->data, true);
 		}
-		if (!isset($frame->data['route'])) {
+		if (empty($route = $frame->data['route'] ?? null)) {
 			throw new Exception('Format error.');
 		}
+		$router = Snowflake::app()->getRouter();
+		$node = $router->search(Socket::MESSAGE . '::' . $route, 'sw:socket');
+		if ($node === null) {
+			throw new Exception('Page not found.');
+		}
+		return $node->dispatch();
 	}
-
-
-	/**
-	 * @param $manager
-	 * @param $frame
-	 * @return mixed
-	 */
-	private function name($manager, $frame)
-	{
-		return $manager->getName(AWebsocket::MESSAGE, [null, null, $frame->data['route']]);
-	}
-
 
 }

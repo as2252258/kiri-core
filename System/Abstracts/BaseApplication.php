@@ -11,17 +11,15 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
-use HttpServer\Client\Client;
-use HttpServer\Client\HttpClient;
-use HttpServer\Client\Curl;
 use HttpServer\Client\Http2;
-use HttpServer\Client\IClient;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use HttpServer\Server;
+use JetBrains\PhpStorm\Pure;
 use Kafka\Producer;
 use Snowflake\Annotation\Annotation;
+use Annotation\Annotation as SAnnotation;
 use Snowflake\Cache\Memcached;
 use Snowflake\Cache\Redis;
 use Snowflake\Di\Service;
@@ -51,6 +49,7 @@ use Database\DatabasesProviders;
  * @property Memcached $memcached
  * @property Logger $logger
  * @property Jwt $jwt
+ * @property SAnnotation $attributes
  * @property Http2 $http2
  * @property BaseGoto $goto
  * @property Producer $kafka
@@ -82,14 +81,14 @@ abstract class BaseApplication extends Service
 		$this->initErrorHandler();
 		$this->enableEnvConfig();
 
-		Component::__construct($config);
+		parent::__construct($config);
 	}
 
 
 	/**
-	 * @return mixed
+	 * @return array
 	 */
-	public function enableEnvConfig()
+	public function enableEnvConfig(): array
 	{
 		if (!file_exists($this->envPath)) {
 			return [];
@@ -112,7 +111,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return array
 	 */
-	protected function readLinesFromFile(string $filePath)
+	protected function readLinesFromFile(string $filePath): array
 	{
 		// Read file into an array of lines with auto-detected line endings
 		$autodetect = ini_get('auto_detect_line_endings');
@@ -130,7 +129,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return bool
 	 */
-	protected function isComment(string $line)
+	protected function isComment(string $line): bool
 	{
 		$line = ltrim($line);
 
@@ -144,9 +143,9 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return bool
 	 */
-	protected function looksLikeSetter(string $line)
+	#[Pure] protected function looksLikeSetter(string $line): bool
 	{
-		return strpos($line, '=') !== false;
+		return str_contains($line, '=');
 	}
 
 
@@ -161,7 +160,7 @@ abstract class BaseApplication extends Service
 			Config::set($key, $value);
 		}
 		if ($storage = Config::get('storage', false, 'storage')) {
-			if (strpos($storage, APP_PATH) === false) {
+			if (!str_contains($storage, APP_PATH)) {
 				$storage = APP_PATH . $storage . '/';
 			}
 			if (!is_dir($storage)) {
@@ -204,7 +203,7 @@ abstract class BaseApplication extends Service
 	 * @return mixed
 	 * @throws ComponentException
 	 */
-	public function clone($name)
+	public function clone($name): mixed
 	{
 		return clone $this->get($name);
 	}
@@ -221,7 +220,7 @@ abstract class BaseApplication extends Service
 	/**
 	 * @return mixed
 	 */
-	public function getLocalIps()
+	public function getLocalIps(): mixed
 	{
 		return swoole_get_local_ip();
 	}
@@ -229,7 +228,7 @@ abstract class BaseApplication extends Service
 	/**
 	 * @return mixed
 	 */
-	public function getFirstLocal()
+	public function getFirstLocal(): mixed
 	{
 		return current($this->getLocalIps());
 	}
@@ -249,7 +248,7 @@ abstract class BaseApplication extends Service
 	 * @return Producer
 	 * @throws ComponentException
 	 */
-	public function getKafka()
+	public function getKafka(): Producer
 	{
 		return $this->get('kafka');
 	}
@@ -259,7 +258,7 @@ abstract class BaseApplication extends Service
 	 * @return \Redis|Redis
 	 * @throws ComponentException
 	 */
-	public function getRedis()
+	public function getRedis(): Redis|\Redis
 	{
 		return $this->get('redis');
 	}
@@ -268,7 +267,7 @@ abstract class BaseApplication extends Service
 	 * @param $ip
 	 * @return bool
 	 */
-	public function isLocal($ip)
+	public function isLocal($ip): bool
 	{
 		return $this->getFirstLocal() == $ip;
 	}
@@ -278,7 +277,7 @@ abstract class BaseApplication extends Service
 	 * @return ErrorHandler
 	 * @throws ComponentException
 	 */
-	public function getError()
+	public function getError(): ErrorHandler
 	{
 		return $this->get('error');
 	}
@@ -288,7 +287,7 @@ abstract class BaseApplication extends Service
 	 * @return Annotation
 	 * @throws ComponentException
 	 */
-	public function getAnnotation()
+	public function getAnnotation(): Annotation
 	{
 		return $this->get('annotation');
 	}
@@ -298,7 +297,7 @@ abstract class BaseApplication extends Service
 	 * @return Connection
 	 * @throws ComponentException
 	 */
-	public function getConnections()
+	public function getConnections(): Connection
 	{
 		return $this->get('connections');
 	}
@@ -308,7 +307,7 @@ abstract class BaseApplication extends Service
 	 * @return Pool
 	 * @throws ComponentException
 	 */
-	public function getPool()
+	public function getPool(): Pool
 	{
 		return $this->get('pool');
 	}
@@ -317,7 +316,7 @@ abstract class BaseApplication extends Service
 	 * @return Response
 	 * @throws ComponentException
 	 */
-	public function getResponse()
+	public function getResponse(): Response
 	{
 		return $this->get('response');
 	}
@@ -326,7 +325,7 @@ abstract class BaseApplication extends Service
 	 * @return Request
 	 * @throws ComponentException
 	 */
-	public function getRequest()
+	public function getRequest(): Request
 	{
 		return $this->get('request');
 	}
@@ -336,7 +335,7 @@ abstract class BaseApplication extends Service
 	 * @return Config
 	 * @throws ComponentException
 	 */
-	public function getConfig()
+	public function getConfig(): Config
 	{
 		return $this->get('config');
 	}
@@ -346,7 +345,7 @@ abstract class BaseApplication extends Service
 	 * @return Router
 	 * @throws ComponentException
 	 */
-	public function getRouter()
+	public function getRouter(): Router
 	{
 		return $this->get('router');
 	}
@@ -356,7 +355,7 @@ abstract class BaseApplication extends Service
 	 * @return Event
 	 * @throws ComponentException
 	 */
-	public function getEvent()
+	public function getEvent(): Event
 	{
 		return $this->get('event');
 	}
@@ -366,18 +365,28 @@ abstract class BaseApplication extends Service
 	 * @return Jwt
 	 * @throws ComponentException
 	 */
-	public function getJwt()
+	public function getJwt(): Jwt
 	{
 		return $this->get('jwt');
 	}
 
 
 	/**
+	 * @return SAnnotation
+	 * @throws ComponentException
+	 */
+	public function getAttributes(): SAnnotation
+	{
+		return $this->get('attributes');
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
-	protected function moreComponents()
+	protected function moreComponents(): void
 	{
-		return $this->setComponents([
+		$this->setComponents([
 			'error'             => ['class' => ErrorHandler::class],
 			'event'             => ['class' => Event::class],
 			'annotation'        => ['class' => Annotation::class],
@@ -388,6 +397,7 @@ abstract class BaseApplication extends Service
 			'request'           => ['class' => Request::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
+			'attributes'        => ['class' => SAnnotation::class],
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Annotation\Websocket as AWebsocket;
@@ -87,20 +88,21 @@ class OnHandshake extends Callback
 	/**
 	 * @param SRequest $request
 	 * @param SResponse $response
-	 * @return mixed|bool|null
+	 * @return mixed
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
-	private function execute(SRequest $request, SResponse $response)
+	private function execute(SRequest $request, SResponse $response): mixed
 	{
 		try {
 			$this->resolveParse($request, $response);
 
-			$manager = Snowflake::app()->annotation->websocket;
-			$name = $manager->getName(AWebsocket::HANDSHAKE);
-			if (!$manager->has($name)) {
-				return $this->disconnect($response);
+			$router = Snowflake::app()->getRouter();
+			$node = $router->search(Socket::HANDSHAKE . '::event', 'sw:socket');
+			if ($node === null) {
+				return $this->disconnect($response, 502);
 			}
-			return $manager->runWith($name, [$request, $response]);
+			return $node->dispatch();
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage());
 			return $this->disconnect($response, 500);

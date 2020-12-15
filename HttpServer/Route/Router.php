@@ -76,10 +76,10 @@ class Router extends Application implements RouterInterface
 	 * @param $path
 	 * @param $handler
 	 * @param string $method
-	 * @return mixed|Node|null
-	 * @throws
+	 * @return ?Node
+	 * @throws ConfigException
 	 */
-	public function addRoute($path, $handler, $method = 'any')
+	public function addRoute($path, $handler, $method = 'any'): ?Node
 	{
 		$method = strtolower($method);
 		if (!isset($this->nodes[$method])) {
@@ -99,9 +99,9 @@ class Router extends Application implements RouterInterface
 	 * @param $path
 	 * @param $handler
 	 * @param string $method
-	 * @return mixed
+	 * @return ?Node
 	 */
-	private function hash($path, $handler, $method = 'any')
+	private function hash($path, $handler, $method = 'any'): ?Node
 	{
 		$path = $this->resolve($path);
 
@@ -278,7 +278,7 @@ class Router extends Application implements RouterInterface
 	 * @return Node
 	 * @throws
 	 */
-	public function NodeInstance($value, $index = 0, $method = 'get')
+	public function NodeInstance($value, $index = 0, $method = 'get'): Node
 	{
 		$node = new Node();
 		$node->childes = [];
@@ -301,7 +301,7 @@ class Router extends Application implements RouterInterface
 	 * @param $method
 	 * @return array
 	 */
-	private function loadNamespace($method)
+	private function loadNamespace($method): array
 	{
 		$name = array_column($this->groupTacks, 'namespace');
 		if ($method == 'package' || $method == 'receive') {
@@ -333,7 +333,7 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @return string
 	 */
-	public function addPrefix()
+	public function addPrefix(): string
 	{
 		$prefix = array_column($this->groupTacks, 'prefix');
 
@@ -352,7 +352,7 @@ class Router extends Application implements RouterInterface
 	 * @return Node|null
 	 * 查找指定路由
 	 */
-	public function tree_search(?array $explode, $method)
+	public function tree_search(?array $explode, $method): ?Node
 	{
 		if (empty($explode)) {
 			return $this->nodes[$method]['/'] ?? null;
@@ -523,7 +523,24 @@ class Router extends Application implements RouterInterface
 			return null;
 		}
 		return $methods['/'];
+	}
 
+
+	/**
+	 * @param $uri
+	 * @param $method
+	 * @return Node|null
+	 */
+	public function search($uri, $method): Node|null
+	{
+		if (!isset($this->nodes[$method])) {
+			return null;
+		}
+		$methods = $this->nodes[$method];
+		if (isset($methods[$uri])) {
+			return $methods[$uri];
+		}
+		return $methods['/'] ?? null;
 	}
 
 

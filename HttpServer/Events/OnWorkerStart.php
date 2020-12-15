@@ -29,10 +29,11 @@ class OnWorkerStart extends Callback
 	 * @param Server $server
 	 * @param int $worker_id
 	 *
-	 * @return mixed|void
+	 * @return mixed
+	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function onHandler(Server $server, int $worker_id)
+	public function onHandler(Server $server, int $worker_id): void
 	{
 		$get_name = $this->get_process_name($server, $worker_id);
 		if (!empty($get_name) && !Snowflake::isMac()) {
@@ -66,7 +67,7 @@ class OnWorkerStart extends Callback
 	 * @return string
 	 * @throws ConfigException
 	 */
-	private function get_process_name($socket, $worker_id)
+	private function get_process_name($socket, $worker_id): string
 	{
 		$prefix = rtrim(Config::get('id',false, 'system:'), ':');
 		if ($worker_id >= $socket->setting['worker_num']) {
