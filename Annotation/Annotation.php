@@ -83,7 +83,7 @@ class Annotation extends Component
 			if (is_file($path)) {
 				$explode_pop = str_replace('.php', '', $explode_pop);
 				$annotation = $this->getReflect($namespace . '\\' . $explode_pop);
-				if (empty($annotation)) {
+				if (count($annotation) < 1) {
 					continue;
 				}
 				$this->_annotations[$alias][] = $annotation;
@@ -120,6 +120,8 @@ class Annotation extends Component
 			foreach ($attributes as $attribute) {
 				$names[$attribute->getName()] = $this->instance($attribute);
 			}
+
+			var_dump($reflect->getName(), $method->getName());
 			$tmp['handler'] = [$object, $method->getName()];
 			$tmp['attributes'] = $names;
 
