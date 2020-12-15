@@ -58,7 +58,7 @@ class OnClose extends Callback
 			}
 			$node = $router->search('/' . Socket::CLOSE . '::event', 'sw::socket');
 			if ($node instanceof Node) {
-				$node->dispatch();
+				$node->dispatch($server, $fd);
 			}
 		} catch (\Throwable $exception) {
 			$this->addError($exception);

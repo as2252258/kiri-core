@@ -68,7 +68,7 @@ class OnMessage extends Callback
 		if ($node === null) {
 			throw new Exception('Page not found.');
 		}
-		return $node->dispatch();
+		return $node->dispatch($server, $frame);
 	}
 
 }

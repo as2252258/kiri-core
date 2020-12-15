@@ -425,7 +425,12 @@ class Node extends Application
 		if (empty($this->callback)) {
 			return JSON::to(404, $node->_error ?? 'Page not found.');
 		}
-		return call_user_func($this->callback, \request());
+		$requestParams = func_get_args();
+		if (func_num_args() > 0) {
+			return call_user_func($this->callback, ...$requestParams);
+		} else {
+			return call_user_func($this->callback, \request());
+		}
 	}
 
 

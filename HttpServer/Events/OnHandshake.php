@@ -102,7 +102,7 @@ class OnHandshake extends Callback
 			if ($node === null) {
 				return $this->disconnect($response, 502);
 			}
-			return $node->dispatch();
+			return $node->dispatch($request, $response);
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage());
 			return $this->disconnect($response, 500);
