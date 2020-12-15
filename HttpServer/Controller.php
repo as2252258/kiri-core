@@ -119,8 +119,7 @@ class Controller extends Application
 	}
 
 	/**
-	 * @return Request
-	 * @throws Exception
+	 * @return Request|null
 	 */
 	public function getRequest(): ?Request
 	{
