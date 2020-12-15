@@ -256,9 +256,9 @@ class Server extends Application
 
 
 	/**
-	 * @return Http|Websocket|Packet|Receive
+	 * @return Packet|Websocket|Receive|Http|null
 	 */
-	public function getServer(): Packet|Websocket|Receive|Http
+	public function getServer(): Packet|Websocket|Receive|Http|null
 	{
 		return $this->baseServer;
 	}
