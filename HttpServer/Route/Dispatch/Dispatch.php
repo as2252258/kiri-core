@@ -19,16 +19,16 @@ class Dispatch
 {
 
 	/** @var Closure|array */
-	protected $handler;
+	protected array|Closure $handler;
 
-	protected Request $request;
+	protected Request|\Swoole\Http\Request $request;
 
 	/**
 	 * @param $handler
 	 * @param $request
 	 * @return static
 	 */
-	public static function create($handler, $request)
+	public static function create($handler, $request): static
 	{
 		$class = new static();
 		$class->handler = $handler;
