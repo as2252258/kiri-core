@@ -51,7 +51,6 @@ class Reduce
 				if ($pipe instanceof Middleware) {
 					return $pipe->onHandler($passable, $stack);
 				} else {
-					var_dump($pipe);
 					return call_user_func($pipe, $passable, $stack);
 				}
 			};
