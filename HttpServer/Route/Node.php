@@ -395,9 +395,6 @@ class Node extends Application
 	 */
 	public function addMiddleware(Closure|string|array $class)
 	{
-		if (!is_callable($class, true)) {
-			return;
-		}
 		if (is_string($class)) {
 			$class = Snowflake::createObject($class);
 			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
@@ -405,7 +402,12 @@ class Node extends Application
 			}
 			$class = [$class, 'onHandler'];
 		}
-		$this->middleware[] = $class;
+		if (!is_array($class) || is_object($class[0])) {
+			$class = [$class];
+		}
+		foreach ($class as $closure) {
+			$this->middleware[] = $closure;
+		}
 		$this->restructure();
 	}
 
