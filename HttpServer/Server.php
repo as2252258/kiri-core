@@ -349,7 +349,9 @@ class Server extends Application
 		} else if ($this->baseServer instanceof Http) {
 			$this->onLoadHttpHandler();
 		}
-		return $this->baseServer->set($settings);
+		$this->baseServer->set($settings);
+
+		return $this->baseServer;
 	}
 
 
