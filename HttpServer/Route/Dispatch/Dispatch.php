@@ -65,11 +65,11 @@ class Dispatch
 	 * @param $controller
 	 * @return mixed
 	 */
-	protected function bindRequest($controller)
+	protected function bindRequest($controller): mixed
 	{
 		$controller->request = Context::getContext('request');
-		$controller->headers = $controller->request->headers;
-		$controller->input = $controller->request->params;
+		$controller->headers = $controller->request?->headers;
+		$controller->input = $controller->request?->params;
 		return $controller;
 	}
 
