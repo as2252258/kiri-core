@@ -69,9 +69,9 @@ class Node extends Application
 			}
 			$this->handler = $this->getReflect($controller, $action);
 		} else if ($handler != null && !is_callable($handler, true)) {
-			var_dump($handler);
 			$this->_error = 'Controller is con\'t exec.';
 		} else {
+			var_dump($this);
 			$this->handler = $handler;
 		}
 		return $this->restructure();
