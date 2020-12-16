@@ -480,15 +480,14 @@ class Router extends Application implements RouterInterface
 			if (!($node = $this->find_path(\request()))) {
 				return send(self::NOT_FOUND, 404);
 			}
-			var_dump($node);
 			send($node->dispatch(), 200);
-			if ($node->hasAfter()) {
-				$node->afterDispatch(\request());
-			}
+//			if ($node->hasAfter()) {
+//				$node->afterDispatch(\request());
+//			}
 		} catch (ExitException $exception) {
 			send($exception->getMessage(), $exception->getCode());
 		} catch (\Throwable $exception) {
-			var_dump($exception);
+			var_dump($exception->getMessage());
 			send($this->exception($exception), 200);
 		}
 	}
