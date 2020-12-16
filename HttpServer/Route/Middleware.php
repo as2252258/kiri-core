@@ -63,15 +63,13 @@ class Middleware
 	 */
 	protected function annotation(Node $node): array
 	{
-		$middleWares = $this->middleWares;
+		$middleWares = $this->annotation_limit($node);
+		$middleWares = $this->annotation_interceptor($node, $middleWares);
+		foreach ($this->middleWares as $middleWare) {
+			$middleWares[] = $middleWare;
+		}
 		$this->middleWares = [];
-		if (!$node->hasInterceptor()) {
-			return $this->annotation_limit($node, $middleWares);
-		}
-		foreach ($node->getInterceptor() as $item) {
-			$middleWares[] = $item;
-		}
-		return $this->annotation_limit($node, $middleWares);
+		return $middleWares;
 	}
 
 
@@ -80,7 +78,24 @@ class Middleware
 	 * @param $middleWares
 	 * @return array
 	 */
-	protected function annotation_limit(Node $node, $middleWares): array
+	protected function annotation_interceptor(Node $node, $middleWares = []): array
+	{
+		if (!$node->hasInterceptor()) {
+			return $middleWares;
+		}
+		foreach ($node->getInterceptor() as $item) {
+			$middleWares[] = $item;
+		}
+		return $middleWares;
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $middleWares
+	 * @return array
+	 */
+	protected function annotation_limit(Node $node, $middleWares = []): array
 	{
 		if (!$node->hasLimits()) {
 			return $middleWares;
