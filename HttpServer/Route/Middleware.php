@@ -86,7 +86,6 @@ class Middleware
 					$node->addAfter($attribute->after);
 				}
 				if ($attribute instanceof RMiddleware) {
-					var_dump($attribute->middleware);
 					$node->addMiddleware($attribute->middleware);
 				}
 				if ($attribute instanceof Limits) {
@@ -108,7 +107,7 @@ class Middleware
 		foreach ($node->getMiddleWares() as $middleWare) {
 			$middleWares[] = $middleWare;
 		}
-		$this->middleWares = [];
+		var_dump($middleWares);
 		return $middleWares;
 	}
 
