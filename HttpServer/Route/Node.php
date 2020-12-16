@@ -230,7 +230,6 @@ class Node extends Application
 		foreach ($handler as $closure) {
 			$this->_interceptors[] = $closure;
 		}
-		$this->restructure();
 	}
 
 
@@ -246,7 +245,6 @@ class Node extends Application
 		foreach ($handler as $closure) {
 			$this->_after[] = $closure;
 		}
-		$this->restructure();
 	}
 
 
@@ -262,7 +260,6 @@ class Node extends Application
 		foreach ($handler as $closure) {
 			$this->_limits[] = $closure;
 		}
-		$this->restructure();
 	}
 
 
@@ -384,7 +381,6 @@ class Node extends Application
 			return;
 		}
 		$this->middleware = $this->each($middles, $_tmp);
-		$this->restructure();
 	}
 
 
@@ -409,7 +405,6 @@ class Node extends Application
 		foreach ($class as $closure) {
 			$this->middleware[] = $closure;
 		}
-		$this->restructure();
 	}
 
 
