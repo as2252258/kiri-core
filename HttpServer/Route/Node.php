@@ -401,7 +401,7 @@ class Node extends Application
 			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
 				return;
 			}
-			$class = [$class, 'onHandler'];
+			$class = [[$class, 'onHandler']];
 		}
 		if (!is_array($class) || is_object($class[0])) {
 			$class = [$class];
