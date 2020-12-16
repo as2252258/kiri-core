@@ -60,6 +60,7 @@ class Middleware
 				$this->set_attributes($node);
 			}
 			return $node->callback = Reduce::reduce(function () use ($node) {
+				var_dump($node->handler);
 				return Dispatch::create($node->handler, func_get_args())->dispatch();
 			}, $this->annotation($node));
 		} catch (\Throwable $exception) {
