@@ -471,23 +471,19 @@ class Router extends Application implements RouterInterface
 
 
 	/**
-	 * @return mixed|void
+	 * @return mixed
 	 * @throws
 	 */
-	public function dispatch()
+	public function dispatch(): mixed
 	{
-		try {
-			if (!($node = $this->find_path(\request()))) {
-				return send(self::NOT_FOUND, 404);
+		if (!($node = $this->find_path(\request()))) {
+			return send(self::NOT_FOUND, 404);
+		} else {
+			send($response = $node->dispatch(), 200);
+			if (!$node->hasAfter()) {
+				return null;
 			}
-			send($node->dispatch(), 200);
-			if ($node->hasAfter()) {
-				$node->afterDispatch(\request());
-			}
-		} catch (ExitException $exception) {
-			send($exception->getMessage(), $exception->getCode());
-		} catch (\Throwable $exception) {
-			send($this->exception($exception), 200);
+			return $node->afterDispatch($response);
 		}
 	}
 

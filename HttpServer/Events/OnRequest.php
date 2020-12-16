@@ -6,6 +6,7 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Exception\ExitException;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
@@ -60,6 +61,8 @@ class OnRequest extends Callback
 				return $sResponse->send($sRequest->isNotFound(), 200);
 			}
 			return Snowflake::app()->getRouter()->dispatch();
+		} catch (ExitException $exception) {
+			return send($exception->getMessage(), $exception->getCode());
 		} catch (Error | \Throwable $exception) {
 			return $this->sendErrorMessage($exception);
 		} finally {
