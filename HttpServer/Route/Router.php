@@ -135,7 +135,7 @@ class Router extends Application implements RouterInterface
 	 * @param string $method
 	 * @return Node
 	 */
-	private function tree($path, $handler, $method = 'any')
+	private function tree($path, $handler, $method = 'any'): Node
 	{
 		list($first, $explode) = $this->split($path);
 
@@ -157,7 +157,7 @@ class Router extends Application implements RouterInterface
 	 * @param $method
 	 * @return Node
 	 */
-	private function bindNode(Node $parent, array $explode, $method)
+	private function bindNode(Node $parent, array $explode, $method): Node
 	{
 		$a = 0;
 		if (empty($explode)) {
@@ -182,9 +182,10 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|mixed|null
+	 * @return mixed
+	 * @throws ConfigException
 	 */
-	public function socket($route, $handler)
+	public function socket($route, $handler): mixed
 	{
 		return $this->addRoute($route, $handler, 'socket');
 	}
@@ -193,10 +194,10 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return mixed|Node|null
-	 * @throws
+	 * @return Node|null
+	 * @throws ConfigException
 	 */
-	public function post($route, $handler)
+	public function post($route, $handler): ?Node
 	{
 		return $this->addRoute($route, $handler, 'post');
 	}
@@ -479,6 +480,7 @@ class Router extends Application implements RouterInterface
 			if (!($node = $this->find_path(\request()))) {
 				return send(self::NOT_FOUND, 404);
 			}
+			var_dump($node);
 			send($node->dispatch(), 200);
 			if ($node->hasAfter()) {
 				$node->afterDispatch(\request());
@@ -486,6 +488,7 @@ class Router extends Application implements RouterInterface
 		} catch (ExitException $exception) {
 			send($exception->getMessage(), $exception->getCode());
 		} catch (\Throwable $exception) {
+			var_dump($exception);
 			send($this->exception($exception), 200);
 		}
 	}
