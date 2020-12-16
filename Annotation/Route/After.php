@@ -14,7 +14,7 @@ namespace Annotation\Route;
 
 	/**
 	 * Interceptor constructor.
-	 * @param string|array $after
+	 * @param \HttpServer\IInterface\After|\HttpServer\IInterface\After[] $after
 	 */
 	public function __construct(public string|array $after)
 	{
