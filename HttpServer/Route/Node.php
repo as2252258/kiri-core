@@ -409,6 +409,15 @@ class Node extends Application
 
 
 	/**
+	 * @return array
+	 */
+	public function getMiddleWares(): array
+	{
+		return $this->middleware;
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	private function restructure(): static
@@ -418,7 +427,6 @@ class Node extends Application
 		}
 		/** @var Middleware $made */
 		$made = Snowflake::createObject(Middleware::class);
-		$made->setMiddleWares($this->middleware);
 		$made->getGenerate($this);
 		return $this;
 	}
