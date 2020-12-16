@@ -403,6 +403,7 @@ class Node extends Application
 			$class = [$class];
 		}
 		foreach ($class as $closure) {
+			var_dump($class);
 			$this->middleware[] = $closure;
 		}
 	}
