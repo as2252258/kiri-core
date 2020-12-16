@@ -25,25 +25,14 @@ use Snowflake\Snowflake;
 	const MESSAGE = 'MESSAGE';
 	const HANDSHAKE = 'HANDSHAKE';
 
-	use \Annotation\Route\Node;
-
-
 	/**
 	 * Socket constructor.
 	 * @param string $event
 	 * @param string|null $uri
-	 * @param array|null $middleware
-	 * @param array|null $interceptor
-	 * @param array|null $limits
-	 * @param array|null $after
 	 */
 	public function __construct(
 		public string $event,
-		public ?string $uri = null,
-		public ?array $middleware = null,
-		public ?array $interceptor = null,
-		public ?array $limits = null,
-		public ?array $after = null
+		public ?string $uri = null
 	)
 	{
 	}
@@ -63,9 +52,7 @@ use Snowflake\Snowflake;
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		$node = $router->addRoute($method, $handler, 'sw::socket');
-
-		return $this->add($node);
+		return $router->addRoute($method, $handler, 'sw::socket');
 	}
 
 }

@@ -25,7 +25,7 @@ use Snowflake\Snowflake;
 			$this->middleware = [$this->middleware];
 		}
 		foreach ($this->middleware as $key => $item) {
-			$this->middleware[$key] = Snowflake::createObject($item);
+			$this->middleware[$key] = [Snowflake::createObject($item), 'onHandler'];
 		}
 	}
 

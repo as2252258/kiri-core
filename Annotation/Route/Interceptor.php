@@ -25,7 +25,7 @@ use Snowflake\Snowflake;
 			$this->interceptor = [$this->interceptor];
 		}
 		foreach ($this->interceptor as $key => $item) {
-			$this->interceptor[$key] = Snowflake::createObject($item);
+			$this->interceptor[$key] = [Snowflake::createObject($item), 'Interceptor'];
 		}
 	}
 

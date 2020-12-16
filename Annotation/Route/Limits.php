@@ -25,7 +25,7 @@ use Snowflake\Snowflake;
 			$this->limits = [$this->limits];
 		}
 		foreach ($this->limits as $key => $item) {
-			$this->limits[$key] = Snowflake::createObject($item);
+			$this->limits[$key] = [Snowflake::createObject($item), 'next'];
 		}
 	}
 
