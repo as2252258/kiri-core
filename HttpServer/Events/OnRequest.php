@@ -53,10 +53,6 @@ class OnRequest extends Callback
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			if ($request->server['request_method'] === 'OPTIONS') {
-				$response->status(200);
-				return $response->end();
-			}
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 			if ($sRequest->is('favicon.ico')) {
