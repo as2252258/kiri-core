@@ -55,24 +55,10 @@ class Middleware
 	 */
 	public function getGenerate(Node $node): mixed
 	{
-		try {
-//			if (is_array($node->handler) && is_object($node->handler[0])) {
-//			}
-			$this->set_attributes($node);
-			return $node->callback = Reduce::reduce(function () use ($node) {
-				if (!request()->isOption) {
-					var_dump($node);
-				}
-				return Dispatch::create($node->handler, func_get_args())->dispatch();
-			}, $this->annotation($node));
-		} catch (\Throwable $exception) {
-			return $node->callback = function () use ($exception) {
-				return JSON::to(500, $exception->getMessage(), [
-					'file' => $exception->getFile(),
-					'line' => $exception->getLine()
-				]);
-			};
-		}
+		$this->set_attributes($node);
+		return $node->callback = Reduce::reduce(function () use ($node) {
+			return Dispatch::create($node->handler, func_get_args())->dispatch();
+		}, $this->annotation($node));
 	}
 
 

@@ -228,7 +228,6 @@ class Node extends Application
 			$handler = [$handler];
 		}
 		foreach ($handler as $closure) {
-			var_dump($closure);
 			$this->_interceptors[] = $closure;
 		}
 		$this->restructure();
@@ -245,7 +244,6 @@ class Node extends Application
 			$handler = [$handler];
 		}
 		foreach ($handler as $closure) {
-			var_dump($closure);
 			$this->_after[] = $closure;
 		}
 		$this->restructure();
@@ -262,7 +260,6 @@ class Node extends Application
 			$handler = [$handler];
 		}
 		foreach ($handler as $closure) {
-			var_dump($closure);
 			$this->_limits[] = $closure;
 		}
 		$this->restructure();
@@ -410,7 +407,6 @@ class Node extends Application
 			$class = [$class];
 		}
 		foreach ($class as $closure) {
-			var_dump($closure);
 			$this->middleware[] = $closure;
 		}
 		$this->restructure();
