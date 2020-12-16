@@ -57,8 +57,8 @@ class OnRequest extends Callback
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 
 			$sResponse->addHeader('Access-Control-Allow-Origin', '*');
-			$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->get('access-control-request-headers'));
-			$sResponse->addHeader('Access-Control-Request-Method', $sRequest->get('access-control-request-method'));
+			$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->headers->get('access-control-request-headers'));
+			$sResponse->addHeader('Access-Control-Request-Method', $sRequest->headers->get('access-control-request-method'));
 
 			if ($sRequest->is('favicon.ico')) {
 				return $sResponse->send($sRequest->isNotFound(), 200);
