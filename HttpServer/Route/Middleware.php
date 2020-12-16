@@ -15,6 +15,7 @@ use Annotation\Route\Middleware as RMiddleware;
 use Exception;
 use Annotation\Route\Limits;
 use HttpServer\Route\Dispatch\Dispatch;
+use Snowflake\Core\JSON;
 use Snowflake\Snowflake;
 
 /**
@@ -54,12 +55,21 @@ class Middleware
 	 */
 	public function getGenerate(Node $node): mixed
 	{
-		if (is_array($node->handler) && is_object($node->handler[0])) {
-			$this->set_attributes($node);
+		try {
+			if (is_array($node->handler) && is_object($node->handler[0])) {
+				$this->set_attributes($node);
+			}
+			return $node->callback = Reduce::reduce(function () use ($node) {
+				return Dispatch::create($node->handler, func_get_args())->dispatch();
+			}, $this->annotation($node));
+		} catch (\Throwable $exception) {
+			return $node->callback = function () use ($exception) {
+				return JSON::to(500, $exception->getMessage(), [
+					'file' => $exception->getFile(),
+					'line' => $exception->getLine()
+				]);
+			};
 		}
-		return $node->callback = Reduce::reduce(function () use ($node) {
-			return Dispatch::create($node->handler, func_get_args())->dispatch();
-		}, $this->annotation($node));
 	}
 
 
