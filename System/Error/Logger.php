@@ -234,10 +234,10 @@ class Logger extends Component
 
 	/**
 	 * @param Throwable $exception
-	 * @return false|int|mixed|string
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function exception(Throwable $exception)
+	public function exception(Throwable $exception): mixed
 	{
 		$errorInfo = [
 			'message' => $exception->getMessage(),

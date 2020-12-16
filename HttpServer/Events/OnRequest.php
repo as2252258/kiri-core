@@ -47,10 +47,10 @@ class OnRequest extends Callback
 	/**
 	 * @param Request $request
 	 * @param Response $response
-	 * @return false|int|mixed|string|void
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ComponentException
 	 */
-	public function onRequest(Request $request, Response $response)
+	public function onRequest(Request $request, Response $response): mixed
 	{
 		try {
 			/** @var HRequest $sRequest */
