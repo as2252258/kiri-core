@@ -48,7 +48,7 @@ class OnRequest extends Callback
 	 * @param Request $request
 	 * @param Response $response
 	 * @return mixed
-	 * @throws ComponentException
+	 * @throws
 	 */
 	public function onRequest(Request $request, Response $response): mixed
 	{
