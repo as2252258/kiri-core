@@ -22,6 +22,9 @@ class Annotation extends Component
 	private array $_annotations = [];
 
 
+	private array $_classes = [];
+
+
 	private array $_targets = [];
 
 
@@ -100,50 +103,99 @@ class Annotation extends Component
 	 */
 	private function getReflect(string $class, string $alias): array
 	{
-		$reflect = Snowflake::getDi()->getReflect($class);
-		if (!$reflect->isInstantiable()) {
+		$reflect = $this->reflectClass($class);
+		if ($reflect->isInstantiable()) {
+			$object = $reflect->newInstance();
+			foreach ($reflect->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+				$tmp = $this->resolveAnnotations($method, $alias, $object);
+
+				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
+			}
+		}
+		return $this->targets($reflect);
+	}
+
+
+	/**
+	 * @param string $class
+	 * @return ReflectionClass
+	 * @throws ReflectionException
+	 */
+	private function reflectClass(string $class): ReflectionClass
+	{
+		return Snowflake::getDi()->getReflect($class);
+	}
+
+
+	/**
+	 * @param $method
+	 * @param $alias
+	 * @param $object
+	 * @return array
+	 */
+	private function resolveAnnotations($method, $alias, $object): array
+	{
+		$attributes = $method->getAttributes();
+		if (count($attributes) < 1) {
 			return [];
 		}
 
-		$this->targets($reflect);
-
-		$annotations = [];
-		$object = $reflect->newInstance();
-		foreach ($reflect->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-			$names = [];
-			$attributes = $method->getAttributes();
-			if (count($attributes) < 1) {
-				continue;
-			}
-			foreach ($attributes as $attribute) {
-				$names[$attribute->getName()] = $this->instance($attribute);
-			}
-
-			$tmp['handler'] = [$object, $method->getName()];
-			$tmp['attributes'] = $names;
-
-			$this->_annotations[$alias][] = $tmp;
+		$names = [];
+		foreach ($attributes as $attribute) {
+			$names[$attribute->getName()] = $this->instance($attribute);
 		}
-		return $annotations;
+
+		$tmp['handler'] = [$object, $method->getName()];
+		$tmp['attributes'] = $names;
+
+		$this->_annotations[$alias][] = $tmp;
+
+		return $tmp;
 	}
+
+
+	/**
+	 * @param $className
+	 * @param string $method
+	 * @return array
+	 */
+	public function getByClass($className, $method = ''): array
+	{
+		if (!isset($this->_classes[$className])) {
+			return [];
+		}
+		if (empty($method)) {
+			return $this->_classes[$className];
+		}
+		foreach ($this->_classes[$className] as $_method => $class) {
+			if ($method == $_method) {
+				return [$class];
+			}
+		}
+		return [];
+	}
+
 
 	/**
 	 * @param ReflectionClass $reflect
+	 * @return array
 	 */
-	private function targets(ReflectionClass $reflect)
+	private function targets(ReflectionClass $reflect): array
 	{
+		$name = $reflect->getName();
+		if (!isset($this->_classes[$name])) {
+			$this->_classes[$name] = [];
+		}
 		$attributes = $reflect->getAttributes();
-		if (count($attributes) < 1) {
-			return;
+		if (count($attributes) > 0) {
+			if (!isset($this->_targets[$name])) {
+				$this->_targets[$name] = [];
+			}
+			foreach ($attributes as $attribute) {
+				$this->_targets[$name][] = $this->instance($attribute);
+			}
 		}
-
-		if (!isset($this->_targets[$reflect->getName()])) {
-			$this->_targets[$reflect->getName()] = [];
-		}
-
-		foreach ($attributes as $attribute) {
-			$this->_targets[$reflect->getName()][] = $this->instance($attribute);
-		}
+		return [];
 	}
 
 

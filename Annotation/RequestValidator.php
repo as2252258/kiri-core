@@ -4,6 +4,9 @@
 namespace Annotation;
 
 
+use Exception;
+use validator\Validator;
+
 /**
  * Class RequestValidator
  * @package Annotation
@@ -14,6 +17,7 @@ namespace Annotation;
 	/**
 	 * RequestValidator constructor.
 	 * @param array $validators
+	 * @throws Exception
 	 */
 	public function __construct(public array $validators)
 	{

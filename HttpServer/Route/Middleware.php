@@ -7,12 +7,15 @@
  */
 declare(strict_types=1);
 
-// declare(strict_types=1);
-
 namespace HttpServer\Route;
 
+use Annotation\Route\After;
+use Annotation\Route\Interceptor;
+use Annotation\Route\Middleware as RMiddleware;
 use Exception;
+use Annotation\Route\Limits;
 use HttpServer\Route\Dispatch\Dispatch;
+use Snowflake\Snowflake;
 
 /**
  * Class Middleware
@@ -51,9 +54,38 @@ class Middleware
 	 */
 	public function getGenerate(Node $node): mixed
 	{
+		if (is_array($node->handler) && is_object($node->handler[0])) {
+			$this->set_attributes($node);
+		}
 		return $node->callback = Reduce::reduce(function () use ($node) {
 			return Dispatch::create($node->handler, func_get_args())->dispatch();
 		}, $this->annotation($node));
+	}
+
+
+	/**
+	 * @param $node
+	 * @throws Exception
+	 */
+	private function set_attributes(Node $node)
+	{
+		[$controller, $action] = $node->handler;
+		$attributes = Snowflake::app()->getAttributes();
+		$annotation = $attributes->getByClass(get_class($controller), $action);
+		foreach ($annotation as $item) {
+			if ($item instanceof Interceptor) {
+				$node->addInterceptor($item->interceptor);
+			}
+			if ($item instanceof After) {
+				$node->addAfter($item->after);
+			}
+			if ($item instanceof RMiddleware) {
+				$node->addMiddleware($item->middleware);
+			}
+			if ($item instanceof Limits) {
+				$node->addLimits($item->limits);
+			}
+		}
 	}
 
 
