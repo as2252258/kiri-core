@@ -56,10 +56,6 @@ class OnRequest extends Callback
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 
-			$sResponse->addHeader('Access-Control-Allow-Origin', '*');
-			$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->headers->get('access-control-request-headers'));
-			$sResponse->addHeader('Access-Control-Request-Method', $sRequest->headers->get('access-control-request-method'));
-
 			if ($sRequest->is('favicon.ico')) {
 				return $sResponse->send($sRequest->isNotFound(), 200);
 			}
@@ -106,14 +102,22 @@ class OnRequest extends Callback
 
 	/**
 	 * @param $exception
-	 * @return false|int|mixed|string
+	 * @return bool|string
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	protected function sendErrorMessage($exception)
+	protected function sendErrorMessage($exception): bool|string
 	{
+
+		$sRequest = \request();
+		$sResponse = \response();
+
+		$sResponse->addHeader('Access-Control-Allow-Origin', '*');
+		$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->headers->get('access-control-request-headers'));
+		$sResponse->addHeader('Access-Control-Request-Method', $sRequest->headers->get('access-control-request-method'));
+
 		$params = Snowflake::app()->getLogger()->exception($exception);
-		return \response()->send($params, 200);
+		return $sResponse->send($params, 200);
 	}
 
 }
