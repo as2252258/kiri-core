@@ -92,20 +92,17 @@ class Middleware
 			return;
 		}
 		foreach ($annotation as $item) {
+			var_dump($item);
 			if ($item instanceof Interceptor) {
-				var_dump($item->interceptor);
 				$node->addInterceptor($item->interceptor);
 			}
 			if ($item instanceof After) {
-				var_dump($item->after);
 				$node->addAfter($item->after);
 			}
 			if ($item instanceof RMiddleware) {
-				var_dump($item->middleware);
 				$node->addMiddleware($item->middleware);
 			}
 			if ($item instanceof Limits) {
-				var_dump($item->limits);
 				$node->addLimits($item->limits);
 			}
 		}
