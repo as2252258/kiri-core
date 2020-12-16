@@ -107,7 +107,9 @@ class Middleware
 		foreach ($node->getMiddleWares() as $middleWare) {
 			$middleWares[] = $middleWare;
 		}
-		var_dump($middleWares);
+		if (!empty($middleWares)) {
+			var_dump($middleWares);
+		}
 		return $middleWares;
 	}
 
