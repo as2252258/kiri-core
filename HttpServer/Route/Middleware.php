@@ -56,9 +56,9 @@ class Middleware
 	public function getGenerate(Node $node): mixed
 	{
 		try {
-			if (is_array($node->handler) && is_object($node->handler[0])) {
-				$this->set_attributes($node);
-			}
+//			if (is_array($node->handler) && is_object($node->handler[0])) {
+//			}
+			$this->set_attributes($node);
 			return $node->callback = Reduce::reduce(function () use ($node) {
 				if (!request()->isOption) {
 					var_dump($node);
@@ -82,9 +82,13 @@ class Middleware
 	 */
 	private function set_attributes(Node $node)
 	{
+		if (!is_array($node->handler)) {
+			return;
+		}
 		[$controller, $action] = $node->handler;
 		$attributes = Snowflake::app()->getAttributes();
 		$annotation = $attributes->getByClass(get_class($controller), $action);
+		var_dump($annotation);
 		foreach ($annotation as $item) {
 			if ($item instanceof Interceptor) {
 				$node->addInterceptor($item->interceptor);
