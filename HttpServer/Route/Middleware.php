@@ -88,18 +88,24 @@ class Middleware
 		[$controller, $action] = $node->handler;
 		$attributes = Snowflake::app()->getAttributes();
 		$annotation = $attributes->getByClass(get_class($controller), $action);
-		var_dump($annotation);
+		if (count($annotation) < 1) {
+			return;
+		}
 		foreach ($annotation as $item) {
 			if ($item instanceof Interceptor) {
+				var_dump($item->interceptor);
 				$node->addInterceptor($item->interceptor);
 			}
 			if ($item instanceof After) {
+				var_dump($item->after);
 				$node->addAfter($item->after);
 			}
 			if ($item instanceof RMiddleware) {
+				var_dump($item->middleware);
 				$node->addMiddleware($item->middleware);
 			}
 			if ($item instanceof Limits) {
+				var_dump($item->limits);
 				$node->addLimits($item->limits);
 			}
 		}
