@@ -258,7 +258,10 @@ class Logger extends Component
 		$logger->write($string . $exception->getTraceAsString(), 'trace');
 		$logger->write(jTraceEx($exception), 'exception');
 
-		return JSON::to($code, $errorInfo['message']);
+		return JSON::to($code, $errorInfo['message'], [
+			'file' => $exception->getFile(),
+			'line' => $exception->getLine()
+		]);
 	}
 
 
