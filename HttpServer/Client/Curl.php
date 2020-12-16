@@ -98,7 +98,6 @@ class Curl extends ClientAbstracts
 	 */
 	private function do($resource, $path, $method)
 	{
-		var_dump($path);
 		curl_setopt($resource, CURLOPT_URL, $path);
 		curl_setopt($resource, CURLOPT_TIMEOUT, $this->getTimeout());                     // 超时设置
 		curl_setopt($resource, CURLOPT_CONNECTTIMEOUT, $this->getConnectTimeout());       // 超时设置
