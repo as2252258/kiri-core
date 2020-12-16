@@ -48,7 +48,6 @@ class Reduce
 	{
 		return function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {
-				var_dump($pipe);
 				if ($pipe instanceof Middleware) {
 					return $pipe->onHandler($passable, $stack);
 				} else {
