@@ -6,7 +6,6 @@ namespace HttpServer\Events;
 
 use Closure;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
@@ -36,7 +35,7 @@ class OnPacket extends Callback
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onHandler(Server $server, string $data, array $clientInfo)
+	public function onHandler(Server $server, string $data, array $clientInfo): mixed
 	{
 		try {
 			$data = DataResolve::unpack($this->unpack, $clientInfo['address'], $clientInfo['port'], $data);

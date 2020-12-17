@@ -10,15 +10,19 @@ declare(strict_types=1);
 namespace validator;
 
 
+/**
+ * Class ArrayValidator
+ * @package validator
+ */
 class ArrayValidator extends BaseValidator
 {
-	
+
 	/**
-	 * @return array|bool
+	 * @return bool
 	 *
 	 * 检查
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		$param = $this->getParams();
 		if (empty($param) || !is_array($param)) {
@@ -30,16 +34,16 @@ class ArrayValidator extends BaseValidator
 		if (!is_array($param[$this->field])) {
 			return $this->addError("The param :attribute must a array");
 		}
-		return $this->toArray($param[$this->field]);
+		return true;
 	}
-	
+
 	/**
 	 * @param $data
 	 * @return array
 	 *
 	 * 转成数组
 	 */
-	private function toArray($data)
+	private function toArray($data): array
 	{
 		if (is_numeric($data)) {
 			return [];
@@ -48,7 +52,7 @@ class ArrayValidator extends BaseValidator
 		} elseif (is_object($data)) {
 			$data = get_object_vars($data);
 		}
-		
+
 		$_tmp = [];
 		foreach ($data as $key => $val) {
 			if (is_object($val)) {
@@ -59,8 +63,8 @@ class ArrayValidator extends BaseValidator
 				$_tmp[$key] = $val;
 			}
 		}
-		
+
 		return $_tmp;
 	}
-	
+
 }

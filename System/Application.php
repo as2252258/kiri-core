@@ -20,6 +20,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Abstracts\Kernel;
 use Snowflake\Exception\NotFindClassException;
+use stdClass;
 use Swoole\Timer;
 
 /**
@@ -54,7 +55,7 @@ class Application extends BaseApplication
 	 * @return $this
 	 * @throws
 	 */
-	public function import(string $service)
+	public function import(string $service): static
 	{
 		if (!class_exists($service)) {
 			throw new NotFindClassException($service);
@@ -71,7 +72,7 @@ class Application extends BaseApplication
 	 * @param $kernel
 	 * @return $this
 	 */
-	public function commands(Kernel $kernel)
+	public function commands(Kernel $kernel): static
 	{
 		foreach ($kernel->getCommands() as $command) {
 			$this->register($command);
@@ -93,20 +94,22 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @param $argv
-	 * @return bool|string|void
-	 * @throws
+	 * @param Input $argv
+	 * @return bool|string
+	 * @throws Exception
+	 * @throws NotFindClassException
+	 * @throws \ReflectionException
 	 */
-	public function start(Input $argv)
+	public function start(Input $argv): bool|string
 	{
 		$this->set('input', $argv);
 		try {
 			$manager = Snowflake::app()->get('console');
 			$manager->setParameters($argv);
 			$class = $manager->search();
-			response()->send($manager->execCommand($class));
+			return response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
-			response()->send(implode("\n", [
+			return response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
 				'File: ' . $exception->getFile()
@@ -119,10 +122,10 @@ class Application extends BaseApplication
 	/**
 	 * @param $className
 	 * @param null $abstracts
-	 * @return mixed
+	 * @return stdClass
 	 * @throws Exception
 	 */
-	public function make($className, $abstracts = null)
+	public function make($className, $abstracts = null): stdClass
 	{
 		return make($className, $abstracts);
 	}

@@ -11,6 +11,7 @@ namespace Database;
 
 use Database\Orm\Select;
 use Database\Traits\QueryTrait;
+use Exception;
 
 /**
  * Class Sql
@@ -23,9 +24,9 @@ class Sql
 	
 	/**
 	 * @return string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function getSql()
+	public function getSql(): string
 	{
 		return (new Select())->getQuery($this);
 	}

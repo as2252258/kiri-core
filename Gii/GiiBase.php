@@ -6,6 +6,9 @@ namespace Gii;
 
 
 use Database\Connection;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
+use ReflectionClass;
 use Snowflake\Abstracts\Input;
 
 /**
@@ -15,22 +18,22 @@ use Snowflake\Abstracts\Input;
 abstract class GiiBase
 {
 
-	public $fileList = [];
+	public array $fileList = [];
 
 
 	/** @var Input */
-	protected $input;
+	protected Input $input;
 
-	public $modelPath = APP_PATH . '/app/Models/';
-	public $modelNamespace = 'App\Models\\';
+	public string $modelPath = APP_PATH . '/app/Models/';
+	public string $modelNamespace = 'App\Models\\';
 
-	public $controllerPath = APP_PATH . '/app/Http/Controllers/';
-	public $controllerNamespace = 'App\\Http\\Controllers\\';
+	public string $controllerPath = APP_PATH . '/app/Http/Controllers/';
+	public string $controllerNamespace = 'App\\Http\\Controllers\\';
 
-	public $module = null;
+	public ?string $module = null;
 
-	public $rules = [];
-	public $type = [
+	public array $rules = [];
+	public array $type = [
 		'int'       => ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'],
 		'string'    => ['char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'enum'],
 		'date'      => ['date'],
@@ -40,10 +43,9 @@ abstract class GiiBase
 		'timestamp' => ['timestamp'],
 		'float'     => ['float', 'double', 'decimal',],
 	];
-	public $tableName = NULL;
+	public ?string $tableName = NULL;
 
-	/** @var Connection */
-	public $db;
+	public ?Connection $db = null;
 
 	/**
 	 * @param string $modelPath
@@ -96,12 +98,12 @@ abstract class GiiBase
 
 
 	/**
-	 * @param \ReflectionClass $object
+	 * @param ReflectionClass $object
 	 * @param                  $className
 	 *
 	 * @return string
 	 */
-	public function getUseContent($object, $className)
+	public function getUseContent(ReflectionClass $object, $className): string
 	{
 		if (empty($object)) {
 			return '';
@@ -126,10 +128,10 @@ abstract class GiiBase
 
 	/**
 	 * @param $fields
-	 * @return mixed|null
+	 * @return mixed 返回表主键
 	 * 返回表主键
 	 */
-	public function getPrimaryKey($fields)
+	public function getPrimaryKey($fields): mixed
 	{
 		$condition = ['PRI', 'UNI'];
 		foreach ($fields as $field) {
@@ -147,7 +149,7 @@ abstract class GiiBase
 	 * @param $className
 	 * @return string
 	 */
-	private function getFilePath($className)
+	private function getFilePath($className): string
 	{
 		if (strpos($className, '\\')) {
 			$className = str_replace('\\', '/', $className);
@@ -160,13 +162,13 @@ abstract class GiiBase
 	}
 
 	/**
-	 * @param \ReflectionClass $object
+	 * @param ReflectionClass $object
 	 * @param                  $className
 	 * @param                  $method
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function getFuncLineContent($object, $className, $method)
+	public function getFuncLineContent(ReflectionClass $object, $className, $method): string
 	{
 		$fun = $object->getMethod($method);
 
@@ -180,7 +182,7 @@ abstract class GiiBase
 	/**
 	 * @return array
 	 */
-	protected function getModelPath()
+	protected function getModelPath(): array
 	{
 		$dbName = $this->db->id;
 		if (empty($dbName) || $dbName == 'db') {
@@ -217,7 +219,7 @@ abstract class GiiBase
 	 * @param $val
 	 * @return string
 	 */
-	protected function checkIsRequired($val)
+	#[Pure] protected function checkIsRequired($val): string
 	{
 		return strtolower($val['Null']) == 'no' && $val['Default'] === NULL ? 'true' : 'false';
 	}
@@ -225,7 +227,7 @@ abstract class GiiBase
 	/**
 	 * @return array
 	 */
-	public function getFileLists()
+	public function getFileLists(): array
 	{
 		return $this->fileList;
 	}

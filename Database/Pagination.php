@@ -52,10 +52,10 @@ class Pagination extends Component
 
 
 	/**
-	 * @param Closure|array $callback
+	 * @param array|Closure $callback
 	 * @throws Exception
 	 */
-	public function setCallback($callback)
+	public function setCallback(array|Closure $callback)
 	{
 		if (!is_callable($callback, true)) {
 			throw new Exception('非法回调函数~');
@@ -68,7 +68,7 @@ class Pagination extends Component
 	 * @param int $number
 	 * @return Pagination
 	 */
-	public function setOffset(int $number)
+	public function setOffset(int $number): static
 	{
 		if ($number < 0) {
 			$number = 0;
@@ -82,7 +82,7 @@ class Pagination extends Component
 	 * @param int $number
 	 * @return Pagination
 	 */
-	public function setLimit(int $number)
+	public function setLimit(int $number): static
 	{
 		if ($number < 1) {
 			$number = 100;
@@ -96,9 +96,9 @@ class Pagination extends Component
 
 	/**
 	 * @param int $number
-	 * @return Pagination|void
+	 * @return Pagination
 	 */
-	public function setMax(int $number)
+	public function setMax(int $number): static
 	{
 		if ($number < 0) {
 			return $this;
@@ -125,7 +125,7 @@ class Pagination extends Component
 	 * @param $param
 	 * @return array
 	 */
-	public function loop($param)
+	public function loop($param): array
 	{
 		if ($this->_max > 0 && $this->_length >= $this->_max) {
 			return $this->output();
@@ -145,7 +145,7 @@ class Pagination extends Component
 	/**
 	 * @return array
 	 */
-	public function output()
+	public function output(): array
 	{
 		return [];
 	}
@@ -172,7 +172,7 @@ class Pagination extends Component
 	 * 解释器
 	 * @return mixed
 	 */
-	private function executed($callback, $data, $param)
+	private function executed($callback, $data, $param): mixed
 	{
 		$this->_group->add(1);
 		return Coroutine::create(function ($callback, $data, $param): void {
@@ -192,7 +192,7 @@ class Pagination extends Component
 	/**
 	 * @return array|Collection
 	 */
-	private function get()
+	private function get(): Collection|array
 	{
 		if ($this->_length + $this->_limit > $this->_max) {
 			$this->_limit = $this->_length + $this->_limit - $this->_max;

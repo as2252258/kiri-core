@@ -35,7 +35,7 @@ class DatabasesProviders extends Providers
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function get($name)
+	public function get($name): Connection
 	{
 		$application = Snowflake::app();
 		if ($application->has('databases.' . $name)) {
@@ -87,10 +87,10 @@ class DatabasesProviders extends Providers
 
 	/**
 	 * @param $name
-	 * @return array|mixed|null
+	 * @return mixed
 	 * @throws ConfigException
 	 */
-	public function getConfig($name)
+	public function getConfig($name): mixed
 	{
 		return Config::get('databases.' . $name, true);
 	}

@@ -21,27 +21,27 @@ interface IOrm
 	 * @param null $db
 	 * @return ActiveRecord
 	 */
-	public static function findOne($param, $db = NULL);
+	public static function findOne($param, $db = NULL): static;
 
 
     /**
      * @return string
      */
-	public static function className();
+	public static function className(): string;
 
 
     /**
      * @return ActiveQuery
      * return a sql queryBuilder
      */
-	public static function find();
+	public static function find(): ActiveQuery;
 
 
 	/**
 	 * @param $dbName
 	 * @return Connection
 	 */
-	public static function setDatabaseConnect($dbName);
+	public static function setDatabaseConnect($dbName): Connection;
 
 //	public static function deleteAll($condition, $attributes);
 

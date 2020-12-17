@@ -88,7 +88,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function errorHandler()
 	{
 		$error = func_get_args();
-		if (strpos($error[2], 'vendor/Reboot.php') !== FALSE) {
+		if (str_contains($error[2], 'vendor/Reboot.php')) {
 			return;
 		}
 
@@ -116,7 +116,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	 * @return false|string
 	 * @throws Exception
 	 */
-	public function sendError($message, $file, $line, $code = 500)
+	public function sendError($message, $file, $line, $code = 500): bool|string
 	{
 		$path = ['file' => $file, 'line' => $line];
 
@@ -130,7 +130,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	/**
 	 * @return mixed
 	 */
-	public function getErrorMessage()
+	public function getErrorMessage(): mixed
 	{
 		$message = $this->message;
 		$this->message = NULL;
@@ -140,7 +140,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	/**
 	 * @return bool
 	 */
-	public function getAsError()
+	public function getAsError(): bool
 	{
 		return $this->message !== NULL;
 	}

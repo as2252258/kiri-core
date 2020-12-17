@@ -7,7 +7,6 @@ namespace HttpServer\Events;
 use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -62,7 +61,7 @@ class OnHandshake extends Callback
 	 * @param int $code
 	 * @return false
 	 */
-	private function disconnect($response, $code = 500)
+	private function disconnect($response, $code = 500): bool
 	{
 		$response->status($code);
 		$response->end();
@@ -73,10 +72,10 @@ class OnHandshake extends Callback
 	/**
 	 * @param SRequest $request
 	 * @param SResponse $response
-	 * @return mixed|void
-	 * @throws Exception
+	 * @return void
+	 * @throws ComponentException
 	 */
-	public function onHandler(SRequest $request, SResponse $response)
+	public function onHandler(SRequest $request, SResponse $response): void
 	{
 		Coroutine::defer(function () {
 			fire(Event::EVENT_AFTER_REQUEST);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Snowflake\Pool;
 
 
-use Snowflake\Cache\Memcached;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Snowflake;
 
 /**
@@ -21,7 +21,7 @@ class Pool extends \Snowflake\Abstracts\Pool
 	/**
 	 * @return Redis
 	 */
-	public function getRedis()
+	#[Pure] public function getRedis(): Redis
 	{
 		return Snowflake::app()->redis_connections;
 	}
@@ -29,18 +29,10 @@ class Pool extends \Snowflake\Abstracts\Pool
 	/**
 	 * @return Connection
 	 */
-	public function getDb()
+	#[Pure] public function getDb(): Connection
 	{
 		return Snowflake::app()->connections;
 	}
 
-
-	/**
-	 * @return Memcached
-	 */
-	public function getMemcached()
-	{
-		return Snowflake::app()->memcached;
-	}
 
 }

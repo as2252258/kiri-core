@@ -8,6 +8,10 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Swoole\Server;
 
+/**
+ * Class OnFinish
+ * @package HttpServer\Events
+ */
 class OnFinish extends Callback
 {
 	/**

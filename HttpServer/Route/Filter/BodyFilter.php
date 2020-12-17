@@ -18,7 +18,7 @@ class BodyFilter extends Filter
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function check()
+	public function check(): bool
 	{
 		return $this->validator();
 	}

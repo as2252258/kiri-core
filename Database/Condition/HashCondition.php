@@ -12,7 +12,7 @@ class HashCondition extends Condition
 	/**
 	 * @return string
 	 */
-	public function builder()
+	public function builder(): string
 	{
 		$array = [];
 		if (empty($this->value)) {

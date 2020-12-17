@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Snowflake\Exception;
 
 
+use JetBrains\PhpStorm\Pure;
 use Throwable;
 
 /**
@@ -19,7 +20,13 @@ use Throwable;
 class NotFindClassException extends \Exception
 {
 
-	public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
+	/**
+	 * NotFindClassException constructor.
+	 * @param string $message
+	 * @param int $code
+	 * @param Throwable|null $previous
+	 */
+	#[Pure] public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
 	{
 		$message = "No class named `$message` was found, please check if the class name is correct";
 		parent::__construct($message, 404, $previous);

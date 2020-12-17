@@ -86,7 +86,7 @@ abstract class Callback extends Application
 	 * @throws \PHPMailer\PHPMailer\Exception
 	 * @throws ConfigException
 	 */
-	private function createEmail()
+	private function createEmail(): PHPMailer
 	{
 		$mail = new PHPMailer(true);
 		$mail->SMTPDebug = SMTP::DEBUG_SERVER;                                                // Enable verbose debug output

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Snowflake\Core;
 
+use JetBrains\PhpStorm\Pure;
+
 /**
  * Class DateFormat
  * @package Snowflake\Snowflake\Core
@@ -20,7 +22,7 @@ class DateFormat
 	 * @param $time
 	 * @return bool|false|int|string
 	 */
-	private static function check($time)
+	private static function check($time): bool|int|string
 	{
 		if ($time === null) {
 			$time = time();
@@ -46,7 +48,7 @@ class DateFormat
 	 *
 	 * 获取指定日期当周第一天的时间
 	 */
-	public static function getWeekCurrentDay($time = null)
+	public static function getWeekCurrentDay($time = null): bool|int
 	{
 		if (!($time = static::check($time))) {
 			return false;
@@ -64,7 +66,7 @@ class DateFormat
 	 *
 	 * 获取指定日期当月第一天的时间
 	 */
-	public static function getMonthCurrentDay($time = null)
+	public static function getMonthCurrentDay($time = null): bool|int
 	{
 		if (!($time = static::check($time))) {
 			return false;
@@ -75,10 +77,10 @@ class DateFormat
 
 	/**
 	 * @param $time
-	 * @return bool|false|int|string
+	 * @return bool|int|string 指定的月份有几天
 	 * 指定的月份有几天
 	 */
-	public static function getMonthTotalDay($time)
+	public static function getMonthTotalDay($time): bool|int|string
 	{
 		if (!($time = static::check($time))) {
 			return false;
@@ -94,7 +96,7 @@ class DateFormat
 	 * @param null $endTime
 	 * @return string
 	 */
-	public static function mtime($startTime, $endTime = null)
+	#[Pure] public static function mtime($startTime, $endTime = null)
 	{
 		if ($endTime === null) {
 			$endTime = microtime(true);

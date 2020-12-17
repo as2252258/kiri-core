@@ -11,6 +11,7 @@ namespace Database\Base;
 
 
 use HttpServer\Http\Context;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\JSON;
 use Database\ActiveQuery;
@@ -23,6 +24,7 @@ use Database\Relation;
 use Snowflake\Error\Logger;
 use Exception;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use validator\Validator;
 use Database\IOrm;
 use Snowflake\Snowflake;
@@ -181,7 +183,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return null|string
 	 * @throws Exception
 	 */
-	public function getPrimaryValue()
+	public function getPrimaryValue(): ?string
 	{
 		if (!$this->hasPrimary()) {
 			return null;
@@ -190,14 +192,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	}
 
 	/**
-	 * @param $condition
+	 * @param $param
 	 * @param $db
 	 * @return $this
 	 * @throws
 	 */
-	public static function findOne($condition, $db = NULL)
+	public static function findOne($param, $db = NULL): static
 	{
-		if (is_numeric($condition)) {
+		if (is_numeric($param)) {
 			$primary = static::getColumns()->getPrimaryKeys();
 			if (empty($primary)) {
 				throw new Exception('Primary key cannot be empty.');
@@ -205,9 +207,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			if (is_array($primary)) {
 				$primary = current($primary);
 			}
-			$condition = [$primary => $condition];
+			$param = [$primary => $param];
 		}
-		return static::find()->where($condition)->first();
+		return static::find()->where($param)->first();
 	}
 
 	/**
@@ -234,10 +236,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	}
 
 	/**
-	 * @return mixed|ActiveQuery
-	 * @throws
+	 * @return ActiveQuery
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	public static function find()
+	public static function find():ActiveQuery
 	{
 		return Snowflake::createObject(ActiveQuery::class, [get_called_class()]);
 	}
@@ -250,19 +253,19 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function deleteAll($condition = NULL, $attributes = [], $if_condition_is_null = false)
+	public static function delete($condition = NULL, $attributes = [], $if_condition_is_null = false): bool
 	{
 		if (empty($condition)) {
 			if (!$if_condition_is_null) {
 				return false;
 			}
-			return static::find()->deleteAll();
+			return static::find()->delete();
 		}
 		$model = static::find()->ifNotWhere($if_condition_is_null)->where($condition);
 		if (!empty($attributes)) {
 			$model->bindParams($attributes);
 		}
-		return $model->deleteAll();
+		return $model->delete();
 	}
 
 
@@ -659,10 +662,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 	/**
 	 * @param $name
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		$method = 'get' . ucfirst($name);
 		if (method_exists($this, $method . 'Attribute')) {
@@ -780,7 +783,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function setDatabaseConnect($bsName)
+	public static function setDatabaseConnect($bsName): Connection
 	{
 		return Snowflake::app()->db->get($bsName);
 	}

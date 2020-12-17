@@ -5,6 +5,7 @@ namespace Snowflake\Core;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Str
@@ -23,7 +24,7 @@ class Str
 	 * @return string
 	 * 获取随机字符串
 	 */
-	public static function rand(int $length = 20)
+	#[Pure] public static function rand(int $length = 20): string
 	{
 		$string = '';
 		if ($length < 1) $length = 20;
@@ -38,10 +39,10 @@ class Str
 	/**
 	 * @param int $length
 	 *
-	 * @return int
+	 * @return int|string 获取随机数字
 	 * 获取随机数字
 	 */
-	public static function random(int $length = 20)
+	#[Pure] public static function random(int $length = 20): int|string
 	{
 		$number = '';
 		$default = str_split(self::NUMBER);
@@ -54,13 +55,13 @@ class Str
 
 	/**
 	 * @param        $string
-	 * @param        $sublen
+	 * @param        $sullen
 	 * @param bool $strip_tags
 	 * @param string $append
 	 *
 	 * @return string
 	 */
-	public static function cut_str_utf8($string, $sublen, $strip_tags = true, $append = '...')
+	public static function cut_str_utf8($string, $sullen, $strip_tags = true, $append = '...'): string
 	{
 		if ($strip_tags) {
 			$string = strip_tags($string);
@@ -71,7 +72,7 @@ class Str
 		for ($i = 0; $i < count($t_string[0]); $i++) {
 			$str .= $t_string[0][$i];
 			//转为gbk，一个汉字长度为2
-			if (strlen(@iconv('utf-8', 'gbk', $str)) >= $sublen) {
+			if (strlen(@iconv('utf-8', 'gbk', $str)) >= $sullen) {
 				if ($i != count($t_string[0]) - 1) $str .= $append;
 				break;
 			}
@@ -86,7 +87,7 @@ class Str
 	 * @return bool
 	 * 判断是否为json字符串
 	 */
-	public static function isJson($data, $callback = null)
+	public static function isJson($data, $callback = null): bool
 	{
 		$json = !is_null(json_decode($data)) && !is_numeric($data);
 		if ($json && is_callable($callback, true)) {
@@ -102,7 +103,7 @@ class Str
 	 * @return bool
 	 * 判断是否序列化字符串
 	 */
-	public static function isSerialize($data, $callBack = null)
+	public static function isSerialize($data, $callBack = null): bool
 	{
 		$false = !empty($data) && unserialize($data) !== false;
 		if ($false && is_callable($callBack, true)) {
@@ -118,7 +119,7 @@ class Str
 	 * @param string $append
 	 * @return string
 	 */
-	public static function cut($string, int $length = 20, $append = '...')
+	#[Pure] public static function cut($string, int $length = 20, $append = '...'): string
 	{
 		if (empty($string)) {
 			return '';
@@ -144,7 +145,7 @@ class Str
 	 *
 	 * @return string
 	 */
-	public static function encrypt($str, $number = 10, $key = 'xshucai.com')
+	public static function encrypt($str, $number = 10, $key = 'xshucai.com'): string
 	{
 		$res = [];
 		$add = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -166,7 +167,7 @@ class Str
 	 * @param $type
 	 * @return string
 	 */
-	public static function filename($file, $type)
+	#[Pure] public static function filename($file, $type): string
 	{
 		switch ($type) {
 			case 'image/png':
@@ -187,7 +188,7 @@ class Str
 	 * @return array
 	 * 剩余天，带分秒
 	 */
-	public static function timeout($endTime, int $startTime = null)
+	public static function timeout($endTime, int $startTime = null): array
 	{
 		$endTime = $endTime - (!empty($startTime) ? $startTime : time());
 
@@ -206,7 +207,7 @@ class Str
 	/**
 	 * @return false|int
 	 */
-	public static function get_sy_time()
+	public static function get_sy_time(): bool|int
 	{
 		$time = strtotime('+1days', strtotime(date('Y-m-d')));
 
@@ -217,7 +218,7 @@ class Str
 	 * @param string $string
 	 * @return string
 	 */
-	public static function encode(string $string)
+	#[Pure] public static function encode(string $string): string
 	{
 		return addslashes($string);
 	}
@@ -227,7 +228,7 @@ class Str
 	 * @return string|string[]|null
 	 * 清除标点符号
 	 */
-	public static function clear(string $string)
+	public static function clear(string $string): array|string|null
 	{
 		$char = '。、！？：；﹑•＂…‘’“”〝〞∕¦‖—　〈〉﹞﹝「」‹›〖〗】【»«』『〕〔》《﹐¸﹕︰﹔！¡？¿﹖﹌﹏﹋＇´ˊˋ―﹫︳︴¯＿￣﹢﹦﹤‐­˜﹟﹩﹠﹪﹡﹨﹍﹉﹎﹊ˇ︵︶︷︸︹︿﹀︺︽︾ˉ﹁﹂﹃﹄︻︼（）';
 		return preg_replace(array("/[[:punct:]]/i", '/[' . $char . ']/u', '/[ ]{2,}/'), '', $string);
@@ -237,12 +238,12 @@ class Str
 	/**
 	 * @param int $user
 	 * @param array $param
-	 * @param int $requestTime
+	 * @param null $requestTime
 	 *
 	 * @return string
 	 * @throws Exception
 	 */
-	public static function token($user, $param = [], $requestTime = NULL)
+	public static function token(int $user, $param = [], $requestTime = NULL): string
 	{
 		$str = '';
 		if (!$requestTime) {

@@ -18,7 +18,7 @@ class Reader
 	 * @param int $size
 	 * @return array and int
 	 */
-	public static function readerServerLogPagination($filepath, $page = 1, $size = 20)
+	public static function readerServerLogPagination($filepath, $page = 1, $size = 20): array
 	{
 		$count = 0;
 		$strings = [];
@@ -56,7 +56,7 @@ class Reader
 	 * @param $lines
 	 * @return mixed
 	 */
-	public static function read_backward_line($filename, $start, $lines)
+	public static function read_backward_line($filename, $start, $lines): mixed
 	{
 		$lines++;
 		$offset = -1;
@@ -100,7 +100,7 @@ class Reader
 	 * @param $filepath
 	 * @return int
 	 */
-	private static function read_count_by_file($filepath)
+	private static function read_count_by_file($filepath): int
 	{
 		$count = 0;
 		//只读方式打开文件
@@ -123,7 +123,7 @@ class Reader
 	 * @param int $size
 	 * @return array
 	 */
-	public static function folderPagination($filepath, $page = 1, $size = 20)
+	public static function folderPagination($filepath, $page = 1, $size = 20): array
 	{
 		$count = 0;
 		$strings = [];

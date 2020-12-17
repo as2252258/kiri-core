@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Database;
 
 
+use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\Mysql\Schema;
 use Database\Orm\Select;
@@ -18,6 +20,7 @@ use Exception;
 use PDO;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -92,7 +95,7 @@ class Connection extends Component
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function getConnect($sql = NULL)
+	public function getConnect($sql = NULL): PDO
 	{
 		$connections = Snowflake::app()->connections;
 		$connections->initConnections($this->cds, true, $this->maxNumber);
@@ -119,7 +122,7 @@ class Connection extends Component
 	 * @return PDO
 	 * @throws Exception
 	 */
-	private function getPdo($sql)
+	private function getPdo($sql): PDO
 	{
 		if ($this->isWrite($sql)) {
 			$connect = $this->masterInstance();
@@ -130,10 +133,11 @@ class Connection extends Component
 	}
 
 	/**
-	 * @return mixed|object|Schema
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	public function getSchema()
+	public function getSchema(): mixed
 	{
 		if ($this->_schema === null) {
 			$this->_schema = Snowflake::createObject([
@@ -148,7 +152,7 @@ class Connection extends Component
 	 * @param $sql
 	 * @return bool
 	 */
-	public function isWrite($sql)
+	#[Pure] public function isWrite($sql): bool
 	{
 		if (empty($sql)) return false;
 
@@ -158,10 +162,10 @@ class Connection extends Component
 	}
 
 	/**
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws ComponentException
 	 */
-	public function getCacheDriver()
+	public function getCacheDriver(): mixed
 	{
 		if (!$this->enableCache) {
 			return null;
@@ -173,7 +177,7 @@ class Connection extends Component
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function masterInstance()
+	public function masterInstance(): PDO
 	{
 		$config = [
 			'cds'      => $this->cds,
@@ -188,7 +192,7 @@ class Connection extends Component
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function slaveInstance()
+	public function slaveInstance(): PDO
 	{
 		if (empty($this->slaveConfig)) {
 			return $this->masterInstance();
@@ -203,7 +207,7 @@ class Connection extends Component
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function beginTransaction()
+	public function beginTransaction(): static
 	{
 		$connections = Snowflake::app()->connections;
 		$connections->beginTransaction($this->cds);
@@ -214,7 +218,7 @@ class Connection extends Component
 	 * @return $this|bool
 	 * @throws Exception
 	 */
-	public function inTransaction()
+	public function inTransaction(): bool|static
 	{
 		$connections = Snowflake::app()->connections;
 		return $connections->inTransaction($this->cds);
@@ -227,7 +231,7 @@ class Connection extends Component
 	public function rollback()
 	{
 		$connections = Snowflake::app()->connections;
-		return $connections->rollback($this->cds);
+		$connections->rollback($this->cds);
 	}
 
 	/**
@@ -237,7 +241,7 @@ class Connection extends Component
 	public function commit()
 	{
 		$connections = Snowflake::app()->connections;
-		return $connections->commit($this->cds);
+		$connections->commit($this->cds);
 	}
 
 	/**
@@ -245,7 +249,7 @@ class Connection extends Component
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function refresh($sql)
+	public function refresh($sql): PDO
 	{
 		if ($this->isWrite($sql)) {
 			$instance = $this->masterInstance();
@@ -261,7 +265,7 @@ class Connection extends Component
 	 * @return Command
 	 * @throws
 	 */
-	public function createCommand($sql = null, $attributes = [])
+	public function createCommand($sql = null, $attributes = []): Command
 	{
 		$command = new Command(['db' => $this, 'sql' => $sql]);
 		return $command->bindValues($attributes);
@@ -271,7 +275,7 @@ class Connection extends Component
 	 * @return Select
 	 * @throws Exception
 	 */
-	public function getBuild()
+	public function getBuild(): Select
 	{
 		return $this->getSchema()->getQueryBuilder();
 	}

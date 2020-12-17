@@ -7,6 +7,7 @@ namespace HttpServer\Route;
 
 use Exception;
 use HttpServer\Application;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 /**
@@ -43,9 +44,10 @@ class Handler extends Application
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Handler
+	 * @return Handler|Node|null
+	 * @throws ConfigException
 	 */
-	public function handler($route, $handler)
+	public function handler($route, $handler): Handler|Node|null
 	{
 		return $this->router->addRoute($route, $handler, 'receive');
 	}

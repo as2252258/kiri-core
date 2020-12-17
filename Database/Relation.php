@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database;
 
 
+use Exception;
 use Snowflake\Abstracts\Component;
 
 /**
@@ -23,7 +24,7 @@ class Relation extends Component
 	 * @param ActiveQuery $query
 	 * @return $this
 	 */
-	public function bindIdentification(string $identification, ActiveQuery $query)
+	public function bindIdentification(string $identification, ActiveQuery $query): static
 	{
 		$this->_query[$identification] = $query;
 		return $this;
@@ -33,19 +34,18 @@ class Relation extends Component
 	 * @param $name
 	 * @return ActiveQuery|null
 	 */
-	public function getQuery(string $name)
+	public function getQuery(string $name): ?ActiveQuery
 	{
 		return $this->_query[$name] ?? null;
 	}
 
 
 	/**
-	 * @param $identification
+	 * @param string $identification
 	 * @param $localValue
-	 * @return ActiveRecord|mixed
-	 * @throws
+	 * @return mixed
 	 */
-	public function first(string $identification, $localValue)
+	public function first(string $identification, $localValue): mixed
 	{
 		$_identification = $identification . '_first_' . $localValue;
 		if (isset($this->_relations[$_identification]) && $this->_relations[$_identification] !== null) {
@@ -62,12 +62,12 @@ class Relation extends Component
 
 
 	/**
-	 * @param $identification
+	 * @param string $identification
 	 * @param $localValue
-	 * @return ActiveRecord|mixed
-	 * @throws
+	 * @return mixed
+	 * @throws Exception
 	 */
-	public function count(string $identification, $localValue)
+	public function count(string $identification, $localValue): mixed
 	{
 		$_identification = $identification . '_count_' . $localValue;
 		if (isset($this->_relations[$_identification]) && $this->_relations[$_identification] !== null) {
@@ -84,12 +84,11 @@ class Relation extends Component
 
 
 	/**
-	 * @param $identification
+	 * @param string $identification
 	 * @param $localValue
-	 * @return array|Collection|mixed|null
-	 * @throws
+	 * @return mixed
 	 */
-	public function get(string $identification, $localValue)
+	public function get(string $identification, $localValue): mixed
 	{
 		if (is_array($localValue)) {
 			$_identification = $identification . '_get_' . implode('_', $localValue);

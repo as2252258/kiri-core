@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Gii;
 
 use Database\Db;
+use Exception;
+use ReflectionException;
 use Snowflake\Snowflake;
 
 /**
@@ -14,11 +16,10 @@ use Snowflake\Snowflake;
 class GiiModel extends GiiBase
 {
 
-	public $classFileName;
-	public $tableName;
-	public $visible;
-	public $res;
-	public $fields;
+	public ?string $classFileName;
+	public ?array $visible;
+	public ?array $res;
+	public ?array $fields;
 
 	/**
 	 * ModelFile constructor.
@@ -28,7 +29,7 @@ class GiiModel extends GiiBase
 	 * @param $res
 	 * @param $fields
 	 */
-	public function __construct($classFileName, $tableName, $visible, $res, $fields)
+	public function __construct(string $classFileName, string $tableName, array $visible, array $res, array $fields)
 	{
 		$this->classFileName = $classFileName;
 		$this->tableName = $tableName;
@@ -38,10 +39,10 @@ class GiiModel extends GiiBase
 	}
 
 	/**
-	 * @throws \ReflectionException
-	 * @throws \Exception
+	 * @throws ReflectionException
+	 * @throws Exception
 	 */
-	public function generate()
+	public function generate(): string
 	{
 		$class = '';
 		$modelPath = $this->getModelPath();
@@ -75,7 +76,7 @@ use Database\ActiveRecord;';
 
 		$createSql = $this->setCreateSql($this->tableName);
 
-		if (strpos($html, $createSql) === false) {
+		if (!str_contains($html, $createSql)) {
 			$html .= '
 ' . $this->setCreateSql($this->tableName);
 		}
@@ -193,7 +194,12 @@ class ' . $managerName . ' extends ActiveRecord
 	}
 
 
-	private function generate_json_function($html, $fields)
+	/**
+	 * @param $html
+	 * @param $fields
+	 * @return array
+	 */
+	private function generate_json_function($html, $fields): array
 	{
 		$strings = [];
 		foreach ($fields as $field) {
@@ -228,11 +234,11 @@ class ' . $managerName . ' extends ActiveRecord
 	}
 	';
 
-				if (strpos($html, 'set' . ucfirst($field['Field']) . 'Attribute') === false) {
+				if (!str_contains($html, 'set' . ucfirst($field['Field']) . 'Attribute')) {
 					$strings[] = $function;
 				}
 
-				if (strpos($html, 'get' . ucfirst($field['Field']) . 'Attribute') === false) {
+				if (!str_contains($html, 'get' . ucfirst($field['Field']) . 'Attribute')) {
 					$strings[] = $get_function;
 				}
 			}
@@ -247,7 +253,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 * @return string
 	 * 创建表名称
 	 */
-	private function createTableName($field)
+	private function createTableName($field): string
 	{
 
 		$prefixed = $this->db->tablePrefix;
@@ -271,7 +277,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 * @return string
 	 * 创建效验规则
 	 */
-	private function createRules($fields)
+	private function createRules($fields): string
 	{
 		$data = [];
 		foreach ($fields as $key => $val) {
@@ -325,7 +331,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 * @param $val
 	 * @return string
 	 */
-	public function getLength($val)
+	public function getLength($val): string
 	{
 		$data = [];
 		foreach ($val as $key => $_val) {
@@ -339,7 +345,7 @@ class ' . $managerName . ' extends ActiveRecord
 		if (empty($data)) return '';
 		$string = [];
 		foreach ($data as $key => $_val) {
-			if (is_string($key) && strpos($key, ',') !== false) {
+			if (is_string($key) && str_contains($key, ',')) {
 				$key = '[' . $key . ']';
 			}
 			if (count($_val) == 1) {
@@ -359,12 +365,12 @@ class ' . $managerName . ' extends ActiveRecord
 	 * @param $fields
 	 * @return string
 	 */
-	public function getUnique($fields)
+	public function getUnique($fields): string
 	{
 		$data = [];
 		foreach ($fields as $_key => $_val) {
 			if ($_val['Extra'] == 'auto_increment') continue;
-			if (strpos($_val['Type'], 'unique') !== FALSE) {
+			if (str_contains($_val['Type'], 'unique')) {
 				$data[] = $_val['Field'];
 			}
 		}
@@ -379,7 +385,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 * @param $val
 	 * @return string
 	 */
-	public function getRequired($val)
+	public function getRequired($val): string
 	{
 		$data = [];
 		foreach ($val as $_key => $_val) {
@@ -409,7 +415,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 *      'field' ,'字段類型' ,'是否必填' ,'字段长度' , '字段解释',
 	 * )
 	 */
-	private function createPrimary($fields)
+	private function createPrimary($fields): ?string
 	{
 		$field = $this->getPrimaryKey($fields);
 		if (empty($field)) {
@@ -422,7 +428,7 @@ class ' . $managerName . ' extends ActiveRecord
 	/**
 	 * @return string
 	 */
-	private function createDatabaseSource()
+	private function createDatabaseSource(): string
 	{
 		return '
     /**
@@ -439,9 +445,9 @@ class ' . $managerName . ' extends ActiveRecord
 	/**
 	 * @param $table
 	 * @return string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	private function setCreateSql($table)
+	private function setCreateSql($table): string
 	{
 		$text = Db::showCreateSql($table, $this->db)['Create Table'] ?? '';
 

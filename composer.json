@@ -21,7 +21,6 @@
     "ext-iconv": "*",
     "ext-mbstring": "*",
     "ext-xml": "*",
-    "ext-memcached": "*",
     "ext-inotify": "*",
     "ext-curl": "*",
     "ext-openssl": "*",

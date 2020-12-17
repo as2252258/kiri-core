@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace Database\Orm;
 
+use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Core\JSON;
 use Snowflake\Core\Str;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Database\ActiveQuery;
 use Database\Base\ConditionClassMap;
@@ -26,7 +29,7 @@ trait Condition
 	 * @return string
 	 * @throws Exception
 	 */
-	public function getWhere($query)
+	public function getWhere($query): string
 	{
 		return $this->builderWhere($query);
 	}
@@ -36,7 +39,7 @@ trait Condition
 	 * @param $alias
 	 * @return string
 	 */
-	private function builderAlias($alias)
+	private function builderAlias($alias): string
 	{
 		return " AS " . $alias;
 	}
@@ -46,7 +49,7 @@ trait Condition
 	 * @return string
 	 * @throws Exception
 	 */
-	private function builderFrom($table)
+	private function builderFrom($table): string
 	{
 		if ($table instanceof ActiveQuery) {
 			$table = '(' . $table->getBuild()->getQuery($table) . ')';
@@ -58,7 +61,7 @@ trait Condition
 	 * @param $join
 	 * @return string
 	 */
-	private function builderJoin($join)
+	#[Pure] private function builderJoin($join): string
 	{
 		if (!empty($join)) {
 			return ' ' . implode(' ', $join);
@@ -71,7 +74,7 @@ trait Condition
 	 * @return string
 	 * @throws Exception
 	 */
-	private function builderWhere($where)
+	private function builderWhere($where): string
 	{
 		if (empty($where)) {
 			return '';
@@ -101,10 +104,11 @@ trait Condition
 
 	/**
 	 * @param $value
-	 * @return mixed|object|string|null
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	private function arrayMap($value)
+	private function arrayMap($value): mixed
 	{
 		$classMap = ConditionClassMap::$conditionMap;
 		if (isset($value[0])) {
@@ -125,10 +129,11 @@ trait Condition
 
 	/**
 	 * @param $value
-	 * @return mixed|object
-	 * @throws Exception
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	private function classMap($value)
+	private function classMap($value): mixed
 	{
 		[$option['opera'], $option['column'], $option['value']] = $value;
 
@@ -146,7 +151,7 @@ trait Condition
 	 * @param $group
 	 * @return string
 	 */
-	private function builderGroup($group)
+	private function builderGroup($group): string
 	{
 		if (empty($group)) {
 			return '';
@@ -158,7 +163,7 @@ trait Condition
 	 * @param $order
 	 * @return string
 	 */
-	private function builderOrder($order)
+	private function builderOrder($order): string
 	{
 		if (!empty($order)) {
 			return ' ORDER BY ' . implode(',', $order);
@@ -171,7 +176,7 @@ trait Condition
 	 * @param ActiveQuery $query
 	 * @return string
 	 */
-	private function builderLimit(ActiveQuery $query)
+	private function builderLimit(ActiveQuery $query): string
 	{
 		$limit = $query->limit;
 		if (!is_numeric($limit) || $limit < 1) {
@@ -192,7 +197,7 @@ trait Condition
 	 * @param bool $isSearch
 	 * @return int|string
 	 */
-	public function valueEncode($value, $isSearch = false)
+	public function valueEncode($value, $isSearch = false): int|string
 	{
 		if ($isSearch) {
 			return $value;

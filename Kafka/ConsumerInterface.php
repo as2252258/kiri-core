@@ -16,7 +16,7 @@ interface ConsumerInterface
 	 * @param Struct $struct
 	 * @return mixed
 	 */
-	public function onHandler(Struct $struct);
+	public function onHandler(Struct $struct): mixed;
 
 
 }

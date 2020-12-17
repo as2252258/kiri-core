@@ -32,7 +32,7 @@ class Filter extends Application
 	 * @return BodyFilter|bool
 	 * @throws Exception
 	 */
-	public function setBody(array $value)
+	public function setBody(array $value): bool|BodyFilter
 	{
 		if (empty($value)) {
 			return true;
@@ -52,7 +52,7 @@ class Filter extends Application
 	 * @return HeaderFilter|bool
 	 * @throws Exception
 	 */
-	public function setHeader(array $value)
+	public function setHeader(array $value): HeaderFilter|bool
 	{
 		if (empty($value)) {
 			return true;
@@ -72,7 +72,7 @@ class Filter extends Application
 	 * @return QueryFilter|bool
 	 * @throws Exception
 	 */
-	public function setQuery(array $value)
+	public function setQuery(array $value): QueryFilter|bool
 	{
 		if (empty($value)) {
 			return true;
@@ -90,7 +90,7 @@ class Filter extends Application
 	/**
 	 * @throws Exception
 	 */
-	public function handler()
+	public function handler(): bool
 	{
 		if (($error = $this->filters()) !== true) {
 			throw new FilterException($error);
@@ -104,7 +104,7 @@ class Filter extends Application
 	/**
 	 * @return bool
 	 */
-	private function filters()
+	private function filters(): bool
 	{
 		if (empty($this->_filters)) {
 			return true;
@@ -118,9 +118,9 @@ class Filter extends Application
 	}
 
 	/**
-	 * @return bool|mixed
+	 * @return mixed
 	 */
-	private function grant()
+	private function grant(): mixed
 	{
 		if (!is_callable($this->grant, true)) {
 			return true;

@@ -15,17 +15,12 @@ use Snowflake\Snowflake;
 class GiiMiddleware extends GiiBase
 {
 
-	public $tableName;
-	public $visible;
-	public $res;
-	public $fields;
-
 
 	/**
-	 * @return string[]
+	 * @return array
 	 * @throws Exception
 	 */
-	public function generate()
+	public function generate(): array
 	{
 
 		$managerName = $this->input->get('name', null);

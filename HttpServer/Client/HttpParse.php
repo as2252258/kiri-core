@@ -44,7 +44,7 @@ class HttpParse
 	 * @return string
 	 * @throws Exception
 	 */
-	public static function parse($data)
+	public static function parse($data): string
 	{
 		$tmp = [];
 		if (is_string($data)) {
@@ -65,7 +65,7 @@ class HttpParse
 	 * @return string
 	 * @throws Exception
 	 */
-	private static function ifElse($t, $qt)
+	private static function ifElse($t, $qt): string
 	{
 		if (is_numeric($qt)) {
 			return $t . '=' . $qt;

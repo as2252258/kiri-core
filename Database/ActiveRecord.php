@@ -14,6 +14,7 @@ use Exception;
 use Database\Base\BaseActiveRecord;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Error\Logger;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
@@ -37,7 +38,7 @@ class ActiveRecord extends BaseActiveRecord
 	/**
 	 * @return array
 	 */
-	public function rules()
+	public function rules(): array
 	{
 		return [];
 	}
@@ -48,7 +49,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return ActiveRecord|false
 	 * @throws Exception
 	 */
-	public function increment(string $column, int $value)
+	public function increment(string $column, int $value): bool|ActiveRecord
 	{
 		if (!$this->mathematics(self::INCR, [$column => $value])) {
 			return false;
@@ -64,7 +65,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return ActiveRecord|false
 	 * @throws Exception
 	 */
-	public function decrement(string $column, int $value)
+	public function decrement(string $column, int $value): bool|ActiveRecord
 	{
 		if (!$this->mathematics(self::DECR, [$column => $value])) {
 			return false;
@@ -79,7 +80,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return ActiveRecord|false
 	 * @throws Exception
 	 */
-	public function increments(array $columns)
+	public function increments(array $columns): bool|static
 	{
 		if (!$this->mathematics(self::INCR, $columns)) {
 			return false;
@@ -96,7 +97,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return ActiveRecord|false
 	 * @throws Exception
 	 */
-	public function decrements(array $columns)
+	public function decrements(array $columns): bool|static
 	{
 		if (!$this->mathematics(self::DECR, $columns)) {
 			return false;
@@ -108,12 +109,13 @@ class ActiveRecord extends BaseActiveRecord
 	}
 
 	/**
-	 * @param $attributes
-	 * @param $condition
-	 * @return bool|ActiveRecord|mixed
+	 * @param array $condition
+	 * @param array $attributes
+	 * @return mixed
+	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	public static function findOrCreate(array $condition, array $attributes = [])
+	public static function findOrCreate(array $condition, array $attributes = []): mixed
 	{
 		$select = static::find()->where($condition)->first();
 		if (!empty($select)) {
@@ -138,7 +140,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return array|bool|int|string|null
 	 * @throws Exception
 	 */
-	private function mathematics($action, $columns, $condition = [])
+	private function mathematics($action, $columns, $condition = []): int|bool|array|string|null
 	{
 		if (empty($condition)) {
 			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
@@ -155,7 +157,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function incrAll($column, $value, $condition = [])
+	public static function incrAll($column, $value, $condition = []): bool
 	{
 		return static::getDb()->createCommand()
 			->mathematics(self::getTable(), [self::INCR => [$column, $value]], $condition)
@@ -170,7 +172,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function decrAll($column, $value, $condition = [])
+	public static function decrAll($column, $value, $condition = []): bool
 	{
 		return static::getDb()->createCommand()
 			->mathematics(self::getTable(), [self::DECR => [$column, $value]], $condition)
@@ -183,7 +185,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws
 	 */
-	public function update(array $attributes)
+	public function update(array $attributes): bool
 	{
 		return $this->save($attributes);
 	}
@@ -194,7 +196,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool|static
 	 * @throws Exception
 	 */
-	public static function insertOrUpdate(array $params, array $condition)
+	public static function insertOrUpdate(array $params, array $condition): bool|static
 	{
 		$first = static::findOrCreate($condition, $params);
 		$first->attributes = $params;
@@ -223,7 +225,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function delete()
+	public function delete(): bool
 	{
 		$conditions = $this->_oldAttributes;
 		if (empty($conditions)) {
@@ -253,7 +255,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function batchUpdate($condition, $attributes = [])
+	public static function batchUpdate($condition, $attributes = []): bool
 	{
 		$condition = static::find()->where($condition);
 		return $condition->batchUpdate($attributes);
@@ -263,10 +265,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param       $condition
 	 * @param array $attributes
 	 *
-	 * @return array|mixed|null|Collection
+	 * @return array|Collection
 	 * @throws Exception
 	 */
-	public static function findAll($condition, $attributes = [])
+	public static function findAll($condition, $attributes = []): array|Collection
 	{
 		$query = static::find()->where($condition);
 		if (!empty($attributes)) {
@@ -277,10 +279,10 @@ class ActiveRecord extends BaseActiveRecord
 
 	/**
 	 * @param $data
-	 * @return array|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function resolveObject($data)
+	private function resolveObject($data): mixed
 	{
 		if (is_numeric($data) || !is_string($data)) {
 			return $data;
@@ -303,10 +305,10 @@ class ActiveRecord extends BaseActiveRecord
 
 
 	/**
-	 * @return array|mixed
+	 * @return array
 	 * @throws Exception
 	 */
-	public function toArray()
+	public function toArray(): array
 	{
 		$data = [];
 		foreach ($this->_attributes as $key => $val) {
@@ -319,7 +321,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return array
 	 * @throws Exception
 	 */
-	private function runRelate()
+	private function runRelate(): array
 	{
 		$relates = [];
 		if (empty($this->_relate)) {
@@ -333,13 +335,13 @@ class ActiveRecord extends BaseActiveRecord
 
 
 	/**
-	 * @param $modelName
+	 * @param string $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return mixed|ActiveQuery
+	 * @return HasOne
 	 * @throws Exception
 	 */
-	public function hasOne(string $modelName, $foreignKey, $localKey)
+	public function hasOne(string $modelName, $foreignKey, $localKey): HasOne
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -357,10 +359,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return mixed|ActiveQuery
+	 * @return HasCount
 	 * @throws Exception
 	 */
-	public function hasCount($modelName, $foreignKey, $localKey)
+	public function hasCount($modelName, $foreignKey, $localKey): HasCount
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -378,10 +380,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return mixed|ActiveQuery
+	 * @return HasMany
 	 * @throws Exception
 	 */
-	public function hasMany($modelName, $foreignKey, $localKey)
+	public function hasMany($modelName, $foreignKey, $localKey): HasMany
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -398,10 +400,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return mixed|ActiveQuery
+	 * @return HasMany
 	 * @throws Exception
 	 */
-	public function hasIn($modelName, $foreignKey, $localKey)
+	public function hasIn($modelName, $foreignKey, $localKey): HasMany
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -418,7 +420,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function afterDelete()
+	public function afterDelete(): bool
 	{
 		if (!$this->hasPrimary()) {
 			return TRUE;
@@ -434,7 +436,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function beforeDelete()
+	public function beforeDelete(): bool
 	{
 		if (!$this->hasPrimary()) {
 			return TRUE;

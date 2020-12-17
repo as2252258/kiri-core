@@ -6,10 +6,6 @@ namespace HttpServer\Events;
 
 use Annotation\Route\Socket;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Route\Annotation\Http;
-use HttpServer\Route\Annotation\Tcp;
-use HttpServer\Route\Annotation\Websocket;
-use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use HttpServer\Route\Node;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
@@ -17,7 +13,6 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
 use Exception;
-use Swoole\Http\Server as HServer;
 use Swoole\WebSocket\Server as WServer;
 
 /**

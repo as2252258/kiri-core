@@ -25,10 +25,10 @@ class Http2 extends Component
 	 * @param $path
 	 * @param array $params
 	 * @param int $timeout
-	 * @return mixed
+	 * @return Result
 	 * @throws Exception
 	 */
-	public function get($domain, $path, $params = [], $timeout = -1)
+	public function get($domain, $path, $params = [], $timeout = -1): Result
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'GET', $params));
@@ -41,10 +41,10 @@ class Http2 extends Component
 	 * @param $path
 	 * @param array $params
 	 * @param int $timeout
-	 * @return mixed
+	 * @return Result
 	 * @throws Exception
 	 */
-	public function post($domain, $path, $params = [], $timeout = -1)
+	public function post($domain, $path, $params = [], $timeout = -1): Result
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'POST', $params));
@@ -57,10 +57,10 @@ class Http2 extends Component
 	 * @param $path
 	 * @param array $params
 	 * @param int $timeout
-	 * @return mixed
+	 * @return Result
 	 * @throws Exception
 	 */
-	public function delete($domain, $path, $params = [], $timeout = -1)
+	public function delete($domain, $path, $params = [], $timeout = -1): Result
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'DELETE', $params));
@@ -76,7 +76,7 @@ class Http2 extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function put($domain, $path, $params = [], $timeout = -1)
+	public function put($domain, $path, $params = [], $timeout = -1): Result
 	{
 		$client = $this->getClient($domain, $path, $timeout);
 		$client->send($this->getRequest($domain, $path, 'PUT', $params));
@@ -92,7 +92,7 @@ class Http2 extends Component
 	 * @return Request
 	 * @throws Exception
 	 */
-	public function getRequest($domain, $path, $method, $params)
+	public function getRequest($domain, $path, $method, $params): Request
 	{
 		if (Context::hasContext($domain . $path)) {
 			$req = Context::getContext($domain . $path);
@@ -123,7 +123,7 @@ class Http2 extends Component
 	 * @return H2Client
 	 * @throws Exception
 	 */
-	private function getClient($domain, $path, $timeout = -1)
+	private function getClient($domain, $path, $timeout = -1): H2Client
 	{
 		if (Context::hasContext($domain)) {
 			return Context::getContext($domain);

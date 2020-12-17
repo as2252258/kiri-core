@@ -30,10 +30,10 @@ class Dtl extends Component
 
 
 	/**
-	 * @return mixed
+	 * @return array
 	 * @throws Exception
 	 */
-	public function toArray()
+	public function toArray(): array
 	{
 		if (!is_array($this->params)) {
 			return ArrayAccess::toArray($this->params);
@@ -44,10 +44,10 @@ class Dtl extends Component
 
 	/**
 	 * @param $name
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function get($name)
+	public function get($name): mixed
 	{
 		$array = $this->toArray();
 		if (!isset($array[$name])) {

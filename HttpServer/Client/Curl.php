@@ -5,6 +5,7 @@ namespace HttpServer\Client;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Curl
@@ -14,13 +15,13 @@ class Curl extends ClientAbstracts
 {
 
 	/**
-	 * @param $path
 	 * @param $method
+	 * @param $path
 	 * @param array $params
-	 * @return bool|string
+	 * @return Result|bool|array|string
 	 * @throws Exception
 	 */
-	public function request($method, $path, $params = [])
+	public function request($method, $path, $params = []): Result|bool|array|string
 	{
 		if ($method == self::GET) {
 			$path = $this->joinGetParams($path, $params);
@@ -33,10 +34,10 @@ class Curl extends ClientAbstracts
 	 * @param $path
 	 * @param $method
 	 * @param $params
-	 * @return mixed|resource
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function getCurlHandler($path, $method, $params)
+	private function getCurlHandler($path, $method, $params): mixed
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
 
@@ -71,7 +72,7 @@ class Curl extends ClientAbstracts
 	 * @return bool
 	 * @throws Exception
 	 */
-	private function curlHandlerSslSet($resource)
+	private function curlHandlerSslSet($resource): bool
 	{
 		if (!empty($this->ssl_key)) {
 			if (!file_exists($this->ssl_key)) {
@@ -129,10 +130,10 @@ class Curl extends ClientAbstracts
 
 	/**
 	 * @param $curl
-	 * @return bool|string
+	 * @return Result|bool|array|string
 	 * @throws Exception
 	 */
-	private function execute($curl)
+	private function execute($curl): Result|bool|array|string
 	{
 		$output = curl_exec($curl);
 		if ($output === false) {
@@ -146,10 +147,10 @@ class Curl extends ClientAbstracts
 	 * @param $curl
 	 * @param $output
 	 * @param array $params
-	 * @return array|Result|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function parseResponse($curl, $output, $params = [])
+	private function parseResponse($curl, $output, $params = []): mixed
 	{
 		curl_close($curl);
 		if ($output === FALSE) {
@@ -170,9 +171,9 @@ class Curl extends ClientAbstracts
 	 * @return array
 	 * @throws Exception
 	 */
-	private function explode($output)
+	private function explode($output): array
 	{
-		if (empty($output) || strpos($output, "\r\n\r\n") === false) {
+		if (empty($output) || !str_contains($output, "\r\n\r\n")) {
 			throw new Exception('Get data null.');
 		}
 
@@ -193,7 +194,7 @@ class Curl extends ClientAbstracts
 	 * @param $headers
 	 * @return array
 	 */
-	private function headerFormat($headers)
+	private function headerFormat($headers): array
 	{
 		$_tmp = [];
 		foreach ($headers as $key => $val) {
@@ -208,7 +209,7 @@ class Curl extends ClientAbstracts
 	/**
 	 * @return array
 	 */
-	private function parseHeaderMat()
+	#[Pure] private function parseHeaderMat(): array
 	{
 		$headers = [];
 		foreach ($this->getHeader() as $key => $val) {

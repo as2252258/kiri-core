@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -18,7 +19,7 @@ class OnManagerStop extends Callback
 
 	/**
 	 * @param $server
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function onHandler(Server $server)
 	{

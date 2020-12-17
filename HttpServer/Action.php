@@ -5,6 +5,7 @@ namespace HttpServer;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -87,7 +88,7 @@ trait Action
 	/**
 	 * WorkerId Iterator
 	 */
-	private function masterIdCheck()
+	private function masterIdCheck(): bool
 	{
 		echo '.';
 		$files = new \DirectoryIterator($this->getWorkerPath());
@@ -110,7 +111,7 @@ trait Action
 	/**
 	 * @return string
 	 */
-	private function getWorkerPath()
+	#[Pure] private function getWorkerPath(): string
 	{
 		return "glob://" . ltrim(APP_PATH, '/') . '/storage/worker/*.sock';
 	}
@@ -120,7 +121,7 @@ trait Action
 	 * @param $port
 	 * @return bool|array
 	 */
-	private function isUse($port)
+	private function isUse($port): bool|array
 	{
 		if (empty($port)) {
 			return false;

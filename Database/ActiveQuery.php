@@ -6,6 +6,7 @@
  * Time: 14:42
  */
 declare(strict_types=1);
+
 namespace Database;
 
 use Snowflake\Abstracts\Component;
@@ -86,7 +87,7 @@ class ActiveQuery extends Component
 	 * @param $value
 	 * @return $this
 	 */
-	public function addParam($key, $value)
+	public function addParam($key, $value): static
 	{
 		$this->attributes[$key] = $value;
 		return $this;
@@ -96,7 +97,7 @@ class ActiveQuery extends Component
 	 * @param array $values
 	 * @return $this
 	 */
-	public function addParams(array $values)
+	public function addParams(array $values): static
 	{
 		foreach ($values as $key => $val) {
 			$this->addParam($key, $val);
@@ -108,7 +109,7 @@ class ActiveQuery extends Component
 	 * @param $name
 	 * @return $this
 	 */
-	public function with($name)
+	public function with($name): static
 	{
 		if (empty($name)) {
 			return $this;
@@ -126,17 +127,17 @@ class ActiveQuery extends Component
 	 * @param bool $isArray
 	 * @return $this
 	 */
-	public function asArray($isArray = TRUE)
+	public function asArray($isArray = TRUE): static
 	{
 		$this->asArray = $isArray;
 		return $this;
 	}
 
 	/**
-	 * @return ActiveRecord
-	 * @throws
+	 * @return ActiveRecord|array|null
+	 * @throws Exception
 	 */
-	public function first()
+	public function first(): ActiveRecord|array|null
 	{
 		$data = $this->modelClass::getDb()
 			->createCommand($this->oneLimit()->queryBuilder())
@@ -156,7 +157,7 @@ class ActiveQuery extends Component
 	/**
 	 * @return array|Collection
 	 */
-	public function get()
+	public function get(): Collection|array
 	{
 		return $this->all();
 	}
@@ -165,7 +166,7 @@ class ActiveQuery extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function flush()
+	public function flush(): array|bool|int|string|null
 	{
 		$sql = $this->getChange()->truncate($this->getTable());
 		return $this->command($sql)->flush();
@@ -178,7 +179,7 @@ class ActiveQuery extends Component
 	 * @return Pagination
 	 * @throws Exception
 	 */
-	public function page(int $size, callable $callback)
+	public function page(int $size, callable $callback): Pagination
 	{
 		$pagination = new Pagination($this);
 		$pagination->setOffset(0);
@@ -194,7 +195,7 @@ class ActiveQuery extends Component
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function column(string $field, $setKey = '')
+	public function column(string $field, $setKey = ''): ?array
 	{
 		return $this->all()->column($field, $setKey);
 	}
@@ -203,7 +204,7 @@ class ActiveQuery extends Component
 	 * @return array|Collection
 	 * @throws
 	 */
-	public function all()
+	public function all(): Collection|array
 	{
 		$collect = new Collection($this, $this->modelClass::getDb()
 			->createCommand($this->queryBuilder())
@@ -220,7 +221,7 @@ class ActiveQuery extends Component
 	 * @return ActiveRecord
 	 * @throws Exception
 	 */
-	public function populate(ActiveRecord $model, $data)
+	public function populate(ActiveRecord $model, $data): ActiveRecord
 	{
 		return $this->getWith($model::populate($data));
 	}
@@ -230,7 +231,7 @@ class ActiveQuery extends Component
 	 * @param $model
 	 * @return mixed
 	 */
-	public function getWith($model)
+	public function getWith($model): mixed
 	{
 		if (empty($this->with) || !is_array($this->with)) {
 			return $model;
@@ -249,7 +250,7 @@ class ActiveQuery extends Component
 	 * @return int
 	 * @throws Exception
 	 */
-	public function count()
+	public function count(): int
 	{
 		$data = $this->modelClass::getDb()
 			->createCommand($this->getBuild()->count($this))
@@ -266,7 +267,7 @@ class ActiveQuery extends Component
 	 * @return array|Command|bool|int|string
 	 * @throws Exception
 	 */
-	public function batchUpdate(array $data)
+	public function batchUpdate(array $data): Command|array|bool|int|string
 	{
 		return $this->getDb()->createCommand()
 			->batchUpdate($this->getTable(), $data, $this->getCondition())
@@ -278,7 +279,7 @@ class ActiveQuery extends Component
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function batchInsert(array $data)
+	public function batchInsert(array $data): bool
 	{
 		return $this->getDb()->createCommand()
 			->batchInsert($this->getTable(), $data)
@@ -301,7 +302,7 @@ class ActiveQuery extends Component
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function exists()
+	public function exists(): bool
 	{
 		$column = $this->modelClass::getDb()
 			->createCommand($this->queryBuilder())
@@ -309,11 +310,12 @@ class ActiveQuery extends Component
 		return $column !== false;
 	}
 
+
 	/**
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function deleteAll()
+	public function delete(): bool
 	{
 		return $this->modelClass::getDb()
 			->createCommand($this->queryBuilder())
@@ -321,19 +323,10 @@ class ActiveQuery extends Component
 	}
 
 	/**
-	 * @return bool
-	 * @throws Exception
-	 */
-	public function delete()
-	{
-		return $this->deleteAll();
-	}
-
-	/**
 	 * @return string
 	 * @throws Exception
 	 */
-	public function getCondition()
+	public function getCondition(): string
 	{
 		return $this->getBuild()->getWhere($this->where);
 	}
@@ -342,7 +335,7 @@ class ActiveQuery extends Component
 	 * @return string
 	 * @throws Exception
 	 */
-	public function queryBuilder()
+	public function queryBuilder(): string
 	{
 		return $this->getBuild()->getQuery($this);
 	}
@@ -353,7 +346,7 @@ class ActiveQuery extends Component
 	 * @return Command
 	 * @throws Exception
 	 */
-	private function command($sql, $attr = [])
+	private function command($sql, $attr = []): Command
 	{
 		if (!empty($attr) && is_array($attr)) {
 			$attr = array_merge($this->attributes, $attr);
@@ -368,7 +361,7 @@ class ActiveQuery extends Component
 	 * @return Select
 	 * @throws Exception
 	 */
-	public function getBuild()
+	public function getBuild(): Select
 	{
 		return $this->getDb()->getSchema()->getQueryBuilder();
 	}
@@ -377,7 +370,7 @@ class ActiveQuery extends Component
 	 * @return orm\Change
 	 * @throws Exception
 	 */
-	public function getChange()
+	public function getChange(): orm\Change
 	{
 		return $this->getDb()->getSchema()->getChange();
 	}
@@ -386,7 +379,7 @@ class ActiveQuery extends Component
 	 * @return Connection
 	 * @throws Exception
 	 */
-	public function getDb()
+	public function getDb(): Connection
 	{
 		return $this->modelClass::getDb();
 	}
@@ -395,7 +388,7 @@ class ActiveQuery extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getPrimary()
+	public function getPrimary(): mixed
 	{
 		return $this->modelClass->getPrimary();
 	}

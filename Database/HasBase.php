@@ -21,15 +21,13 @@ abstract class HasBase
 {
 
 	/** @var ActiveRecord|Collection */
-	protected $data;
+	protected Collection|ActiveRecord $data;
 
 	/**
 	 * @var IOrm
 	 */
 	protected IOrm $model;
 
-	/** @var */
-	protected $primaryId;
 
 	/** @var array */
 	protected array $value = [];
@@ -46,7 +44,7 @@ abstract class HasBase
      * @param Relation $relation
      * @throws Exception
      */
-	public function __construct(IOrm $model, $primaryId, $value, Relation $relation)
+	public function __construct(mixed $model, $primaryId, $value, Relation $relation)
 	{
 		if (!class_exists($model)) {
 			throw new Exception('Model must implement ' . ActiveRecord::class);
@@ -64,7 +62,6 @@ abstract class HasBase
 		$this->_relation = $relation->bindIdentification($model, $_model);
 
 		$this->model = $model;
-		$this->primaryId = $primaryId;
 		$this->value = $value;
 	}
 
@@ -74,7 +71,7 @@ abstract class HasBase
 	 * @param $name
 	 * @return mixed
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		if (empty($this->value)) {
 			return null;

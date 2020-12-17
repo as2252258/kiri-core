@@ -6,6 +6,7 @@ namespace HttpServer\Client;
 
 use Closure;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\JSON;
@@ -57,33 +58,32 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return static
 	 */
-	public static function NewRequest()
+	#[Pure] public static function NewRequest(): static
 	{
 		return new static();
 	}
 
 
 	/**
-	 * @param $url
-	 * @param array $data
-	 * @return array|mixed|Result
+	 * @param $path
+	 * @param array $params
+	 * @return array|int|string|Result
 	 * @throws
 	 */
-	public function post($url, $data = [])
+	public function post(string $path, array $params = []): array|int|string|Result
 	{
-		return $this->request(self::POST, $url, $data);
+		return $this->request(self::POST, $path, $params);
 	}
 
 
 	/**
-	 * @param $url
-	 * @param array $data
-	 * @return array|mixed|Result
-	 * @throws
+	 * @param string $path
+	 * @param array $params
+	 * @return array|int|string|Result
 	 */
-	public function put($url, $data = [])
+	public function put(string $path, array $params = []): array|int|string|Result
 	{
-		return $this->request(self::PUT, $url, $data);
+		return $this->request(self::PUT, $path, $params);
 	}
 
 
@@ -99,54 +99,50 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
+	 * @return array|int|string|Result
 	 */
-	public function head(string $path, array $params = [])
+	public function head(string $path, array $params = []): array|int|string|Result
 	{
 		return $this->request(self::HEAD, $path, $params);
 	}
 
 
 	/**
-	 * @param $url
-	 * @param array $data
-	 * @return array|mixed|Result
-	 * @throws
+	 * @param string $path
+	 * @param array $params
+	 * @return array|int|string|Result
 	 */
-	public function get($url, $data = [])
+	public function get(string $path, array $params = []): array|int|string|Result
 	{
-		return $this->request(self::GET, $url, $data);
-	}
-
-	/**
-	 * @param $url
-	 * @param array $data
-	 * @return array|mixed|Result
-	 * @throws Exception
-	 */
-	public function option($url, $data = [])
-	{
-		return $this->request(self::OPTIONS, $url, $data);
-	}
-
-	/**
-	 * @param $url
-	 * @param array $data
-	 * @return array|mixed|Result
-	 * @throws Exception
-	 */
-	public function delete($url, $data = [])
-	{
-		return $this->request(self::DELETE, $url, $data);
+		return $this->request(self::GET, $path, $params);
 	}
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
-	 * @throws Exception
+	 * @return array|int|string|Result
 	 */
-	public function options(string $path, array $params = [])
+	public function option(string $path, array $params = []): array|int|string|Result
+	{
+		return $this->request(self::OPTIONS, $path, $params);
+	}
+
+	/**
+	 * @param string $path
+	 * @param array $params
+	 * @return array|int|string|Result
+	 */
+	public function delete(string $path, array $params = []): array|int|string|Result
+	{
+		return $this->request(self::DELETE, $path, $params);
+	}
+
+	/**
+	 * @param string $path
+	 * @param array $params
+	 * @return array|int|string|Result
+	 */
+	public function options(string $path, array $params = []): array|int|string|Result
 	{
 		return $this->request(self::OPTIONS, $path, $params);
 
@@ -155,10 +151,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return mixed
-	 * @throws Exception
+	 * @return array|int|string|Result
 	 */
-	public function upload(string $path, array $params = [])
+	public function upload(string $path, array $params = []): array|int|string|Result
 	{
 		return $this->request(self::UPLOAD, $path, $params);
 	}
@@ -175,7 +170,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return int
 	 */
-	protected function getHostPort()
+	protected function getHostPort(): int
 	{
 		if (!empty($this->getPort())) {
 			return $this->getPort();
@@ -196,10 +191,6 @@ abstract class ClientAbstracts extends Component implements IClient
 			$this->host = System::gethostbyname($host);
 		}
 		$this->addHeader('Host', $host);
-//
-//		if (!preg_match('/(\d{1,3}\.){4}/', $host . '.')) {
-//		} else {
-//		}
 	}
 
 	/**
@@ -220,15 +211,15 @@ abstract class ClientAbstracts extends Component implements IClient
 
 
 	/**
-	 * @param array $headers
+	 * @param array $header
 	 * @return array
 	 */
-	public function setHeaders(array $headers)
+	public function setHeaders(array $header): array
 	{
-		if (empty($headers)) {
+		if (empty($header)) {
 			return [];
 		}
-		foreach ($headers as $key => $val) {
+		foreach ($header as $key => $val) {
 			$this->header[$key] = $val;
 		}
 		return $this->header;
@@ -252,11 +243,11 @@ abstract class ClientAbstracts extends Component implements IClient
 	}
 
 	/**
-	 * @param int $timeout
+	 * @param int $value
 	 */
-	public function setTimeout(int $timeout): void
+	public function setTimeout(int $value): void
 	{
-		$this->timeout = $timeout;
+		$this->timeout = $value;
 	}
 
 	/**
@@ -268,11 +259,11 @@ abstract class ClientAbstracts extends Component implements IClient
 	}
 
 	/**
-	 * @param Closure|null $callback
+	 * @param Closure|null $value
 	 */
-	public function setCallback(?Closure $callback): void
+	public function setCallback(?Closure $value): void
 	{
-		$this->callback = $callback;
+		$this->callback = $value;
 	}
 
 	/**
@@ -284,12 +275,12 @@ abstract class ClientAbstracts extends Component implements IClient
 	}
 
 	/**
-	 * @param string $method
+	 * @param string $value
 	 * @return $this
 	 */
-	public function setMethod(string $method): self
+	public function setMethod(string $value): self
 	{
-		$this->method = $method;
+		$this->method = $value;
 		return $this;
 	}
 
@@ -414,17 +405,17 @@ abstract class ClientAbstracts extends Component implements IClient
 	}
 
 	/**
-	 * @param string $ca
+	 * @param string $ssl_key_file
 	 */
-	public function setCa(string $ca): void
+	public function setCa(string $ssl_key_file): void
 	{
-		$this->ca = $ca;
+		$this->ca = $ssl_key_file;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPort(): int
+	#[Pure] public function getPort(): int
 	{
 		if ($this->isSSL()) {
 			return 443;
@@ -496,7 +487,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $host
 	 * @return string|string[]
 	 */
-	protected function replaceHost($host)
+	protected function replaceHost($host): array|string
 	{
 		if ($this->isHttp($host)) {
 			return str_replace('http://', '', $host);
@@ -512,7 +503,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return false|int
 	 */
-	protected function checkIsIp($url)
+	protected function checkIsIp($url): bool|int
 	{
 		return preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $url);
 	}
@@ -521,18 +512,18 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	protected function isHttp($url)
+	#[Pure] protected function isHttp($url): bool
 	{
-		return strpos($url, 'http://') === 0;
+		return str_starts_with($url, 'http://');
 	}
 
 	/**
 	 * @param $url
 	 * @return bool
 	 */
-	protected function isHttps($url)
+	#[Pure] protected function isHttps($url): bool
 	{
-		return strpos($url, 'https://') === 0;
+		return str_starts_with($url, 'https://');
 	}
 
 
@@ -540,7 +531,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $newData
 	 * @return mixed
 	 */
-	protected function mergeParams($newData)
+	protected function mergeParams($newData): mixed
 	{
 		if (empty($this->getData())) {
 			return $this->toRequest($newData);
@@ -559,9 +550,9 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param $data
-	 * @return false|mixed|string
+	 * @return string
 	 */
-	protected function toRequest($data)
+	protected function toRequest($data): string
 	{
 		if (is_string($data)) {
 			return $data;
@@ -572,9 +563,9 @@ abstract class ClientAbstracts extends Component implements IClient
 		} else if (isset($this->header['content-type'])) {
 			$contentType = $this->header['content-type'];
 		}
-		if (strpos($contentType, 'json') !== false) {
+		if (str_contains($contentType, 'json')) {
 			return Help::toJson($data);
-		} else if (strpos($contentType, 'xml') !== false) {
+		} else if (str_contains($contentType, 'xml')) {
 			return Help::toXml($data);
 		} else {
 			return http_build_query($data);
@@ -585,21 +576,21 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param $data
 	 * @param $body
-	 * @return mixed
+	 * @return array
 	 */
-	protected function resolve($data, $body)
+	protected function resolve($data, $body): array
 	{
 		if (is_array($body)) {
 			return $body;
 		}
 		$type = $data['content-type'] ?? $data['Content-Type'] ?? 'text/html';
-		if (strpos($type, 'text/html') !== false) {
+		if (str_contains($type, 'text/html')) {
 			return $body;
-		} else if (strpos($type, 'json') !== false) {
+		} else if (str_contains($type, 'json')) {
 			return json_decode($body, true);
-		} else if (strpos($type, 'xml') !== false) {
+		} else if (str_contains($type, 'xml')) {
 			return Help::xmlToArray($body);
-		} else if (strpos($type, 'plain') !== false) {
+		} else if (str_contains($type, 'plain')) {
 			return Help::toArray($body);
 		}
 		return $body;
@@ -609,12 +600,12 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param $body
 	 * @param $_data
-	 * @param $header
-	 * @param $statusCode
-	 * @return array|mixed|Result
+	 * @param array $header
+	 * @param int $statusCode
+	 * @return mixed 构建返回体
 	 * 构建返回体
 	 */
-	protected function structure($body, $_data, $header = [], $statusCode = 200)
+	protected function structure($body, $_data, $header = [], $statusCode = 200): mixed
 	{
 		if ($this->callback instanceof Closure) {
 			$result = call_user_func($this->callback, $body, $_data, $header);
@@ -631,7 +622,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $statusCode
 	 * @return Result
 	 */
-	private function parseResult($body, $header, $statusCode)
+	private function parseResult($body, $header, $statusCode): Result
 	{
 		if (is_string($body)) {
 			$result['code'] = 0;
@@ -649,9 +640,9 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param $body
-	 * @return array|mixed|string
+	 * @return mixed
 	 */
-	protected function searchMessageByData($body)
+	protected function searchMessageByData($body): mixed
 	{
 		$parent = [];
 		if (empty($this->errorMsgField)) {
@@ -682,7 +673,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @return bool
 	 * check isPost Request
 	 */
-	public function isPost()
+	#[Pure] public function isPost(): bool
 	{
 		return strtolower($this->method) === self::POST;
 	}
@@ -693,7 +684,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 *
 	 * check isGet Request
 	 */
-	public function isGet()
+	#[Pure] public function isGet(): bool
 	{
 		return strtolower($this->method) === self::GET;
 	}
@@ -704,7 +695,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @return array|string
 	 * 将请求参数进行编码
 	 */
-	protected function paramEncode($arr)
+	#[Pure] protected function paramEncode($arr): array|string
 	{
 		if (!is_array($arr)) {
 			return $arr;
@@ -722,15 +713,15 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $string
-	 * @return array|string[]
+	 * @return array
 	 */
-	protected function matchHost(string $string)
+	protected function matchHost(string $string): array
 	{
 		if (($parse = isUrl($string, true)) === false) {
 			return $this->defaultString($string);
 		}
 		[$isHttps, $domain, $port, $path] = $parse;
-		if (strpos($domain, ':' . $port) !== false) {
+		if (str_contains($domain, ':' . $port)) {
 			$domain = str_replace(':' . $port, '', $domain);
 		}
 		$this->port = $isHttps ? 443 : $this->port;
@@ -753,7 +744,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $string
 	 * @return array
 	 */
-	private function defaultString($string)
+	private function defaultString($string): array
 	{
 		$host = $this->getHost();
 		if ($string == '/') {
@@ -770,7 +761,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $params
 	 * @return string
 	 */
-	protected function joinGetParams($path, $params)
+	#[Pure] protected function joinGetParams($path, $params): string
 	{
 		if (empty($params)) {
 			return $path;
@@ -778,7 +769,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		if (!is_string($params)) {
 			$params = http_build_query($params);
 		}
-		if (strpos($path, '?') !== false) {
+		if (str_contains($path, '?')) {
 			[$path, $getParams] = explode('?', $path);
 		}
 		if (!isset($getParams) || empty($getParams)) {
@@ -795,7 +786,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $header
 	 * @return Result
 	 */
-	protected function fail($code, $message, $data = [], $header = [])
+	protected function fail($code, $message, $data = [], $header = []): Result
 	{
 		return new Result([
 			'code'    => $code,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database\Condition;
 
 use Database\ActiveQuery;
+use Exception;
 
 /**
  * Class InCondition
@@ -15,9 +16,9 @@ class InCondition extends Condition
 
 	/**
 	 * @return string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function builder()
+	public function builder(): string
 	{
 		if ($this->value instanceof ActiveQuery) {
 			$this->value = $this->value->getBuild()->getQuery($this->value);

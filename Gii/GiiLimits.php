@@ -15,17 +15,14 @@ use Snowflake\Snowflake;
 class GiiLimits extends GiiBase
 {
 
-	public $tableName;
-	public $visible;
-	public $res;
-	public $fields;
+	public ?string $tableName = '';
 
 
 	/**
 	 * @return string[]
 	 * @throws Exception
 	 */
-	public function generate()
+	public function generate(): array
 	{
 
 		$managerName = $this->input->get('name', null);

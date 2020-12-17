@@ -43,10 +43,10 @@ class Command extends Component
 
 
 	/**
-	 * @return bool|PDOStatement
-	 * @throws
+	 * @return array|bool|int|string|PDOStatement|null
+	 * @throws Exception
 	 */
-	public function incrOrDecr()
+	public function incrOrDecr(): array|bool|int|string|PDOStatement|null
 	{
 		return $this->execute(static::EXECUTE);
 	}
@@ -54,10 +54,10 @@ class Command extends Component
 	/**
 	 * @param bool $isInsert
 	 * @param bool $hasAutoIncrement
-	 * @return bool|string
-	 * @throws
+	 * @return int|bool|array|string|null
+	 * @throws Exception
 	 */
-	public function save($isInsert = TRUE, $hasAutoIncrement = true)
+	public function save($isInsert = TRUE, $hasAutoIncrement = true): int|bool|array|string|null
 	{
 		return $this->execute(static::EXECUTE, $isInsert, $hasAutoIncrement);
 	}
@@ -70,7 +70,7 @@ class Command extends Component
 	 * @return Command
 	 * @throws Exception
 	 */
-	public function update($model, $attributes, $condition, $param)
+	public function update($model, $attributes, $condition, $param): Command
 	{
 		$change = $this->db->getSchema()->getChange();
 		$sql = $change->update($model, $attributes, $condition, $param);
@@ -85,7 +85,7 @@ class Command extends Component
 	 * @return Command
 	 * @throws Exception
 	 */
-	public function batchUpdate($tableName, $attributes, $condition)
+	public function batchUpdate($tableName, $attributes, $condition): Command
 	{
 		$change = $this->db->getSchema()->getChange();
 		[$sql, $param] = $change->batchUpdate($tableName, $attributes, $condition);
@@ -99,7 +99,7 @@ class Command extends Component
 	 * @return Command
 	 * @throws Exception
 	 */
-	public function batchInsert($tableName, $attributes)
+	public function batchInsert($tableName, $attributes): Command
 	{
 		$change = $this->db->getSchema()->getChange();
 		$attribute_key = array_keys(current($attributes));
@@ -114,7 +114,7 @@ class Command extends Component
 	 * @return Command
 	 * @throws Exception
 	 */
-	public function insert($tableName, $attributes, $param)
+	public function insert($tableName, $attributes, $param): Command
 	{
 		$change = $this->db->getSchema()->getChange();
 		$sql = $change->insert($tableName, $attributes, $param);
@@ -122,10 +122,10 @@ class Command extends Component
 	}
 
 	/**
-	 * @return bool|int
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function all()
+	public function all(): int|bool|array|string|null
 	{
 		return $this->execute(static::FETCH_ALL);
 	}
@@ -137,7 +137,7 @@ class Command extends Component
 	 * @return Command
 	 * @throws Exception
 	 */
-	public function mathematics($tableName, $param, $condition)
+	public function mathematics($tableName, $param, $condition): static
 	{
 		$change = $this->db->getSchema()->getChange();
 		$sql = $change->mathematics($tableName, $param, $condition);
@@ -145,49 +145,49 @@ class Command extends Component
 	}
 
 	/**
-	 * @return array|mixed
+	 * @return array|bool|int|string|null
 	 * @throws Exception
 	 */
-	public function one()
+	public function one(): null|array|bool|int|string
 	{
 		return $this->execute(static::FETCH);
 	}
 
 	/**
-	 * @return bool|int
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function fetchColumn()
+	public function fetchColumn(): int|bool|array|string|null
 	{
 		return $this->execute(static::FETCH_COLUMN);
 	}
 
 	/**
-	 * @return bool|int
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function rowCount()
+	public function rowCount(): int|bool|array|string|null
 	{
 		return $this->execute(static::ROW_COUNT);
 	}
 
 	/**
-	 * @return bool|int
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function flush()
+	public function flush(): int|bool|array|string|null
 	{
 		return $this->execute(static::EXECUTE);
 	}
 
 	/**
 	 * @param $type
-	 * @param $isInsert
-	 * @param $hasAutoIncrement
-	 * @return bool|int
+	 * @param null $isInsert
+	 * @param bool $hasAutoIncrement
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	private function execute($type, $isInsert = null, $hasAutoIncrement = true)
+	private function execute($type, $isInsert = null, $hasAutoIncrement = true): int|bool|array|string|null
 	{
 		try {
 			$time = microtime(true);
@@ -211,10 +211,10 @@ class Command extends Component
 
 	/**
 	 * @param $type
-	 * @return array|int|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function search($type)
+	private function search($type): mixed
 	{
 		$connect = $this->db->getConnect($this->sql);
 		if (!($connect instanceof PDO)) {
@@ -239,7 +239,7 @@ class Command extends Component
 	 * @return bool|string
 	 * @throws Exception
 	 */
-	private function insert_or_change($isInsert, $hasAutoIncrement)
+	private function insert_or_change($isInsert, $hasAutoIncrement): bool|string
 	{
 		if (!($connection = $this->initPDOStatement())) {
 			return false;
@@ -262,7 +262,7 @@ class Command extends Component
 	 * 重新构建
 	 * @throws
 	 */
-	private function initPDOStatement()
+	private function initPDOStatement(): PDO|bool|null
 	{
 		if (empty($this->sql)) {
 			return null;
@@ -281,7 +281,7 @@ class Command extends Component
 	 * @param $modelName
 	 * @return $this
 	 */
-	public function setModelName($modelName)
+	public function setModelName($modelName): static
 	{
 		$this->_modelName = $modelName;
 		return $this;
@@ -290,25 +290,25 @@ class Command extends Component
 	/**
 	 * @return string
 	 */
-	public function getModelName()
+	public function getModelName(): string
 	{
 		return $this->_modelName;
 	}
 
 	/**
-	 * @return bool|int
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function delete()
+	public function delete(): int|bool|array|string|null
 	{
 		return $this->execute(static::EXECUTE);
 	}
 
 	/**
-	 * @return bool|int
+	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function exec()
+	public function exec(): int|bool|array|string|null
 	{
 		return $this->execute(static::EXECUTE);
 	}
@@ -317,7 +317,7 @@ class Command extends Component
 	 * @param array|null $data
 	 * @return $this
 	 */
-	public function bindValues(array $data = NULL)
+	public function bindValues(array $data = NULL): static
 	{
 		if (!is_array($this->params)) {
 			$this->params = [];
@@ -333,7 +333,7 @@ class Command extends Component
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function setSql($sql)
+	public function setSql($sql): static
 	{
 		$this->sql = $sql;
 		return $this;
@@ -342,7 +342,7 @@ class Command extends Component
 	/**
 	 * @return string
 	 */
-	public function getError()
+	public function getError(): string
 	{
 		return $this->prepare->errorInfo()[2] ?? 'Db 驱动错误.';
 	}

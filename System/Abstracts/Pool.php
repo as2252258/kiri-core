@@ -5,6 +5,7 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
@@ -37,10 +38,10 @@ abstract class Pool extends Component
 
 	/**
 	 * @param $name
-	 * @return mixed
+	 * @return array
 	 * @throws Exception
 	 */
-	protected function get($name)
+	protected function get($name): array
 	{
 		[$timeout, $connection] = $this->_items[$name]->pop();
 		if (!$this->checkCanUse($name, $timeout, $connection)) {
@@ -56,12 +57,12 @@ abstract class Pool extends Component
 	 * @param false $isMaster
 	 * @return string
 	 */
-	public function name($cds, $isMaster = false)
+	#[Pure] public function name($cds, $isMaster = false): string
 	{
 		if ($isMaster === true) {
-			return hash('sha256',$cds . 'master');
+			return hash('sha256', $cds . 'master');
 		} else {
-			return hash('sha256',$cds . 'slave');
+			return hash('sha256', $cds . 'slave');
 		}
 	}
 
@@ -74,7 +75,7 @@ abstract class Pool extends Component
 	 * 检查连接可靠性
 	 * @throws Exception
 	 */
-	public function checkCanUse($name, $time, $client)
+	public function checkCanUse(string $name, int $time, mixed $client): mixed
 	{
 		throw new Exception('Undefined system processing function.');
 	}
@@ -83,7 +84,7 @@ abstract class Pool extends Component
 	 * @param $name
 	 * @throws Exception
 	 */
-	public function desc($name)
+	public function desc(string $name)
 	{
 		throw new Exception('Undefined system processing function.');
 	}
@@ -93,16 +94,16 @@ abstract class Pool extends Component
 	 * @param $isMaster
 	 * @throws Exception
 	 */
-	public function getConnection(array $config, $isMaster)
+	public function getConnection(array $config, bool $isMaster)
 	{
 		throw new Exception('Undefined system processing function.');
 	}
 
 	/**
 	 * @param $name
-	 * @return mixed
+	 * @return bool
 	 */
-	public function hasItem($name)
+	public function hasItem(string $name): bool
 	{
 		return $this->size($name) > 0;
 	}
@@ -112,7 +113,7 @@ abstract class Pool extends Component
 	 * @param $name
 	 * @return mixed
 	 */
-	public function size($name)
+	public function size(string $name): mixed
 	{
 		if (!isset($this->_items[$name])) {
 			return 0;
@@ -125,7 +126,7 @@ abstract class Pool extends Component
 	 * @param $name
 	 * @param $client
 	 */
-	public function push($name, $client)
+	public function push(string $name, mixed $client)
 	{
 		$this->_items[$name]->push([time(), $client]);
 		unset($client);
@@ -133,9 +134,9 @@ abstract class Pool extends Component
 
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 */
-	public function clean($name)
+	public function clean(string $name)
 	{
 		if (!isset($this->_items[$name])) {
 			return;
@@ -150,7 +151,7 @@ abstract class Pool extends Component
 	/**
 	 * @return Channel[]
 	 */
-	protected function getChannels()
+	protected function getChannels(): array
 	{
 		return $this->_items;
 	}

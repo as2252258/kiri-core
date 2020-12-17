@@ -51,7 +51,7 @@ class Producer extends Component
 	 * @param $servers
 	 * @return Producer
 	 */
-	public function setBrokers(string $servers)
+	public function setBrokers(string $servers): static
 	{
 		$this->conf->set('metadata.broker.list', $servers);
 		return $this;
@@ -62,7 +62,7 @@ class Producer extends Component
 	 * @param $servers
 	 * @return Producer
 	 */
-	public function setTopic(string $servers)
+	public function setTopic(string $servers): static
 	{
 		$this->_topic = $servers;
 		return $this;

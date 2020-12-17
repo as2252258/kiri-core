@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
 use Database\ActiveQuery;
 use Exception;
@@ -26,7 +27,7 @@ class Change extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function update(string $model, $attributes, $condition, &$params)
+	public function update(string $model, $attributes, $condition, &$params): string
 	{
 		if (empty($params)) {
 			throw new Exception("Not has update values.");
@@ -55,7 +56,7 @@ class Change extends BaseObject
 	 * @return array|string
 	 * @throws
 	 */
-	public function batchUpdate(string $table, array $attributes, $condition)
+	public function batchUpdate(string $table, array $attributes, $condition): array|string
 	{
 		$param = [];
 		$_attributes = [];
@@ -83,7 +84,7 @@ class Change extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function mathematics($table, $params, $condition)
+	public function mathematics($table, $params, $condition): string
 	{
 		$_tmp = $newParam = [];
 		if (isset($params['incr']) && is_array($params['incr'])) {
@@ -109,7 +110,7 @@ class Change extends BaseObject
 	 * @return array
 	 * @throws Exception
 	 */
-	private function assemble($params, $op, array $_tmp)
+	private function assemble($params, $op, array $_tmp): array
 	{
 		$message = 'Incr And Decr action. The value must a numeric.';
 		foreach ($params as $key => $val) {
@@ -127,7 +128,7 @@ class Change extends BaseObject
 	 * @param array $params
 	 * @return string
 	 */
-	public function insertOrUpdateByDUPLICATE($table, array $params)
+	public function insertOrUpdateByDUPLICATE($table, array $params): string
 	{
 		$keys = implode(',', array_keys($params));
 
@@ -153,14 +154,14 @@ class Change extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function insert($table, $attributes, array $params = NULL)
+	public function insert($table, $attributes, array $params = NULL): string
 	{
 		$sql = $this->inserts($table, implode(',', $attributes), '(:' . implode(',:', $attributes) . ')');
 		if (empty($params)) {
 			throw new Exception("save data param not find.");
 		}
 		foreach ($params as $key => $val) {
-			if (strpos($sql, ':' . $key) === FALSE) {
+			if (!str_contains($sql, ':' . $key)) {
 				throw new Exception("save $key data param not find.");
 			}
 		}
@@ -175,7 +176,7 @@ class Change extends BaseObject
 	 * @return array
 	 * @throws Exception
 	 */
-	public function batchInsert($table, $attributes, array $params = NULL)
+	public function batchInsert($table, $attributes, array $params = NULL): array
 	{
 		if (empty($params)) {
 			throw new Exception("save data param not find.");
@@ -205,7 +206,7 @@ class Change extends BaseObject
 	 * @return string
 	 * 构建SQL语句
 	 */
-	private function inserts($table, $fields, $data)
+	#[Pure] private function inserts($table, $fields, $data): string
 	{
 		$query = [
 			'INSERT IGNORE INTO', '%s', '(%s)', 'VALUES %s'
@@ -223,7 +224,7 @@ class Change extends BaseObject
 	 * @return bool|string
 	 * @throws Exception
 	 */
-	public function updateAll($table, $attributes, $condition)
+	public function updateAll($table, $attributes, $condition): bool|string
 	{
 		$param = [];
 		foreach ($attributes as $key => $val) {
@@ -247,7 +248,7 @@ class Change extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function delete(ActiveQuery $query)
+	public function delete(ActiveQuery $query): string
 	{
 		if (empty($query->from)) {
 			$query->from = $query->getTable();
@@ -266,7 +267,7 @@ class Change extends BaseObject
 	 * @param string $tableName
 	 * @return string
 	 */
-	public function truncate(string $tableName)
+	public function truncate(string $tableName): string
 	{
 		return 'TRUNCATE ' . $tableName;
 	}

@@ -49,9 +49,9 @@ class XmlFormatter extends Application implements IFormatter
 	}
 
 	/**
-	 * @return mixed
+	 * @return string|null
 	 */
-	public function getData(): mixed
+	public function getData(): ?string
 	{
 		$data = $this->data;
 		$this->clear();

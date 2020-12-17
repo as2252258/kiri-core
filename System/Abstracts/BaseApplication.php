@@ -18,9 +18,7 @@ use HttpServer\Route\Router;
 use HttpServer\Server;
 use JetBrains\PhpStorm\Pure;
 use Kafka\Producer;
-use Snowflake\Annotation\Annotation;
 use Annotation\Annotation as SAnnotation;
-use Snowflake\Cache\Memcached;
 use Snowflake\Cache\Redis;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
@@ -38,7 +36,6 @@ use Database\DatabasesProviders;
 /**
  * Class BaseApplication
  * @package Snowflake\Snowflake\Base
- * @property Annotation $annotation
  * @property Event $event
  * @property Router $router
  * @property SPool $pool
@@ -46,7 +43,6 @@ use Database\DatabasesProviders;
  * @property Server $server
  * @property DatabasesProviders $db
  * @property Connection $connections
- * @property Memcached $memcached
  * @property Logger $logger
  * @property Jwt $jwt
  * @property SAnnotation $attributes
@@ -284,16 +280,6 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Annotation
-	 * @throws ComponentException
-	 */
-	public function getAnnotation(): Annotation
-	{
-		return $this->get('annotation');
-	}
-
-
-	/**
 	 * @return Connection
 	 * @throws ComponentException
 	 */
@@ -389,7 +375,6 @@ abstract class BaseApplication extends Service
 		$this->setComponents([
 			'error'             => ['class' => ErrorHandler::class],
 			'event'             => ['class' => Event::class],
-			'annotation'        => ['class' => Annotation::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],

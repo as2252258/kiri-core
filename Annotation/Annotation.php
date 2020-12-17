@@ -7,6 +7,7 @@ namespace Annotation;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
 
@@ -104,7 +105,7 @@ class Annotation extends Component
 		$reflect = $this->reflectClass($class);
 		if ($reflect->isInstantiable()) {
 			$object = $reflect->newInstance();
-			foreach ($reflect->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
 				$tmp = $this->resolveAnnotations($method, $alias, $object);
 
 				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;

@@ -46,7 +46,7 @@ class Redis extends Component
 	 * @return mixed
 	 * @throws
 	 */
-	public function __call($name, $arguments)
+	public function __call($name, $arguments): mixed
 	{
 		if (method_exists($this, $name)) {
 			$data = $this->{$name}(...$arguments);
@@ -82,7 +82,7 @@ SCRIPT;
 	 * @return int
 	 * @throws Exception
 	 */
-	public function unlock($key)
+	public function unlock($key): int
 	{
 		$redis = $this->proxy();
 		return $redis->del($key);
@@ -113,7 +113,7 @@ SCRIPT;
 	 * @return \Redis
 	 * @throws Exception
 	 */
-	public function proxy()
+	public function proxy(): \Redis
 	{
 		$connections = Snowflake::app()->pool->redis;
 

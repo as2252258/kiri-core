@@ -65,11 +65,11 @@ class DataResolve
 	 * @param $address
 	 * @param $port
 	 * @param $data
-	 * @return array|mixed
+	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private static function callbackResolve($callback, $address, $port, $data)
+	private static function callbackResolve($callback, $address, $port, $data): mixed
 	{
 		if ($callback instanceof Closure) {
 			if (empty($address) && empty($port)) {

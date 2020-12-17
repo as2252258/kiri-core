@@ -22,10 +22,10 @@ class HasMany extends HasBase
 	/**
 	 * @param $name
 	 * @param $arguments
-	 * @return mixed
+	 * @return static
 	 * @throws Exception
 	 */
-	public function __call($name, $arguments)
+	public function __call($name, $arguments): static
 	{
 		$this->_relation->getQuery($this->model::className())->$name(...$arguments);
 		return $this;
@@ -35,7 +35,7 @@ class HasMany extends HasBase
 	 * @return array|null|ActiveRecord
 	 * @throws Exception
 	 */
-	public function get()
+	public function get(): array|ActiveRecord|null
 	{
 		return $this->_relation->get($this->model::className(), $this->value);
 	}

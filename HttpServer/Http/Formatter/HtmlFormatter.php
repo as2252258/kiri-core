@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace HttpServer\Http\Formatter;
 
 
+use Exception;
 use Snowflake\Core\JSON;
 use HttpServer\Application;
 use Swoole\Http\Response;
@@ -32,7 +33,7 @@ class HtmlFormatter extends Application implements IFormatter
 	/**
 	 * @param $context
 	 * @return $this
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function send($context): static
 	{

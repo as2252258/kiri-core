@@ -30,58 +30,58 @@ class Logger extends Component
 
 	/**
 	 * @param $message
-	 * @param string $category
-	 * @param null $_
+	 * @param string $method
+	 * @param null $file
 	 * @throws Exception
 	 */
-	public function debug($message, $category = 'app', $_ = null)
+	public function debug(mixed $message, string $method = 'app', $file = null)
 	{
-		$this->writer($message, $category);
+		$this->writer($message, $method);
 	}
 
 
 	/**
 	 * @param $message
-	 * @param string $category
+	 * @param string $method
 	 * @throws Exception
 	 */
-	public function trance($message, $category = 'app')
+	public function trance($message, $method = 'app')
 	{
-		$this->writer($message, $category);
+		$this->writer($message, $method);
 	}
 
 
 	/**
 	 * @param $message
-	 * @param string $category
-	 * @param null $_
+	 * @param string $method
+	 * @param null $file
 	 * @throws Exception
 	 */
-	public function error($message, $category = 'error', $_ = null)
+	public function error(mixed $message, $method = 'error', $file = null)
 	{
-		$this->writer($message, $category);
+		$this->writer($message, $method);
 	}
 
 	/**
 	 * @param $message
-	 * @param string $category
-	 * @param null $_
+	 * @param string $method
+	 * @param null $file
 	 * @throws Exception
 	 */
-	public function success($message, $category = 'app', $_ = null)
+	public function success(mixed $message, $method = 'app', $file = null)
 	{
-		$this->writer($message, $category);
+		$this->writer($message, $method);
 	}
 
 	/**
 	 * @param $message
-	 * @param string $category
+	 * @param string $method
 	 * @return string
 	 * @throws Exception
 	 */
-	private function writer($message, $category = 'app')
+	private function writer($message, $method = 'app'): string
 	{
-		$this->print_r($message, $category);
+		$this->print_r($message, $method);
 		if ($message instanceof Throwable) {
 			$message = $message->getMessage();
 		} else {
@@ -96,7 +96,7 @@ class Logger extends Component
 			if (!is_array($this->logs)) {
 				$this->logs = [];
 			}
-			$this->logs[] = [$category, $message];
+			$this->logs[] = [$method, $message];
 		}
 		return $message;
 	}
@@ -104,17 +104,17 @@ class Logger extends Component
 
 	/**
 	 * @param $message
-	 * @param $category
+	 * @param $method
 	 * @throws Exception
 	 */
-	public function print_r($message, $category = '')
+	public function print_r($message, $method = '')
 	{
 		$debug = Config::get('debug', false, ['enable' => false]);
 		if ((bool)$debug['enable'] === true) {
 			if (!is_callable($debug['callback'] ?? null, true)) {
 				return;
 			}
-			call_user_func($debug['callback'], $message, $category);
+			call_user_func($debug['callback'], $message, $method);
 		}
 	}
 
@@ -123,33 +123,33 @@ class Logger extends Component
 	 * @param string $application
 	 * @return mixed
 	 */
-	public function getLastError($application = 'app')
+	public function getLastError($application = 'app'): mixed
 	{
-		$_tmp = [];
+		$filetype = [];
 		foreach ($this->logs as $key => $val) {
 			if ($val[0] != $application) {
 				continue;
 			}
-			$_tmp[] = $val[1];
+			$filetype[] = $val[1];
 		}
-		if (empty($_tmp)) {
+		if (empty($filetype)) {
 			return 'Unknown error.';
 		}
-		return end($_tmp);
+		return end($filetype);
 	}
 
 	/**
 	 * @param $messages
-	 * @param string $category
+	 * @param string $method
 	 * @throws
 	 */
-	public function write(string $messages, $category = 'app')
+	public function write(string $messages, $method = 'app')
 	{
 		if (empty($messages)) {
 			return;
 		}
 		$fileName = 'server-' . date('Y-m-d') . '.log';
-		$dirName = 'log/' . (empty($category) ? 'app' : $category);
+		$dirName = 'log/' . (empty($method) ? 'app' : $method);
 		$logFile = '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL;
 		Snowflake::writeFile(storage($fileName, $dirName), $logFile, FILE_APPEND);
 
@@ -167,9 +167,9 @@ class Logger extends Component
 
 	/**
 	 * @param $logFile
-	 * @return false|string
+	 * @return string
 	 */
-	private function getSource($logFile)
+	private function getSource($logFile): string
 	{
 		if (!file_exists($logFile)) {
 			shell_exec('echo 3 > /proc/sys/vm/drop_caches');
@@ -191,8 +191,8 @@ class Logger extends Component
 			return;
 		}
 		foreach ($this->logs as $log) {
-			[$category, $message] = $log;
-			$this->write($message, $category);
+			[$method, $message] = $log;
+			$this->write($message, $method);
 		}
 		$this->logs = [];
 	}
@@ -200,7 +200,7 @@ class Logger extends Component
 	/**
 	 * @return array
 	 */
-	public function clear()
+	public function clear(): array
 	{
 		return $this->logs = [];
 	}
@@ -209,7 +209,7 @@ class Logger extends Component
 	 * @param $data
 	 * @return string
 	 */
-	private function arrayFormat($data)
+	private function arrayFormat($data): string
 	{
 		if (is_string($data)) {
 			return $data;
@@ -220,15 +220,15 @@ class Logger extends Component
 			$data = get_object_vars($data);
 		}
 
-		$_tmp = [];
+		$filetype = [];
 		foreach ($data as $key => $val) {
 			if (is_array($val)) {
-				$_tmp[] = $this->arrayFormat($val);
+				$filetype[] = $this->arrayFormat($val);
 			} else {
-				$_tmp[] = (is_string($key) ? $key . ' : ' : '') . $val;
+				$filetype[] = (is_string($key) ? $key . ' : ' : '') . $val;
 			}
 		}
-		return implode(PHP_EOL, $_tmp);
+		return implode(PHP_EOL, $filetype);
 	}
 
 
@@ -269,12 +269,12 @@ class Logger extends Component
 	 * @param Throwable $exception
 	 * @return array
 	 */
-	private function getException(Throwable $exception)
+	private function getException(Throwable $exception): array
 	{
-		$_tmp = [$exception->getMessage()];
-		$_tmp[] = $exception->getFile() . ' on line ' . $exception->getLine();
-		$_tmp[] = $exception->getTrace();
-		return $_tmp;
+		$filetype = [$exception->getMessage()];
+		$filetype[] = $exception->getFile() . ' on line ' . $exception->getLine();
+		$filetype[] = $exception->getTrace();
+		return $filetype;
 	}
 
 }

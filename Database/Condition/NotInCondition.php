@@ -14,7 +14,7 @@ class NotInCondition extends Condition
 	/**
 	 * @return string
 	 */
-	public function builder()
+	public function builder(): string
 	{
 
 		$format = array_filter($this->format($this->value));

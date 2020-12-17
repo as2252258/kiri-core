@@ -17,7 +17,7 @@ class EmailValidator extends BaseValidator
 	 * @return bool
 	 * 检查是否存在
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		$param = $this->getParams();
 		if (empty($param) || !isset($param[$this->field])) {

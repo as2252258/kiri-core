@@ -14,7 +14,7 @@ class NotBetweenCondition extends Condition
 	/**
 	 * @return string
 	 */
-	public function builder()
+	public function builder(): string
 	{
 		return $this->column . ' NOT BETWEEN ' . $this->value[0] . ' AND ' . $this->value[1];
 	}

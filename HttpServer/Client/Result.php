@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Client;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Result
@@ -45,7 +46,7 @@ class Result
 	 * @param $data
 	 * @return $this
 	 */
-	public function setAssignment($data)
+	public function setAssignment($data): static
 	{
 		foreach ($data as $key => $val) {
 			if (!property_exists($this, $key)) {
@@ -59,9 +60,9 @@ class Result
 
 	/**
 	 * @param $name
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		return $this->$name;
 	}
@@ -69,9 +70,9 @@ class Result
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return $this|void
+	 * @return $this
 	 */
-	public function __set($name, $value)
+	public function __set($name, $value): static
 	{
 		$this->$name = $value;
 
@@ -81,7 +82,7 @@ class Result
 	/**
 	 * @return array
 	 */
-	public function getHeaders()
+	public function getHeaders(): array
 	{
 		$_tmp = [];
 		if (!is_array($this->header)) {
@@ -103,7 +104,7 @@ class Result
 	/**
 	 * @return array
 	 */
-	public function getTime()
+	public function getTime(): array
 	{
 		return [
 			'startTime'   => $this->startTime,
@@ -118,7 +119,7 @@ class Result
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function setAttr($key, $data)
+	public function setAttr($key, $data): static
 	{
 		if (!property_exists($this, $key)) {
 			throw new Exception('未查找到相应对象属性');
@@ -131,7 +132,7 @@ class Result
 	 * @param int $status
 	 * @return bool
 	 */
-	public function isResultsOK($status = 0)
+	public function isResultsOK($status = 0): bool
 	{
 		if (!$this->httpIsOk()) {
 			return false;
@@ -142,7 +143,7 @@ class Result
 	/**
 	 * @return bool
 	 */
-	public function httpIsOk()
+	#[Pure] public function httpIsOk(): bool
 	{
 		return in_array($this->httpStatus, [100, 101, 200, 201, 202, 203, 204, 205, 206]);
 	}
@@ -150,7 +151,7 @@ class Result
 	/**
 	 * @return mixed
 	 */
-	public function getBody()
+	public function getBody(): mixed
 	{
 		return $this->data;
 	}
@@ -158,7 +159,7 @@ class Result
 	/**
 	 * @return mixed
 	 */
-	public function getMessage()
+	public function getMessage(): mixed
 	{
 		return $this->message;
 	}
@@ -166,7 +167,7 @@ class Result
 	/**
 	 * @return mixed
 	 */
-	public function getCode()
+	public function getCode(): mixed
 	{
 		return $this->code;
 	}

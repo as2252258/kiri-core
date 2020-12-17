@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace validator;
 
+use JetBrains\PhpStorm\Pure;
+
 /**
  * Class EnumValidator
  * @package validator
@@ -16,7 +18,7 @@ class EnumValidator extends BaseValidator
 	/**
 	 * @return bool
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		$param = $this->getParams();
 		if (empty($param) || !isset($param[$this->field])) {
@@ -40,7 +42,7 @@ class EnumValidator extends BaseValidator
 	/**
 	 * @return string
 	 */
-	private function i()
+	#[Pure] private function i(): string
 	{
 		return 'The param :attribute value only in ' . implode(',', $this->value);
 	}

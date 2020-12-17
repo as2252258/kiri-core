@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
@@ -29,7 +30,7 @@ class Config extends Component
 	/**
 	 * @return mixed
 	 */
-	public function getData()
+	public function getData(): mixed
 	{
 		return $this->data;
 	}
@@ -40,7 +41,7 @@ class Config extends Component
 	 * @param $value
 	 * @return mixed
 	 */
-	public function setData($key, $value)
+	public function setData($key, $value): mixed
 	{
 		return $this->data[$key] = $value;
 	}
@@ -52,10 +53,10 @@ class Config extends Component
 	 * @return mixed
 	 * @throws
 	 */
-	public static function get($key, $try = FALSE, $default = null)
+	public static function get($key, $try = FALSE, $default = null): mixed
 	{
 		$instance = Snowflake::app()->config->getData();
-		if (strpos($key, '.') === false) {
+		if (!str_contains($key, '.')) {
 			return isset($instance[$key]) ? $instance[$key] : $default;
 		}
 		foreach (explode('.', $key) as $value) {
@@ -82,7 +83,7 @@ class Config extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function set($key, $value)
+	public static function set($key, $value): mixed
 	{
 		$config = Snowflake::app()->config;
 		return $config->setData($key, $value);
@@ -93,7 +94,7 @@ class Config extends Component
 	 * @param bool $must_not_null
 	 * @return bool
 	 */
-	public static function has($key, $must_not_null = false)
+	#[Pure] public static function has($key, $must_not_null = false): bool
 	{
 		$config = Snowflake::app()->config;
 		if (!isset($config->data[$key])) {

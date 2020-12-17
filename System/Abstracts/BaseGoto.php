@@ -16,12 +16,12 @@ class BaseGoto extends Component
 {
 
 	/**
-	 * @param $message
+	 * @param string $message
 	 * @param int $statusCode
-	 * @return mixed|void
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ExitException
 	 */
-	public function end(string $message, $statusCode = 200)
+	public function end(string $message, $statusCode = 200): mixed
 	{
 		throw new ExitException(JSON::to(12350, $message), $statusCode);
 	}

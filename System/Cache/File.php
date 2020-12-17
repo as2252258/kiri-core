@@ -6,10 +6,12 @@
  * Time: 14:51
  */
 declare(strict_types=1);
+
 namespace Snowflake\Cache;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Swoole\Coroutine\System;
 
@@ -32,8 +34,9 @@ class File extends Component implements ICache
 	/**
 	 * @param $key
 	 * @param $val
+	 * @return string|int
 	 */
-	public function set($key, $val)
+	public function set($key, $val): string|int
 	{
 		if (is_array($val) || is_object($val)) {
 			$val = serialize($val);
@@ -42,15 +45,15 @@ class File extends Component implements ICache
 		if (!$this->exists($tmpFile)) {
 			touch($tmpFile);
 		}
-		System::writeFile($tmpFile, $val, LOCK_EX);
+		return System::writeFile($tmpFile, $val, LOCK_EX);
 	}
 
 	/**
 	 * @param $key
 	 * @param array $hashKeys
-	 * @return mixed|void
+	 * @return array|bool
 	 */
-	public function hMget($key, array $hashKeys)
+	public function hMGet($key, array $hashKeys): array|bool
 	{
 		$hash = $this->get($key);
 		if (!is_array($hash)) {
@@ -67,9 +70,9 @@ class File extends Component implements ICache
 	/**
 	 * @param $key
 	 * @param array $val
-	 * @return mixed|void
+	 * @return mixed
 	 */
-	public function hMset($key, array $val)
+	public function hMSet($key, array $val): mixed
 	{
 		$hash = $this->get($key);
 		if (!is_array($hash)) {
@@ -81,11 +84,11 @@ class File extends Component implements ICache
 	}
 
 	/**
-	 * @param $key
-	 * @param $hashKey
-	 * @return mixed|void
+	 * @param string $key
+	 * @param string $hashKey
+	 * @return string|int|bool
 	 */
-	public function hget($key, $hashKey)
+	public function hGet(string $key, string $hashKey): string|int|bool|null
 	{
 		$hash = $this->get($key);
 		if (!is_array($hash)) {
@@ -98,9 +101,9 @@ class File extends Component implements ICache
 	 * @param $key
 	 * @param $hashKey
 	 * @param $hashValue
-	 * @return mixed|void
+	 * @return mixed
 	 */
-	public function hset($key, $hashKey, $hashValue)
+	public function hSet($key, $hashKey, $hashValue): mixed
 	{
 		$hash = $this->get($key);
 		if (!is_array($hash)) {
@@ -116,20 +119,20 @@ class File extends Component implements ICache
 	 * @param $key
 	 * @return bool
 	 */
-	public function exists($key)
+	#[Pure] public function exists($key): bool
 	{
 		return file_exists($key);
 	}
 
 	/**
 	 * @param $key
-	 * @return mixed|null
+	 * @return mixed|bool
 	 */
-	public function get($key)
+	public function get($key): string|bool
 	{
 		$tmpFile = $this->getCacheKey($key);
 		if (!$this->exists($tmpFile)) {
-			return NULL;
+			return false;
 		}
 		$content = file_get_contents($tmpFile);
 		return unserialize($content);
@@ -140,8 +143,8 @@ class File extends Component implements ICache
 	 * @return string
 	 * @throws
 	 */
-	private function getCacheKey($key)
+	private function getCacheKey($key): string
 	{
-		return storage($key,'cache');
+		return storage($key, 'cache');
 	}
 }

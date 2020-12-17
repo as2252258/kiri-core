@@ -27,11 +27,11 @@ class Command extends \Console\Command
 
 	/**
 	 * @param Input $dtl
-	 * @return mixed|void
+	 * @return string
 	 * @throws Exception
 	 * @throws ConfigException
 	 */
-	public function onHandler(Input $dtl)
+	public function onHandler(Input $dtl): string
 	{
 		$manager = Snowflake::app()->server;
 		$manager->setDaemon($dtl->get('daemon', 0));
@@ -48,7 +48,7 @@ class Command extends \Console\Command
 		if ($dtl->get('action') == 'stop') {
 			return 'shutdown success.';
 		}
-		$manager->start();
+		return $manager->start();
 	}
 
 }

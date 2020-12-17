@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database\Condition;
 
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
 use Snowflake\Core\Str;
 
@@ -66,7 +67,7 @@ abstract class Condition extends BaseObject
 	 * $query->ANDWhere('id', '=', 7);
 	 * $sql = '(((id=2 AND id=3 AND id<4) OR id=5) OR id=6) AND i(d=7)';
 	 */
-	protected function resolve($column, $value = null, $oprea = '=')
+	protected function resolve($column, $value = null, $oprea = '='): string
 	{
 		if ($value === NULL) {
 			return '';
@@ -83,7 +84,7 @@ abstract class Condition extends BaseObject
 
 		$explode = explode('(', $columns);
 		$explode = array_shift($explode);
-		if (strpos($explode, ' ') !== false) {
+		if (str_contains($explode, ' ')) {
 			$explode = explode(' ', $explode)[0];
 		}
 		if (!in_array(trim($explode), static::INT_TYPE)) {
@@ -97,9 +98,9 @@ abstract class Condition extends BaseObject
 
 	/**
 	 * @param array|null $param
-	 * @return array
+	 * @return array|null
 	 */
-	protected function format(?array $param)
+	protected function format(?array $param): ?array
 	{
 		if (!is_array($param)) {
 			return null;
@@ -126,7 +127,7 @@ abstract class Condition extends BaseObject
 	 * @param string $oprea
 	 * @return string
 	 */
-	public function typeBuilder($column, $value = null, $oprea = '=')
+	#[Pure] public function typeBuilder($column, $value = null, $oprea = '='): string
 	{
 		if (is_numeric($value)) {
 			if ($value != (int)$value) {

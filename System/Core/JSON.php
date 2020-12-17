@@ -24,7 +24,7 @@ class JSON
 	 * @return false|string
 	 * @throws Exception
 	 */
-	public static function encode($data)
+	public static function encode($data): bool|string
 	{
 		if (empty($data)) {
 			return $data;
@@ -41,7 +41,7 @@ class JSON
 	 * @param bool $asArray
 	 * @return mixed
 	 */
-	public static function decode($data, $asArray = true)
+	public static function decode($data, $asArray = true): mixed
 	{
 		if (is_array($data)) {
 			return $data;
@@ -58,7 +58,7 @@ class JSON
 	 * @return mixed
 	 * @throws
 	 */
-	public static function to($code, $message = '', $data = [], $count = 0, $exPageInfo = [])
+	public static function to($code, $message = '', $data = [], $count = 0, $exPageInfo = []): mixed
 	{
 		$params['code'] = $code;
 		if (!is_string($message)) {
@@ -91,7 +91,7 @@ class JSON
 	 * @return false|int|string
 	 * @throws Exception
 	 */
-	public static function output($state, $body)
+	public static function output($state, $body): bool|int|string
 	{
 		$params['state'] = $state;
 		$params['body'] = ArrayAccess::toArray($body);

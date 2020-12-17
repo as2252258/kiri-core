@@ -28,7 +28,7 @@ class EmptyValidator extends BaseValidator
 	 *
 	 * 检查参数是否为NULL
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		$param = $this->getParams();
 		if (empty($param) || !isset($param[$this->field])) {

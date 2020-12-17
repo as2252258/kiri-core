@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kafka;
 
 
+use Exception;
 use Psr\Log\LoggerInterface;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -17,10 +18,10 @@ class Logger implements LoggerInterface
 
 
 	/**
-	 * @param string $message
+	 * @param mixed $message
 	 * @param array $context
 	 */
-    public function emergency($message, array $context = array())
+    public function emergency(mixed $message, array $context = array())
     {
         // TODO: Implement emergency() method.
         var_dump(func_get_args());
@@ -30,14 +31,15 @@ class Logger implements LoggerInterface
 	 * @param string $message
 	 * @param array $context
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
-    public function alert($message, array $context = array())
+    public function alert(mixed $message, array $context = array())
     {
 	    $logger = Snowflake::app()->getLogger();
 	    $logger->debug($message);
     }
 
-    public function critical($message, array $context = array())
+    public function critical(mixed $message, array $context = array())
     {
         // TODO: Implement critical() method.
         var_dump(func_get_args());
@@ -47,8 +49,9 @@ class Logger implements LoggerInterface
 	 * @param string $message
 	 * @param array $context
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
-    public function error($message, array $context = array())
+    public function error(mixed $message, array $context = array())
     {
 	    $logger = Snowflake::app()->getLogger();
 	    $logger->error($message);
@@ -59,7 +62,7 @@ class Logger implements LoggerInterface
 	 * @param array $context
 	 * @throws ComponentException
 	 */
-    public function warning($message, array $context = array())
+    public function warning(mixed $message, array $context = array())
     {
 	    $logger = Snowflake::app()->getLogger();
 	    $logger->warning($message);
@@ -70,7 +73,7 @@ class Logger implements LoggerInterface
 	 * @param array $context
 	 * @throws ComponentException
 	 */
-    public function notice($message, array $context = array())
+    public function notice(mixed $message, array $context = array())
     {
 	    $logger = Snowflake::app()->getLogger();
 	    $logger->info($message);
@@ -81,7 +84,7 @@ class Logger implements LoggerInterface
 	 * @param array $context
 	 * @throws ComponentException
 	 */
-    public function info($message, array $context = array())
+    public function info(mixed $message, array $context = array())
     {
 	    $logger = Snowflake::app()->getLogger();
 	    $logger->info($message);
@@ -91,8 +94,9 @@ class Logger implements LoggerInterface
 	 * @param string $message
 	 * @param array $context
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
-    public function debug($message, array $context = array())
+    public function debug(mixed $message, array $context = array())
     {
 	    $logger = Snowflake::app()->getLogger();
 	    $logger->debug($message);
@@ -103,8 +107,9 @@ class Logger implements LoggerInterface
 	 * @param $message
 	 * @param array $context
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
-    public function log($level, $message, array $context = array())
+    public function log($level, mixed $message, array $context = array())
     {
         $logger = Snowflake::app()->getLogger();
         $logger->debug($message);

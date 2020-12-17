@@ -23,6 +23,6 @@ interface ErrorInterface
 	 * @param int $code
 	 * @return mixed
 	 */
-	public function sendError($message, $file, $line, $code = 500);
+	public function sendError($message, $file, $line, $code = 500): mixed;
 
 }

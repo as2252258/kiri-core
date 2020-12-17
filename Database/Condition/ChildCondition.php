@@ -14,7 +14,7 @@ class ChildCondition extends Condition
 	/**
 	 * @return string
 	 */
-	public function builder()
+	public function builder(): string
 	{
 		return $this->column . ' ' . $this->opera . ' (' . $this->value . ')';
 	}

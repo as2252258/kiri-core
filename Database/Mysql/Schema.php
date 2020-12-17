@@ -28,9 +28,9 @@ class Schema extends Component
 	private ?Change $_change = null;
 
 	/**
-	 * @return Select
+	 * @return Select|null
 	 */
-	public function getQueryBuilder()
+	public function getQueryBuilder(): ?Select
 	{
 		if ($this->_builder === null) {
 			$this->_builder = new Select();
@@ -39,9 +39,9 @@ class Schema extends Component
 	}
 
 	/**
-	 * @return Change
+	 * @return Change|null
 	 */
-	public function getChange()
+	public function getChange(): ?Change
 	{
 		if ($this->_change === null) {
 			$this->_change = new Change();
@@ -51,9 +51,9 @@ class Schema extends Component
 
 
 	/**
-	 * @return Columns
+	 * @return Columns|null
 	 */
-	public function getColumns()
+	public function getColumns(): ?Columns
 	{
 		if ($this->_column === null) {
 			$this->_column = new Columns(['db' => $this->db]);

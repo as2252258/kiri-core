@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace HttpServer\Client;
 
 use Exception;
-use Swoole\Coroutine;
+use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine\Http\Client as SClient;
 
 /**
@@ -22,17 +22,17 @@ class Client extends ClientAbstracts
 
 	/**
 	 * @param string $method
-	 * @param $url
-	 * @param array $data
-	 * @return array|mixed|Result
+	 * @param $path
+	 * @param array $params
+	 * @return array|string|Result
 	 * @throws Exception
 	 */
-	public function request(string $method, $url, $data = [])
+	public function request(string $method, $path, $params = []): array|string|Result
 	{
 		return $this->setMethod($method)
 			->coroutine(
-				$this->matchHost($url),
-				$this->paramEncode($data)
+				$this->matchHost($path),
+				$this->paramEncode($params)
 			);
 	}
 
@@ -40,11 +40,11 @@ class Client extends ClientAbstracts
 	/**
 	 * @param $url
 	 * @param array $data
-	 * @return array|mixed|Result
+	 * @return array|string|Result
 	 * @throws Exception
 	 * 使用swoole协程方式请求
 	 */
-	private function coroutine($url, $data = [])
+	private function coroutine($url, $data = []): array|string|Result
 	{
 		try {
 			$client = $this->generate_client($data, ...$url);
@@ -77,7 +77,7 @@ class Client extends ClientAbstracts
 	 * @param $path
 	 * @return SClient
 	 */
-	private function generate_client($data, $host, $isHttps, $path)
+	private function generate_client($data, $host, $isHttps, $path): SClient
 	{
 		if ($isHttps || $this->isSSL()) {
 			$client = new SClient($host, 443, $this->isSSL());
@@ -112,7 +112,7 @@ class Client extends ClientAbstracts
 	/**
 	 * @return array
 	 */
-	private function settings()
+	#[Pure] private function settings(): array
 	{
 		$sslCert = $this->getSslCertFile();
 		$sslKey = $this->getSslKeyFile();

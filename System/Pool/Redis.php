@@ -31,10 +31,11 @@ class Redis extends Pool
 	/**
 	 * @param array $config
 	 * @param bool $isMaster
-	 * @return mixed|null
+	 * @return mixed
+	 * @throws RedisConnectException
 	 * @throws Exception
 	 */
-	public function getConnection(array $config, $isMaster = false)
+	public function getConnection(array $config, $isMaster = false): mixed
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 		$coroutineName = $this->name('redis:' . $name, $isMaster);
@@ -53,7 +54,7 @@ class Redis extends Pool
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getByChannel($coroutineName, $config)
+	public function getByChannel($coroutineName, $config): mixed
 	{
 		if (!$this->hasItem($coroutineName)) {
 			return $this->saveClient($coroutineName, $this->createConnect($config, $coroutineName));
@@ -72,7 +73,7 @@ class Redis extends Pool
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function saveClient($coroutineName, $client)
+	private function saveClient($coroutineName, $client): mixed
 	{
 		return Context::setContext($coroutineName, $client);
 	}
@@ -84,7 +85,7 @@ class Redis extends Pool
 	 * @return SRedis
 	 * @throws RedisConnectException
 	 */
-	private function createConnect(array $config, string $coroutineName)
+	private function createConnect(array $config, string $coroutineName): SRedis
 	{
 		$redis = new SRedis();
 		if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
@@ -139,7 +140,7 @@ class Redis extends Pool
 	/**
 	 * @param $coroutineName
 	 */
-	public function remove($coroutineName)
+	public function remove(string $coroutineName)
 	{
 		Context::deleteId($coroutineName);
 	}
@@ -148,10 +149,10 @@ class Redis extends Pool
 	 * @param $name
 	 * @param $time
 	 * @param $client
-	 * @return bool|mixed
+	 * @return bool
 	 * @throws Exception
 	 */
-	public function checkCanUse($name, $time, $client)
+	public function checkCanUse(string $name, int $time, mixed $client): bool
 	{
 		try {
 			if ($time + 60 * 10 < time()) {
@@ -173,7 +174,7 @@ class Redis extends Pool
 		}
 	}
 
-	public function desc($name)
+	public function desc(string $name)
 	{
 		// TODO: Implement desc() method.
 	}

@@ -10,9 +10,15 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Core\Str;
 use Snowflake\Exception\AuthException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
+
+/**
+ * Class Jwt
+ * @package Snowflake\Jwt
+ */
 class Jwt extends Component
 {
 
@@ -122,7 +128,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return array
 	 * @throws Exception
 	 */
-	public function create(int $unionId, $headers = [])
+	public function create(int $unionId, $headers = []): array
 	{
 		$this->user = $unionId;
 		$this->config['time'] = time();
@@ -149,7 +155,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @throws Exception
 	 * 对相关信息进行加密
 	 */
-	private function createEncrypt($unionId)
+	private function createEncrypt($unionId): array
 	{
 		$caches = $this->clear($unionId);
 		$param = $this->assembly(array_merge($this->config, [
@@ -182,7 +188,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return array
 	 * @throws
 	 */
-	private function assembly(array $param, $update = FALSE)
+	private function assembly(array $param, $update = FALSE): array
 	{
 		if (isset($param['sign'])) {
 			unset($param['sign']);
@@ -205,7 +211,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return array
 	 * @throws Exception
 	 */
-	public function refresh($headers = [])
+	public function refresh($headers = []): array
 	{
 		$this->data = $headers;
 		if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
@@ -226,9 +232,9 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @param $param
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	private function initialize(array $param)
+	private function initialize(array $param): array
 	{
 		$_param = [
 			'version' => '1',
@@ -270,7 +276,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return string
 	 * @throws Exception
 	 */
-	private function authKey(string $_source, string $token)
+	private function authKey(string $_source, string $token): string
 	{
 		$source = $this->getSource();
 		if (!empty($_source)) $source = $_source;
@@ -283,7 +289,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @return string
 	 */
-	public function getSource()
+	public function getSource(): string
 	{
 		return $this->data['source'] ?? 'browser';
 	}
@@ -295,7 +301,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 *
 	 * @return string
 	 */
-	private function token(int $user, $param = [], $requestTime = NULL)
+	private function token(int $user, $param = [], $requestTime = NULL): string
 	{
 		$str = '';
 
@@ -318,7 +324,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return mixed
 	 * 将字符串替换成指定格式
 	 */
-	private function preg(string $str)
+	private function preg(string $str): mixed
 	{
 		$preg = '/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/';
 		return preg_replace($preg, '$1-$2-$3-$4-$5', $str);
@@ -329,7 +335,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return string[]
 	 * @throws Exception
 	 */
-	public function clear(int $user)
+	public function clear(int $user): array
 	{
 		$this->user = $user;
 		$redis = $this->getRedis();
@@ -356,7 +362,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return bool
 	 * @throws AuthException
 	 */
-	public function check(array $data, int $user)
+	public function check(array $data, int $user): bool
 	{
 		$this->data = $data;
 		$this->user = $user;
@@ -378,7 +384,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return mixed
 	 * @throws
 	 */
-	public function getCurrentOnlineUser()
+	public function getCurrentOnlineUser(): mixed
 	{
 		$this->data = request()->headers->getHeaders();
 		$model = $this->getUserModel();
@@ -398,10 +404,12 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 	/**
 	 * @param array $header
-	 * @return false|mixed
+	 * @return mixed
+	 * @throws AuthException
+	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	public static function checkAuth(array $header = [])
+	public static function checkAuth(array $header = []): mixed
 	{
 		$instance = Snowflake::app()->getJwt();
 		if (empty($header)) {
@@ -435,7 +443,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @throws AuthException
 	 * @throws Exception
 	 */
-	private function getUserModel()
+	private function getUserModel(): bool|array
 	{
 		if (!isset($this->data['token'])) {
 			throw new AuthException('暂无访问权限！');
@@ -448,7 +456,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return Redis
 	 * @throws Exception
 	 */
-	private function getRedis()
+	private function getRedis(): Redis
 	{
 		return Snowflake::app()->getRedis();
 	}

@@ -27,7 +27,7 @@ abstract class Filter extends Application
 	 * @return bool
 	 * @throws Exception
 	 */
-	protected function validator()
+	protected function validator(): bool
 	{
 		$validator = Validator::getInstance();
 		$validator->setParams($this->params);

@@ -12,7 +12,7 @@ namespace HttpServer\Route;
 class Any
 {
 
-	private $nodes = [];
+	private array $nodes = [];
 
 	/**
 	 * Any constructor.
@@ -29,7 +29,7 @@ class Any
 	 * @param $arguments
 	 * @return $this
 	 */
-	public function __call($name, $arguments)
+	public function __call($name, $arguments): static
 	{
 		foreach ($this->nodes as $node) {
 			$node->{$name}(...$arguments);

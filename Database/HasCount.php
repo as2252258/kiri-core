@@ -18,7 +18,7 @@ class HasCount extends HasBase
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function __call($name, $arguments)
+	public function __call($name, $arguments): static
 	{
 		$this->_relation->getQuery($this->model::className())->$name(...$arguments);
 		return $this;
@@ -28,7 +28,7 @@ class HasCount extends HasBase
 	 * @return array|null|ActiveRecord
 	 * @throws Exception
 	 */
-	public function get()
+	public function get(): array|ActiveRecord|null
 	{
 		return $this->_relation->count($this->model::className(), $this->value);
 	}

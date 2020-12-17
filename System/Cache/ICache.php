@@ -6,6 +6,7 @@
  * Time: 16:35
  */
 declare(strict_types=1);
+
 namespace Snowflake\Cache;
 
 /**
@@ -17,36 +18,36 @@ interface ICache
 	/**
 	 * @param $key
 	 * @param $val
-	 * @return mixed
+	 * @return string|int
 	 */
-	public function set($key, $val);
+	public function set($key, $val): string|int;
 
 	/**
 	 * @param $key
-	 * @return mixed
+	 * @return string|int|bool
 	 */
-	public function get($key);
+	public function get($key): string|int|bool;
 
 	/**
 	 * @param $key
-	 * @param $hashKeys
-	 * @return mixed
+	 * @param array $hashKeys
+	 * @return array|bool|null
 	 */
-	public function hMget($key, array $hashKeys);
+	public function hMGet($key, array $hashKeys): array|bool|null;
 
 	/**
 	 * @param $key
 	 * @param array $val
 	 * @return mixed
 	 */
-	public function hMset($key, array $val);
+	public function hMSet($key, array $val): mixed;
 
 	/**
-	 * @param $key
-	 * @param $hashKey
-	 * @return mixed
+	 * @param string $key
+	 * @param string $hashKey
+	 * @return string|int|bool
 	 */
-	public function hget($key, $hashKey);
+	public function hGet(string $key, string $hashKey): string|int|bool;
 
 	/**
 	 * @param $key
@@ -54,11 +55,11 @@ interface ICache
 	 * @param $hashValue
 	 * @return mixed
 	 */
-	public function hset($key, $hashKey, $hashValue);
+	public function hSet($key, $hashKey, $hashValue): mixed;
 
 	/**
 	 * @param $key
 	 * @return bool
 	 */
-	public function exists($key);
+	public function exists($key): bool;
 }

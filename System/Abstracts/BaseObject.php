@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Error\Logger;
 use Snowflake\Snowflake;
 
@@ -44,7 +45,7 @@ class BaseObject implements Configure
 	/**
 	 * @return string
 	 */
-	public static function className()
+	#[Pure] public static function className(): string
 	{
 		return get_called_class();
 	}
@@ -72,7 +73,7 @@ class BaseObject implements Configure
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		$method = 'get' . ucfirst($name);
 		if (method_exists($this, $method)) {
@@ -89,7 +90,7 @@ class BaseObject implements Configure
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function addError($message, $model = 'app')
+	public function addError($message, $model = 'app'): bool
 	{
 		if ($message instanceof \Throwable) {
 			$this->error($message->getMessage(), $message->getFile(), $message->getLine());
@@ -109,9 +110,8 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws
 	 */
-	public function debug($message, string $method = __METHOD__, string $file = __FILE__)
+	public function debug(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
 		if (!is_string($message)) {
 			$message = print_r($message, true);
@@ -125,9 +125,8 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws
 	 */
-	public function info($message, string $method = __METHOD__, string $file = __FILE__)
+	public function info(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
 		if (!is_string($message)) {
 			$message = print_r($message, true);
@@ -140,9 +139,8 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws
 	 */
-	public function success($message, string $method = __METHOD__, string $file = __FILE__)
+	public function success(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
 		if (!is_string($message)) {
 			$message = print_r($message, true);
@@ -157,7 +155,7 @@ class BaseObject implements Configure
 	 * @param string $method
 	 * @param string $file
 	 */
-	public function warning($message, string $method = __METHOD__, string $file = __FILE__)
+	public function warning(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
 		if (!is_string($message)) {
 			$message = print_r($message, true);
@@ -172,7 +170,7 @@ class BaseObject implements Configure
 	 * @param null $method
 	 * @param null $file
 	 */
-	public function error($message, $method = null, $file = null)
+	public function error(mixed $message, $method = null, $file = null)
 	{
 		if (!empty($file)) {
 			echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . "\033[0m";

@@ -29,7 +29,7 @@ class Input
 	/**
 	 * @return string
 	 */
-	public function getCommandName()
+	public function getCommandName(): string
 	{
 		return $this->_command;
 	}
@@ -40,7 +40,7 @@ class Input
 	 * @param null $default
 	 * @return mixed|null
 	 */
-	public function get($key, $default = null)
+	public function get($key, $default = null): mixed
 	{
 		return $this->_argv[$key] ?? $default;
 	}
@@ -50,7 +50,7 @@ class Input
 	 * @param $value
 	 * @return $this
 	 */
-	public function set($key, $value)
+	public function set($key, $value): static
 	{
 		$this->_argv[$key] = $value;
 		return $this;
@@ -60,7 +60,7 @@ class Input
 	/**
 	 * @return false|string
 	 */
-	public function toJson()
+	public function toJson(): bool|string
 	{
 		return json_encode($this->_argv, JSON_UNESCAPED_UNICODE);
 	}
@@ -71,7 +71,7 @@ class Input
 	 * @return array
 	 * @throws Exception
 	 */
-	public function resolve($parameters)
+	public function resolve($parameters): array
 	{
 		$arrays = [];
 		$parameters = array_slice($parameters, 1);
@@ -90,7 +90,7 @@ class Input
 	/**
 	 * @return string
 	 */
-	public function getCommand()
+	public function getCommand(): string
 	{
 		return $this->_command;
 	}

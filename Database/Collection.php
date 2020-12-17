@@ -6,6 +6,7 @@
  * Time: 13:38
  */
 declare(strict_types=1);
+
 namespace Database;
 
 use Database\Base\AbstractCollection;
@@ -35,7 +36,7 @@ class Collection extends AbstractCollection
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function values($field)
+	public function values($field): ?array
 	{
 		if (empty($field) || !is_string($field)) {
 			return NULL;
@@ -53,7 +54,7 @@ class Collection extends AbstractCollection
 	 * @param string $field
 	 * @return array|null
 	 */
-	public function keyBy(string $field)
+	public function keyBy(string $field): ?array
 	{
 		$array = $this->toArray();
 		$column = array_flip(array_column($array, $field));
@@ -67,7 +68,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return $this
 	 */
-	public function orderRand()
+	public function orderRand(): static
 	{
 		shuffle($this->_item);
 		return $this;
@@ -79,7 +80,7 @@ class Collection extends AbstractCollection
 	 *
 	 * @return array
 	 */
-	public function slice($start = 0, $length = 20)
+	#[Pure] public function slice($start = 0, $length = 20): array
 	{
 		if (empty($this->_item) || !is_array($this->_item)) {
 			return [];
@@ -97,7 +98,7 @@ class Collection extends AbstractCollection
 	 *
 	 * @return array|null
 	 */
-	public function column($field, $setKey = '')
+	public function column($field, $setKey = ''): ?array
 	{
 		$data = $this->toArray();
 		if (empty($data)) {
@@ -115,7 +116,7 @@ class Collection extends AbstractCollection
 	 *
 	 * @return float|int|null
 	 */
-	public function sum($field)
+	public function sum($field): float|int|null
 	{
 		$array = $this->column($field);
 		if (empty($array)) {
@@ -125,9 +126,9 @@ class Collection extends AbstractCollection
 	}
 
 	/**
-	 * @return ActiveRecord|mixed
+	 * @return ActiveRecord|array
 	 */
-	public function current()
+	#[Pure] public function current(): ActiveRecord|array
 	{
 		return current($this->_item);
 	}
@@ -135,7 +136,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return int
 	 */
-	public function size()
+	#[Pure] public function size(): int
 	{
 		return (int)count($this->_item);
 	}
@@ -144,7 +145,7 @@ class Collection extends AbstractCollection
 	 * @return array
 	 * @throws
 	 */
-	public function toArray()
+	public function toArray(): array
 	{
 		$array = [];
 		foreach ($this as $value) {
@@ -161,7 +162,7 @@ class Collection extends AbstractCollection
 	 * @throws Exception
 	 * 批量删除
 	 */
-	public function delete()
+	public function delete(): bool
 	{
 		$model = $this->model;
 		if (!$model->hasPrimary()) {
@@ -177,7 +178,7 @@ class Collection extends AbstractCollection
 		}
 		return $this->model::find()
 			->in($model->getPrimary(), $ids)
-			->deleteAll();
+			->delete();
 	}
 
 	/**
@@ -185,7 +186,7 @@ class Collection extends AbstractCollection
 	 * @return Collection
 	 * @throws
 	 */
-	public function filter(array $condition)
+	public function filter(array $condition): Collection|static
 	{
 		$_filters = [];
 		if (empty($condition)) {
@@ -207,7 +208,7 @@ class Collection extends AbstractCollection
 	 * @return bool
 	 * @throws Exception
 	 */
-	private function filterCheck($value, $condition)
+	private function filterCheck($value, $condition): bool
 	{
 		$_value = $value;
 		if ($_value instanceof ActiveRecord) {
@@ -224,9 +225,9 @@ class Collection extends AbstractCollection
 	/**
 	 * @param $key
 	 * @param $value
-	 * @return ActiveRecord|mixed|null
+	 * @return mixed
 	 */
-	public function exists($key, $value)
+	public function exists($key, $value): mixed
 	{
 		foreach ($this as $item) {
 			if ($item->$key === $value) {
@@ -239,7 +240,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return bool
 	 */
-	public function isEmpty()
+	#[Pure] public function isEmpty(): bool
 	{
 		return $this->size() < 1;
 	}

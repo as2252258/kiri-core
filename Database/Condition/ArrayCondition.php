@@ -7,6 +7,7 @@ namespace Database\Condition;
 use Database\ActiveQuery;
 use Database\Base\ConditionClassMap;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Str;
 use Snowflake\Snowflake;
 
@@ -23,7 +24,7 @@ class ArrayCondition extends Condition
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function builder()
+	public function builder(): mixed
 	{
 		if ($this->value instanceof Condition) {
 			return $this->value->builder();
@@ -58,7 +59,7 @@ class ArrayCondition extends Condition
 	 * @param $value
 	 * @return bool
 	 */
-	private function isMath($value)
+	#[Pure] private function isMath($value): bool
 	{
 		return isset($value[0]) && in_array($value[0], $this->math);
 	}
@@ -68,7 +69,7 @@ class ArrayCondition extends Condition
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function buildOperaCondition($value)
+	public function buildOperaCondition(array $value): mixed
 	{
 		[$option['opera'], $option['column'], $option['value']] = $value;
 		$strPer = strtoupper($option['opera']);
@@ -79,7 +80,7 @@ class ArrayCondition extends Condition
 			}
 			$option = array_merge($option, $class);
 		} else if ($value instanceof ActiveQuery) {
-			$option['value'] = $value->adaptation();
+			$option['value'] = $value->getBuild()->getQuery($value);
 			$option['class'] = ChildCondition::class;
 		} else {
 			$option['class'] = DefaultCondition::class;
@@ -94,7 +95,7 @@ class ArrayCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function buildHashCondition($key, $value)
+	public function buildHashCondition($key, $value): string
 	{
 		return $this->resolve($key, $value);
 	}

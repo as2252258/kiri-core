@@ -24,7 +24,7 @@ class HasOne extends HasBase
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function __call($name, $arguments)
+	public function __call($name, $arguments): static
 	{
 		$this->_relation->getQuery($this->model::className())->$name(...$arguments);
 		return $this;
@@ -34,7 +34,7 @@ class HasOne extends HasBase
 	 * @return array|null|ActiveRecord
 	 * @throws Exception
 	 */
-	public function get()
+	public function get(): array|ActiveRecord|null
 	{
 		return $this->_relation->first($this->model::className(), $this->value);
 	}

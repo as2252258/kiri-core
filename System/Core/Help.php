@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Snowflake\Core;
 
 
+use Exception;
+use JetBrains\PhpStorm\Pure;
+
 /**
  * Class Help
  * @package Snowflake\Snowflake\Core
@@ -16,7 +19,7 @@ class Help
 	 * @param array $data
 	 * @return string
 	 */
-	public static function toXml(array $data)
+	#[Pure] public static function toXml(array $data)
 	{
 		$xml = "<xml>";
 		foreach ($data as $key => $val) {
@@ -33,9 +36,9 @@ class Help
 
 	/**
 	 * @param $xml
-	 * @return array|mixed
+	 * @return mixed
 	 */
-	public static function toArray($xml)
+	public static function toArray($xml): mixed
 	{
 		if (empty($xml)) {
 			return null;
@@ -49,7 +52,11 @@ class Help
 	}
 
 
-	public static function jsonToArray($xml)
+	/**
+	 * @param $xml
+	 * @return mixed
+	 */
+	public static function jsonToArray($xml): mixed
 	{
 		$_xml = json_decode($xml, true);
 		if (is_null($_xml)) {
@@ -62,7 +69,7 @@ class Help
 	 * @param $xml
 	 * @return mixed
 	 */
-	public static function xmlToArray($xml)
+	public static function xmlToArray($xml): mixed
 	{
 		if (is_array($xml)) {
 			return $xml;
@@ -79,9 +86,9 @@ class Help
 	/**
 	 * @param $parameter
 	 * @return array|false|string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public static function toString($parameter)
+	public static function toString($parameter): bool|array|string
 	{
 		if (!is_string($parameter)) {
 			$parameter = ArrayAccess::toArray($parameter);
@@ -94,9 +101,9 @@ class Help
 
 	/**
 	 * @param mixed $json
-	 * @return false|mixed|string
+	 * @return bool|string
 	 */
-	public static function toJson($json)
+	public static function toJson(mixed $json): bool|string
 	{
 		if (is_object($json)) {
 			$json = get_object_vars($json);
@@ -122,7 +129,7 @@ class Help
 	 *
 	 * 随机字符串
 	 */
-	public static function random($length = 20)
+	public static function random($length = 20): string
 	{
 		$res = [];
 		$str = 'abcdefghijklmnopqrstuvwxyz';
@@ -144,7 +151,7 @@ class Help
 	 * @param $type
 	 * @return string
 	 */
-	public static function sign(array $array, $key, $type)
+	public static function sign(array $array, $key, $type): string
 	{
 		ksort($array, SORT_ASC);
 		$string = [];

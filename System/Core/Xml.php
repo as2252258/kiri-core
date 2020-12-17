@@ -21,7 +21,7 @@ class Xml
 	 * @param bool $asArray
 	 * @return array|object
 	 */
-	public static function toArray($data, $asArray = true)
+	public static function toArray($data, $asArray = true): object|array
 	{
 		$data = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($asArray) {
@@ -35,7 +35,7 @@ class Xml
 	 * @param $str
 	 * @return array|bool|object
 	 */
-	public static function isXml($str)
+	public static function isXml($str): object|bool|array
 	{
 		$xml_parser = xml_parser_create();
 		if (!xml_parse($xml_parser, $str, true)) {

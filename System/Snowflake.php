@@ -25,6 +25,11 @@ defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be 
 defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/Controllers/');
 defined('SOCKET_PATH') or define('SOCKET_PATH', APP_PATH . 'app/Websocket/');
 
+
+/**
+ * Class Snowflake
+ * @package Snowflake
+ */
 class Snowflake
 {
 
@@ -135,7 +140,7 @@ class Snowflake
 
 	/**
 	 * @param $workerId
-	 * @return false|int|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
 	public static function setProcessId($workerId): mixed
@@ -146,7 +151,7 @@ class Snowflake
 
 	/**
 	 * @param $workerId
-	 * @return false|int|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
 	public static function setWorkerId($workerId): mixed
@@ -314,7 +319,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isMac()
+	#[Pure] public static function isMac(): bool
 	{
 		$output = strtolower(PHP_OS | PHP_OS_FAMILY);
 		if (str_contains('mac', $output)) {
@@ -329,7 +334,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isLinux(): bool
+	#[Pure] public static function isLinux(): bool
 	{
 		if (!static::isMac()) {
 			return true;

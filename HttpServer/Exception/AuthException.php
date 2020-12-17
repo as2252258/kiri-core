@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace HttpServer\Exception;
 
 
+use JetBrains\PhpStorm\Pure;
 use Throwable;
 
 /**
@@ -17,8 +18,15 @@ use Throwable;
  */
 class AuthException extends \Exception
 {
-	
-	public function __construct($message = "", $code = 0, Throwable $previous = NULL)
+
+
+	/**
+	 * AuthException constructor.
+	 * @param string $message
+	 * @param int $code
+	 * @param Throwable|null $previous
+	 */
+	#[Pure] public function __construct($message = "", $code = 0, Throwable $previous = NULL)
 	{
 		parent::__construct($message, 7000, $previous);
 	}

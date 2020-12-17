@@ -6,7 +6,10 @@ namespace HttpServer\Http;
 use Exception;
 use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
+use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Core\JSON;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use function router;
@@ -77,7 +80,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isFavicon()
+	public function isFavicon(): bool
 	{
 		return $this->getUri() === 'favicon.ico';
 	}
@@ -85,7 +88,7 @@ class Request extends Application
 	/**
 	 * @return mixed
 	 */
-	public function getIdentity()
+	public function getIdentity(): mixed
 	{
 		return $this->_grant;
 	}
@@ -93,7 +96,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isHead()
+	public function isHead(): bool
 	{
 		$result = $this->headers->getHeader('request_method') == 'head';
 		if ($result) {
@@ -108,7 +111,7 @@ class Request extends Application
 	 * @param $status
 	 * @return mixed
 	 */
-	public function setStatus($status)
+	public function setStatus($status): mixed
 	{
 		return $this->statusCode = $status;
 	}
@@ -116,7 +119,7 @@ class Request extends Application
 	/**
 	 * @return int
 	 */
-	public function getStatus()
+	public function getStatus(): int
 	{
 		return $this->statusCode;
 	}
@@ -124,7 +127,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsPackage()
+	public function getIsPackage(): bool
 	{
 		return $this->headers->getHeader('request_method') == 'package';
 	}
@@ -132,7 +135,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsReceive()
+	public function getIsReceive(): bool
 	{
 		return $this->headers->getHeader('request_method') == 'receive';
 	}
@@ -150,7 +153,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function hasGrant()
+	public function hasGrant(): bool
 	{
 		return $this->_grant !== null;
 	}
@@ -159,7 +162,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	public function parseUri()
+	public function parseUri(): string
 	{
 		$array = [];
 		$explode = explode('/', $this->headers->getHeader('request_uri'));
@@ -175,15 +178,15 @@ class Request extends Application
 	/**
 	 * @return string[]
 	 */
-	public function getExplode()
+	public function getExplode(): array
 	{
 		return $this->explode;
 	}
 
 	/**
-	 * @return mixed|string
+	 * @return string
 	 */
-	public function getCurrent()
+	#[Pure] public function getCurrent(): string
 	{
 		return current($this->explode);
 	}
@@ -191,7 +194,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	public function getUri()
+	public function getUri(): string
 	{
 		if (!$this->headers) {
 			return 'command exec.';
@@ -207,10 +210,10 @@ class Request extends Application
 
 
 	/**
-	 * @return mixed|string
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ComponentException
 	 */
-	public function adapter()
+	public function adapter(): mixed
 	{
 		if (!$this->isHead()) {
 			return router()->dispatch();
@@ -222,7 +225,7 @@ class Request extends Application
 	/**
 	 * @return string|null
 	 */
-	public function getPlatform()
+	public function getPlatform(): ?string
 	{
 		$user = $this->headers->getHeader('user-agent');
 		$match = preg_match('/\(.*\)?/', $user, $output);
@@ -245,7 +248,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isIos()
+	public function isIos(): bool
 	{
 		return $this->getPlatform() == static::PLATFORM_IPHONE;
 	}
@@ -253,7 +256,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isAndroid()
+	public function isAndroid(): bool
 	{
 		return $this->getPlatform() == static::PLATFORM_ANDROID;
 	}
@@ -261,7 +264,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isMacOs()
+	public function isMacOs(): bool
 	{
 		return $this->getPlatform() == static::PLATFORM_MAC_OX;
 	}
@@ -269,7 +272,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isWindows()
+	public function isWindows(): bool
 	{
 		return $this->getPlatform() == static::PLATFORM_WINDOWS;
 	}
@@ -277,7 +280,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsPost()
+	public function getIsPost(): bool
 	{
 		return $this->getMethod() == 'post';
 	}
@@ -286,7 +289,7 @@ class Request extends Application
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function getIsHttp()
+	public function getIsHttp(): bool
 	{
 		return true;
 	}
@@ -294,7 +297,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsOption()
+	public function getIsOption(): bool
 	{
 		return $this->getMethod() == 'options';
 	}
@@ -302,7 +305,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsGet()
+	public function getIsGet(): bool
 	{
 		return $this->getMethod() == 'get';
 	}
@@ -310,7 +313,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsDelete()
+	public function getIsDelete(): bool
 	{
 		return $this->getMethod() == 'delete';
 	}
@@ -320,7 +323,7 @@ class Request extends Application
 	 *
 	 * 获取请求类型
 	 */
-	public function getMethod()
+	public function getMethod(): string
 	{
 		$method = $this->headers->get('request_method');
 		if (empty($method)) {
@@ -332,7 +335,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function getIsCli()
+	public function getIsCli(): bool
 	{
 		return $this->isCli === TRUE;
 	}
@@ -357,7 +360,7 @@ class Request extends Application
 	/**
 	 * @return mixed|null
 	 */
-	public function getIp()
+	#[Pure] public function getIp()
 	{
 		$headers = $this->headers->getHeaders();
 		if (!empty($headers['x-forwarded-for'])) return $headers['x-forwarded-for'];
@@ -369,7 +372,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	public function getRuntime()
+	#[Pure] public function getRuntime(): string
 	{
 		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
 	}
@@ -377,7 +380,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	public function getDebug()
+	public function getDebug(): string
 	{
 		$mainstay = sprintf("%.6f", microtime(true)); // 带毫秒的时间戳
 
@@ -402,7 +405,7 @@ class Request extends Application
 	 * @param $router
 	 * @return bool
 	 */
-	public function is($router)
+	public function is($router): bool
 	{
 		return $this->getUri() == trim($router, '/');
 	}
@@ -410,7 +413,7 @@ class Request extends Application
 	/**
 	 * @return bool
 	 */
-	public function isNotFound()
+	public function isNotFound(): bool
 	{
 		return JSON::to(404, 'Page ' . $this->getUri() . ' not found.');
 	}
@@ -419,10 +422,10 @@ class Request extends Application
 	/**
 	 * @param $request
 	 * @return mixed
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	public static function create($request)
+	public static function create($request): Request
 	{
 		$sRequest = Context::setContext('request', Snowflake::createObject(Request::class));
 		$sRequest->fd = $request->fd;

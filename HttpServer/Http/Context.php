@@ -145,10 +145,10 @@ class Context extends BaseContext
 	}
 
 	/**
-	 * @param $id
-	 * @param null $key
+	 * @param string $id
+	 * @param string|null $key
 	 */
-	public static function deleteId($id, $key = null)
+	public static function deleteId(string $id,string $key = null)
 	{
 		if (!static::hasContext($id, $key)) {
 			return;

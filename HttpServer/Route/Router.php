@@ -5,18 +5,14 @@ namespace HttpServer\Route;
 
 use Closure;
 use Exception;
-use HttpServer\Exception\ExitException;
-use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
-use HttpServer\Route\Annotation\Http;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
-use Snowflake\Core\JSON;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 
 defined('ROUTER_TREE') or define('ROUTER_TREE', 1);
 defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
@@ -41,8 +37,6 @@ class Router extends Application implements RouterInterface
 	public ?Closure $middleware = null;
 
 	public bool $useTree = false;
-
-	private bool $reading = false;
 
 
 	/**
@@ -115,7 +109,7 @@ class Router extends Application implements RouterInterface
 	 * @param $path
 	 * @return string
 	 */
-	private function resolve($path)
+	#[Pure] private function resolve($path): string
 	{
 		$paths = array_column($this->groupTacks, 'prefix');
 		if (empty($paths)) {
@@ -182,10 +176,10 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return mixed
+	 * @return Node|null
 	 * @throws ConfigException
 	 */
-	public function socket($route, $handler): mixed
+	public function socket($route, $handler): ?Node
 	{
 		return $this->addRoute($route, $handler, 'socket');
 	}
@@ -205,10 +199,10 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return mixed|Node|null
-	 * @throws
+	 * @return Node|null
+	 * @throws ConfigException
 	 */
-	public function get($route, $handler)
+	public function get($route, $handler): ?Node
 	{
 		return $this->addRoute($route, $handler, 'get');
 	}
@@ -219,7 +213,7 @@ class Router extends Application implements RouterInterface
 	 * @return mixed|Node|null
 	 * @throws
 	 */
-	public function options($route, $handler)
+	public function options($route, $handler): ?Node
 	{
 		return $this->addRoute($route, $handler, 'options');
 	}
@@ -240,8 +234,9 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Any
+	 * @throws ConfigException
 	 */
-	public function any($route, $handler)
+	public function any($route, $handler): Any
 	{
 		$nodes = [];
 		foreach (['get', 'post', 'options', 'put', 'delete'] as $method) {
@@ -253,10 +248,10 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return mixed|Node|null
-	 * @throws
+	 * @return Node|null
+	 * @throws ConfigException
 	 */
-	public function delete($route, $handler)
+	public function delete($route, $handler): ?Node
 	{
 		return $this->addRoute($route, $handler, 'delete');
 	}
@@ -264,10 +259,10 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return mixed|Node|null
-	 * @throws
+	 * @return Node|null
+	 * @throws ConfigException
 	 */
-	public function put($route, $handler)
+	public function put($route, $handler): ?Node
 	{
 		return $this->addRoute($route, $handler, 'put');
 	}
@@ -380,7 +375,7 @@ class Router extends Application implements RouterInterface
 	 * @return array
 	 * '*'
 	 */
-	public function split($path)
+	public function split($path): array
 	{
 		$prefix = $this->addPrefix();
 		$path = ltrim($path, '/');
@@ -403,7 +398,7 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @return array
 	 */
-	public function each()
+	public function each(): array
 	{
 		$paths = [];
 		foreach ($this->nodes as $node) {
@@ -427,7 +422,7 @@ class Router extends Application implements RouterInterface
 	 * @param array $returns
 	 * @return array
 	 */
-	private function readByArray($array, $returns = [])
+	private function readByArray($array, $returns = []): array
 	{
 		foreach ($array as $value) {
 			if (empty($value)) {
@@ -450,7 +445,7 @@ class Router extends Application implements RouterInterface
 	 * @param string $paths
 	 * @return array
 	 */
-	private function readByChild($child, $paths = '')
+	private function readByChild($child, $paths = ''): array
 	{
 		$newPath = [];
 		/** @var Node $item */
@@ -490,11 +485,10 @@ class Router extends Application implements RouterInterface
 
 	/**
 	 * @param $exception
-	 * @return false|int|mixed|string
+	 * @return mixed
 	 * @throws ComponentException
-	 * @throws Exception
 	 */
-	private function exception($exception)
+	private function exception($exception): mixed
 	{
 		return Snowflake::app()->getLogger()->exception($exception);
 	}
@@ -502,10 +496,10 @@ class Router extends Application implements RouterInterface
 
 	/**
 	 * @param Request $request
-	 * @return Node|false|int|mixed|string|null
+	 * @return Node|null 树干搜索
 	 * 树干搜索
 	 */
-	private function find_path(Request $request)
+	private function find_path(Request $request): ?Node
 	{
 		$method = $request->getMethod();
 		if (!isset($this->nodes[$method])) {
@@ -545,7 +539,7 @@ class Router extends Application implements RouterInterface
 	 * @param $request
 	 * @return Node|null
 	 */
-	private function search_options($request)
+	private function search_options($request): ?Node
 	{
 		$method = $request->getMethod();
 		if (!isset($this->nodes[$method])) {
@@ -563,7 +557,7 @@ class Router extends Application implements RouterInterface
 	 * @return Node|null
 	 * 树杈搜索
 	 */
-	private function Branch_search($request)
+	private function Branch_search($request): ?Node
 	{
 		$node = $this->tree_search($request->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {
@@ -596,7 +590,6 @@ class Router extends Application implements RouterInterface
 	private function loadRouteDir($path)
 	{
 		$files = glob($path . '/*');
-		$this->reading = true;
 		for ($i = 0; $i < count($files); $i++) {
 			if (is_dir($files[$i])) {
 				$this->loadRouteDir($files[$i]);
@@ -604,7 +597,6 @@ class Router extends Application implements RouterInterface
 				$this->loadRouterFile($files[$i]);
 			}
 		}
-		$this->reading = false;
 	}
 
 

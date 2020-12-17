@@ -25,7 +25,7 @@ class Db
 	/**
 	 * @return bool
 	 */
-	public static function transactionsActive()
+	public static function transactionsActive(): bool
 	{
 		return static::$isActive;
 	}
@@ -65,7 +65,7 @@ class Db
 	 *
 	 * @return static
 	 */
-	public static function table($table)
+	public static function table($table): Db|static
 	{
 		$db = new Db();
 		$db->from($table);
@@ -77,7 +77,7 @@ class Db
 	 * @param string $alias
 	 * @return string
 	 */
-	public static function any_value(string $column, string $alias = '')
+	public static function any_value(string $column, string $alias = ''): string
 	{
 		if (empty($alias)) {
 			$alias = $column . '_any_value';
@@ -90,7 +90,7 @@ class Db
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function get(Connection $db = NULL)
+	public function get(Connection $db = NULL): mixed
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -104,17 +104,17 @@ class Db
 	 * @param $column
 	 * @return string
 	 */
-	public static function raw($column)
+	public static function raw($column): string
 	{
 		return '`' . $column . '`';
 	}
 
 	/**
 	 * @param Connection|null $db
-	 * @return array|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function find(Connection $db = NULL)
+	public function find(Connection $db = NULL): mixed
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -129,7 +129,7 @@ class Db
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function count(Connection $db = NULL)
+	public function count(Connection $db = NULL): bool|int
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -144,7 +144,7 @@ class Db
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function exists(Connection $db = NULL)
+	public function exists(Connection $db = NULL): bool|int
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -161,7 +161,7 @@ class Db
 	 * @return array|bool|int|string|null
 	 * @throws Exception
 	 */
-	public static function findAllBySql(string $sql, array $attributes = [], Connection $db = NULL)
+	public static function findAllBySql(string $sql, array $attributes = [], Connection $db = NULL): int|bool|array|string|null
 	{
 		return $db->createCommand($sql, $attributes)->all();
 	}
@@ -173,7 +173,7 @@ class Db
 	 * @return array|mixed
 	 * @throws Exception
 	 */
-	public static function findBySql(string $sql, array $attributes = [], Connection $db = NULL)
+	public static function findBySql(string $sql, array $attributes = [], Connection $db = NULL): mixed
 	{
 		return $db->createCommand($sql, $attributes)->one();
 	}
@@ -183,7 +183,7 @@ class Db
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function values(string $field)
+	public function values(string $field): ?array
 	{
 		$data = $this->get();
 		if (empty($data) || empty($field)) {
@@ -198,10 +198,10 @@ class Db
 
 	/**
 	 * @param $field
-	 * @return array|mixed|null
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function value($field)
+	public function value($field): mixed
 	{
 		$data = $this->find();
 		if (!empty($field) && isset($data[$field])) {
@@ -215,7 +215,7 @@ class Db
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function delete($db = null)
+	public function delete($db = null): bool|int
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -232,7 +232,7 @@ class Db
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public static function drop($table, $db = null)
+	public static function drop($table, $db = null): bool|int
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -246,7 +246,7 @@ class Db
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public static function truncate($table, $db = null)
+	public static function truncate($table, $db = null): bool|int
 	{
 
 		if (empty($db)) {
@@ -259,10 +259,10 @@ class Db
 	/**
 	 * @param $table
 	 * @param Connection|NULL $db
-	 * @return array|mixed|null
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function showCreateSql($table, Connection $db = NULL)
+	public static function showCreateSql($table, Connection $db = NULL): mixed
 	{
 
 		if (empty($db)) {
@@ -283,7 +283,7 @@ class Db
 	 * @return bool|int|null
 	 * @throws Exception
 	 */
-	public static function desc($table, Connection $db = NULL)
+	public static function desc($table, Connection $db = NULL): bool|int|null
 	{
 		if (empty($db)) {
 			$db = Snowflake::app()->database;
@@ -300,10 +300,10 @@ class Db
 	/**
 	 * @param string $table
 	 * @param Connection|NULL $db
-	 * @return array|mixed|null
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function show(string $table, Connection $db = NULL)
+	public static function show(string $table, Connection $db = NULL): mixed
 	{
 		if (empty($table)) {
 			return null;

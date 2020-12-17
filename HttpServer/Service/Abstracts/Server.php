@@ -43,11 +43,11 @@ trait Server
 
 
 	/**
-	 * @return mixed|void
+	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function onHandlerListener()
+	public function onHandlerListener(): mixed
 	{
 		$this->on('WorkerStop', $this->createHandler('workerStop'));
 		$this->on('WorkerExit', $this->createHandler('workerExit'));
@@ -83,7 +83,7 @@ trait Server
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	protected function createHandler($eventName)
+	protected function createHandler($eventName): array
 	{
 		$classPrefix = 'HttpServer\Events\On' . ucfirst($eventName);
 		if (!class_exists($classPrefix)) {

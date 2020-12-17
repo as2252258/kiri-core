@@ -25,7 +25,7 @@ abstract class ServerBase extends Application
 	/**
 	 * @return Server
 	 */
-	public function getServer()
+	public function getServer(): Server
 	{
 		return $this->server;
 	}

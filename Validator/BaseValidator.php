@@ -5,6 +5,7 @@ namespace validator;
 
 
 use Database\ActiveRecord;
+use Exception;
 
 abstract class BaseValidator
 {
@@ -24,6 +25,10 @@ abstract class BaseValidator
 	/** @var ActiveRecord */
 	protected ActiveRecord $model;
 
+
+	/**
+	 * @param $model
+	 */
 	public function setModel($model)
 	{
 		$this->model = $model;
@@ -32,16 +37,25 @@ abstract class BaseValidator
 	/**
 	 * @return ActiveRecord
 	 */
-	public function getModel()
+	public function getModel(): ActiveRecord
 	{
 		return $this->model;
 	}
 
+
+	/**
+	 * BaseValidator constructor.
+	 * @param array $config
+	 */
 	public function __construct($config = [])
 	{
 		$this->regConfig($config);
 	}
 
+
+	/**
+	 * @param $config
+	 */
 	private function regConfig($config)
 	{
 		if (empty($config) || !is_array($config)) {
@@ -53,27 +67,27 @@ abstract class BaseValidator
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 * @return bool
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
-    	throw new \Exception('Child Class must define method of trigger');
+    	throw new Exception('Child Class must define method of trigger');
 	}
 
 	/**
-	 * @return mixed
+	 * @return array
 	 */
-	protected function getParams()
+	protected function getParams(): array
 	{
 		return $this->params;
 	}
 
 	/**
-	 * @param $data
+	 * @param array $data
 	 * @return $this
 	 */
-	public function setParams($data)
+	public function setParams(array $data): static
 	{
 		$this->params = $data;
 		return $this;
@@ -83,7 +97,7 @@ abstract class BaseValidator
 	 * @param $message
 	 * @return bool
 	 */
-	public function addError($message)
+	public function addError($message): bool
 	{
 		$this->isFail = FALSE;
 
@@ -97,7 +111,7 @@ abstract class BaseValidator
 	/**
 	 * @return string
 	 */
-	public function getError()
+	public function getError(): string
 	{
 		return $this->message;
 	}
@@ -105,7 +119,7 @@ abstract class BaseValidator
 	/**
 	 * @param $name
 	 * @param $value
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function __set($name, $value)
 	{
@@ -115,7 +129,7 @@ abstract class BaseValidator
 		} else if (property_exists($this, $name)) {
 			$this->$name = $value;
 		} else {
-			throw new \Exception('unknown property ' . $name . ' in class ' . get_called_class());
+			throw new Exception('unknown property ' . $name . ' in class ' . get_called_class());
 		}
 	}
 }

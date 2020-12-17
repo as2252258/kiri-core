@@ -6,10 +6,12 @@
  * Time: 14:28
  */
 declare(strict_types=1);
+
 namespace Snowflake\Abstracts;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Snowflake;
 
 /**
@@ -48,7 +50,7 @@ class Component extends BaseObject
 	 * @param null $callback
 	 * @return bool
 	 */
-	public function hasEvent($name, $callback = null)
+	#[Pure] public function hasEvent($name, $callback = null): bool
 	{
 		if (!isset($this->_events[$name])) {
 			return false;
@@ -94,19 +96,21 @@ class Component extends BaseObject
 	/**
 	 * @param $name
 	 * @param null $handler
-	 * @return mixed
+	 * @return void
 	 */
-	public function off($name, $handler = NULL)
+	public function off($name, $handler = NULL): void
 	{
 		$aEvents = Snowflake::app()->event;
 		if (!isset($this->_events[$name])) {
-			return $aEvents->of($name, $handler);
+			$aEvents->of($name, $handler);
+			return;
 		}
 
 		if (empty($handler)) {
 			unset($this->_events[$name]);
 
-			return $aEvents->of($name, $handler);
+			$aEvents->of($name, $handler);
+			return;
 		}
 
 		foreach ($this->_events[$name] as $key => $val) {
@@ -117,7 +121,7 @@ class Component extends BaseObject
 
 			break;
 		}
-		return $aEvents->of($name, $handler);
+		$aEvents->of($name, $handler);
 	}
 
 	/**
@@ -150,7 +154,7 @@ class Component extends BaseObject
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		if (property_exists($this, $name)) {
 			return $this->$name ?? null;

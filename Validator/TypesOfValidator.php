@@ -41,7 +41,7 @@ class TypesOfValidator extends BaseValidator
 	/**
 	 * @return bool
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		if (!in_array($this->method, $this->types)) {
 			return true;
@@ -67,7 +67,7 @@ class TypesOfValidator extends BaseValidator
 	 * @param $value
 	 * @return bool
 	 */
-	public function jsonFormat($value)
+	public function jsonFormat($value): bool
 	{
 		if (!is_string($value) || is_numeric($value)) {
 			return $this->addError('The ' . $this->field . ' not is JSON data.');
@@ -82,7 +82,7 @@ class TypesOfValidator extends BaseValidator
 	 * @param $value
 	 * @return bool
 	 */
-	public function serializeFormat($value)
+	public function serializeFormat($value): bool
 	{
 		if (!is_string($value) || is_numeric($value)) {
 			return $this->addError('The ' . $this->field . ' not is serialize data.');
@@ -97,7 +97,7 @@ class TypesOfValidator extends BaseValidator
 	 * @param $value
 	 * @return bool
 	 */
-	public function arrayFormat($value)
+	public function arrayFormat($value): bool
 	{
 		if (!is_array($value)) {
 			return $this->addError('The ' . $this->field . ' not is array data.');
@@ -109,7 +109,7 @@ class TypesOfValidator extends BaseValidator
 	 * @param $value
 	 * @return bool
 	 */
-	public function stringFormat($value)
+	public function stringFormat($value): bool
 	{
 		if (is_array($value) || is_object($value) || is_bool($value)) {
 			return $this->addError('The ' . $this->field . ' not is string data.');
@@ -121,7 +121,7 @@ class TypesOfValidator extends BaseValidator
 	 * @param $value
 	 * @return bool
 	 */
-	public function integerFormat($value)
+	public function integerFormat($value): bool
 	{
 		if (!is_numeric($value)) {
 			return $this->addError('The ' . $this->field . ' not is number data.');
@@ -137,7 +137,7 @@ class TypesOfValidator extends BaseValidator
 	 * @param $value
 	 * @return bool
 	 */
-	public function floatFormat($value)
+	public function floatFormat($value): bool
 	{
 		$trim = floatval((string)$value);
 		if ($trim != $value || !is_float($trim)) {

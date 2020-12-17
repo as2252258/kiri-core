@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Gii;
 
+use Exception;
 use Snowflake\Snowflake;
 
 /**
@@ -13,9 +14,9 @@ use Snowflake\Snowflake;
 class GiiController extends GiiBase
 {
 
-	public $className;
+	public string $className = '';
 
-	public $fields;
+	public array $fields = [];
 
 	public function __construct($className, $fields)
 	{
@@ -26,9 +27,9 @@ class GiiController extends GiiBase
 
 	/**
 	 * @return string
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function generate()
+	public function generate(): string
 	{
 		$path = $this->getControllerPath();
 		$modelPath = $this->getModelPath();
@@ -70,7 +71,7 @@ use {$model_namespace}\\{$managerName};
 		}
 
 		$historyModel = "use {$model_namespace}\\{$managerName};";
-		if (strpos($html, $historyModel) === false) {
+		if (!str_contains($html, $historyModel)) {
 			$html .= $historyModel;
 		}
 
@@ -125,7 +126,7 @@ class {$controllerName}Controller extends Controller
 	/**
 	 * @return array
 	 */
-	private function getControllerPath()
+	private function getControllerPath(): array
 	{
 		$dbName = $this->db->id;
 		if (empty($dbName) || $dbName == 'db') {
@@ -159,7 +160,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 新增
 	 */
-	public function controllerMethodAdd($fields, $className, $object = NULL)
+	public function controllerMethodAdd($fields, $className, $object = NULL): string
 	{
 		return '
     /**
@@ -184,7 +185,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 通用
 	 */
-	public function controllerMethodLoadParam($fields, $className, $object = NULL)
+	public function controllerMethodLoadParam($fields, $className, $object = NULL): string
 	{
 		return '
 	/**
@@ -205,7 +206,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 构建更新
 	 */
-	public function controllerMethodUpdate($fields, $className, $object = NULL)
+	public function controllerMethodUpdate($fields, $className, $object = NULL): string
 	{
 		return '
     /**
@@ -234,7 +235,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 构建更新
 	 */
-	public function controllerMethodBatchDelete($fields, $className, $object = NULL)
+	public function controllerMethodBatchDelete($fields, $className, $object = NULL): string
 	{
 		return '
     /**
@@ -269,7 +270,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 构建详情
 	 */
-	public function controllerMethodDetail($fields, $className, $managerName)
+	public function controllerMethodDetail($fields, $className, $managerName): string
 	{
 		return '
     /**
@@ -293,7 +294,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 构建删除操作
 	 */
-	public function controllerMethodDelete($fields, $className, $managerName)
+	public function controllerMethodDelete($fields, $className, $managerName): string
 	{
 		return '
     /**
@@ -329,7 +330,7 @@ class {$controllerName}Controller extends Controller
 	 * @return string
 	 * 构建查询列表
 	 */
-	public function controllerMethodList($fields, $className, $managerName, $object = NULL)
+	public function controllerMethodList($fields, $className, $managerName, $object = NULL): string
 	{
 		return '
     /**
@@ -366,7 +367,7 @@ class {$controllerName}Controller extends Controller
     ';
 	}
 
-	private function getData($fields)
+	private function getData($fields): string
 	{
 		$html = '';
 
@@ -439,7 +440,12 @@ class {$controllerName}Controller extends Controller
 		return $html;
 	}
 
-	private function getMaxLength($fields)
+
+	/**
+	 * @param $fields
+	 * @return int
+	 */
+	private function getMaxLength($fields): int
 	{
 		$length = 0;
 		foreach ($fields as $key => $val) {
@@ -448,7 +454,11 @@ class {$controllerName}Controller extends Controller
 		return $length;
 	}
 
-	private function getWhere($fields)
+	/**
+	 * @param $fields
+	 * @return string
+	 */
+	private function getWhere($fields): string
 	{
 		$html = '';
 

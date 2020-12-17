@@ -12,6 +12,8 @@ namespace Gii;
 use Database\Connection;
 use Database\Db;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -52,7 +54,7 @@ class Gii
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function run(?Connection $db, $input)
+	public function run(?Connection $db, $input): array
 	{
 		$this->input = $input;
 		if (!empty($db)) $this->db = $db;
@@ -90,8 +92,9 @@ class Gii
 	 * @return array
 	 * @throws ComponentException
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
-	private function getModel($make, $input)
+	private function getModel($make, $input): array
 	{
 		if (!$this->db) {
 			$db = $this->input->get('databases', 'db');
@@ -120,7 +123,7 @@ class Gii
 	 *
 	 * @throws Exception
 	 */
-	private function getTable($controller, $model)
+	private function getTable($controller, $model): array
 	{
 		$tables = $this->getFields($this->getTables());
 		if (empty($tables)) {
@@ -145,7 +148,7 @@ class Gii
 	 * @return string
 	 * @throws Exception
 	 */
-	private function generateModel(array $data)
+	private function generateModel(array $data): string
 	{
 		$controller = new GiiModel($data['classFileName'], $data['tableName'], $data['visible'], $data['res'], $data['fields']);
 		$controller->setConnection($this->db);
@@ -163,7 +166,7 @@ class Gii
 	 * @return string
 	 * @throws Exception
 	 */
-	private function generateController(array $data)
+	private function generateController(array $data): string
 	{
 		$controller = new GiiController($data['classFileName'], $data['fields']);
 		$controller->setConnection($this->db);
@@ -177,10 +180,10 @@ class Gii
 	}
 
 	/**
-	 * @return array|null
+	 * @return array|string|null
 	 * @throws Exception
 	 */
-	private function getTables()
+	private function getTables(): array|string|null
 	{
 		if (empty($this->tableName)) {
 			return $this->showAll();
@@ -199,7 +202,7 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function showAll()
+	private function showAll(): array
 	{
 		$res = [];
 		$_tables = Db::findAllBySql('show tables', [], $this->db);
@@ -214,10 +217,10 @@ class Gii
 
 	/**
 	 * @param $table
-	 * @return bool|int
+	 * @return bool|int|null
 	 * @throws Exception
 	 */
-	private function getIndex($table)
+	private function getIndex($table): bool|int|null
 	{
 		$data = Db::findAllBySql('SHOW INDEX FROM ' . $table, [], $this->db);
 
@@ -230,7 +233,7 @@ class Gii
 	 * @return array
 	 * @throws
 	 */
-	private function getFields($tables)
+	private function getFields($tables): array
 	{
 		$res = [];
 		if (!is_array($tables)) {
@@ -254,7 +257,7 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	public function createModelFile($tableName, $tables)
+	public function createModelFile($tableName, $tables): array
 	{
 		$res = $visible = $fields = $keys = [];
 		foreach ($tables as $_key => $_val) {
@@ -289,7 +292,7 @@ class Gii
 	 * @return string
 	 * 创建变量注释
 	 */
-	private function createVisible($field)
+	private function createVisible($field): string
 	{
 		return '
  * @property $' . $field;
@@ -301,7 +304,7 @@ class Gii
 	 * @return string
 	 * 暂时不知道干嘛用的
 	 */
-	private function createSetFunc($field, $comment)
+	#[Pure] private function createSetFunc($field, $comment): string
 	{
 		return '
             ' . str_pad('\'' . $field . '\'', 20, ' ', STR_PAD_RIGHT) . '=> \'' . (empty($comment) ? ucfirst($field) : $comment) . '\',';
@@ -312,18 +315,13 @@ class Gii
 	 * @return string
 	 * 构建类名称
 	 */
-	private function getClassName($tableName)
+	private function getClassName($tableName): string
 	{
 		$res = [];
 		foreach (explode('_', $tableName) as $n => $val) {
 			$res[] = ucfirst($val);
 		}
-
-		$name = ucfirst(rtrim($this->db->tablePrefix, '_'));
-
 		return implode('', $res);
-
-		return str_replace($name, '', implode('', $res)) . 'Comply';
 	}
 
 }

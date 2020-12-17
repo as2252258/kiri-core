@@ -6,15 +6,10 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Route\Annotation\Websocket as AWebsocket;
-use HttpServer\Service\Http;
-use HttpServer\Service\Websocket;
 use Snowflake\Abstracts\Config;
-use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\System;
 use Swoole\Server;
 
 /**

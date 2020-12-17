@@ -105,7 +105,7 @@ class Connection extends Pool
 	 *
 	 * db is in transaction
 	 */
-	public function inTransaction($cds)
+	public function inTransaction($cds): bool
 	{
 		$coroutineName = $this->name($cds, true);
 		if (!Context::hasContext('begin_' . $coroutineName)) {
@@ -162,7 +162,7 @@ class Connection extends Pool
 	 * @param false $isMaster
 	 * @return array
 	 */
-	private function getIndex($name, $isMaster = false)
+	private function getIndex($name, $isMaster = false): array
 	{
 		return [Coroutine::getCid(), $this->name($name, $isMaster)];
 	}
@@ -197,7 +197,7 @@ class Connection extends Pool
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getConnection(array $config, $isMaster = false)
+	public function getConnection(array $config, $isMaster = false): mixed
 	{
 		$coroutineName = $this->name($config['cds'], $isMaster);
 		if (!isset($this->hasCreate[$coroutineName])) {
@@ -222,7 +222,7 @@ class Connection extends Pool
 	 * @param $client
 	 * @return mixed
 	 */
-	private function saveClient($coroutineName, $client)
+	private function saveClient($coroutineName, $client): mixed
 	{
 		return Context::setContext($coroutineName, $client);
 	}
@@ -234,7 +234,7 @@ class Connection extends Pool
 	 * @return PDO
 	 * @throws Exception
 	 */
-	private function nowClient($coroutineName, $config)
+	private function nowClient($coroutineName, $config): PDO
 	{
 		$client = $this->createConnect($coroutineName, ...$this->parseConfig($config));
 		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
@@ -251,7 +251,7 @@ class Connection extends Pool
 	 * @param $config
 	 * @return array
 	 */
-	private function parseConfig($config)
+	private function parseConfig($config): array
 	{
 		return [$config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4'];
 	}
@@ -283,7 +283,7 @@ class Connection extends Pool
 	 * @param $coroutineName
 	 * @return bool
 	 */
-	private function hasClient($coroutineName)
+	private function hasClient($coroutineName): bool
 	{
 		return Context::hasContext($coroutineName);
 	}
@@ -323,19 +323,19 @@ class Connection extends Pool
 	/**
 	 * @param $name
 	 * @param $time
-	 * @param $connect
+	 * @param $client
 	 * @return bool
 	 */
-	public function checkCanUse($name, $time, $connect)
+	public function checkCanUse($name, $time, $client): bool
 	{
 		try {
 			if ($time + 60 * 10 > time()) {
 				return $result = true;
 			}
-			if (empty($connect) || !($connect instanceof PDO)) {
+			if (empty($client) || !($client instanceof PDO)) {
 				return $result = false;
 			}
-			if (!$connect->getAttribute(PDO::ATTR_SERVER_INFO)) {
+			if (!$client->getAttribute(PDO::ATTR_SERVER_INFO)) {
 				return $result = false;
 			}
 			return $result = true;
@@ -358,7 +358,7 @@ class Connection extends Pool
 	 * @return PDO
 	 * @throws Exception
 	 */
-	public function createConnect($coroutineName, $cds, $username, $password, $charset = 'utf8mb4')
+	public function createConnect($coroutineName, $cds, $username, $password, $charset = 'utf8mb4'): PDO
 	{
 		try {
 			$link = new PDO($cds, $username, $password, [
@@ -408,9 +408,9 @@ class Connection extends Pool
 	}
 
 	/**
-	 * @param $coroutineName
+	 * @param string $coroutineName
 	 */
-	public function desc($coroutineName)
+	public function desc(string $coroutineName)
 	{
 		if (!isset($this->hasCreate[$coroutineName])) {
 			$this->hasCreate[$coroutineName] = 0;

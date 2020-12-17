@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
 use Database\ActiveQuery;
 use Database\Sql;
@@ -24,17 +25,17 @@ class Select extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	public function getQuery($query)
+	public function getQuery(ActiveQuery|Sql|Db $query): string
 	{
 		return $this->generate($query, false);
 	}
 
 	/**
-	 * @param ActiveQuery|Db|mixed $query
+	 * @param ActiveQuery|Db|Sql $query
 	 * @return string
 	 * @throws Exception
 	 */
-	public function count($query)
+	public function count(ActiveQuery|Db|Sql $query): string
 	{
 		return $this->generate($query, true);
 	}
@@ -45,7 +46,7 @@ class Select extends BaseObject
 	 * @return string
 	 * @throws Exception
 	 */
-	private function generate($query, $isCount = false)
+	private function generate(ActiveQuery|Db|Sql $query, $isCount = false): string
 	{
 		if (empty($query->from)) {
 			$query->from = $query->getTable();
@@ -78,7 +79,7 @@ class Select extends BaseObject
 	 * @param bool $isCount
 	 * @return string
 	 */
-	private function builderSelect($select = NULL, $isCount = false)
+	#[Pure] private function builderSelect($select = NULL, $isCount = false): string
 	{
 		if ($isCount === true) {
 			return 'SELECT COUNT(*)';
@@ -97,7 +98,7 @@ class Select extends BaseObject
 	 * @param $table
 	 * @return string
 	 */
-	public function getColumn($table)
+	public function getColumn($table): string
 	{
 		return 'SHOW FULL FIELDS FROM ' . $table;
 	}

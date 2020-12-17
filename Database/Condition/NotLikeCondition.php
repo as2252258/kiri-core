@@ -17,7 +17,7 @@ class NotLikeCondition extends Condition
 	/**
 	 * @return string
 	 */
-	public function builder()
+	public function builder(): string
 	{
 		if (!is_string($this->value)) {
 			$this->value = array_shift($this->value);

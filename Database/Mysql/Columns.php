@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Database\Mysql;
 
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Database\Connection;
 use Exception;
@@ -58,7 +59,7 @@ class Columns extends Component
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function table(string $table)
+	public function table(string $table): static
 	{
 		$this->structure($this->table = $table);
 		return $this;
@@ -67,7 +68,7 @@ class Columns extends Component
 	/**
 	 * @return string
 	 */
-	public function getTable()
+	public function getTable(): string
 	{
 		return $this->table;
 	}
@@ -75,10 +76,10 @@ class Columns extends Component
 	/**
 	 * @param $key
 	 * @param $val
-	 * @return float|int|mixed|string
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function fieldFormat($key, $val)
+	public function fieldFormat($key, $val): mixed
 	{
 		return $this->encode($val, $this->get_fields($key));
 	}
@@ -88,7 +89,7 @@ class Columns extends Component
 	 * @return array
 	 * @throws
 	 */
-	public function populate($data)
+	public function populate($data): array
 	{
 		$column = $this->get_fields();
 		foreach ($data as $key => $val) {
@@ -102,11 +103,10 @@ class Columns extends Component
 
 	/**
 	 * @param $val
-	 * @param $format
-	 * @return float|int|mixed|string
-	 * @throws
+	 * @param null $format
+	 * @return mixed
 	 */
-	public function decode($val, $format = null)
+	public function decode($val, $format = null): mixed
 	{
 		if (empty($format)) {
 			return $val;
@@ -125,12 +125,12 @@ class Columns extends Component
 
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 * @param $value
-	 * @return float|int|mixed|string
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function _decode(string $name, $value)
+	public function _decode(string $name, $value): mixed
 	{
 		return $this->decode($value, $this->get_fields($name));
 	}
@@ -138,11 +138,11 @@ class Columns extends Component
 
 	/**
 	 * @param $val
-	 * @param $format
-	 * @return float|int|mixed|string
-	 * @throws
+	 * @param null $format
+	 * @return mixed
+	 * @throws Exception
 	 */
-	public function encode($val, $format = null)
+	public function encode($val, $format = null): mixed
 	{
 		if (empty($format)) {
 			return $val;
@@ -163,7 +163,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isInt($format)
+	#[Pure] public function isInt($format): bool
 	{
 		return in_array($format, ['int', 'bigint', 'tinyint', 'smallint', 'mediumint']);
 	}
@@ -172,7 +172,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isFloat($format)
+	#[Pure] public function isFloat($format): bool
 	{
 		return in_array($format, ['float', 'double', 'decimal']);
 	}
@@ -181,7 +181,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isJson($format)
+	#[Pure] public function isJson($format): bool
 	{
 		return in_array($format, ['json']);
 	}
@@ -190,7 +190,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isString($format)
+	#[Pure] public function isString($format): bool
 	{
 		return in_array($format, ['varchar', 'char', 'text', 'longtext', 'tinytext', 'mediumtext']);
 	}
@@ -200,7 +200,7 @@ class Columns extends Component
 	 * @return array
 	 * @throws
 	 */
-	public function format()
+	public function format(): array
 	{
 		return $this->columns('Default', 'Field');
 	}
@@ -209,7 +209,7 @@ class Columns extends Component
 	 * @return int|string|null
 	 * @throws Exception
 	 */
-	public function getAutoIncrement()
+	public function getAutoIncrement(): int|string|null
 	{
 		return $this->_auto_increment[$this->table] ?? null;
 	}
@@ -219,7 +219,7 @@ class Columns extends Component
 	 *
 	 * @throws Exception
 	 */
-	public function getPrimaryKeys()
+	public function getPrimaryKeys(): array|string|null
 	{
 		if (isset($this->_auto_increment[$this->table])) {
 			return $this->_auto_increment[$this->table];
@@ -232,7 +232,7 @@ class Columns extends Component
 	 *
 	 * @throws Exception
 	 */
-	public function getFirstPrimary()
+	#[Pure] public function getFirstPrimary(): array|string|null
 	{
 		if (isset($this->_auto_increment[$this->table])) {
 			return $this->_auto_increment[$this->table];
@@ -249,7 +249,7 @@ class Columns extends Component
 	 * @return array
 	 * @throws Exception
 	 */
-	private function columns($name, $index = null)
+	private function columns($name, $index = null): array
 	{
 		if (empty($index)) {
 			return array_column($this->getColumns(), $name);
@@ -259,10 +259,10 @@ class Columns extends Component
 	}
 
 	/**
-	 * @return array|bool|int|mixed|string
+	 * @return array|static
 	 * @throws Exception
 	 */
-	private function getColumns()
+	private function getColumns(): array|static
 	{
 		return $this->structure($this->getTable());
 	}
@@ -270,10 +270,10 @@ class Columns extends Component
 
 	/**
 	 * @param $table
-	 * @return $this
+	 * @return array|Columns
 	 * @throws Exception
 	 */
-	private function structure($table)
+	private function structure($table): array|static
 	{
 		if (!isset($this->columns[$table]) || empty($this->columns[$table])) {
 			$sql = $this->db->getBuild()->getColumn($table);
@@ -291,9 +291,9 @@ class Columns extends Component
 	/**
 	 * @param $column
 	 * @param $table
-	 * @return mixed
+	 * @return array
 	 */
-	private function resolve(array $column, $table)
+	private function resolve(array $column, $table): array
 	{
 		foreach ($column as $key => $item) {
 			$this->addPrimary($item, $table);
@@ -335,24 +335,24 @@ class Columns extends Component
 	 * @param $type
 	 * @return string
 	 */
-	private function clean($type)
+	private function clean($type): string
 	{
-		if (strpos($type, ')') === false) {
+		if (!str_contains($type, ')')) {
 			return $type;
 		}
 		$replace = preg_replace('/\(\d+(,\d+)?\)(\s+\w+)*/', '', $type);
-		if (strpos(' ', $replace) !== FALSE) {
+		if (str_contains(' ', $replace)) {
 			$replace = explode(' ', $replace)[1];
 		}
 		return $replace;
 	}
 
 	/**
-	 * @param $field
-	 * @return array|string
+	 * @param null $field
+	 * @return array|string|null
 	 * @throws Exception
 	 */
-	public function get_fields($field = null)
+	public function get_fields($field = null): array|string|null
 	{
 		$fields = $this->columns('Type', 'Field');
 		if (empty($field)) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace validator;
 
 
+use Closure;
 use Exception;
 use Snowflake\Snowflake;
 
@@ -104,9 +105,9 @@ class Validator extends BaseValidator
 	];
 
 	/**
-	 * @return Validator
+	 * @return Validator|null
 	 */
-	public static function getInstance()
+	public static function getInstance(): ?Validator
 	{
 		if (static::$instance == null) {
 			static::$instance = new Validator();
@@ -120,7 +121,7 @@ class Validator extends BaseValidator
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function make($field, $rules)
+	public function make($field, $rules): static
 	{
 		if (!is_array($field)) {
 			$field = [$field];
@@ -176,7 +177,7 @@ class Validator extends BaseValidator
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function validation()
+	public function validation(): bool
 	{
 		if (count($this->validators) < 1) {
 			return true;
@@ -197,11 +198,11 @@ class Validator extends BaseValidator
 	}
 
 	/**
-	 * @param BaseValidator $val
+	 * @param BaseValidator|array|Closure $val
 	 * @return mixed
-	 * @throws
+	 * @throws Exception
 	 */
-	private function check($val)
+	private function check(BaseValidator|array|Closure $val): mixed
 	{
 		if (is_callable($val, true)) {
 			return call_user_func($val, $this);

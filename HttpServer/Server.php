@@ -9,8 +9,6 @@ use HttpServer\Events\OnConnect;
 use HttpServer\Events\OnPacket;
 use HttpServer\Events\OnReceive;
 use HttpServer\Events\OnRequest;
-use HttpServer\Route\Annotation\Http as AnnotationHttp;
-use HttpServer\Route\Annotation\Tcp;
 use HttpServer\Service\Http;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Packet;
@@ -22,7 +20,6 @@ use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use HttpServer\Route\Annotation\Websocket as AWebsocket;
 use Swoole\Runtime;
 
 /**
@@ -111,21 +108,21 @@ class Server extends Application
 
 
 	/**
-	 * @return void
+	 * @return string start server
 	 *
 	 * start server
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function start()
+	public function start(): string
 	{
 		$configs = Config::get('servers', true);
 		Snowflake::clearWorkerId();
 		$baseServer = $this->initCore($configs);
 		if (!$baseServer) {
-			return;
+			return 'ok';
 		}
-		$baseServer->start();
+		return $baseServer->start();
 	}
 
 

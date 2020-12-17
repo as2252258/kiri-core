@@ -15,7 +15,7 @@ class MathematicsCondition extends Condition
 	/**
 	 * @return mixed
 	 */
-	public function builder()
+	public function builder(): mixed
 	{
 		return $this->{strtolower($this->type)}((float)$this->value);
 	}
@@ -24,7 +24,7 @@ class MathematicsCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function eq($value)
+	public function eq($value): string
 	{
 		return $this->column . ' = ' . $value;
 	}
@@ -33,7 +33,7 @@ class MathematicsCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function neq($value)
+	public function neq($value): string
 	{
 		return $this->column . ' <> ' . $value;
 	}
@@ -42,7 +42,7 @@ class MathematicsCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function gt($value)
+	public function gt($value): string
 	{
 		return $this->column . ' > ' . $value;
 	}
@@ -51,7 +51,7 @@ class MathematicsCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function egt($value)
+	public function egt($value): string
 	{
 		return $this->column . ' >= ' . $value;
 	}
@@ -61,7 +61,7 @@ class MathematicsCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function lt($value)
+	public function lt($value): string
 	{
 		return $this->column . ' < ' . $value;
 	}
@@ -70,7 +70,7 @@ class MathematicsCondition extends Condition
 	 * @param $value
 	 * @return string
 	 */
-	public function elt($value)
+	public function elt($value): string
 	{
 		return $this->column . ' <= ' . $value;
 	}

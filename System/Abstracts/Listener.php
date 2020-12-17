@@ -19,7 +19,7 @@ abstract class Listener extends Component implements IListener
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function getName()
+	public function getName(): string
 	{
 		if (empty($this->trigger)) {
 			throw new \Exception('Listener name con\'t empty.');

@@ -87,7 +87,7 @@ class Event extends BaseObject
 	 * @param $name
 	 * @param $callback
 	 */
-	public function of($name, $callback)
+	public function of($name, $callback): void
 	{
 		if (!isset($this->_events[$name])) {
 			return;
@@ -106,7 +106,7 @@ class Event extends BaseObject
 	 * @param $name
 	 * @return bool
 	 */
-	public function offName($name)
+	public function offName($name): bool
 	{
 		if (!$this->exists($name)) {
 			return true;
@@ -121,7 +121,7 @@ class Event extends BaseObject
 	 * @param null $callback
 	 * @return bool
 	 */
-	public function exists($name, $callback = null)
+	public function exists($name, $callback = null): bool
 	{
 		if (!isset($this->_events[$name])) {
 			return false;
@@ -142,9 +142,9 @@ class Event extends BaseObject
 	/**
 	 * @param $name
 	 * @param $handler
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function get($name, $handler)
+	public function get($name, $handler): mixed
 	{
 		if (!$this->exists($name)) {
 			return null;
@@ -173,7 +173,7 @@ class Event extends BaseObject
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function trigger($name, $parameter = null, $handler = null, $is_remove = false)
+	public function trigger($name, $parameter = null, $handler = null, $is_remove = false): mixed
 	{
 		if (!$this->exists($name)) {
 			return false;

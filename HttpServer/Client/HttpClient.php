@@ -4,6 +4,7 @@
 namespace HttpServer\Client;
 
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -28,7 +29,7 @@ class HttpClient extends Component
 	/**
 	 * @return Http2
 	 */
-	public static function http2()
+	#[Pure] public static function http2(): Http2
 	{
 		return Snowflake::app()->http2;
 	}

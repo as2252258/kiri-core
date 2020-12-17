@@ -23,7 +23,7 @@ use Swoole\Timer;
  */
 class ServerInotify extends Process
 {
-	private $inotify;
+	private mixed $inotify;
 	private bool $isReloading = false;
 	private bool $isReloadingOut = false;
 	private array $watchFiles = [];
@@ -80,10 +80,10 @@ class ServerInotify extends Process
 	/**
 	 * @param $path
 	 * @param bool $isReload
-	 * @return void|mixed
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function loadByDir($path, $isReload = false)
+	private function loadByDir($path, $isReload = false): mixed
 	{
 		$path = rtrim($path, '/');
 		foreach (glob(realpath($path) . '/*') as $value) {
@@ -105,7 +105,7 @@ class ServerInotify extends Process
 	 * @param $isReload
 	 * @return bool
 	 */
-	private function checkFile($value, $isReload)
+	private function checkFile($value, $isReload): bool
 	{
 		$md5 = md5($value);
 		$mTime = filectime($value);
@@ -243,7 +243,7 @@ class ServerInotify extends Process
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function watch($dir)
+	public function watch($dir): bool
 	{
 		//目录不存在
 		if (!is_dir($dir)) {

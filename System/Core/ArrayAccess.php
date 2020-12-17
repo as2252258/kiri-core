@@ -24,7 +24,7 @@ class ArrayAccess
 	 * @return array
 	 * @throws Exception
 	 */
-	public static function toArray($data)
+	public static function toArray($data): array
 	{
 		if (!is_object($data) && !is_array($data)) {
 			return $data;
@@ -49,10 +49,10 @@ class ArrayAccess
 
 	/**
 	 * @param $data
-	 * @return array|mixed
+	 * @return array
 	 * @throws Exception
 	 */
-	public static function objToArray($data)
+	public static function objToArray($data): array
 	{
 		if (!is_object($data)) {
 			return $data;
@@ -77,7 +77,7 @@ class ArrayAccess
 	 * @param array $newArray
 	 * @return array
 	 */
-	public static function merge(array $oldArray, array $newArray)
+	public static function merge(array $oldArray, array $newArray): array
 	{
 		if (empty($oldArray)) {
 			return $newArray;

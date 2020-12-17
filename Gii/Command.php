@@ -27,7 +27,7 @@ class Command extends \Console\Command
 	 * @return array
 	 * @throws Exception
 	 */
-	public function onHandler(Input $dtl)
+	public function onHandler(Input $dtl): array
 	{
 		/** @var Gii $gii */
 		$gii = Snowflake::app()->get('gii');

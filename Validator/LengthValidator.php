@@ -23,7 +23,7 @@ class LengthValidator extends BaseValidator
 	/**
 	 * @return bool
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		$param = $this->getParams();
 		if (empty($param) || !isset($param[$this->field])) {
@@ -53,7 +53,7 @@ class LengthValidator extends BaseValidator
 	 *
 	 * 效验长度是否大于最大长度
 	 */
-	private function maxLength($value)
+	private function maxLength($value): bool
 	{
 		if (is_array($value)) {
 			if (count($value) > $value) {
@@ -76,7 +76,7 @@ class LengthValidator extends BaseValidator
 	 *
 	 * 效验长度是否小于最小长度
 	 */
-	private function minLength($value)
+	private function minLength($value): bool
 	{
 		if (is_array($value)) {
 			if (count($value) < $value) {
@@ -99,7 +99,7 @@ class LengthValidator extends BaseValidator
 	 *
 	 * 效验长度是否小于最小长度
 	 */
-	private function defaultLength($value)
+	private function defaultLength($value): bool
 	{
 		if (is_array($value)) {
 			if (count($value) !== $value) {

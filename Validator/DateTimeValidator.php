@@ -23,7 +23,7 @@ class DateTimeValidator extends BaseValidator
 	/**
 	 * @return bool
 	 */
-	public function trigger()
+	public function trigger(): bool
 	{
 		$param = $this->getParams();
 		if (empty($param) || !is_array($param)) {
@@ -53,7 +53,7 @@ class DateTimeValidator extends BaseValidator
 	 *
 	 * 效验分秒 格式如  01:02 or 01-02
 	 */
-	public function validatorTime($value)
+	public function validatorTime($value): bool
 	{
 		if (empty($value) || !is_string($value)) {
 			return $this->addError('The param :attribute not is a date value');
@@ -73,7 +73,7 @@ class DateTimeValidator extends BaseValidator
 	 *
 	 * 效验分秒 格式如 2017-12-22 01:02
 	 */
-	public function validateDatetime($value)
+	public function validateDatetime($value): bool
 	{
 		if (empty($value) || !is_string($value)) {
 			return $this->addError('The param :attribute not is a date value');
@@ -93,7 +93,7 @@ class DateTimeValidator extends BaseValidator
 	 *
 	 * 效验分秒 格式如  2017-12-22
 	 */
-	public function validatorDate($value)
+	public function validatorDate($value): bool
 	{
 		if (empty($value) || !is_string($value)) {
 			return $this->addError('The param :attribute not is a date value');
@@ -112,7 +112,7 @@ class DateTimeValidator extends BaseValidator
 	 *
 	 * 效验时间戳 格式如  1521452254
 	 */
-	public function validatorTimestamp($value)
+	public function validatorTimestamp($value): bool
 	{
 		if (empty($value) || !is_numeric($value)) {
 			return $this->addError('The param :attribute not is a timestamp value');
