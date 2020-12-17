@@ -12,10 +12,12 @@ use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use HttpServer\Route\Node;
 use HttpServer\Service\Http;
+use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Error;
@@ -55,12 +57,12 @@ class OnRequest extends Callback
 	{
 		try {
 			/** @var HRequest $sRequest */
-			[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
-
+			[$sRequest, $sResponse] = $this->create($request, $response);
 			if ($sRequest->is('favicon.ico')) {
 				return $sResponse->send($sRequest->isNotFound(), 200);
+			} else {
+				return Snowflake::app()->getRouter()->dispatch();
 			}
-			return Snowflake::app()->getRouter()->dispatch();
 		} catch (ExitException $exception) {
 			return send($exception->getMessage(), $exception->getCode());
 		} catch (Error | \Throwable $exception) {
@@ -72,6 +74,19 @@ class OnRequest extends Callback
 
 			$logger->write(JSON::encode($request), 'request');
 		}
+	}
+
+
+	/**
+	 * @param $request
+	 * @param $response
+	 * @return array
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function create($request, $response): array
+	{
+		return [HRequest::create($request), HResponse::create($response)];
 	}
 
 
