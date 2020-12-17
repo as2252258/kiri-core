@@ -420,10 +420,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 	/**
 	 * @param null $data
-	 * @return bool|BaseActiveRecord
+	 * @return bool|$this
 	 * @throws Exception
 	 */
-	public function save($data = NULL): bool|static
+	public function save($data = NULL): static|bool
 	{
 		if (is_array($data)) {
 			$this->setAttributes($data);
