@@ -74,7 +74,7 @@ class Node extends Application
 		} else {
 			$this->handler = $handler;
 		}
-		return $this->restructure();
+		return $this;
 	}
 
 
@@ -366,7 +366,7 @@ class Node extends Application
 	{
 		$limits = Snowflake::app()->getLimits();
 		$limits->addLimits($this->path, $limit, $duration, $isBindConsumer);
-		return $this->restructure();
+		return $this;
 	}
 
 
@@ -438,6 +438,7 @@ class Node extends Application
 	 */
 	public function dispatch(): mixed
 	{
+		$this->restructure();
 		if (empty($this->callback)) {
 			return JSON::to(404, $node->_error ?? 'Page not found.');
 		}
