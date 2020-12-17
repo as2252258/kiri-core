@@ -177,7 +177,7 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Node|null
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function socket($route, $handler): ?Node
 	{
@@ -189,7 +189,7 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Node|null
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function post($route, $handler): ?Node
 	{
@@ -200,7 +200,7 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Node|null
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function get($route, $handler): ?Node
 	{
@@ -210,7 +210,7 @@ class Router extends Application implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return mixed|Node|null
+	 * @return Node|null
 	 * @throws
 	 */
 	public function options($route, $handler): ?Node
@@ -234,7 +234,7 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Any
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function any($route, $handler): Any
 	{
@@ -249,7 +249,7 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Node|null
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function delete($route, $handler): ?Node
 	{
@@ -260,7 +260,7 @@ class Router extends Application implements RouterInterface
 	 * @param $route
 	 * @param $handler
 	 * @return Node|null
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function put($route, $handler): ?Node
 	{
