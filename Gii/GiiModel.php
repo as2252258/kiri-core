@@ -266,7 +266,8 @@ class ' . $managerName . ' extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName(){
+    public static function tableName(): string
+    {
         return \'' . $field . '\';
     }
     ';
@@ -432,10 +433,10 @@ class ' . $managerName . ' extends ActiveRecord
 	{
 		return '
     /**
-	 * @return mixed|Connection
+	 * @return Connection
 	 * @throws Exception
 	 */
-    public static function getDb()
+    public static function getDb(): Connection
     {
 	    return static::setDatabaseConnect(\'' . $this->db->id . '\');
     }
