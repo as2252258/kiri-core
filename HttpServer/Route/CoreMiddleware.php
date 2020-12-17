@@ -29,7 +29,7 @@ class CoreMiddleware implements \HttpServer\IInterface\Middleware
 	{
 		$headers = $request->headers;
 
-		var_dump($request->getUri());
+		var_dump($request->getUri(), get_called_class());
 
 		/** @var Response $response */
 		$response = Context::getContext('response');
