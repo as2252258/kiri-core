@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Database\Mysql;
 
 
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\Component;
 use Database\Connection;
 use Exception;
@@ -163,7 +163,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	#[Pure] public function isInt($format): bool
+	public function isInt($format): bool
 	{
 		return in_array($format, ['int', 'bigint', 'tinyint', 'smallint', 'mediumint']);
 	}
@@ -172,7 +172,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	#[Pure] public function isFloat($format): bool
+	public function isFloat($format): bool
 	{
 		return in_array($format, ['float', 'double', 'decimal']);
 	}
@@ -181,7 +181,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	#[Pure] public function isJson($format): bool
+	public function isJson($format): bool
 	{
 		return in_array($format, ['json']);
 	}
@@ -190,7 +190,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	#[Pure] public function isString($format): bool
+	public function isString($format): bool
 	{
 		return in_array($format, ['varchar', 'char', 'text', 'longtext', 'tinytext', 'mediumtext']);
 	}
@@ -232,7 +232,7 @@ class Columns extends Component
 	 *
 	 * @throws Exception
 	 */
-	#[Pure] public function getFirstPrimary(): array|string|null
+	public function getFirstPrimary(): array|string|null
 	{
 		if (isset($this->_auto_increment[$this->table])) {
 			return $this->_auto_increment[$this->table];

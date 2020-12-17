@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Database\Condition;
 
 
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\BaseObject;
 use Snowflake\Core\Str;
 
@@ -127,7 +127,7 @@ abstract class Condition extends BaseObject
 	 * @param string $oprea
 	 * @return string
 	 */
-	#[Pure] public function typeBuilder($column, $value = null, $oprea = '='): string
+	public function typeBuilder($column, $value = null, $oprea = '='): string
 	{
 		if (is_numeric($value)) {
 			if ($value != (int)$value) {

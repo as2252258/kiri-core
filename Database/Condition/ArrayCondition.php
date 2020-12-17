@@ -7,7 +7,7 @@ namespace Database\Condition;
 use Database\ActiveQuery;
 use Database\Base\ConditionClassMap;
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Core\Str;
 use Snowflake\Snowflake;
 
@@ -59,7 +59,7 @@ class ArrayCondition extends Condition
 	 * @param $value
 	 * @return bool
 	 */
-	#[Pure] private function isMath($value): bool
+	private function isMath($value): bool
 	{
 		return isset($value[0]) && in_array($value[0], $this->math);
 	}

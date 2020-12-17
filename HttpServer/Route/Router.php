@@ -8,7 +8,7 @@ use Exception;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 use HttpServer\Application;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -109,7 +109,7 @@ class Router extends Application implements RouterInterface
 	 * @param $path
 	 * @return string
 	 */
-	#[Pure] private function resolve($path): string
+	private function resolve($path): string
 	{
 		$paths = array_column($this->groupTacks, 'prefix');
 		if (empty($paths)) {

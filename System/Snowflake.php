@@ -7,7 +7,7 @@ namespace Snowflake;
 
 use Exception;
 use HttpServer\IInterface\Task;
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\JSON;
@@ -222,7 +222,7 @@ class Snowflake
 	 * @return Server|null
 	 * @throws
 	 */
-	#[Pure] public static function getWebSocket(): ?Server
+	public static function getWebSocket(): ?Server
 	{
 		$server = static::app()->server->getServer();
 		if (!($server instanceof Server)) {
@@ -319,7 +319,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	#[Pure] public static function isMac(): bool
+	public static function isMac(): bool
 	{
 		$output = strtolower(PHP_OS | PHP_OS_FAMILY);
 		if (str_contains('mac', $output)) {
@@ -334,7 +334,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	#[Pure] public static function isLinux(): bool
+	public static function isLinux(): bool
 	{
 		if (!static::isMac()) {
 			return true;

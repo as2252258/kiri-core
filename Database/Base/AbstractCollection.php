@@ -12,7 +12,7 @@ namespace Database\Base;
 
 use ArrayIterator;
 use Database\ActiveQuery;
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\ActiveRecord;
@@ -55,7 +55,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/**
 	 * @return int
 	 */
-	#[Pure] public function getLength(): int
+	public function getLength(): int
 	{
 		return count($this->_item);
 	}

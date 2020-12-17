@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace HttpServer\Client;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Swoole\Coroutine\Http\Client as SClient;
 
 /**
@@ -112,7 +112,7 @@ class Client extends ClientAbstracts
 	/**
 	 * @return array
 	 */
-	#[Pure] private function settings(): array
+	private function settings(): array
 	{
 		$sslCert = $this->getSslCertFile();
 		$sslKey = $this->getSslKeyFile();

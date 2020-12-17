@@ -5,7 +5,7 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
@@ -57,7 +57,7 @@ abstract class Pool extends Component
 	 * @param false $isMaster
 	 * @return string
 	 */
-	#[Pure] public function name($cds, $isMaster = false): string
+	public function name($cds, $isMaster = false): string
 	{
 		if ($isMaster === true) {
 			return hash('sha256', $cds . 'master');

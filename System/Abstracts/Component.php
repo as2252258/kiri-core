@@ -11,7 +11,7 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Snowflake;
 
 /**
@@ -50,7 +50,7 @@ class Component extends BaseObject
 	 * @param null $callback
 	 * @return bool
 	 */
-	#[Pure] public function hasEvent($name, $callback = null): bool
+	public function hasEvent($name, $callback = null): bool
 	{
 		if (!isset($this->_events[$name])) {
 			return false;

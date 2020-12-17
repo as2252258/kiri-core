@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Database\Orm;
 
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionException;
 use Snowflake\Core\JSON;
 use Snowflake\Core\Str;
@@ -61,7 +61,7 @@ trait Condition
 	 * @param $join
 	 * @return string
 	 */
-	#[Pure] private function builderJoin($join): string
+	private function builderJoin($join): string
 	{
 		if (!empty($join)) {
 			return ' ' . implode(' ', $join);

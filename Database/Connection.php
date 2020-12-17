@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Database;
 
 
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\Mysql\Schema;
@@ -152,7 +152,7 @@ class Connection extends Component
 	 * @param $sql
 	 * @return bool
 	 */
-	#[Pure] public function isWrite($sql): bool
+	public function isWrite($sql): bool
 	{
 		if (empty($sql)) return false;
 

@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Exception\ConfigException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
@@ -94,7 +94,7 @@ class Config extends Component
 	 * @param bool $must_not_null
 	 * @return bool
 	 */
-	#[Pure] public static function has($key, $must_not_null = false): bool
+	public static function has($key, $must_not_null = false): bool
 	{
 		$config = Snowflake::app()->config;
 		if (!isset($config->data[$key])) {

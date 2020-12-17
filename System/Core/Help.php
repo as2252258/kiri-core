@@ -6,7 +6,7 @@ namespace Snowflake\Core;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 
 /**
  * Class Help
@@ -19,7 +19,7 @@ class Help
 	 * @param array $data
 	 * @return string
 	 */
-	#[Pure] public static function toXml(array $data)
+	public static function toXml(array $data)
 	{
 		$xml = "<xml>";
 		foreach ($data as $key => $val) {

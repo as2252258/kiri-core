@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\BaseObject;
 use Database\ActiveQuery;
 use Exception;
@@ -206,7 +206,7 @@ class Change extends BaseObject
 	 * @return string
 	 * 构建SQL语句
 	 */
-	#[Pure] private function inserts($table, $fields, $data): string
+	private function inserts($table, $fields, $data): string
 	{
 		$query = [
 			'INSERT IGNORE INTO', '%s', '(%s)', 'VALUES %s'

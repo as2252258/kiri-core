@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Snowflake\Exception;
 
 
-use JetBrains\PhpStorm\Pure;
+
 use Throwable;
 
 /**
@@ -27,7 +27,7 @@ class ComponentException extends \Exception
 	 * @param int $code
 	 * @param Throwable|null $previous
 	 */
-	#[Pure] public function __construct(string $message = "", int $code = 0, Throwable $previous = NULL)
+	public function __construct(string $message = "", int $code = 0, Throwable $previous = NULL)
 	{
 		parent::__construct($message, 5000, $previous);
 	}

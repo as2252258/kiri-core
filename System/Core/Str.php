@@ -5,7 +5,7 @@ namespace Snowflake\Core;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 
 /**
  * Class Str
@@ -24,7 +24,7 @@ class Str
 	 * @return string
 	 * 获取随机字符串
 	 */
-	#[Pure] public static function rand(int $length = 20): string
+	public static function rand(int $length = 20): string
 	{
 		$string = '';
 		if ($length < 1) $length = 20;
@@ -42,7 +42,7 @@ class Str
 	 * @return int|string 获取随机数字
 	 * 获取随机数字
 	 */
-	#[Pure] public static function random(int $length = 20): int|string
+	public static function random(int $length = 20): int|string
 	{
 		$number = '';
 		$default = str_split(self::NUMBER);
@@ -119,7 +119,7 @@ class Str
 	 * @param string $append
 	 * @return string
 	 */
-	#[Pure] public static function cut($string, int $length = 20, $append = '...'): string
+	public static function cut($string, int $length = 20, $append = '...'): string
 	{
 		if (empty($string)) {
 			return '';
@@ -167,7 +167,7 @@ class Str
 	 * @param $type
 	 * @return string
 	 */
-	#[Pure] public static function filename($file, $type): string
+	public static function filename($file, $type): string
 	{
 		switch ($type) {
 			case 'image/png':
@@ -218,7 +218,7 @@ class Str
 	 * @param string $string
 	 * @return string
 	 */
-	#[Pure] public static function encode(string $string): string
+	public static function encode(string $string): string
 	{
 		return addslashes($string);
 	}

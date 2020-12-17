@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Client;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 
 /**
  * Class Result
@@ -143,7 +143,7 @@ class Result
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function httpIsOk(): bool
+	public function httpIsOk(): bool
 	{
 		return in_array($this->httpStatus, [100, 101, 200, 201, 202, 203, 204, 205, 206]);
 	}

@@ -11,7 +11,6 @@ namespace Database;
 
 use Database\Base\AbstractCollection;
 use Exception;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Collection
@@ -80,7 +79,7 @@ class Collection extends AbstractCollection
 	 *
 	 * @return array
 	 */
-	#[Pure] public function slice($start = 0, $length = 20): array
+	public function slice($start = 0, $length = 20): array
 	{
 		if (empty($this->_item) || !is_array($this->_item)) {
 			return [];
@@ -128,7 +127,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return ActiveRecord|array
 	 */
-	#[Pure] public function current(): ActiveRecord|array
+	public function current(): ActiveRecord|array
 	{
 		return current($this->_item);
 	}
@@ -136,7 +135,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return int
 	 */
-	#[Pure] public function size(): int
+	public function size(): int
 	{
 		return (int)count($this->_item);
 	}
@@ -240,7 +239,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function isEmpty(): bool
+	public function isEmpty(): bool
 	{
 		return $this->size() < 1;
 	}

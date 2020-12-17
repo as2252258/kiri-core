@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Snowflake\Core;
 
-use JetBrains\PhpStorm\Pure;
+
 
 /**
  * Class DateFormat
@@ -96,7 +96,7 @@ class DateFormat
 	 * @param null $endTime
 	 * @return string
 	 */
-	#[Pure] public static function mtime($startTime, $endTime = null)
+	public static function mtime($startTime, $endTime = null)
 	{
 		if ($endTime === null) {
 			$endTime = microtime(true);

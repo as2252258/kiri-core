@@ -7,7 +7,7 @@ namespace Gii;
 
 use Database\Connection;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionClass;
 use Snowflake\Abstracts\Input;
 
@@ -219,7 +219,7 @@ abstract class GiiBase
 	 * @param $val
 	 * @return string
 	 */
-	#[Pure] protected function checkIsRequired($val): string
+	protected function checkIsRequired($val): string
 	{
 		return strtolower($val['Null']) == 'no' && $val['Default'] === NULL ? 'true' : 'false';
 	}

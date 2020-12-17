@@ -9,7 +9,7 @@ use Closure;
 use HttpServer\Http\Request;
 use Exception;
 use HttpServer\Application;
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionException;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\NotFindClassException;
@@ -81,7 +81,7 @@ class Node extends Application
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function hasInterceptor(): bool
+	public function hasInterceptor(): bool
 	{
 		return count($this->_interceptors) > 0;
 	}
@@ -90,7 +90,7 @@ class Node extends Application
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function hasLimits(): bool
+	public function hasLimits(): bool
 	{
 		return count($this->_limits) > 0;
 	}
@@ -129,7 +129,7 @@ class Node extends Application
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function hasAfter(): bool
+	public function hasAfter(): bool
 	{
 		return count($this->_after) > 0;
 	}

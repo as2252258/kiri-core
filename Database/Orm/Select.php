@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\BaseObject;
 use Database\ActiveQuery;
 use Database\Sql;
@@ -79,7 +79,7 @@ class Select extends BaseObject
 	 * @param bool $isCount
 	 * @return string
 	 */
-	#[Pure] private function builderSelect($select = NULL, $isCount = false): string
+	private function builderSelect($select = NULL, $isCount = false): string
 	{
 		if ($isCount === true) {
 			return 'SELECT COUNT(*)';

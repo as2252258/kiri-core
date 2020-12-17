@@ -5,7 +5,7 @@ namespace HttpServer;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -111,7 +111,7 @@ trait Action
 	/**
 	 * @return string
 	 */
-	#[Pure] private function getWorkerPath(): string
+	private function getWorkerPath(): string
 	{
 		return "glob://" . ltrim(APP_PATH, '/') . '/storage/worker/*.sock';
 	}

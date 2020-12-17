@@ -13,7 +13,7 @@ use Database\Connection;
 use Database\Db;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -304,7 +304,7 @@ class Gii
 	 * @return string
 	 * 暂时不知道干嘛用的
 	 */
-	#[Pure] private function createSetFunc($field, $comment): string
+	private function createSetFunc($field, $comment): string
 	{
 		return '
             ' . str_pad('\'' . $field . '\'', 20, ' ', STR_PAD_RIGHT) . '=> \'' . (empty($comment) ? ucfirst($field) : $comment) . '\',';

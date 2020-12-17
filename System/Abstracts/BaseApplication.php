@@ -16,7 +16,7 @@ use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use HttpServer\Server;
-use JetBrains\PhpStorm\Pure;
+
 use Kafka\Producer;
 use Annotation\Annotation as SAnnotation;
 use Snowflake\Cache\Redis;
@@ -139,7 +139,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return bool
 	 */
-	#[Pure] protected function looksLikeSetter(string $line): bool
+	protected function looksLikeSetter(string $line): bool
 	{
 		return str_contains($line, '=');
 	}

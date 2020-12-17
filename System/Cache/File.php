@@ -11,7 +11,7 @@ namespace Snowflake\Cache;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\Component;
 use Swoole\Coroutine\System;
 
@@ -119,7 +119,7 @@ class File extends Component implements ICache
 	 * @param $key
 	 * @return bool
 	 */
-	#[Pure] public function exists($key): bool
+	public function exists($key): bool
 	{
 		return file_exists($key);
 	}

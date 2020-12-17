@@ -6,7 +6,7 @@ namespace HttpServer\Http;
 use Exception;
 use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
-use JetBrains\PhpStorm\Pure;
+
 use ReflectionException;
 use Snowflake\Core\JSON;
 use Snowflake\Exception\ComponentException;
@@ -186,7 +186,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	#[Pure] public function getCurrent(): string
+	public function getCurrent(): string
 	{
 		return current($this->explode);
 	}
@@ -360,7 +360,7 @@ class Request extends Application
 	/**
 	 * @return mixed|null
 	 */
-	#[Pure] public function getIp()
+	public function getIp()
 	{
 		$headers = $this->headers->getHeaders();
 		if (!empty($headers['x-forwarded-for'])) return $headers['x-forwarded-for'];
@@ -372,7 +372,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	#[Pure] public function getRuntime(): string
+	public function getRuntime(): string
 	{
 		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
 	}

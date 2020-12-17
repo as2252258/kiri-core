@@ -6,7 +6,7 @@ namespace HttpServer\Client;
 
 use Closure;
 use Exception;
-use JetBrains\PhpStorm\Pure;
+
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\JSON;
@@ -58,7 +58,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return static
 	 */
-	#[Pure] public static function NewRequest(): static
+	public static function NewRequest(): static
 	{
 		return new static();
 	}
@@ -415,7 +415,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return int
 	 */
-	#[Pure] public function getPort(): int
+	public function getPort(): int
 	{
 		if ($this->isSSL()) {
 			return 443;
@@ -512,7 +512,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	#[Pure] protected function isHttp($url): bool
+	protected function isHttp($url): bool
 	{
 		return str_starts_with($url, 'http://');
 	}
@@ -521,7 +521,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	#[Pure] protected function isHttps($url): bool
+	protected function isHttps($url): bool
 	{
 		return str_starts_with($url, 'https://');
 	}
@@ -673,7 +673,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @return bool
 	 * check isPost Request
 	 */
-	#[Pure] public function isPost(): bool
+	public function isPost(): bool
 	{
 		return strtolower($this->method) === self::POST;
 	}
@@ -684,7 +684,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 *
 	 * check isGet Request
 	 */
-	#[Pure] public function isGet(): bool
+	public function isGet(): bool
 	{
 		return strtolower($this->method) === self::GET;
 	}
@@ -695,7 +695,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @return array|string
 	 * 将请求参数进行编码
 	 */
-	#[Pure] protected function paramEncode($arr): array|string
+	protected function paramEncode($arr): array|string
 	{
 		if (!is_array($arr)) {
 			return $arr;
@@ -761,7 +761,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $params
 	 * @return string
 	 */
-	#[Pure] protected function joinGetParams($path, $params): string
+	protected function joinGetParams($path, $params): string
 	{
 		if (empty($params)) {
 			return $path;
