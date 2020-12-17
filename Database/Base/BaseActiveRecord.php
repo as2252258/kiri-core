@@ -180,10 +180,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	}
 
 	/**
-	 * @return null|string
+	 * @return int|null
 	 * @throws Exception
 	 */
-	public function getPrimaryValue(): ?string
+	public function getPrimaryValue(): ?int
 	{
 		if (!$this->hasPrimary()) {
 			return null;
