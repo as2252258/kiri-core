@@ -29,8 +29,6 @@ class CoreMiddleware implements \HttpServer\IInterface\Middleware
 	{
 		$headers = $request->headers;
 
-		var_dump($request->getUri(), get_called_class());
-
 		/** @var Response $response */
 		$response = Context::getContext('response');
 		$response->addHeader('Access-Control-Allow-Origin', '*');
