@@ -171,7 +171,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return null|string
 	 * @throws Exception
 	 */
-	public function getPrimary()
+	public function getPrimary(): ?string
 	{
 		if (!$this->hasPrimary()) {
 			return null;
@@ -253,7 +253,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function delete($condition = NULL, $attributes = [], $if_condition_is_null = false): bool
+	public static function deleteByCondition($condition = NULL, $attributes = [], $if_condition_is_null = false): bool
 	{
 		if (empty($condition)) {
 			if (!$if_condition_is_null) {

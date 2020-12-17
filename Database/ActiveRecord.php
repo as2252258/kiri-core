@@ -234,9 +234,9 @@ class ActiveRecord extends BaseActiveRecord
 		$primary = $this->getPrimary();
 
 		if (!empty($primary)) {
-			$sul = static::deleteAll([$primary => $this->getAttribute($primary)]);
+			$sul = static::deleteByCondition([$primary => $this->getAttribute($primary)]);
 		} else {
-			$sul = static::deleteAll($conditions);
+			$sul = static::deleteByCondition($conditions);
 		}
 		if (!$sul) {
 			return false;
