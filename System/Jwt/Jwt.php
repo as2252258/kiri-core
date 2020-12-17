@@ -5,7 +5,7 @@ namespace Snowflake\Jwt;
 
 use Exception;
 use HttpServer\Http\HttpHeaders;
-use Redis;
+use Snowflake\Cache\Redis;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Str;
 use Snowflake\Exception\AuthException;
@@ -453,10 +453,10 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	}
 
 	/**
-	 * @return Redis
-	 * @throws Exception
+	 * @return Redis|\Redis
+	 * @throws ComponentException
 	 */
-	private function getRedis(): Redis
+	private function getRedis(): Redis|\Redis
 	{
 		return Snowflake::app()->getRedis();
 	}
