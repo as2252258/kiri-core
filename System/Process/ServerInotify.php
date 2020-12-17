@@ -80,10 +80,10 @@ class ServerInotify extends Process
 	/**
 	 * @param $path
 	 * @param bool $isReload
-	 * @return mixed
+	 * @return void
 	 * @throws Exception
 	 */
-	private function loadByDir($path, $isReload = false): mixed
+	private function loadByDir($path, $isReload = false): void
 	{
 		$path = rtrim($path, '/');
 		foreach (glob(realpath($path) . '/*') as $value) {
