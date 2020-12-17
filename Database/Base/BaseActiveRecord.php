@@ -100,7 +100,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return array
 	 */
-	public function getActions()
+	public function getActions(): array
 	{
 		return $this->actions;
 	}
@@ -108,7 +108,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return bool
 	 */
-	public function getIsCreate()
+	public function getIsCreate(): bool
 	{
 		return $this->isNewExample === TRUE;
 	}
@@ -117,7 +117,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @param bool $bool
 	 * @return $this
 	 */
-	public function setIsCreate($bool = FALSE)
+	public function setIsCreate($bool = FALSE): static
 	{
 		$this->isNewExample = $bool;
 		return $this;
@@ -129,7 +129,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * get last exception or other error
 	 * @throws ComponentException
 	 */
-	public function getLastError()
+	public function getLastError(): mixed
 	{
 		return Snowflake::app()->getLogger()->getLastError('mysql');
 	}
@@ -138,7 +138,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function hasPrimary()
+	public function hasPrimary(): bool
 	{
 		if ($this->primary !== NULL) {
 			return true;
@@ -153,7 +153,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @throws Exception
 	 */
-	public function hasAutoIncrement()
+	public function hasAutoIncrement(): bool
 	{
 		$autoIncrement = $this->getAutoIncrement();
 		return $autoIncrement !== null;
@@ -162,7 +162,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @throws Exception
 	 */
-	public function getAutoIncrement()
+	public function getAutoIncrement(): int|string|null
 	{
 		return static::getColumns()->getAutoIncrement();
 	}
@@ -218,7 +218,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @throws Exception
 	 * @throws Exception
 	 */
-	public static function max($field = null)
+	public static function max($field = null): ?ActiveRecord
 	{
 		$columns = static::getColumns();
 		if (empty($field)) {
@@ -240,7 +240,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	public static function find():ActiveQuery
+	public static function find(): ActiveQuery
 	{
 		return Snowflake::createObject(ActiveQuery::class, [get_called_class()]);
 	}
@@ -272,7 +272,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return array
 	 */
-	public function getAttributes()
+	public function getAttributes(): array
 	{
 		return $this->_attributes;
 	}
@@ -280,7 +280,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return array
 	 */
-	public function getOldAttributes()
+	public function getOldAttributes(): array
 	{
 		return $this->_oldAttributes;
 	}
@@ -290,7 +290,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @param $value
 	 * @return mixed
 	 */
-	public function setAttribute($name, $value)
+	public function setAttribute($name, $value): mixed
 	{
 		return $this->_attributes[$name] = $value;
 	}
@@ -300,7 +300,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @param $value
 	 * @return mixed
 	 */
-	public function setOldAttribute($name, $value)
+	public function setOldAttribute($name, $value): mixed
 	{
 		return $this->_oldAttributes[$name] = $value;
 	}
@@ -310,7 +310,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function setAttributes(array $param)
+	public function setAttributes(array $param): static
 	{
 		if (empty($param)) {
 			return $this;
@@ -329,7 +329,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @param $param
 	 * @return $this
 	 */
-	public function setOldAttributes($param)
+	public function setOldAttributes($param): static
 	{
 		if (empty($param) || !is_array($param)) {
 			return $this;
@@ -355,7 +355,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return $this|bool
 	 * @throws Exception
 	 */
-	private function insert($param, $attributes)
+	private function insert($param, $attributes): bool|static
 	{
 		if (empty($param)) {
 			return FALSE;
@@ -397,7 +397,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return $this|bool
 	 * @throws Exception
 	 */
-	private function update($attributes, $condition, $param)
+	private function update($attributes, $condition, $param): bool|static
 	{
 		if (empty($param)) {
 			return true;
@@ -420,10 +420,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 	/**
 	 * @param null $data
-	 * @return bool|mixed|ActiveRecord
+	 * @return bool|BaseActiveRecord
 	 * @throws Exception
 	 */
-	public function save($data = NULL)
+	public function save($data = NULL): bool|static
 	{
 		if (is_array($data)) {
 			$this->setAttributes($data);
@@ -453,7 +453,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function validator(array $rule)
+	public function validator(array $rule): bool
 	{
 		if (empty($rule)) return true;
 		$validate = $this->resolve($rule);
@@ -469,7 +469,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return Validator
 	 * @throws Exception
 	 */
-	private function resolve($rule)
+	private function resolve($rule): Validator
 	{
 		$validate = Validator::getInstance();
 		$validate->setParams($this->_attributes);
@@ -503,7 +503,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return array
 	 * @throws Exception
 	 */
-	private function filtration_and_separation()
+	private function filtration_and_separation(): array
 	{
 		$_tmp = [];
 		$condition = [];
@@ -546,7 +546,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return array
 	 */
-	public function getRelates()
+	public function getRelates(): array
 	{
 		return $this->_relate;
 	}
@@ -563,9 +563,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 	/**
 	 * @param $name
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function getRelate($name)
+	public function getRelate($name): mixed
 	{
 		if (!isset($this->_relate[$name])) {
 			return NULL;
@@ -579,7 +579,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function has($attribute)
+	public function has($attribute): bool
 	{
 		$format = static::getColumns()->format();
 
@@ -590,13 +590,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return string
 	 * @throws Exception
 	 */
-	public static function getTable()
+	public static function getTable(): string
 	{
 		$tablePrefix = static::getDb()->tablePrefix;
 
 		$table = static::tableName();
 
-		if (strpos($table, $tablePrefix) === 0) {
+		if (str_starts_with($table, $tablePrefix)) {
 			return $table;
 		}
 
@@ -619,16 +619,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function afterSave($attributes, $changeAttributes)
+	public function afterSave($attributes, $changeAttributes): void
 	{
-		return true;
 	}
 
 	/**
 	 * @return Connection
 	 * @throws Exception
 	 */
-	public static function getDb()
+	public static function getDb(): Connection
 	{
 		return static::setDatabaseConnect('db');
 	}
@@ -636,7 +635,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return static
 	 */
-	public function refresh()
+	public function refresh(): static
 	{
 		$this->_oldAttributes = $this->_attributes;
 		return $this;
@@ -691,11 +690,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 	/**
 	 * @param $name
-	 * @return mixed|null
+	 * @return bool
 	 */
-	public function __isset($name)
+	public function __isset($name): bool
 	{
-		return $this->_attributes[$name] ?? null;
+		return isset($this->_attributes[$name]);
 	}
 
 	/**
@@ -703,7 +702,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return array|null|ActiveRecord
 	 * @throws Exception
 	 */
-	private function resolveClass($call)
+	private function resolveClass($call): array|ActiveRecord|null
 	{
 		if ($call instanceof HasOne) {
 			return $call->get();
@@ -720,17 +719,17 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function offsetExists($offset)
+	public function offsetExists(mixed $offset): bool
 	{
 		return $this->has($offset);
 	}
 
 	/**
 	 * @param mixed $offset
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function offsetGet($offset)
+	public function offsetGet(mixed $offset): mixed
 	{
 		return $this->__get($offset);
 	}
@@ -740,16 +739,16 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @param mixed $value
 	 * @throws Exception
 	 */
-	public function offsetSet($offset, $value)
+	public function offsetSet(mixed $offset, mixed $value)
 	{
-		return $this->__set($offset, $value);
+		$this->__set($offset, $value);
 	}
 
 	/**
 	 * @param mixed $offset
 	 * @throws Exception
 	 */
-	public function offsetUnset($offset)
+	public function offsetUnset(mixed $offset)
 	{
 		if (!$this->has($offset)) {
 			return;
@@ -764,7 +763,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @return array
 	 */
-	public function unset()
+	public function unset(): array
 	{
 		$fields = func_get_args();
 		$fields = array_shift($fields);
@@ -779,20 +778,20 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 
 
 	/**
-	 * @param $bsName
+	 * @param $dbName
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function setDatabaseConnect($bsName): Connection
+	public static function setDatabaseConnect($dbName): Connection
 	{
-		return Snowflake::app()->db->get($bsName);
+		return Snowflake::app()->db->get($dbName);
 	}
 
 	/**
 	 * @return Columns
 	 * @throws Exception
 	 */
-	public static function getColumns()
+	public static function getColumns(): Columns
 	{
 		return static::getDb()->getSchema()
 			->getColumns()
@@ -804,7 +803,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 * @return static
 	 * @throws
 	 */
-	public static function populate(array $data)
+	public static function populate(array $data): static
 	{
 		$model = new static();
 		$model->setAttributes($data);
