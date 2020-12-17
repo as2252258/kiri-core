@@ -43,11 +43,11 @@ trait Server
 
 
 	/**
-	 * @return mixed
+	 * @return void
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function onHandlerListener(): mixed
+	public function onHandlerListener(): void
 	{
 		$this->on('WorkerStop', $this->createHandler('workerStop'));
 		$this->on('WorkerExit', $this->createHandler('workerExit'));
