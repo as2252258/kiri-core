@@ -78,6 +78,9 @@ class Middleware
 			return;
 		}
 		foreach ($annotation as $item) {
+			if (empty($item) || !isset($item['attributes'])) {
+				continue;
+			}
 			foreach ($item['attributes'] as $attribute) {
 				if ($attribute instanceof Interceptor) {
 					$node->addInterceptor($attribute->interceptor);
