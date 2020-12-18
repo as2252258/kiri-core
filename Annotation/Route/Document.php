@@ -25,7 +25,7 @@ namespace Annotation\Route;
 
 
 	public function __construct(
-		public array $params,
+		public array $request,
 		public array $response
 	)
 	{
