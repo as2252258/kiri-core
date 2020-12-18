@@ -210,32 +210,40 @@ class Response extends Application
 	 * @param $status
 	 * @return mixed
 	 */
-	private function sendData($sendData, $status)
+	private function sendData($sendData, $status): mixed
 	{
 		$this->response->status($status);
 		$this->response->header('Content-Type', $this->getContentType());
 		$this->response->header('Run-Time', $this->getRuntime());
+		$this->response->end($this->headers($sendData));
+		$this->response = null;
+		unset($this->response);
+		return $sendData;
+	}
+
+
+	/**
+	 * @param $sendData
+	 * @return string
+	 */
+	private function headers($sendData): string
+	{
 		if (!empty($this->headers) && is_array($this->headers)) {
 			foreach ($this->headers as $key => $header) {
 				$this->response->header($key, $header);
 			}
 			$this->headers = [];
 		}
-		if (empty($sendData)) {
-			$sendData = '';
-		}
-		$this->response->end($sendData);
-		$this->response = null;
-		unset($this->response);
-		return $sendData;
+		return $sendData == null ? '' : $sendData;
 	}
+
 
 	/**
 	 * @param $url
 	 * @param array $param
 	 * @return int
 	 */
-	public function redirect($url, array $param = [])
+	public function redirect($url, array $param = []): int
 	{
 		if (!empty($param)) {
 			$url .= '?' . http_build_query($param);
@@ -251,7 +259,7 @@ class Response extends Application
 	 * @param null $response
 	 * @return mixed
 	 */
-	public static function create($response = null)
+	public static function create($response = null): mixed
 	{
 		$ciResponse = Context::setContext('response', new Response());
 		$ciResponse->response = $response;
@@ -273,7 +281,7 @@ class Response extends Application
 	/**
 	 * @return string
 	 */
-	public function getRuntime()
+	public function getRuntime(): string
 	{
 		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
 	}
