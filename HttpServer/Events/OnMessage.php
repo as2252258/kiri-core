@@ -28,12 +28,15 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
+			if ($frame->opcode == 0x08) {
+				return;
+			}
+			Coroutine::defer(fn() => fire(Event::EVENT_AFTER_REQUEST));
+
 			$event = Snowflake::app()->getEvent();
-			if ($frame->opcode != 0x08) {
-				$content = $this->resolve($event, $frame, $server);
-				if (!empty($content)) {
-					$server->send($frame->fd, $content);
-				}
+			$content = $this->resolve($event, $frame, $server);
+			if (!empty($content)) {
+				$server->send($frame->fd, $content);
 			}
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
