@@ -115,11 +115,7 @@ class Redis extends Pool
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
-
-		$client = Context::getContext($coroutineName);
-
-		$this->push($coroutineName, $client);
-		$this->remove($coroutineName);
+		$this->push($coroutineName, Context::getContext($coroutineName));
 	}
 
 	/**
