@@ -27,11 +27,8 @@ class OnMessage extends Callback
 	 */
 	public function onHandler(Server $server, Frame $frame)
 	{
-		$event = Snowflake::app()->getEvent();
-		Coroutine::defer(function () use ($event) {
-			$event->trigger(Event::EVENT_AFTER_REQUEST);
-		});
 		try {
+			$event = Snowflake::app()->getEvent();
 			if ($frame->opcode != 0x08) {
 				$content = $this->resolve($event, $frame, $server);
 				if (!empty($content)) {
