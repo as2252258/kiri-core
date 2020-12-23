@@ -161,7 +161,7 @@ class Kafka extends \Snowflake\Process\Process
 
 		$topicConf = new TopicConf();
 		$topicConf->set('auto.commit.enable', '1');
-		$topicConf->set('auto.create.topics.enable', 'true');
+		$topicConf->set('auto.create.topics.enable', '1');
 		$topicConf->set('auto.commit.interval.ms', '100');
 		//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
 		$topicConf->set('auto.offset.reset', 'smallest');
