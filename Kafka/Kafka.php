@@ -15,6 +15,7 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\WaitGroup;
+use Swoole\IDEHelper\StubGenerators\Swoole;
 use Swoole\Process;
 use Snowflake\Abstracts\Config as SConfig;
 use Throwable;
@@ -37,6 +38,10 @@ class Kafka extends \Snowflake\Process\Process
 	public function onHandler(Process $process)
 	{
 		$this->channelListener();
+
+		Process::signal(SIGUSR1, function () use ($process) {
+			var_dump($process);
+		});
 
 		$waite = new WaitGroup();
 		$kafkaServers = SConfig::get('kafka.servers');

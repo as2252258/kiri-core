@@ -209,19 +209,6 @@ class ServerInotify extends Process
 	public function trigger_reload()
 	{
 		Snowflake::reload();
-
-		$system = Snowflake::app()->server;
-
-		$processes = Config::get('processes');
-		if (!empty($processes) && is_array($processes)) {
-			$processes = merge($processes, $system->getProcesses());
-		} else {
-			$processes = $system->getProcesses();
-		}
-		foreach ($processes as $name => $process) {
-			$process = Snowflake::app()->get($name);
-			$process->exit(0);
-		}
 	}
 
 
