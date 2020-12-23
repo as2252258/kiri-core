@@ -130,7 +130,7 @@ class Kafka extends \Snowflake\Process\Process
 			if (!class_exists($namespace)) {
 				return;
 			}
-			$class = new $namespace();
+			$class = Snowflake::createObject($namespace);
 			if (!($class instanceof ConsumerInterface)) {
 				return;
 			}
