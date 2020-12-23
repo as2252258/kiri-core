@@ -39,13 +39,6 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		$this->channelListener();
 
-		go(function () use ($process) {
-			$sign = Coroutine::waitSignal(SIGUSR1 | SIGTERM | SIGKILL, -1);
-
-
-			var_dump($sign);
-		});
-
 		$waite = new WaitGroup();
 		$kafkaServers = SConfig::get('kafka.servers');
 		foreach ($kafkaServers as $kafkaServer) {
