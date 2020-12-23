@@ -25,6 +25,7 @@ return [
 				},
 			]
 		],
+
 		[
 			'id'       => '',
 			'type'     => Server::PACKAGE,
