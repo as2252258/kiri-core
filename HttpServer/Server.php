@@ -75,6 +75,15 @@ class Server extends Application
 
 
 	/**
+	 * @return array
+	 */
+	public function getProcesses(): array
+	{
+		return $this->process ?? [];
+	}
+
+
+	/**
 	 * @param array $configs
 	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws ConfigException
