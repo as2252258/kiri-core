@@ -160,12 +160,16 @@ class Kafka extends \Snowflake\Process\Process
 		}
 
 		$topicConf = new TopicConf();
-		$topicConf->set('auto.commit.enable', '1');
-		$topicConf->set('allow.auto.create.topics', 'true');
-		$topicConf->set('auto.commit.interval.ms', '100');
-		//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
-		$topicConf->set('auto.offset.reset', 'smallest');
-		$topicConf->set('offset.store.path', 'kafka_offset.log');
+		try {
+			$topicConf->set('auto.commit.enable', '1');
+			$topicConf->set('auto.commit.interval.ms', '100');
+			//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
+			$topicConf->set('auto.offset.reset', 'smallest');
+			$topicConf->set('offset.store.path', 'kafka_offset.log');
+			$topicConf->set('allow.auto.create.topics', 'true');
+		} catch (Throwable $exception) {
+			var_dump($exception->getMessage());
+		}
 
 		return [$conf, $topicConf, $kafka];
 	}
