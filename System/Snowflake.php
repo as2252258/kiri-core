@@ -10,7 +10,7 @@ use HttpServer\IInterface\Task;
 
 use ReflectionException;
 use Snowflake\Abstracts\Config;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Di\Container;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -257,7 +257,7 @@ class Snowflake
 			return false;
 		}
 		if (!is_string($data)) {
-			$data = JSON::encode($data);
+			$data = Json::encode($data);
 		}
 		return $server->push($fd, $data);
 	}

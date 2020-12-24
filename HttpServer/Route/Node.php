@@ -11,7 +11,7 @@ use Exception;
 use HttpServer\Application;
 
 use ReflectionException;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -440,7 +440,7 @@ class Node extends Application
 	{
 		$this->restructure();
 		if (empty($this->callback)) {
-			return JSON::to(404, $node->_error ?? 'Page not found.');
+			return Json::to(404, $node->_error ?? 'Page not found.');
 		}
 		$requestParams = func_get_args();
 		if (func_num_args() > 0) {

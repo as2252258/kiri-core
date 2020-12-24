@@ -37,10 +37,10 @@ return [
 			],
 			'message'  => [
 				'pack'   => function ($data) {
-					return \Snowflake\Core\JSON::encode($data);
+					return \Snowflake\Core\Json::encode($data);
 				},
 				'unpack' => function ($data) {
-					return \Snowflake\Core\JSON::decode($data);
+					return \Snowflake\Core\Json::decode($data);
 				},
 			],
 			'events'   => [
@@ -57,10 +57,10 @@ return [
 			],
 			'message'  => [
 				'pack'   => function ($data) {
-					return \Snowflake\Core\JSON::encode($data);
+					return \Snowflake\Core\Json::encode($data);
 				},
 				'unpack' => function ($data) {
-					return \Snowflake\Core\JSON::decode($data);
+					return \Snowflake\Core\Json::decode($data);
 				},
 			],
 			'events'   => [

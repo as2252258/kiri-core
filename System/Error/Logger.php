@@ -12,7 +12,7 @@ namespace Snowflake\Error;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Process;
 use Throwable;
@@ -258,7 +258,7 @@ class Logger extends Component
 		$logger->write($string . $exception->getTraceAsString(), 'trace');
 		$logger->write(jTraceEx($exception), 'exception');
 
-		return JSON::to($code, $errorInfo['message'], [
+		return Json::to($code, $errorInfo['message'], [
 			'file' => $exception->getFile(),
 			'line' => $exception->getLine()
 		]);

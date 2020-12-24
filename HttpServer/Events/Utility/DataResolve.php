@@ -7,7 +7,7 @@ namespace HttpServer\Events\Utility;
 use Closure;
 use Exception;
 use ReflectionException;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -26,7 +26,7 @@ class DataResolve
 	public static function pack($unpack, $data)
 	{
 		if (empty($unpack)) {
-			$params = JSON::encode($data);
+			$params = Json::encode($data);
 		} else {
 			$params = self::callbackResolve($unpack, null, null, $data);
 		}
@@ -49,7 +49,7 @@ class DataResolve
 	public static function unpack($unpack, $address, $port, $data)
 	{
 		if (empty($unpack)) {
-			$params = JSON::decode($data);
+			$params = Json::decode($data);
 		} else {
 			$params = self::callbackResolve($unpack, $address, $port, $data);
 		}

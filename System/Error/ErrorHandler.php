@@ -12,7 +12,7 @@ namespace Snowflake\Error;
 use Exception;
 use HttpServer\IInterface\IFormatter;
 use Snowflake\Abstracts\Component;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 
@@ -98,7 +98,7 @@ class ErrorHandler extends Component implements ErrorInterface
 			$error[0] = 500;
 		}
 
-		$data = JSON::to(500, $error[1], $path);
+		$data = Json::to(500, $error[1], $path);
 
 		logger()->error($data, 'error');
 
@@ -120,7 +120,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		$path = ['file' => $file, 'line' => $line];
 
-		$data = JSON::to($code, $this->category . ': ' . $message, $path);
+		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
 		logger()->trance($data, $this->category);
 

@@ -10,7 +10,7 @@ use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -68,7 +68,7 @@ class OnRequest extends Callback
 
 			$request = get_object_vars($request);
 
-			$logger->write(JSON::encode($request), 'request');
+			$logger->write(Json::encode($request), 'request');
 		}
 	}
 

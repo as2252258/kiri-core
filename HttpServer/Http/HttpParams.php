@@ -12,7 +12,7 @@ namespace HttpServer\Http;
 use Exception;
 use HttpServer\Exception\RequestException;
 use Snowflake\Core\Help;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 
 /**
@@ -130,11 +130,11 @@ class HttpParams
 	{
 		$data = $this->array($name);
 		if (empty($data)) {
-			return JSON::encode([]);
+			return Json::encode([]);
 		} else if (!is_array($data)) {
-			return JSON::encode([]);
+			return Json::encode([]);
 		}
-		return JSON::encode($data);
+		return Json::encode($data);
 	}
 
 	/**

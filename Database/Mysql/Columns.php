@@ -15,7 +15,7 @@ namespace Database\Mysql;
 use Snowflake\Abstracts\Component;
 use Database\Connection;
 use Exception;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 
 /**
  * Class Columns
@@ -115,7 +115,7 @@ class Columns extends Component
 		if ($this->isInt($format)) {
 			return (int)$val;
 		} else if ($this->isJson($format)) {
-			return JSON::decode($val, true);
+			return Json::decode($val, true);
 		} else if ($this->isFloat($format)) {
 			return (float)$val;
 		} else {
@@ -151,7 +151,7 @@ class Columns extends Component
 		if ($this->isInt($format)) {
 			return (int)$val;
 		} else if ($this->isJson($format)) {
-			return JSON::encode($val);
+			return Json::encode($val);
 		} else if ($this->isFloat($format)) {
 			return (float)$val;
 		} else {

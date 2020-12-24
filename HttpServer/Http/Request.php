@@ -8,7 +8,7 @@ use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
 
 use ReflectionException;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -415,7 +415,7 @@ class Request extends Application
 	 */
 	public function isNotFound(): bool
 	{
-		return JSON::to(404, 'Page ' . $this->getUri() . ' not found.');
+		return Json::to(404, 'Page ' . $this->getUri() . ' not found.');
 	}
 
 

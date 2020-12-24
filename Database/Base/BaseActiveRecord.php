@@ -13,7 +13,7 @@ namespace Database\Base;
 use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Connection;

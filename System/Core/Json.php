@@ -16,7 +16,7 @@ use Exception;
  * Class JSON
  * @package Snowflake\Snowflake\Core
  */
-class JSON
+class Json
 {
 
 	/**

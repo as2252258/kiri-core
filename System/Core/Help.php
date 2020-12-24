@@ -93,7 +93,7 @@ class Help
 		if (!is_string($parameter)) {
 			$parameter = ArrayAccess::toArray($parameter);
 			if (is_array($parameter)) {
-				$parameter = JSON::encode($parameter);
+				$parameter = Json::encode($parameter);
 			}
 		}
 		return $parameter;

@@ -11,7 +11,7 @@ namespace HttpServer\Http\Formatter;
 
 
 use Exception;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use HttpServer\Application;
 use Swoole\Http\Response;
 use HttpServer\IInterface\IFormatter;
@@ -38,7 +38,7 @@ class HtmlFormatter extends Application implements IFormatter
 	public function send($context): static
 	{
 		if (!is_string($context)) {
-			$context = JSON::encode($context);
+			$context = Json::encode($context);
 		}
 		$this->data = $context;
 		return $this;

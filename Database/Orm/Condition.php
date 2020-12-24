@@ -5,7 +5,7 @@ namespace Database\Orm;
 
 
 use ReflectionException;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Snowflake\Core\Str;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -205,7 +205,7 @@ trait Condition
 		if (is_numeric($value)) {
 			return $value;
 		} else {
-			if (!is_null(JSON::decode($value))) {
+			if (!is_null(Json::decode($value))) {
 				return $value;
 			}
 			return '\'' . Str::encode($value) . '\'';

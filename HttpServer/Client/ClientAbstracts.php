@@ -9,7 +9,7 @@ use Exception;
 
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Swoole\Coroutine\System;
 
 

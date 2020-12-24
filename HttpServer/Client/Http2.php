@@ -8,7 +8,7 @@ use Exception;
 use HttpServer\Http\Context;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Swoole\Http2\Request;
 use Swoole\Coroutine\Http2\Client as H2Client;
 
@@ -107,7 +107,7 @@ class Http2 extends Component
 				'accept-encoding' => 'gzip'
 			];
 			if (!is_string($params)) {
-				$params = JSON::encode($params);
+				$params = Json::encode($params);
 			}
 			Context::setContext($domain . $path, $req);
 		}
