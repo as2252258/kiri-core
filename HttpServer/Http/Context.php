@@ -24,7 +24,7 @@ class Context extends BaseContext
 	 * @param null $key
 	 * @return mixed
 	 */
-	public static function setContext($id, $context, $key = null)
+	public static function setContext($id, $context, $key = null): mixed
 	{
 		if (static::inCoroutine()) {
 			return self::setCoroutine($id, $context, $key);
@@ -39,7 +39,7 @@ class Context extends BaseContext
 	 * @param null $key
 	 * @return mixed
 	 */
-	private static function setStatic($id, $context, $key = null)
+	private static function setStatic($id, $context, $key = null): mixed
 	{
 		if (!empty($key)) {
 			if (!is_array(static::$_requests[$id])) {
@@ -57,30 +57,31 @@ class Context extends BaseContext
 	 * @param $id
 	 * @param $context
 	 * @param null $key
-	 * @return
+	 * @return mixed
 	 */
-	private static function setCoroutine($id, $context, $key = null)
+	private static function setCoroutine($id, $context, $key = null): mixed
 	{
 		if (!static::hasContext($id)) {
 			Coroutine::getContext()[$id] = [];
 		}
 		if (!empty($key)) {
 			if (!is_array(Coroutine::getContext()[$id])) {
-				return Coroutine::getContext()[$id] = [$key => $context];
+				Coroutine::getContext()[$id] = [$key => $context];
 			} else {
-				return Coroutine::getContext()[$id][$key] = $context;
+				Coroutine::getContext()[$id][$key] = $context;
 			}
 		} else {
-			return Coroutine::getContext()[$id] = $context;
+			Coroutine::getContext()[$id] = $context;
 		}
+		return $context;
 	}
 
 	/**
 	 * @param $id
 	 * @param null $key
-	 * @return false|mixed
+	 * @return mixed
 	 */
-	public static function autoIncr($id, $key = null)
+	public static function autoIncr($id, $key = null): mixed
 	{
 		if (!static::inCoroutine()) {
 			return false;
@@ -94,9 +95,9 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param null $key
-	 * @return false|mixed
+	 * @return mixed
 	 */
-	public static function autoDecr($id, $key = null)
+	public static function autoDecr($id, $key = null): mixed
 	{
 		if (!static::inCoroutine() || !static::hasContext($id)) {
 			return false;
@@ -112,7 +113,7 @@ class Context extends BaseContext
 	 * @param null $key
 	 * @return mixed
 	 */
-	public static function getContext($id, $key = null)
+	public static function getContext($id, $key = null): mixed
 	{
 		if (!static::hasContext($id)) {
 			return null;
@@ -135,7 +136,7 @@ class Context extends BaseContext
 	/**
 	 * @return mixed
 	 */
-	public static function getAllContext()
+	public static function getAllContext(): mixed
 	{
 		if (static::inCoroutine()) {
 			return Coroutine::getContext() ?? [];
@@ -148,7 +149,7 @@ class Context extends BaseContext
 	 * @param string $id
 	 * @param string|null $key
 	 */
-	public static function deleteId(string $id,string $key = null)
+	public static function deleteId(string $id, string $key = null)
 	{
 		if (!static::hasContext($id, $key)) {
 			return;
@@ -167,9 +168,9 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param null $key
-	 * @return mixed
+	 * @return bool
 	 */
-	public static function hasContext($id, $key = null)
+	public static function hasContext($id, $key = null): bool
 	{
 		if (!static::inCoroutine()) {
 			return false;
@@ -190,7 +191,7 @@ class Context extends BaseContext
 	/**
 	 * @return bool
 	 */
-	public static function inCoroutine()
+	public static function inCoroutine(): bool
 	{
 		return Coroutine::getCid() > 0;
 	}

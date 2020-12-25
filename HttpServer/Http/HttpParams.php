@@ -11,8 +11,10 @@ namespace HttpServer\Http;
 
 use Exception;
 use HttpServer\Exception\RequestException;
+use ReflectionException;
 use Snowflake\Core\Help;
 use Snowflake\Core\Json;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -50,7 +52,7 @@ class HttpParams
 	/**
 	 * @return int
 	 */
-	public function offset()
+	public function offset(): int
 	{
 		return ($this->page() - 1) * $this->size();
 	}
@@ -81,7 +83,7 @@ class HttpParams
 	/**
 	 * @return int
 	 */
-	private function page()
+	private function page(): int
 	{
 		return (int)$this->get('page', 1);
 	}
@@ -89,7 +91,7 @@ class HttpParams
 	/**
 	 * @return int
 	 */
-	public function size()
+	public function size(): int
 	{
 		return (int)$this->get('size', 20);
 	}
@@ -97,11 +99,11 @@ class HttpParams
 
 	/**
 	 * @param $name
-	 * @param $defaultValue
-	 * @param $call
-	 * @return mixed|null
+	 * @param null $defaultValue
+	 * @param null $call
+	 * @return mixed
 	 */
-	public function get($name, $defaultValue = null, $call = null)
+	public function get($name, $defaultValue = null, $call = null): mixed
 	{
 		return $this->gets[$name] ?? $defaultValue;
 	}
@@ -109,10 +111,10 @@ class HttpParams
 	/**
 	 * @param $name
 	 * @param null $defaultValue
-	 * @param $call
-	 * @return mixed|null
+	 * @param null $call
+	 * @return mixed
 	 */
-	public function post($name, $defaultValue = null, $call = null)
+	public function post($name, $defaultValue = null, $call = null): mixed
 	{
 		$data = $this->body[$name] ?? $defaultValue;
 		if ($call !== null) {
@@ -123,10 +125,10 @@ class HttpParams
 
 	/**
 	 * @param $name
-	 * @return false|string
+	 * @return bool|string
 	 * @throws Exception
 	 */
-	public function json($name)
+	public function json($name): bool|string
 	{
 		$data = $this->array($name);
 		if (empty($data)) {
@@ -140,7 +142,7 @@ class HttpParams
 	/**
 	 * @return array
 	 */
-	public function gets()
+	public function gets(): array
 	{
 		return $this->gets;
 	}
@@ -148,7 +150,7 @@ class HttpParams
 	/**
 	 * @return array
 	 */
-	public function params()
+	public function params(): array
 	{
 		return array_merge($this->body ?? [], $this->files ?? []);
 	}
@@ -156,7 +158,7 @@ class HttpParams
 	/**
 	 * @return array
 	 */
-	public function load()
+	public function load(): array
 	{
 		return array_merge($this->files, $this->body, $this->gets);
 	}
@@ -164,19 +166,20 @@ class HttpParams
 	/**
 	 * @param $name
 	 * @param array $defaultValue
-	 * @return array|mixed
+	 * @return mixed
 	 */
-	public function array($name, $defaultValue = [])
+	public function array($name, $defaultValue = []): mixed
 	{
 		return $this->body[$name] ?? $defaultValue;
 	}
 
 	/**
 	 * @param $name
-	 * @return mixed|File|null
-	 * @throws Exception
+	 * @return File|null
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	public function file($name)
+	public function file($name): File|null
 	{
 		if (!isset($this->files[$name])) {
 			return null;
@@ -189,10 +192,10 @@ class HttpParams
 	/**
 	 * @param $name
 	 * @param bool $isNeed
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws RequestException
 	 */
-	private function required($name, $isNeed = false)
+	private function required($name, $isNeed = false): mixed
 	{
 		$int = $this->body[$name] ?? NULL;
 		if (is_null($int) && $isNeed === true) {
@@ -206,21 +209,17 @@ class HttpParams
 	 * @param bool $isNeed
 	 * @param null $min
 	 * @param null $max
-	 * @return int
-	 * @throws Exception
+	 * @return int|null
+	 * @throws RequestException
 	 */
-	public function int($name, $isNeed = FALSE, $min = NULL, $max = NULL)
+	public function int($name, $isNeed = FALSE, $min = NULL, $max = NULL): ?int
 	{
 		$int = $this->required($name, $isNeed);
-		if ($int === null) return null;
+		if (is_null($int)) return null;
 		if (is_array($min)) {
 			list($min, $max) = $min;
 		}
-		if (is_null($int)) {
-			$length = 0;
-		} else {
-			$length = strlen((string)$int);
-		}
+		$length = strlen((string)$int);
 		if (!is_numeric($int) || intval($int) != $int) {
 			throw new RequestException("The request parameter $name must integer.");
 		}
@@ -235,7 +234,7 @@ class HttpParams
 	 * @return float
 	 * @throws Exception
 	 */
-	public function float($name, $isNeed = FALSE, $round = 0)
+	public function float($name, $isNeed = FALSE, $round = 0): ?float
 	{
 		$int = $this->required($name, $isNeed);
 		if ($int === null) {
@@ -256,7 +255,7 @@ class HttpParams
 	 * @return string
 	 * @throws
 	 */
-	public function string($name, $isNeed = FALSE, $length = NULL)
+	public function string($name, $isNeed = FALSE, $length = NULL): string
 	{
 		$string = $this->required($name, $isNeed);
 		if ($string === null || $length === null) {
@@ -297,10 +296,10 @@ class HttpParams
 	 * @param      $name
 	 * @param bool $isNeed
 	 *
-	 * @return string
+	 * @return string|null
 	 * @throws RequestException
 	 */
-	public function email($name, $isNeed = FALSE)
+	public function email($name, $isNeed = FALSE): ?string
 	{
 		$email = $this->required($name, $isNeed);
 		if ($email === null) {
@@ -317,10 +316,10 @@ class HttpParams
 	 * @param      $name
 	 * @param bool $isNeed
 	 *
-	 * @return string
+	 * @return bool|string
 	 * @throws RequestException
 	 */
-	public function bool($name, $isNeed = FALSE)
+	public function bool($name, $isNeed = FALSE): bool|string
 	{
 		$email = $this->required($name, $isNeed);
 		if ($email === null) {
@@ -333,10 +332,10 @@ class HttpParams
 	 * @param      $name
 	 * @param null $default
 	 *
-	 * @return mixed|null
+	 * @return int|string|null
 	 * @throws RequestException
 	 */
-	public function timestamp($name, $default = NULL)
+	public function timestamp($name, $default = NULL): null|int|string
 	{
 		$value = $this->required($name, false);
 		if ($value === null) {
@@ -358,10 +357,10 @@ class HttpParams
 	 * @param      $name
 	 * @param null $default
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws RequestException
 	 */
-	public function datetime($name, $default = NULL)
+	public function datetime($name, $default = NULL): mixed
 	{
 		$value = $this->required($name, false);
 		if ($value === null) {
@@ -379,10 +378,10 @@ class HttpParams
 	/**
 	 * @param $name
 	 * @param null $default
-	 * @return mixed|null
+	 * @return mixed
 	 * @throws RequestException
 	 */
-	public function ip($name, $default = NULL)
+	public function ip($name, $default = NULL): mixed
 	{
 		$value = $this->required($name, false);
 		if ($value == NULL) {
@@ -398,9 +397,9 @@ class HttpParams
 
 	/**
 	 * @param $name
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function __get($name)
+	public function __get($name): mixed
 	{
 		$load = $this->load();
 

@@ -54,7 +54,7 @@ class Response extends Application
 	 * @param $format
 	 * @return $this
 	 */
-	public function setFormat($format)
+	public function setFormat($format): static
 	{
 		$this->format = $format;
 		return $this;
@@ -63,7 +63,7 @@ class Response extends Application
 	/**
 	 * 清理无用数据
 	 */
-	public function clear()
+	public function clear(): void
 	{
 		$this->fd = 0;
 		$this->isWebSocket = false;
@@ -73,7 +73,7 @@ class Response extends Application
 	/**
 	 * @return string
 	 */
-	public function getContentType()
+	public function getContentType(): string
 	{
 		if ($this->format == null || $this->format == static::JSON) {
 			return 'application/json;charset=utf-8';
@@ -89,7 +89,7 @@ class Response extends Application
 	 * @param $content
 	 * @return mixed
 	 */
-	public function toHtml($content)
+	public function toHtml($content): mixed
 	{
 		$this->format = self::HTML;
 		return $content;
@@ -100,7 +100,7 @@ class Response extends Application
 	 * @param $content
 	 * @return mixed
 	 */
-	public function toJson($content)
+	public function toJson($content): mixed
 	{
 		$this->format = self::JSON;
 		return $content;
@@ -111,7 +111,7 @@ class Response extends Application
 	 * @param $content
 	 * @return mixed
 	 */
-	public function toXml($content)
+	public function toXml($content): mixed
 	{
 		$this->format = self::XML;
 		return $content;
@@ -122,7 +122,7 @@ class Response extends Application
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function sender()
+	public function sender(): mixed
 	{
 		return $this->send(func_get_args());
 	}
@@ -132,7 +132,7 @@ class Response extends Application
 	 * @param $value
 	 * @return Response
 	 */
-	public function addHeader($key, $value)
+	public function addHeader($key, $value): static
 	{
 		$this->headers[$key] = $value;
 		return $this;
@@ -141,7 +141,7 @@ class Response extends Application
 	/**
 	 * @return bool
 	 */
-	private function isClient()
+	private function isClient(): bool
 	{
 		return !($this->response instanceof SResponse) && !($this->response instanceof S2Response);
 	}
@@ -153,7 +153,7 @@ class Response extends Application
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function send($context = '', $statusCode = 200, $response = null)
+	public function send($context = '', $statusCode = 200, $response = null): mixed
 	{
 		$sendData = $this->parseData($context);
 		if ($response instanceof SResponse) {
@@ -171,7 +171,7 @@ class Response extends Application
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function parseData($context)
+	private function parseData($context): mixed
 	{
 		if (isset($this->_format_maps[$this->format])) {
 			$config['class'] = $this->_format_maps[$this->format];
@@ -187,7 +187,7 @@ class Response extends Application
 	 * @return string
 	 * @throws Exception
 	 */
-	private function printResult($result)
+	private function printResult($result): string
 	{
 		$result = Help::toString($result);
 		$string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;

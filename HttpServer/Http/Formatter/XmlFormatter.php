@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace HttpServer\Http\Formatter;
 
 
+use Exception;
 use HttpServer\Application;
 use SimpleXMLElement;
 use Swoole\Http\Response;
@@ -33,7 +34,7 @@ class XmlFormatter extends Application implements IFormatter
 	/**
 	 * @param $context
 	 * @return $this
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function send($context): static
 	{

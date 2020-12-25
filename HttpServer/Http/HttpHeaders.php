@@ -6,6 +6,7 @@
  * Time: 14:54
  */
 declare(strict_types=1);
+
 namespace HttpServer\Http;
 
 /**
@@ -75,7 +76,7 @@ class HttpHeaders
 	 * @param array $headers
 	 * @return $this
 	 */
-	public function addHeaders(array $headers)
+	public function addHeaders(array $headers): static
 	{
 		if (empty($headers)) {
 			return $this;
@@ -90,7 +91,7 @@ class HttpHeaders
 	/**
 	 * @return array
 	 */
-	public function getResponseHeaders()
+	public function getResponseHeaders(): array
 	{
 		return $this->response;
 	}
@@ -98,7 +99,7 @@ class HttpHeaders
 	/**
 	 * @return array
 	 */
-	public function toArray()
+	public function toArray(): array
 	{
 		return $this->headers;
 	}
@@ -107,7 +108,7 @@ class HttpHeaders
 	 * @param $name
 	 * @return mixed|null
 	 */
-	public function getHeader($name)
+	public function getHeader($name): ?string
 	{
 		if (!isset($this->headers[$name])) {
 			return null;
@@ -119,9 +120,9 @@ class HttpHeaders
 	/**
 	 * @param $name
 	 * @param null $default
-	 * @return mixed|string|null
+	 * @return mixed
 	 */
-	public function get($name, $default = null)
+	public function get($name, $default = null): mixed
 	{
 		if (($value = $this->getHeader($name)) === null) {
 			return $default;
@@ -134,7 +135,7 @@ class HttpHeaders
 	 * @param $name
 	 * @return bool
 	 */
-	public function exists($name)
+	public function exists($name): bool
 	{
 		return isset($this->headers[$name]) && $this->headers[$name] != null;
 	}
@@ -143,7 +144,7 @@ class HttpHeaders
 	/**
 	 * @return array
 	 */
-	public function getHeaders()
+	public function getHeaders(): array
 	{
 		return $this->headers;
 	}

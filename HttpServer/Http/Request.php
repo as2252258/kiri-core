@@ -360,7 +360,7 @@ class Request extends Application
 	/**
 	 * @return mixed|null
 	 */
-	public function getIp()
+	public function getIp(): string|null
 	{
 		$headers = $this->headers->getHeaders();
 		if (!empty($headers['x-forwarded-for'])) return $headers['x-forwarded-for'];

@@ -35,7 +35,7 @@ class File
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function saveTo(string $path)
+	public function saveTo(string $path): bool
 	{
 		if ($this->hasError()) {
 			throw new Exception($this->getErrorInfo());
@@ -51,7 +51,7 @@ class File
 	/**
 	 * @return string
 	 */
-	public function rename()
+	public function rename(): string
 	{
 		if (!empty($this->newName)) {
 			return $this->newName;
@@ -64,7 +64,7 @@ class File
 	/**
 	 * @return string
 	 */
-	public function getTmpPath()
+	public function getTmpPath(): string
 	{
 		return $this->tmp_name;
 	}
@@ -74,7 +74,7 @@ class File
 	 *
 	 * check file have error
 	 */
-	public function hasError()
+	public function hasError(): bool
 	{
 		return $this->error !== 0;
 	}
@@ -84,7 +84,7 @@ class File
 	 *
 	 * get upload error info
 	 */
-	public function getErrorInfo()
+	public function getErrorInfo(): mixed
 	{
 		if (!isset($this->errorInfo[$this->error])) {
 			return 'Unknown upload error.';
