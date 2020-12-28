@@ -41,7 +41,6 @@ class Kafka extends \Snowflake\Process\Process
 
 		$waite = new WaitGroup();
 		$kafkaServers = SConfig::get('kafka.servers');
-		var_dump($kafkaServers);
 		foreach ($kafkaServers as $kafkaServer) {
 			$waite->add();
 			go(function () use ($kafkaServer, $waite) {
@@ -60,15 +59,19 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	private function waite(array $kafkaServer)
 	{
-		[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
-		$objRdKafka = new Consumer($config);
-		$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
+		try {
+			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
+			$objRdKafka = new Consumer($config);
+			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 
-		var_dump($kafkaServer['topic']);
+			var_dump($kafkaServer['topic']);
 
-		$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
-		while (true) {
-			$this->resolve($topic, $conf['interval'] ?? 1000);
+			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+			while (true) {
+				$this->resolve($topic, $conf['interval'] ?? 1000);
+			}
+		} catch (Throwable $exception) {
+			$this->application->error($exception->getMessage());
 		}
 	}
 
@@ -85,7 +88,6 @@ class Kafka extends \Snowflake\Process\Process
 				return;
 			}
 			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
-				var_dump($message->topic_name, $message);
 				$this->channel->push([$message->topic_name, $message]);
 			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
 				$this->application->error('No more messages; will wait for more');
