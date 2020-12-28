@@ -251,10 +251,6 @@ class Server extends Application
 				$system->write(Json::encode($this->params[$name]));
 			}
 			$this->baseServer->addProcess($system);
-			if (Snowflake::isLinux()) {
-				$prefix = ucfirst(rtrim(Snowflake::app()->id, ':'));
-				$system->name($prefix . ': ' . $name . '::' . $process);
-			}
 			$application->set($process, $system);
 		}
 	}
