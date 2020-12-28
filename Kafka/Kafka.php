@@ -49,7 +49,6 @@ class Kafka extends \Snowflake\Process\Process
 				});
 				$this->waite($kafkaServer);
 			});
-			var_dump($kafkaServer);
 		}
 		$waite->wait();
 	}
@@ -64,8 +63,6 @@ class Kafka extends \Snowflake\Process\Process
 			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
 			$objRdKafka = new Consumer($config);
 			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
-
-			var_dump($kafkaServer['topic']);
 
 			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 			while (true) {
