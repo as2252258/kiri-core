@@ -49,6 +49,7 @@ class Kafka extends \Snowflake\Process\Process
 				});
 				$this->waite($kafkaServer);
 			});
+			var_dump($kafkaServer);
 		}
 		$waite->wait();
 	}
