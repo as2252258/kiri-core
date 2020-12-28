@@ -242,7 +242,7 @@ class Server extends Application
 			if (is_array($process)) {
 				[$process, $is_enable_coroutine] = $process;
 			}
-			$this->debug(sprintf('Process %s', $process));
+			$this->debug(sprintf('Process %s', $name . '::' . $process));
 			if (!is_string($process)) {
 				continue;
 			}
