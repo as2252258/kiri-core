@@ -6,6 +6,7 @@ namespace Kafka;
 
 use Exception;
 use HttpServer\Server;
+use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Config as SConfig;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
@@ -34,7 +35,15 @@ class KafkaProviders extends Providers
 		if (!extension_loaded('rdkafka')) {
 			return;
 		}
-		$server->addProcess('kafka', Kafka::class);
+
+		$kafkaServers = Config::get('kafka.servers', false, []);
+		if (empty($kafkaServers)) {
+			return;
+		}
+
+		foreach ($kafkaServers as $index => $kafkaServer) {
+			$server->addProcess('kafka_' . $index, Kafka::class, $kafkaServer);
+		}
 	}
 
 }

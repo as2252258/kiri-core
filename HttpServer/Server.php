@@ -16,10 +16,12 @@ use HttpServer\Service\Websocket;
 use Exception;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use Swoole\Process;
 use Swoole\Runtime;
 
 /**
@@ -63,14 +65,18 @@ class Server extends Application
 
 	private array $process = [];
 
+	private array $params = [];
+
 
 	/**
 	 * @param $name
 	 * @param $process
+	 * @param array $pramas
 	 */
-	public function addProcess($name, $process)
+	public function addProcess($name, $process, $pramas = [])
 	{
 		$this->process[$name] = $process;
+		$this->params[$name] = $pramas;
 	}
 
 
@@ -241,6 +247,9 @@ class Server extends Application
 				continue;
 			}
 			$system = new $process(Snowflake::app(), $name, $is_enable_coroutine);
+			if (isset($this->params[$name])) {
+				$system->write(Json::encode($this->params[$name]));
+			}
 			$this->baseServer->addProcess($system);
 			$application->set($process, $system);
 		}
