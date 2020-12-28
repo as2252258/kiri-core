@@ -41,6 +41,7 @@ class Kafka extends \Snowflake\Process\Process
 
 		$waite = new WaitGroup();
 		$kafkaServers = SConfig::get('kafka.servers');
+		var_dump($kafkaServers);
 		foreach ($kafkaServers as $kafkaServer) {
 			$waite->add();
 			go(function () use ($kafkaServer, $waite) {
