@@ -17,6 +17,10 @@ use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 
+use HttpServer\Service\Http;
+use HttpServer\Service\Packet;
+use HttpServer\Service\Receive;
+use HttpServer\Service\Websocket;
 use Kafka\Producer;
 use Annotation\Annotation as SAnnotation;
 use Snowflake\Cache\Redis;
@@ -354,6 +358,26 @@ abstract class BaseApplication extends Service
 	public function getJwt(): Jwt
 	{
 		return $this->get('jwt');
+	}
+
+
+	/**
+	 * @return Server
+	 * @throws ComponentException
+	 */
+	public function getServer(): Server
+	{
+		return $this->get('server');
+	}
+
+
+	/**
+	 * @return Http|Packet|Receive|Websocket|null
+	 * @throws ComponentException
+	 */
+	public function getService(): Packet|Websocket|Receive|Http|null
+	{
+		return $this->getServer()->getServer();
 	}
 
 
