@@ -246,7 +246,7 @@ class Logger extends Component
 		];
 		$this->error(var_export($errorInfo, true));
 
-		$code = $exception->getCode() ?? 500;
+		$code = $exception->getCode() == 0 ? 500 : $exception->getCode();
 
 		$logger = Snowflake::app()->logger;
 
