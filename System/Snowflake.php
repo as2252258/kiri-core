@@ -288,6 +288,30 @@ class Snowflake
 
 
 	/**
+	 * @param $v1
+	 * @param $v2
+	 * @return float
+	 */
+	public static function distance(array $v1, array $v2): float
+	{
+		$maxX = max($v1['x'], $v2['x']);
+		$minX = min($v1['x'], $v2['x']);
+
+		$maxZ = max($v1['z'], $v2['z']);
+		$minZ = min($v1['z'], $v2['z']);
+
+		$dx = abs($maxX - $minX);
+		$dy = abs($maxZ - $minZ);
+
+		$sqrt = sqrt($dx * $dx + $dy * $dy);
+		if ($sqrt < 0) {
+			$sqrt = abs($sqrt);
+		}
+		return (float)$sqrt;
+	}
+
+
+	/**
 	 * @param $process
 	 */
 	public static function shutdown($process): void
