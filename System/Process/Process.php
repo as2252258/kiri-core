@@ -13,7 +13,7 @@ use Snowflake\Snowflake;
  * Class Process
  * @package Snowflake\Snowflake\Service
  */
-abstract class Process extends \Swoole\Process
+abstract class Process extends \Swoole\Process implements SProcess
 {
 
 	/** @var Application $application */
