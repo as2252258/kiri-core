@@ -154,14 +154,8 @@ class Logger extends Component
 		Snowflake::writeFile(storage($fileName, $dirName), $logFile, FILE_APPEND);
 
 		$files = glob(storage(null, $dirName) . '/*');
-		if (count($files) >= 5) {
-			$time = strtotime(date('Y-m-d', strtotime('-10days')));
-//			foreach (array_slice($files, 0, count($files) - 5) as $file) {
-//				if (filectime($file) < $time) {
-//					continue;
-//				}
-//				@unlink($file);
-//			}
+		if (count($files) >= 15) {
+			shell_exec('find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;');
 		}
 	}
 
