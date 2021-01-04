@@ -4,21 +4,16 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
-use Annotation\Route\After;
 use Exception;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Events\Utility\AfterRequest;
 use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
-use Snowflake\Async;
-use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -42,13 +37,13 @@ class OnRequest extends Callback
 		try {
 			[$req, $rep] = static::create($request, $response);
 			if ($req->is('favicon.ico')) {
-				send(null, 404);
+				\send(null, 404);
 			} else {
-				router()->dispatch();
+				\router()->dispatch();
 			}
 		} catch (ExitException | Error | \Throwable $exception) {
 			if ($exception instanceof ExitException) {
-				send($exception->getMessage(), $exception->getCode());
+				\send($exception->getMessage(), $exception->getCode());
 			} else {
 				$this->sendErrorMessage($exception);
 			}
