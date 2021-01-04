@@ -235,7 +235,7 @@ class Connection extends Pool
 			if (!empty($charset)) {
 				$link->query('SET NAMES ' . $charset);
 			}
-			$this->success('create db client -> ' . $cds . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
+			$this->success('create db client -> ' . $cds . ':' . env('workerId', 0));
 			$this->incr($coroutineName);
 			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 				$number > 0 && $link->beginTransaction();

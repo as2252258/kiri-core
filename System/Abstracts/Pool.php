@@ -108,6 +108,9 @@ abstract class Pool extends Component
 	 */
 	public function createConnect(array $config, string $coroutineName, callable $createHandler): void
 	{
+		if ($this->size($coroutineName) > 0) {
+			return;
+		}
 		if (Context::hasContext('create:connect:' . $coroutineName)) {
 			return;
 		}

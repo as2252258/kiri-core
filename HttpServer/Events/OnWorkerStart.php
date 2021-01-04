@@ -34,6 +34,8 @@ class OnWorkerStart extends Callback
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
 		}
+
+		putenv('workerId=' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
 			return;
@@ -65,7 +67,7 @@ class OnWorkerStart extends Callback
 	 */
 	private function get_process_name($socket, $worker_id): string
 	{
-		$prefix = rtrim(Config::get('id',false, 'system:'), ':');
+		$prefix = rtrim(Config::get('id', false, 'system:'), ':');
 		if ($worker_id >= $socket->setting['worker_num']) {
 			return $prefix . ': Task: No.' . $worker_id;
 		} else {
