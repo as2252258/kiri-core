@@ -7,6 +7,7 @@ namespace Snowflake\Process;
 
 use Exception;
 use Snowflake\Application;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 
 /**
@@ -31,6 +32,7 @@ abstract class Process extends \Swoole\Process implements SProcess
 	{
 		$class = get_called_class();
 		parent::__construct(function ($process) use ($name, $class) {
+			fire(Event::SERVER_WORKER_START);
 			if (Snowflake::isLinux()) {
 				$prefix = ucfirst(rtrim(Snowflake::app()->id, ':'));
 				$this->name($prefix . ': ' . $class);
