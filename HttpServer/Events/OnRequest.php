@@ -36,7 +36,26 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
-		$this->onRequest($request, $response);
+		Coroutine::defer([$this, 'onAfter']);
+		try {
+			/** @var HRequest $sRequest */
+			[$sRequest, $sResponse] = $this->create($request, $response);
+			if ($sRequest->is('favicon.ico')) {
+				$sResponse->send($sRequest->isNotFound(), 200);
+			} else {
+				Snowflake::app()->getRouter()->dispatch();
+			}
+		} catch (ExitException $exception) {
+			send($exception->getMessage(), $exception->getCode());
+		} catch (Error | \Throwable $exception) {
+			$this->sendErrorMessage($exception);
+		} finally {
+			$logger = Snowflake::app()->getLogger();
+
+			$request = get_object_vars($request);
+
+			$logger->write(Json::encode($request), 'request');
+		}
 	}
 
 
@@ -46,36 +65,6 @@ class OnRequest extends Callback
 	public function onAfter()
 	{
 		fire(Event::EVENT_AFTER_REQUEST);
-	}
-
-	/**
-	 * @param Request $request
-	 * @param Response $response
-	 * @return mixed
-	 * @throws
-	 */
-	public function onRequest(Request $request, Response $response): mixed
-	{
-		Coroutine::defer([$this, 'onAfter']);
-		try {
-			/** @var HRequest $sRequest */
-			[$sRequest, $sResponse] = $this->create($request, $response);
-			if ($sRequest->is('favicon.ico')) {
-				return $sResponse->send($sRequest->isNotFound(), 200);
-			} else {
-				return Snowflake::app()->getRouter()->dispatch();
-			}
-		} catch (ExitException $exception) {
-			return send($exception->getMessage(), $exception->getCode());
-		} catch (Error | \Throwable $exception) {
-			return $this->sendErrorMessage($exception);
-		} finally {
-			$logger = Snowflake::app()->getLogger();
-
-			$request = get_object_vars($request);
-
-			$logger->write(Json::encode($request), 'request');
-		}
 	}
 
 

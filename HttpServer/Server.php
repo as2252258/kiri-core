@@ -319,6 +319,7 @@ class Server extends Application
 	 * @return \Swoole\Server|Packet|Receive|Http|Websocket|null
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
 	{
