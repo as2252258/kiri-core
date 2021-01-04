@@ -173,6 +173,7 @@ class BaseObject implements Configure
 	 */
 	public function error(mixed $message, $method = null, $file = null)
 	{
+		var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
 		if (!empty($file)) {
 			echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . "\033[0m";
 			echo PHP_EOL;
