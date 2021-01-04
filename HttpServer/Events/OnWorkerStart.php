@@ -35,6 +35,7 @@ class OnWorkerStart extends Callback
 			swoole_set_process_name($get_name);
 		}
 		if ($worker_id >= $server->setting['worker_num']) {
+			fire(Event::SERVER_TASK_START);
 			return;
 		}
 		Snowflake::setWorkerId($server->worker_pid);
