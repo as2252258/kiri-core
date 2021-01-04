@@ -413,7 +413,7 @@ class Connection extends Pool
 	public function desc(string $name)
 	{
 		if (!isset($this->hasCreate[$name])) {
-			return;
+			$this->hasCreate[$name] = 0;
 		}
 		$this->hasCreate[$name] -= 1;
 	}
