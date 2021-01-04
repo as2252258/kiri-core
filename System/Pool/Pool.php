@@ -11,8 +11,8 @@ use Snowflake\Snowflake;
 /**
  * Class Pool
  * @package Snowflake\Pool
- * @property $redis
- * @property $db
+ * @property Redis $redis
+ * @property Connection $db
  * @property $memcached
  */
 class Pool extends \Snowflake\Abstracts\Pool
