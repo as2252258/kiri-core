@@ -153,7 +153,9 @@ abstract class Pool extends Component
 	 */
 	public function push(string $name, mixed $client)
 	{
-		$this->_items[$name]->push([time(), $client]);
+		if (!$this->_items[$name]->isFull()) {
+			$this->_items[$name]->push([time(), $client]);
+		}
 		unset($client);
 	}
 

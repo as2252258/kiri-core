@@ -57,7 +57,7 @@ class Redis extends Pool
 	 */
 	public function getByChannel($coroutineName, $config): mixed
 	{
-		if ($this->_create < $this->max && !$this->hasItem($coroutineName)) {
+		if (!$this->hasItem($coroutineName)) {
 			$this->newClient($config, $coroutineName);
 		}
 		[$time, $clients] = $this->get($coroutineName);
