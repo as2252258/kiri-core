@@ -408,13 +408,13 @@ class Connection extends Pool
 	}
 
 	/**
-	 * @param string $coroutineName
+	 * @param string $name
 	 */
-	public function desc(string $coroutineName)
+	public function desc(string $name)
 	{
-		if (!isset($this->hasCreate[$coroutineName])) {
-			$this->hasCreate[$coroutineName] = 0;
+		if (!isset($this->hasCreate[$name])) {
+			return;
 		}
-		$this->hasCreate[$coroutineName] -= 1;
+		$this->hasCreate[$name] -= 1;
 	}
 }
