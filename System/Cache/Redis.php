@@ -47,20 +47,14 @@ class Redis extends Component
 	 */
 	public function createPool()
 	{
-		try {
-			$connections = Snowflake::app()->pool->redis;
+		$connections = Snowflake::app()->pool->redis;
 
-			$config = $this->get_config();
-			$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
+		$config = $this->get_config();
+		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 
-			$length = env('REDIS.POOL_LENGTH', 100);
+		$length = env('REDIS.POOL_LENGTH', 100);
 
-			$connections->initConnections('redis:' . $name, true, $length);
-		} catch (\Throwable $exception) {
-			var_dump($exception->getMessage());
-			var_dump($exception->getFile());
-			var_dump($exception->getLine());
-		}
+		$connections->initConnections('redis:' . $name, true, $length);
 	}
 
 

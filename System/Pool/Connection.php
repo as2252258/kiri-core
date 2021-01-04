@@ -36,14 +36,20 @@ class Connection extends Pool
 	 */
 	public function Heartbeat_detection($timer)
 	{
-		$this->creates = $timer;
-		if ($this->lastTime == 0) {
-			return;
-		}
-		if ($this->lastTime + 600 < time()) {
-			$this->flush(0);
-		} else if ($this->lastTime + 300 < time()) {
-			$this->flush(2);
+		try {
+			$this->creates = $timer;
+			if ($this->lastTime == 0) {
+				return;
+			}
+			if ($this->lastTime + 600 < time()) {
+				$this->flush(0);
+			} else if ($this->lastTime + 300 < time()) {
+				$this->flush(2);
+			}
+		} catch (\Throwable $exception) {
+			var_dump($exception->getMessage());
+			var_dump($exception->getFile());
+			var_dump($exception->getLine());
 		}
 	}
 
