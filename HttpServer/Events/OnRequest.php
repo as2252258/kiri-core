@@ -36,12 +36,17 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
-		Coroutine::defer(function () {
-			fire(Event::EVENT_AFTER_REQUEST);
-		});
 		$this->onRequest($request, $response);
 	}
 
+
+	/**
+	 * @throws ComponentException
+	 */
+	public function onAfter()
+	{
+		fire(Event::EVENT_AFTER_REQUEST);
+	}
 
 	/**
 	 * @param Request $request
@@ -51,6 +56,7 @@ class OnRequest extends Callback
 	 */
 	public function onRequest(Request $request, Response $response): mixed
 	{
+		Coroutine::defer([$this, 'onAfter']);
 		try {
 			/** @var HRequest $sRequest */
 			[$sRequest, $sResponse] = $this->create($request, $response);
