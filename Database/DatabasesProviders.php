@@ -7,6 +7,7 @@ namespace Database;
 use Exception;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
+use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Snowflake\Abstracts\Config;
@@ -26,6 +27,9 @@ class DatabasesProviders extends Providers
 	public function onImport(Application $application)
 	{
 		$application->set('db', $this);
+
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 	}
 
 

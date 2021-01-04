@@ -38,7 +38,24 @@ class Redis extends Component
 		$event = Snowflake::app()->event;
 		$event->on(Event::RELEASE_ALL, [$this, 'destroy']);
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'release']);
+		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 	}
+
+
+	/**
+	 * @throws ConfigException
+	 */
+	public function createPool()
+	{
+		$connections = Snowflake::app()->pool->redis;
+
+		$config = $this->get_config();
+		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
+
+		$connections->initConnections('redis:' . $name, true);
+		$connections->setLength(env('REDIS.POOL_LENGTH', 100));
+	}
+
 
 	/**
 	 * @param $name
@@ -117,13 +134,7 @@ SCRIPT;
 	{
 		$connections = Snowflake::app()->pool->redis;
 
-		$config = $this->get_config();
-		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-
-		$connections->initConnections('redis:' . $name, true);
-		$connections->setLength(env('REDIS.POOL_LENGTH', 100));
-
-		$client = $connections->getConnection($config, true);
+		$client = $connections->getConnection($this->get_config(), true);
 		if (!($client instanceof \Redis)) {
 			throw new Exception('Redis connections more.');
 		}
