@@ -210,7 +210,7 @@ class Connection extends Pool
 			$this->newClient($config, $coroutineName);
 		}
 		[$time, $connections] = $this->get($coroutineName);
-		if ($connections instanceof PDO) {
+		if (!($connections instanceof PDO)) {
 			throw new Exception('Database exception.');
 		}
 		return Context::setContext($coroutineName, $connections);
