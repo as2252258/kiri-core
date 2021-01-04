@@ -44,7 +44,7 @@ abstract class Pool extends Component
 	 */
 	protected function get($name): array
 	{
-		[$timeout, $connection] = $this->_items[$name]->pop();
+		[$timeout, $connection] = $this->_items[$name]->pop(30);
 		if (!$this->checkCanUse($name, $timeout, $connection)) {
 			unset($client);
 			return [0, null];
