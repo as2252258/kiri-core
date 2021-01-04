@@ -19,6 +19,10 @@ use Exception;
 class Redis extends Pool
 {
 
+
+	private int $_create = 0;
+
+
 	/**
 	 * @param $value
 	 */
@@ -32,7 +36,6 @@ class Redis extends Pool
 	 * @param array $config
 	 * @param bool $isMaster
 	 * @return mixed
-	 * @throws RedisConnectException
 	 * @throws Exception
 	 */
 	public function getConnection(array $config, $isMaster = false): mixed
@@ -41,8 +44,6 @@ class Redis extends Pool
 		$coroutineName = $this->name('redis:' . $name, $isMaster);
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
-		} else if (!$this->hasItem($coroutineName)) {
-			return $this->saveClient($coroutineName, $this->createConnect($config, $coroutineName));
 		}
 		return $this->getByChannel($coroutineName, $config);
 	}
@@ -56,14 +57,14 @@ class Redis extends Pool
 	 */
 	public function getByChannel($coroutineName, $config): mixed
 	{
-		if (!$this->hasItem($coroutineName)) {
-			return $this->saveClient($coroutineName, $this->createConnect($config, $coroutineName));
+		if ($this->_create < $this->max && !$this->hasItem($coroutineName)) {
+			$this->createConnect($config, $coroutineName);
 		}
-		$clients = $this->get($coroutineName);
-		if ($clients[1] === null) {
+		[$time, $clients] = $this->get($coroutineName);
+		if ($clients === null) {
 			return $this->getByChannel($coroutineName, $config);
 		}
-		return $this->saveClient($coroutineName, $clients[1]);
+		return $this->saveClient($coroutineName, $clients);
 	}
 
 
@@ -82,26 +83,41 @@ class Redis extends Pool
 	/**
 	 * @param array $config
 	 * @param string $coroutineName
-	 * @return SRedis
-	 * @throws RedisConnectException
+	 * @throws Exception
 	 */
-	private function createConnect(array $config, string $coroutineName): SRedis
+	private function createConnect(array $config, string $coroutineName): void
 	{
-		$redis = new SRedis();
-		if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
-			throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
+		try {
+			if ($this->_create >= $this->max) {
+				return;
+			}
+			$this->_create += 1;
+			if (Context::hasContext('at_create_db')) {
+				return;
+			}
+			Context::setContext('at_create_db', 1);
+			$redis = new SRedis();
+			if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
+				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
+			}
+			if (empty($config['auth']) || !$redis->auth($config['auth'])) {
+				throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
+			}
+			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
+			if (!isset($config['read_timeout'])) {
+				$config['read_timeout'] = 10;
+			}
+			$redis->select($config['databases']);
+			$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
+			$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
+
+			$this->push($coroutineName, $redis);
+		} catch (\Throwable $exception) {
+			$this->addError($exception->getMessage());
+		} finally {
+			Context::deleteId('at_create_db');
 		}
-		if (empty($config['auth']) || !$redis->auth($config['auth'])) {
-			throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
-		}
-		$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
-		if (!isset($config['read_timeout'])) {
-			$config['read_timeout'] = 10;
-		}
-		$redis->select($config['databases']);
-		$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
-		$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
-		return $redis;
+
 	}
 
 	/**
@@ -130,6 +146,9 @@ class Redis extends Pool
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
+
+		$this->_create -= 1;
+
 		$this->remove($coroutineName);
 		$this->clean($coroutineName);
 	}
@@ -171,9 +190,12 @@ class Redis extends Pool
 		}
 	}
 
+	/**
+	 * @param string $name
+	 */
 	public function desc(string $name)
 	{
-		// TODO: Implement desc() method.
+		$this->_create -= 1;
 	}
 
 

@@ -36,20 +36,14 @@ class Connection extends Pool
 	 */
 	public function Heartbeat_detection($timer)
 	{
-		try {
-			$this->creates = $timer;
-			if ($this->lastTime == 0) {
-				return;
-			}
-			if ($this->lastTime + 600 < time()) {
-				$this->flush(0);
-			} else if ($this->lastTime + 300 < time()) {
-				$this->flush(2);
-			}
-		} catch (\Throwable $exception) {
-			var_dump($exception->getMessage());
-			var_dump($exception->getFile());
-			var_dump($exception->getLine());
+		$this->creates = $timer;
+		if ($this->lastTime == 0) {
+			return;
+		}
+		if ($this->lastTime + 600 < time()) {
+			$this->flush(0);
+		} else if ($this->lastTime + 300 < time()) {
+			$this->flush(2);
 		}
 	}
 
@@ -242,7 +236,9 @@ class Connection extends Pool
 	 */
 	private function nowClient($coroutineName, $config): PDO
 	{
-		$client = $this->createConnect($coroutineName, ...$this->parseConfig($config));
+
+		$this->createConnect($coroutineName, ...$this->parseConfig($config));
+		[$time, $client] = $this->get($coroutineName);
 		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 			$number > 0 && $client->beginTransaction();
 		}
@@ -361,12 +357,15 @@ class Connection extends Pool
 	 * @param $username
 	 * @param $password
 	 * @param string $charset
-	 * @return PDO
 	 * @throws Exception
 	 */
-	public function createConnect($coroutineName, $cds, $username, $password, $charset = 'utf8mb4'): PDO
+	public function createConnect($coroutineName, $cds, $username, $password, $charset = 'utf8mb4'): void
 	{
 		try {
+			if (Context::hasContext('at_create_db')) {
+				return;
+			}
+			Context::setContext('at_create_db',1);
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
 				PDO::ATTR_CASE             => PDO::CASE_NATURAL,
@@ -380,13 +379,15 @@ class Connection extends Pool
 			}
 			$this->success('create db client -> ' . $cds . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
 			$this->incr($coroutineName);
-			return $link;
+			$this->push($coroutineName, $link);
 		} catch (\Throwable $exception) {
 			$this->addError($cds . '  ->  ' . $exception->getMessage());
 			if ($exception->getCode() === 2006) {
-				return $this->createConnect($coroutineName, $cds, $username, $password, $charset);
+				$this->createConnect($coroutineName, $cds, $username, $password, $charset);
 			}
 			throw new Exception($exception->getMessage());
+		} finally {
+			Context::deleteId('at_create_db');
 		}
 	}
 
