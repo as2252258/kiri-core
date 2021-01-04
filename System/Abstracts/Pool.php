@@ -6,6 +6,7 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 
+use HttpServer\Http\Context;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
@@ -98,6 +99,27 @@ abstract class Pool extends Component
 	{
 		throw new Exception('Undefined system processing function.');
 	}
+
+
+	/**
+	 * @param array $config
+	 * @param string $coroutineName
+	 * @param callable $createHandler
+	 */
+	public function createConnect(array $config, string $coroutineName, callable $createHandler): void
+	{
+		if (Context::hasContext('create:connect:' . $coroutineName)) {
+			return;
+		}
+		Context::setContext('create:connect:' . $coroutineName, 1);
+
+		$client = call_user_func($createHandler, ...$config);
+
+		$this->push($coroutineName, $client);
+
+		Context::deleteId('create:connect:' . $coroutineName);
+	}
+
 
 	/**
 	 * @param $name
