@@ -31,7 +31,9 @@ class OnMessage extends Callback
 			if ($frame->opcode == 0x08) {
 				return;
 			}
-			Coroutine::defer(fn() => fire(Event::EVENT_AFTER_REQUEST));
+			Coroutine::defer(function () {
+				fire(Event::EVENT_AFTER_REQUEST);
+			});
 
 			$event = Snowflake::app()->getEvent();
 			$content = $this->resolve($event, $frame, $server);
