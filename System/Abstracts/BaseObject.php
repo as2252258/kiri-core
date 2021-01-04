@@ -92,6 +92,7 @@ class BaseObject implements Configure
 	 */
 	public function addError($message, $model = 'app'): bool
 	{
+		var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
 		if ($message instanceof \Throwable) {
 			$this->error($message->getMessage(), $message->getFile(), $message->getLine());
 		} else {
