@@ -8,6 +8,7 @@ use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\WebSocket\Frame;
@@ -27,18 +28,14 @@ class OnMessage extends Callback
 	 */
 	public function onHandler(Server $server, Frame $frame)
 	{
+		Coroutine::defer([$this, 'onAfter']);
 		try {
-			if ($frame->opcode == 0x08) {
-				return;
-			}
-			Coroutine::defer(function () {
-				fire(Event::EVENT_AFTER_REQUEST);
-			});
-
-			$event = Snowflake::app()->getEvent();
-			$content = $this->resolve($event, $frame, $server);
-			if (!empty($content)) {
-				$server->send($frame->fd, $content);
+			if ($frame->opcode != 0x08) {
+				$event = Snowflake::app()->getEvent();
+				$content = $this->resolve($event, $frame, $server);
+				if (!empty($content)) {
+					$server->send($frame->fd, $content);
+				}
 			}
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage(), 'websocket');
@@ -46,6 +43,15 @@ class OnMessage extends Callback
 		} finally {
 			logger()->insert();
 		}
+	}
+
+
+	/**
+	 * @throws ComponentException
+	 */
+	public function onAfter()
+	{
+		fire(Event::EVENT_AFTER_REQUEST);
 	}
 
 	/**
