@@ -23,6 +23,7 @@ use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
 use Kafka\Producer;
 use Annotation\Annotation as SAnnotation;
+use Snowflake\Async;
 use Snowflake\Cache\Redis;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
@@ -46,6 +47,7 @@ use Database\DatabasesProviders;
  * @property \Redis|Redis $redis
  * @property Server $server
  * @property DatabasesProviders $db
+ * @property Async $async
  * @property Connection $connections
  * @property Logger $logger
  * @property Jwt $jwt
@@ -392,6 +394,16 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return Async
+	 * @throws ComponentException
+	 */
+	public function getAsync(): Async
+	{
+		return $this->get('async');
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	protected function moreComponents(): void
@@ -410,6 +422,7 @@ abstract class BaseApplication extends Service
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
+			'async'             => ['class' => Async::class],
 			'goto'              => ['class' => BaseGoto::class],
 			'http2'             => ['class' => Http2::class],
 		]);

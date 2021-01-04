@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Annotation\Route\After;
 use Exception;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Events\Utility\AfterRequest;
 use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
+use Snowflake\Async;
 use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
@@ -36,35 +39,22 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response)
 	{
-		Coroutine::defer([$this, 'onAfter']);
 		try {
-			/** @var HRequest $sRequest */
-			[$sRequest, $sResponse] = $this->create($request, $response);
-			if ($sRequest->is('favicon.ico')) {
-				$sResponse->send($sRequest->isNotFound(), 200);
+			[$req, $rep] = static::create($request, $response);
+			if ($req->is('favicon.ico')) {
+				send(null, 404);
 			} else {
-				Snowflake::app()->getRouter()->dispatch();
+				router()->dispatch();
 			}
-		} catch (ExitException $exception) {
-			send($exception->getMessage(), $exception->getCode());
-		} catch (Error | \Throwable $exception) {
-			$this->sendErrorMessage($exception);
+		} catch (ExitException | Error | \Throwable $exception) {
+			if ($exception instanceof ExitException) {
+				send($exception->getMessage(), $exception->getCode());
+			} else {
+				$this->sendErrorMessage($exception);
+			}
 		} finally {
-			$logger = Snowflake::app()->getLogger();
-
-			$request = get_object_vars($request);
-
-			$logger->write(Json::encode($request), 'request');
+			$this->onAfter();
 		}
-	}
-
-
-	/**
-	 * @throws ComponentException
-	 */
-	public function onAfter()
-	{
-		fire(Event::EVENT_AFTER_REQUEST);
 	}
 
 
@@ -75,9 +65,18 @@ class OnRequest extends Callback
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function create($request, $response): array
+	public static function create($request, $response): array
 	{
 		return [HRequest::create($request), HResponse::create($response)];
+	}
+
+
+	/**
+	 * @throws ComponentException
+	 */
+	public function onAfter()
+	{
+		fire(Event::EVENT_AFTER_REQUEST);
 	}
 
 
