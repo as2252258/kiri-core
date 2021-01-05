@@ -7,6 +7,8 @@ namespace Snowflake\Abstracts;
 use Exception;
 
 use HttpServer\Http\Context;
+use PDO;
+use Redis;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
@@ -105,22 +107,24 @@ abstract class Pool extends Component
 	 * @param array $config
 	 * @param string $coroutineName
 	 * @param callable $createHandler
+	 * @return PDO|Redis|null
+	 * @throws Exception
 	 */
-	public function createConnect(array $config, string $coroutineName, callable $createHandler): void
+	public function createConnect(array $config, string $coroutineName, callable $createHandler): PDO|Redis|null
 	{
 		if ($this->size($coroutineName) > 0) {
-			return;
+			return $this->get($coroutineName)[1];
 		}
 		if (Context::hasContext('create:connect:' . $coroutineName)) {
-			return;
+			return $this->get($coroutineName)[1];
 		}
 		Context::setContext('create:connect:' . $coroutineName, 1);
 
 		$client = call_user_func($createHandler, ...$config);
 
-		$this->push($coroutineName, $client);
-
 		Context::deleteId('create:connect:' . $coroutineName);
+
+		return $client;
 	}
 
 

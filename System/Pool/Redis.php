@@ -58,19 +58,26 @@ class Redis extends Pool
 	public function getByChannel($coroutineName, $config): mixed
 	{
 		if (!$this->hasItem($coroutineName)) {
-			$this->newClient($config, $coroutineName);
-		}
-		[$time, $clients] = $this->get($coroutineName);
-		if ($clients === null) {
-			return $this->getByChannel($coroutineName, $config);
+			$clients = $this->newClient($config, $coroutineName);
+		} else {
+			[$time, $clients] = $this->get($coroutineName);
+			if ($clients === null) {
+				return $this->getByChannel($coroutineName, $config);
+			}
 		}
 		return $this->saveClient($coroutineName, $clients);
 	}
 
 
-	private function newClient($config, $coroutineName)
+	/**
+	 * @param $config
+	 * @param $coroutineName
+	 * @return SRedis|null
+	 * @throws Exception
+	 */
+	private function newClient($config, $coroutineName): \Redis|null
 	{
-		$this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
+		return $this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
 			$redis = new SRedis();
 			if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));

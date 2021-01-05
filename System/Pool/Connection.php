@@ -207,11 +207,12 @@ class Connection extends Pool
 			return Context::getContext($coroutineName);
 		}
 		if ($this->size($coroutineName) < 1) {
-			$this->newClient($config, $coroutineName);
-		}
-		[$time, $connections] = $this->get($coroutineName);
-		if (!($connections instanceof PDO)) {
-			throw new Exception('Database exception.');
+			$connections = $this->newClient($config, $coroutineName);
+		} else {
+			[$time, $connections] = $this->get($coroutineName);
+			if (!($connections instanceof PDO)) {
+				throw new Exception('Database exception.');
+			}
 		}
 		return Context::setContext($coroutineName, $connections);
 	}
@@ -220,10 +221,12 @@ class Connection extends Pool
 	/**
 	 * @param $config
 	 * @param $coroutineName
+	 * @return PDO|null
+	 * @throws Exception
 	 */
-	private function newClient($config, $coroutineName)
+	private function newClient($config, $coroutineName): PDO|null
 	{
-		$this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
+		return $this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
 				PDO::ATTR_CASE             => PDO::CASE_NATURAL,
