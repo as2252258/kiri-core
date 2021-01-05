@@ -8,6 +8,9 @@ interface SProcess
 {
 
 
-	public function onHandler(\Swoole\Process $process);
+	/**
+	 * @param \Swoole\Process $process
+	 */
+	public function onHandler(\Swoole\Process $process): void;
 
 }

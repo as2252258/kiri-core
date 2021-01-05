@@ -36,7 +36,7 @@ class ServerInotify extends Process
 	 * @param \Swoole\Process $process
 	 * @throws Exception
 	 */
-	public function onHandler(\Swoole\Process $process)
+	public function onHandler(\Swoole\Process $process): void
 	{
 		set_error_handler([$this, 'onErrorHandler']);
 		$this->dirs = Config::get('inotify', false, [APP_PATH]);
