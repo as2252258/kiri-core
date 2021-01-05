@@ -34,7 +34,7 @@ class Kafka extends \Snowflake\Process\Process
 	 * @param Process $process
 	 * @throws \Exception
 	 */
-	public function onHandler(Process $process)
+	public function onHandler(Process $process): void
 	{
 		$this->channelListener();
 
