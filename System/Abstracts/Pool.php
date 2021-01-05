@@ -120,11 +120,11 @@ abstract class Pool extends Component
 		}
 		Context::setContext('create:connect:' . $coroutineName, 1);
 
-		$client = call_user_func($createHandler, ...$config);
+		$this->push($coroutineName, call_user_func($createHandler, ...$config));
 
 		Context::deleteId('create:connect:' . $coroutineName);
 
-		return $client;
+		return $this->get($coroutineName)[1];
 	}
 
 
