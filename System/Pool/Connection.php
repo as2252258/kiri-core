@@ -226,6 +226,7 @@ class Connection extends Pool
 	 */
 	private function newClient($config, $coroutineName): PDO|null
 	{
+		$this->printClients($config['cds'], $coroutineName, true);
 		return $this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
@@ -238,7 +239,7 @@ class Connection extends Pool
 			if (!empty($charset)) {
 				$link->query('SET NAMES ' . $charset);
 			}
-			$this->success('create client[address: ' . $cds . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->hasCreate[$coroutineName] . ']');
+			$this->printClients($cds, $coroutineName);
 			$this->incr($coroutineName);
 			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 				$number > 0 && $link->beginTransaction();
@@ -253,11 +254,23 @@ class Connection extends Pool
 
 	/**
 	 * @param $config
+	 * @param $name
 	 * @return array
 	 */
 	private function parseConfig($config, $name): array
 	{
 		return [$config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4', $name];
+	}
+
+
+	/**
+	 * @param $cds
+	 * @param $coroutineName
+	 * @param false $isBefore
+	 */
+	public function printClients($cds, $coroutineName, $isBefore = false)
+	{
+		$this->success(($isBefore ? 'before ' : '') . 'create client[address: ' . $cds . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->hasCreate[$coroutineName] . ']');
 	}
 
 
