@@ -239,7 +239,6 @@ class Connection extends Pool
 			if (!empty($charset)) {
 				$link->query('SET NAMES ' . $charset);
 			}
-			$this->printClients($cds, $coroutineName);
 			$this->incr($coroutineName);
 			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 				$number > 0 && $link->beginTransaction();
