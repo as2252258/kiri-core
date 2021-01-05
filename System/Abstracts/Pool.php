@@ -166,6 +166,7 @@ abstract class Pool extends Component
 
 	/**
 	 * @param string $name
+	 * @throws Exception
 	 */
 	public function clean(string $name)
 	{
@@ -175,6 +176,8 @@ abstract class Pool extends Component
 		$channel = $this->_items[$name];
 		while ([$time, $client] = $channel->pop(0.001)) {
 			unset($client);
+
+			$this->desc($name);
 		}
 	}
 

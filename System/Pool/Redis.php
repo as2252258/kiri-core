@@ -137,7 +137,7 @@ class Redis extends Pool
 			return;
 		}
 
-		$this->_create -= 1;
+		$this->desc($coroutineName);
 
 		$this->remove($coroutineName);
 		$this->clean($coroutineName);
