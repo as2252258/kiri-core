@@ -128,6 +128,7 @@ class Redis extends Pool
 	/**
 	 * @param array $config
 	 * @param bool $isMaster
+	 * @throws Exception
 	 */
 	public function destroy(array $config, $isMaster = false)
 	{

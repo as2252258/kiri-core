@@ -355,52 +355,7 @@ class Connection extends Pool
 
 	/**
 	 * @param $coroutineName
-	 * @param $cds
-	 * @param $username
-	 * @param $password
-	 * @param string $charset
 	 * @throws Exception
-	 */
-//	public function createConnect($coroutineName, $cds, $username, $password, $charset = 'utf8mb4'): void
-//	{
-//		try {
-//			if (Context::hasContext('at_create_db')) {
-//				return;
-//			}
-//			Context::setContext('at_create_db', 1);
-//			$link = new PDO($cds, $username, $password, [
-//				PDO::ATTR_EMULATE_PREPARES => false,
-//				PDO::ATTR_CASE             => PDO::CASE_NATURAL,
-//				PDO::ATTR_TIMEOUT          => $this->timeout,
-//			]);
-//			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
-//			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
-//			if (!empty($charset)) {
-//				$link->query('SET NAMES ' . $charset);
-//			}
-//			$this->success('create db client -> ' . $cds . ':' . $this->hasCreate[$coroutineName] . ':' . $this->size($coroutineName));
-//			$this->incr($coroutineName);
-//			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
-//				$number > 0 && $link->beginTransaction();
-//			}
-//			if ($this->creates === 0) {
-//				$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
-//			}
-//			$this->push($coroutineName, $link);
-//		} catch (\Throwable $exception) {
-//			$this->addError($cds . '  ->  ' . $exception->getMessage());
-//			if ($exception->getCode() === 2006) {
-//				$this->createConnect($coroutineName, $cds, $username, $password, $charset);
-//			}
-//			throw new Exception($exception->getMessage());
-//		} finally {
-//			Context::deleteId('at_create_db');
-//		}
-//	}
-
-	/**
-	 * @param $coroutineName
 	 */
 	public function disconnect($coroutineName)
 	{
