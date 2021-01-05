@@ -238,6 +238,7 @@ class Connection extends Pool
 			if (!empty($charset)) {
 				$link->query('SET NAMES ' . $charset);
 			}
+			$this->success('create db client has num ' . $this->size($coroutineName) . ', has create ' . $this->hasCreate[$coroutineName]);
 			$this->success('create db client -> ' . $cds . ':' . env('workerId', 0) . ':' . Coroutine::getCid());
 			$this->incr($coroutineName);
 			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {

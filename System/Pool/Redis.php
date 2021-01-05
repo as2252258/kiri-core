@@ -85,6 +85,7 @@ class Redis extends Pool
 			if (empty($config['auth']) || !$redis->auth($config['auth'])) {
 				throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
 			}
+			$this->success('create db client has num ' . $this->size($coroutineName) . ', has create ' . $this->_create);
 			$this->success('create redis client -> ' . $config['host'] . ':' . env('workerId', 0) . ':' . Coroutine::getCid());
 			if (!isset($config['read_timeout'])) {
 				$config['read_timeout'] = 10;
@@ -109,46 +110,6 @@ class Redis extends Pool
 		return Context::setContext($coroutineName, $client);
 	}
 
-
-	/**
-	 * @param array $config
-	 * @param string $coroutineName
-	 * @throws Exception
-	 */
-//	private function createConnect(array $config, string $coroutineName): void
-//	{
-//		try {
-//			if ($this->_create >= $this->max) {
-//				return;
-//			}
-//			$this->_create += 1;
-//			if (Context::hasContext('at_create_db')) {
-//				return;
-//			}
-//			Context::setContext('at_create_db', 1);
-//			$redis = new SRedis();
-//			if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
-//				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
-//			}
-//			if (empty($config['auth']) || !$redis->auth($config['auth'])) {
-//				throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
-//			}
-//			$this->success('create redis client -> ' . $config['host'] . ':' . $this->size($coroutineName));
-//			if (!isset($config['read_timeout'])) {
-//				$config['read_timeout'] = 10;
-//			}
-//			$redis->select($config['databases']);
-//			$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
-//			$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
-//
-//			$this->push($coroutineName, $redis);
-//		} catch (\Throwable $exception) {
-//			$this->addError($exception->getMessage());
-//		} finally {
-//			Context::deleteId('at_create_db');
-//		}
-//
-//	}
 
 	/**
 	 * @param array $config
