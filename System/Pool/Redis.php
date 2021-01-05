@@ -85,7 +85,7 @@ class Redis extends Pool
 			if (empty($config['auth']) || !$redis->auth($config['auth'])) {
 				throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
 			}
-			$this->success('create client[address: ' . $config['host'] . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->_create);
+			$this->success('create client[address: ' . $config['host'] . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->_create . ']');
 			if (!isset($config['read_timeout'])) {
 				$config['read_timeout'] = 10;
 			}

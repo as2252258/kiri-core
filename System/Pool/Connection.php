@@ -238,7 +238,7 @@ class Connection extends Pool
 			if (!empty($charset)) {
 				$link->query('SET NAMES ' . $charset);
 			}
-			$this->success('create client[address: ' . $cds . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->hasCreate[$coroutineName]);
+			$this->success('create client[address: ' . $cds . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->hasCreate[$coroutineName] . ']');
 			$this->incr($coroutineName);
 			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 				$number > 0 && $link->beginTransaction();
