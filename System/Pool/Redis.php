@@ -93,6 +93,8 @@ class Redis extends Pool
 			$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
 			$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
 
+			$this->_create += 1;
+
 			return $redis;
 		});
 	}
