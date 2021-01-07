@@ -40,12 +40,12 @@ class OnRequest extends Callback
 			if ($req->is('favicon.ico')) {
 				return \send(null, 404);
 			}
-			\router()->dispatch();
+			return \router()->dispatch();
 		} catch (ExitException | Error | \Throwable $exception) {
 			if ($exception instanceof ExitException) {
 				return \send($exception->getMessage(), $exception->getCode());
 			}
-			$this->sendErrorMessage($exception);
+			return $this->sendErrorMessage($exception);
 		} finally {
 			write(Json::encode(get_object_vars($request)), 'request');
 			$this->onAfter();
