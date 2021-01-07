@@ -10,6 +10,7 @@ use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -32,22 +33,21 @@ class OnRequest extends Callback
 	 * @return void
 	 * @throws Exception
 	 */
-	public function onHandler(Request $request, Response $response)
+	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
 			[$req, $rep] = static::create($request, $response);
 			if ($req->is('favicon.ico')) {
-				\send(null, 404);
-			} else {
-				\router()->dispatch();
+				return \send(null, 404);
 			}
+			\router()->dispatch();
 		} catch (ExitException | Error | \Throwable $exception) {
 			if ($exception instanceof ExitException) {
-				\send($exception->getMessage(), $exception->getCode());
-			} else {
-				$this->sendErrorMessage($exception);
+				return \send($exception->getMessage(), $exception->getCode());
 			}
+			$this->sendErrorMessage($exception);
 		} finally {
+			write(Json::encode(get_object_vars($request)), 'request');
 			$this->onAfter();
 		}
 	}
