@@ -576,9 +576,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param $data
 	 * @param $body
-	 * @return array
+	 * @return array|string
 	 */
-	protected function resolve($data, $body): array
+	protected function resolve($data, $body): array|string
 	{
 		if (is_array($body)) {
 			return $body;
