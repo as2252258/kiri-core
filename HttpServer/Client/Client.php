@@ -81,9 +81,9 @@ class Client extends ClientAbstracts
 	private function generate_client($data, $host, $isHttps, $path): SClient
 	{
 		if ($isHttps || $this->isSSL()) {
-			$client = new SClient($host, 443, $this->isSSL());
+			$client = new SClient($host, 443, true);
 		} else {
-			$client = new SClient($host, $this->getPort(), $this->isSSL());
+			$client = new SClient($host, $this->getPort(), false);
 		}
 
 		if (strpos($path, '/') !== 0) {
@@ -94,6 +94,7 @@ class Client extends ClientAbstracts
 			$this->addHeader('User-Agent', $this->getAgent());
 		}
 
+		var_dump($this->getHeader());
 		$client->setHeaders($this->getHeader());
 		$client->setMethod(strtoupper($this->getMethod()));
 		if (strtolower($this->getMethod()) == self::GET && !empty($data)) {
