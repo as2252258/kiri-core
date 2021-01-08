@@ -47,7 +47,6 @@ class Client extends ClientAbstracts
 	private function coroutine($url, $data = []): array|string|Result
 	{
 		try {
-			var_dump($url);
 			$client = $this->generate_client($data, ...$url);
 			if ($client->statusCode < 0) {
 				throw new Exception($client->errMsg);
