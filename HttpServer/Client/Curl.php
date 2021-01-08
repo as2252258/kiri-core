@@ -72,7 +72,7 @@ class Curl extends ClientAbstracts
 	 * @return bool
 	 * @throws Exception
 	 */
-	private function curlHandlerSslSet($resource): bool
+	private function curlHandlerSslSet($resource): mixed
 	{
 		if (!empty($this->ssl_key)) {
 			if (!file_exists($this->ssl_key)) {
