@@ -95,6 +95,11 @@ class OnHandshake extends Callback
 	{
 		try {
 			$this->resolveParse($request, $response);
+			if (isset($request->get['debug']) && $request->get['debug'] == 'test') {
+				$response->status(101);
+				$response->end();
+				return true;
+			}
 
 			$router = Snowflake::app()->getRouter();
 			$node = $router->search('/' . Socket::HANDSHAKE . '::event', 'sw::socket');
