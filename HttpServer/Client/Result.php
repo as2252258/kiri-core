@@ -70,13 +70,10 @@ class Result
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return $this
 	 */
-	public function __set($name, $value): static
+	public function __set($name, $value)
 	{
 		$this->$name = $value;
-
-		return $this;
 	}
 
 	/**
