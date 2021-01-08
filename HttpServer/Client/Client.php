@@ -93,8 +93,6 @@ class Client extends ClientAbstracts
 		if (!empty($this->getAgent())) {
 			$this->addHeader('User-Agent', $this->getAgent());
 		}
-
-		var_dump($this->getHeader());
 		$client->setHeaders($this->getHeader());
 		$client->setMethod(strtoupper($this->getMethod()));
 		if (strtolower($this->getMethod()) == self::GET && !empty($data)) {
