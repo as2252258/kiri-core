@@ -20,6 +20,8 @@ use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Process\Biomonitoring;
+use Snowflake\Process\ServerInotify;
 use Snowflake\Snowflake;
 use Swoole\Process;
 use Swoole\Runtime;
@@ -63,7 +65,9 @@ class Server extends Application
 	private array $listenTypes = [];
 
 
-	private array $process = [];
+	private array $process = [
+		'biomonitoring' => Biomonitoring::class
+	];
 
 	private array $params = [];
 
@@ -71,12 +75,12 @@ class Server extends Application
 	/**
 	 * @param $name
 	 * @param $process
-	 * @param array $pramas
+	 * @param array $params
 	 */
-	public function addProcess($name, $process, $pramas = [])
+	public function addProcess($name, $process, $params = [])
 	{
 		$this->process[$name] = $process;
-		$this->params[$name] = $pramas;
+		$this->params[$name] = $params;
 	}
 
 
