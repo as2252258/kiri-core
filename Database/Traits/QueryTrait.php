@@ -727,10 +727,10 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param array|callable $conditions
+	 * @param callable|array|string $conditions
 	 * @return $this
 	 */
-	public function where(callable|array $conditions): static
+	public function where(callable|array|string $conditions): static
 	{
 		if ($conditions instanceof \Closure) {
 			call_user_func($conditions, $this);
