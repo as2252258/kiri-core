@@ -77,6 +77,18 @@ trait QueryTrait
 
 
 	/**
+	 * @param string $column
+	 * @param string $value
+	 * @return $this
+	 */
+	public function locate(string $column, string $value): static
+	{
+		$this->where[] = 'LOCATE(' . $column . ',\'' . addslashes($value) . '\')';
+		return $this;
+	}
+
+
+	/**
 	 * @param $column
 	 * @return $this
 	 */
