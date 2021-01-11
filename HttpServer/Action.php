@@ -23,7 +23,7 @@ trait Action
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function restart(\HttpServer\Server $socket)
+	public function restart(\HttpServer\Server $socket): mixed
 	{
 		$this->_shutdown($socket);
 
