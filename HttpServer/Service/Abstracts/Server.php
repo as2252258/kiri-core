@@ -33,7 +33,6 @@ trait Server
 
 	/**
 	 * @param array $settings
-	 * @return mixed|void
 	 */
 	public function set(array $settings)
 	{
