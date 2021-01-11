@@ -56,10 +56,9 @@ class Client extends ClientAbstracts
 			if (in_array($client->getStatusCode(), [200, 201])) {
 				return $this->structure($body, $data, $client->getHeaders());
 			}
-			if ($client->getStatusCode() == 302) {
-				var_dump($body, $client->getHeaders()['location']);
-				return $this->get($client->getHeaders()['location']);
-			}
+//			if ($client->getStatusCode() == 302) {
+//				return $this->get($client->getHeaders()['location']);
+//			}
 			if (is_string($body)) {
 				$message = 'Request error code ' . $client->getStatusCode();
 			} else {
