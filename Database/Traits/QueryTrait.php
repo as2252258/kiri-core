@@ -740,7 +740,6 @@ trait QueryTrait
 			}
 			$this->where[] = $conditions;
 		}
-		var_dump($this->where);
 		return $this;
 	}
 
