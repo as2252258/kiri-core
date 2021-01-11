@@ -57,6 +57,7 @@ class Client extends ClientAbstracts
 				return $this->structure($body, $data, $client->getHeaders());
 			}
 			if ($client->getStatusCode() == 302) {
+				var_dump($body, $client->getHeaders()['location']);
 				return $this->get($client->getHeaders()['location']);
 			}
 			if (is_string($body)) {
