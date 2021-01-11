@@ -82,10 +82,8 @@ class Client extends ClientAbstracts
 		if ($isHttps || $this->isSSL()) {
 			$client = new SClient($host, 443, true);
 		} else {
-			var_dump($host, $this->getPort());
 			$client = new SClient($host, $this->getPort(), false);
 		}
-
 		if (strpos($path, '/') !== 0) {
 			$path = '/' . $path;
 		}
