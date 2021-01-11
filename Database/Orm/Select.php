@@ -71,6 +71,8 @@ class Select extends BaseObject
 		}
 		$builder[] = $this->builderLimit($query);
 
+		var_dump($builder);
+
 		return implode('', $builder);
 	}
 
