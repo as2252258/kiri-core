@@ -85,14 +85,17 @@ class Result
 		if (!is_array($this->header)) {
 			return $_tmp;
 		}
-		var_dump($this->header);
 		foreach ($this->header as $key => $val) {
 			if ($key == 0) {
 				$_tmp['pro'] = $val;
 			} else {
-				$trim = explode(': ', $val);
+				if (str_contains($val, ': ')) {
+					$trim = explode(': ', $val);
 
-				$_tmp[strtolower($trim[0])] = $trim[1];
+					$_tmp[strtolower($trim[0])] = $trim[1];
+				} else {
+					$_tmp[$key] = $val;
+				}
 			}
 		}
 		return $_tmp;
