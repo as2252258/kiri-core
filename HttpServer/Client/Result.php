@@ -85,6 +85,7 @@ class Result
 		if (!is_array($this->header)) {
 			return $_tmp;
 		}
+		var_dump($this->header);
 		foreach ($this->header as $key => $val) {
 			if ($key == 0) {
 				$_tmp['pro'] = $val;
