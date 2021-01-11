@@ -51,7 +51,6 @@ class Select extends BaseObject
 		if (empty($query->from)) {
 			$query->from = $query->getTable();
 		}
-		var_dump($query->where);
 		$builder = array_filter([
 			$this->builderSelect($query->select, $isCount),
 			$this->builderFrom($query->from),

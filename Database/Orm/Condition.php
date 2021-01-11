@@ -112,10 +112,10 @@ trait Condition
 	{
 		$classMap = ConditionClassMap::$conditionMap;
 		if (isset($value[0])) {
-			$value[0] = strtoupper($value[0]);
-			if (!isset($classMap[$value[0]])) {
+			if (!isset($classMap[strtoupper($value[0])])) {
 				return $value[0];
 			}
+			$value[0] = strtoupper($value[0]);
 			$result = $this->classMap($value);
 		} else {
 			/** @var HashCondition $condition */
