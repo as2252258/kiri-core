@@ -118,21 +118,23 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	protected function handlerExecute($topic, $message)
 	{
-		try {
-			$topic = str_replace('-', '_', $topic);
+		go(function () use ($topic, $message) {
+			try {
+				$topic = str_replace('-', '_', $topic);
 
-			$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
-			if (!class_exists($namespace)) {
-				return;
+				$namespace = 'App\\Kafka\\' . ucfirst($topic) . 'Consumer';
+				if (!class_exists($namespace)) {
+					return;
+				}
+				$class = Snowflake::createObject($namespace);
+				if (!($class instanceof ConsumerInterface)) {
+					return;
+				}
+				$class->onHandler(new Struct($topic, $message));
+			} catch (Throwable $exception) {
+				$this->application->error($exception->getMessage());
 			}
-			$class = Snowflake::createObject($namespace);
-			if (!($class instanceof ConsumerInterface)) {
-				return;
-			}
-			$class->onHandler(new Struct($topic, $message));
-		} catch (Throwable $exception) {
-			$this->application->error($exception->getMessage());
-		}
+		});
 	}
 
 
