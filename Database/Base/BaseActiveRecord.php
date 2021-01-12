@@ -434,10 +434,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			return false;
 		}
 
-		$format = static::getColumns()->format();
-		$this->_attributes = array_merge($format, $this->_attributes);
 		static::getDb()->enablingTransactions();
-
 		[$attributes, $condition, $param] = $this->filtration_and_separation();
 		if (($primary = $this->getPrimary()) !== null) {
 			$condition = [$primary => $this->getPrimaryValue()];
