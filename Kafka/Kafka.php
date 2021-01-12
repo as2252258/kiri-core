@@ -52,10 +52,10 @@ class Kafka extends \Snowflake\Process\Process
 			$objRdKafka = new Consumer($config);
 			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 
-			$topic->consumeStart(0, RD_KAFKA_OFFSET_BEGINNING);
-			while (true) {
+			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+			do {
 				$this->resolve($topic, $conf['interval'] ?? 1000);
-			}
+			} while (true);
 		} catch (Throwable $exception) {
 			$this->application->error($exception->getMessage());
 		}
@@ -73,6 +73,7 @@ class Kafka extends \Snowflake\Process\Process
 			if (empty($message)) {
 				return;
 			}
+			var_dump($message->topic_name, $message);
 			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
 				$this->channel->push([$message->topic_name, $message]);
 			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
