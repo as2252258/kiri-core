@@ -21,7 +21,7 @@ interface IOrm
 	 * @param null $db
 	 * @return ActiveRecord
 	 */
-	public static function findOne($param, $db = NULL): static;
+	public static function findOne($param, $db = NULL): mixed;
 
 
     /**
