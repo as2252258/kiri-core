@@ -228,6 +228,9 @@ class Node extends Application
 			$handler = [$handler];
 		}
 		foreach ($handler as $closure) {
+			if (in_array($closure, $this->_interceptors)) {
+				continue;
+			}
 			$this->_interceptors[] = $closure;
 		}
 	}
@@ -243,6 +246,9 @@ class Node extends Application
 			$handler = [$handler];
 		}
 		foreach ($handler as $closure) {
+			if (in_array($closure, $this->_after)) {
+				continue;
+			}
 			$this->_after[] = $closure;
 		}
 	}
@@ -258,6 +264,9 @@ class Node extends Application
 			$handler = [$handler];
 		}
 		foreach ($handler as $closure) {
+			if (in_array($closure, $this->_limits)) {
+				continue;
+			}
 			$this->_limits[] = $closure;
 		}
 	}
@@ -403,6 +412,9 @@ class Node extends Application
 			$class = [$class];
 		}
 		foreach ($class as $closure) {
+			if (in_array($closure, $this->middleware)) {
+				continue;
+			}
 			$this->middleware[] = $closure;
 		}
 	}
