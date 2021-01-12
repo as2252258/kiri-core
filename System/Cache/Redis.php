@@ -13,6 +13,7 @@ use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -121,10 +122,11 @@ SCRIPT;
 	/**
 	 * 销毁连接池
 	 * @throws ConfigException
+	 * @throws ComponentException
 	 */
 	public function destroy()
 	{
-		$connections = Snowflake::app()->pool->redis;
+		$connections = Snowflake::app()->getPool()->getRedis();
 		$connections->destroy($this->get_config(), true);
 	}
 
@@ -134,7 +136,7 @@ SCRIPT;
 	 */
 	public function proxy(): \Redis
 	{
-		$connections = Snowflake::app()->pool->redis;
+		$connections = Snowflake::app()->getPool()->getRedis();
 
 		$client = $connections->getConnection($this->get_config(), true);
 		if (!($client instanceof \Redis)) {

@@ -296,10 +296,10 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Pool
+	 * @return SPool
 	 * @throws ComponentException
 	 */
-	public function getPool(): Pool
+	public function getPool(): SPool
 	{
 		return $this->get('pool');
 	}

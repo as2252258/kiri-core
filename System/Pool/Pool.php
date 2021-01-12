@@ -6,6 +6,7 @@ namespace Snowflake\Pool;
 
 
 
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -20,18 +21,20 @@ class Pool extends \Snowflake\Abstracts\Pool
 
 	/**
 	 * @return Redis
+	 * @throws ComponentException
 	 */
 	public function getRedis(): Redis
 	{
-		return Snowflake::app()->redis_connections;
+		return Snowflake::app()->get('redis_connections');
 	}
 
 	/**
 	 * @return Connection
+	 * @throws ComponentException
 	 */
 	public function getDb(): Connection
 	{
-		return Snowflake::app()->connections;
+		return Snowflake::app()->get('connections');
 	}
 
 
