@@ -52,7 +52,7 @@ class Kafka extends \Snowflake\Process\Process
 			$objRdKafka = new Consumer($config);
 			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 
-			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+			$topic->consumeStart(0, RD_KAFKA_OFFSET_BEGINNING);
 			while (true) {
 				$this->resolve($topic, $conf['interval'] ?? 1000);
 			}
@@ -151,19 +151,18 @@ class Kafka extends \Snowflake\Process\Process
 		if (function_exists('pcntl_sigprocmask')) {
 			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
 			$conf->set('internal.termination.signal', (string)SIGIO);
-//		} else {
-//			$conf->set('queue.buffering.max.ms', '1');
 		}
 
 		$topicConf = new TopicConf();
 		try {
 			$topicConf->set('auto.commit.enable', '1');
 			$topicConf->set('auto.commit.interval.ms', '100');
-			//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
+
+			//smallest：简单理解为从头开始消费，
+			//largest：简单理解为从最新的开始消费
 			$topicConf->set('auto.offset.reset', 'smallest');
 			$topicConf->set('offset.store.path', 'kafka_offset.log');
 			$topicConf->set('offset.store.method', 'broker');
-//			$topicConf->set('allow.auto.create.topics', 'true');
 		} catch (Throwable $exception) {
 			var_dump($exception->getMessage());
 		}
