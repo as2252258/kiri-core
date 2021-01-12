@@ -73,7 +73,7 @@ class Kafka extends \Snowflake\Process\Process
 			if (empty($message)) {
 				return;
 			}
-			var_dump($message->topic_name, $message);
+			var_dump($message->err, $message->topic_name, $message);
 			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
 				$this->channel->push([$message->topic_name, $message]);
 			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
