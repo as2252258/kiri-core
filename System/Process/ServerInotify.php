@@ -229,10 +229,13 @@ class ServerInotify extends Process
 	}
 
 	/**
+	 * @param $code
+	 * @param $message
+	 * @param $file
+	 * @param $line
 	 */
-	protected function onErrorHandler()
+	protected function onErrorHandler($code, $message, $file, $line)
 	{
-		[$code, $message, $file, $line, $args] = func_get_args();
 		$this->application->debug('Error:' . $message);
 		$this->application->debug($file . ':' . $line);
 	}
