@@ -162,6 +162,7 @@ class Kafka extends \Snowflake\Process\Process
 			//smallest：简单理解为从头开始消费，largest：简单理解为从最新的开始消费
 			$topicConf->set('auto.offset.reset', 'smallest');
 			$topicConf->set('offset.store.path', 'kafka_offset.log');
+			$topicConf->set('offset.store.method', 'broker');
 //			$topicConf->set('allow.auto.create.topics', 'true');
 		} catch (Throwable $exception) {
 			var_dump($exception->getMessage());
