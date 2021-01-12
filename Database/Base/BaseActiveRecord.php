@@ -428,7 +428,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	public function save($data = NULL): static|bool
 	{
 		if (is_array($data)) {
-			$this->setAttributes($data);
+			$this->_attributes = array_merge($this->_attributes, $data);
 		}
 		if (!$this->validator($this->rules()) || !$this->beforeSave()) {
 			return false;
