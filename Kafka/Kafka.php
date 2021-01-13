@@ -76,7 +76,7 @@ class Kafka extends \Snowflake\Process\Process
 			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
 				$this->channel->push([$message->topic_name, $message]);
 			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
-				$this->application->error('No more messages; will wait for more');
+				$this->application->warning('No more messages; will wait for more');
 			} else if ($message->err == RD_KAFKA_RESP_ERR__TIMED_OUT) {
 				$this->application->error('Kafka Timed out');
 			} else {
