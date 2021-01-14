@@ -83,7 +83,7 @@ trait QueryTrait
 	 */
 	public function locate(string $column, string $value): static
 	{
-		$this->where[] = 'LOCATE(' . $column . ',\'' . addslashes($value) . '\')';
+		$this->where[] = 'LOCATE(' . $column . ',\'' . addslashes($value) . '\') > 0';
 		return $this;
 	}
 
