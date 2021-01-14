@@ -18,6 +18,7 @@ use Swoole\Coroutine\WaitGroup;
 use Swoole\IDEHelper\StubGenerators\Swoole;
 use Swoole\Process;
 use Snowflake\Abstracts\Config as SConfig;
+use Swoole\Timer;
 use Throwable;
 
 /**
@@ -39,6 +40,9 @@ class Kafka extends \Snowflake\Process\Process
 		$this->channelListener();
 
 		$this->waite(json_decode($process->read(), true));
+		Timer::tick(1000, function () {
+			$this->application->error('kafka service error.');
+		});
 	}
 
 
@@ -49,6 +53,9 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		try {
 			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
+			if (empty($config) && empty($topic) && empty($conf)) {
+				return;
+			}
 			$objRdKafka = new Consumer($config);
 			$topic = $objRdKafka->newTopic($kafkaServer['topic'], $topic);
 
@@ -144,19 +151,19 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	private function kafkaConfig($kafka): array
 	{
-		$conf = new Conf();
-		$conf->setRebalanceCb([$this, 'rebalanced_cb']);
-		$conf->set('group.id', $kafka['groupId']);
-		$conf->set('metadata.broker.list', $kafka['brokers']);
-		$conf->set('socket.timeout.ms', '30000');
-
-		if (function_exists('pcntl_sigprocmask')) {
-			pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
-			$conf->set('internal.termination.signal', (string)SIGIO);
-		}
-
-		$topicConf = new TopicConf();
 		try {
+			$conf = new Conf();
+			$conf->setRebalanceCb([$this, 'rebalanced_cb']);
+			$conf->set('group.id', $kafka['groupId']);
+			$conf->set('metadata.broker.list', $kafka['brokers']);
+			$conf->set('socket.timeout.ms', '30000');
+
+			if (function_exists('pcntl_sigprocmask')) {
+				pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
+				$conf->set('internal.termination.signal', (string)SIGIO);
+			}
+
+			$topicConf = new TopicConf();
 			$topicConf->set('auto.commit.enable', '1');
 			$topicConf->set('auto.commit.interval.ms', '100');
 
@@ -166,14 +173,13 @@ class Kafka extends \Snowflake\Process\Process
 			$topicConf->set('offset.store.path', 'kafka_offset.log');
 			$topicConf->set('offset.store.method', 'broker');
 
-			var_dump(get_object_vars($topicConf));
-
-			$topicConf->set('auto.create.topics.enable', 'true');
+			return [$conf, $topicConf, $kafka];
 		} catch (Throwable $exception) {
 			$this->application->error($exception->getMessage());
+
+			return [null, null, null];
 		}
 
-		return [$conf, $topicConf, $kafka];
 	}
 
 
