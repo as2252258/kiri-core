@@ -166,9 +166,11 @@ class Kafka extends \Snowflake\Process\Process
 			$topicConf->set('offset.store.path', 'kafka_offset.log');
 			$topicConf->set('offset.store.method', 'broker');
 
-			$conf->set('auto.create.topics.enable', 'true');
+			var_dump($topicConf->dump());
+
+			$topicConf->set('auto.create.topics.enable', 'true');
 		} catch (Throwable $exception) {
-			var_dump($exception->getMessage());
+			$this->application->error($exception->getMessage());
 		}
 
 		return [$conf, $topicConf, $kafka];
