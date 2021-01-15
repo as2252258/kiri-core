@@ -2,6 +2,8 @@
 
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
 
+use HttpServer\Http\HttpParams;
+use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use Snowflake\Error\Logger;
@@ -16,10 +18,10 @@ if (!function_exists('make')) {
 	/**
 	 * @param $name
 	 * @param $default
-	 * @return stdClass
+	 * @return mixed
 	 * @throws
 	 */
-	function make($name, $default)
+	function make($name, $default): mixed
 	{
 		if (Snowflake::has($name)) {
 			$class = Snowflake::app()->$name;
@@ -72,7 +74,7 @@ if (!function_exists('split_request_uri')) {
 	 * @param $url
 	 * @return false|array
 	 */
-	function split_request_uri($url)
+	function split_request_uri($url): bool|array
 	{
 		if (($parse = isUrl($url, null)) === false) {
 			return false;
@@ -96,17 +98,10 @@ if (!function_exists('hadDomain')) {
 	 * @param $url
 	 * @return false|array
 	 */
-	function hadDomain($url)
+	function hadDomain($url): bool|array
 	{
-		if (($parse = isUrl($url, null)) === false) {
-			return false;
-		}
-		[$isHttps, $domain, $port, $path] = $parse;
-		$uri = $isHttps ? 'https://' . $domain : 'http://' . $domain;
-		if (!empty($port)) {
-			$uri .= ':' . $port;
-		}
-		return $uri;
+		$param = split_request_uri($url);
+		return !is_array($param) ? false : $param[0];
 	}
 
 }
@@ -117,10 +112,9 @@ if (!function_exists('isDomain')) {
 
 	/**
 	 * @param $url
-	 * @param $replace
 	 * @return false|array
 	 */
-	function isDomain($url)
+	function isDomain($url): array|bool
 	{
 		return !isIp($url);
 	}
@@ -133,7 +127,7 @@ if (!function_exists('isIp')) {
 	 * @param $url
 	 * @return false|array
 	 */
-	function isIp($url)
+	function isIp($url): bool|array
 	{
 		return preg_match('/(\d{1,3}\.){3}\.\d{1,3}(:\d{1,5})?/', $url);
 	}
@@ -230,7 +224,7 @@ if (!function_exists('exif_imagetype')) {
 	 * @param $name
 	 * @return string
 	 */
-	function exif_imagetype($name)
+	function exif_imagetype($name): string
 	{
 		return get_file_extension($name);
 	}
@@ -244,7 +238,7 @@ if (!function_exists('logger')) {
 	 * @return Logger
 	 * @throws ComponentException
 	 */
-	function logger()
+	function logger(): Logger
 	{
 		return Snowflake::app()->getLogger();
 	}
@@ -327,12 +321,12 @@ if (!function_exists('get_file_extension')) {
 if (!function_exists('request')) {
 
 	/**
-	 * @return mixed|null
+	 * @return Request
 	 */
-	function request(): \HttpServer\Http\Request
+	function request(): Request
 	{
 		if (!Context::hasContext('request')) {
-			return make('request', \HttpServer\Http\Request::class);
+			return make('request', Request::class);
 		}
 		return Context::getContext('request');
 	}
@@ -342,9 +336,9 @@ if (!function_exists('request')) {
 if (!function_exists('Input')) {
 
 	/**
-	 * @return mixed|null
+	 * @return HttpParams
 	 */
-	function Input()
+	function Input(): HttpParams
 	{
 		return request()->params;
 	}
@@ -359,7 +353,7 @@ if (!function_exists('storage')) {
 	 * @return string
 	 * @throws Exception
 	 */
-	function storage($fileName = '', $path = '')
+	function storage($fileName = '', $path = ''): string
 	{
 		$basePath = Snowflake::getStoragePath();
 		if (empty($path)) {
@@ -382,7 +376,7 @@ if (!function_exists('storage')) {
 	 * @return false|string
 	 * @throws Exception
 	 */
-	function initDir($basePath, $path)
+	function initDir($basePath, $path): bool|string
 	{
 		$explode = array_filter(explode('/', $path));
 		$_path = '/' . trim($basePath, '/') . '/';
@@ -434,7 +428,7 @@ if (!function_exists('response')) {
 	 * @return Response|stdClass
 	 * @throws
 	 */
-	function response()
+	function response(): Response|stdClass
 	{
 		if (!Context::hasContext('response')) {
 			return make('response', Response::class);
@@ -452,7 +446,7 @@ if (!function_exists('send')) {
 	 * @return bool|Response|stdClass|string
 	 * @throws Exception
 	 */
-	function send($context, $statusCode = 200)
+	function send($context, $statusCode = 200): Response|bool|string|stdClass
 	{
 		return \response()->send($context, $statusCode);
 	}
@@ -461,7 +455,12 @@ if (!function_exists('send')) {
 
 if (!function_exists('redirect')) {
 
-	function redirect($url)
+
+	/**
+	 * @param $url
+	 * @return int
+	 */
+	function redirect($url): int
 	{
 		return response()->redirect($url);
 	}
@@ -474,9 +473,9 @@ if (!function_exists('env')) {
 	/**
 	 * @param $key
 	 * @param null $default
-	 * @return array|false|string|null
+	 * @return array|string|null
 	 */
-	function env($key, $default = null)
+	function env($key, $default = null): null|array|string
 	{
 		$env = getenv($key);
 		if ($env === false) {
@@ -493,7 +492,7 @@ if (!function_exists('sweep')) {
 	 * @param string $configPath
 	 * @return array|false|string|null
 	 */
-	function sweep($configPath = APP_PATH . '/config')
+	function sweep($configPath = APP_PATH . '/config'): bool|array|string|null
 	{
 		$array = [];
 		foreach (glob($configPath . '/*') as $config) {
@@ -513,7 +512,7 @@ if (!function_exists('merge')) {
 	 * @param $param1
 	 * @return array
 	 */
-	function merge($param, $param1)
+	function merge($param, $param1): array
 	{
 		return ArrayAccess::merge($param, $param1);
 	}
@@ -528,7 +527,7 @@ if (!function_exists('router')) {
 	 * @return Router
 	 * @throws ComponentException
 	 */
-	function router()
+	function router(): Router
 	{
 		return Snowflake::app()->getRouter();
 	}
@@ -543,7 +542,7 @@ if (!function_exists('jTraceEx')) {
 	 * @param null $seen
 	 * @return string
 	 */
-	function jTraceEx($e, $seen = null)
+	function jTraceEx($e, $seen = null): string
 	{
 		$starter = $seen ? 'Caused by: ' : '';
 		$result = array();
@@ -593,7 +592,7 @@ if (!function_exists('swoole_substr_json_decode')) {
 	 * @param int $length
 	 * @return mixed
 	 */
-	function swoole_substr_json_decode($packet, $length = 0)
+	function swoole_substr_json_decode($packet, $length = 0): mixed
 	{
 		return json_decode($packet, true);
 	}
@@ -609,7 +608,7 @@ if (!function_exists('swoole_substr_unserialize')) {
 	 * @param int $length
 	 * @return mixed
 	 */
-	function swoole_substr_unserialize($packet, $length = 0)
+	function swoole_substr_unserialize($packet, $length = 0): mixed
 	{
 		return unserialize($packet);
 	}
