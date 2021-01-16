@@ -385,8 +385,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			$this->afterSave($attributes, $param);
 			$lastId = $this->refresh();
 		} catch (\Throwable $exception) {
-			$lastId = false;
 			$trance->rollback();
+			$lastId = $this->addError($exception->getMessage(),'mysql');
 		}
 		return $lastId;
 	}
@@ -411,7 +411,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 		$trance = $command->beginTransaction();
 		if (!($command = $command->createCommand($sql, $param)->save(false, $this->hasAutoIncrement()))) {
 			$trance->rollback();
-			$result = $this->addError($this->getLastError());
+			$result = false;
 		} else {
 			$trance->commit();
 			$result = $this->refresh();
