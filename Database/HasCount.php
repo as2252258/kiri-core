@@ -15,13 +15,15 @@ class HasCount extends HasBase
 	/**
 	 * @param $name
 	 * @param $arguments
-	 * @return $this
+	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function __call($name, $arguments): static
+	public function __call($name, $arguments): mixed
 	{
-		$this->_relation->getQuery($this->model::className())->$name(...$arguments);
-		return $this;
+		if (method_exists($this, $name)) {
+			return call_user_func([$this, $name], ...$arguments);
+		}
+		return $this->_relation->getQuery($this->model::className())->$name(...$arguments);
 	}
 
 	/**
