@@ -338,10 +338,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param string $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return HasOne
+	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasOne(string $modelName, $foreignKey, $localKey): HasOne
+	public function hasOne(string $modelName, $foreignKey, $localKey): mixed
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -359,10 +359,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return HasCount
+	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasCount($modelName, $foreignKey, $localKey): HasCount
+	public function hasCount($modelName, $foreignKey, $localKey): mixed
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -380,10 +380,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return HasMany
+	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasMany($modelName, $foreignKey, $localKey): HasMany
+	public function hasMany($modelName, $foreignKey, $localKey): mixed
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
@@ -400,10 +400,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return HasMany
+	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasIn($modelName, $foreignKey, $localKey): HasMany
+	public function hasIn($modelName, $foreignKey, $localKey): mixed
 	{
 		if (!$this->has($localKey)) {
 			throw new Exception("Need join table primary key.");
