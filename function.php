@@ -160,7 +160,6 @@ if (!function_exists('loadByDir')) {
 				$first = explode(DIRECTORY_SEPARATOR, $replace);
 				array_shift($first);
 
-				var_dump($namespace . '\\' . implode('\\', $first));
 				Snowflake::setAutoload($namespace . '\\' . implode('\\', $first), $value);
 			}
 		}
