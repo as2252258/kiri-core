@@ -174,7 +174,7 @@ abstract class GiiBase
 
 		$content = file_get_contents($this->getFilePath($className));
 		$explode = explode(PHP_EOL, $content);
-		$exists = array_slice($explode, $fun->getStartLine(), $fun->getEndLine() - $fun->getStartLine() + 1);
+		$exists = array_slice($explode, $fun->getStartLine() - 1, $fun->getEndLine() - $fun->getStartLine() + 1);
 		return implode(PHP_EOL, $exists);
 	}
 
