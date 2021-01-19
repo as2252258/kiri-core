@@ -45,6 +45,16 @@ class Input
 		return $this->_argv[$key] ?? $default;
 	}
 
+
+	/**
+	 * @param $key
+	 * @return bool
+	 */
+	public function exists($key): bool
+	{
+		return isset($this->_argv[$key]);
+	}
+
 	/**
 	 * @param $key
 	 * @param $value

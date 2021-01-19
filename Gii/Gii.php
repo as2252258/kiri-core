@@ -14,6 +14,7 @@ use Database\Db;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 
+use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -110,10 +111,33 @@ class Gii
 	 */
 	private function getModel($make, $input): array
 	{
-		if (!$this->db) {
+		if ($this->db) {
+			return $this->makeByDatabases($make, $input);
+		}
+		if ($this->input->exists('databases')) {
 			$db = $this->input->get('databases', 'db');
 			$this->db = Snowflake::app()->db->get($db);
+
+			return $this->makeByDatabases($make, $input);
 		}
+		$array = [];
+		foreach (Config::get('databases') as $key => $connection) {
+			$this->db = Snowflake::app()->db->get($key);
+
+			$array[$key] = $this->makeByDatabases($make, $input);
+		}
+		return $array;
+	}
+
+
+	/**
+	 * @param $make
+	 * @param $input
+	 * @return array
+	 * @throws ComponentException
+	 */
+	private function makeByDatabases($make, $input): array
+	{
 		$redis = Snowflake::app()->getRedis();
 		if (!empty($input->get('table'))) {
 			$this->tableName = $input->get('table');
