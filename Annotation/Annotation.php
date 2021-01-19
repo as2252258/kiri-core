@@ -216,6 +216,8 @@ class Annotation extends Component
 	 */
 	private function instance(ReflectionAttribute $attribute): array|object
 	{
+		var_dump($attribute->getName());
+		var_dump($attribute->getTarget());
 		return $attribute->newInstance();
 	}
 
