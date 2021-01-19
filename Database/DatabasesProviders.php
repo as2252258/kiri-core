@@ -36,7 +36,7 @@ class DatabasesProviders extends Providers
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->readControllers(CONTROLLER_PATH, 'App\Models', 'models');
+			$attributes->readControllers(MODEL_PATH, 'App\Models', 'models');
 		});
 	}
 
