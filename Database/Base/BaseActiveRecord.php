@@ -492,10 +492,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	{
 		$method = 'get' . ucfirst($name) . 'Attribute';
 
-		$attributes = Snowflake::app()->getAttributes();
-		$callback = $attributes->getByClass(static::class, $name);
-		var_dump($callback);
-
 		if (method_exists($this, $method)) {
 			return $this->$method($this->_attributes[$name]);
 		}
