@@ -120,14 +120,11 @@ class ' . $managerName . ' extends ActiveRecord
 				} else {
 					$debug = 'public';
 				}
-
-
 				if ($property->hasType()) {
-					$type = $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
+					$type = ' ' . $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
 				} else {
 					$type = ' $' . $key . ' = ' . $val . ';' . "\n";
 				}
-
 				if ($property->isStatic()) {
 					$html .= '
     ' . $debug . ' static' . $type;
