@@ -129,8 +129,14 @@ class ' . $managerName . ' extends ActiveRecord
 					if ($key == 'primary') {
 						continue;
 					}
-					$html .= '
+
+					if ($property->hasType()) {
+						$html .= '
+    ' . $debug . ' ' . $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
+					} else {
+						$html .= '
     ' . $debug . ' $' . $key . ' = ' . $val . ';' . "\n";
+					}
 				}
 
 			}
