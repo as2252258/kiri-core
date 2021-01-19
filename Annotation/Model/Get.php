@@ -19,7 +19,7 @@ use Attribute;
 		public string $name
 	)
 	{
-
+		var_dump($this->name);
 	}
 
 
