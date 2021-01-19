@@ -57,16 +57,15 @@ class GiiModel extends GiiBase
 		if (file_exists($modelPath['path'] . '/' . $managerName . '.php')) {
 			try {
 				$class = new \ReflectionClass($modelPath['namespace'] . '\\' . $managerName);
+
+				$html = $this->getUseContent($class, $classFileName);
 			} catch (\Throwable $e) {
 				var_dump($e->getMessage());
 			}
-			$html = $this->getUseContent($class, $classFileName);
-		} else {
-			$html = '';
 		}
 
 
-		if (empty($html)) {
+		if (!isset($html) || empty($html)) {
 			$html = '<?php
 namespace ' . $namespace . ';
 
