@@ -310,14 +310,14 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function toArray(): array
 	{
-		$data = [];
 		$attributes = Snowflake::app()->getAttributes();
 		$callback = $attributes->getByClass(static::class);
-		var_dump($callback);
 
-		foreach ($this->_attributes as $key => $val) {
-			$data[$key] = $this->getAttribute($key);
+		$data = $this->_attributes;
+		foreach ($callback as $key => $item) {
+			$data[$key] = call_user_func($item, $data[$key]);
 		}
+
 		return array_merge($data, $this->runRelate());
 	}
 

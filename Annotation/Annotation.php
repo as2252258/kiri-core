@@ -116,6 +116,9 @@ class Annotation extends Component
 				}
 
 				$tmp = $this->resolveAnnotations($method, $alias, $object);
+				if (empty($tmp)) {
+					continue;
+				}
 
 				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
 			}
@@ -177,7 +180,7 @@ class Annotation extends Component
 		}
 		foreach ($this->_classes[$className] as $_method => $class) {
 			if ($method == $_method) {
-				return [$class, $_method];
+				return [$class];
 			}
 		}
 		return [];
