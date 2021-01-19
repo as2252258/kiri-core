@@ -139,17 +139,17 @@ class Annotation extends Component
 	private function resolveAnnotations($method, $alias, $object): array
 	{
 		$attributes = $method->getAttributes();
+		if ($alias == 'models') {
+			var_dump($method, $attributes);
+		}
+
 		if (count($attributes) < 1) {
 			return [];
 		}
 
 		$names = [];
 		foreach ($attributes as $attribute) {
-			$instance = $this->instance($attribute);
-			if ($instance instanceof Get) {
-				var_dump($instance);
-			}
-			$names[$attribute->getName()] = $instance;
+			$names[$attribute->getName()] = $this->instance($attribute);
 		}
 
 		$tmp['handler'] = [$object, $method->getName()];
