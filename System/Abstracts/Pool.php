@@ -35,6 +35,9 @@ abstract class Pool extends Component
 		if (isset($this->_items[$name]) && $this->_items[$name] instanceof Channel) {
 			return;
 		}
+		if (!Context::inCoroutine()) {
+			return;
+		}
 		$this->_items[$name] = new Channel((int)$max);
 		$this->max = (int)$max;
 	}
@@ -46,6 +49,9 @@ abstract class Pool extends Component
 	 */
 	protected function get($name): array
 	{
+		if (!Context::inCoroutine()) {
+			return [0, null];
+		}
 		[$timeout, $connection] = $this->_items[$name]->pop(30);
 		if (!$this->checkCanUse($name, $timeout, $connection)) {
 			unset($client);
@@ -144,6 +150,9 @@ abstract class Pool extends Component
 	 */
 	public function size(string $name): mixed
 	{
+		if (!Context::inCoroutine()) {
+			return 0;
+		}
 		if (!isset($this->_items[$name])) {
 			return 0;
 		}
@@ -157,6 +166,9 @@ abstract class Pool extends Component
 	 */
 	public function push(string $name, mixed $client)
 	{
+		if (!Context::inCoroutine()) {
+			return;
+		}
 		if (!$this->_items[$name]->isFull()) {
 			$this->_items[$name]->push([time(), $client]);
 		}
@@ -170,6 +182,9 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
+		if (!Context::inCoroutine()) {
+			return;
+		}
 		if (!isset($this->_items[$name])) {
 			return;
 		}
