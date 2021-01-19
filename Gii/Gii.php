@@ -119,14 +119,11 @@ class Gii
 			$this->tableName = $input->get('table');
 			$redis->del('column:' . $this->tableName);
 		}
-		switch ($make) {
-			case 'controller':
-				return $this->getTable(1, 0);
-			case 'model':
-				return $this->getTable(0, 1);
-			default:
-				return [];
-		}
+		return match ($make) {
+			'controller' => $this->getTable(1, 0),
+			'model' => $this->getTable(0, 1),
+			default => [],
+		};
 	}
 
 
