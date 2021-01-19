@@ -126,6 +126,9 @@ class ' . $managerName . ' extends ActiveRecord
 					$html .= '
     ' . $debug . ' static $' . $key . ' = ' . $val . ';' . "\n";
 				} else {
+					if ($key == 'primary') {
+						continue;
+					}
 					$html .= '
     ' . $debug . ' $' . $key . ' = ' . $val . ';' . "\n";
 				}
