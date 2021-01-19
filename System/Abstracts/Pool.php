@@ -35,8 +35,8 @@ abstract class Pool extends Component
 		if (isset($this->_items[$name]) && $this->_items[$name] instanceof Channel) {
 			return;
 		}
-		$this->_items[$name] = new Channel($max);
-		$this->max = $max;
+		$this->_items[$name] = new Channel((int)$max);
+		$this->max = (int)$max;
 	}
 
 	/**
