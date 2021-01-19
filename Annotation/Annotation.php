@@ -139,6 +139,7 @@ class Annotation extends Component
 	private function resolveAnnotations(ReflectionMethod $method, $alias, $object): array
 	{
 		$attributes = $method->getAttributes();
+		$this->debug($method->getName());
 		if ($method->getName() == 'getGoods_descriptionAttribute') {
 			var_dump($method, $attributes);
 		}
