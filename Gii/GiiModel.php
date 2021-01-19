@@ -130,13 +130,13 @@ class ' . $managerName . ' extends ActiveRecord
 
 				if ($property->isStatic()) {
 					$html .= '
-    ' . $debug . ' static ' . $type;
+    ' . $debug . ' static' . $type;
 				} else {
 					if ($key == 'primary') {
 						continue;
 					}
 					$html .= '
-    ' . $debug . ' ' . $type;
+    ' . $debug . $type;
 				}
 
 			}
