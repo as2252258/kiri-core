@@ -313,6 +313,8 @@ class ActiveRecord extends BaseActiveRecord
 		$attributes = Snowflake::app()->getAttributes();
 		$callback = $attributes->getByClass(static::class);
 
+		var_dump($callback);
+
 		$data = $this->_attributes;
 		foreach ($callback as $key => $item) {
 			$data[$key] = call_user_func($item, $data[$key]);
