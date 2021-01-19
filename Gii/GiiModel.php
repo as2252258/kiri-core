@@ -208,10 +208,10 @@ class ' . $managerName . ' extends ActiveRecord
 				$function = '
 	/**
 	 * @param $value
-	 * @return false|string
+	 * @return int|bool|string
 	 * @throws Exception
     */
-	public function set' . ucfirst($field['Field']) . 'Attribute($value) 
+	public function set' . ucfirst($field['Field']) . 'Attribute($value): int|bool|string
 	{
 		if ( !is_string($value) ) {
 			return JSON::encode($value); 
@@ -223,9 +223,9 @@ class ' . $managerName . ' extends ActiveRecord
 				$get_function = '
 	/**
 	 * @param $value
-	 * @return mixed
+	 * @return array|null|bool
 	 */
-	public function get' . ucfirst($field['Field']) . 'Attribute($value) 
+	public function get' . ucfirst($field['Field']) . 'Attribute($value): array|null|bool
 	{
 		$value = stripcslashes($value);
 		if ( is_string($value) ) {
