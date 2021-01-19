@@ -80,9 +80,9 @@ class Annotation extends Component
 			$this->_annotations[$alias] = [];
 		}
 		foreach ($paths as $path) {
-//			if (!str_contains('.php', $path)) {
-//				continue;
-//			}
+			if (!str_contains($path, '.php')) {
+				continue;
+			}
 			$explode = explode('/', $path);
 
 			$explode_pop = array_pop($explode);
