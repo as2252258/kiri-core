@@ -82,11 +82,13 @@ class Annotation extends Component
 		foreach ($paths as $path) {
 			$explode = explode('/', $path);
 
-			$length = strlen($path);
-			if ($length - 4 != $length - (strpos('.php', $path) != false)) {
+			$isPhp = strpos('.php', $path);
+			if ($isPhp === false) {
 				continue;
 			}
-
+			if (strlen($path) - 4 != $isPhp) {
+				continue;
+			}
 
 			$explode_pop = array_pop($explode);
 			if (is_file($path)) {
