@@ -4,6 +4,7 @@
 namespace Annotation;
 
 
+use Annotation\Model\Get;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -111,8 +112,6 @@ class Annotation extends Component
 			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
 				$tmp = $this->resolveAnnotations($method, $alias, $object);
 
-				var_dump($tmp);
-
 				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
 			}
 		}
@@ -146,7 +145,11 @@ class Annotation extends Component
 
 		$names = [];
 		foreach ($attributes as $attribute) {
-			$names[$attribute->getName()] = $this->instance($attribute);
+			$instance = $this->instance($attribute);
+			if ($instance instanceof Get) {
+				var_dump($instance);
+			}
+			$names[$attribute->getName()] = $instance;
 		}
 
 		$tmp['handler'] = [$object, $method->getName()];
