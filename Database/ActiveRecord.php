@@ -317,7 +317,10 @@ class ActiveRecord extends BaseActiveRecord
 
 		$data = $this->_attributes;
 		foreach ($callback as $key => $item) {
-			$data[$key] = call_user_func($item, $data[$key]);
+			$result = call_user_func($item['handler'], $data[$key]);
+			foreach ($item['attributes'] as $attribute) {
+				$data[$attribute] = $result;
+			}
 		}
 
 		return array_merge($data, $this->runRelate());
