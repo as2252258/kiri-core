@@ -5,6 +5,7 @@ namespace Gii;
 
 
 use Exception;
+use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -32,7 +33,16 @@ class Command extends \Console\Command
 		/** @var Gii $gii */
 		$gii = Snowflake::app()->get('gii');
 
-		return $gii->run($dtl->get('databases'), $dtl);
+		$connections = Snowflake::app()->db;
+		if ($dtl->exists('databases')) {
+			return $gii->run($connections->get($dtl->get('databases')), $dtl);
+		}
+
+		$array = [];
+		foreach (Config::get('databases') as $key => $connection) {
+			$array[$key] = $gii->run($connections->get($key), $dtl);
+		}
+		return $array;
 	}
 
 }

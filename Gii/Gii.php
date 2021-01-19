@@ -111,24 +111,13 @@ class Gii
 	 */
 	private function getModel($make, $input): array
 	{
-		if ($this->db) {
+		if ($this->db instanceof Connection) {
 			return $this->makeByDatabases($make, $input);
 		}
-		if ($this->input->exists('databases')) {
-			$db = $this->input->get('databases', 'db');
-			$this->db = Snowflake::app()->db->get($db);
+		$db = $this->input->get('databases', 'db');
+		$this->db = Snowflake::app()->db->get($db);
 
-			return $this->makeByDatabases($make, $input);
-		}
-		$array = [];
-		foreach (Config::get('databases') as $key => $connection) {
-			var_dump($connection);
-			
-			$this->db = Snowflake::app()->db->get($key);
-
-			$array[$key] = $this->makeByDatabases($make, $input);
-		}
-		return $array;
+		return $this->makeByDatabases($make, $input);
 	}
 
 
