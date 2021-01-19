@@ -314,24 +314,36 @@ class ActiveRecord extends BaseActiveRecord
 		$attributes = Snowflake::app()->getAttributes();
 		$callback = $attributes->getByClass(static::class);
 
-		var_dump($callback);
-
 		$data = $this->_attributes;
 		foreach ($callback as $key => $item) {
-			foreach ($item['attributes'] as $attribute) {
-				if (!($attribute instanceof Get)) {
-					continue;
-				}
-				$name = $attribute->name;
-
-				$result = call_user_func($item['handler'], $data[$name]);
-
-				$data[$name] = $result;
-			}
+			$data = $this->resolveAttributes($item, $data);
 		}
 
 		return array_merge($data, $this->runRelate());
 	}
+
+
+	/**
+	 * @param $item
+	 * @param $data
+	 * @return array
+	 */
+	private function resolveAttributes($item, $data): array
+	{
+		if (!isset($item['attributes'])) {
+			return $data;
+		}
+		foreach ($item['attributes'] as $attribute) {
+			if (!($attribute instanceof Get)) {
+				continue;
+			}
+			$name = $attribute->name;
+			$result = call_user_func($item['handler'], $data[$name]);
+			$data[$name] = $result;
+		}
+		return $data;
+	}
+
 
 	/**
 	 * @return array
