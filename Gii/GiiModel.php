@@ -168,8 +168,7 @@ class ' . $managerName . ' extends ActiveRecord
 					foreach ($attributes as $attribute) {
 						$over .= "
 	#[\\" . $attribute->getName() . "('" . implode('\',\'', $attribute->getArguments()) . "')]
-	
-	";
+";
 					}
 				}
 
