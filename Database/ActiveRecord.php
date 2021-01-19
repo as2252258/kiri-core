@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Database;
 
 
+use Annotation\Model\Get;
 use Exception;
 use Database\Base\BaseActiveRecord;
 use Snowflake\Core\ArrayAccess;
@@ -316,10 +317,14 @@ class ActiveRecord extends BaseActiveRecord
 		$data = $this->_attributes;
 		foreach ($callback as $key => $item) {
 			foreach ($item['attributes'] as $attribute) {
+				if (!($attribute instanceof Get)) {
+					continue;
+				}
+				$name = $attribute->name;
 
-				$result = call_user_func($item['handler'], $data[$attribute]);
+				$result = call_user_func($item['handler'], $data[$name]);
 
-				$data[$attribute] = $result;
+				$data[$name] = $result;
 			}
 		}
 
