@@ -114,6 +114,8 @@ class Gii
 		if ($this->db) {
 			return $this->makeByDatabases($make, $input);
 		}
+
+		var_dump($this->input->exists('databases'));
 		if ($this->input->exists('databases')) {
 			$db = $this->input->get('databases', 'db');
 			$this->db = Snowflake::app()->db->get($db);
