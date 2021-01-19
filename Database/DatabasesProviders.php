@@ -35,7 +35,6 @@ class DatabasesProviders extends Providers
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 
-		$event->on(Event::SERVER_BEFORE_START, [$this, 'scanModel']);
 		$event->on(Event::SERVER_WORKER_START, [$this, 'scanModel']);
 	}
 
