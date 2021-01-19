@@ -83,7 +83,7 @@ class Annotation extends Component
 			$explode = explode('/', $path);
 
 			$length = strlen($path);
-			if ($length - 4 != $length - strpos('.php', $path)) {
+			if ($length - 4 != $length - (strpos('.php', $path) != false)) {
 				continue;
 			}
 
