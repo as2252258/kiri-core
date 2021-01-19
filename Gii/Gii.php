@@ -56,9 +56,11 @@ class Gii
 	 */
 	public function run(?Connection $db, $input): array
 	{
-		return [go(function () use ($db, $input) {
-			return $this->gen($db, $input);
-		})];
+		return [
+			go(function () use ($db, $input) {
+				return $this->gen($input, $db);
+			})
+		];
 	}
 
 
