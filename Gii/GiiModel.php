@@ -142,7 +142,7 @@ class ' . $managerName . ' extends ActiveRecord
 
 		$html .= $this->createRules($this->fields);
 
-		$out = ['rules', 'tableName'];
+		$out = ['rules', 'tableName', 'attributes'];
 		if (is_object($class)) {
 			$methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
 
