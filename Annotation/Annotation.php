@@ -80,15 +80,10 @@ class Annotation extends Component
 			$this->_annotations[$alias] = [];
 		}
 		foreach ($paths as $path) {
+			if (!str_contains('.php', $path)) {
+				continue;
+			}
 			$explode = explode('/', $path);
-
-			$isPhp = strpos('.php', $path);
-			if ($isPhp === false) {
-				continue;
-			}
-			if (strlen($path) - 4 != $isPhp) {
-				continue;
-			}
 
 			$explode_pop = array_pop($explode);
 			if (is_file($path)) {
