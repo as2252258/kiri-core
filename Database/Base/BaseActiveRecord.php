@@ -386,7 +386,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 			$lastId = $this->refresh();
 		} catch (\Throwable $exception) {
 			$trance->rollback();
-			$lastId = $this->addError($exception->getMessage(),'mysql');
+			$lastId = $this->addError($exception->getMessage(), 'mysql');
 		}
 		return $lastId;
 	}
@@ -665,6 +665,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public function __get($name): mixed
 	{
+		$attributes = Snowflake::app()->getAttributes();
+		$callback = $attributes->getByClass(static::class, $name);
+		var_dump($callback);
+
 		$method = 'get' . ucfirst($name);
 		if (method_exists($this, $method . 'Attribute')) {
 			return $this->{$method . 'Attribute'}($this->_attributes[$name] ?? null);

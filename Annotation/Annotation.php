@@ -168,7 +168,7 @@ class Annotation extends Component
 		}
 		foreach ($this->_classes[$className] as $_method => $class) {
 			if ($method == $_method) {
-				return [$class];
+				return [$class, $_method];
 			}
 		}
 		return [];
