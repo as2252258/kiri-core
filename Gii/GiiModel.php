@@ -162,7 +162,8 @@ class ' . $managerName . ' extends ActiveRecord
 				if (!empty($attributes)) {
 					foreach ($attributes as $attribute) {
 						$over .= "
-	#[" . $attribute->getName() . "('" . implode('\',\'', $attribute->getArguments()) . "')]";
+	#[\"" . $attribute->getName() . "('" . implode('\',\'', $attribute->getArguments()) . "')]
+	";
 					}
 				}
 
