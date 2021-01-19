@@ -33,11 +33,11 @@ class DatabasesProviders extends Providers
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 
-//		$event = Snowflake::app()->getEvent();
-//		$event->on(Event::SERVER_WORKER_START, function () {
-//			$attributes = Snowflake::app()->getAttributes();
-//			$attributes->readControllers(CONTROLLER_PATH, 'App\Models', 'models');
-//		});
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::SERVER_WORKER_START, function () {
+			$attributes = Snowflake::app()->getAttributes();
+			$attributes->readControllers(CONTROLLER_PATH, 'App\Models', 'models');
+		});
 	}
 
 
