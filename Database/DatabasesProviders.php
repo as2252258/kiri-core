@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database;
 
 
+use Annotation\IAnnotation;
 use Exception;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
@@ -31,6 +32,12 @@ class DatabasesProviders extends Providers
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
+
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::SERVER_WORKER_START, function () {
+			$attributes = Snowflake::app()->getAttributes();
+			$attributes->readControllers(CONTROLLER_PATH, 'App\Models', 'models');
+		});
 	}
 
 
