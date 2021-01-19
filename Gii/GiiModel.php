@@ -129,7 +129,6 @@ class ' . $managerName . ' extends ActiveRecord
 					if ($key == 'primary') {
 						continue;
 					}
-
 					if ($property->hasType()) {
 						$html .= '
     ' . $debug . ' ' . $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
