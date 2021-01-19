@@ -122,20 +122,21 @@ class ' . $managerName . ' extends ActiveRecord
 				}
 
 
+				if ($property->hasType()) {
+					$type = $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
+				} else {
+					$type = ' $' . $key . ' = ' . $val . ';' . "\n";
+				}
+
 				if ($property->isStatic()) {
 					$html .= '
-    ' . $debug . ' static $' . $key . ' = ' . $val . ';' . "\n";
+    ' . $debug . ' static ' . $type;
 				} else {
 					if ($key == 'primary') {
 						continue;
 					}
-					if ($property->hasType()) {
-						$html .= '
-    ' . $debug . ' ' . $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
-					} else {
-						$html .= '
-    ' . $debug . ' $' . $key . ' = ' . $val . ';' . "\n";
-					}
+					$html .= '
+    ' . $debug . ' ' . $type;
 				}
 
 			}
