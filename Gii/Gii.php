@@ -114,8 +114,6 @@ class Gii
 		if ($this->db) {
 			return $this->makeByDatabases($make, $input);
 		}
-
-		var_dump($this->input->exists('databases'));
 		if ($this->input->exists('databases')) {
 			$db = $this->input->get('databases', 'db');
 			$this->db = Snowflake::app()->db->get($db);
@@ -124,6 +122,8 @@ class Gii
 		}
 		$array = [];
 		foreach (Config::get('databases') as $key => $connection) {
+			var_dump($connection);
+			
 			$this->db = Snowflake::app()->db->get($key);
 
 			$array[$key] = $this->makeByDatabases($make, $input);
@@ -137,6 +137,7 @@ class Gii
 	 * @param $input
 	 * @return array
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	private function makeByDatabases($make, $input): array
 	{

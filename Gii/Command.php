@@ -32,9 +32,7 @@ class Command extends \Console\Command
 		/** @var Gii $gii */
 		$gii = Snowflake::app()->get('gii');
 
-		$connections = Snowflake::app()->db->get($dtl->get('databases', 'db'));
-
-		return $gii->run($connections, $dtl);
+		return $gii->run($dtl->get('databases'), $dtl);
 	}
 
 }
