@@ -173,7 +173,13 @@ class Context extends BaseContext
 	public static function hasContext($id, $key = null): bool
 	{
 		if (!static::inCoroutine()) {
-			return false;
+			if (!isset(static::$_requests[$id]) || empty(static::$_requests[$id])) {
+				return false;
+			}
+			if (!empty($key) && !isset(static::$_requests[$id][$key])) {
+				return false;
+			}
+			return true;
 		}
 		if (!isset(Coroutine::getContext()[$id])) {
 			return false;
