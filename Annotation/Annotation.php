@@ -153,7 +153,11 @@ class Annotation extends Component
 
 		$names = [];
 		foreach ($attributes as $attribute) {
-			$names[$attribute->getName()] = $this->instance($attribute);
+			$class = $this->instance($attribute);
+			if ($class === null) {
+				continue;
+			}
+			$names[$attribute->getName()] = $class;
 		}
 
 		$tmp['handler'] = [$object, $method->getName()];
@@ -203,7 +207,11 @@ class Annotation extends Component
 				$this->_targets[$name] = [];
 			}
 			foreach ($attributes as $attribute) {
-				$this->_targets[$name][] = $this->instance($attribute);
+				$class = $this->instance($attribute);
+				if ($class === null) {
+					continue;
+				}
+				$this->_targets[$name][] = $class;
 			}
 		}
 		return [];
@@ -212,12 +220,13 @@ class Annotation extends Component
 
 	/**
 	 * @param ReflectionAttribute $attribute
-	 * @return array|object
+	 * @return array|object|null
 	 */
-	private function instance(ReflectionAttribute $attribute): array|object
+	private function instance(ReflectionAttribute $attribute): array|object|null
 	{
-		var_dump($attribute->getName());
-		var_dump($attribute->getTarget());
+		if (!class_exists($attribute->getName())) {
+			return null;
+		}
 		return $attribute->newInstance();
 	}
 
