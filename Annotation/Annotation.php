@@ -131,15 +131,15 @@ class Annotation extends Component
 
 
 	/**
-	 * @param $method
+	 * @param ReflectionMethod $method
 	 * @param $alias
 	 * @param $object
 	 * @return array
 	 */
-	private function resolveAnnotations($method, $alias, $object): array
+	private function resolveAnnotations(ReflectionMethod $method, $alias, $object): array
 	{
 		$attributes = $method->getAttributes();
-		if ($alias == 'models') {
+		if ($method->getName() == 'getGoods_descriptionAttribute') {
 			var_dump($method, $attributes);
 		}
 
