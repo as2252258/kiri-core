@@ -34,7 +34,7 @@ class DatabasesProviders extends Providers
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_MANAGER_START, function () {
+		$event->on(Event::SERVER_BEFORE_START, function () {
 			$attributes = Snowflake::app()->getAttributes();
 			$attributes->readControllers(MODEL_PATH, 'App\Models', 'models');
 		});

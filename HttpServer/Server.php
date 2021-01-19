@@ -138,6 +138,8 @@ class Server extends Application
 		$configs = Config::get('servers', true);
 		Snowflake::clearWorkerId();
 		$baseServer = $this->initCore($configs);
+
+		fire(Event::SERVER_BEFORE_START);
 		if (!$baseServer) {
 			return 'ok';
 		}
