@@ -105,6 +105,8 @@ class Annotation extends Component
 	 */
 	private function getReflect(string $class, string $alias): array
 	{
+		var_dump($class);
+
 		$reflect = $this->reflectClass($class);
 		if ($reflect->isInstantiable()) {
 			$object = $reflect->newInstance();
