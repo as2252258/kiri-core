@@ -60,10 +60,12 @@ class GiiModel extends GiiBase
 			} catch (\Throwable $e) {
 				var_dump($e->getMessage());
 			}
+			$html = $this->getUseContent($class, $classFileName);
+		} else {
+			$html = '';
 		}
 
 
-		$html = $this->getUseContent($class, $classFileName);
 		if (empty($html)) {
 			$html = '<?php
 namespace ' . $namespace . ';
