@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use Annotation\Model\Get;
+use Database\ActiveRecord;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -110,6 +111,10 @@ class Annotation extends Component
 		if ($reflect->isInstantiable()) {
 			$object = $reflect->newInstance();
 			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+				if ($method->class != $class) {
+					continue;
+				}
+
 				$tmp = $this->resolveAnnotations($method, $alias, $object);
 
 				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
