@@ -56,6 +56,21 @@ class Gii
 	 */
 	public function run(?Connection $db, $input): array
 	{
+		return go(function () use ($db, $input) {
+			return $this->gen($db, $input);
+		});
+	}
+
+
+	/**
+	 * @param $input
+	 * @param $db
+	 * @return array|string[]
+	 * @throws ComponentException
+	 * @throws ConfigException
+	 */
+	public function gen($input, $db)
+	{
 		$this->input = $input;
 		if (!empty($db)) $this->db = $db;
 
