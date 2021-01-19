@@ -126,16 +126,19 @@ class ' . $managerName . ' extends ActiveRecord
 					$html .= '
     ' . $debug . ' static $' . $key . ' = ' . $val . ';' . "\n";
 				} else {
+					if ($val == 'primary') {
+						continue;
+					}
 					$html .= '
     ' . $debug . ' $' . $key . ' = ' . $val . ';' . "\n";
 				}
 
 			}
-		} else {
-			$primary = $this->createPrimary($this->fields);
-			if (!empty($primary)) {
-				$html .= $primary . "\n";
-			}
+		}
+
+		$primary = $this->createPrimary($this->fields);
+		if (!empty($primary)) {
+			$html .= $primary . "\n";
 		}
 
 		$html .= $this->createTableName($this->tableName) . "\n";
