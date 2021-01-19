@@ -158,7 +158,7 @@ class ' . $managerName . ' extends ActiveRecord
 				$over = "
 	" . $val->getDocComment() . "\n";
 
-				$attributes = $val->getAttributes($class);
+				$attributes = $val->getAttributes();
 				if (!empty($attributes)) {
 					foreach ($attributes as $attribute) {
 						$over .= "
