@@ -6,9 +6,11 @@ namespace Database;
 
 use Annotation\IAnnotation;
 use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Snowflake\Abstracts\Config;
@@ -33,11 +35,19 @@ class DatabasesProviders extends Providers
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_BEFORE_START, function () {
-			$attributes = Snowflake::app()->getAttributes();
-			$attributes->readControllers(MODEL_PATH, 'App\Models', 'models');
-		});
+		$event->on(Event::SERVER_BEFORE_START, [$this, 'scanModel']);
+		$event->on(Event::SERVER_WORKER_START, [$this, 'scanModel']);
+	}
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 */
+	public function scanModel()
+	{
+		$attributes = Snowflake::app()->getAttributes();
+		$attributes->readControllers(MODEL_PATH, 'App\Models', 'models');
 	}
 
 
