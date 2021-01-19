@@ -158,6 +158,14 @@ class ' . $managerName . ' extends ActiveRecord
 				$over = "
 	" . $val->getDocComment() . "\n";
 
+				$attributes = $val->getAttributes($class);
+				if (!empty($attributes)) {
+					foreach ($attributes as $attribute) {
+						$over .= "
+	#[" . $attribute->getName() . "('" . implode('\',\'', $attribute->getArguments()) . "')]";
+					}
+				}
+
 				$func = $this->getFuncLineContent($class, $classFileName, $val->name) . "\n";
 
 				$content[] = $over . $func;
@@ -216,6 +224,7 @@ class ' . $managerName . ' extends ActiveRecord
 	 * @param $value
 	 * @return array|null|bool
 	 */
+	#[Get(\'' . $field['Field'] . '\')]
 	public function get' . ucfirst($field['Field']) . 'Attribute($value): array|null|bool
 	{
 		$value = stripcslashes($value);
