@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Database\Base;
 
 
+use Annotation\Model\Get;
 use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
@@ -53,6 +54,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/** @var null|string */
 	protected ?string $primary = NULL;
 
+
+	private array $_annotations = [];
+
 	/**
 	 * @var bool
 	 */
@@ -73,7 +77,33 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
+		$this->parseAnnotation();
 	}
+
+
+	/**
+	 * @throws ComponentException
+	 */
+	private function parseAnnotation(): void
+	{
+		$attributes = Snowflake::app()->getAttributes();
+		$annotations = $attributes->getByClass(static::class);
+
+		$response = [];
+		foreach ($annotations as $annotation) {
+			if (!isset($annotation['attributes'])) {
+				continue;
+			}
+			foreach ($annotation['attributes'] as $attribute) {
+				if (!($attribute instanceof Get)) {
+					continue;
+				}
+				$response[$attribute->name] = $attribute['handler'];
+			}
+		}
+		$this->_annotations = $response;
+	}
+
 
 	/**
 	 * @param string $column
@@ -616,7 +646,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	/**
 	 * @param $attributes
 	 * @param $changeAttributes
-	 * @return mixed
 	 * @throws Exception
 	 */
 	public function afterSave($attributes, $changeAttributes): void
@@ -666,30 +695,50 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 	 */
 	public function __get($name): mixed
 	{
-		$attributes = Snowflake::app()->getAttributes();
-		$callback = $attributes->getByClass(static::class, $name);
-		var_dump($callback);
-
-		$method = 'get' . ucfirst($name);
-		if (method_exists($this, $method . 'Attribute')) {
-			return $this->{$method . 'Attribute'}($this->_attributes[$name] ?? null);
+		$value = $this->_attributes[$name] ?? null;
+		if ($this->hasAnnotation($name)) {
+			return call_user_func($this->_annotations[$name], $value);
 		}
-
-		if (isset($this->_attributes[$name]) || array_key_exists($name, $this->_attributes)) {
-			return static::getColumns()->_decode($name, $this->_attributes[$name]);
+		if (array_key_exists($name, $this->_attributes)) {
+			return static::getColumns()->_decode($name, $value);
 		}
-
 		if (isset($this->_relate[$name])) {
 			$gets = $this->{$this->_relate[$name]}();
-		} else if (method_exists($this, $method)) {
-			$gets = $this->$method();
 		}
-
 		if (isset($gets)) {
 			return $this->resolveClass($gets);
 		}
-
 		return parent::__get($name);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function getAnnotation(): array
+	{
+		return $this->_annotations;
+	}
+
+
+	/**
+	 * @param $name
+	 * @return bool
+	 */
+	protected function hasAnnotation($name): bool
+	{
+		return isset($this->_annotations[$name]);
+	}
+
+
+	/**
+	 * @param $item
+	 * @param $data
+	 * @return array
+	 */
+	protected function resolveAttributes($item, $data): array
+	{
+		return call_user_func($item, $data);
 	}
 
 	/**

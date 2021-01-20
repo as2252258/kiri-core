@@ -311,37 +311,11 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function toArray(): array
 	{
-		$attributes = Snowflake::app()->getAttributes();
-		$callback = $attributes->getByClass(static::class);
-
 		$data = $this->_attributes;
-		foreach ($callback as $key => $item) {
-			$data = $this->resolveAttributes($item, $data);
+		foreach ($this->getAnnotation() as $key => $item) {
+			$data[$key] = call_user_func($item, $data[$key]);
 		}
-
 		return array_merge($data, $this->runRelate());
-	}
-
-
-	/**
-	 * @param $item
-	 * @param $data
-	 * @return array
-	 */
-	private function resolveAttributes($item, $data): array
-	{
-		if (!isset($item['attributes'])) {
-			return $data;
-		}
-		foreach ($item['attributes'] as $attribute) {
-			if (!($attribute instanceof Get)) {
-				continue;
-			}
-			$name = $attribute->name;
-			$result = call_user_func($item['handler'], $data[$name]);
-			$data[$name] = $result;
-		}
-		return $data;
 	}
 
 

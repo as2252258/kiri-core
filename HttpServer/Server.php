@@ -97,6 +97,7 @@ class Server extends Application
 	 * @param array $configs
 	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function initCore(array $configs): Packet|Websocket|Receive|Http|null
 	{

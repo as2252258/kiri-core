@@ -5,6 +5,7 @@ namespace Annotation\Model;
 
 
 use Attribute;
+use Database\ActiveRecord;
 
 
 /**
