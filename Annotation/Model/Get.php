@@ -16,11 +16,14 @@ use Database\ActiveRecord;
 {
 
 
+	/**
+	 * Get constructor.
+	 * @param string $name
+	 */
 	public function __construct(
 		public string $name
 	)
 	{
-		var_dump($this->name);
 	}
 
 
