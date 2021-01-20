@@ -98,7 +98,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
 				if (!($attribute instanceof Get)) {
 					continue;
 				}
-				$response[$attribute->name] = $attribute['handler'];
+				$response[$attribute->name] = $annotation['handler'];
 			}
 		}
 		$this->_annotations = $response;
