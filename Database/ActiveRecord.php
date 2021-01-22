@@ -313,11 +313,9 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$data = $this->_attributes;
 		foreach ($this->getAnnotation() as $key => $item) {
-			if (!$this->hasAnnotation($key)) {
-				continue;
+			if ($this->hasAnnotation($key)) {
+				$data[$key] = call_user_func([$this, $item[1]], $data[$key] ?? '');
 			}
-			$item = [$this, $item[1]];
-			$data[$key] = call_user_func($item, $data[$key] ?? '');
 		}
 		return array_merge($data, $this->runRelate());
 	}
