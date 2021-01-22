@@ -11,10 +11,10 @@ namespace Database\Base;
 
 
 use Annotation\Model\Get;
+use ArrayAccess;
 use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
-use Snowflake\Core\Json;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Connection;
@@ -22,7 +22,6 @@ use Database\HasMany;
 use Database\HasOne;
 use Database\Mysql\Columns;
 use Database\Relation;
-use Snowflake\Error\Logger;
 use Exception;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -39,7 +38,7 @@ use Snowflake\Snowflake;
  * @method rules()
  * @method static tableName()
  */
-abstract class BaseActiveRecord extends Component implements IOrm, \ArrayAccess
+abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 {
 
 	/** @var array */
