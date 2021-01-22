@@ -316,6 +316,7 @@ class ActiveRecord extends BaseActiveRecord
 			if (!$this->hasAnnotation($key)) {
 				continue;
 			}
+			$item = [$this, $item[1]];
 			$data[$key] = call_user_func($item, $data[$key]);
 		}
 		return array_merge($data, $this->runRelate());
