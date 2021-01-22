@@ -317,7 +317,7 @@ class ActiveRecord extends BaseActiveRecord
 				continue;
 			}
 			$item = [$this, $item[1]];
-			$data[$key] = call_user_func($item, $data[$key]);
+			$data[$key] = call_user_func($item, $data[$key] ?? '');
 		}
 		return array_merge($data, $this->runRelate());
 	}
