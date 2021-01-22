@@ -313,7 +313,7 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$data = $this->_attributes;
 		foreach ($this->getAnnotation() as $key => $item) {
-			if (!isset($data[$key])) {
+			if (!$this->hasAnnotation($key)) {
 				continue;
 			}
 			$data[$key] = call_user_func($item, $data[$key]);
