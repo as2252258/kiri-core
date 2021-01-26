@@ -292,6 +292,9 @@ class ActiveRecord extends BaseActiveRecord
 			return $data;
 		}
 		$resolve = $this->{$data}();
+		if ($resolve instanceof HasBase) {
+			$resolve = $resolve->get();
+		}
 		if ($resolve instanceof Collection) {
 			return $resolve->toArray();
 		}
