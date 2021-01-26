@@ -29,7 +29,8 @@ class HasOne extends HasBase
 		if (method_exists($this, $name)) {
 			return call_user_func([$this, $name], ...$arguments);
 		}
-		return $this->_relation->getQuery($this->model::className())->$name(...$arguments);
+		$this->_relation->getQuery($this->model::className())->$name(...$arguments);
+		return $this;
 	}
 
 	/**
