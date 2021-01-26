@@ -24,10 +24,9 @@ abstract class HasBase
 	protected Collection|ActiveRecord $data;
 
 	/**
-	 * @var IOrm
+	 * @var IOrm|ActiveRecord
 	 */
-	protected IOrm $model;
-
+	protected mixed $model;
 
 	/** @var array */
 	protected array $value = [];

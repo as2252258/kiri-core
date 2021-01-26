@@ -223,12 +223,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @param $param
 	 * @param null $db
-	 * @return static
+	 * @return $this
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function findOne($param, $db = NULL): mixed
+	public static function findOne($param, $db = NULL): static
 	{
 		if (is_numeric($param)) {
 			$primary = static::getColumns()->getPrimaryKeys();
