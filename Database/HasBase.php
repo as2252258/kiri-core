@@ -28,8 +28,7 @@ abstract class HasBase
 	 */
 	protected mixed $model;
 
-	/** @var array */
-	protected array $value = [];
+	protected mixed $value = [];
 
 
 	/** @var Relation $_relation */
