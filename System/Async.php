@@ -22,7 +22,7 @@ class Async extends Component
 	 */
 	public function dispatch(Task $class)
 	{
-		$server = Snowflake::app()->server->getServer();
+		$server = Snowflake::app()->getSwoole();
 		if (!isset($server->setting['task_worker_num']) || !class_exists($class)) {
 			return;
 		}

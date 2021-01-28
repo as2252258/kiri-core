@@ -377,7 +377,7 @@ abstract class BaseApplication extends Service
 	 * @return Http|Packet|Receive|Websocket|null
 	 * @throws ComponentException
 	 */
-	public function getService(): Packet|Websocket|Receive|Http|null
+	public function getSwoole(): Packet|Websocket|Receive|Http|null
 	{
 		return $this->getServer()->getServer();
 	}

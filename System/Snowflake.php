@@ -225,7 +225,7 @@ class Snowflake
 	 */
 	public static function getWebSocket(): ?Server
 	{
-		$server = static::app()->server->getServer();
+		$server = static::app()->getSwoole();
 		if (!($server instanceof Server)) {
 			return null;
 		}
@@ -273,7 +273,7 @@ class Snowflake
 	 */
 	public static function async(string $class, array $params = [])
 	{
-		$server = static::app()->server->getServer();
+		$server = static::app()->getSwoole();
 		if (!isset($server->setting['task_worker_num']) || !class_exists($class)) {
 			return;
 		}
@@ -317,7 +317,7 @@ class Snowflake
 	 */
 	public static function shutdown($process): void
 	{
-		static::app()->server->getServer()->shutdown();
+		static::app()->getSwoole()->shutdown();
 		if ($process instanceof Process) {
 			$process->exit(0);
 		}

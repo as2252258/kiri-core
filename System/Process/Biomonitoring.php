@@ -22,7 +22,7 @@ class Biomonitoring extends Process
 	 */
 	public function onHandler(\Swoole\Process $process): void
 	{
-		$server = Snowflake::app()->getService();
+		$server = Snowflake::app()->getSwoole();
 		Timer::tick(1000, function () use ($server) {
 			clearstatcache();
 			if (($size = filesize($server->setting['log_file'])) > 1024000000) {
