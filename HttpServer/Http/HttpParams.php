@@ -11,6 +11,7 @@ namespace HttpServer\Http;
 
 use Exception;
 use HttpServer\Exception\RequestException;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Help;
 use Snowflake\Core\Json;
@@ -150,7 +151,7 @@ class HttpParams
 	/**
 	 * @return array
 	 */
-	public function params(): array
+	#[Pure] public function params(): array
 	{
 		return array_merge($this->body ?? [], $this->files ?? []);
 	}
@@ -158,7 +159,7 @@ class HttpParams
 	/**
 	 * @return array
 	 */
-	public function load(): array
+	#[Pure] public function load(): array
 	{
 		return array_merge($this->files, $this->body, $this->gets);
 	}
@@ -231,8 +232,8 @@ class HttpParams
 	 * @param      $name
 	 * @param bool $isNeed
 	 * @param int $round
-	 * @return float
-	 * @throws Exception
+	 * @return float|null
+	 * @throws RequestException
 	 */
 	public function float($name, $isNeed = FALSE, $round = 0): ?float
 	{
@@ -399,7 +400,7 @@ class HttpParams
 	 * @param $name
 	 * @return mixed
 	 */
-	public function __get($name): mixed
+	#[Pure] public function __get($name): mixed
 	{
 		$load = $this->load();
 
