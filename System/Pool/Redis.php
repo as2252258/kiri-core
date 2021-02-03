@@ -163,21 +163,22 @@ class Redis extends Pool
 	{
 		try {
 			if ($time + 60 * 10 < time()) {
-				return $result = false;
+				$result = false;
+			} else if (!($client instanceof SRedis)) {
+				$result = false;
+			} else if (!$client->isConnected() || !$client->ping('connect.')) {
+				$result = false;
+			} else {
+				$result = true;
 			}
-			if (!($client instanceof SRedis)) {
-				return $result = false;
-			}
-			if (!$client->isConnected() || !$client->ping('connect.')) {
-				return $result = false;
-			}
-			return $result = true;
 		} catch (\Throwable $exception) {
-			return $result = false;
+			$this->error($exception->getMessage());
+			$result = false;
 		} finally {
 			if (!$result) {
 				$this->desc($name);
 			}
+			return $result;
 		}
 	}
 
