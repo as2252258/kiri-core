@@ -146,7 +146,10 @@ abstract class Pool extends Component
 	 */
 	public function hasItem(string $name): bool
 	{
-		return $this->size($name) > 0;
+		if (isset($this->_items[$name])) {
+			return $this->_items[$name]->isEmpty();
+		}
+		return false;
 	}
 
 

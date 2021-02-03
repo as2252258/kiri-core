@@ -45,25 +45,12 @@ class Redis extends Pool
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		}
-		return $this->getByChannel($coroutineName, $config);
-	}
-
-
-	/**
-	 * @param $coroutineName
-	 * @param $config
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function getByChannel($coroutineName, $config): mixed
-	{
 		if (!$this->hasItem($coroutineName)) {
-			$clients = $this->newClient($config, $coroutineName);
-		} else {
-			[$time, $clients] = $this->get($coroutineName);
-			if ($clients === null) {
-				return $this->getByChannel($coroutineName, $config);
-			}
+			return $this->saveClient($coroutineName, $this->newClient($config, $coroutineName));
+		}
+		[$time, $clients] = $this->get($coroutineName);
+		if ($clients === null) {
+			return $this->saveClient($coroutineName, $this->newClient($config, $coroutineName));
 		}
 		return $this->saveClient($coroutineName, $clients);
 	}
