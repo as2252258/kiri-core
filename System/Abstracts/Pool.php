@@ -53,8 +53,10 @@ abstract class Pool extends Component
 			return [0, null];
 		}
 		[$timeout, $connection] = $this->_items[$name]->pop(30);
+		if (empty($timeout) || empty($connection)) {
+			return [0, null];
+		}
 		if (!$this->checkCanUse($name, $timeout, $connection)) {
-			unset($client);
 			return [0, null];
 		} else {
 			return [$timeout, $connection];
