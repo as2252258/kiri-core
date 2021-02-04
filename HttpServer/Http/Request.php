@@ -77,6 +77,22 @@ class Request extends Application
 		$this->fd = $fd;
 	}
 
+
+	/**
+	 * @return array|null
+	 * @throws ComponentException
+	 */
+	public function getConnectInfo(): array|null
+	{
+		if (empty($this->fd)) {
+			return null;
+		}
+		$server = Snowflake::app()->getSwoole();
+
+		return $server->connection_info($this->fd);
+	}
+
+
 	/**
 	 * @return bool
 	 */
