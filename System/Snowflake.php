@@ -265,6 +265,16 @@ class Snowflake
 
 
 	/**
+	 * @return mixed
+	 */
+	public static function localhost(): mixed
+	{
+		return Snowflake::app()->getFirstLocal();
+	}
+
+
+
+	/**
 	 * @param string $class
 	 * @param array $params
 	 * @throws NotFindClassException
