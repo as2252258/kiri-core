@@ -92,7 +92,6 @@ class Json
 	/**
 	 * @param Throwable|Error $throwable
 	 * @return bool|string
-	 * @throws Exception
 	 */
 	public static function error(Throwable|Error $throwable): bool|string
 	{
