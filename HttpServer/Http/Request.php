@@ -89,7 +89,7 @@ class Request extends Application
 		}
 		$server = Snowflake::app()->getSwoole();
 
-		return $server->connection_info($this->fd);
+		return $server->getClientInfo($this->fd);
 	}
 
 

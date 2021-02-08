@@ -13,7 +13,13 @@ interface AuthIdentity
 {
 
 
-
 	public function getIdentity();
+
+
+	/**
+	 * @return string|int
+	 * 获取唯一识别码
+	 */
+	public function getUniqueId(): string|int;
 
 }
