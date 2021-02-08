@@ -169,11 +169,21 @@ class Event extends BaseObject
 
 	/**
 	 * @param $name
-	 * @param null $handler
+	 * @param array $params
+	 * @return mixed
+	 */
+	public function dispatch($name, $params = []): mixed
+	{
+		return $this->trigger($name, $params);
+	}
+
+
+	/**
+	 * @param $name
 	 * @param null $parameter
+	 * @param null $handler
 	 * @param false $is_remove
-	 * @return bool|mixed
-	 * @throws Exception
+	 * @return mixed
 	 */
 	public function trigger($name, $parameter = null, $handler = null, $is_remove = false): mixed
 	{
