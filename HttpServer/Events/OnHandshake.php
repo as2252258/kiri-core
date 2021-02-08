@@ -37,10 +37,7 @@ class OnHandshake extends Callback
 		if (0 === preg_match($patten, $secWebSocketKey) || 16 !== strlen(base64_decode($secWebSocketKey))) {
 			throw new Exception('protocol error.', 500);
 		}
-		$key = base64_encode(sha1(
-			$request->header['sec-websocket-key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11',
-			TRUE
-		));
+		$key = base64_encode(sha1($request->header['sec-websocket-key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', TRUE));
 		$headers = [
 			'Upgrade'               => 'websocket',
 			'Connection'            => 'Upgrade',
@@ -70,10 +67,23 @@ class OnHandshake extends Callback
 
 
 	/**
+	 * @param $response
+	 * @param int $code
+	 * @return false
+	 */
+	private function connect($response, $code = 101): bool
+	{
+		$response->status($code);
+		$response->end();
+		return false;
+	}
+
+
+	/**
 	 * @param SRequest $request
 	 * @param SResponse $response
 	 * @return void
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function onHandler(SRequest $request, SResponse $response): void
 	{
@@ -88,7 +98,6 @@ class OnHandshake extends Callback
 	 * @param SRequest $request
 	 * @param SResponse $response
 	 * @return mixed
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	private function execute(SRequest $request, SResponse $response): mixed
@@ -96,11 +105,8 @@ class OnHandshake extends Callback
 		try {
 			$this->resolveParse($request, $response);
 			if (isset($request->get['debug']) && $request->get['debug'] == 'test') {
-				$response->status(101);
-				$response->end();
-				return true;
+				return $this->connect($response, 101);
 			}
-
 			$router = Snowflake::app()->getRouter();
 			$node = $router->search('/' . Socket::HANDSHAKE . '::event', 'sw::socket');
 			if ($node === null) {
@@ -110,25 +116,9 @@ class OnHandshake extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception->getMessage() . ' ' . $exception->getFile() . ' ' . $exception->getLine());
 			return $this->disconnect($response, 500);
-		} finally {
-			$this->eventTrigger($request, $response);
 		}
 	}
 
-
-	/**
-	 * @param $request
-	 * @param $response
-	 * @throws ComponentException
-	 * @throws Exception
-	 */
-	private function eventTrigger($request, $response)
-	{
-		go(function () use ($request, $response) {
-			$manager = Snowflake::app()->getEvent();
-			$manager->trigger(Event::SERVER_HANDSHAKE, [$request, $response]);
-		});
-	}
 
 
 }

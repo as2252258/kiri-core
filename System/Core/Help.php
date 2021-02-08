@@ -6,6 +6,7 @@ namespace Snowflake\Core;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 
 /**
@@ -19,11 +20,13 @@ class Help
 	 * @param array $data
 	 * @return string
 	 */
-	public static function toXml(array $data)
+	#[Pure] public static function toXml(array $data): string
 	{
 		$xml = "<xml>";
 		foreach ($data as $key => $val) {
-			if (is_numeric($val)) {
+			if (is_array($val)) {
+				$xml .= "<" . $key . ">" . static::xmlChild($val) . "</" . $key . ">";
+			} else if (is_numeric($val)) {
 				$xml .= "<" . $key . ">" . $val . "</" . $key . ">";
 			} else {
 				$xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
@@ -31,6 +34,26 @@ class Help
 		}
 		$xml .= "</xml>";
 		return $xml;
+	}
+
+
+	/**
+	 * @param array $array
+	 * @return string
+	 */
+	private static function xmlChild(array $array): string
+	{
+		$string = '';
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$string .= static::xmlChild($value);
+			} else if (is_numeric($value)) {
+				$string .= "<" . $key . ">" . $value . "</" . $key . ">";
+			} else {
+				$string .= "<" . $key . "><![CDATA[" . $value . "]]></" . $key . ">";
+			}
+		}
+		return $string;
 	}
 
 
@@ -151,7 +174,7 @@ class Help
 	 * @param $type
 	 * @return string
 	 */
-	public static function sign(array $array, $key, $type): string
+	public static function sign(array $array, $key, $type = 'MD5'): string
 	{
 		ksort($array, SORT_ASC);
 		$string = [];

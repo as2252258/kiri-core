@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Snowflake\Core;
 
+use Error;
 use Exception;
+use Throwable;
 
 /**
  * Class JSON
@@ -19,10 +21,10 @@ use Exception;
 class Json
 {
 
+
 	/**
 	 * @param $data
 	 * @return false|string
-	 * @throws Exception
 	 */
 	public static function encode($data): bool|string
 	{
@@ -48,6 +50,7 @@ class Json
 		}
 		return json_decode($data, $asArray);
 	}
+
 
 	/**
 	 * @param $code
@@ -85,6 +88,24 @@ class Json
 		return static::encode($params);
 	}
 
+
+	/**
+	 * @param Throwable|Error $throwable
+	 * @return bool|string
+	 * @throws Exception
+	 */
+	public static function error(Throwable|Error $throwable): bool|string
+	{
+		$array['code'] = $throwable->getCode() == 0 ? 500 : $throwable->getCode();
+		$array['message'] = $throwable->getMessage();
+		$array['param'] = [
+			'file' => $throwable->getFile(),
+			'line' => $throwable->getLine()
+		];
+		return Json::encode($array);
+	}
+
+
 	/**
 	 * @param $state
 	 * @param $body
@@ -98,5 +119,4 @@ class Json
 
 		return static::encode($params);
 	}
-
 }
