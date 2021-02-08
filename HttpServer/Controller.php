@@ -15,6 +15,7 @@ use Exception;
 use HttpServer\Route\Router;
 use Kafka\Producer;
 use Snowflake\Abstracts\BaseGoto;
+use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Cache\Redis;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
@@ -27,23 +28,11 @@ use Snowflake\Snowflake;
 /**
  * Class WebController
  * @package Snowflake\Snowflake\Web
- * @property BaseGoto $goto
- * @property Event $event
- * @property Router $router
- * @property SPool $pool
- * @property \Redis|Redis $redis
- * @property Server $server
- * @property DatabasesProviders $db
- * @property Connection $connections
- * @property Logger $logger
- * @property Jwt $jwt
- * @property Client $client
- * @property Producer $kafka
- * @property Curl $curl
- * @property Http2 $http2
  */
 class Controller extends Application
 {
+
+	use TraitApplication;
 
 	/** @var null|HttpParams $input */
 	public null|HttpParams $input;

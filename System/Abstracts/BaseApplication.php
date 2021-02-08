@@ -41,23 +41,11 @@ use Database\DatabasesProviders;
 /**
  * Class BaseApplication
  * @package Snowflake\Snowflake\Base
- * @property Event $event
- * @property Router $router
- * @property SPool $pool
- * @property \Redis|Redis $redis
- * @property Server $server
- * @property DatabasesProviders $db
- * @property Async $async
- * @property Connection $connections
- * @property Logger $logger
- * @property Jwt $jwt
- * @property SAnnotation $attributes
- * @property Http2 $http2
- * @property BaseGoto $goto
- * @property Producer $kafka
  */
 abstract class BaseApplication extends Service
 {
+
+	use TraitApplication;
 
 	/**
 	 * @var string
