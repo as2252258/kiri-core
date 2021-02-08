@@ -104,11 +104,9 @@ class Middleware
 	 */
 	protected function annotation(Node $node): array
 	{
-		$middleWares = $this->annotation_limit($node);
+		$middleWares = $node->getMiddleWares();
+		$middleWares = $this->annotation_limit($node, $middleWares);
 		$middleWares = $this->annotation_interceptor($node, $middleWares);
-		foreach ($node->getMiddleWares() as $middleWare) {
-			$middleWares[] = $middleWare;
-		}
 		return $middleWares;
 	}
 
