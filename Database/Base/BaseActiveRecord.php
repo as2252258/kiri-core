@@ -419,7 +419,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function setPrimary($lastId, $param)
+	private function setPrimary($lastId, $param): mixed
 	{
 		if ($this->hasAutoIncrement()) {
 			return $this->setAttribute($this->getAutoIncrement(), (int)$lastId);
