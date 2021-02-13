@@ -424,11 +424,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if ($this->hasAutoIncrement()) {
 			return $this->setAttribute($this->getAutoIncrement(), (int)$lastId);
 		}
-		if ($this->hasPrimary()) {
-			$primary = $this->getPrimary();
-			if (!isset($param[$primary]) || empty($param[$primary])) {
-				$this->setAttribute($primary, (int)$lastId);
-			}
+		if (!$this->hasPrimary()) {
+			return $this;
+		}
+		$primary = $this->getPrimary();
+		if (!isset($param[$primary]) || empty($param[$primary])) {
+			$this->setAttribute($primary, (int)$lastId);
 		}
 		return $this->setAttributes($param);
 	}
