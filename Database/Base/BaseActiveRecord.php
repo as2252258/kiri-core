@@ -401,16 +401,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			if (($lastId = $commandExec->save(true, $this->hasAutoIncrement())) === false) {
 				throw new Exception('保存失败.' . $sqlBuilder);
 			}
-			if ($this->hasAutoIncrement()) {
-				$this->setAttribute($this->getAutoIncrement(), (int)$lastId);
-			} else if ($this->hasPrimary()) {
-				$primary = $this->getPrimary();
-				if (!isset($param[$primary]) || empty($param[$primary])) {
-					$this->setAttribute($primary, (int)$lastId);
-				}
-			}
 			$trance->commit();
-			$this->setAttributes($param);
+			$this->setPrimary($lastId, $param);
 			$this->afterSave($attributes, $param);
 			$lastId = $this->refresh();
 		} catch (\Throwable $exception) {
@@ -418,6 +410,27 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			$lastId = $this->addError($exception->getMessage(), 'mysql');
 		}
 		return $lastId;
+	}
+
+
+	/**
+	 * @param $lastId
+	 * @param $param
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function setPrimary($lastId, $param)
+	{
+		if ($this->hasAutoIncrement()) {
+			return $this->setAttribute($this->getAutoIncrement(), (int)$lastId);
+		}
+		if ($this->hasPrimary()) {
+			$primary = $this->getPrimary();
+			if (!isset($param[$primary]) || empty($param[$primary])) {
+				$this->setAttribute($primary, (int)$lastId);
+			}
+		}
+		return $this->setAttributes($param);
 	}
 
 
