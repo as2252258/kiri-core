@@ -53,7 +53,7 @@ class Kafka extends \Snowflake\Process\Process
 	{
 		try {
 			$prefix = ucfirst(rtrim(Snowflake::app()->id, ':'));
-			swoole_set_process_name($prefix . ' Kafka_' . $kafkaServer['topic']);
+			swoole_set_process_name($prefix . ': Kafka_' . $kafkaServer['topic']);
 
 			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
 			if (empty($config) && empty($topic) && empty($conf)) {
