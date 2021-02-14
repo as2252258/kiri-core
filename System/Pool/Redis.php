@@ -94,7 +94,7 @@ class Redis extends Pool
 	 */
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{
-		$this->warning(($isBefore ? 'before ' : '') . 'create client[address: ' . $cds . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->_create . ']');
+		$this->warning(($isBefore ? 'before ' : '') . 'create client[address: ' . $cds . ',' . env('workerId') . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->_create . ']');
 	}
 
 
