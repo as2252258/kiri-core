@@ -5,6 +5,7 @@ namespace Kafka;
 
 use Exception;
 use RdKafka\Conf;
+use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
@@ -102,10 +103,21 @@ class Producer extends Component
 	}
 
 
+	/** @var ProducerTopic[] $topics  */
+	private array $topics = [];
+
+
+
+	/**
+	 * @param $message
+	 * @param $key
+	 */
 	private function push($message, $key)
 	{
-		$topic = $this->producer->newTopic($this->_topic, $this->topicConf);
-		$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
+		if(!isset($this->topics[$this->_topic])){
+			$this->topics[$this->_topic] = $this->producer->newTopic($this->_topic, $this->topicConf);
+		}
+		$this->topics[$this->_topic]->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
 		$this->producer->poll(0);
 	}
 
