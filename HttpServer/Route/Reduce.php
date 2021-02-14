@@ -7,6 +7,8 @@ namespace HttpServer\Route;
 use Closure;
 use HttpServer\IInterface\After;
 use HttpServer\IInterface\Middleware;
+use Snowflake\Core\Json;
+use Snowflake\Event;
 
 class Reduce
 {
@@ -31,10 +33,15 @@ class Reduce
 	{
 		return array_reduce(array_reverse($middleWares), function ($stack, $pipe) {
 			return function ($request, $passable) use ($stack, $pipe) {
-				if ($pipe instanceof After) {
+				try {
+					if (!($pipe instanceof After)) {
+						return call_user_func($pipe, $request, $passable, $stack);
+					}
 					return $pipe->onHandler($request, $passable);
-				} else {
-					return call_user_func($pipe, $request, $passable, $stack);
+				} catch (\Throwable $throwable) {
+					return Json::to(0, $throwable);
+				} finally {
+					fire(Event::EVENT_AFTER_REQUEST);
 				}
 			};
 		});

@@ -106,7 +106,6 @@ class Node extends Application
 	{
 		return Coroutine::create(function ($request, $response) {
 			(Reduce::after($this->_after))($request, $response);
-			fire(Event::EVENT_AFTER_REQUEST);
 		}, \request(), $response);
 	}
 
