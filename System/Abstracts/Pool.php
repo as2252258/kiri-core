@@ -7,6 +7,7 @@ namespace Snowflake\Abstracts;
 use Exception;
 
 use HttpServer\Http\Context;
+use JetBrains\PhpStorm\Pure;
 use PDO;
 use Redis;
 use Swoole\Coroutine;
@@ -72,7 +73,7 @@ abstract class Pool extends Component
 	 * @param false $isMaster
 	 * @return string
 	 */
-	public function name($cds, $isMaster = false): string
+	#[Pure] public function name($cds, $isMaster = false): string
 	{
 		if ($isMaster === true) {
 			return hash('sha256', $cds . 'master');
@@ -186,7 +187,6 @@ abstract class Pool extends Component
 		if (!$this->_items[$name]->isFull()) {
 			$this->_items[$name]->push([time(), $client]);
 		}
-		unset($client);
 	}
 
 
