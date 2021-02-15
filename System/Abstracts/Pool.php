@@ -134,11 +134,9 @@ abstract class Pool extends Component
 			return $client;
 		}
 
-		$this->push($coroutineName, $client);
-
 		Context::deleteId('create:connect:' . $coroutineName);
 
-		return $this->get($coroutineName)[1];
+		return $client;
 	}
 
 
