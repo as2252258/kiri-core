@@ -47,13 +47,13 @@ class Redis extends Pool
 			return Context::getContext($coroutineName);
 		}
 		if (!$this->hasItem($coroutineName)) {
-			return $this->saveClient($coroutineName, $this->newClient($config, $coroutineName));
+			return Context::setContext($coroutineName, $this->newClient($config, $coroutineName));
 		}
 		[$time, $clients] = $this->get($coroutineName);
 		if ($clients === null) {
-			return $this->saveClient($coroutineName, $this->newClient($config, $coroutineName));
+			return Context::setContext($coroutineName, $this->newClient($config, $coroutineName));
 		}
-		return $this->saveClient($coroutineName, $clients);
+		return Context::setContext($coroutineName, $clients);
 	}
 
 
@@ -65,8 +65,7 @@ class Redis extends Pool
 	 */
 	private function newClient($config, $coroutineName): \Redis|null
 	{
-		$this->printClients($config['host'], $coroutineName, true);
-		return $this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
+		$client = $this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
 			$redis = new SRedis();
 			if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -89,6 +88,11 @@ class Redis extends Pool
 
 			return $redis;
 		});
+		if ($client === false) {
+			return $this->newClient($config, $coroutineName);
+		}
+		$this->printClients($config['host'], $coroutineName, true);
+		return $client;
 	}
 
 
@@ -100,18 +104,6 @@ class Redis extends Pool
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{
 		$this->warning(($isBefore ? 'before ' : '') . 'create client[address: ' . $cds . ', ' . env('workerId') . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->_create . ']');
-	}
-
-
-	/**
-	 * @param $coroutineName
-	 * @param $client
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function saveClient($coroutineName, $client): mixed
-	{
-		return Context::setContext($coroutineName, $client);
 	}
 
 
