@@ -26,61 +26,6 @@ class Connection extends Pool
 	protected array $connections = [];
 
 
-	private int $creates = 0;
-
-
-	public int $lastTime = 0;
-
-	/**
-	 * @param $timer
-	 */
-	public function Heartbeat_detection($timer)
-	{
-		$this->creates = $timer;
-		if ($this->lastTime == 0) {
-			return;
-		}
-		if ($this->lastTime + 600 < time()) {
-			$this->flush(0);
-		} else if ($this->lastTime + 300 < time()) {
-			$this->flush(2);
-		}
-	}
-
-
-	/**
-	 * @param $retain_number
-	 */
-	protected function flush($retain_number)
-	{
-		$channels = $this->getChannels();
-		foreach ($channels as $name => $channel) {
-			$this->pop($channel, $name, $retain_number);
-		}
-		if ($retain_number == 0) {
-			$this->debug('release Timer::tick');
-			Timer::clear($this->creates);
-			$this->creates = 0;
-		}
-	}
-
-
-	/**
-	 * @param $channel
-	 * @param $name
-	 * @param $retain_number
-	 */
-	protected function pop($channel, $name, $retain_number)
-	{
-		while ($channel->length() > $retain_number) {
-			[$timer, $connection] = $channel->pop();
-			if ($connection) {
-				unset($connection);
-			}
-			$this->desc($name);
-		}
-	}
-
 
 	/**
 	 * @param $timeout
@@ -244,7 +189,7 @@ class Connection extends Pool
 				$number > 0 && $link->beginTransaction();
 			}
 			if ($this->creates === 0) {
-				$this->creates = Timer::tick(10000, [$this, 'Heartbeat_detection']);
+				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 			}
 			return $link;
 		});

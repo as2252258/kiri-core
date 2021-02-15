@@ -11,6 +11,7 @@ use RedisException;
 use Snowflake\Exception\RedisConnectException;
 use Swoole\Coroutine;
 use Exception;
+use Swoole\Timer;
 
 /**
  * Class RedisClient
@@ -21,6 +22,9 @@ class Redis extends Pool
 
 
 	private int $_create = 0;
+
+
+	private int $creates = 0;
 
 
 	/**
@@ -79,6 +83,10 @@ class Redis extends Pool
 			$redis->select($config['databases']);
 			$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
 			$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
+
+			if ($this->creates === 0) {
+				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
+			}
 
 			$this->_create += 1;
 
