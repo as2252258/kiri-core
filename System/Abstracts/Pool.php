@@ -42,6 +42,8 @@ abstract class Pool extends Component
 		$this->max = (int)$max;
 	}
 
+
+
 	/**
 	 * @param $name
 	 * @return array
@@ -52,7 +54,7 @@ abstract class Pool extends Component
 		if (!Context::inCoroutine()) {
 			return [0, null];
 		}
-		[$timeout, $connection] = $this->_items[$name]->pop(30);
+		[$timeout, $connection] = $this->_items[$name]->pop(-1);
 		if (empty($timeout) || empty($connection)) {
 			return [0, null];
 		}
@@ -62,6 +64,8 @@ abstract class Pool extends Component
 			return [$timeout, $connection];
 		}
 	}
+
+
 
 	/**
 	 * @param $cds
@@ -133,6 +137,7 @@ abstract class Pool extends Component
 			Context::deleteId('create:connect:' . $coroutineName);
 			return $client;
 		}
+		$this->push($coroutineName, $client);
 
 		Context::deleteId('create:connect:' . $coroutineName);
 
