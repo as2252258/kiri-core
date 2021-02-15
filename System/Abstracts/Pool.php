@@ -206,10 +206,10 @@ abstract class Pool extends Component
 		}
 	}
 
-	private int $creates = 0;
+	protected int $creates = 0;
 
 
-	public int $lastTime = 0;
+	protected int $lastTime = 0;
 
 
 	/**
