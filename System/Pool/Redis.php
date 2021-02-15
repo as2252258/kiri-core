@@ -89,6 +89,7 @@ class Redis extends Pool
 			return $redis;
 		});
 		if ($client === false) {
+			Coroutine::sleep(0.003);
 			return $this->newClient($config, $coroutineName);
 		}
 		$this->printClients($config['host'], $coroutineName, true);
