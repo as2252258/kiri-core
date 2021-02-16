@@ -47,11 +47,14 @@ class Redis extends Pool
 			return Context::getContext($coroutineName);
 		}
 		if (!$this->hasItem($coroutineName)) {
-			return Context::setContext($coroutineName, $this->newClient($config, $coroutineName));
+			if (($client = $this->newClient($config, $coroutineName)) == true) {
+				return Context::getContext($coroutineName);
+			}
+			return Context::setContext($coroutineName, $client);
 		}
 		[$time, $clients] = $this->get($coroutineName);
 		if ($clients === null) {
-			return Context::setContext($coroutineName, $this->newClient($config, $coroutineName));
+			throw new Exception('Redis exception.');
 		}
 		return Context::setContext($coroutineName, $clients);
 	}
@@ -65,7 +68,8 @@ class Redis extends Pool
 	 */
 	private function newClient($config, $coroutineName): \Redis|null
 	{
-		$client = $this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
+		$this->printClients($config['host'], $coroutineName, true);
+		return $this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
 			$redis = new SRedis();
 			if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -88,12 +92,6 @@ class Redis extends Pool
 
 			return $redis;
 		});
-		if ($client === false) {
-			Coroutine::sleep(0.003);
-			return $this->getConnection($config, $coroutineName);
-		}
-		$this->printClients($config['host'], $coroutineName, true);
-		return $client;
 	}
 
 

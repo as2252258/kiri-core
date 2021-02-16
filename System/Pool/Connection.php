@@ -151,7 +151,10 @@ class Connection extends Pool
 			return Context::getContext($coroutineName);
 		}
 		if (!$this->hasItem($coroutineName)) {
-			return Context::setContext($coroutineName, $this->newClient($config, $coroutineName));
+			if (($client = $this->newClient($config, $coroutineName)) == true) {
+				return Context::getContext($coroutineName);
+			}
+			return Context::setContext($coroutineName, $client);
 		}
 		[$time, $connections] = $this->get($coroutineName);
 		if (!($connections instanceof PDO)) {
@@ -169,7 +172,7 @@ class Connection extends Pool
 	 */
 	private function newClient($config, $coroutineName): PDO|null
 	{
-		$connections = $this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
+		return $this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
 				PDO::ATTR_CASE             => PDO::CASE_NATURAL,
@@ -190,12 +193,6 @@ class Connection extends Pool
 			}
 			return $link;
 		});
-		if ($connections === false) {
-			Coroutine::sleep(0.003);
-			return $this->getConnection($config, $coroutineName);
-		}
-		$this->printClients($config['cds'], $coroutineName, true);
-		return $connections;
 	}
 
 
