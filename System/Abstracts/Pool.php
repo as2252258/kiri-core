@@ -130,6 +130,7 @@ abstract class Pool extends Component
 			while (!($client = Context::hasContext($coroutineName))){
 				var_dump($client);
 			}
+			var_dump($client);
 			return true;
 		}
 		Context::setContext('create:connect:' . $coroutineName, 1);
