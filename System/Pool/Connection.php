@@ -169,7 +169,6 @@ class Connection extends Pool
 	 */
 	private function newClient($config, $coroutineName): PDO|null
 	{
-		$this->printClients($config['cds'], $coroutineName, true);
 		$connections = $this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
@@ -195,6 +194,7 @@ class Connection extends Pool
 			Coroutine::sleep(0.003);
 			return $this->getConnection($config, $coroutineName);
 		}
+		$this->printClients($config['cds'], $coroutineName, true);
 		return $connections;
 	}
 
