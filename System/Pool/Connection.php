@@ -193,7 +193,7 @@ class Connection extends Pool
 		});
 		if ($connections === false) {
 			Coroutine::sleep(0.003);
-			return $this->newClient($config, $coroutineName);
+			return $this->getConnection($config, $coroutineName);
 		}
 		return $connections;
 	}
