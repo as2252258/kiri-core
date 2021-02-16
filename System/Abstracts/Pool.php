@@ -127,10 +127,8 @@ abstract class Pool extends Component
 	public function createConnect(array $config, string $coroutineName, callable $createHandler): PDO|Redis|false
 	{
 		if (Context::hasContext('create:connect:' . $coroutineName)) {
-			while (true){
-				if (Context::hasContext($coroutineName)){
-					break;
-				}
+			while (!($client = Context::hasContext($coroutineName))){
+				var_dump($client);
 			}
 			return true;
 		}
