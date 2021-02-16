@@ -18,14 +18,14 @@ use Swoole\Timer;
 class Connection extends Pool
 {
 
+	use Timeout;
+
 	public array $hasCreate = [];
 
 	public int $timeout = 1900;
 
 	/** @var PDO[] */
 	protected array $connections = [];
-
-	public int $creates = 0;
 
 
 	/**

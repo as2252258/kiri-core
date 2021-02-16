@@ -20,10 +20,10 @@ use Swoole\Timer;
 class Redis extends Pool
 {
 
+	use Timeout;
+
 
 	private int $_create = 0;
-
-	public int $creates = 0;
 
 	/**
 	 * @param $value
