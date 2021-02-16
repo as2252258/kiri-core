@@ -205,7 +205,6 @@ abstract class Pool extends Component
 		}
 	}
 
-	protected int $creates = 0;
 
 
 	protected int $lastTime = 0;

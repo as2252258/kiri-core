@@ -25,6 +25,8 @@ class Connection extends Pool
 	/** @var PDO[] */
 	protected array $connections = [];
 
+	public int $creates = 0;
+
 
 	/**
 	 * @param $timeout
