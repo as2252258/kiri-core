@@ -45,7 +45,6 @@ abstract class Pool extends Component
 	}
 
 
-
 	/**
 	 * @param $name
 	 * @return array
@@ -66,7 +65,6 @@ abstract class Pool extends Component
 			return [$timeout, $connection];
 		}
 	}
-
 
 
 	/**
@@ -126,12 +124,12 @@ abstract class Pool extends Component
 	 */
 	public function createConnect(array $config, string $coroutineName, callable $createHandler): PDO|Redis|false
 	{
-		if (Context::hasContext('create:connect:' . $coroutineName)) {
-			while (($client = Context::getContext($coroutineName)) != null){
-				var_dump($client);
-			}
-			var_dump($client);
+		if ($client = Context::getContext($coroutineName)) {
 			return $client;
+		}
+		if (Context::hasContext('create:connect:' . $coroutineName)) {
+			Coroutine::sleep(0.001);
+			return $this->createConnect($config, $coroutineName, $createHandler);
 		}
 		Context::setContext('create:connect:' . $coroutineName, 1);
 
