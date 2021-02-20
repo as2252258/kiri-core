@@ -130,7 +130,7 @@ abstract class Pool extends Component
 			return;
 		}
 
-		if ($this->creates === 0) {
+		if ($this->creates === -1) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
 
