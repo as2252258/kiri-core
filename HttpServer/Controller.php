@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HttpServer;
 
 
+use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
@@ -16,7 +17,7 @@ use Snowflake\Snowflake;
  * Class WebController
  * @package Snowflake\Snowflake\Web
  */
-class Controller extends Application
+class Controller extends HttpService
 {
 
 	use TraitApplication;
