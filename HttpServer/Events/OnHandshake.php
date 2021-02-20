@@ -106,7 +106,9 @@ class OnHandshake extends Callback
 				return $this->connect($response, 101);
 			}
 			$router = Snowflake::app()->getRouter();
-			$node = $router->search('/' . Socket::HANDSHAKE . '::event', 'sw::socket');
+
+			$node = $router->tree_search(explode('/', Socket::HANDSHAKE . '::event'), 'sw::socket');
+//			$node = $router->search('/' . Socket::HANDSHAKE . '::event', 'sw::socket');
 			if ($node === null) {
 				return $this->disconnect($response, 502);
 			}

@@ -49,7 +49,10 @@ class OnClose extends Callback
 			if (!($server instanceof WServer) || !$server->isEstablished($fd)) {
 				return;
 			}
-			$node = $router->search('/' . Socket::CLOSE . '::event', 'sw::socket');
+
+			$node = $router->tree_search(explode('/', Socket::CLOSE . '::event'), 'sw::socket');
+
+//			$node = $router->search('/' . Socket::CLOSE . '::event', 'sw::socket');
 			if ($node instanceof Node) {
 				$node->dispatch($server, $fd);
 			}
