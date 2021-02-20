@@ -48,11 +48,11 @@ class Redis extends Pool
 			return Context::getContext($coroutineName);
 		}
 		if (!$this->hasItem($coroutineName)) {
-			return $this->newClient($config, $coroutineName);
+			$this->newClient($config, $coroutineName);
 		}
 		[$time, $clients] = $this->get($coroutineName);
 		if ($clients === null) {
-			return $this->newClient($config, $coroutineName);
+			return $this->getConnection($config, $coroutineName);
 		}
 		return Context::setContext($coroutineName, $clients);
 	}
@@ -81,10 +81,6 @@ class Redis extends Pool
 			$redis->select($config['databases']);
 			$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
 			$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
-
-			if ($this->creates === 0) {
-				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
-			}
 
 			$this->_create += 1;
 
