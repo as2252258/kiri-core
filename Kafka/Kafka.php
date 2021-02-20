@@ -39,12 +39,7 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function onHandler(Process $process): void
 	{
-//		$this->channelListener();
-
 		$this->waite(json_decode($process->read(), true));
-		Timer::tick(1000, function () {
-			$this->application->error('kafka service error.');
-		});
 	}
 
 
@@ -97,41 +92,6 @@ class Kafka extends \Snowflake\Process\Process
 		} catch (Throwable $exception) {
 			$this->application->error($exception);
 		}
-	}
-
-
-	/**
-	 * 监听通道数据传递
-	 */
-	public function channelListener()
-	{
-		$this->channel = new Channel($this->maxLength);
-		Coroutine::create(function () {
-			$group = new WaitGroup();
-			for ($i = 0; $i < $this->maxLength; $i++) {
-				$group->add();
-				go(function () use ($group) {
-					defer(function () use ($group) {
-						$group->done();
-					});
-					$this->popMessage();
-				});
-			}
-			$group->wait();
-		});
-	}
-
-
-	/**
-	 * 优化执行方式
-	 */
-	public function popMessage()
-	{
-		$messages = $this->channel->pop(-1);
-		if (!empty($messages)) {
-			$this->handlerExecute($messages[0], $messages[1]);
-		}
-		$this->popMessage();
 	}
 
 
