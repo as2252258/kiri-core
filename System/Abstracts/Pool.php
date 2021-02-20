@@ -128,8 +128,10 @@ abstract class Pool extends Component
 			return $client;
 		}
 		if (Context::hasContext('create:connect:' . $coroutineName)) {
-			Coroutine::sleep(0.001);
-			return $this->createConnect($config, $coroutineName, $createHandler);
+			while ($client = Context::getContext($coroutineName)) {
+				Coroutine::sleep(0.001);
+			}
+			return $client;
 		}
 		Context::setContext('create:connect:' . $coroutineName, 1);
 
@@ -204,7 +206,6 @@ abstract class Pool extends Component
 			$this->desc($name);
 		}
 	}
-
 
 
 	/**
