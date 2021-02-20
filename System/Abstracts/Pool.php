@@ -80,9 +80,9 @@ abstract class Pool extends Component
 	#[Pure] public function name($driver, $cds, $isMaster = false): string
 	{
 		if ($isMaster === true) {
-			return $driver . ':' . hash('sha256', $cds . 'master');
+			return $driver . ':' . $cds . 'master';
 		} else {
-			return $driver . ':' . hash('sha256', $cds . 'slave');
+			return $driver . ':' . $cds . 'slave';
 		}
 	}
 
