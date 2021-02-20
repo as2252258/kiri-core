@@ -46,7 +46,6 @@ trait Timeout
 			$this->pop($channel, $name, $retain_number);
 		}
 		if ($retain_number == 0) {
-			$this->debug('release ' . implode(',', $names));
 			$this->debug('release Timer::tick');
 			Timer::clear($this->creates);
 			$this->creates = -1;
