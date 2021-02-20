@@ -140,7 +140,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 		$this->data = $headers;
 		if (empty($unionId)) {
-			throw new Exception('您还未登录或已登录超时');
+			throw new AuthException('您还未登录或已登录超时');
 		}
 		$source = $header['source'] ?? 'browser';
 		if (empty($source) || !in_array($source, $this->source)) {
@@ -215,13 +215,13 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	{
 		$this->data = $headers;
 		if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
-			throw new Exception('信息解码失败.');
+			throw new AuthException('信息解码失败.');
 		}
 
 		$this->user = $data['user'];
 
 		if (!$this->getRedis()->exists('refresh:' . $this->user)) {
-			throw new Exception('refresh data error.');
+			throw new AuthException('refresh data error.');
 		}
 
 		$this->getRedis()->del('refresh:' . $this->user);
@@ -281,7 +281,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		$source = $this->getSource();
 		if (!empty($_source)) $source = $_source;
 		if (empty($source)) {
-			throw new Exception("未知的登陆设备");
+			throw new AuthException("未知的登陆设备");
 		}
 		return 'Tmp_Token:' . strtoupper($source) . ':' . $token;
 	}
@@ -321,13 +321,11 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @param string $str
 	 *
-	 * @return mixed
-	 * 将字符串替换成指定格式
+	 * @return array|string|null 将字符串替换成指定格式
 	 */
-	private function preg(string $str): mixed
+	private function preg(string $str): null|array|string
 	{
-		$preg = '/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/';
-		return preg_replace($preg, '$1-$2-$3-$4-$5', $str);
+		return preg_replace('/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/', '$1-$2-$3-$4-$5', $str);
 	}
 
 	/**
@@ -389,13 +387,13 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		$this->data = request()->headers->getHeaders();
 		$model = $this->getUserModel();
 		if (empty($model)) {
-			return $this->addError('授权信息已过期！');
+			throw new AuthException('授权信息已过期！');
 		}
 		if (!isset($model['user'])) {
-			return $this->addError('授权信息错误！');
+			throw new AuthException('授权信息错误！');
 		}
 		if (!$this->check($this->data, (int)$model['user'])) {
-			return $this->addError('授权信息不合法！');
+			throw new AuthException('授权信息不合法！');
 		}
 		$this->expireRefresh();
 
