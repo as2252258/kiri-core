@@ -156,9 +156,7 @@ class Redis extends Pool
 	public function checkCanUse(string $name, int $time, mixed $client): bool
 	{
 		try {
-			if ($time + 60 * 10 < time()) {
-				$result = false;
-			} else if (!($client instanceof SRedis)) {
+			if (!($client instanceof SRedis)) {
 				$result = false;
 			} else if (!$client->isConnected() || !$client->ping('connect.')) {
 				$result = false;
