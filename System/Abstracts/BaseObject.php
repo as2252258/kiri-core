@@ -182,7 +182,13 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . (empty($method) ? '' : $method . ': ') . PHP_EOL . $message . "\033[0m";
+
+		$length = strlen('[ERROR][2021-02-20 08:32:02]:');
+
+		$message = PHP_EOL . (empty($method) ? '' : $method . ': ') . $message;
+
+		echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' .
+			str_pad($message, $length, ' ', STR_PAD_LEFT) . "\033[0m";
 		echo PHP_EOL;
 	}
 
