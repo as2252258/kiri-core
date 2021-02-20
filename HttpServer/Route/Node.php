@@ -104,9 +104,7 @@ class Node extends Application
 	 */
 	public function afterDispatch($response = null): mixed
 	{
-		return Coroutine::create(function ($request, $response) {
-			(Reduce::after($this->_after))($request, $response);
-		}, \request(), $response);
+		return (Reduce::after($this->_after))(\request(), $response);
 	}
 
 

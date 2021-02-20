@@ -17,12 +17,10 @@ trait Timeout
 
 
 	/**
-	 * @param $timer
 	 * @throws Exception
 	 */
-	public function Heartbeat_detection($timer)
+	public function Heartbeat_detection()
 	{
-		$this->creates = $timer;
 		if ($this->lastTime == 0) {
 			return;
 		}
