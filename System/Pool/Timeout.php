@@ -45,7 +45,7 @@ trait Timeout
 		if ($retain_number == 0) {
 			$this->debug('release Timer::tick');
 			Timer::clear($this->creates);
-			$this->creates = 0;
+			$this->creates = -1;
 		}
 	}
 
