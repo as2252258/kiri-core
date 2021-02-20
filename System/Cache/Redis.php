@@ -125,6 +125,7 @@ SCRIPT;
 	 * 销毁连接池
 	 * @throws ConfigException
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function destroy()
 	{

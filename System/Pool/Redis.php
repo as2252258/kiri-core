@@ -20,7 +20,6 @@ use Swoole\Timer;
 class Redis extends Pool
 {
 
-	use Timeout;
 
 
 	private int $_create = 0;

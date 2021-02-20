@@ -18,7 +18,6 @@ use Swoole\Timer;
 class Connection extends Pool
 {
 
-	use Timeout;
 
 	public array $hasCreate = [];
 
@@ -178,9 +177,6 @@ class Connection extends Pool
 			$this->incr($coroutineName);
 			if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 				$number > 0 && $link->beginTransaction();
-			}
-			if ($this->creates === 0) {
-				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 			}
 			return $link;
 		});

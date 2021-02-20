@@ -10,6 +10,7 @@ use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
 use PDO;
 use Redis;
+use Snowflake\Pool\Timeout;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
@@ -25,6 +26,8 @@ abstract class Pool extends Component
 	private array $_items = [];
 
 	protected int $max = 60;
+
+	use Timeout;
 
 	/**
 	 * @param $name
@@ -125,6 +128,10 @@ abstract class Pool extends Component
 	{
 		if (Context::hasContext('create:connect:' . $coroutineName)) {
 			return;
+		}
+
+		if ($this->creates === 0) {
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
 
 		Context::setContext('create:connect:' . $coroutineName, 1);
