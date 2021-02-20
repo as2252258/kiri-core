@@ -4,6 +4,7 @@
 namespace HttpServer;
 
 use Annotation\IAnnotation;
+use HttpServer\Abstracts\HttpService;
 use HttpServer\Events\OnClose;
 use HttpServer\Events\OnConnect;
 use HttpServer\Events\OnPacket;
@@ -40,7 +41,7 @@ use Swoole\Runtime;
  *    ['host'=> '127.0.0.1', 'port'=> 5775, 'mode'=> SWOOLE_TCP]
  * ]
  */
-class Server extends Application
+class Server extends HttpService
 {
 	use Action;
 
