@@ -80,9 +80,9 @@ abstract class Pool extends Component
 	#[Pure] public function name($driver, $cds, $isMaster = false): string
 	{
 		if ($isMaster === true) {
-			return $driver . ':' . $cds . 'master';
+			return $cds . '_master';
 		} else {
-			return $driver . ':' . $cds . 'slave';
+			return $cds . '_slave';
 		}
 	}
 
@@ -132,7 +132,6 @@ abstract class Pool extends Component
 			return;
 		}
 
-		var_dump($coroutineName);
 		if ($this->creates === -1) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
