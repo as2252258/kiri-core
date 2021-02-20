@@ -100,7 +100,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = Json::to(500, $error[1], $path);
 
-		logger()->error($data, 'error');
+		Snowflake::app()->error($data, 'error');
 
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
@@ -122,7 +122,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
-		logger()->trance($data, $this->category);
+		Snowflake::app()->trance($data, $this->category);
 
 		return response()->send($data);
 	}
@@ -153,6 +153,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function writer($message, $category = 'app')
 	{
-		logger()->debug($message, $category);
+		Snowflake::app()->debug($message, $category);
 	}
 }
