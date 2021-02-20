@@ -53,11 +53,7 @@ class Connection extends Pool
 	 */
 	public function inTransaction($cds): bool
 	{
-		$coroutineName = $this->name($cds, true);
-		if (!Context::hasContext('begin_' . $coroutineName)) {
-			return false;
-		}
-		return Context::getContext('begin_' . $coroutineName) == 0;
+		return Context::getContext('begin_' . $this->name($cds, true)) == 0;
 	}
 
 	/**
@@ -97,7 +93,6 @@ class Connection extends Pool
 		}
 		Context::setContext('begin_' . $coroutineName, 0);
 		if ($connection->inTransaction()) {
-			$this->info('connection commit.');
 			$connection->commit();
 		}
 	}
@@ -125,11 +120,8 @@ class Connection extends Pool
 		if (Context::autoDecr('begin_' . $coroutineName) > 0) {
 			return;
 		}
-		if ($this->hasClient($coroutineName)) {
-			/** @var PDO $connection */
-			$connection = Context::getContext($coroutineName);
+		if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
 			if ($connection->inTransaction()) {
-				$this->info('connection rollBack.');
 				$connection->rollBack();
 			}
 		}
@@ -254,7 +246,6 @@ class Connection extends Pool
 	 */
 	public function connection_clear()
 	{
-		$this->debug('receive all clients.');
 		$connections = Context::getAllContext();
 		foreach ($connections as $name => $connection) {
 			if (empty($connection) || !($connection instanceof PDO)) {
@@ -289,9 +280,6 @@ class Connection extends Pool
 	public function checkCanUse($name, $time, $client): bool
 	{
 		try {
-			if ($time + 60 * 10 > time()) {
-				return $result = true;
-			}
 			if (empty($client) || !($client instanceof PDO)) {
 				return $result = false;
 			}
