@@ -39,8 +39,6 @@ trait Timeout
 	protected function flush($retain_number)
 	{
 		$channels = $this->getChannels();
-
-		$names = [];
 		foreach ($channels as $name => $channel) {
 			$names[] = $name;
 			$this->pop($channel, $name, $retain_number);
