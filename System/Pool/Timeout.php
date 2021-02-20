@@ -10,10 +10,10 @@ use Swoole\Timer;
 trait Timeout
 {
 
-	private int $creates = -1;
+	public int $creates = -1;
 
 
-	private int $lastTime = 0;
+	public int $lastTime = 0;
 
 
 	/**
