@@ -114,13 +114,24 @@ class Kafka extends \Snowflake\Process\Process
 					defer(function () use ($group) {
 						$group->done();
 					});
-					while ($messages = $this->channel->pop()) {
-						$this->handlerExecute($messages[0], $messages[1]);
-					}
+					$this->popMessage();
 				});
 			}
 			$group->wait();
 		});
+	}
+
+
+	/**
+	 * 优化执行方式
+	 */
+	public function popMessage()
+	{
+		$messages = $this->channel->pop(-1);
+		if (!empty($messages)) {
+			$this->handlerExecute($messages[0], $messages[1]);
+		}
+		$this->popMessage();
 	}
 
 
