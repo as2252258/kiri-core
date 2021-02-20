@@ -39,7 +39,7 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function onHandler(Process $process): void
 	{
-		$this->channelListener();
+//		$this->channelListener();
 
 		$this->waite(json_decode($process->read(), true));
 		Timer::tick(1000, function () {
@@ -86,7 +86,7 @@ class Kafka extends \Snowflake\Process\Process
 				return;
 			}
 			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
-				$this->channel->push([$message->topic_name, $message]);
+				$this->handlerExecute($message->topic_name, $message);
 			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
 				$this->application->warning('No more messages; will wait for more');
 			} else if ($message->err == RD_KAFKA_RESP_ERR__TIMED_OUT) {
