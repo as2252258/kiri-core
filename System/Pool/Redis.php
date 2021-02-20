@@ -44,8 +44,8 @@ class Redis extends Pool
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 		$coroutineName = $this->name('redis:' . $name, $isMaster);
-		if (Context::hasContext($coroutineName)) {
-			return Context::getContext($coroutineName);
+		if (($redis = Context::getContext($coroutineName)) instanceof \Redis) {
+			return $redis;
 		}
 		if (!$this->hasItem($coroutineName)) {
 			$this->newClient($config, $coroutineName);

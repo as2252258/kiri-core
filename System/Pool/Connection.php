@@ -149,8 +149,8 @@ class Connection extends Pool
 		if (!isset($this->hasCreate[$coroutineName])) {
 			$this->hasCreate[$coroutineName] = 0;
 		}
-		if (Context::hasContext($coroutineName)) {
-			return Context::getContext($coroutineName);
+		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
+			return $pdo;
 		}
 		if (!$this->hasItem($coroutineName)) {
 			$this->newClient($config, $coroutineName);
