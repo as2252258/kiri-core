@@ -500,7 +500,6 @@ class Router extends Application implements RouterInterface
 	 * @param Request $request
 	 * @return Node|null 树干搜索
 	 * 树干搜索
-	 * @throws ConfigException
 	 */
 	private function find_path(Request $request): ?Node
 	{
@@ -559,11 +558,11 @@ class Router extends Application implements RouterInterface
 
 
 	/**
-	 * @param $request
+	 * @param Request $request
 	 * @return Node|null
 	 * 树杈搜索
 	 */
-	private function Branch_search($request): ?Node
+	private function Branch_search(Request $request): ?Node
 	{
 		$node = $this->tree_search($request->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {

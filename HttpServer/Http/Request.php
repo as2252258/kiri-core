@@ -443,10 +443,12 @@ class Request extends Application
 	 */
 	public static function create($request): Request
 	{
+		/** @var Request $sRequest */
 		$sRequest = Context::setContext('request', Snowflake::createObject(Request::class));
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
 		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
+		$sRequest->parseUri();
 
 		$sRequest->params = new HttpParams($request->rawContent(), $request->get, $request->files);
 		if (!empty($request->post)) {
