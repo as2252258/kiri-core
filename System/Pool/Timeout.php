@@ -40,7 +40,6 @@ trait Timeout
 	{
 		$channels = $this->getChannels();
 		foreach ($channels as $name => $channel) {
-			$this->debug('release ' . $name);
 			$this->pop($channel, $name, $retain_number);
 		}
 		if ($retain_number == 0) {
