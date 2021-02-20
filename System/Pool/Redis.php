@@ -52,7 +52,7 @@ class Redis extends Pool
 		}
 		[$time, $clients] = $this->get($coroutineName);
 		if ($clients === null) {
-			throw new Exception('Redis exception.');
+			return $this->newClient($config, $coroutineName);
 		}
 		return Context::setContext($coroutineName, $clients);
 	}
