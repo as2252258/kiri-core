@@ -88,7 +88,7 @@ class OnRequest extends Callback
 				$response->end($message);
 			}
 		} catch (\ErrorException $exception) {
-			$logger = Snowflake::app()->logger;
+			$logger = Snowflake::app()->getLogger();
 			$logger->write($exception->getMessage(), 'shutdown');
 		} finally {
 			unset($response);

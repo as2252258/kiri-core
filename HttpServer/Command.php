@@ -33,7 +33,7 @@ class Command extends \Console\Command
 	 */
 	public function onHandler(Input $dtl): string
 	{
-		$manager = Snowflake::app()->server;
+		$manager = Snowflake::app()->getServer();
 		$manager->setDaemon($dtl->get('daemon', 0));
 
 		if (!in_array($dtl->get('action'), self::ACTIONS)) {

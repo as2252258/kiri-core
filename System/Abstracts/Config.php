@@ -55,7 +55,7 @@ class Config extends Component
 	 */
 	public static function get($key, $try = FALSE, $default = null): mixed
 	{
-		$instance = Snowflake::app()->config->getData();
+		$instance = Snowflake::app()->getConfig()->getData();
 		if (!str_contains($key, '.')) {
 			return isset($instance[$key]) ? $instance[$key] : $default;
 		}
@@ -85,7 +85,7 @@ class Config extends Component
 	 */
 	public static function set($key, $value): mixed
 	{
-		$config = Snowflake::app()->config;
+		$config = Snowflake::app()->getConfig();
 		return $config->setData($key, $value);
 	}
 
@@ -96,7 +96,7 @@ class Config extends Component
 	 */
 	public static function has($key, $must_not_null = false): bool
 	{
-		$config = Snowflake::app()->config;
+		$config = Snowflake::app()->getConfig();
 		if (!isset($config->data[$key])) {
 			return false;
 		}

@@ -242,7 +242,7 @@ class Logger extends Component
 
 		$code = $exception->getCode() == 0 ? 500 : $exception->getCode();
 
-		$logger = Snowflake::app()->logger;
+		$logger = Snowflake::app()->getLogger();
 
 		$string = 'Exception: ' . PHP_EOL;
 		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
