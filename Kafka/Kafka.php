@@ -30,6 +30,8 @@ class Kafka extends \Snowflake\Process\Process
 
 	protected Channel $channel;
 
+	private int $maxLength = 5000;
+
 
 	/**
 	 * @param Process $process
@@ -103,10 +105,10 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function channelListener()
 	{
-		$this->channel = new Channel(100);
+		$this->channel = new Channel($this->maxLength);
 		Coroutine::create(function () {
 			$group = new WaitGroup();
-			for ($i = 0; $i < 100; $i++) {
+			for ($i = 0; $i < $this->maxLength; $i++) {
 				$group->add();
 				go(function () use ($group) {
 					defer(function () use ($group) {
