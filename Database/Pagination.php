@@ -182,7 +182,7 @@ class Pagination extends Component
 				$this->addError($exception->getMessage());
 			} finally {
 				$event = Snowflake::app()->getEvent();
-				$event->trigger(Event::EVENT_AFTER_REQUEST);
+				$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
 				$this->_group->done();
 			}
 		}, $callback, $data, $param);

@@ -87,10 +87,8 @@ class OnHandshake extends Callback
 	 */
 	public function onHandler(SRequest $request, SResponse $response): void
 	{
-		Coroutine::defer(function () {
-			fire(Event::EVENT_AFTER_REQUEST);
-		});
 		$this->execute($request, $response);
+		fire(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 

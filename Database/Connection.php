@@ -70,8 +70,8 @@ class Connection extends Component
 	public function init()
 	{
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::RELEASE_ALL, [$this, 'disconnect']);
-		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'clear_connection']);
+		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'disconnect']);
+		$event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'clear_connection']);
 	}
 
 

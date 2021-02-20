@@ -40,8 +40,6 @@ class Reduce
 					return $pipe->onHandler($request, $passable);
 				} catch (\Throwable $throwable) {
 					return Json::to(0, $throwable);
-				} finally {
-					fire(Event::EVENT_AFTER_REQUEST);
 				}
 			};
 		});

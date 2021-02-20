@@ -35,10 +35,6 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response): mixed
 	{
-		defer(function () use ($request) {
-			write(Json::encode(get_object_vars($request)), 'request');
-			fire(Event::EVENT_AFTER_REQUEST);
-		});
 		try {
 			[$req, $rep] = static::create($request, $response);
 			if ($req->is('favicon.ico')) {
@@ -50,6 +46,9 @@ class OnRequest extends Callback
 				return \send($exception->getMessage(), $exception->getCode());
 			}
 			return $this->sendErrorMessage($exception);
+		} finally {
+			write(Json::encode(get_object_vars($request)), 'request');
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
 		}
 	}
 

@@ -37,8 +37,8 @@ class Redis extends Component
 	public function init()
 	{
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::RELEASE_ALL, [$this, 'destroy']);
-		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'release']);
+		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'destroy']);
+		$event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'release']);
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 	}

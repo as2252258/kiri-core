@@ -109,7 +109,7 @@ class OnTask extends Callback
 			$this->error($exception, 'Task');
 		} finally {
 			$event = Snowflake::app()->getEvent();
-			$event->trigger(Event::RELEASE_ALL);
+			$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
 			Timer::clearAll();
 		}
 		return $finish;

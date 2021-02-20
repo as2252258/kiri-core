@@ -28,7 +28,6 @@ class OnMessage extends Callback
 	 */
 	public function onHandler(Server $server, Frame $frame)
 	{
-		Coroutine::defer([$this, 'onAfter']);
 		try {
 			if ($frame->opcode != 0x08) {
 				$event = Snowflake::app()->getEvent();
@@ -41,17 +40,9 @@ class OnMessage extends Callback
 			$this->addError($exception->getMessage(), 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
 		} finally {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
 			logger()->insert();
 		}
-	}
-
-
-	/**
-	 * @throws ComponentException
-	 */
-	public function onAfter()
-	{
-		fire(Event::EVENT_AFTER_REQUEST);
 	}
 
 	/**

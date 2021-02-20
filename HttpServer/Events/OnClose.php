@@ -31,10 +31,8 @@ class OnClose extends Callback
 	 */
 	public function onHandler(Server $server, int $fd)
 	{
-		Coroutine::defer(function () {
-			fire(Event::EVENT_AFTER_REQUEST);
-		});
 		$this->execute($server, $fd);
+		fire(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 

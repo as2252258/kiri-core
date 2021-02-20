@@ -89,7 +89,7 @@ class Producer extends Component
 		});
 
 		$event = Snowflake::app()->getEvent();
-		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'flush']);
+		$event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'flush']);
 
 		if ($this->producer === null) {
 			$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
