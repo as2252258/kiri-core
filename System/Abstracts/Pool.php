@@ -119,27 +119,19 @@ abstract class Pool extends Component
 	 * @param array $config
 	 * @param string $coroutineName
 	 * @param callable $createHandler
-	 * @return PDO|Redis|null
 	 * @throws Exception
 	 */
-	public function createConnect(array $config, string $coroutineName, callable $createHandler): PDO|Redis|false
+	public function createConnect(array $config, string $coroutineName, callable $createHandler)
 	{
-		if ($client = Context::getContext($coroutineName)) {
-			return $client;
-		}
 		if (Context::hasContext('create:connect:' . $coroutineName)) {
-			while ($client = Context::getContext($coroutineName)) {
-				Coroutine::sleep(0.001);
-			}
-			return $client;
+			return;
 		}
+
 		Context::setContext('create:connect:' . $coroutineName, 1);
 
-		$client = call_user_func($createHandler, ...$config);
+		$this->push($coroutineName, call_user_func($createHandler, ...$config));
 
 		Context::deleteId('create:connect:' . $coroutineName);
-
-		return Context::setContext($coroutineName, $client);
 	}
 
 

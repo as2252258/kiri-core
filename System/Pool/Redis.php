@@ -67,7 +67,7 @@ class Redis extends Pool
 	private function newClient($config, $coroutineName): \Redis|null
 	{
 		$this->printClients($config['host'], $coroutineName, true);
-		return $this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
+		$this->createConnect([$config, $coroutineName], $coroutineName, function ($config, $coroutineName) {
 			$redis = new SRedis();
 			if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -90,6 +90,7 @@ class Redis extends Pool
 
 			return $redis;
 		});
+		return $this->get($coroutineName)[1];
 	}
 
 

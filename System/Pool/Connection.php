@@ -172,7 +172,7 @@ class Connection extends Pool
 	private function newClient($config, $coroutineName): PDO|null
 	{
 		$this->printClients($config['cds'], $coroutineName, true);
-		return $this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
+		$this->createConnect($this->parseConfig($config, $coroutineName), $coroutineName, function ($cds, $username, $password, $charset, $coroutineName) {
 			$link = new PDO($cds, $username, $password, [
 				PDO::ATTR_EMULATE_PREPARES => false,
 				PDO::ATTR_CASE             => PDO::CASE_NATURAL,
@@ -193,6 +193,7 @@ class Connection extends Pool
 			}
 			return $link;
 		});
+		return $this->get($coroutineName)[1];
 	}
 
 
