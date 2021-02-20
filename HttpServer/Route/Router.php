@@ -80,13 +80,13 @@ class Router extends Application implements RouterInterface
 			$this->nodes[$method] = [];
 		}
 
-		$useTree = Config::get('router', false, ROUTER_HASH);
-		var_dump($useTree);
-		if ($useTree == ROUTER_TREE) {
-			return $this->tree($path, $handler, $method);
-		} else {
-			return $this->hash($path, $handler, $method);
-		}
+//		$useTree = Config::get('router', false, ROUTER_HASH);
+//		var_dump($useTree);
+//		if ($useTree == ROUTER_TREE) {
+		return $this->tree($path, $handler, $method);
+//		} else {
+//			return $this->hash($path, $handler, $method);
+//		}
 	}
 
 
@@ -504,14 +504,10 @@ class Router extends Application implements RouterInterface
 	 */
 	private function find_path(Request $request): ?Node
 	{
+		return $this->Branch_search($request);
+
 		$method = $request->getMethod();
 		$uri = $request->headers->get('request_uri', '/');
-
-		$context = Config::get('router', false, ROUTER_HASH);
-		var_dump($context);
-		if ($context === ROUTER_TREE) {
-			return $this->Branch_search($request);
-		}
 
 		if (!isset($this->nodes[$method])) {
 			return null;
