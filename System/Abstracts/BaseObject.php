@@ -93,7 +93,10 @@ class BaseObject implements Configure
 	public function addError($message, $model = 'app'): bool
 	{
 		if ($message instanceof \Throwable) {
-			$this->error($message->getMessage(), $message->getFile(), $message->getLine());
+			$format = 'Error: ' . $message->getMessage() . PHP_EOL;
+			$format .= 'File: ' . $message->getFile() . PHP_EOL;
+			$format .= 'Line: ' . $message->getLine();
+			$this->error($format);
 		} else {
 			if (!is_string($message)) {
 				$message = json_encode($message, JSON_UNESCAPED_UNICODE);
