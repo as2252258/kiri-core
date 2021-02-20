@@ -7,6 +7,7 @@ namespace HttpServer\Events;
 use Annotation\Route\Socket;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Route\Node;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -50,9 +51,12 @@ class OnClose extends Callback
 				return;
 			}
 
-			$node = $router->tree_search(explode('/', Socket::CLOSE . '::event'), 'sw::socket');
-
-//			$node = $router->search('/' . Socket::CLOSE . '::event', 'sw::socket');
+			$context = Config::get('router', false, ROUTER_TREE);
+			if ($context === ROUTER_TREE) {
+				$node = $router->tree_search(explode('/', Socket::CLOSE . '::event'), 'sw::socket');
+			} else {
+				$node = $router->search('/' . Socket::CLOSE . '::event', 'sw::socket');
+			}
 			if ($node instanceof Node) {
 				$node->dispatch($server, $fd);
 			}

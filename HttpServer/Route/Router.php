@@ -80,13 +80,12 @@ class Router extends Application implements RouterInterface
 			$this->nodes[$method] = [];
 		}
 
-//		$useTree = Config::get('router', false, ROUTER_HASH);
-//		var_dump($useTree);
-//		if ($useTree == ROUTER_TREE) {
-		return $this->tree($path, $handler, $method);
-//		} else {
-//			return $this->hash($path, $handler, $method);
-//		}
+		$useTree = Config::get('router', false, ROUTER_TREE);
+		if ($useTree == ROUTER_TREE) {
+			return $this->tree($path, $handler, $method);
+		} else {
+			return $this->hash($path, $handler, $method);
+		}
 	}
 
 
@@ -500,10 +499,14 @@ class Router extends Application implements RouterInterface
 	 * @param Request $request
 	 * @return Node|null 树干搜索
 	 * 树干搜索
+	 * @throws ConfigException
 	 */
 	private function find_path(Request $request): ?Node
 	{
-		return $this->Branch_search($request);
+		$useTree = Config::get('router', false, ROUTER_TREE);
+		if ($useTree === ROUTER_TREE) {
+			return $this->Branch_search($request);
+		}
 
 		$method = $request->getMethod();
 		$uri = $request->headers->get('request_uri', '/');

@@ -8,6 +8,7 @@ use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Context;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -64,8 +65,12 @@ class OnMessage extends Callback
 			throw new Exception('Format error.');
 		}
 		$router = Snowflake::app()->getRouter();
-
-		$node = $router->tree_search(explode('/', Socket::MESSAGE . '::' . $route), 'sw::socket');
+		$context = Config::get('router', false, ROUTER_TREE);
+		if ($context === ROUTER_TREE) {
+			$node = $router->tree_search(explode('/', Socket::MESSAGE . '::' . $route), 'sw::socket');
+		} else {
+			$node = $router->search('/' . Socket::HANDSHAKE . '::' . $route, 'sw::socket');
+		}
 		if ($node === null) {
 			throw new Exception('Page not found.');
 		}
