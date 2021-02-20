@@ -487,6 +487,7 @@ class Router extends Application implements RouterInterface
 	 * @param $exception
 	 * @return mixed
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	private function exception($exception): mixed
 	{
@@ -498,15 +499,22 @@ class Router extends Application implements RouterInterface
 	 * @param Request $request
 	 * @return Node|null 树干搜索
 	 * 树干搜索
+	 * @throws ConfigException
 	 */
 	private function find_path(Request $request): ?Node
 	{
 		$method = $request->getMethod();
+		$uri = $request->headers->get('request_uri', '/');
+
+		$context = Config::get('router', false, ROUTER_HASH);
+		if ($context === ROUTER_TREE) {
+			return $this->Branch_search($request);
+		}
+
 		if (!isset($this->nodes[$method])) {
 			return null;
 		}
 		$methods = $this->nodes[$method];
-		$uri = $request->headers->get('request_uri', '/');
 		if (isset($methods[$uri])) {
 			return $methods[$uri];
 		}
