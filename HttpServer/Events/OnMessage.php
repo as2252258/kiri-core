@@ -66,11 +66,10 @@ class OnMessage extends Callback
 		}
 		$router = Snowflake::app()->getRouter();
 		$context = Config::get('router', false, ROUTER_TREE);
-		var_dump($context);
 		if ($context === ROUTER_TREE) {
 			$node = $router->tree_search(explode('/', Socket::MESSAGE . '::' . $route), 'sw::socket');
 		} else {
-			$node = $router->search('/' . Socket::HANDSHAKE . '::' . $route, 'sw::socket');
+			$node = $router->search('/' . Socket::MESSAGE . '::' . $route, 'sw::socket');
 		}
 		if ($node === null) {
 			throw new Exception('Page not found.');
