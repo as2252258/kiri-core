@@ -40,9 +40,7 @@ abstract class Callback extends Application
 			$logger->clear();
 
 			$event = Snowflake::app()->getEvent();
-			$event->offName(Event::EVENT_AFTER_REQUEST);
 			$event->offName(Event::SYSTEM_RESOURCE_RELEASES);
-			$event->offName(Event::EVENT_BEFORE_REQUEST);
 			$this->eventNotify($message, $event);
 		} catch (\Throwable $exception) {
 			$this->error($exception->getMessage());
