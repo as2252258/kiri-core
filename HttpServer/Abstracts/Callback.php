@@ -16,6 +16,11 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine\Server;
 use Swoole\Timer;
 
+
+/**
+ * Class Callback
+ * @package HttpServer\Abstracts
+ */
 abstract class Callback extends Application
 {
 
