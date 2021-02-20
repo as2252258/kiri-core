@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace HttpServer\Route;
 
 
+use HttpServer\Abstracts\HttpService;
 use HttpServer\Exception\AuthException;
 use HttpServer\Route\Filter\BodyFilter;
 use HttpServer\Route\Filter\FilterException;
 use HttpServer\Route\Filter\HeaderFilter;
 use HttpServer\Route\Filter\QueryFilter;
 use Exception;
-use HttpServer\Application;
 use Snowflake\Snowflake;
 
 /**
  * Class Filter
  * @package Snowflake\Snowflake\Route
  */
-class Filter extends Application
+class Filter extends HttpService
 {
 
 	/** @var Filter\Filter[] */

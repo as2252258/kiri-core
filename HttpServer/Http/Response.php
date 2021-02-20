@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace HttpServer\Http;
 
-use HttpServer\Application;
+use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
@@ -23,7 +23,7 @@ use Swoole\Http2\Response as S2Response;
  * Class Response
  * @package Snowflake\Snowflake\Http
  */
-class Response extends Application
+class Response extends HttpService
 {
 
 	const JSON = 'json';

@@ -11,7 +11,7 @@ namespace HttpServer\Http\Formatter;
 
 
 use Exception;
-use HttpServer\Application;
+use HttpServer\Abstracts\HttpService;
 use SimpleXMLElement;
 use Swoole\Http\Response;
 use HttpServer\IInterface\IFormatter;
@@ -21,7 +21,7 @@ use HttpServer\IInterface\IFormatter;
  * Class XmlFormatter
  * @package Snowflake\Snowflake\Http\Formatter
  */
-class XmlFormatter extends Application implements IFormatter
+class XmlFormatter extends HttpService implements IFormatter
 {
 
 	public ?string $data = '';

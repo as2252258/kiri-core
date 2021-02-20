@@ -6,9 +6,9 @@ namespace HttpServer\Route;
 
 
 use Closure;
+use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use Exception;
-use HttpServer\Application;
 
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
@@ -24,7 +24,7 @@ use function Input;
  * Class Node
  * @package Snowflake\Snowflake\Route
  */
-class Node extends Application
+class Node extends HttpService
 {
 
 	public string $path = '';

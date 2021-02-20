@@ -5,9 +5,9 @@ namespace HttpServer\Route;
 
 use Closure;
 use Exception;
+use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
-use HttpServer\Application;
 
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ComponentException;
@@ -21,7 +21,7 @@ defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
  * Class Router
  * @package Snowflake\Snowflake\Route
  */
-class Router extends Application implements RouterInterface
+class Router extends HttpService implements RouterInterface
 {
 	/** @var Node[] $nodes */
 	public array $nodes = [];

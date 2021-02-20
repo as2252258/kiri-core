@@ -9,15 +9,14 @@ declare(strict_types=1);
 
 namespace HttpServer\Http\Formatter;
 
-use Exception;
-use HttpServer\Application;
+use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\IFormatter;
 
 /**
  * Class JsonFormatter
  * @package Snowflake\Snowflake\Http\Formatter
  */
-class JsonFormatter extends Application implements IFormatter
+class JsonFormatter extends HttpService implements IFormatter
 {
 	public $data;
 

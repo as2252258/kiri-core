@@ -5,7 +5,6 @@ namespace HttpServer\Abstracts;
 
 
 use Exception;
-use HttpServer\Application;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use Snowflake\Abstracts\Config;
@@ -21,7 +20,7 @@ use Swoole\Timer;
  * Class Callback
  * @package HttpServer\Abstracts
  */
-abstract class Callback extends Application
+abstract class Callback extends HttpService
 {
 
 

@@ -6,7 +6,7 @@ namespace HttpServer\Route;
 
 
 use Exception;
-use HttpServer\Application;
+use HttpServer\Abstracts\HttpService;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -14,7 +14,7 @@ use Snowflake\Snowflake;
  * Class TcpListen
  * @package Snowflake\Snowflake\Route
  */
-class Handler extends Application
+class Handler extends HttpService
 {
 
 	/** @var Router */

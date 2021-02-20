@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Http;
 
 use Exception;
-use HttpServer\Application;
+use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 
 use JetBrains\PhpStorm\Pure;
@@ -33,7 +33,7 @@ defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
  * @property-read $isPackage
  * @property-read $isReceive
  */
-class Request extends Application
+class Request extends HttpService
 {
 
 	/** @var int $fd */

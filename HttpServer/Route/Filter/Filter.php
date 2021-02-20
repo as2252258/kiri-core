@@ -6,14 +6,14 @@ namespace HttpServer\Route\Filter;
 
 
 use Exception;
-use HttpServer\Application;
+use HttpServer\Abstracts\HttpService;
 use validator\Validator;
 
 /**
  * Class Filter
  * @package Snowflake\Snowflake\Route\Filter
  */
-abstract class Filter extends Application
+abstract class Filter extends HttpService
 {
 
 	public array $rules = [];

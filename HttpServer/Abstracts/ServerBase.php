@@ -9,14 +9,13 @@ declare(strict_types=1);
 namespace HttpServer\Abstracts;
 
 
-use HttpServer\Application;
 use Swoole\WebSocket\Server;
 
 /**
  * Class ServerBase
  * @package Snowflake\Snowflake\Server
  */
-abstract class ServerBase extends Application
+abstract class ServerBase extends HttpService
 {
 
 	/** @var Server */
