@@ -81,6 +81,7 @@ class Router extends Application implements RouterInterface
 		}
 
 		$useTree = Config::get('router', false, ROUTER_HASH);
+		var_dump($useTree);
 		if ($useTree == ROUTER_TREE) {
 			return $this->tree($path, $handler, $method);
 		} else {
@@ -507,6 +508,7 @@ class Router extends Application implements RouterInterface
 		$uri = $request->headers->get('request_uri', '/');
 
 		$context = Config::get('router', false, ROUTER_HASH);
+		var_dump($context);
 		if ($context === ROUTER_TREE) {
 			return $this->Branch_search($request);
 		}
