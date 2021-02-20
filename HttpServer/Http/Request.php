@@ -7,6 +7,7 @@ use Exception;
 use HttpServer\Application;
 use HttpServer\IInterface\AuthIdentity;
 
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
@@ -202,7 +203,7 @@ class Request extends Application
 	/**
 	 * @return string
 	 */
-	public function getCurrent(): string
+	#[Pure] public function getCurrent(): string
 	{
 		return current($this->explode);
 	}
