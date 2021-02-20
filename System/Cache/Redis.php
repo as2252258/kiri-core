@@ -57,7 +57,7 @@ class Redis extends Component
 
 		$length = env('REDIS.POOL_LENGTH', 100);
 
-		$connections->initConnections('redis:' . $name, true, $length);
+		$connections->initConnections('redis', 'redis:' . $name, true, $length);
 	}
 
 

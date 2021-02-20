@@ -30,13 +30,14 @@ abstract class Pool extends Component
 	use Timeout;
 
 	/**
+	 * @param $driver
 	 * @param $name
 	 * @param false $isMaster
 	 * @param int $max
 	 */
-	public function initConnections($name, $isMaster = false, $max = 60)
+	public function initConnections($driver, $name, $isMaster = false, $max = 60)
 	{
-		$name = $this->name($name, $isMaster);
+		$name = $this->name($driver, $name, $isMaster);
 		if (isset($this->_items[$name]) && $this->_items[$name] instanceof Channel) {
 			return;
 		}
@@ -71,16 +72,17 @@ abstract class Pool extends Component
 
 
 	/**
+	 * @param $driver
 	 * @param $cds
 	 * @param false $isMaster
 	 * @return string
 	 */
-	#[Pure] public function name($cds, $isMaster = false): string
+	#[Pure] public function name($driver, $cds, $isMaster = false): string
 	{
 		if ($isMaster === true) {
-			return hash('sha256', $cds . 'master');
+			return $driver . ':' . hash('sha256', $cds . 'master');
 		} else {
-			return hash('sha256', $cds . 'slave');
+			return $driver . ':' . hash('sha256', $cds . 'slave');
 		}
 	}
 

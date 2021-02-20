@@ -42,7 +42,7 @@ class Redis extends Pool
 	public function getConnection(array $config, $isMaster = false): mixed
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		$coroutineName = $this->name('redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
 		if (($redis = Context::getContext($coroutineName)) instanceof \Redis) {
 			return $redis;
 		}
@@ -105,7 +105,7 @@ class Redis extends Pool
 	public function release(array $config, $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		$coroutineName = $this->name('redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
@@ -121,7 +121,7 @@ class Redis extends Pool
 	public function destroy(array $config, $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		$coroutineName = $this->name('redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}

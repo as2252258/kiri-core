@@ -98,8 +98,8 @@ class Connection extends Component
 	public function getConnect($sql = NULL): PDO
 	{
 		$connections = $this->connections();
-		$connections->initConnections($this->cds, true, $this->maxNumber);
-		$connections->initConnections($this->slaveConfig['cds'], false, $this->maxNumber);
+		$connections->initConnections('mysql', $this->cds, true, $this->maxNumber);
+		$connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
 		$connections->setTimeout($this->timeout);
 
 		return $this->getPdo($sql);
@@ -113,8 +113,8 @@ class Connection extends Component
 	public function fill()
 	{
 		$connections = $this->connections();
-		$connections->initConnections($this->cds, true, $this->maxNumber);
-		$connections->initConnections($this->slaveConfig['cds'], false, $this->maxNumber);
+		$connections->initConnections('mysql', $this->cds, true, $this->maxNumber);
+		$connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
 	}
 
 
