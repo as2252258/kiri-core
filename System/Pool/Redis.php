@@ -111,6 +111,7 @@ class Redis extends Pool
 		}
 		$this->push($coroutineName, Context::getContext($coroutineName));
 		$this->remove($coroutineName);
+		$this->lastTime = time();
 	}
 
 	/**
