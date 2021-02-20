@@ -407,7 +407,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			$lastId = $this->refresh();
 		} catch (\Throwable $exception) {
 			$trance->rollback();
-			$lastId = $this->addError($exception->getMessage(), 'mysql');
+			$lastId = $this->addError($exception, 'mysql');
 		}
 		return $lastId;
 	}

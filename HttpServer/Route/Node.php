@@ -212,7 +212,7 @@ class Node extends Application
 			return [$reflect->newInstance(), $action];
 		} catch (Throwable $exception) {
 			$this->_error = $exception->getMessage();
-			$this->error($exception->getMessage(), 'router');
+			$this->error($exception, 'router');
 			return null;
 		}
 	}

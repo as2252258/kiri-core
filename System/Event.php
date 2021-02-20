@@ -217,7 +217,7 @@ class Event extends BaseObject
 				}
 				call_user_func($handler, ...$defaultParameter);
 			} catch (\Throwable $exception) {
-				$this->error($exception->getMessage());
+				$this->error($exception);
 			}
 		}
 		if ($is_remove) {

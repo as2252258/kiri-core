@@ -159,7 +159,7 @@ class Redis extends Pool
 				$result = true;
 			}
 		} catch (\Throwable $exception) {
-			$this->error($exception->getMessage());
+			$this->error($exception);
 			$result = false;
 		} finally {
 			if (!$result) {

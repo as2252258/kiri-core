@@ -122,7 +122,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
-		Snowflake::app()->trance($data, $this->category);
+		logger()->trance($data, $this->category);
 
 		return response()->send($data);
 	}

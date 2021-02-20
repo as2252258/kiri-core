@@ -37,7 +37,7 @@ class OnMessage extends Callback
 				}
 			}
 		} catch (\Throwable $exception) {
-			$this->addError($exception->getMessage(), 'websocket');
+			$this->addError($exception, 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);

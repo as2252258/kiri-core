@@ -48,7 +48,7 @@ abstract class Callback extends Application
 			$event->offName(Event::SYSTEM_RESOURCE_RELEASES);
 			$this->eventNotify($message, $event);
 		} catch (\Throwable $exception) {
-			$this->error($exception->getMessage());
+			$this->addError($exception);
 		}
 	}
 
@@ -132,7 +132,7 @@ abstract class Callback extends Application
 			$mail->AltBody = $message;
 			$mail->send();
 		} catch (\Throwable $e) {
-			$this->addError($e->getMessage(), 'email');
+			$this->addError($e, 'email');
 		}
 	}
 

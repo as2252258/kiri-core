@@ -610,7 +610,7 @@ class Router extends Application implements RouterInterface
 			$router = $this;
 			include_once "{$files}";
 		} catch (\Throwable $exception) {
-			$this->error($exception->getMessage());
+			$this->error($exception);
 		} finally {
 			if (isset($exception)) {
 				unset($exception);
