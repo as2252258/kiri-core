@@ -53,7 +53,7 @@ class OnWorkerStart extends Callback
 	{
 		try {
 			$this->debug(sprintf('Worker #%d is start.....', $worker_id));
-			$event = Snowflake::app()->event;
+			$event = Snowflake::app()->getEvent();
 			$event->trigger(Event::SERVER_WORKER_START, [$worker_id]);
 		} catch (\Throwable $exception) {
 			write($exception->getMessage(), 'worker');

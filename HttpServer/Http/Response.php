@@ -199,7 +199,7 @@ class Response extends Application
 		$string .= 'Command End!' . PHP_EOL . PHP_EOL;
 		echo $string;
 
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->trigger('CONSOLE_END');
 
 		return $result;

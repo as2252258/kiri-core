@@ -76,7 +76,7 @@ class Component extends BaseObject
 	 */
 	public function trigger($name, $event = null, $params = [], $isRemove = false)
 	{
-		$aEvents = Snowflake::app()->event;
+		$aEvents = Snowflake::app()->getEvent();
 		if (isset($this->_events[$name])) {
 			$events = $this->_events[$name];
 			foreach ($events as $key => $_event) {
@@ -100,7 +100,7 @@ class Component extends BaseObject
 	 */
 	public function off($name, $handler = NULL): void
 	{
-		$aEvents = Snowflake::app()->event;
+		$aEvents = Snowflake::app()->getEvent();
 		if (!isset($this->_events[$name])) {
 			$aEvents->of($name, $handler);
 			return;
@@ -129,7 +129,7 @@ class Component extends BaseObject
 	public function offAll()
 	{
 		$this->_events = [];
-		$aEvents = Snowflake::app()->event;
+		$aEvents = Snowflake::app()->getEvent();
 		$aEvents->clean();
 	}
 

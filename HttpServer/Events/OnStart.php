@@ -24,7 +24,7 @@ class OnStart extends Callback
 		if (Snowflake::isLinux()) {
 			name(Config::get('id', false, 'system:') . ': master.');
 		}
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_EVENT_START, null, $server);
 	}
 

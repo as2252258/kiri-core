@@ -108,7 +108,7 @@ class OnTask extends Callback
 			$finish['info'] = $this->format($exception);
 			$this->error($exception, 'Task');
 		} finally {
-			$event = Snowflake::app()->event;
+			$event = Snowflake::app()->getEvent();
 			$event->trigger(Event::RELEASE_ALL);
 			Timer::clearAll();
 		}

@@ -52,7 +52,7 @@ class OnReceive extends Callback
 			$response = DataResolve::pack($this->pack, $response);
 			return $server->send($fd, $response);
 		} finally {
-			$event = Snowflake::app()->event;
+			$event = Snowflake::app()->getEvent();
 			$event->trigger(Event::SERVER_WORKER_STOP);
 		}
 	}

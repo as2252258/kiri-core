@@ -27,7 +27,7 @@ class OnConnect extends Callback
 	 */
 	public function onHandler(\Swoole\Server $server, int $fd, int $reactorId)
 	{
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::RECEIVE_CONNECTION, [$server, $fd, $reactorId]);
 	}
 

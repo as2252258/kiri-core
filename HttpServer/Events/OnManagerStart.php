@@ -23,7 +23,7 @@ class OnManagerStart extends Callback
 		$this->debug('manager start.');
 		Snowflake::setWorkerId($server->manager_pid);
 
-		$events = Snowflake::app()->event;
+		$events = Snowflake::app()->getEvent();
 		$events->trigger(Event::SERVER_MANAGER_START, null, $server);
 		if (Snowflake::isLinux()) {
 			$prefix = Config::get('id', false, 'system:');

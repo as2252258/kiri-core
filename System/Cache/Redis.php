@@ -36,7 +36,7 @@ class Redis extends Component
 	 */
 	public function init()
 	{
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->on(Event::RELEASE_ALL, [$this, 'destroy']);
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'release']);
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
@@ -46,10 +46,11 @@ class Redis extends Component
 
 	/**
 	 * @throws ConfigException
+	 * @throws ComponentException
 	 */
 	public function createPool()
 	{
-		$connections = Snowflake::app()->pool->redis;
+		$connections = Snowflake::app()->getPool()->getRedis();
 
 		$config = $this->get_config();
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
@@ -112,10 +113,11 @@ SCRIPT;
 	/**
 	 * 释放连接池
 	 * @throws ConfigException
+	 * @throws ComponentException
 	 */
 	public function release()
 	{
-		$connections = Snowflake::app()->pool->redis;
+		$connections = Snowflake::app()->getPool()->getRedis();
 		$connections->release($this->get_config(), true);
 	}
 

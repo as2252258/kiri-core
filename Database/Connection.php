@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Database;
 
 
-
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\Mysql\Schema;
@@ -69,7 +69,7 @@ class Connection extends Component
 	 */
 	public function init()
 	{
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->on(Event::RELEASE_ALL, [$this, 'disconnect']);
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'clear_connection']);
 	}
@@ -85,7 +85,7 @@ class Connection extends Component
 		}
 		$this->beginTransaction();
 
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->on(Connection::TRANSACTION_COMMIT, [$this, 'commit'], false, true);
 		$event->on(Connection::TRANSACTION_ROLLBACK, [$this, 'rollback'], false, true);
 	}
@@ -97,7 +97,7 @@ class Connection extends Component
 	 */
 	public function getConnect($sql = NULL): PDO
 	{
-		$connections = Snowflake::app()->connections;
+		$connections = $this->connections();
 		$connections->initConnections($this->cds, true, $this->maxNumber);
 		$connections->initConnections($this->slaveConfig['cds'], false, $this->maxNumber);
 		$connections->setTimeout($this->timeout);
@@ -108,10 +108,11 @@ class Connection extends Component
 
 	/**
 	 * 初始化 Channel
+	 * @throws ComponentException
 	 */
 	public function fill()
 	{
-		$connections = Snowflake::app()->connections;
+		$connections = $this->connections();
 		$connections->initConnections($this->cds, true, $this->maxNumber);
 		$connections->initConnections($this->slaveConfig['cds'], false, $this->maxNumber);
 	}
@@ -152,7 +153,7 @@ class Connection extends Component
 	 * @param $sql
 	 * @return bool
 	 */
-	public function isWrite($sql): bool
+	#[Pure] public function isWrite($sql): bool
 	{
 		if (empty($sql)) return false;
 
@@ -179,13 +180,11 @@ class Connection extends Component
 	 */
 	public function masterInstance(): PDO
 	{
-		$config = [
+		return $this->connections()->getConnection([
 			'cds'      => $this->cds,
 			'username' => $this->username,
 			'password' => $this->password
-		];
-		$pool = Snowflake::app()->connections;
-		return $pool->getConnection($config, true);
+		], true);
 	}
 
 	/**
@@ -194,12 +193,20 @@ class Connection extends Component
 	 */
 	public function slaveInstance(): PDO
 	{
-		if (empty($this->slaveConfig)) {
+		if (empty($this->slaveConfig) || $this->slaveConfig['cds'] == $this->cds) {
 			return $this->masterInstance();
 		}
+		return $this->connections()->getConnection($this->slaveConfig, false);
+	}
 
-		$connections = Snowflake::app()->connections;
-		return $connections->getConnection($this->slaveConfig, false);
+
+	/**
+	 * @return \Snowflake\Pool\Connection
+	 * @throws ComponentException
+	 */
+	private function connections(): \Snowflake\Pool\Connection
+	{
+		return Snowflake::app()->getConnections();
 	}
 
 
@@ -209,8 +216,7 @@ class Connection extends Component
 	 */
 	public function beginTransaction(): static
 	{
-		$connections = Snowflake::app()->connections;
-		$connections->beginTransaction($this->cds);
+		$this->connections()->beginTransaction($this->cds);
 		return $this;
 	}
 
@@ -220,8 +226,7 @@ class Connection extends Component
 	 */
 	public function inTransaction(): bool|static
 	{
-		$connections = Snowflake::app()->connections;
-		return $connections->inTransaction($this->cds);
+		return $this->connections()->inTransaction($this->cds);
 	}
 
 	/**
@@ -230,8 +235,7 @@ class Connection extends Component
 	 */
 	public function rollback()
 	{
-		$connections = Snowflake::app()->connections;
-		$connections->rollback($this->cds);
+		$this->connections()->rollback($this->cds);
 	}
 
 	/**
@@ -240,8 +244,7 @@ class Connection extends Component
 	 */
 	public function commit()
 	{
-		$connections = Snowflake::app()->connections;
-		$connections->commit($this->cds);
+		$this->connections()->commit($this->cds);
 	}
 
 	/**
@@ -287,7 +290,7 @@ class Connection extends Component
 	 */
 	public function release()
 	{
-		$connections = Snowflake::app()->connections;
+		$connections = $this->connections();
 
 		$connections->release($this->cds, true);
 		$connections->release($this->slaveConfig['cds'], false);
@@ -296,10 +299,11 @@ class Connection extends Component
 
 	/**
 	 * 临时回收
+	 * @throws ComponentException
 	 */
 	public function recovery()
 	{
-		$connections = Snowflake::app()->connections;
+		$connections = $this->connections();
 
 		$connections->release($this->cds, true);
 		$connections->release($this->slaveConfig['cds'], false);
@@ -312,7 +316,7 @@ class Connection extends Component
 	 */
 	public function clear_connection()
 	{
-		$connections = Snowflake::app()->connections;
+		$connections = $this->connections();
 
 		$connections->release($this->cds, true);
 		$connections->release($this->slaveConfig['cds'], false);
@@ -324,7 +328,7 @@ class Connection extends Component
 	 */
 	public function disconnect()
 	{
-		$connections = Snowflake::app()->connections;
+		$connections = $this->connections();
 		$connections->disconnect($this->cds);
 		$connections->disconnect($this->slaveConfig['cds']);
 	}

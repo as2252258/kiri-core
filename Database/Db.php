@@ -43,7 +43,7 @@ class Db
 	 */
 	public static function commit()
 	{
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->trigger(Connection::TRANSACTION_COMMIT);
 		$event->offName(Connection::TRANSACTION_COMMIT);
 		static::$isActive = false;
@@ -54,7 +54,7 @@ class Db
 	 */
 	public static function rollback()
 	{
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		$event->trigger(Connection::TRANSACTION_ROLLBACK);
 		$event->offName(Connection::TRANSACTION_ROLLBACK);
 		static::$isActive = false;

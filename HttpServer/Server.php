@@ -314,7 +314,7 @@ class Server extends Application
 		if (!is_array($config['events'])) {
 			return;
 		}
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		foreach ($config['events'] as $name => $_event) {
 			$event->on($name, $_event);
 		}

@@ -173,7 +173,7 @@ abstract class BaseApplication extends Service
 		if (!isset($config['events']) || !is_array($config['events'])) {
 			return;
 		}
-		$event = Snowflake::app()->event;
+		$event = Snowflake::app()->getEvent();
 		foreach ($config['events'] as $key => $value) {
 			if (is_string($value)) {
 				if (!class_exists($value)) {

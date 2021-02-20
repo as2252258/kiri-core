@@ -39,7 +39,7 @@ abstract class Callback extends Application
 			$logger->write($this->_MESSAGE[$message] . $worker_id);
 			$logger->clear();
 
-			$event = Snowflake::app()->event;
+			$event = Snowflake::app()->getEvent();
 			$event->offName(Event::EVENT_AFTER_REQUEST);
 			$event->offName(Event::EVENT_BEFORE_REQUEST);
 			$this->eventNotify($message, $event);
