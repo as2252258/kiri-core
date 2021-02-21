@@ -60,7 +60,7 @@ trait Timeout
 	protected function pop($channel, $name, $retain_number)
 	{
 		while ($channel->length() > $retain_number) {
-			[$timer, $connection] = $channel->pop();
+            $connection = $channel->pop();
 			if ($connection) {
 				unset($connection);
 			}
