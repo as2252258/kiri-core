@@ -38,4 +38,9 @@ class Pool extends \Snowflake\Abstracts\Pool
 	}
 
 
+    public function createClient(string $name, array $config): mixed
+    {
+        // TODO: Implement createClient() method.
+        return null;
+    }
 }
