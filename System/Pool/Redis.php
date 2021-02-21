@@ -21,7 +21,7 @@ class Redis extends Pool
 {
 
 
-    private int $_create = 0;
+    public int $_create = 0;
 
     /**
      * @param $value
