@@ -49,7 +49,7 @@ class Db
         $event = Snowflake::app()->getEvent();
         $event->trigger(Connection::TRANSACTION_COMMIT);
         $event->offName(Connection::TRANSACTION_COMMIT);
-        Context::deleteId('begin:transaction');
+        Context::deleteContext('begin:transaction');
     }
 
     /**
@@ -63,7 +63,7 @@ class Db
         $event = Snowflake::app()->getEvent();
         $event->trigger(Connection::TRANSACTION_ROLLBACK);
         $event->offName(Connection::TRANSACTION_ROLLBACK);
-        Context::deleteId('begin:transaction');
+        Context::deleteContext('begin:transaction');
     }
 
     /**
