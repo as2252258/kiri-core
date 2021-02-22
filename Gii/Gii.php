@@ -131,8 +131,8 @@ class Gii
 	private function makeByDatabases($make, $input): array
 	{
 		$redis = Snowflake::app()->getRedis();
-		if (!empty($input->get('table'))) {
-			$this->tableName = $input->get('table');
+		if (!empty($input->get('name'))) {
+			$this->tableName = $input->get('name');
 			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {

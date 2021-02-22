@@ -20,12 +20,7 @@ class Command extends \Console\Command
 	public string $command = 'sw:gii';
 
 
-	public string $description = './snowflake sw:gii make=model table=xxxx databases=xxx' . "\v" .
-	'./snowflake sw:gii make=controller table=xxxx databases=xxx' . "\v" .
-	'./snowflake sw:gii make=task name=xxxx' . "\v" .
-	'./snowflake sw:gii make=interceptor name=xxxx' . "\v" .
-	'./snowflake sw:gii make=limits name=xxxx' . "\v" .
-	'./snowflake sw:gii make=middleware name=xxxx' . "\v";
+	public string $description = './snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx';
 
 
 	/**
