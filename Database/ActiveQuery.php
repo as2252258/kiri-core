@@ -45,22 +45,22 @@ class ActiveQuery extends Component
 	public array $attributes = [];
 
 
-	/** @var ActiveRecord */
-	public ActiveRecord $modelClass;
-
 	/**
 	 * Comply constructor.
 	 * @param $model
 	 * @param array $config
 	 * @throws
 	 */
-	public function __construct($model, $config = [])
+	public function __construct($model = null, $config = [])
 	{
+		if (empty($model)) {
+			return parent::__construct($config);
+		}
 		if (!is_object($model)) {
 			$model = Snowflake::createObject($model);
 		}
 		$this->modelClass = $model;
-		parent::__construct($config);
+		return parent::__construct($config);
 	}
 
 	/**

@@ -35,9 +35,9 @@ trait QueryTrait
 	public bool $ifNotWhere = false;
 
 	/**
-	 * @var ActiveRecord
+	 * @var ?ActiveRecord
 	 */
-	public ActiveRecord $modelClass;
+	public ?ActiveRecord $modelClass;
 
 	/**
 	 * clear
