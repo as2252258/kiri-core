@@ -62,10 +62,10 @@ class Node extends HttpService
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	public function afterInit()
+	public function init()
 	{
 		listen(Event::SERVER_AFTER_WORKER_START, [$this, 'restructure']);
-		var_dump($this, 'restructure');
+		var_dump($this);
 	}
 
 	/**
