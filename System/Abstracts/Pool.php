@@ -49,11 +49,12 @@ abstract class Pool extends Component
     }
 
 
-    /**
-     * @param $name
-     * @return array
-     * @throws Exception
-     */
+	/**
+	 * @param $name
+	 * @param array $callback
+	 * @return array
+	 * @throws Exception
+	 */
     protected function get($name, array $callback): mixed
     {
         if (!Context::inCoroutine()) {

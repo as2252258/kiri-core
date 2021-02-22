@@ -8,6 +8,7 @@ use Annotation\IAnnotation;
 use Closure;
 use Exception;
 use HttpServer\Route\Node;
+use HttpServer\Route\Router;
 use ReflectionException;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -39,20 +40,21 @@ use Snowflake\Snowflake;
 
 
 	/**
-	 * @param array|Closure $handler
-	 * @return Node|null
+	 * @param array $handler
+	 * @return Router
 	 * @throws ComponentException
 	 * @throws ConfigException
-	 * @throws Exception
 	 */
-	public function setHandler(array|Closure $handler): ?Node
+	public function execute(array $handler): Router
 	{
-		$router = Snowflake::app()->getRouter();
 		// TODO: Implement setHandler() method.
+		$router = Snowflake::app()->getRouter();
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		return $router->addRoute($method, $handler, 'sw::socket');
+		$router->addRoute($method, $handler, 'sw::socket');
+
+		return $router;
 	}
 
 }

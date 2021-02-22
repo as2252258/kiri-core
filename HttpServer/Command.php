@@ -5,8 +5,12 @@ namespace HttpServer;
 
 
 use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Input;
+use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindPropertyException;
 use Snowflake\Snowflake;
 
 /**
@@ -48,7 +52,29 @@ class Command extends \Console\Command
 		if ($dtl->get('action') == 'stop') {
 			return 'shutdown success.';
 		}
+
+		listen(Event::SERVER_BEFORE_START, [$this, 'scan_system_annotation']);
+
 		return $manager->start();
 	}
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindPropertyException
+	 */
+	public function scan_system_annotation()
+	{
+		$annotation = Snowflake::app()->getAttributes();
+		$annotation->readControllers(__DIR__ . '/../Console', 'Console', 'system');
+		$annotation->readControllers(__DIR__ . '/../Database', 'Database', 'system');
+		$annotation->readControllers(__DIR__ . '/../Gii', 'Gii', 'system');
+		$annotation->readControllers(__DIR__ . '/../HttpServer', 'HttpServer', 'system');
+		$annotation->readControllers(__DIR__ . '/../Kafka', 'Kafka', 'system');
+		$annotation->readControllers(__DIR__ . '/../System', 'Snowflake', 'system');
+		$annotation->readControllers(__DIR__ . '/../Validator', 'Validator', 'system');
+	}
+
 
 }

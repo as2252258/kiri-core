@@ -57,7 +57,7 @@ class Command extends Component
 	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function save($isInsert = TRUE, $hasAutoIncrement = true): int|bool|array|string|null
+	public function save($isInsert = TRUE, $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		return $this->execute(static::EXECUTE, $isInsert, $hasAutoIncrement);
 	}
@@ -187,7 +187,7 @@ class Command extends Component
 	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	private function execute($type, $isInsert = null, $hasAutoIncrement = true): int|bool|array|string|null
+	private function execute($type, $isInsert = null, $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		try {
 			$time = microtime(true);
@@ -251,7 +251,7 @@ class Command extends Component
 			return true;
 		}
 		$result = $connection->lastInsertId();
-		if ($result == 0 && $hasAutoIncrement) {
+		if ($result == 0 && $hasAutoIncrement->hasAutoIncrement()) {
 			return $this->addError($connection->errorInfo()[2], 'mysql');
 		}
 		return $result;

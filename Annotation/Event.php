@@ -4,6 +4,7 @@
 namespace Annotation;
 
 
+use Exception;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
@@ -12,7 +13,7 @@ use Snowflake\Snowflake;
  * Class Event
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Event
+#[\Attribute(\Attribute::TARGET_METHOD)] class Event implements IAnnotation
 {
 
 
@@ -20,11 +21,24 @@ use Snowflake\Snowflake;
 	 * Event constructor.
 	 * @param string $name
 	 * @param array $params
-	 * @throws ComponentException
 	 */
 	public function __construct(public string $name, public array $params = [])
 	{
+	}
+
+
+	/**
+	 * @param array $handler
+	 * @return \Snowflake\Event
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	public function execute(array $handler): \Snowflake\Event
+	{
+		// TODO: Implement execute() method.
 		$event = Snowflake::app()->getEvent();
+		$event->on($this->name, $handler, $this->params);
+		return $event;
 	}
 
 }

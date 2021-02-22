@@ -2,6 +2,7 @@
 
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
 
+use Annotation\Annotation;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -32,6 +33,22 @@ if (!function_exists('make')) {
 			Snowflake::setAlias($name, $default);
 		}
 		return $class;
+	}
+
+
+}
+
+
+if (!function_exists('annotation')) {
+
+
+	/**
+	 * @return Annotation
+	 * @throws ComponentException
+	 */
+	function annotation(): Annotation
+	{
+		return Snowflake::app()->getAttributes();
 	}
 
 
@@ -391,6 +408,26 @@ if (!function_exists('storage')) {
 		return realpath($_path);
 	}
 
+
+}
+
+
+if (!function_exists('listen')) {
+
+
+	/**
+	 * @param $name
+	 * @param $callback
+	 * @param $params
+	 * @param $isAppend
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	function listen($name, $callback, $params = [], $isAppend = true)
+	{
+		$event = Snowflake::app()->getEvent();
+		$event->on($name, $callback, $params, $isAppend);
+	}
 
 }
 

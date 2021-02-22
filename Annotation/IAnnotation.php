@@ -9,12 +9,11 @@ use Closure;
 interface IAnnotation
 {
 
-
 	/**
-	 * @param array|Closure $handler
+	 * @param array $handler
 	 * @return mixed
 	 */
-	public function setHandler(array|Closure $handler): mixed;
+	public function execute(array $handler): mixed;
 
 
 }

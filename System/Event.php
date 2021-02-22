@@ -6,6 +6,7 @@ namespace Snowflake;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
 use Snowflake\Core\ArrayAccess;
 
@@ -45,6 +46,7 @@ class Event extends BaseObject
 	const SERVER_MANAGER_STOP = 'SERVER:EVENT:MANAGER:START';
 	const SERVER_WORKER_STOP = 'SERVER:EVENT:WORKER:STOP';
 	const SERVER_WORKER_START = 'SERVER:EVENT:WORKER:START';
+	const SERVER_AFTER_WORKER_START = 'SERVER:EVENT:AFTER:WORKER:START';
 	const SERVER_BEFORE_START = 'SERVER:EVENT:BEFORE:START';
 	const SERVER_TASK_START = 'SERVER:EVENT:TASK:START';
 	const SERVER_WORKER_EXIT = 'SERVER:EVENT:WORKER:EXIT';
@@ -193,37 +195,44 @@ class Event extends BaseObject
 			return false;
 		}
 		if (!empty($handler) && $this->exists($name, $handler)) {
-			[$handler, $defaultParameter] = $this->get($name, $handler);
-			if (!empty($parameter)) {
-				$defaultParameter = ArrayAccess::merge($defaultParameter, $parameter);
-			}
-			if (!is_array($defaultParameter)) {
-				$defaultParameter = [$defaultParameter];
-			}
-			$result = call_user_func($handler, ...$defaultParameter);
-			if ($is_remove) {
-				$this->of($name, $handler);
-			}
-			return $result;
+			$events = [$this->get($name, $handler)];
+		} else {
+			$events = $this->_events[$name];
 		}
-		foreach ($this->_events[$name] as $index => $event) {
-			try {
-				[$handler, $defaultParameter] = $event;
-				if (!empty($parameter)) {
-					$defaultParameter = ArrayAccess::merge($defaultParameter, $parameter);
-				}
-				if (!is_array($defaultParameter)) {
-					$defaultParameter = [$defaultParameter];
-				}
-				call_user_func($handler, ...$defaultParameter);
-			} catch (\Throwable $exception) {
-				$this->error($exception);
+		foreach ($events as $index => $event) {
+			$meta = $this->mergeParams($event[1], $parameter);
+			if (call_user_func($event[0], ...$meta) === false) {
+				return false;
 			}
 		}
 		if ($is_remove) {
 			$this->offName($name);
 		}
 		return true;
+	}
+
+
+	/**
+	 * @param $defaultParameter
+	 * @param $parameter
+	 * @return array
+	 */
+	#[Pure] private function mergeParams($defaultParameter, $parameter = []): array
+	{
+		if (empty($defaultParameter)) {
+			$defaultParameter = $parameter;
+		} else {
+			if (!is_array($parameter)) {
+				$parameter = [];
+			}
+			foreach ($parameter as $key => $value) {
+				$defaultParameter[] = $value;
+			}
+		}
+		if (!is_array($defaultParameter)) {
+			$defaultParameter = [$defaultParameter];
+		}
+		return $defaultParameter;
 	}
 
 

@@ -17,6 +17,7 @@ use Snowflake\Core\ArrayAccess;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
 defined('FIND_OR_CREATE_MESSAGE') or define('FIND_OR_CREATE_MESSAGE', 'Create a new model, but the data cannot be empty.');
@@ -314,6 +315,11 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function toArray(): array
 	{
+		$class = $this;
+		Coroutine::defer(function () use ($class) {
+			$object = Snowflake::app()->getObject();
+			$object->release(get_called_class(), $class);
+		});
 		$data = $this->_attributes;
 		foreach ($this->getAnnotation() as $key => $item) {
 			if (!isset($data[$key])) {

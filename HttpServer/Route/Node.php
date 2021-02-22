@@ -14,6 +14,7 @@ use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -55,6 +56,16 @@ class Node extends HttpService
 	private array $_interceptors = [];
 	private array $_after = [];
 	private array $_limits = [];
+
+
+	/**
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	public function afterInit()
+	{
+		listen(Event::SERVER_AFTER_WORKER_START, [$this, 'restructure']);
+	}
 
 	/**
 	 * @param $handler
@@ -450,7 +461,6 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		$this->restructure();
 		if (empty($this->callback)) {
 			return Json::to(404, $node->_error ?? 'Page not found.');
 		}

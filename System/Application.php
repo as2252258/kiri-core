@@ -97,13 +97,14 @@ class Application extends BaseApplication
 	 * @param Input $argv
 	 * @return bool|string
 	 * @throws Exception
-	 * @throws NotFindClassException
-	 * @throws \ReflectionException
 	 */
 	public function start(Input $argv): bool|string
 	{
-		$this->set('input', $argv);
 		try {
+			fire(Event::SERVER_BEFORE_START);
+
+			$this->set('input', $argv);
+
 			$manager = Snowflake::app()->get('console');
 			$manager->setParameters($argv);
 			$class = $manager->search();

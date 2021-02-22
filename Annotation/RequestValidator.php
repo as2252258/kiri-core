@@ -11,7 +11,7 @@ use validator\Validator;
  * Class RequestValidator
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class RequestValidator
+#[\Attribute(\Attribute::TARGET_METHOD)] class RequestValidator implements IAnnotation
 {
 
 	/**
@@ -21,6 +21,16 @@ use validator\Validator;
 	 */
 	public function __construct(public array $validators)
 	{
+	}
+
+
+	/**
+	 * @param array $handler
+	 * @return bool
+	 */
+	public function execute(array $handler): bool
+	{
+		return true;
 	}
 
 

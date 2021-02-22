@@ -4,13 +4,12 @@
 namespace Annotation;
 
 
-use Annotation\Model\Get;
-use Database\ActiveRecord;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\NotFindPropertyException;
 use Snowflake\Snowflake;
 
 /**
@@ -29,17 +28,40 @@ class Annotation extends Component
 	private array $_targets = [];
 
 
+	private array $_methods = [];
+
+
+	/**
+	 * @param array $handler
+	 * @param $name
+	 */
+	public function addMethodAttribute(array $handler, $name)
+	{
+		$this->_methods[get_class($handler[0])][$name] = $handler;
+	}
+
+
+	/**
+	 * @param string $className
+	 * @return array 根据类名获取注解
+	 * 根据类名获取注解
+	 */
+	public function getMethods(string $className): array
+	{
+		return $this->_methods[$className] ?? [];
+	}
+
+
 	/**
 	 * @param string $path
 	 * @param string $namespace
 	 * @param string $alias
 	 * @return $this
-	 * @throws ReflectionException
+	 * @throws ReflectionException|NotFindPropertyException
 	 */
 	public function readControllers(string $path, string $namespace, string $alias = 'root'): static
 	{
-		$this->scanDir(glob($path . '*'), $namespace, $alias);
-		return $this;
+		return $this->scanDir(glob($path . '*'), $namespace, $alias);
 	}
 
 
@@ -57,24 +79,11 @@ class Annotation extends Component
 
 
 	/**
-	 * @param string $target
-	 * @return mixed
-	 */
-	public function getTarget(string $target): mixed
-	{
-		if (!isset($this->_targets[$target])) {
-			return [];
-		}
-		return $this->_targets[$target];
-	}
-
-
-	/**
 	 * @param array $paths
 	 * @param string $namespace
 	 * @param string $alias
 	 * @return $this
-	 * @throws ReflectionException
+	 * @throws ReflectionException|NotFindPropertyException
 	 */
 	private function scanDir(array $paths, string $namespace, string $alias): static
 	{
@@ -104,26 +113,74 @@ class Annotation extends Component
 	 * @param string $alias
 	 * @return array
 	 * @throws ReflectionException
+	 * @throws NotFindPropertyException
 	 */
 	private function getReflect(string $class, string $alias): array
 	{
 		$reflect = $this->reflectClass($class);
-		if ($reflect->isInstantiable()) {
-			$object = $reflect->newInstance();
-			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-				if ($method->class != $class) {
-					continue;
-				}
+		if (!$reflect->isInstantiable()) {
+			return $this->targets($reflect);
+		}
+		$object = $reflect->newInstance();
+		$this->resolveMethod($reflect, $class, $alias, $object);
+		return $this->targets($reflect);
+	}
 
-				$tmp = $this->resolveAnnotations($method, $alias, $object);
-				if (empty($tmp)) {
-					continue;
-				}
 
-				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
+	/**
+	 * @param ReflectionClass $reflect
+	 * @param $class
+	 * @param $alias
+	 * @param $object
+	 * @throws NotFindPropertyException
+	 */
+	private function resolveMethod(ReflectionClass $reflect, $class, $alias, $object)
+	{
+		foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+			if ($method->class != $class) {
+				continue;
+			}
+
+			$tmp = $this->resolveAnnotations($method, $alias, $object);
+			if (empty($tmp)) {
+				continue;
+			}
+
+			$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
+		}
+		$this->resolveProperty($reflect, $object);
+	}
+
+
+	/**
+	 * @param ReflectionClass $reflectionClass
+	 * @param $object
+	 * @throws NotFindPropertyException
+	 */
+	private function resolveProperty(ReflectionClass $reflectionClass, $object)
+	{
+		$property = $reflectionClass->getProperties();
+		foreach ($property as $value) {
+			$attributes = $value->getAttributes();
+			if (count($attributes) < 1) {
+				continue;
+			}
+			foreach ($attributes as $attribute) {
+				/** @var IAnnotation $annotation */
+				$annotation = $attribute->newInstance()->execute([$object, $value->getName()]);
+				if ($value->isStatic()) {
+					$object::{$value->getName()} = $annotation;
+				} else if ($value->isPublic()) {
+					$object->{$value->getName()} = $annotation;
+				} else {
+					$name = 'set' . ucfirst($value->getName());
+					if (!method_exists($object, $name)) {
+						throw new NotFindPropertyException('set property need method ' . $name);
+					}
+					$object->$name($annotation);
+				}
 			}
 		}
-		return $this->targets($reflect);
 	}
 
 
@@ -153,11 +210,12 @@ class Annotation extends Component
 
 		$names = [];
 		foreach ($attributes as $attribute) {
+			/** @var IAnnotation $class */
 			$class = $this->instance($attribute);
 			if ($class === null) {
 				continue;
 			}
-			$names[$attribute->getName()] = $class;
+			$names[$attribute->getName()] = $class->execute([$object, $method->getName()]);
 		}
 
 		$tmp['handler'] = [$object, $method->getName()];

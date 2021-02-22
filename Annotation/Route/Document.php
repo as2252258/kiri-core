@@ -4,11 +4,13 @@
 namespace Annotation\Route;
 
 
+use Annotation\IAnnotation;
+
 /**
  * Class Document
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Document
+#[\Attribute(\Attribute::TARGET_METHOD)] class Document implements IAnnotation
 {
 
 	const INTEGER = 'int';
@@ -29,6 +31,17 @@ namespace Annotation\Route;
 		public array $response
 	)
 	{
+	}
+
+
+	/**
+	 * @param array $handler
+	 * @return array
+	 */
+	public function execute(array $handler): array
+	{
+		// TODO: Implement execute() method.
+		return [$this->request, $this->response];
 	}
 
 }

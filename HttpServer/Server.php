@@ -140,8 +140,6 @@ class Server extends HttpService
 		$configs = Config::get('servers', true);
 		Snowflake::clearWorkerId();
 
-		fire(Event::SERVER_BEFORE_START);
-
 		$baseServer = $this->initCore($configs);
 		if (!$baseServer) {
 			return 'ok';

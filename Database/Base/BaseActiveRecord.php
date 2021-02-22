@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Database\Base;
 
 
+use Annotation\Event;
+use Annotation\Inject;
 use Annotation\Model\Get;
 use ArrayAccess;
 use HttpServer\Http\Context;
@@ -28,6 +30,7 @@ use Snowflake\Exception\NotFindClassException;
 use validator\Validator;
 use Database\IOrm;
 use Snowflake\Snowflake;
+use Snowflake\Event as SEvent;
 
 /**
  * Class BOrm
@@ -40,6 +43,14 @@ use Snowflake\Snowflake;
  */
 abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 {
+
+	const AFTER_SAVE = 'after::save';
+	const BEFORE_SAVE = 'before::save';
+
+
+	#[Inject(SEvent::class)]
+	protected ?SEvent $event;
+
 
 	/** @var array */
 	protected array $_attributes = [];
@@ -65,6 +76,17 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	protected ?Relation $_relation;
 
+
+	/**
+	 * object init
+	 */
+	public function clean()
+	{
+		$this->_attributes = [];
+		$this->_oldAttributes = [];
+	}
+
+
 	/**
 	 * @throws Exception
 	 */
@@ -76,55 +98,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
-		$this->parseAnnotation();
+		$this->_annotations = annotation()->getMethods(get_called_class());
 	}
 
-
-	/**
-	 * @throws ComponentException
-	 */
-	private function parseAnnotation(): void
-	{
-		$attributes = Snowflake::app()->getAttributes();
-		$annotations = $attributes->getByClass(static::class);
-
-		$response = [];
-		foreach ($annotations as $annotation) {
-			if (!isset($annotation['attributes'])) {
-				continue;
-			}
-			foreach ($annotation['attributes'] as $attribute) {
-				if (!($attribute instanceof Get)) {
-					continue;
-				}
-				$response[$attribute->name] = $annotation['handler'];
-			}
-		}
-		$this->_annotations = $response;
-	}
-
-
-	/**
-	 * @param string $column
-	 * @param int $value
-	 * @return void
-	 * @throws Exception
-	 */
-	public function incrBy(string $column, int $value)
-	{
-		throw new Exception('Undefined function incrBy in ' . get_called_class());
-	}
-
-	/**
-	 * @param string $column
-	 * @param int $value
-	 * @return void
-	 * @throws Exception
-	 */
-	public function decrBy(string $column, int $value)
-	{
-		throw new Exception('Undefined function decrBy in ' . get_called_class());
-	}
 
 	/**
 	 * @return array
@@ -223,7 +199,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @param $param
 	 * @param null $db
-	 * @return $this
+	 * @return BaseActiveRecord|null
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
@@ -234,17 +210,29 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return null;
 		}
 		if (is_numeric($param)) {
-			$primary = static::getColumns()->getPrimaryKeys();
-			if (empty($primary)) {
-				throw new Exception('Primary key cannot be empty.');
-			}
-			if (is_array($primary)) {
-				$primary = current($primary);
-			}
-			$param = [$primary => $param];
+			$param = static::getPrimaryCondition($param);
 		}
 		return static::find()->where($param)->first();
 	}
+
+
+	/**
+	 * @param $param
+	 * @return array
+	 * @throws Exception
+	 */
+	private static function getPrimaryCondition($param): array
+	{
+		$primary = static::getColumns()->getPrimaryKeys();
+		if (empty($primary)) {
+			throw new Exception('Primary key cannot be empty.');
+		}
+		if (is_array($primary)) {
+			$primary = current($primary);
+		}
+		return [$primary => $param];
+	}
+
 
 	/**
 	 * @param null $field
@@ -375,15 +363,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	}
 
 	/**
-	 * @return bool
-	 * @throws Exception
-	 */
-	public function beforeSave()
-	{
-		return true;
-	}
-
-	/**
 	 * @param $attributes
 	 * @param $param
 	 * @return $this|bool
@@ -401,13 +380,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$trance = $dbConnection->beginTransaction();
 		try {
 			$commandExec = $dbConnection->createCommand($sqlBuilder, $param);
-			if (($lastId = $commandExec->save(true, $this->hasAutoIncrement())) === false) {
+			if (($lastId = $commandExec->save(true, $this)) === false) {
 				throw new Exception('保存失败.' . $sqlBuilder);
 			}
 			$trance->commit();
 			$this->setPrimary($lastId, $param);
-			$this->afterSave($attributes, $param);
-			$lastId = $this->refresh();
+
+			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
 		} catch (\Throwable $exception) {
 			$trance->rollback();
 			$lastId = $this->addError($exception, 'mysql');
@@ -455,13 +434,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$sql = $change->update(static::getTable(), $attributes, $condition, $param);
 
 		$trance = $command->beginTransaction();
-		if (!($command = $command->createCommand($sql, $param)->save(false, $this->hasAutoIncrement()))) {
+		if (!($command = $command->createCommand($sql, $param)->save(false, $this))) {
 			$trance->rollback();
 			$result = false;
 		} else {
 			$trance->commit();
-			$result = $this->refresh();
-			$this->afterSave($attributes, $param);
+
+			$result = $this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
 		}
 		return $result;
 	}
@@ -476,7 +455,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (is_array($data)) {
 			$this->_attributes = array_merge($this->_attributes, $data);
 		}
-		if (!$this->validator($this->rules()) || !$this->beforeSave()) {
+		if (!$this->validator($this->rules())) {
 			return false;
 		}
 
@@ -599,9 +578,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @return Relation
+	 * @return Relation|null
 	 */
-	public function getRelation()
+	public function getRelation(): ?Relation
 	{
 		return $this->_relation;
 	}
@@ -647,7 +626,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		}
 
 		if (empty($table)) {
-			$class = preg_replace('/model\\\/', '', get_called_class());
+			$class = preg_replace('/model\\\\/', '', get_called_class());
 			$table = lcfirst($class);
 		}
 
@@ -662,10 +641,24 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @param $attributes
 	 * @param $changeAttributes
+	 * @return bool
 	 * @throws Exception
 	 */
-	public function afterSave($attributes, $changeAttributes): void
+	#[Event(static::AFTER_SAVE)]
+	public function afterSave($attributes, $changeAttributes): bool
 	{
+		return true;
+	}
+
+
+	/**
+	 * @param $model
+	 * @return bool
+	 */
+	#[Event(static::BEFORE_SAVE)]
+	public function beforeSave($model): bool
+	{
+		return true;
 	}
 
 	/**
@@ -874,7 +867,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
-		$model = new static();
+		$object = Snowflake::app()->getObject();
+		$model = $object->getConnection([static::class], false);
 		$model->setAttributes($data);
 		$model->setIsCreate(false);
 		$model->refresh();

@@ -4,13 +4,16 @@
 namespace Annotation\Route;
 
 
+use Annotation\IAnnotation;
+use ReflectionException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
  * Class Interceptor
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Interceptor
+#[\Attribute(\Attribute::TARGET_METHOD)] class Interceptor implements IAnnotation
 {
 
 
@@ -21,12 +24,26 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $interceptor)
 	{
-		if (is_string($this->interceptor)) {
-			$this->interceptor = [$this->interceptor];
+		if (!is_string($this->interceptor)) {
+			return;
 		}
+		$this->interceptor = [$this->interceptor];
+	}
+
+
+	/**
+	 * @param array $handler
+	 * @return array|string
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	public function execute(array $handler): array|string
+	{
+		// TODO: Implement execute() method.
 		foreach ($this->interceptor as $key => $item) {
 			$this->interceptor[$key] = [Snowflake::createObject($item), 'Interceptor'];
 		}
+		return $this->interceptor;
 	}
 
 }

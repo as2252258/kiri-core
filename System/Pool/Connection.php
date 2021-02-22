@@ -151,11 +151,12 @@ class Connection extends Pool
     }
 
 
-    /**
-     * @param array $config
-     * @return mixed
-     */
-    public function createClient(string $name, array $config): mixed
+	/**
+	 * @param string $name
+	 * @param array $config
+	 * @return PDO
+	 */
+    public function createClient(string $name, array $config): PDO
     {
         $this->printClients($config['cds'], $name, true);
         // TODO: Implement createClient() method.

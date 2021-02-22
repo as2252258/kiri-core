@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Snowflake\Pool;
 
 
-
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
@@ -38,9 +37,9 @@ class Pool extends \Snowflake\Abstracts\Pool
 	}
 
 
-    public function createClient(string $name, array $config): mixed
-    {
-        // TODO: Implement createClient() method.
-        return null;
-    }
+	public function createClient(string $name, array $config): mixed
+	{
+		// TODO: Implement createClient() method.
+		return null;
+	}
 }

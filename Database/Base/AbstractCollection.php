@@ -13,10 +13,14 @@ namespace Database\Base;
 use ArrayIterator;
 use Database\ActiveQuery;
 
+use Exception;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\ActiveRecord;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 use Traversable;
 
 /**
@@ -55,7 +59,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/**
 	 * @return int
 	 */
-	public function getLength(): int
+	#[Pure] public function getLength(): int
 	{
 		return count($this->_item);
 	}
@@ -88,13 +92,24 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 
 	/**
 	 * @return Traversable|CollectionIterator|ArrayIterator
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function getIterator(): Traversable|CollectionIterator|ArrayIterator
 	{
 		return new CollectionIterator($this->model, $this->query, $this->_item);
 	}
+
+
+	/**
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	public function getModel(): ActiveRecord
+	{
+		return Snowflake::app()->getObject()->getConnection([$this->model], false);
+	}
+
 
 	/**
 	 * @param mixed $offset

@@ -33,6 +33,7 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\InitException;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\Connection;
+use Snowflake\Pool\ObjectPool;
 use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Snowflake\Event;
@@ -405,6 +406,16 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return ObjectPool
+	 * @throws ComponentException
+	 */
+	public function getObject(): ObjectPool
+	{
+		return $this->get('object');
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	protected function moreComponents(): void
@@ -424,6 +435,7 @@ abstract class BaseApplication extends Service
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
 			'async'             => ['class' => Async::class],
+			'object'            => ['class' => ObjectPool::class],
 			'goto'              => ['class' => BaseGoto::class],
 			'http2'             => ['class' => Http2::class],
 		]);

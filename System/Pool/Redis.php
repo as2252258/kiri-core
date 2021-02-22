@@ -49,12 +49,13 @@ class Redis extends Pool
     }
 
 
-    /**
-     * @param array $config
-     * @return SRedis
-     * @throws RedisConnectException
-     */
-    public function createClient(string $name, array $config): mixed
+	/**
+	 * @param string $name
+	 * @param array $config
+	 * @return SRedis
+	 * @throws RedisConnectException
+	 */
+    public function createClient(string $name, array $config): SRedis
     {
         $this->printClients($config['host'], $name, true);
         $redis = new SRedis();

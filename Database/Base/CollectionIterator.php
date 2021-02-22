@@ -32,15 +32,11 @@ class CollectionIterator extends \ArrayIterator
 	 * @param $query
 	 * @param array $array
 	 * @param int $flags
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function __construct($model, $query, $array = array(), $flags = 0)
 	{
 		$this->model = $model;
-		if (is_string($model)) {
-			$this->model = Snowflake::createObject($model);
-		}
 		$this->query = $query;
 		parent::__construct($array, $flags);
 	}
@@ -53,7 +49,10 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	protected function newModel($current): ActiveRecord
 	{
-		return (clone $this->model)->setAttributes($current);
+		$object = Snowflake::app()->getObject();
+		$model = $object->getConnection([$this->model], false);
+
+		return $model->setAttributes($current);
 
 	}
 
