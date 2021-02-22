@@ -462,20 +462,19 @@ class Server extends HttpService
 
 			$attributes = Snowflake::app()->getAttributes();
 			$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
-
-			$aliases = $attributes->getAlias('controllers');
-			var_dump($aliases);
-			if (count($aliases) < 1) {
-				return;
-			}
-			foreach ($aliases as $alias) {
-				$handler = $alias['handler'];
-				foreach ($alias['attributes'] as $key => $attribute) {
-					if ($attribute instanceof IAnnotation) {
-						$attribute->execute($handler);
-					}
-				}
-			}
+//
+//			$aliases = $attributes->getAlias('controllers');
+//			if (count($aliases) < 1) {
+//				return;
+//			}
+//			foreach ($aliases as $alias) {
+//				$handler = $alias['handler'];
+//				foreach ($alias['attributes'] as $key => $attribute) {
+//					if ($attribute instanceof IAnnotation) {
+//						$attribute->execute($handler);
+//					}
+//				}
+//			}
 		});
 	}
 
