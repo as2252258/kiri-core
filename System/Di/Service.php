@@ -24,125 +24,127 @@ use Snowflake\Snowflake;
 class Service extends Component
 {
 
-	private array $_components = [];
+    private array $_components = [];
 
 
-	private array $_definition = [];
+    private array $_definition = [];
 
 
-	protected array $_alias = [];
+    protected array $_alias = [];
 
-	/**
-	 * @param $id
-	 *
-	 * @return mixed
-	 * @throws
-	 */
-	public function get($id): mixed
-	{
-		if (isset($this->_components[$id])) {
-			return $this->_components[$id];
-		}
-		if (isset($this->_definition[$id])) {
-			$object = $this->_definition[$id];
-			if (!is_object($object)) {
-				$object = Snowflake::createObject($object);
-			}
-		} else if (!isset($this->_alias[$id])) {
-			throw new ComponentException("Unknown component ID: $id");
-		} else {
-			$id = $this->_alias[$id];
+    /**
+     * @param $id
+     *
+     * @return mixed
+     * @throws
+     */
+    public function get($id): mixed
+    {
+        if (isset($this->_components[$id])) {
+            return $this->_components[$id];
+        }
+        if (!isset($this->_definition[$id]) && !isset($this->_alias[$id])) {
+            throw new ComponentException("Unknown component ID: $id");
+        }
+        if (isset($this->_definition[$id])) {
+            $config = $this->_definition[$id];
+            if (is_object($config)) {
+                return $this->_components[$id] = $config;
+            }
+            $object = Snowflake::createObject($config);
+        } else {
+            $config = $this->_alias[$id];
 
-			$object = Snowflake::createObject($id);
-		}
-		return $this->_components[$id] = $object;
-	}
+            $object = Snowflake::createObject($config);
+        }
+        return $this->_components[$id] = Snowflake::configure($object, $config);
+    }
 
-	/**
-	 * @param string $className
-	 * @param string $alias
-	 */
-	public function setAlias(string $className, string $alias)
-	{
-		$this->_alias[$className] = $alias;
-	}
+    /**
+     * @param string $className
+     * @param string $alias
+     */
+    public function setAlias(string $className, string $alias)
+    {
+        $this->_alias[$className] = $alias;
+    }
 
-	/**
-	 * @param $id
-	 * @param $definition
-	 *
-	 * @return mixed
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 */
-	public function set($id, $definition): mixed
-	{
-		if ($definition === NULL) {
-			return $this->remove($id);
-		}
-		unset($this->_components[$id]);
-		if (is_object($definition) || is_callable($definition, TRUE)) {
-			return $this->_definition[$id] = $definition;
-		} else if (!is_array($definition)) {
-			throw new ComponentException("Unexpected configuration type for the \"$id\" component: " . gettype($definition));
-		}
-		if (!isset($definition['class'])) {
-			throw new ComponentException("The configuration for the \"$id\" component must contain a \"class\" element.");
-		} else {
-			$this->_definition[$id] = $definition;
-		}
-		return $this->get($id);
-	}
+    /**
+     * @param $id
+     * @param $definition
+     *
+     * @return mixed
+     * @throws ComponentException
+     * @throws ReflectionException
+     * @throws NotFindClassException
+     */
+    public function set($id, $definition): mixed
+    {
+        if ($definition === NULL) {
+            return $this->remove($id);
+        }
+        unset($this->_components[$id]);
+        if (is_object($definition) || is_callable($definition, TRUE)) {
+            return $this->_definition[$id] = $definition;
+        } else if (!is_array($definition)) {
+            throw new ComponentException("Unexpected configuration type for the \"$id\" component: " . gettype($definition));
+        }
+        if (!isset($definition['class'])) {
+            throw new ComponentException("The configuration for the \"$id\" component must contain a \"class\" element.");
+        } else {
+            $this->_definition[$id] = $definition;
+        }
+        return $this->get($id);
+    }
 
-	/**
-	 * @param $id
-	 * @return bool
-	 */
-	public function has($id): bool
-	{
-		return isset($this->_definition[$id]) || isset($this->_components[$id]) || isset($this->_alias[$id]);
-	}
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function has($id): bool
+    {
+        return isset($this->_definition[$id]) || isset($this->_components[$id]) || isset($this->_alias[$id]);
+    }
 
-	/**
-	 * @param array $data
-	 * @throws Exception
-	 */
-	public function setComponents(array $data)
-	{
-		foreach ($data as $key => $val) {
-			$this->set($key, $val);
-		}
-	}
+    /**
+     * @param array $data
+     * @throws Exception
+     */
+    public function setComponents(array $data)
+    {
+        foreach ($data as $key => $val) {
+            $this->set($key, $val);
+        }
+    }
 
 
-	/**
-	 * @param $name
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function __get($name): mixed
-	{
-		if ($this->has($name)) {
-			return $this->get($name);
-		}
+    /**
+     * @param $name
+     * @return mixed
+     * @throws Exception
+     */
+    public function __get($name): mixed
+    {
+        if ($this->has($name)) {
+            return $this->get($name);
+        }
 
-		return parent::__get($name);
-	}
+        return parent::__get($name);
+    }
 
-	/**
-	 * @param $id
-	 * @return bool
-	 */
-	public function remove($id): bool
-	{
-		unset($this->_components[$id]);
-		unset($this->_definition[$id]);
-		if (isset($this->_alias[$id])) {
-			unset($this->_components[$this->_alias[$id]]);
-			unset($this->_definition[$this->_alias[$id]]);
-			unset($this->_alias[$id]);
-		}
-		return $this->has($id);
-	}
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function remove($id): bool
+    {
+        unset($this->_components[$id]);
+        unset($this->_definition[$id]);
+        if (isset($this->_alias[$id])) {
+            unset($this->_components[$this->_alias[$id]]);
+            unset($this->_definition[$this->_alias[$id]]);
+            unset($this->_alias[$id]);
+        }
+        return $this->has($id);
+    }
 }
