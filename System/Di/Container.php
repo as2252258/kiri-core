@@ -181,12 +181,11 @@ class Container extends BaseObject
 			return $param->getDefaultValue();
 		}
 		return match ($type = $param->getType()) {
-			'mixed' => $param->getDefaultValue(),
 			'array' => [],
 			'int', 'float' => 0,
 			'bool' => false,
 			'string', null => '',
-			'', 'object' => NULL,
+			'', 'object', 'mixed' => NULL,
 			default => Snowflake::createObject($type)
 		};
 	}
