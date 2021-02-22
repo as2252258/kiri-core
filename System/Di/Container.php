@@ -187,7 +187,7 @@ class Container extends BaseObject
      * @return mixed
      * @throws ReflectionException
      */
-    public function getReflect($class): ReflectionClass
+    public function getReflect($class): ?ReflectionClass
     {
         $reflect = $this->_reflection[$class] ?? null;
         if (!is_null($reflect)) {
