@@ -183,11 +183,11 @@ class Container extends BaseObject
 
 	/**
 	 * @param $param
-	 * @return false|int|string|null
+	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveDefaultValue($param,): bool|int|string|null
+	private function resolveDefaultValue($param,): mixed
 	{
 		if ($param->isOptional()) {
 			return $param->getDefaultValue();
