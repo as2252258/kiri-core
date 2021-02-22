@@ -15,11 +15,14 @@ use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
 use HttpServer\ServerProviders;
+use ReflectionException;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Abstracts\Kernel;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Exception\NotFindPropertyException;
 use stdClass;
 use Swoole\Timer;
 
@@ -101,6 +104,8 @@ class Application extends BaseApplication
 	public function start(Input $argv): bool|string
 	{
 		try {
+			$this->scan_system_annotation();
+
 			fire(Event::SERVER_BEFORE_START);
 
 			$this->set('input', $argv);
@@ -119,6 +124,25 @@ class Application extends BaseApplication
 			Timer::clearAll();
 		}
 	}
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindPropertyException
+	 */
+	public function scan_system_annotation()
+	{
+		$annotation = Snowflake::app()->getAttributes();
+		$annotation->readControllers(__DIR__ . '/../Console', 'Console', 'system');
+		$annotation->readControllers(__DIR__ . '/../Database', 'Database', 'system');
+		$annotation->readControllers(__DIR__ . '/../Gii', 'Gii', 'system');
+		$annotation->readControllers(__DIR__ . '/../HttpServer', 'HttpServer', 'system');
+		$annotation->readControllers(__DIR__ . '/../Kafka', 'Kafka', 'system');
+		$annotation->readControllers(__DIR__ . '/../System', 'Snowflake', 'system');
+		$annotation->readControllers(__DIR__ . '/../Validator', 'Validator', 'system');
+	}
+
 
 	/**
 	 * @param $className
