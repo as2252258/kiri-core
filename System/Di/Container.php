@@ -164,8 +164,7 @@ class Container extends BaseObject
             return [];
         }
         $constructs = $reflection->getConstructor();
-        var_dump($constructs);
-        if (empty($constructs) || count($constructs->getParameters()) < 1) {
+        if ($constructs === null || count($constructs->getParameters()) < 1) {
             return [$reflection, $this->_constructs[$class] = ['class' => $class]];
         }
         $dependencies = [];
