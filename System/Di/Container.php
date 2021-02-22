@@ -181,10 +181,10 @@ class Container extends BaseObject
                 $dependencies[] = $param->getDefaultValue();
             } else {
                 $c = $param->getClass();
-                var_dump($c);
                 $dependencies[] = $c === NULL ? NULL : $c->getName();
             }
         }
+        var_dump($dependencies);
         $this->_constructs[$class] = $dependencies;
         return [$reflection, $dependencies];
     }
