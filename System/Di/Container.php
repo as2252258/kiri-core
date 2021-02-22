@@ -103,12 +103,12 @@ class Container extends BaseObject
         if (!$reflect->isInstantiable()) {
             throw new NotFindClassException($reflect->getName());
         }
+        $this->_param[$class] = $config;
 
         $dependencies = $this->_constructs[$class] ?? [];
         if (empty($config)) {
             return $reflect->newInstanceArgs($dependencies);
         }
-        $this->_param[$class] = $config;
 
         if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
             $dependencies[count($dependencies) - 1] = $config;
