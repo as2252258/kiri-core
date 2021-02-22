@@ -169,11 +169,12 @@ class Annotation extends Component
 			foreach ($attributes as $attribute) {
 				/** @var IAnnotation $annotation */
 				$annotation = $attribute->newInstance()->execute([$object, $value->getName()]);
-				if ($value->isStatic()) {
-					$name = $value->getName();
-
-					$object::$name = $annotation;
-				} else if ($value->isPublic()) {
+//				if ($value->isStatic()) {
+//					$name = $value->getName();
+//
+//					$object::$name = $annotation;
+//				} else
+				if ($value->isPublic()) {
 					$object->{$value->getName()} = $annotation;
 				} else {
 					$name = 'set' . ucfirst($value->getName());
