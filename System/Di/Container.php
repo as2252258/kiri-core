@@ -71,20 +71,20 @@ class Container extends BaseObject
     {
         if (isset($this->_singletons[$class])) {
             return $this->_singletons[$class];
-        } else if (!isset($this->_constructs[$class])) {
+        }
+        if (!isset($this->_constructs[$class])) {
             return $this->resolve($class, $constrict, $config);
         }
         $definition = $this->_constructs[$class];
         if (is_callable($definition, TRUE)) {
             return call_user_func($definition, $this, $constrict, $config);
         } else if (is_array($definition)) {
-            $object = $this->resolveDefinition($definition, $class, $config, $constrict);
+            return $this->resolveDefinition($definition, $class, $config, $constrict);
         } else if (is_object($definition)) {
             return $this->_singletons[$class] = $definition;
         } else {
             throw new NotFindClassException($class);
         }
-        return $this->_singletons[$class] = $object;
     }
 
     /**
@@ -112,7 +112,7 @@ class Container extends BaseObject
         } else {
             $object = $this->get($class, $definition, $config);
         }
-        return $object;
+        return $this->_singletons[$class] = $object;
     }
 
     /**
@@ -127,7 +127,7 @@ class Container extends BaseObject
     private function resolve($class, $constrict, $config): object
     {
         /** @var ReflectionClass $reflect */
-        list($reflect, $dependencies) = $this->resolveDependencies($class);
+        [$reflect, $dependencies] = $this->resolveDependencies($class);
         foreach ($constrict as $index => $param) {
             $dependencies[$index] = $param;
         }
@@ -171,7 +171,7 @@ class Container extends BaseObject
         }
         $constructs = $reflection->getConstructor();
         if ($constructs === null || count($constructs->getParameters()) < 1) {
-            return [$reflection, $this->_constructs[$class] = ['class' => $class]];
+            return [$reflection, $this->_constructs[$class] = []];
         }
         $dependencies = [];
         foreach ($constructs->getParameters() as $key => $param) {
@@ -182,7 +182,6 @@ class Container extends BaseObject
                 $dependencies[] = $c === NULL ? NULL : $c->getName();
             }
         }
-        var_dump($dependencies);
         $this->_constructs[$class] = $dependencies;
         return [$reflection, $dependencies];
     }

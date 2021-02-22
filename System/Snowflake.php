@@ -99,7 +99,9 @@ class Snowflake
 			if (!isset($className['class']) || empty($className['class'])) {
 				throw new Exception('Object configuration must be an array containing a "class" element.');
 			}
-			return static::$container->get($className['class'], $construct, $className);
+			$class = $className['class'];
+			unset($className['class']);
+			return static::$container->get($class, $construct, $className);
 		} else if (is_callable($className, TRUE)) {
 			return call_user_func($className, $construct);
 		} else {
