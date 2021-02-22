@@ -25,7 +25,7 @@ class DefaultCommand extends Command
 		$param = $dtl->get('commandList');
 
 		$last = '';
-		$lists = [str_pad('Commands', 24, ' ', STR_PAD_RIGHT) . '注释'];
+		$lists = ["Commands\t" . '注释'];
 		foreach ($param as $key => $val) {
 			$split = explode(':', $key);
 			if (empty($last) && isset($split[0])) {
