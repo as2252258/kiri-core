@@ -97,6 +97,10 @@ class Container extends BaseObject
             throw new NotFindClassException($reflect->getName());
         }
 
+        if ($class == HttpHeaders::class) {
+            var_dump($class);
+        }
+
         $dependencies = $this->_constructs[$class] ?? [];
         if (empty($config)) {
             return $reflect->newInstanceArgs($dependencies);
