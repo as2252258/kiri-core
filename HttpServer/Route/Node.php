@@ -215,7 +215,7 @@ class Node extends HttpService
 	{
 		try {
 			$reflect = Snowflake::getDi()->getReflect($controller);
-			if (!$reflect->isInstantiable()) {
+			if (empty($reflect)) {
 				throw new Exception($controller . ' Class is con\'t Instantiable.');
 			}
 			if (!empty($action) && !$reflect->hasMethod($action)) {
@@ -446,7 +446,6 @@ class Node extends HttpService
 	 */
 	private function restructure(): static
 	{
-		var_dump($this, 'restructure');
 		if (empty($this->handler)) {
 			return $this;
 		}

@@ -119,6 +119,9 @@ class Annotation extends Component
 	private function getReflect(string $class, string $alias): array
 	{
 		$reflect = $this->reflectClass($class);
+		if (empty($reflect)) {
+			return [];
+		}
 		if (!$reflect->isInstantiable()) {
 			return $this->targets($reflect);
 		}
@@ -190,10 +193,10 @@ class Annotation extends Component
 
 	/**
 	 * @param string $class
-	 * @return ReflectionClass
+	 * @return ReflectionClass|null
 	 * @throws ReflectionException
 	 */
-	private function reflectClass(string $class): ReflectionClass
+	private function reflectClass(string $class): ?ReflectionClass
 	{
 		return Snowflake::getDi()->getReflect($class);
 	}

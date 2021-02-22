@@ -168,6 +168,9 @@ class Container extends BaseObject
 			$reflection = $this->_reflection[$class];
 		} else {
 			$reflection = new ReflectionClass($class);
+			if (!$reflection->isInstantiable()) {
+				return [];
+			}
 			$this->_reflection[$class] = $reflection;
 		}
 		$constructs = $reflection->getConstructor();
@@ -191,36 +194,16 @@ class Container extends BaseObject
 
 	/**
 	 * @param $class
-	 * @return mixed
+	 * @return ReflectionClass|null
 	 * @throws ReflectionException
 	 */
-	public function getReflect($class): ReflectionClass
+	public function getReflect($class): ?ReflectionClass
 	{
 		if (!isset($this->_reflection[$class])) {
 			$this->resolveDependencies($class);
 		}
-		return $this->_reflection[$class];
+		return $this->_reflection[$class] ?? null;
 	}
-
-
-	/**
-	 * @param string $class
-	 * @return array
-	 * @throws ReflectionException
-	 */
-	public function getAttributes(string $class): array
-	{
-		$reflection = $this->getReflect($class);
-		$methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-
-		$classAttribute = $reflection->getAttributes();
-
-		foreach ($methods as $method) {
-			$this->_attributes[$reflection->getName()][$method->getName()] = $method->getAttributes();
-		}
-		return $this->_attributes[$reflection->getName()];
-	}
-
 
 	/**
 	 * @param $class
