@@ -162,16 +162,27 @@ class Annotation extends Component
 	{
 		$property = $reflectionClass->getProperties();
 		foreach ($property as $value) {
+			if ($value->isStatic()) continue;
 			$attributes = $value->getAttributes();
 			if (count($attributes) < 1) {
 				continue;
 			}
 			foreach ($attributes as $attribute) {
-				$attribute = $this->instance($attribute);
-				if (empty($attribute)) {
+				/** @var IAnnotation $annotation */
+				$annotation = $this->instance($attribute);
+				if (empty($annotation)) {
 					continue;
 				}
-				$value->setValue($attribute->execute([$object, $value->getName()]));
+				$annotation = $annotation->execute([$object, $value->getName()]);
+				if ($value->isPublic()) {
+					$object->{$value->getName()} = $annotation;
+				} else {
+					$name = 'set' . ucfirst($value->getName());
+					if (!method_exists($object, $name)) {
+						throw new NotFindPropertyException('set property need method ' . $name);
+					}
+					$object->$name($annotation);
+				}
 			}
 		}
 	}
