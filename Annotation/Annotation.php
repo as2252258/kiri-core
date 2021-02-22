@@ -121,6 +121,7 @@ class Annotation extends Component
     {
         try {
             $reflect = $this->reflectClass($class);
+            var_dump($reflect, $class);
             if (empty($reflect) || !$reflect->isInstantiable()) {
                 return [];
             }
@@ -218,20 +219,19 @@ class Annotation extends Component
             return [];
         }
 
-        $names = [];
         foreach ($attributes as $attribute) {
             /** @var IAnnotation $class */
             $class = $this->instance($attribute);
             if ($class === null) {
                 continue;
             }
-            $names[$attribute->getName()] = $class->execute([$object, $method->getName()]);
+            $class->execute([$object, $method->getName()]);
         }
 
-        $tmp['handler'] = [$object, $method->getName()];
-        $tmp['attributes'] = $names;
-
-        $this->_annotations[$alias][] = $tmp;
+//        $tmp['handler'] = [$object, $method->getName()];
+//        $tmp['attributes'] = $names;
+//
+//        $this->_annotations[$alias][] = $tmp;
 
         return $tmp;
     }
