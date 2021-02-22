@@ -195,9 +195,9 @@ class Container extends BaseObject
 		return match ($param->getType()) {
 			'mixed' => $param->getDefaultValue(),
 			'string' => '',
-			'int' => 0,
+			'int', 'float' => 0,
 			'bool' => false,
-			'NULL' => NULL,
+			'' => NULL,
 			default => Snowflake::createObject($param->getType())
 		};
 	}
@@ -234,6 +234,7 @@ class Container extends BaseObject
 	 * @param $class
 	 * @return ReflectionClass|null
 	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function getReflect($class): ?ReflectionClass
 	{
