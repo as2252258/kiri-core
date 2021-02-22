@@ -276,8 +276,7 @@ class Columns extends Component
 	private function structure($table): array|static
 	{
 		if (!isset($this->columns[$table]) || empty($this->columns[$table])) {
-			$sql = $this->db->getBuild()->getColumn($table);
-			$column = $this->db->createCommand($sql)->all();
+			$column = $this->db->createCommand($this->db->getBuild()->getColumn($table))->all();
 			if (empty($column)) {
 				throw new Exception("The table " . $table . " not exists.");
 			}
