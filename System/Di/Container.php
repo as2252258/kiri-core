@@ -120,14 +120,12 @@ class Container extends BaseObject
 	{
 		[$reflect, $dependencies] = $this->resolveDependencies($class);
 		foreach ($constrict as $index => $param) {
-			if (is_array($param)) {
-				continue;
-			}
 			$dependencies[$index] = $param;
 		}
 		if (!$reflect->isInstantiable()) {
 			throw new Exception($reflect->getName() . ' con\'t instantiable');
 		}
+		var_dump($dependencies);
 		if (empty($config)) {
 			return $reflect->newInstanceArgs($dependencies ?? []);
 		}
