@@ -126,10 +126,6 @@ class Container extends BaseObject
      */
     private function resolve($class, $constrict, $config): object
     {
-        /**
-         * @var ReflectionClass $reflect
-         * @var array $dependencies
-         */
         list($reflect, $dependencies) = $this->resolveDependencies($class);
         foreach ($constrict as $index => $param) {
             $dependencies[$index] = $param;
@@ -163,17 +159,15 @@ class Container extends BaseObject
      */
     private function resolveDependencies($class): array
     {
-        $dependencies = [];
-        if (isset($this->_reflection[$class])) {
-            $reflection = $this->_reflection[$class];
-        } else {
-            $reflection = new ReflectionClass($class);
-            $this->_reflection[$class] = $reflection;
+        $reflection = $this->reflectionClass($class);
+        if (empty($reflection)) {
+            return [];
         }
         $constructs = $reflection->getConstructor();
         if (empty($constructs) || count($constructs->getParameters()) < 1) {
             return [$reflection, $this->_constructs[$class] = []];
         }
+        $dependencies = [];
         foreach ($constructs->getParameters() as $key => $param) {
             if ($param->isDefaultValueAvailable()) {
                 $dependencies[] = $param->getDefaultValue();
@@ -189,6 +183,25 @@ class Container extends BaseObject
 
     /**
      * @param $class
+     * @return array
+     */
+    private function reflectionClass($class)
+    {
+        if (isset($this->_reflection[$class])) {
+            $reflection = $this->_reflection[$class];
+        } else {
+            $reflection = new ReflectionClass($class);
+            if (!$reflection->isInstantiable()) {
+                return null;
+            }
+            $this->_reflection[$class] = $reflection;
+        }
+        return $reflection;
+    }
+
+
+    /**
+     * @param $class
      * @return mixed
      * @throws ReflectionException
      */
@@ -199,26 +212,6 @@ class Container extends BaseObject
         }
         return $this->_reflection[$class];
     }
-
-
-    /**
-     * @param string $class
-     * @return array
-     * @throws ReflectionException
-     */
-    public function getAttributes(string $class): array
-    {
-        $reflection = $this->getReflect($class);
-        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-
-        $classAttribute = $reflection->getAttributes();
-
-        foreach ($methods as $method) {
-            $this->_attributes[$reflection->getName()][$method->getName()] = $method->getAttributes();
-        }
-        return $this->_attributes[$reflection->getName()];
-    }
-
 
     /**
      * @param $class
