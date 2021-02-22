@@ -202,7 +202,8 @@ class Container extends BaseObject
 				default => Snowflake::createObject($type)
 			};
 		} catch (\Throwable $throwable) {
-			var_dump($class, $throwable->getMessage());
+			var_dump($class, $throwable->getMessage(), $throwable->getFile(), $throwable->getLine());
+			echo PHP_EOL;
 			return null;
 		}
 	}
