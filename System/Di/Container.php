@@ -175,6 +175,7 @@ class Container extends BaseObject
             return [$reflection, []];
         }
         foreach ($constructs->getParameters() as $key => $param) {
+            var_dump(version_compare(PHP_VERSION, '5.6.0', '>='));
             if (version_compare(PHP_VERSION, '5.6.0', '>=') && $param->isVariadic()) {
                 break;
             } else if ($param->isDefaultValueAvailable()) {
