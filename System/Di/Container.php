@@ -125,8 +125,9 @@ class Container extends BaseObject
 		if (!$reflect->isInstantiable()) {
 			throw new Exception($reflect->getName() . ' con\'t instantiable');
 		}
-		var_dump($class, $dependencies);
 		if (empty($config)) {
+			var_dump($class, $dependencies);
+
 			return $reflect->newInstanceArgs($dependencies ?? []);
 		}
 		if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
