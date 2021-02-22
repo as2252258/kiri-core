@@ -128,12 +128,10 @@ class Container extends BaseObject
 	private function resolve($class, $constrict, $config): object
 	{
 		[$reflect, $dependencies] = $this->resolveDependencies($class);
-		if (empty($reflect)) {
-			throw new \Exception('asdjakkjgsg');
-		}
 		foreach ($constrict as $index => $param) {
 			$dependencies[$index] = $param;
 		}
+		var_dump($reflect);
 		if (!$reflect->isInstantiable()) {
 			throw new NotFindClassException($reflect->getName());
 		}
