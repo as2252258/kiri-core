@@ -174,6 +174,7 @@ class Container extends BaseObject
 			return [$reflection, []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
+			var_dump($class);
 			$dependencies[] = $this->resolveDefaultValue($param);
 		}
 		$this->_constructs[$class] = $dependencies;
@@ -192,7 +193,6 @@ class Container extends BaseObject
 		if ($param->isOptional()) {
 			return $param->getDefaultValue();
 		}
-		var_dump($param->getClass());
 		return match ($param->getType()) {
 			'mixed' => $param->getDefaultValue(),
 			'string' => '',
