@@ -138,6 +138,7 @@ class Container extends BaseObject
             if (!$reflection->isInstantiable()) {
                 return null;
             }
+            $this->_reflection[$class] = $reflection;
         } else {
             $reflection = $this->_reflection[$class];
         }
