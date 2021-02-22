@@ -170,7 +170,9 @@ class Annotation extends Component
 				/** @var IAnnotation $annotation */
 				$annotation = $attribute->newInstance()->execute([$object, $value->getName()]);
 				if ($value->isStatic()) {
-					$object::{$value->getName()} = $annotation;
+					$name = $value->getName();
+
+					$object::$name = $annotation;
 				} else if ($value->isPublic()) {
 					$object->{$value->getName()} = $annotation;
 				} else {
