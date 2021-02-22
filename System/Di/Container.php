@@ -148,10 +148,6 @@ class Container extends BaseObject
         } else {
             $this->_constructs[$class] = $constrict;
         }
-
-        if ($class == HttpHeaders::class) {
-            var_dump($constrict, $this->_constructs[$class]);
-        }
         return $reflection;
     }
 
