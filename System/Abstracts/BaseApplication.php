@@ -21,6 +21,7 @@ use HttpServer\Service\Http;
 use HttpServer\Service\Packet;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
+use JetBrains\PhpStorm\Pure;
 use Kafka\Producer;
 use Annotation\Annotation as SAnnotation;
 use Snowflake\Async;
@@ -37,6 +38,7 @@ use Snowflake\Snowflake;
 use Snowflake\Event;
 use Snowflake\Pool\Pool as SPool;
 use Database\DatabasesProviders;
+use Swoole\Table;
 
 /**
  * Class BaseApplication
@@ -133,7 +135,7 @@ abstract class BaseApplication extends Service
 	 *
 	 * @return bool
 	 */
-	protected function looksLikeSetter(string $line): bool
+	#[Pure] protected function looksLikeSetter(string $line): bool
 	{
 		return str_contains($line, '=');
 	}
@@ -308,6 +310,17 @@ abstract class BaseApplication extends Service
 	public function getRequest(): Request
 	{
 		return $this->get('request');
+	}
+
+
+	/**
+	 * @param $name
+	 * @return Table
+	 * @throws ComponentException
+	 */
+	public function getTable($name): Table
+	{
+		return $this->get($name);
 	}
 
 
