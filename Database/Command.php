@@ -221,7 +221,7 @@ class Command extends Component
         if (!($connect instanceof PDO)) {
             return null;
         }
-        var_dump($connect, $this->sql);
+        var_dump($connect->getAttribute(PDO::ATTR_SERVER_INFO), $this->sql);
         if (!($query = $connect->query($this->sql))) return null;
         if ($type === static::ROW_COUNT) {
             $result = $query->rowCount();
