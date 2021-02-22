@@ -470,7 +470,7 @@ class Server extends HttpService
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
-						$attribute->setHandler($handler);
+						$attribute->execute($handler);
 					}
 				}
 			}
@@ -496,7 +496,7 @@ class Server extends HttpService
 				$handler = $alias['handler'];
 				foreach ($alias['attributes'] as $key => $attribute) {
 					if ($attribute instanceof IAnnotation) {
-						$attribute->setHandler($handler);
+						$attribute->execute($handler);
 					}
 				}
 			}

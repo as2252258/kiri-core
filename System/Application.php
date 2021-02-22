@@ -134,13 +134,13 @@ class Application extends BaseApplication
 	public function scan_system_annotation()
 	{
 		$annotation = Snowflake::app()->getAttributes();
-		$annotation->readControllers(__DIR__ . '/../Console', 'Console', 'system');
-		$annotation->readControllers(__DIR__ . '/../Database', 'Database', 'system');
-		$annotation->readControllers(__DIR__ . '/../Gii', 'Gii', 'system');
-		$annotation->readControllers(__DIR__ . '/../HttpServer', 'HttpServer', 'system');
-		$annotation->readControllers(__DIR__ . '/../Kafka', 'Kafka', 'system');
-		$annotation->readControllers(__DIR__ . '/../System', 'Snowflake', 'system');
-		$annotation->readControllers(__DIR__ . '/../Validator', 'Validator', 'system');
+		$annotation->readControllers(__DIR__ . '/../Console/', 'Console', 'system');
+		$annotation->readControllers(__DIR__ . '/../Database/', 'Database', 'system');
+		$annotation->readControllers(__DIR__ . '/../Gii/', 'Gii', 'system');
+		$annotation->readControllers(__DIR__ . '/../HttpServer/', 'HttpServer', 'system');
+		$annotation->readControllers(__DIR__ . '/../Kafka/', 'Kafka', 'system');
+		$annotation->readControllers(__DIR__ . '/../System/', 'Snowflake', 'system');
+		$annotation->readControllers(__DIR__ . '/../Validator/', 'Validator', 'system');
 	}
 
 
