@@ -144,16 +144,20 @@ class Annotation extends Component
 	private function resolveMethod(ReflectionClass $reflect, $class, $alias, $object)
 	{
 		var_dump($reflect->getName());
-		foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-			if ($method->class != $class) {
-				continue;
-			}
+		try {
+			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+				if ($method->class != $class) {
+					continue;
+				}
 
-			$tmp = $this->resolveAnnotations($method, $alias, $object);
-			if (empty($tmp)) {
-				continue;
+				$tmp = $this->resolveAnnotations($method, $alias, $object);
+				if (empty($tmp)) {
+					continue;
+				}
+				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
 			}
-			$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
+		} catch (\Throwable $throwable) {
+			$this->addError($throwable);
 		}
 		$this->resolveProperty($reflect, $object);
 	}
