@@ -99,10 +99,10 @@ class Container extends BaseObject
     private function resolveDefinition($definition, $class, $config, $constrict): mixed
     {
         if (!isset($definition['class'])) {
-            var_dump($definition);
             throw new NotFindClassException($class);
         }
         $_className = $definition['class'];
+        unset($definition['class']);
 
         $config = array_merge($definition, $config);
         $definition = $this->mergeParam($class, $constrict);
@@ -165,7 +165,7 @@ class Container extends BaseObject
         }
         $constructs = $reflection->getConstructor();
         if (empty($constructs) || count($constructs->getParameters()) < 1) {
-            return [$reflection, $this->_constructs[$class] = []];
+            return [$reflection, $this->_constructs[$class] = ['class' => $class]];
         }
         $dependencies = [];
         foreach ($constructs->getParameters() as $key => $param) {
