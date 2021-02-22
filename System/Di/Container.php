@@ -76,7 +76,7 @@ class Container extends BaseObject
 			return $this->resolve($class, $constrict, $config);
 		}
 		$definition = $this->_constructs[$class];
-		var_dump($definition);
+		var_dump($class, $definition);
 		if (is_callable($definition, TRUE)) {
 			return call_user_func($definition, $this, $constrict, $config);
 		} else if (is_array($definition)) {
@@ -132,7 +132,6 @@ class Container extends BaseObject
 		foreach ($constrict as $index => $param) {
 			$dependencies[$index] = $param;
 		}
-		var_dump($reflect);
 		if (!$reflect->isInstantiable()) {
 			throw new NotFindClassException($reflect->getName());
 		}
@@ -169,11 +168,16 @@ class Container extends BaseObject
 		};
 		$constructs = $reflection->getConstructor();
 		if (!($constructs instanceof \ReflectionMethod)) {
-			return [$reflection, $this->_constructs[$class] = []];
+			return [
+				$reflection, $this->_constructs[$class] = [
+					'class' => $class
+				]
+			];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
 			$dependencies[] = $this->resolveDefaultValue($param);
 		}
+		$dependencies['class'] = $class;
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
 	}
