@@ -4,6 +4,7 @@
 namespace Annotation;
 
 
+use Exception;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -114,26 +115,29 @@ class Annotation extends Component
 	 * @param string $class
 	 * @param string $alias
 	 * @return array
-	 * @throws ReflectionException
-	 * @throws NotFindPropertyException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	private function getReflect(string $class, string $alias): array
 	{
-		$reflect = $this->reflectClass($class);
-		var_dump($class, $reflect);
-		if (empty($reflect)) {
+		try {
+			$reflect = $this->reflectClass($class);
+			var_dump($class, $reflect);
+			if (empty($reflect)) {
+				return [];
+			}
+
+			$constructor = $reflect->getConstructor();
+			if (!empty($constructor) && count($constructor->getParameters()) > 0) {
+				return [];
+			}
+
+			$object = $reflect->newInstance();
+			$this->resolveMethod($reflect, $class, $alias, $object);
+			return $this->targets($reflect);
+		} catch (\Throwable $throwable) {
+			$this->addError($throwable);
 			return [];
 		}
-
-		$constructor = $reflect->getConstructor();
-		if (!empty($constructor) && count($constructor->getParameters()) > 0) {
-			return [];
-		}
-
-		$object = $reflect->newInstance();
-		$this->resolveMethod($reflect, $class, $alias, $object);
-		return $this->targets($reflect);
 	}
 
 
@@ -146,20 +150,16 @@ class Annotation extends Component
 	 */
 	private function resolveMethod(ReflectionClass $reflect, $class, $alias, $object)
 	{
-		try {
-			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-				if ($method->class != $class) {
-					continue;
-				}
-
-				$tmp = $this->resolveAnnotations($method, $alias, $object);
-				if (empty($tmp)) {
-					continue;
-				}
-				$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
+		foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+			if ($method->class != $class) {
+				continue;
 			}
-		} catch (\Throwable $throwable) {
-			$this->addError($throwable);
+
+			$tmp = $this->resolveAnnotations($method, $alias, $object);
+			if (empty($tmp)) {
+				continue;
+			}
+			$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
 		}
 		$this->resolveProperty($reflect, $object);
 	}
