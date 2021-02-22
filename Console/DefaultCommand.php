@@ -12,7 +12,7 @@ use Snowflake\Abstracts\Input;
  */
 class DefaultCommand extends Command
 {
-	public string $command = 'a:help';
+	public string $command = 'system:help';
 
 	public string $description = 'command lists';
 
