@@ -18,6 +18,15 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 
 
     /**
+     * set pool max length
+     */
+    public function init()
+    {
+        $this->max = 100;
+    }
+
+
+    /**
      * @param array $config
      * @param bool $isMaster
      * @return mixed
@@ -25,9 +34,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
      */
     public function getConnection(array $config, bool $isMaster): mixed
     {
-        $config[0] = md5($config[0]);
-        $this->max = 100;
-        return $this->get($config[0], $config);
+        return $this->get(md5($config[0]), $config);
     }
 
 
