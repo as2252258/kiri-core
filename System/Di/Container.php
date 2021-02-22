@@ -143,14 +143,14 @@ class Container extends BaseObject
             $reflection = $this->_reflection[$class];
         }
 
-        if (!is_null($construct = $reflection->getConstructor())) {
-            $this->_constructs[$class] = $this->resolveMethodParam($construct, $constrict);
-        } else {
-            if ($class == HttpHeaders::class) {
-                var_dump($constrict);
-            }
-            $this->_constructs[$class] = $constrict;
-        }
+//        if (!is_null($construct = $reflection->getConstructor())) {
+//            $this->_constructs[$class] = $this->resolveMethodParam($construct, $constrict);
+//        } else {
+//            if ($class == HttpHeaders::class) {
+//                var_dump($constrict);
+//            }
+//            $this->_constructs[$class] = $constrict;
+//        }
         return $reflection;
     }
 
