@@ -166,7 +166,6 @@ class Container extends BaseObject
     {
         $array = [];
         foreach ($method->getParameters() as $key => $parameter) {
-            if (!$parameter->isOptional()) continue;
             if (!is_null($default[$key] ?? null)) {
                 $array[] = $default[$key];
             } else if ($parameter->isDefaultValueAvailable()) {
