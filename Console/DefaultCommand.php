@@ -29,15 +29,15 @@ class DefaultCommand extends Command
 		foreach ($param as $key => $val) {
 			$split = explode(':', $key);
 			if (empty($last) && isset($split[0])) {
-				$lists[] = str_pad("\033[32;40;1;1m" . $split[0] . " \033[0m", 40, ' ', STR_PAD_RIGHT);
+				$lists[] = "\033[32;40;1;1m" . $split[0] . " \033[0m\t";
 			} else if (isset($split[0]) && $last != $split[0]) {
-				$lists[] = str_pad("\033[32;40;1;1m" . $split[0] . " \033[0m", 40, ' ', STR_PAD_RIGHT);
+				$lists[] = "\033[32;40;1;1m" . $split[0] . " \033[0m\t";
 			}
 
 			$last = $split[0] ?? '';
 
 			list($method, $ts) = $val;
-			$lists[] = str_pad("\033[32;40;1;1m  " . $key . " \033[0m", 40, ' ', STR_PAD_RIGHT) . $method;
+			$lists[] = "\033[32;40;1;1m  " . $key . " \033[0m\t" . $method;
 		}
 		return implode("\v", $lists);
 	}
