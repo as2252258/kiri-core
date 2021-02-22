@@ -178,9 +178,9 @@ class Container extends BaseObject
         } else {
             $reflection = $this->_reflection[$class];
         }
-//        if (!is_null($construct = $reflection->getConstructor())) {
-//            $constrict = $this->resolveMethodParam($construct);
-//        }
+        if (!is_null($construct = $reflection->getConstructor())) {
+            $constrict = $this->resolveMethodParam($construct);
+        }
         return [$reflection, $constrict];
     }
 
@@ -195,9 +195,7 @@ class Container extends BaseObject
     {
         $array = [];
         foreach ($method->getParameters() as $key => $parameter) {
-            if (version_compare(PHP_VERSION, '5.6.0', '>=') && $parameter->isVariadic()) {
-                break;
-            } else if ($parameter->isDefaultValueAvailable()) {
+            if ($parameter->isDefaultValueAvailable()) {
                 $array[] = $parameter->getDefaultValue();
             } else {
                 $type = $parameter->getType();
