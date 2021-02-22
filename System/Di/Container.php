@@ -77,7 +77,6 @@ class Container extends BaseObject
 			return $this->resolve($class, $constrict, $config);
 		}
 		$definition = $this->_constructs[$class];
-		var_dump($class, $definition);
 		if (is_callable($definition, TRUE)) {
 			return call_user_func($definition, $this, $constrict, $config);
 		} else if (is_array($definition)) {
@@ -101,21 +100,10 @@ class Container extends BaseObject
 	 */
 	private function resolveDefinition($definition, $class, $config, $constrict): mixed
 	{
-		if (!isset($definition['class'])) {
-			throw new NotFindClassException($class);
-		}
-		$_className = $definition['class'];
-		unset($definition['class']);
-
 		$config = array_merge($definition, $config);
 		$definition = $this->mergeParam($class, $constrict);
 
-		if ($_className === $class) {
-			$object = $this->resolve($class, $definition, $config);
-		} else {
-			$object = $this->get($class, $definition, $config);
-		}
-		return $object;
+		return $this->resolve($class, $definition, $config);
 	}
 
 	/**
