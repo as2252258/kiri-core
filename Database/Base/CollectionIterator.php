@@ -34,7 +34,7 @@ class CollectionIterator extends \ArrayIterator
 	 * @param int $flags
 	 * @throws Exception
 	 */
-	public function __construct($model, $query, $array = array(), $flags = 0)
+	public function __construct(ActiveRecord $model,ActiveQuery $query, $array = array(), $flags = 0)
 	{
 		$this->model = $model;
 		$this->query = $query;
