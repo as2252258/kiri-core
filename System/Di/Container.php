@@ -70,7 +70,7 @@ class Container extends BaseObject
             return $this->resolve($class, $constrict, $config);
         }
 
-        $definition = $this->_param[$class];
+        $definition = $this->_param[$class] ?? ['class' => $class];
         if (is_callable($definition, TRUE)) {
             return call_user_func($definition, $this, $constrict, $config);
         } else if (is_array($definition)) {
