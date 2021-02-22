@@ -102,7 +102,6 @@ class Container extends BaseObject
             throw new NotFindClassException($class);
         }
         $_className = $definition['class'];
-        unset($definition['class']);
 
         $config = array_merge($definition, $config);
         $definition = $this->mergeParam($class, $constrict);
