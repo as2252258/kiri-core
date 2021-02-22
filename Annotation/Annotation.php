@@ -9,6 +9,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Exception\NotFindPropertyException;
 use Snowflake\Snowflake;
 
@@ -142,6 +143,7 @@ class Annotation extends Component
 	 */
 	private function resolveMethod(ReflectionClass $reflect, $class, $alias, $object)
 	{
+		var_dump($reflect->getName());
 		foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
 			if ($method->class != $class) {
 				continue;
@@ -151,8 +153,6 @@ class Annotation extends Component
 			if (empty($tmp)) {
 				continue;
 			}
-
-			var_dump($tmp);
 			$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
 		}
 		$this->resolveProperty($reflect, $object);
@@ -198,6 +198,7 @@ class Annotation extends Component
 	 * @param string $class
 	 * @return ReflectionClass|null
 	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	private function reflectClass(string $class): ?ReflectionClass
 	{
