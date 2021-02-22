@@ -78,6 +78,16 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
+	 * @param SEvent $event
+	 * 默认注入
+	 */
+	public function setEvent(SEvent $event)
+	{
+		$this->event = $event;
+	}
+
+
+	/**
 	 * object init
 	 */
 	public function clean()
