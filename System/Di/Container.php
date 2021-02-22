@@ -167,7 +167,7 @@ class Container extends BaseObject
 		};
 		$constructs = $reflection->getConstructor();
 		if (!($constructs instanceof \ReflectionMethod)) {
-			return [$reflection, []];
+			return [$reflection, $this->_constructs[$class] = []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
 			$dependencies[] = $this->resolveDefaultValue($param);
