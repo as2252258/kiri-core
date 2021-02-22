@@ -17,7 +17,6 @@ use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Throwable;
 use function Input;
 
@@ -445,7 +444,6 @@ class Node extends HttpService
 	 */
 	public function restructure(): static
 	{
-		var_dump($this->handler);
 		if (empty($this->handler)) {
 			return $this;
 		}

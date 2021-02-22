@@ -13,6 +13,7 @@ use ReflectionClass;
 use Snowflake\Abstracts\BaseObject;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 
 /**
  * Class Container
@@ -160,38 +161,50 @@ class Container extends BaseObject
 	 *
 	 * @return array
 	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	private function resolveDependencies($class): array
 	{
 		$dependencies = [];
-		if (!class_exists($class)) {
+		if (!class_exists($class) || !($reflection = $this->resolveClass($class))) {
 			return [];
-		}
-		if (isset($this->_reflection[$class])) {
-			$reflection = $this->_reflection[$class];
-		} else {
-			$reflection = new ReflectionClass($class);
-			if (!$reflection->isInstantiable()) {
-				return [];
-			}
-			$this->_reflection[$class] = $reflection;
-		}
+		};
 		$constructs = $reflection->getConstructor();
-		if (empty($constructs) || !is_array($constructs)) {
+		if (!($constructs instanceof \ReflectionMethod)) {
 			return [$reflection, []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
-			if (version_compare(PHP_VERSION, '5.6.0', '>=') && $param->isVariadic()) {
-				break;
-			} else if ($param->isDefaultValueAvailable()) {
+			if ($param->isOptional()) {
 				$dependencies[] = $param->getDefaultValue();
 			} else {
-				$c = $param->getClass();
-				$dependencies[] = $c === NULL ? NULL : $c->getName();
+				match ($param->getType()) {
+					'mixed' => $dependencies[] = $param->getDefaultValue(),
+					'string' => $dependencies[] = '',
+					'int' => $dependencies[] = 0,
+					'bool' => $dependencies[] = false,
+					default => $dependencies[] = Snowflake::createObject($param->getType())
+				};
 			}
 		}
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
+	}
+
+
+	/**
+	 * @param $class
+	 * @return ReflectionClass|null
+	 */
+	private function resolveClass($class): ?ReflectionClass
+	{
+		if (!isset($this->_reflection[$class])) {
+			$reflection = new ReflectionClass($class);
+			if (!$reflection->isInstantiable()) {
+				return null;
+			}
+			$this->_reflection[$class] = $reflection;
+		}
+		return $this->_reflection[$class];
 	}
 
 
