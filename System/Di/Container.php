@@ -13,6 +13,7 @@ use ReflectionClass;
 use Snowflake\Abstracts\BaseObject;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 
 /**
  * Class Container
@@ -49,15 +50,6 @@ class Container extends BaseObject
      */
     private array $_param = [];
 
-
-    /**
-     * @var array
-     *
-     * The method attributes
-     */
-    private array $_attributes = [];
-
-
     /**
      * @param       $class
      * @param array $constrict
@@ -79,7 +71,9 @@ class Container extends BaseObject
         if (is_callable($definition, TRUE)) {
             return call_user_func($definition, $this, $constrict, $config);
         } else if (is_array($definition)) {
-            return $this->resolveDefinition($definition, $class, $config, $constrict);
+            $definition = $this->mergeParam($definition, $constrict);
+
+            return $this->_singletons[$class] = $this->resolve($class, $definition, $config);
         } else if (is_object($definition)) {
             return $this->_singletons[$class] = $definition;
         } else {
@@ -87,22 +81,6 @@ class Container extends BaseObject
         }
     }
 
-    /**
-     * @param $definition
-     * @param $class
-     * @param $config
-     * @param $constrict
-     * @return mixed
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     */
-    private function resolveDefinition($definition, $class, $config, $constrict): mixed
-    {
-        $config = array_merge($definition, $config);
-        $definition = $this->mergeParam($class, $constrict);
-
-        return $this->_singletons[$class] = $this->resolve($class, $definition, $config);
-    }
 
     /**
      * @param $class
@@ -115,31 +93,34 @@ class Container extends BaseObject
      */
     private function resolve($class, $constrict, $config): object
     {
-        /** @var ReflectionClass $reflect */
-        [$reflect, $dependencies] = $this->resolveDependencies($class);
-        foreach ($constrict as $index => $param) {
-            $dependencies[$index] = $param;
-        }
+        $reflect = $this->resolveDependencies($class, $constrict);
         if (!$reflect->isInstantiable()) {
             throw new NotFindClassException($reflect->getName());
         }
         if (empty($config)) {
             return $reflect->newInstanceArgs($dependencies ?? []);
         }
+
+        $dependencies = $this->_constructs[$class] ?? null;
         if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
             $dependencies[count($dependencies) - 1] = $config;
             return $reflect->newInstanceArgs($dependencies);
         }
 
         $this->_param[$class] = $config;
-        if ($reflect->getConstructor() !== null) {
-            $object = $reflect->newInstanceArgs($dependencies ?? []);
-        } else {
-            $object = $reflect->newInstance();
-        }
-        foreach ($config as $key => $val) {
-            $object->{$key} = $val;
-        }
+        $object = !is_null($dependencies) ? $reflect->newInstanceArgs($dependencies) : $reflect->newInstance();
+
+        return $this->onAfterInit($object, $config);
+    }
+
+    /**
+     * @param $object
+     * @param $config
+     * @return mixed
+     */
+    private function onAfterInit($object, $config)
+    {
+        Snowflake::configure($object, $config);
         if (method_exists($object, 'afterInit')) {
             call_user_func([$object, 'afterInit']);
         }
@@ -152,35 +133,7 @@ class Container extends BaseObject
      * @return array
      * @throws ReflectionException
      */
-    private function resolveDependencies($class): array
-    {
-        $reflection = $this->reflectionClass($class);
-        if (empty($reflection)) {
-            return [];
-        }
-        $constructs = $reflection->getConstructor();
-        if ($constructs === null || count($constructs->getParameters()) < 1) {
-            return [$reflection, $this->_constructs[$class] = []];
-        }
-        $dependencies = [];
-        foreach ($constructs->getParameters() as $key => $param) {
-            if ($param->isDefaultValueAvailable()) {
-                $dependencies[] = $param->getDefaultValue();
-            } else {
-                $c = $param->getClass();
-                $dependencies[] = $c === NULL ? NULL : $c->getName();
-            }
-        }
-        $this->_constructs[$class] = $dependencies;
-        return [$reflection, $dependencies];
-    }
-
-
-    /**
-     * @param $class
-     * @return array
-     */
-    private function reflectionClass($class)
+    private function resolveDependencies($class, $constrict = []): ?ReflectionClass
     {
         if (isset($this->_reflection[$class])) {
             $reflection = $this->_reflection[$class];
@@ -190,6 +143,12 @@ class Container extends BaseObject
                 return null;
             }
             $this->_reflection[$class] = $reflection;
+        }
+        if (!is_null($construct = $reflection->getConstructor())) {
+            foreach ($constrict as $key => $item) {
+                $construct[$key] = $item;
+            }
+            $this->_constructs[$class] = $constrict;
         }
         return $reflection;
     }
