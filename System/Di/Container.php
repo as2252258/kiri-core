@@ -192,6 +192,7 @@ class Container extends BaseObject
 		if ($param->isOptional()) {
 			return $param->getDefaultValue();
 		}
+		var_dump($param->getType(), $param->getName());
 		return match ($param->getType()) {
 			'mixed' => $param->getDefaultValue(),
 			'string' => '',
