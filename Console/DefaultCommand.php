@@ -39,7 +39,7 @@ class DefaultCommand extends Command
 			list($method, $ts) = $val;
 			$lists[] = str_pad("\033[32;40;1;1m  " . $key . " \033[0m", 40, ' ', STR_PAD_RIGHT) . $method;
 		}
-		return implode(PHP_EOL, $lists);
+		return implode("\t", $lists);
 	}
 
 }
