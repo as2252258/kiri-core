@@ -444,7 +444,6 @@ class Node extends HttpService
 	 */
 	public function restructure(): static
 	{
-		var_dump($this->handler);
 		if (empty($this->handler)) {
 			return $this;
 		}
