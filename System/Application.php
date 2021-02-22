@@ -133,6 +133,8 @@ class Application extends BaseApplication
 	 */
 	public function scan_system_annotation()
 	{
+		$this->debug('scan system files...');
+
 		$annotation = Snowflake::app()->getAttributes();
 		$annotation->readControllers(__DIR__ . '/../Console/', 'Console', 'system');
 		$annotation->readControllers(__DIR__ . '/../Database/', 'Database', 'system');
