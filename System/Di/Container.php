@@ -145,12 +145,42 @@ class Container extends BaseObject
             $this->_reflection[$class] = $reflection;
         }
         if (!is_null($construct = $reflection->getConstructor())) {
-            foreach ($constrict as $key => $item) {
-                $construct[$key] = $item;
-            }
-            $this->_constructs[$class] = $constrict;
+            $this->_constructs[$class] = $this->resolveMethodParam($construct, $constrict);
         }
         return $reflection;
+    }
+
+
+    /**
+     * @param \ReflectionMethod|null $method
+     * @return array
+     * @throws NotFindClassException
+     * @throws ReflectionException
+     */
+    private function resolveMethodParam(?\ReflectionMethod $method, $default = []): array
+    {
+        $array = [];
+        foreach ($method->getParameters() as $key => $parameter) {
+            if (!$parameter->isOptional()) continue;
+            if (isset($default[$key])) {
+                $array[] = $default[$key];
+            } else if ($parameter->isDefaultValueAvailable()) {
+                $array[] = $parameter->getDefaultValue();
+            } else {
+                $type = $parameter->getType();
+                if (is_string($type) && class_exists($type)) {
+                    $type = Snowflake::createObject($type);
+                }
+                $array[] = match ($parameter->getType()) {
+                    'string' => '',
+                    'int', 'float' => 0,
+                    '', null, 'object', 'mixed' => NULL,
+                    'bool' => false,
+                    default => $type
+                };
+            }
+        }
+        return $array;
     }
 
 
