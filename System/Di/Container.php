@@ -104,6 +104,7 @@ class Container extends BaseObject
             throw new NotFindClassException($reflect->getName());
         }
         $this->_param[$class] = $config;
+        $this->_param[$class]['class'] = $class;
 
         $dependencies = $this->_constructs[$class] ?? [];
         if (empty($config)) {
