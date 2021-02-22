@@ -171,11 +171,10 @@ class Container extends BaseObject
             $this->_reflection[$class] = $reflection;
         }
         $constructs = $reflection->getConstructor();
-        if (empty($constructs) || !is_array($constructs)) {
+        if (empty($constructs) || count($constructs->getParameters()) < 1) {
             return [$reflection, []];
         }
         foreach ($constructs->getParameters() as $key => $param) {
-            var_dump(version_compare(PHP_VERSION, '5.6.0', '>='));
             if (version_compare(PHP_VERSION, '5.6.0', '>=') && $param->isVariadic()) {
                 break;
             } else if ($param->isDefaultValueAvailable()) {
