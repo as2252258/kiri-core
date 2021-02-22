@@ -113,6 +113,9 @@ class Container extends BaseObject
 
         if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
             $dependencies[count($dependencies) - 1] = $config;
+
+            var_dump($dependencies);
+
             return $reflect->newInstanceArgs($dependencies);
         }
 
