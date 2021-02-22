@@ -98,21 +98,10 @@ class Container extends BaseObject
      */
     private function resolveDefinition($definition, $class, $config, $constrict): mixed
     {
-        if (!isset($definition['class'])) {
-            throw new NotFindClassException($class);
-        }
-        $_className = $definition['class'];
-        unset($definition['class']);
-
         $config = array_merge($definition, $config);
         $definition = $this->mergeParam($class, $constrict);
 
-        if ($_className === $class) {
-            $object = $this->resolve($class, $definition, $config);
-        } else {
-            $object = $this->get($class, $definition, $config);
-        }
-        return $this->_singletons[$class] = $object;
+        return $this->_singletons[$class] = $this->resolve($class, $definition, $config);
     }
 
     /**
