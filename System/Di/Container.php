@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Snowflake\Di;
 
+use HttpServer\Http\HttpHeaders;
 use ReflectionClass;
 use Snowflake\Abstracts\BaseObject;
 use ReflectionException;
@@ -98,6 +99,9 @@ class Container extends BaseObject
 
         $dependencies = $this->_constructs[$class] ?? [];
         if (empty($config)) {
+            if ($class == HttpHeaders::class) {
+                var_dump($dependencies);
+            }
             return $reflect->newInstanceArgs($dependencies);
         }
         $this->_param[$class] = $config;
