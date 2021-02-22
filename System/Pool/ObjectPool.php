@@ -34,6 +34,9 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
      */
     public function getConnection(array $config, bool $isMaster): mixed
     {
+        if (is_object($config[0])) {
+            return $config[0];
+        }
         return $this->get(md5($config[0]), $config);
     }
 
