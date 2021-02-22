@@ -92,7 +92,9 @@ class Service extends Component
 		} else {
 			$this->_definition[$id] = $definition;
 		}
-		return $this->_components[$id] = Snowflake::createObject($definition);
+		$this->_components[$id] = Snowflake::createObject($definition);
+		var_dump($this->_components[$id]);
+		return $this->_components[$id];
 	}
 
 	/**
