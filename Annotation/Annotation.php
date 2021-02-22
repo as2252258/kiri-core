@@ -152,6 +152,7 @@ class Annotation extends Component
 				continue;
 			}
 
+			var_dump($tmp);
 			$this->_classes[$reflect->getName()][$method->getName()] = $tmp;
 		}
 		$this->resolveProperty($reflect, $object);
