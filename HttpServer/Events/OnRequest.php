@@ -42,6 +42,7 @@ class OnRequest extends Callback
 			}
 			return \router()->dispatch();
 		} catch (ExitException | Error | \Throwable $exception) {
+            $this->addError($exception);
 			if ($exception instanceof ExitException) {
 				return \send($exception->getMessage(), $exception->getCode());
 			}
