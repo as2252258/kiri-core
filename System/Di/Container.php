@@ -71,8 +71,6 @@ class Container extends BaseObject
         if (is_callable($definition, TRUE)) {
             return call_user_func($definition, $this, $constrict, $config);
         } else if (is_array($definition)) {
-            $definition = $this->mergeParam($definition, $constrict);
-
             return $this->_singletons[$class] = $this->resolve($class, $definition, $config);
         } else if (is_object($definition)) {
             return $this->_singletons[$class] = $definition;
