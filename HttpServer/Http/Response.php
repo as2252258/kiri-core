@@ -197,7 +197,7 @@ class Response extends HttpService
 			$string .= $result . PHP_EOL . PHP_EOL;
 		}
 		$string .= 'Command End!' . PHP_EOL . PHP_EOL;
-		echo $string;
+		print_r($string);
 
 		$event = Snowflake::app()->getEvent();
 		$event->trigger('CONSOLE_END');
