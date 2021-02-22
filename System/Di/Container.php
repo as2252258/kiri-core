@@ -125,7 +125,7 @@ class Container extends BaseObject
 		if (!$reflect->isInstantiable()) {
 			throw new Exception($reflect->getName() . ' con\'t instantiable');
 		}
-		var_dump($dependencies);
+		var_dump($class, $dependencies);
 		if (empty($config)) {
 			return $reflect->newInstanceArgs($dependencies ?? []);
 		}
