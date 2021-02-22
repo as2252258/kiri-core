@@ -174,8 +174,7 @@ class Container extends BaseObject
 			return [$reflection, []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
-			var_dump($class);
-			$dependencies[] = $this->resolveDefaultValue($param);
+			$dependencies[] = $this->resolveDefaultValue($param, $class);
 		}
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
@@ -188,19 +187,24 @@ class Container extends BaseObject
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveDefaultValue(\ReflectionParameter $param): mixed
+	private function resolveDefaultValue(\ReflectionParameter $param, $class): mixed
 	{
 		if ($param->isOptional()) {
 			return $param->getDefaultValue();
 		}
-		return match ($param->getType()) {
-			'mixed' => $param->getDefaultValue(),
-			'string' => '',
-			'int', 'float' => 0,
-			'bool' => false,
-			'', null, 'object' => NULL,
-			default => Snowflake::createObject($param->getType())
-		};
+		try {
+			return match ($type = $param->getType()) {
+				'mixed' => $param->getDefaultValue(),
+				'string' => '',
+				'int', 'float' => 0,
+				'bool' => false,
+				'', null, 'object' => NULL,
+				default => Snowflake::createObject($type)
+			};
+		} catch (\Throwable $throwable) {
+			var_dump($class, $throwable->getMessage());
+			return null;
+		}
 	}
 
 

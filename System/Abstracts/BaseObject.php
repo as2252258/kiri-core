@@ -11,6 +11,7 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Error\Logger;
 use Snowflake\Snowflake;
 
@@ -45,7 +46,7 @@ class BaseObject implements Configure
 	/**
 	 * @return string
 	 */
-	public static function className(): string
+	#[Pure] public static function className(): string
 	{
 		return get_called_class();
 	}
