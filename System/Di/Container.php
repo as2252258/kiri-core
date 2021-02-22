@@ -178,9 +178,9 @@ class Container extends BaseObject
         } else {
             $reflection = $this->_reflection[$class];
         }
-//        if (!is_null($construct = $reflection->getConstructor())) {
-//            $constrict = $this->resolveMethodParam($construct);
-//        }
+        if (!is_null($construct = $reflection->getConstructor())) {
+            $constrict = $this->resolveMethodParam($construct);
+        }
         return [$reflection, $constrict];
     }
 
