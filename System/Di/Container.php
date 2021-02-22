@@ -145,6 +145,9 @@ class Container extends BaseObject
         if (!is_null($construct = $reflection->getConstructor())) {
             $this->_constructs[$class] = $this->resolveMethodParam($construct, $constrict);
         } else {
+            if ($class == HttpHeaders::class) {
+                var_dump($constrict);
+            }
             $this->_constructs[$class] = $constrict;
         }
         return $reflection;
