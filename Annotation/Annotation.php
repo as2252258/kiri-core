@@ -123,8 +123,8 @@ class Annotation extends Component
 			return [];
 		}
 
-		$constructor = $reflect->getConstructor()->getParameters();
-		if (count($constructor) > 0) {
+		$constructor = $reflect->getConstructor();
+		if (!empty($constructor) && count($constructor->getParameters()) > 0) {
 			return [];
 		}
 
