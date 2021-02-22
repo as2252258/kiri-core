@@ -29,7 +29,8 @@
     "ext-sockets": "*",
     "ext-pcntl": "*",
     "ext-posix": "*",
-    "ext-rdkafka": "*"
+    "ext-rdkafka": "*",
+    "symfony/console": "^5.2"
   },
   "autoload": {
     "psr-4": {
