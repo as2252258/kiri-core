@@ -445,6 +445,7 @@ class Node extends HttpService
 	 */
 	private function restructure(): static
 	{
+		$this->error('eeee');
 		if (empty($this->handler)) {
 			return $this;
 		}
