@@ -90,6 +90,9 @@ class Snowflake
 	 */
 	public static function createObject($className, $construct = []): mixed
 	{
+		if (is_object($className)) {
+			return $className;
+		}
 		if (is_string($className)) {
 			return static::$container->get($className, $construct);
 		} else if (is_array($className)) {
@@ -271,7 +274,6 @@ class Snowflake
 	{
 		return Snowflake::app()->getFirstLocal();
 	}
-
 
 
 	/**
