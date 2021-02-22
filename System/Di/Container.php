@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Snowflake\Di;
 
+use Database\Connection;
 use HttpServer\Http\HttpHeaders;
 use ReflectionClass;
 use Snowflake\Abstracts\BaseObject;
@@ -69,6 +70,10 @@ class Container extends BaseObject
             return $this->resolve($class, $constrict, $config);
         }
 
+        if ($class == Connection::class) {
+            var_dump($class, $constrict, $config);
+        }
+
         $definition = $this->_param[$class];
         if (is_callable($definition, TRUE)) {
             return call_user_func($definition, $this, $constrict, $config);
@@ -113,9 +118,6 @@ class Container extends BaseObject
 
         if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
             $dependencies[count($dependencies) - 1] = $config;
-
-            var_dump($dependencies);
-
             return $reflect->newInstanceArgs($dependencies);
         }
 
