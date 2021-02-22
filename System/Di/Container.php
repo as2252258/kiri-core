@@ -174,20 +174,32 @@ class Container extends BaseObject
 			return [$reflection, []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
-			if ($param->isOptional()) {
-				$dependencies[] = $param->getDefaultValue();
-			} else {
-				match ($param->getType()) {
-					'mixed' => $dependencies[] = $param->getDefaultValue(),
-					'string' => $dependencies[] = '',
-					'int' => $dependencies[] = 0,
-					'bool' => $dependencies[] = false,
-					default => $dependencies[] = Snowflake::createObject($param->getType())
-				};
-			}
+			$dependencies[] = $this->resolveDefaultValue($param);
 		}
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
+	}
+
+
+	/**
+	 * @param $param
+	 * @return false|int|string|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function resolveDefaultValue($param,): bool|int|string|null
+	{
+		if ($param->isOptional()) {
+			return $param->getDefaultValue();
+		}
+		return match ($param->getType()) {
+			'mixed' => $param->getDefaultValue(),
+			'string' => '',
+			'int' => 0,
+			'bool' => false,
+			'NULL' => NULL,
+			default => Snowflake::createObject($param->getType())
+		};
 	}
 
 
