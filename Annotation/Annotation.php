@@ -122,10 +122,9 @@ class Annotation extends Component
 		if (empty($reflect)) {
 			return [];
 		}
-		if (!$reflect->isInstantiable()) {
-			return $this->targets($reflect);
-		}
-		$object = $reflect->newInstance();
+		$depend = Snowflake::getDi()->getDependencies($class);
+
+		$object = $reflect->newInstanceArgs($depend);
 		$this->resolveMethod($reflect, $class, $alias, $object);
 		return $this->targets($reflect);
 	}

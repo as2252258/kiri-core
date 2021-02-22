@@ -194,6 +194,16 @@ class Container extends BaseObject
 
 	/**
 	 * @param $class
+	 * @return mixed
+	 */
+	public function getDependencies($class): mixed
+	{
+		return $this->_constructs[$class] ?? [];
+	}
+
+
+	/**
+	 * @param $class
 	 * @return ReflectionClass|null
 	 * @throws ReflectionException
 	 */
