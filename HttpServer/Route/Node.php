@@ -65,6 +65,7 @@ class Node extends HttpService
 	public function afterInit()
 	{
 		listen(Event::SERVER_AFTER_WORKER_START, [$this, 'restructure']);
+		var_dump($this, 'restructure');
 	}
 
 	/**
@@ -445,7 +446,7 @@ class Node extends HttpService
 	 */
 	private function restructure(): static
 	{
-		$this->error('eeee');
+		var_dump($this, 'restructure');
 		if (empty($this->handler)) {
 			return $this;
 		}
