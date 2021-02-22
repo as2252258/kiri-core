@@ -464,6 +464,7 @@ class Server extends HttpService
 			$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
 
 			$aliases = $attributes->getAlias('controllers');
+			var_dump($aliases);
 			if (count($aliases) < 1) {
 				return;
 			}
