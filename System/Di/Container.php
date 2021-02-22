@@ -63,15 +63,11 @@ class Container extends BaseObject
      */
     public function get($class, $constrict = [], $config = []): mixed
     {
-        if (isset($this->_singletons[$class])) {
-            return $this->_singletons[$class];
-        }
+//        if (isset($this->_singletons[$class])) {
+//            return $this->_singletons[$class];
+//        }
         if (!isset($this->_constructs[$class])) {
             return $this->resolve($class, $constrict, $config);
-        }
-
-        if ($class == Connection::class) {
-            var_dump($class, $constrict, $config);
         }
 
         $definition = $this->_param[$class];
