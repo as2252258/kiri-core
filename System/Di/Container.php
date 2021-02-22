@@ -187,12 +187,12 @@ class Container extends BaseObject
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveDefaultValue($param,): mixed
+	private function resolveDefaultValue(\ReflectionParameter $param): mixed
 	{
 		if ($param->isOptional()) {
 			return $param->getDefaultValue();
 		}
-		var_dump($param->getType(), $param->getName());
+		var_dump($param);
 		return match ($param->getType()) {
 			'mixed' => $param->getDefaultValue(),
 			'string' => '',
