@@ -121,20 +121,9 @@ class Annotation extends Component
     {
         try {
             $reflect = $this->reflectClass($class);
-            if (empty($reflect)) {
+            if (empty($reflect) || !$reflect->isInstantiable()) {
                 return [];
             }
-            if (!$reflect->isInstantiable()) {
-                return [];
-            }
-
-            $construct = $reflect->getConstructor();
-            if (!empty($construct) && count($params = $construct->getParameters()) > 0) {
-                if (!$params[0]->isOptional()) {
-                    return [];
-                }
-            }
-
             $object = $reflect->newInstance();
             $this->resolveMethod($reflect, $class, $alias, $object);
             return $this->targets($reflect);
