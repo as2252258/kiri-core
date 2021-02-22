@@ -172,7 +172,7 @@ class Container extends BaseObject
         }
         $constructs = $reflection->getConstructor();
         if (empty($constructs) || count($constructs->getParameters()) < 1) {
-            return [$reflection, []];
+            return [$reflection, $this->_constructs[$class] = []];
         }
         foreach ($constructs->getParameters() as $key => $param) {
             if ($param->isDefaultValueAvailable()) {
