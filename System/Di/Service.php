@@ -40,21 +40,24 @@ class Service extends Component
      */
     public function get($id): mixed
     {
-        if (!isset($this->_components[$id])) {
-            if (!isset($this->_definition[$id])) {
-                throw new ComponentException("Unknown component ID: $id");
-            }
+        if (isset($this->_components[$id])) {
+            return $this->_components[$id];
+        }
+        if (!isset($this->_definition[$id]) && !isset($this->_alias[$id])) {
+            throw new ComponentException("Unknown component ID: $id");
+        }
+        if (isset($this->_definition[$id])) {
             $config = $this->_definition[$id];
             if (is_object($config)) {
-                return $config;
+                return $this->_components[$id] = $config;
             }
-            $this->_components[$id] = Snowflake::createObject($config);
+            $object = Snowflake::createObject($config);
+        } else {
+            $config = $this->_alias[$id];
+
+            $object = Snowflake::createObject($config);
         }
-        $object = $this->_components[$id];
-        if (method_exists($object, 'afterInit')) {
-            $object->afterInit();
-        }
-        return $object;
+        return $this->_components[$id] = $object;
     }
 
     /**
@@ -78,25 +81,20 @@ class Service extends Component
     public function set($id, $definition): mixed
     {
         if ($definition === NULL) {
-            $this->remove($id);
-            return;
+            return $this->remove($id);
         }
-
         unset($this->_components[$id]);
-
         if (is_object($definition) || is_callable($definition, TRUE)) {
-            $this->_definition[$id] = $definition;
-            return;
-        } else if (is_array($definition)) {
-            if (isset($definition['class'])) {
-                $this->_definition[$id] = $definition;
-            } else {
-                throw new ComponentException("The configuration for the \"$id\" component must contain a \"class\" element.");
-            }
-        } else {
+            return $this->_definition[$id] = $definition;
+        } else if (!is_array($definition)) {
             throw new ComponentException("Unexpected configuration type for the \"$id\" component: " . gettype($definition));
         }
-        $this->_components[$id] = $object = Snowflake::createObject($definition);
+        if (!isset($definition['class'])) {
+            throw new ComponentException("The configuration for the \"$id\" component must contain a \"class\" element.");
+        } else {
+            $this->_definition[$id] = $definition;
+        }
+        return $this->get($id);
     }
 
     /**
