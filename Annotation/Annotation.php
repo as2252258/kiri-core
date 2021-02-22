@@ -167,22 +167,11 @@ class Annotation extends Component
 				continue;
 			}
 			foreach ($attributes as $attribute) {
-				/** @var IAnnotation $annotation */
-				$annotation = $attribute->newInstance()->execute([$object, $value->getName()]);
-//				if ($value->isStatic()) {
-//					$name = $value->getName();
-//
-//					$object::$name = $annotation;
-//				} else
-				if ($value->isPublic()) {
-					$object->{$value->getName()} = $annotation;
-				} else {
-					$name = 'set' . ucfirst($value->getName());
-					if (!method_exists($object, $name)) {
-						throw new NotFindPropertyException('set property need method ' . $name);
-					}
-					$object->$name($annotation);
+				$attribute = $this->instance($attribute);
+				if (empty($attribute)) {
+					continue;
 				}
+				$value->setValue($attribute->execute([$object, $value->getName()]));
 			}
 		}
 	}
