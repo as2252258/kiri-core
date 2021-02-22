@@ -49,12 +49,12 @@ abstract class Pool extends Component
     }
 
 
-	/**
-	 * @param $name
-	 * @param array $callback
-	 * @return array
-	 * @throws Exception
-	 */
+    /**
+     * @param $name
+     * @param array $callback
+     * @return array
+     * @throws Exception
+     */
     protected function get($name, array $callback): mixed
     {
         if (!Context::inCoroutine()) {
@@ -178,6 +178,9 @@ abstract class Pool extends Component
     {
         if (!Context::inCoroutine()) {
             return;
+        }
+        if (!isset($this->_items[$name])) {
+            $this->_items[$name] = new Channel($this->max);
         }
         if (!$this->_items[$name]->isFull()) {
             $this->_items[$name]->push($client);
