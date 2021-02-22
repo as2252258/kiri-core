@@ -175,9 +175,7 @@ class Container extends BaseObject
             return [$reflection, []];
         }
         foreach ($constructs->getParameters() as $key => $param) {
-            if ($param->isVariadic()) {
-                break;
-            } else if ($param->isDefaultValueAvailable()) {
+            if ($param->isDefaultValueAvailable()) {
                 $dependencies[] = $param->getDefaultValue();
             } else {
                 $c = $param->getClass();
