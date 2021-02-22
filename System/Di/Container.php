@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Snowflake\Di;
 
+use Exception;
 use ReflectionClass;
 use Snowflake\Abstracts\BaseObject;
 use ReflectionException;
@@ -125,6 +126,7 @@ class Container extends BaseObject
 	 * @return object
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function resolve($class, $constrict, $config): object
 	{
@@ -133,7 +135,7 @@ class Container extends BaseObject
 			$dependencies[$index] = $param;
 		}
 		if (!$reflect->isInstantiable()) {
-			throw new NotFindClassException($reflect->getName());
+			throw new Exception($reflect->getName() . ' con\'t instantiable');
 		}
 		if (empty($config)) {
 			return $reflect->newInstanceArgs($dependencies ?? []);
@@ -168,16 +170,11 @@ class Container extends BaseObject
 		};
 		$constructs = $reflection->getConstructor();
 		if (!($constructs instanceof \ReflectionMethod)) {
-			return [
-				$reflection, $this->_constructs[$class] = [
-					'class' => $class
-				]
-			];
+			return [$reflection, $this->_constructs[$class] = []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
 			$dependencies[] = $this->resolveDefaultValue($param);
 		}
-		$dependencies['class'] = $class;
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
 	}
