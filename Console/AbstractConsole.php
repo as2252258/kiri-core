@@ -67,7 +67,7 @@ abstract class AbstractConsole extends Component
 		$name = $this->parameters->getCommandName();
 		$this->parameters->set('commandList', $this->getCommandList());
 
-		$help = 'list';
+		$help = 'system:help';
 		foreach ($this->commands as $command) {
 			if ($command->command == $help) {
 				$help = $command;
