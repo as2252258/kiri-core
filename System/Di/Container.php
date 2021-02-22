@@ -99,9 +99,6 @@ class Container extends BaseObject
 
         $dependencies = $this->_constructs[$class] ?? [];
         if (empty($config)) {
-            if ($class == HttpHeaders::class) {
-                var_dump($dependencies);
-            }
             return $reflect->newInstanceArgs($dependencies);
         }
         $this->_param[$class] = $config;
@@ -136,17 +133,19 @@ class Container extends BaseObject
      */
     private function resolveDependencies($class, $constrict = []): ?ReflectionClass
     {
-        if (isset($this->_reflection[$class])) {
-            $reflection = $this->_reflection[$class];
-        } else {
+        if (!isset($this->_reflection[$class])) {
             $reflection = new ReflectionClass($class);
             if (!$reflection->isInstantiable()) {
                 return null;
             }
-            $this->_reflection[$class] = $reflection;
+        } else {
+            $reflection = $this->_reflection[$class];
         }
+
         if (!is_null($construct = $reflection->getConstructor())) {
             $this->_constructs[$class] = $this->resolveMethodParam($construct, $constrict);
+        } else {
+            $this->_constructs[$class] = $constrict;
         }
         return $reflection;
     }
