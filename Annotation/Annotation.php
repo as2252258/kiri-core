@@ -121,13 +121,7 @@ class Annotation extends Component
 	{
 		try {
 			$reflect = $this->reflectClass($class);
-			var_dump($class, $reflect);
 			if (empty($reflect)) {
-				return [];
-			}
-
-			$constructor = $reflect->getConstructor();
-			if (!empty($constructor) && count($constructor->getParameters()) > 0) {
 				return [];
 			}
 
