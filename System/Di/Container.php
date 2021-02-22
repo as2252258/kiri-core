@@ -197,7 +197,7 @@ class Container extends BaseObject
 			'string' => '',
 			'int', 'float' => 0,
 			'bool' => false,
-			'' => NULL,
+			'', null => NULL,
 			default => Snowflake::createObject($param->getType())
 		};
 	}
