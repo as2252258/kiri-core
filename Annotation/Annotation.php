@@ -148,12 +148,7 @@ class Annotation extends Component
             if ($method->class != $class) {
                 continue;
             }
-
-            $tmp = $this->resolveAnnotations($method, $alias, $object);
-            if (empty($tmp)) {
-                continue;
-            }
-            $this->_classes[$reflect->getName()][$method->getName()] = $tmp;
+            $this->resolveAnnotations($method, $alias, $object);
         }
         $this->resolveProperty($reflect, $object);
     }
@@ -233,7 +228,7 @@ class Annotation extends Component
 //
 //        $this->_annotations[$alias][] = $tmp;
 
-        return $tmp;
+        return [];
     }
 
 
