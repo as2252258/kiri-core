@@ -14,7 +14,7 @@ class DefaultCommand extends Command
 {
 	public string $command = 'list';
 
-	public string $description = 'help';
+	public string $description = 'command lists';
 
 	/**
 	 * @param Input $dtl
