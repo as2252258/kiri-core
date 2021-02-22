@@ -118,7 +118,7 @@ abstract class Pool extends Component
      */
     public function checkCanUse(string $name, mixed $client): mixed
     {
-        throw new Exception('Undefined system processing function.');
+        return true;
     }
 
     /**
