@@ -102,8 +102,6 @@ class Connection extends Component
         $connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
         $connections->setTimeout($this->timeout);
 
-        var_dump($this->cds, $this->slaveConfig['cds']);
-
         return $this->getPdo($sql);
     }
 
