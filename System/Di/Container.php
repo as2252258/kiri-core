@@ -68,11 +68,18 @@ class Container extends BaseObject
         if (!isset($this->_constructs[$class])) {
             return $this->resolve($class, $constrict, $config);
         }
-        $definition = $this->_constructs[$class];
+
+        $definition = $this->_param[$class];
         if (is_callable($definition, TRUE)) {
             return call_user_func($definition, $this, $constrict, $config);
         } else if (is_array($definition)) {
-            return $this->_singletons[$class] = $this->resolve($class, $definition, $config);
+            $definition = $this->_constructs[$class] ?? [];
+            if ($class === $definition['class']) {
+                $object = $this->resolve($class, $definition, $config);
+            } else {
+                $object = $this->get($class, $definition, $config);
+            }
+            return $this->_singletons[$class] = $object;
         } else if (is_object($definition)) {
             return $this->_singletons[$class] = $definition;
         } else {
