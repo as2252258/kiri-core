@@ -139,7 +139,6 @@ class Container extends BaseObject
         }
         if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
             $dependencies[count($dependencies) - 1] = $config;
-            var_dump($dependencies);
             return $reflect->newInstanceArgs($dependencies);
         }
 
@@ -174,7 +173,7 @@ class Container extends BaseObject
         if ($constructs === null || count($constructs->getParameters()) < 1) {
             return [$reflection, $this->_constructs[$class] = ['class' => $class]];
         }
-        $dependencies = [];
+        $dependencies = ['class' => $class];
         foreach ($constructs->getParameters() as $key => $param) {
             if ($param->isDefaultValueAvailable()) {
                 $dependencies[] = $param->getDefaultValue();
