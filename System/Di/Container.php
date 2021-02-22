@@ -69,7 +69,7 @@ class Container extends BaseObject
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function get($class, $constrict = [], $config = []): mixed
+	public function get($class, $constrict = null, $config = null): mixed
 	{
 		if (isset($this->_singletons[$class])) {
 			return $this->_singletons[$class];
@@ -126,8 +126,6 @@ class Container extends BaseObject
 			throw new Exception($reflect->getName() . ' con\'t instantiable');
 		}
 		if (empty($config)) {
-			var_dump($class, $dependencies);
-
 			return $reflect->newInstanceArgs($dependencies ?? []);
 		}
 		if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
