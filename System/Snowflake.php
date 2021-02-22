@@ -90,6 +90,7 @@ class Snowflake
 	 */
 	public static function createObject($className, $construct = []): mixed
 	{
+		var_dump($className);
 		if (is_object($className)) {
 			return $className;
 		}
