@@ -193,7 +193,9 @@ class Container extends BaseObject
 			return $param->getDefaultValue();
 		}
 		try {
-			return match ($type = $param->getType()) {
+			$type = $param->getType();
+			var_dump($type);
+			return match ($type) {
 				'mixed' => $param->getDefaultValue(),
 				'string' => '',
 				'int', 'float' => 0,
