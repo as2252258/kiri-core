@@ -99,6 +99,7 @@ class Container extends BaseObject
     private function resolveDefinition($definition, $class, $config, $constrict): mixed
     {
         if (!isset($definition['class'])) {
+            var_dump($definition);
             throw new NotFindClassException($class);
         }
         $_className = $definition['class'];
