@@ -126,6 +126,7 @@ class Container extends BaseObject
      */
     private function resolve($class, $constrict, $config): object
     {
+        /** @var ReflectionClass $reflect */
         list($reflect, $dependencies) = $this->resolveDependencies($class);
         foreach ($constrict as $index => $param) {
             $dependencies[$index] = $param;
@@ -140,8 +141,13 @@ class Container extends BaseObject
             $dependencies[count($dependencies) - 1] = $config;
             return $reflect->newInstanceArgs($dependencies);
         }
+
         $this->_param[$class] = $config;
-        $object = $reflect->newInstanceArgs($dependencies ?? []);
+        if ($reflect->getConstructor() !== null) {
+            $object = $reflect->newInstanceArgs($dependencies ?? []);
+        } else {
+            $object = $reflect->newInstance();
+        }
         foreach ($config as $key => $val) {
             $object->{$key} = $val;
         }
