@@ -125,9 +125,16 @@ class Annotation extends Component
 				return [];
 			}
 
+			$construct = $reflect->getConstructor();
+			if (!empty($construct) && count($params = $construct->getParameters()) > 0) {
+				if (!$params[0]->isOptional()) {
+					return [];
+				}
+			}
+
 			$def = Snowflake::getDi()->getDependencies($class);
 
-			$object = $reflect->newInstanceArgs($def);
+			$object = $reflect->newInstance($def);
 			$this->resolveMethod($reflect, $class, $alias, $object);
 			return $this->targets($reflect);
 		} catch (\Throwable $throwable) {
