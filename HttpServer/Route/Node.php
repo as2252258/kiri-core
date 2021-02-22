@@ -443,7 +443,7 @@ class Node extends HttpService
 	/**
 	 * @throws Exception
 	 */
-	private function restructure(): static
+	public function restructure(): static
 	{
 		var_dump($this->handler);
 		if (empty($this->handler)) {
