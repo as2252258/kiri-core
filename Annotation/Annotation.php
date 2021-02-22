@@ -85,6 +85,7 @@ class Annotation extends Component
 	 * @param string $alias
 	 * @return $this
 	 * @throws ReflectionException|NotFindPropertyException
+	 * @throws NotFindClassException
 	 */
 	private function scanDir(array $paths, string $namespace, string $alias): static
 	{
@@ -115,10 +116,12 @@ class Annotation extends Component
 	 * @return array
 	 * @throws ReflectionException
 	 * @throws NotFindPropertyException
+	 * @throws NotFindClassException
 	 */
 	private function getReflect(string $class, string $alias): array
 	{
 		$reflect = $this->reflectClass($class);
+		var_dump($class, $reflect);
 		if (empty($reflect)) {
 			return [];
 		}
@@ -143,7 +146,6 @@ class Annotation extends Component
 	 */
 	private function resolveMethod(ReflectionClass $reflect, $class, $alias, $object)
 	{
-		var_dump($reflect->getName());
 		try {
 			foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
 				if ($method->class != $class) {
