@@ -37,7 +37,7 @@ class DefaultCommand extends Command
 			$last = $split[0] ?? '';
 
 			list($method, $ts) = $val;
-			$lists[] = "\033[32;40;1;1m  " . $key . " \033[0m\t\v" . $method."\v";
+			$lists[] = "\033[32;40;1;1m  " . $key . " \033[0m\t\t" . $method."\t";
 		}
 		return implode(PHP_EOL, $lists);
 	}
