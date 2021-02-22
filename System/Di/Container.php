@@ -175,7 +175,7 @@ class Container extends BaseObject
             return [$reflection, []];
         }
         foreach ($constructs->getParameters() as $key => $param) {
-            if (version_compare(PHP_VERSION, '5.6.0', '>=') && $param->isVariadic()) {
+            if ($param->isVariadic()) {
                 break;
             } else if ($param->isDefaultValueAvailable()) {
                 $dependencies[] = $param->getDefaultValue();
@@ -184,7 +184,6 @@ class Container extends BaseObject
                 $dependencies[] = $c === NULL ? NULL : $c->getName();
             }
         }
-        var_dump($dependencies);
         $this->_constructs[$class] = $dependencies;
         return [$reflection, $dependencies];
     }
