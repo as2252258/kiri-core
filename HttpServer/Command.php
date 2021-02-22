@@ -53,7 +53,7 @@ class Command extends \Console\Command
 			return 'shutdown success.';
 		}
 
-		listen(Event::SERVER_BEFORE_START, [$this, 'scan_system_annotation']);
+		$this->scan_system_annotation();
 
 		return $manager->start();
 	}

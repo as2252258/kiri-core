@@ -187,28 +187,32 @@ class Event extends BaseObject
 	 * @param null $parameter
 	 * @param null $handler
 	 * @param false $is_remove
-	 * @return mixed
+	 * @return bool
 	 */
-	public function trigger($name, $parameter = null, $handler = null, $is_remove = false): mixed
+	public function trigger($name, $parameter = null, $handler = null, $is_remove = false): bool
 	{
-		if (!$this->exists($name)) {
-			return false;
-		}
-		if (!empty($handler) && $this->exists($name, $handler)) {
-			$events = [$this->get($name, $handler)];
-		} else {
-			$events = $this->_events[$name];
-		}
-		foreach ($events as $index => $event) {
-			$meta = $this->mergeParams($event[1], $parameter);
-			if (call_user_func($event[0], ...$meta) === false) {
+		try {
+			if (!$this->exists($name)) {
 				return false;
 			}
+			if (!empty($handler) && $this->exists($name, $handler)) {
+				$events = [$this->get($name, $handler)];
+			} else {
+				$events = $this->_events[$name];
+			}
+			foreach ($events as $index => $event) {
+				$meta = $this->mergeParams($event[1], $parameter);
+				if (call_user_func($event[0], ...$meta) === false) {
+					return false;
+				}
+			}
+			if ($is_remove) {
+				$this->offName($name);
+			}
+			return true;
+		} catch (\Throwable $throwable) {
+			return false;
 		}
-		if ($is_remove) {
-			$this->offName($name);
-		}
-		return true;
 	}
 
 
