@@ -127,11 +127,7 @@ class Container extends BaseObject
 	 */
 	private function resolve($class, $constrict, $config): object
 	{
-		/**
-		 * @var ReflectionClass $reflect
-		 * @var array $dependencies
-		 */
-		list($reflect, $dependencies) = $this->resolveDependencies($class);
+		[$reflect, $dependencies] = $this->resolveDependencies($class);
 		foreach ($constrict as $index => $param) {
 			$dependencies[$index] = $param;
 		}
@@ -174,7 +170,7 @@ class Container extends BaseObject
 			return [$reflection, []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
-			$dependencies[] = $this->resolveDefaultValue($param, $class);
+			$dependencies[] = $this->resolveDefaultValue($param);
 		}
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
@@ -187,27 +183,20 @@ class Container extends BaseObject
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveDefaultValue(\ReflectionParameter $param, $class): mixed
+	private function resolveDefaultValue(\ReflectionParameter $param): mixed
 	{
 		if ($param->isOptional()) {
 			return $param->getDefaultValue();
 		}
-		try {
-			$type = $param->getType();
-			var_dump($type);
-			return match ($type) {
-				'mixed' => $param->getDefaultValue(),
-				'string' => '',
-				'int', 'float' => 0,
-				'bool' => false,
-				'', null, 'object' => NULL,
-				default => Snowflake::createObject($type)
-			};
-		} catch (\Throwable $throwable) {
-			var_dump($class, $throwable->getMessage(), $throwable->getFile(), $throwable->getLine());
-			echo PHP_EOL;
-			return null;
-		}
+		return match ($type = $param->getType()) {
+			'mixed' => $param->getDefaultValue(),
+			'string' => '',
+			'array' => [],
+			'int', 'float' => 0,
+			'bool' => false,
+			'', null, 'object' => NULL,
+			default => Snowflake::createObject($type)
+		};
 	}
 
 
