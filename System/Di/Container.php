@@ -173,7 +173,7 @@ class Container extends BaseObject
         if ($constructs === null || count($constructs->getParameters()) < 1) {
             return [$reflection, $this->_constructs[$class] = ['class' => $class]];
         }
-        $dependencies = ['class' => $class];
+        $dependencies = [];
         foreach ($constructs->getParameters() as $key => $param) {
             if ($param->isDefaultValueAvailable()) {
                 $dependencies[] = $param->getDefaultValue();
@@ -182,6 +182,7 @@ class Container extends BaseObject
                 $dependencies[] = $c === NULL ? NULL : $c->getName();
             }
         }
+        var_dump($dependencies);
         $this->_constructs[$class] = $dependencies;
         return [$reflection, $dependencies];
     }
