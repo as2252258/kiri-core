@@ -134,6 +134,9 @@ abstract class AbstractConsole extends Component
 	{
 		$_tmp = [];
 		foreach ($this->commands as $command) {
+			if ($command->command === 'system:help') {
+				continue;
+			}
 			$_tmp[$command->command] = [$command->description, $command];
 		}
 		ksort($_tmp, SORT_ASC);
