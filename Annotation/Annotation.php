@@ -61,6 +61,7 @@ class Annotation extends Component
 	 */
 	public function readControllers(string $path, string $namespace, string $alias = 'root'): static
 	{
+		$this->debug('scan dir ' . $path . ' ing...');
 		return $this->scanDir(glob($path . '*'), $namespace, $alias);
 	}
 
