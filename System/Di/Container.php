@@ -189,10 +189,11 @@ class Container extends BaseObject
      */
     public function getReflect($class): ReflectionClass
     {
-        if (!isset($this->_reflection[$class])) {
-            $this->resolveDependencies($class);
+        $reflect = $this->_reflection[$class] ?? null;
+        if (!is_null($reflect)) {
+            return $reflect;
         }
-        return $this->_reflection[$class];
+        return $this->resolveDependencies($class);
     }
 
     /**
