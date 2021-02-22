@@ -129,6 +129,7 @@ class Container extends BaseObject
 			return $reflect->newInstanceArgs($dependencies ?? []);
 		}
 		if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
+			var_dump($dependencies);
 			$dependencies[count($dependencies) - 1] = $config;
 			return $reflect->newInstanceArgs($dependencies);
 		}
@@ -161,7 +162,7 @@ class Container extends BaseObject
 			return [$reflection, $this->_constructs[$class] = []];
 		}
 		foreach ($constructs->getParameters() as $key => $param) {
-			$dependencies[$param->getName()] = $this->resolveDefaultValue($param);
+			$dependencies[] = $this->resolveDefaultValue($param);
 		}
 		$this->_constructs[$class] = $dependencies;
 		return [$reflection, $dependencies];
