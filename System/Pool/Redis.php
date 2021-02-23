@@ -8,6 +8,7 @@ namespace Snowflake\Pool;
 use HttpServer\Http\Context;
 use Redis as SRedis;
 use RedisException;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\RedisConnectException;
 use Swoole\Coroutine;
 use Exception;
@@ -33,29 +34,29 @@ class Redis extends Pool
 
 
     /**
-     * @param array $config
+     * @param mixed $config
      * @param bool $isMaster
      * @return mixed
      * @throws Exception
      */
-    public function getConnection(array $config, $isMaster = false): mixed
+    public function get(mixed $config, $isMaster = false): mixed
     {
         $name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
         $coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
         if (($redis = Context::getContext($coroutineName)) instanceof \Redis) {
             return $redis;
         }
-        return Context::setContext($coroutineName, $this->get($coroutineName, $config));
+        return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
     }
 
 
 	/**
 	 * @param string $name
-	 * @param array $config
+	 * @param mixed $config
 	 * @return SRedis
-	 * @throws RedisConnectException
+	 * @throws RedisConnectException|ComponentException
 	 */
-    public function createClient(string $name, array $config): SRedis
+    public function createClient(string $name, mixed $config): SRedis
     {
         $this->printClients($config['host'], $name, true);
         $redis = new SRedis();

@@ -7,6 +7,7 @@ use HttpServer\Http\Context;
 use PDO;
 use Exception;
 use Snowflake\Abstracts\Config;
+use Snowflake\Exception\ComponentException;
 use Swoole\Coroutine;
 use Snowflake\Abstracts\Pool;
 use Swoole\Timer;
@@ -129,12 +130,12 @@ class Connection extends Pool
 
 
     /**
-     * @param array $config
+     * @param mixed $config
      * @param bool $isMaster
      * @return mixed
      * @throws Exception
      */
-    public function getConnection(array $config, $isMaster = false): mixed
+    public function get(mixed $config, $isMaster = false): mixed
     {
         $coroutineName = $this->name('mysql', $config['cds'], $isMaster);
         if (!isset($this->hasCreate[$coroutineName])) {
@@ -143,7 +144,7 @@ class Connection extends Pool
         if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
             return $pdo;
         }
-        $connections = $this->get($coroutineName, $config);
+        $connections = $this->getFromChannel($coroutineName, $config);
         if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
             $number > 0 && $connections->beginTransaction();
         }
@@ -153,10 +154,11 @@ class Connection extends Pool
 
 	/**
 	 * @param string $name
-	 * @param array $config
+	 * @param mixed $config
 	 * @return PDO
+	 * @throws ComponentException
 	 */
-    public function createClient(string $name, array $config): PDO
+    public function createClient(string $name, mixed $config): PDO
     {
         $this->printClients($config['cds'], $name, true);
         // TODO: Implement createClient() method.
@@ -177,11 +179,12 @@ class Connection extends Pool
     }
 
 
-    /**
-     * @param $cds
-     * @param $coroutineName
-     * @param false $isBefore
-     */
+	/**
+	 * @param $cds
+	 * @param $coroutineName
+	 * @param false $isBefore
+	 * @throws ComponentException
+	 */
     public function printClients($cds, $coroutineName, $isBefore = false)
     {
         $this->warning(($isBefore ? 'before ' : '') . 'create client[address: ' . $cds . ', ' . env('workerId') . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->hasCreate[$coroutineName] . ']');

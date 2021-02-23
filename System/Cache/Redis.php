@@ -141,7 +141,7 @@ SCRIPT;
 	{
 		$connections = Snowflake::app()->getPool()->getRedis();
 
-		$client = $connections->getConnection($this->get_config(), true);
+		$client = $connections->get($this->get_config(), true);
 		if (!($client instanceof \Redis)) {
 			throw new Exception('Redis connections more.');
 		}

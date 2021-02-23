@@ -107,7 +107,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 */
 	public function getModel(): ActiveRecord
 	{
-		return Snowflake::app()->getObject()->getConnection([$this->model], false);
+		return Snowflake::app()->getObject()->get($this->model, false);
 	}
 
 
