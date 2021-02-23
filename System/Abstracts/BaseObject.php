@@ -120,8 +120,12 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		echo "\033[35m[DEBUG][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
-		echo PHP_EOL;
+		$message = "\033[35m[DEBUG][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message .= PHP_EOL;
+
+		$socket = Snowflake::getWebSocket();
+
+		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
 	}
 
 
@@ -135,8 +139,12 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		echo "\033[34m[INFO][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
-		echo PHP_EOL;
+		$message = "\033[34m[INFO][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message .= PHP_EOL;
+
+		$socket = Snowflake::getWebSocket();
+
+		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
 	}
 
 	/**
@@ -149,8 +157,13 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		echo "\033[36m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
-		echo PHP_EOL;
+
+		$message = "\033[36m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message .= PHP_EOL;
+
+		$socket = Snowflake::getWebSocket();
+
+		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
 	}
 
 
@@ -164,8 +177,13 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		echo "\033[33m[WARNING][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
-		echo PHP_EOL;
+
+		$message = "\033[33m[WARNING][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message .= PHP_EOL;
+
+		$socket = Snowflake::getWebSocket();
+
+		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
 	}
 
 
@@ -188,9 +206,13 @@ class BaseObject implements Configure
 
 		$message = (empty($method) ? '' : $method . ': ') . $message;
 
-		echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . PHP_EOL .
+		$message = "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . PHP_EOL .
 			str_pad($message, $length, ' ', STR_PAD_LEFT) . "\033[0m";
-		echo PHP_EOL;
+		$message .= PHP_EOL;
+
+		$socket = Snowflake::getWebSocket();
+
+		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
 	}
 
 }

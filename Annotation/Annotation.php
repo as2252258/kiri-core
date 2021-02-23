@@ -121,7 +121,6 @@ class Annotation extends Component
     {
         try {
             $reflect = $this->reflectClass($class);
-            var_dump($reflect, $class);
             if (empty($reflect) || !$reflect->isInstantiable()) {
                 return [];
             }
