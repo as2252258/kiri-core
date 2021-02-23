@@ -77,6 +77,7 @@ class Middleware
 			return;
 		}
 		foreach ($annotation as $attribute) {
+			var_dump($attribute);
 			if ($attribute instanceof Interceptor) {
 				$node->addInterceptor($attribute->interceptor);
 			}
