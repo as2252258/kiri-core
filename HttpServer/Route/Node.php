@@ -447,9 +447,6 @@ class Node extends HttpService
 		if (empty($this->handler)) {
 			return $this;
 		}
-		if (!is_array($this->handler)) {
-			return $this;
-		}
 		/** @var Middleware $made */
 		$made = Snowflake::createObject(Middleware::class);
 		$made->getGenerate($this);
