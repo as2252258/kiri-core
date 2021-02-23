@@ -306,12 +306,14 @@ class Command extends Component
 	}
 
 	/**
+	 * @param null $scope
+	 * @param bool $insert
 	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function exec(): int|bool|array|string|null
+	public function exec($scope = null, $insert = false): int|bool|array|string|null
 	{
-		return $this->execute(static::EXECUTE);
+		return $this->execute(static::EXECUTE, $insert, $scope);
 	}
 
 	/**

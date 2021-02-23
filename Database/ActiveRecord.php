@@ -149,36 +149,7 @@ class ActiveRecord extends BaseActiveRecord
 		}
 		return static::getDb()->createCommand()
 			->mathematics(self::getTable(), [$action => $columns], $condition)
-			->exec();
-	}
-
-	/**
-	 * @param $column
-	 * @param $value
-	 * @param array $condition
-	 * @return bool
-	 * @throws Exception
-	 */
-	public static function incrAll($column, $value, $condition = []): bool
-	{
-		return static::getDb()->createCommand()
-			->mathematics(self::getTable(), [self::INCR => [$column, $value]], $condition)
-			->exec();
-	}
-
-
-	/**
-	 * @param $column
-	 * @param $value
-	 * @param array $condition
-	 * @return bool
-	 * @throws Exception
-	 */
-	public static function decrAll($column, $value, $condition = []): bool
-	{
-		return static::getDb()->createCommand()
-			->mathematics(self::getTable(), [self::DECR => [$column, $value]], $condition)
-			->exec();
+			->exec(false, $this);
 	}
 
 
