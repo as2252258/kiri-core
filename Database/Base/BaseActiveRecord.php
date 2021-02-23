@@ -108,7 +108,23 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
-		$this->_annotations = annotation()->getMethods(get_called_class());
+		$this->createAnnotation();
+	}
+
+
+	/**
+	 * @throws ComponentException
+	 */
+	private function createAnnotation()
+	{
+		$annotation = Snowflake::app()->getAttributes();
+
+		$this->_annotations = $annotation->getMethods(get_called_class());
+
+		$lists = $annotation->getPropertyAnnotation(get_called_class());
+		foreach ($lists as $name => $list) {
+			$this->{$name} = $list;
+		}
 	}
 
 

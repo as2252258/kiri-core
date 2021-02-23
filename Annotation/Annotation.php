@@ -168,21 +168,36 @@ class Annotation extends Component
 				$annotation = $annotation->execute([$object, $value->getName()]);
 				$this->_prepertyes[get_class($object)][$value->getName()] = $annotation;
 
-				if (str_contains(env('workerId'), 'Task')) {
-					var_dump(get_class($object) . '::' . $value->getName());
-				}
-
 				if ($value->isPublic()) {
-					$object->{$value->getName()} = $annotation;
-				} else {
-					$name = 'set' . ucfirst($value->getName());
-					if (!method_exists($object, $name)) {
-						throw new NotFindPropertyException('set property need method ' . $name);
-					}
-					$object->$name($annotation);
+					continue;
+				}
+				if (!method_exists($object, ($name = 'set' . ucfirst($value->getName())))) {
+					throw new NotFindPropertyException('set property need method ' . $name);
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * @param $class
+	 * @param string $property
+	 * @return mixed|null
+	 */
+	public function getPropertyAnnotation($class, $property = ''): ?array
+	{
+		if (is_object($class)) {
+			$class = get_class($class);
+		}
+		if (!isset($this->_prepertyes[$class])) {
+			return null;
+		}
+
+		if (!empty($property)) {
+			return $this->_prepertyes[$class][$property] ?? null;
+		}
+
+		return $this->_prepertyes[$class];
 	}
 
 
