@@ -81,13 +81,13 @@ class Middleware
 				$node->addInterceptor($attribute->reflectClass($attribute->interceptor));
 			}
 			if ($attribute instanceof After) {
-				$node->addInterceptor($attribute->reflectClass($attribute->after));
+				$node->addAfter($attribute->reflectClass($attribute->after));
 			}
 			if ($attribute instanceof RMiddleware) {
-				$node->addInterceptor($attribute->reflectClass($attribute->middleware));
+				$node->addMiddleware($attribute->reflectClass($attribute->middleware));
 			}
 			if ($attribute instanceof Limits) {
-				$node->addInterceptor($attribute->reflectClass($attribute->limits));
+				$node->addLimits($attribute->reflectClass($attribute->limits));
 			}
 		}
 	}
