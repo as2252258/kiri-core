@@ -23,23 +23,23 @@ trait Node
 	 */
 	public function reflectClass(array $classes): array
 	{
-		$di = Snowflake::getDi();
-		foreach ($classes as  $class) {
-			$object = $di->get($class);
+		$array = [];
+		foreach ($classes as $class) {
+			$object = Snowflake::getDi()->get($class);
 			if ($object instanceof Interceptor) {
-				$classes[] = [$object, 'Interceptor'];
+				$array[] = [$object, 'Interceptor'];
 			}
 			if ($object instanceof Limits) {
-				$classes[] = [$object, 'next'];
+				$array[] = [$object, 'next'];
 			}
 			if ($object instanceof After) {
-				$classes[] = [$object, 'onHandler'];
+				$array[] = [$object, 'onHandler'];
 			}
 			if ($object instanceof Middleware) {
-				$classes[] = [$object, 'onHandler'];
+				$array[] = [$object, 'onHandler'];
 			}
 		}
-		return $classes;
+		return $array;
 	}
 
 }
