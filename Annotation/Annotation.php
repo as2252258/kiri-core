@@ -167,6 +167,11 @@ class Annotation extends Component
 				}
 				$annotation = $annotation->execute([$object, $value->getName()]);
 				$this->_prepertyes[get_class($object)][$value->getName()] = $annotation;
+
+				if (str_contains(env('workerId'), 'Task')) {
+					var_dump(get_class($object) . '::' . $value->getName());
+				}
+
 				if ($value->isPublic()) {
 					$object->{$value->getName()} = $annotation;
 				} else {
