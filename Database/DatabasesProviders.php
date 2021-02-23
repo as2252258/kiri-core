@@ -50,7 +50,7 @@ class DatabasesProviders extends Providers
 	 */
 	public function scanModel()
 	{
-		if (str_contains(env('workerId', ''), 'Task')) {
+		if (str_contains(env('workerId'), 'Task')) {
 			var_dump(get_called_class());
 		}
 		$attributes = Snowflake::app()->getAttributes();
