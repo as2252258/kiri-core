@@ -24,10 +24,6 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $interceptor)
 	{
-		if (!is_string($this->interceptor)) {
-			return;
-		}
-		$this->interceptor = [$this->interceptor];
 	}
 
 

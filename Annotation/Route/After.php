@@ -24,10 +24,6 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $after)
 	{
-		if (!is_string($this->after)) {
-			return;
-		}
-		$this->after = [$this->after];
 	}
 
 

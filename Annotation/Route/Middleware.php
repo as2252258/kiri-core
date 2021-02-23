@@ -25,10 +25,6 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $middleware)
 	{
-		if (!is_string($this->middleware)) {
-			return;
-		}
-		$this->middleware = [$this->middleware];
 	}
 
 

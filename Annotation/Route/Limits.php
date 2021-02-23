@@ -24,10 +24,6 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $limits)
 	{
-		if (!is_string($this->limits)) {
-			return;
-		}
-		$this->limits = [$this->limits];
 	}
 
 
