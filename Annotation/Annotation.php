@@ -34,7 +34,7 @@ class Annotation extends Component
 	private array $_methods = [];
 
 
-	private array $_prepertyes = [];
+	private array $_properties = [];
 
 
 	/**
@@ -150,8 +150,8 @@ class Annotation extends Component
 	private function resolveProperty(ReflectionClass $reflectionClass, $object)
 	{
 		$property = $reflectionClass->getProperties();
-		if (!isset($this->_prepertyes[get_class($object)])) {
-			$this->_prepertyes[get_class($object)] = [];
+		if (!isset($this->_properties[get_class($object)])) {
+			$this->_properties[get_class($object)] = [];
 		}
 		foreach ($property as $value) {
 			if ($value->isStatic()) continue;
@@ -166,7 +166,7 @@ class Annotation extends Component
 					continue;
 				}
 				$annotation = $annotation->execute([$object, $value->getName()]);
-				$this->_prepertyes[get_class($object)][$value->getName()] = $annotation;
+				$this->_properties[get_class($object)][$value->getName()] = $annotation;
 
 				if ($value->isPublic()) {
 					continue;
@@ -189,15 +189,15 @@ class Annotation extends Component
 		if (is_object($class)) {
 			$class = get_class($class);
 		}
-		if (!isset($this->_prepertyes[$class])) {
+		if (!isset($this->_properties[$class])) {
 			return null;
 		}
 
 		if (!empty($property)) {
-			return $this->_prepertyes[$class][$property] ?? null;
+			return $this->_properties[$class][$property] ?? null;
 		}
 
-		return $this->_prepertyes[$class];
+		return $this->_properties[$class];
 	}
 
 
