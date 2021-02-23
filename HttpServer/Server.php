@@ -461,20 +461,7 @@ class Server extends HttpService
 			$router->loadRouterSetting();
 
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->readControllers(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
-//
-//			$aliases = $attributes->getAlias('controllers');
-//			if (count($aliases) < 1) {
-//				return;
-//			}
-//			foreach ($aliases as $alias) {
-//				$handler = $alias['handler'];
-//				foreach ($alias['attributes'] as $key => $attribute) {
-//					if ($attribute instanceof IAnnotation) {
-//						$attribute->execute($handler);
-//					}
-//				}
-//			}
+			$attributes->read(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
 		});
 	}
 
@@ -487,7 +474,7 @@ class Server extends HttpService
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
+			$attributes->read(SOCKET_PATH, 'App\Websocket', 'sockets');
 		});
 	}
 

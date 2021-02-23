@@ -51,7 +51,7 @@ class DatabasesProviders extends Providers
 	public function scanModel()
 	{
 		$attributes = Snowflake::app()->getAttributes();
-		$attributes->readControllers(MODEL_PATH, 'App\Models', 'models');
+		$attributes->read(MODEL_PATH, 'App\Models', 'models');
 	}
 
 

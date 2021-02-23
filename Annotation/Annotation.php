@@ -65,7 +65,7 @@ class Annotation extends Component
 	 * @return $this
 	 * @throws ReflectionException|NotFindPropertyException|NotFindClassException
 	 */
-	public function readControllers(string $path, string $namespace, string $alias = 'root'): static
+	public function read(string $path, string $namespace, string $alias = 'root'): static
 	{
 		return $this->scanDir(glob($path . '*'), $namespace, $alias);
 	}
