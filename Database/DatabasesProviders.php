@@ -50,6 +50,7 @@ class DatabasesProviders extends Providers
 	 */
 	public function scanModel()
 	{
+		var_dump(env('workerId'));
 		if (str_contains(env('workerId'), 'Task')) {
 			var_dump(get_called_class());
 		}
