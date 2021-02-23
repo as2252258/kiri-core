@@ -104,7 +104,7 @@ class Application extends BaseApplication
 	public function start(Input $argv): bool|string
 	{
 		try {
-			$this->scan_system_annotation();
+//			$this->scan_system_annotation();
 
 			fire(Event::SERVER_BEFORE_START);
 
@@ -129,7 +129,7 @@ class Application extends BaseApplication
 	/**
 	 * @throws ReflectionException
 	 * @throws ComponentException
-	 * @throws NotFindPropertyException
+	 * @throws NotFindPropertyException|NotFindClassException
 	 */
 	public function scan_system_annotation()
 	{
