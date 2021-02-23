@@ -56,16 +56,6 @@ class Node extends HttpService
 	private array $_after = [];
 	private array $_limits = [];
 
-
-	/**
-	 * @throws ComponentException
-	 * @throws Exception
-	 */
-	public function init()
-	{
-		listen(Event::SERVER_AFTER_WORKER_START, [$this, 'restructure']);
-	}
-
 	/**
 	 * @param $handler
 	 * @return Node
@@ -460,9 +450,10 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		if (empty($this->callback)) {
+		if (empty($this->callback) && $this->restructure()) {
 			return Json::to(404, $node->_error ?? 'Page not found.');
 		}
+
 		$requestParams = func_get_args();
 		if (func_num_args() > 0) {
 			return call_user_func($this->callback, ...$requestParams);
