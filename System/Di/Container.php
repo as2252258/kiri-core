@@ -161,12 +161,13 @@ class Container extends BaseObject
         return $object;
     }
 
-    /**
-     * @param $class
-     *
-     * @return array
-     * @throws ReflectionException
-     */
+	/**
+	 * @param $class
+	 * @param array $constrict
+	 * @return array|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
     private function resolveDependencies($class, $constrict = []): ?array
     {
         if (!isset($this->_reflection[$class])) {
@@ -215,11 +216,12 @@ class Container extends BaseObject
     }
 
 
-    /**
-     * @param $class
-     * @return mixed
-     * @throws ReflectionException
-     */
+	/**
+	 * @param $class
+	 * @return ReflectionClass|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
     public function getReflect($class): ?ReflectionClass
     {
         $reflect = $this->_reflection[$class] ?? null;

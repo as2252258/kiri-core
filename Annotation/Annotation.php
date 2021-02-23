@@ -193,7 +193,6 @@ class Annotation extends Component
      * @param string $class
      * @return ReflectionClass|null
      * @throws ReflectionException
-     * @throws NotFindClassException
      */
     private function reflectClass(string $class): ?ReflectionClass
     {
