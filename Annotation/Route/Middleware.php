@@ -17,6 +17,8 @@ use Snowflake\Snowflake;
 #[\Attribute(\Attribute::TARGET_METHOD)] class Middleware implements IAnnotation
 {
 
+	use Node;
+
 
 	/**
 	 * Interceptor constructor.
@@ -25,6 +27,9 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $middleware)
 	{
+		if (is_string($this->middleware)) {
+			$this->middleware = [];
+		}
 	}
 
 

@@ -16,6 +16,7 @@ use Snowflake\Snowflake;
 #[\Attribute(\Attribute::TARGET_METHOD)] class Limits implements IAnnotation
 {
 
+	use Node;
 
 	/**
 	 * Limits constructor.
@@ -24,6 +25,9 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $limits)
 	{
+		if (is_string($this->limits)) {
+			$this->limits = [];
+		}
 	}
 
 

@@ -16,6 +16,7 @@ use Snowflake\Snowflake;
 #[\Attribute(\Attribute::TARGET_METHOD)] class After implements IAnnotation
 {
 
+	use Node;
 
 	/**
 	 * Interceptor constructor.
@@ -24,6 +25,9 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string|array $after)
 	{
+		if (is_string($this->after)) {
+			$this->after = [];
+		}
 	}
 
 

@@ -77,22 +77,17 @@ class Middleware
 			return;
 		}
 		foreach ($annotation as $attribute) {
-			var_dump($attribute);
 			if ($attribute instanceof Interceptor) {
-				var_dump($attribute);
-				$node->addInterceptor($attribute->interceptor);
+				$node->addInterceptor($attribute->reflectClass($attribute->interceptor));
 			}
 			if ($attribute instanceof After) {
-				var_dump($attribute);
-				$node->addAfter($attribute->after);
+				$node->addInterceptor($attribute->reflectClass($attribute->after));
 			}
 			if ($attribute instanceof RMiddleware) {
-				var_dump($attribute);
-				$node->addMiddleware($attribute->middleware);
+				$node->addInterceptor($attribute->reflectClass($attribute->middleware));
 			}
 			if ($attribute instanceof Limits) {
-				var_dump($attribute);
-				$node->addLimits($attribute->limits);
+				$node->addInterceptor($attribute->reflectClass($attribute->limits));
 			}
 		}
 	}
