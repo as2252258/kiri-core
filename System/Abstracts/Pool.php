@@ -56,7 +56,7 @@ abstract class Pool extends Component
 	 * @return array
 	 * @throws Exception
 	 */
-	protected function getFromChannel($name, array $callback): mixed
+	protected function getFromChannel($name, mixed $callback): mixed
 	{
 		if (!Context::inCoroutine()) {
 			return $this->createClient($name, $callback);
