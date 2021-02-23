@@ -120,6 +120,15 @@ class Logger extends Component
 
 
 	/**
+	 * @param $message
+	 */
+	public function output($message)
+	{
+		echo $message;
+	}
+
+
+	/**
 	 * @param string $application
 	 * @return mixed
 	 */
