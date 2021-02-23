@@ -28,7 +28,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function init()
 	{
-		$this->max = 100;
+		$this->max = 5000;
 
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'destruct']);
