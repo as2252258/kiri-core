@@ -30,21 +30,6 @@ class Logger extends Component
 
 	public int $worker_id;
 
-
-	private Channel $channel;
-
-
-	public function init()
-	{
-		$this->channel = new Channel(5000);
-		Coroutine::create(function () {
-			while ($message = $this->channel->pop(-1)) {
-				echo $message;
-			}
-		});
-	}
-
-
 	/**
 	 * @param $message
 	 * @param string $method
@@ -141,7 +126,7 @@ class Logger extends Component
 	 */
 	public function output($message)
 	{
-		$this->channel->push($message);
+		echo $message;
 	}
 
 
