@@ -5,6 +5,7 @@ namespace Annotation\Route;
 
 
 use Annotation\IAnnotation;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -23,10 +24,10 @@ use Snowflake\Snowflake;
 	 * @param string|array $limits
 	 * @throws
 	 */
-	public function __construct(public string|array $limits)
+	#[Pure] public function __construct(public string|array $limits)
 	{
 		if (is_string($this->limits)) {
-			$this->limits = [];
+			$this->limits = [$this->limits];
 		}
 	}
 

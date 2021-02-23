@@ -25,10 +25,10 @@ use Snowflake\Snowflake;
 	 * @param string|array $middleware
 	 * @throws
 	 */
-	public function __construct(public string|array $middleware)
+	#[Pure] public function __construct(public string|array $middleware)
 	{
 		if (is_string($this->middleware)) {
-			$this->middleware = [];
+			$this->middleware = [$this->middleware];
 		}
 	}
 

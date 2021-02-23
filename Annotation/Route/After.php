@@ -5,6 +5,7 @@ namespace Annotation\Route;
 
 
 use Annotation\IAnnotation;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -23,10 +24,10 @@ use Snowflake\Snowflake;
 	 * @param \HttpServer\IInterface\After|\HttpServer\IInterface\After[] $after
 	 * @throws
 	 */
-	public function __construct(public string|array $after)
+	#[Pure] public function __construct(public string|array $after)
 	{
 		if (is_string($this->after)) {
-			$this->after = [];
+			$this->after = [$this->after];
 		}
 	}
 
