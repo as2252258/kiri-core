@@ -417,6 +417,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			$trance->commit();
 			$lastId = $this->setPrimary($lastId, $param);
 
+			var_dump($lastId);
+
 			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
 		} catch (\Throwable $exception) {
 			$trance->rollback();
