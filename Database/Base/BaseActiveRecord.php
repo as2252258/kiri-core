@@ -411,11 +411,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$trance = $dbConnection->beginTransaction();
 		try {
 			$commandExec = $dbConnection->createCommand($sqlBuilder, $param);
-			if (($lastId = $commandExec->save(true, $this)) === false) {
+			if (!($lastId = (int)$commandExec->save(true, $this))) {
 				throw new Exception('保存失败.' . $sqlBuilder);
 			}
 			$trance->commit();
-			$this->setPrimary($lastId = (int)$lastId, $param);
+			$this->setPrimary($lastId, $param);
 
 			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
 		} catch (\Throwable $exception) {

@@ -255,7 +255,7 @@ class Command extends Component
 		if ($result == 0 && $hasAutoIncrement->hasAutoIncrement()) {
 			return $this->addError($connection->errorInfo()[2], 'mysql');
 		}
-		return $result;
+		return $result == 0 ? true : $result;
 	}
 
 
