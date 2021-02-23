@@ -193,7 +193,7 @@ class Event extends BaseObject
 	{
 		try {
 			if (!$this->exists($name)) {
-				return false;
+				return true;
 			}
 			if (!empty($handler) && $this->exists($name, $handler)) {
 				$events = [$this->get($name, $handler)];
