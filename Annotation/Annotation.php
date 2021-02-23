@@ -34,6 +34,9 @@ class Annotation extends Component
 	private array $_methods = [];
 
 
+	private array $_prepertyes = [];
+
+
 	/**
 	 * @param array $handler
 	 * @param $name
@@ -147,6 +150,9 @@ class Annotation extends Component
 	private function resolveProperty(ReflectionClass $reflectionClass, $object)
 	{
 		$property = $reflectionClass->getProperties();
+		if (!isset($this->_prepertyes[get_class($object)])) {
+			$this->_prepertyes[get_class($object)] = [];
+		}
 		foreach ($property as $value) {
 			if ($value->isStatic()) continue;
 			$attributes = $value->getAttributes();
@@ -160,6 +166,7 @@ class Annotation extends Component
 					continue;
 				}
 				$annotation = $annotation->execute([$object, $value->getName()]);
+				$this->_prepertyes[get_class($object)][$value->getName()] = $annotation;
 				if ($value->isPublic()) {
 					$object->{$value->getName()} = $annotation;
 				} else {

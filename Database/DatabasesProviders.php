@@ -12,6 +12,8 @@ use Snowflake\Application;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Exception\NotFindPropertyException;
 use Snowflake\Snowflake;
 use Snowflake\Abstracts\Config;
 
@@ -36,12 +38,15 @@ class DatabasesProviders extends Providers
 		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 
 		$event->on(Event::SERVER_WORKER_START, [$this, 'scanModel']);
+		$event->on(Event::SERVER_TASK_START, [$this, 'scanModel']);
 	}
 
 
 	/**
-	 * @throws ReflectionException
 	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 * @throws NotFindPropertyException
 	 */
 	public function scanModel()
 	{
