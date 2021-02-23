@@ -38,7 +38,11 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 		if (is_object($config)) {
 			return $config;
 		}
-		return $this->getFromChannel($name = md5($config), [$config, $construct]);
+		$object = $this->getFromChannel($name = md5($config), [$config, $construct]);
+		if (method_exists($object, 'clean')) {
+			$object->clean();
+		}
+		return $object;
 	}
 
 
@@ -61,9 +65,6 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function release(string $name, mixed $object)
 	{
-		if (method_exists($object, 'clean')) {
-			$object->clean();
-		}
 		$this->push($name, $object);
 	}
 
