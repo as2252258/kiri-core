@@ -149,7 +149,7 @@ class ActiveRecord extends BaseActiveRecord
 		}
 		return static::getDb()->createCommand()
 			->mathematics(self::getTable(), [$action => $columns], $condition)
-			->exec(false, $this);
+			->exec($this);
 	}
 
 
