@@ -33,9 +33,9 @@ use Snowflake\Snowflake;
 
 	/**
 	 * @param array $handler
-	 * @return array|string
+	 * @return After
 	 */
-	public function execute(array $handler): array|string
+	public function execute(array $handler): static
 	{
 		return $this;
 	}
