@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -68,31 +69,16 @@ class Annotation extends Component
 
 
 	/**
-	 * @param string $alias
-	 * @return array
-	 */
-	public function getAlias(string $alias = 'root'): array
-	{
-		if (!isset($this->_annotations[$alias])) {
-			return [];
-		}
-		return $this->_annotations[$alias];
-	}
-
-
-	/**
 	 * @param array $paths
 	 * @param string $namespace
 	 * @param string $alias
 	 * @return $this
 	 * @throws ReflectionException|NotFindPropertyException
 	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	private function scanDir(array $paths, string $namespace, string $alias): static
 	{
-		if (!isset($this->_annotations[$alias])) {
-			$this->_annotations[$alias] = [];
-		}
 		foreach ($paths as $path) {
 			$explode = explode('/', $path);
 
@@ -191,7 +177,7 @@ class Annotation extends Component
 	/**
 	 * @param string $class
 	 * @return ReflectionClass|null
-	 * @throws ReflectionException
+	 * @throws ReflectionException|NotFindClassException
 	 */
 	private function reflectClass(string $class): ?ReflectionClass
 	{
@@ -213,8 +199,8 @@ class Annotation extends Component
 		}
 
 		$name = get_class($object) . '_' . $method->getName();
-		if (!isset($this->_annotations[$alias][$name])) {
-			$this->_annotations[$alias][$name] = [];
+		if (!isset($this->_annotations[$name])) {
+			$this->_annotations[$name] = [];
 		}
 
 		$array = [];
@@ -227,7 +213,7 @@ class Annotation extends Component
 			$array[] = $class->execute([$object, $method->getName()]);
 		}
 
-		$this->_annotations[$alias][$name][] = $array;
+		$this->_annotations[$name][] = $array;
 		return [];
 	}
 
@@ -235,18 +221,17 @@ class Annotation extends Component
 	/**
 	 * @param $class
 	 * @param $method
-	 * @param string $alias
 	 * @return mixed
 	 */
-	public function getAnnotationByMethod($class, $method, $alias = ''): mixed
+	#[Pure] public function getAnnotationByMethod($class, $method): array
 	{
-		if (!isset($this->_annotations[$alias])) {
-			return [];
-		}
 		if (is_object($class)) {
 			$class = get_class($class);
 		}
-		return $this->_annotations[$alias][$class . '_' . $method] ?? [];
+		if (!isset($this->_annotations[$class . '_' . $method])) {
+			return [];
+		}
+		return $this->_annotations[$class . '_' . $method];
 	}
 
 

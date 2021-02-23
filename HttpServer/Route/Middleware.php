@@ -72,10 +72,11 @@ class Middleware
 		}
 		[$controller, $action] = $node->handler;
 		$attributes = Snowflake::app()->getAttributes();
-		$annotation = $attributes->getAnnotationByMethod($controller, $action, 'controllers');
+		$annotation = $attributes->getAnnotationByMethod($controller, $action);
 		if (count($annotation) < 1) {
 			return;
 		}
+		var_dump(count($annotation));
 		foreach ($annotation as $attribute) {
 			if ($attribute instanceof Interceptor) {
 				$node->addInterceptor($attribute->interceptor);
