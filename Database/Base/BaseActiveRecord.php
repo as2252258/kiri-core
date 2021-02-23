@@ -93,7 +93,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function clean()
 	{
-		$this->debug(get_called_class() . ' clean after request.');
+		$this->error(get_called_class() . ' clean after request.');
 		$this->_attributes = [];
 		$this->_oldAttributes = [];
 	}
