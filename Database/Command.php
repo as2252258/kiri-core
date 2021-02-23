@@ -246,9 +246,10 @@ class Command extends Component
             return false;
         }
         if (($result = $this->prepare->execute($this->params)) === false) {
+        	var_dump($result);
             return $this->addError($connection->errorInfo()[2], 'mysql');
         }
-        if (!$isInsert) {
+        if ($isInsert === false) {
             return true;
         }
         $result = $connection->lastInsertId();
