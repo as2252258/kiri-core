@@ -26,15 +26,17 @@ class Dispatch
 
 	protected mixed $request;
 
+
 	/**
 	 * @param $handler
 	 * @param $request
 	 * @return static
-	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public static function create($handler, $request): static
 	{
-		$class = objectPool(get_called_class());
+		$class = new static();
 		$class->handler = $handler;
 		$class->request = $request;
 		if ($handler instanceof Closure) {

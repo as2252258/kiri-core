@@ -233,6 +233,20 @@ if (!function_exists('objectPool')) {
 	}
 }
 
+if (!function_exists('objectRecover')) {
+
+	/**
+	 * @param string $className
+	 * @param $object
+	 * @return mixed
+	 * @throws ComponentException
+	 */
+	function objectRecover(mixed $className, $object): void
+	{
+		Snowflake::app()->getObject()->release($className, $object);
+	}
+}
+
 
 if (!function_exists('instance_load')) {
 

@@ -315,11 +315,6 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function toArray(): array
 	{
-		$class = $this;
-		Coroutine::defer(function () use ($class) {
-			$object = Snowflake::app()->getObject();
-			$object->release(get_called_class(), $class);
-		});
 		$data = $this->_attributes;
 		foreach ($this->getAnnotation() as $key => $item) {
 			if (!isset($data[$key])) {
@@ -327,7 +322,18 @@ class ActiveRecord extends BaseActiveRecord
 			}
 			$data[$key] = call_user_func([$this, $item[1]], $data[$key]);
 		}
-		return array_merge($data, $this->runRelate());
+		$data = array_merge($data, $this->runRelate());
+		$this->recover();
+		return $data;
+	}
+
+
+	/**
+	 * @throws ComponentException
+	 */
+	public function recover()
+	{
+		objectRecover(get_called_class(), $this);
 	}
 
 
