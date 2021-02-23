@@ -24,19 +24,19 @@ trait Node
 	public function reflectClass(array $classes): array
 	{
 		$di = Snowflake::getDi();
-		foreach ($classes as $key => $class) {
+		foreach ($classes as  $class) {
 			$object = $di->get($class);
 			if ($object instanceof Interceptor) {
-				$classes[$key] = [$object, 'Interceptor'];
+				$classes[] = [$object, 'Interceptor'];
 			}
 			if ($object instanceof Limits) {
-				$classes[$key] = [$object, 'next'];
+				$classes[] = [$object, 'next'];
 			}
 			if ($object instanceof After) {
-				$classes[$key] = [$object, 'onHandler'];
+				$classes[] = [$object, 'onHandler'];
 			}
 			if ($object instanceof Middleware) {
-				$classes[$key] = [$object, 'onHandler'];
+				$classes[] = [$object, 'onHandler'];
 			}
 		}
 		return $classes;
