@@ -450,8 +450,11 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		if (empty($this->callback) && $this->restructure()) {
-			return Json::to(404, $node->_error ?? 'Page not found.');
+		if (empty($this->callback)) {
+			$this->restructure();
+			if (empty($this->callback)) {
+				return Json::to(404, $node->_error ?? 'Page not found.');
+			}
 		}
 
 		$requestParams = func_get_args();
