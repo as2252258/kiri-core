@@ -62,6 +62,15 @@ class Pagination extends Component
 
 
 	/**
+	 * recover class by clone
+	 */
+	public function __clone()
+	{
+		$this->clean();
+	}
+
+
+	/**
 	 * @param array|Closure $callback
 	 * @throws Exception
 	 */
