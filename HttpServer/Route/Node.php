@@ -401,6 +401,7 @@ class Node extends HttpService
 	 */
 	public function addMiddleware(Closure|string|array $class)
 	{
+		if (empty($class)) return;
 		if (is_string($class)) {
 			$class = Snowflake::createObject($class);
 			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
