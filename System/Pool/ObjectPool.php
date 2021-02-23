@@ -62,11 +62,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function release(string $name, mixed $object)
 	{
-		$newObject = clone $object;
-		if (method_exists($newObject, 'clean')) {
-			$newObject->clean();
-		}
-		$this->push($name, $newObject);
+		$this->push($name, clone $object);
 	}
 
 }
