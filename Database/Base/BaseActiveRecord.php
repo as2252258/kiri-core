@@ -415,7 +415,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 				throw new Exception('保存失败.' . $sqlBuilder);
 			}
 			$trance->commit();
-			$this->setPrimary($lastId, $param);
+			$lastId = $this->setPrimary($lastId, $param);
 
 			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
 		} catch (\Throwable $exception) {
