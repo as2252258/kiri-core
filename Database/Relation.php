@@ -44,6 +44,7 @@ class Relation extends Component
 	 * @param string $identification
 	 * @param $localValue
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public function first(string $identification, $localValue): mixed
 	{

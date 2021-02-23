@@ -6,6 +6,7 @@ namespace Snowflake\Pool;
 
 use Exception;
 use ReflectionException;
+use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -37,7 +38,9 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 		if (is_object($config)) {
 			return $config;
 		}
-		return $this->getFromChannel(md5($config), [$config, $construct]);
+		$object = $this->getFromChannel(md5($config), [$config, $construct]);
+		listen(Event::EVENT_AFTER_REQUEST, [$object, 'clean']);
+		return $object;
 	}
 
 

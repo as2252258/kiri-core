@@ -27,6 +27,12 @@ class CollectionIterator extends \ArrayIterator
 	private ActiveQuery $query;
 
 
+	public function clean()
+	{
+		unset($this->query);
+	}
+
+
 	/**
 	 * CollectionIterator constructor.
 	 * @param $model

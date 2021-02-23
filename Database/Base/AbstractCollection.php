@@ -39,6 +39,13 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 
 	protected ActiveQuery $query;
 
+
+	public function clean()
+	{
+		unset($this->query, $this->model, $this->_item);
+	}
+
+
 	/**
 	 * Collection constructor.
 	 *

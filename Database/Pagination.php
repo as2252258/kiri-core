@@ -51,6 +51,16 @@ class Pagination extends Component
 	}
 
 
+	public function clean()
+	{
+		unset($this->activeQuery, $this->_callback, $this->_group);
+		$this->_offset = 0;
+		$this->_limit = 100;
+		$this->_max = 0;
+		$this->_length = 0;;
+	}
+
+
 	/**
 	 * @param array|Closure $callback
 	 * @throws Exception

@@ -9,7 +9,9 @@ use Closure;
 use HttpServer\Controller;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
+use ReflectionException;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -54,12 +56,12 @@ class Dispatch
 
 
 	/**
-	 * 设置作用域
-	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	protected function bind()
 	{
-		$class = $this->bindRequest(objectPool(Controller::class));
+		$class = $this->bindRequest(Snowflake::createObject(Controller::class));
 		$this->handler = Closure::bind($this->handler, $class);
 	}
 
