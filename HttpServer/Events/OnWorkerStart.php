@@ -35,14 +35,13 @@ class OnWorkerStart extends Callback
 			swoole_set_process_name($get_name);
 		}
 
+		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
-			putenv('workerId=Task.' . $worker_id);
-			return;
+		} else {
+			Snowflake::setWorkerId($server->worker_pid);
+			$this->setWorkerAction($worker_id);
 		}
-		putenv('workerId=Worker.' . $worker_id);
-		Snowflake::setWorkerId($server->worker_pid);
-		$this->setWorkerAction($worker_id);
 	}
 
 	/**
