@@ -27,7 +27,6 @@ use Database\Relation;
 use Exception;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
-use static;
 use validator\Validator;
 use Database\IOrm;
 use Snowflake\Snowflake;
