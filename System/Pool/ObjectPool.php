@@ -38,8 +38,8 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 		if (is_object($config)) {
 			return $config;
 		}
-		$object = $this->getFromChannel(md5($config), [$config, $construct]);
-		listen(Event::EVENT_AFTER_REQUEST, [$object, 'clean']);
+		$object = $this->getFromChannel($name = md5($config), [$config, $construct]);
+		listen(Event::EVENT_AFTER_REQUEST, [$this, 'release'], [$name, $object]);
 		return $object;
 	}
 
