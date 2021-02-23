@@ -164,6 +164,7 @@ class Annotation extends Component
 					$object->{$value->getName()} = $annotation;
 				} else {
 					$name = 'set' . ucfirst($value->getName());
+					var_dump($name);
 					if (!method_exists($object, $name)) {
 						throw new NotFindPropertyException('set property need method ' . $name);
 					}
