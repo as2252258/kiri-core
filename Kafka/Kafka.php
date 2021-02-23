@@ -10,6 +10,7 @@ use RdKafka\ConsumerTopic;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -98,6 +99,7 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param $topic
 	 * @param $message
+	 * @throws ComponentException
 	 */
 	protected function handlerExecute($topic, $message)
 	{
@@ -109,11 +111,11 @@ class Kafka extends \Snowflake\Process\Process
 				if (!class_exists($namespace)) {
 					return;
 				}
-				$class = Snowflake::createObject($namespace);
+				$class = objectPool($namespace);
 				if (!($class instanceof ConsumerInterface)) {
 					return;
 				}
-				$class->onHandler(new Struct($topic, $message));
+				$class->onHandler(objectPool(Struct::class, [$topic, $message]));
 			} catch (Throwable $exception) {
 				$this->application->error($exception);
 			}

@@ -218,6 +218,22 @@ if (!function_exists('fire')) {
 }
 
 
+if (!function_exists('objectPool')) {
+
+	/**
+	 * @param string $className
+	 * @param array $construct
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	function objectPool(mixed $className, array $construct = []): mixed
+	{
+		return Snowflake::app()->getObject()->load($className, $construct);
+	}
+}
+
+
 if (!function_exists('instance_load')) {
 
 	function instance_load()

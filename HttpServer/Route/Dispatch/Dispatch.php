@@ -9,6 +9,7 @@ use Closure;
 use HttpServer\Controller;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -27,10 +28,11 @@ class Dispatch
 	 * @param $handler
 	 * @param $request
 	 * @return static
+	 * @throws ComponentException
 	 */
 	public static function create($handler, $request): static
 	{
-		$class = new static();
+		$class = objectPool(get_called_class());
 		$class->handler = $handler;
 		$class->request = $request;
 		if ($handler instanceof Closure) {
@@ -53,10 +55,11 @@ class Dispatch
 
 	/**
 	 * 设置作用域
+	 * @throws ComponentException
 	 */
 	protected function bind()
 	{
-		$class = $this->bindRequest(new Controller());
+		$class = $this->bindRequest(objectPool(Controller::class));
 		$this->handler = Closure::bind($this->handler, $class);
 	}
 

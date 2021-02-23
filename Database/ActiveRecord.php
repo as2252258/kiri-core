@@ -126,7 +126,7 @@ class ActiveRecord extends BaseActiveRecord
 		if (empty($attributes)) {
 			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
-		$select = new static();
+		$select = objectPool(self::class);
 		$select->attributes = $attributes;
 		if (!$select->save()) {
 			throw new Exception($select->getLastError());
@@ -365,7 +365,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		$relation = $this->getRelation();
 
-		return new HasOne($modelName, $foreignKey, $value, $relation);
+		return objectPool(HasOne::class, [$modelName, $foreignKey, $value, $relation]);
 	}
 
 
@@ -386,7 +386,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		$relation = $this->getRelation();
 
-		return new HasCount($modelName, $foreignKey, $value, $relation);
+		return objectPool(HasCount::class, [$modelName, $foreignKey, $value, $relation]);
 	}
 
 
@@ -407,7 +407,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		$relation = $this->getRelation();
 
-		return new HasMany($modelName, $foreignKey, $value, $relation);
+		return objectPool(HasMany::class, [$modelName, $foreignKey, $value, $relation]);
 	}
 
 	/**
@@ -427,7 +427,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		$relation = $this->getRelation();
 
-		return new HasMany($modelName, $foreignKey, $value, $relation);
+		return objectPool(HasMany::class, [$modelName, $foreignKey, $value, $relation]);
 	}
 
 	/**

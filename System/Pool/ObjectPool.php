@@ -28,16 +28,16 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 
 	/**
 	 * @param array $config
-	 * @param bool $isMaster
+	 * @param array $construct
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function get(mixed $config, bool $isMaster = false): mixed
+	public function load(mixed $config, array $construct = []): mixed
 	{
 		if (is_object($config)) {
 			return $config;
 		}
-		return $this->getFromChannel(md5($config), $config);
+		return $this->getFromChannel(md5($config), [$config, $construct]);
 	}
 
 
@@ -50,8 +50,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function createClient(string $name, mixed $config): mixed
 	{
-		// TODO: Implement createClient() method.
-		return Snowflake::createObject($config);
+		return Snowflake::createObject(...$config);
 	}
 
 

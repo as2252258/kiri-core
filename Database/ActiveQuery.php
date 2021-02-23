@@ -181,7 +181,7 @@ class ActiveQuery extends Component
 	 */
 	public function page(int $size, callable $callback): Pagination
 	{
-		$pagination = new Pagination($this);
+		$pagination = objectPool(Pagination::class, [$this]);
 		$pagination->setOffset(0);
 		$pagination->setLimit($size);
 		$pagination->setCallback($callback);
@@ -206,9 +206,8 @@ class ActiveQuery extends Component
 	 */
 	public function all(): Collection|array
 	{
-		$collect = new Collection($this, $this->modelClass::getDb()
-			->createCommand($this->queryBuilder())
-			->all(), $this->modelClass);
+		$data = $this->modelClass::getDb()->createCommand($this->queryBuilder())->all();
+		$collect = objectPool(Collection::class, [$this, $data, $this->modelClass]);
 		if ($this->asArray) {
 			return $collect->toArray();
 		}

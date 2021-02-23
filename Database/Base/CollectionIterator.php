@@ -50,10 +50,7 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	protected function newModel($current): ActiveRecord
 	{
-		$object = Snowflake::app()->getObject();
-		$model = $object->get($this->model, false);
-
-		return $model->setAttributes($current);
+		return objectPool($this->model)->setAttributes($current);
 
 	}
 
