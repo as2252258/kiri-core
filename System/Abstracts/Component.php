@@ -12,6 +12,8 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 
+use JetBrains\PhpStorm\Pure;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -50,7 +52,7 @@ class Component extends BaseObject
 	 * @param null $callback
 	 * @return bool
 	 */
-	public function hasEvent($name, $callback = null): bool
+	#[Pure] public function hasEvent($name, $callback = null): bool
 	{
 		if (!isset($this->_events[$name])) {
 			return false;
@@ -97,6 +99,7 @@ class Component extends BaseObject
 	 * @param $name
 	 * @param null $handler
 	 * @return void
+	 * @throws ComponentException
 	 */
 	public function off($name, $handler = NULL): void
 	{

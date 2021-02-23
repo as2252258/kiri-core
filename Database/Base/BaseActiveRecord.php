@@ -495,7 +495,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return false;
 		}
 
-		if (!$this->event->dispatch(self::BEFORE_SAVE, [$this])) {
+		if (!$this->event->dispatch(self::BEFORE_SAVE, [$this], $this)) {
 			return false;
 		}
 

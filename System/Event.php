@@ -174,11 +174,12 @@ class Event extends BaseObject
 	/**
 	 * @param $name
 	 * @param array $params
-	 * @return mixed
+	 * @param null $scope
+	 * @return bool
 	 */
-	public function dispatch($name, $params = []): mixed
+	public function dispatch($name, $params = [], $scope = null): bool
 	{
-		return $this->trigger($name, $params);
+		return $this->trigger($name, $params, $scope);
 	}
 
 
