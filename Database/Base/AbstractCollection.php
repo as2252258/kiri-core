@@ -47,15 +47,6 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 
 
 	/**
-	 * recover class by clone
-	 */
-	public function __clone()
-	{
-		$this->clean();
-	}
-
-
-	/**
 	 * Collection constructor.
 	 *
 	 * @param $query

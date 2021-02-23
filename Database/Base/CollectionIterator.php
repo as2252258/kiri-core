@@ -34,15 +34,6 @@ class CollectionIterator extends \ArrayIterator
 
 
 	/**
-	 * recover class by clone
-	 */
-	public function __clone()
-	{
-		$this->clean();
-	}
-
-
-	/**
 	 * CollectionIterator constructor.
 	 * @param $model
 	 * @param $query

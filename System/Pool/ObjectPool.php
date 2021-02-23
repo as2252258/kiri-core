@@ -18,13 +18,20 @@ use Snowflake\Snowflake;
 class ObjectPool extends \Snowflake\Abstracts\Pool
 {
 
+	private array $_waitRecover = [];
+
 
 	/**
 	 * set pool max length
+	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function init()
 	{
 		$this->max = 100;
+
+		$event = Snowflake::app()->getEvent();
+		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'destruct']);
 	}
 
 
@@ -62,7 +69,27 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function release(string $name, mixed $object)
 	{
-		$this->push($name, clone $object);
+		$this->_waitRecover[$name][] = $object;
+	}
+
+
+	public function destruct()
+	{
+		if (empty($this->_waitRecover)) {
+			return;
+		}
+		foreach ($this->_waitRecover as $name => $value) {
+			if (empty($value)) {
+				continue;
+			}
+			foreach ($value as $object) {
+				if (method_exists($object, 'clean')) {
+					$object->clean();
+				}
+				$this->push($name, $object);
+			}
+		}
+		$this->_waitRecover = [];
 	}
 
 }

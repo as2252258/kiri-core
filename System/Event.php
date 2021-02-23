@@ -172,14 +172,6 @@ class Event extends BaseObject
 
 
 	/**
-	 * recover class by clone
-	 */
-	public function __clone()
-	{
-		$this->clean();
-	}
-
-	/**
 	 * @param $name
 	 * @param array $params
 	 * @param null $scope

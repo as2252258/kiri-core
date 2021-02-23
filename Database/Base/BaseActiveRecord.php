@@ -98,15 +98,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * recover class by clone
-	 */
-	public function __clone()
-	{
-		$this->clean();
-	}
-
-
-	/**
 	 * @throws Exception
 	 */
 	public function init()
