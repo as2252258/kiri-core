@@ -465,13 +465,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$sql = $change->update(static::getTable(), $attributes, $condition, $param);
 
 		$trance = $command->beginTransaction();
-		if (!($command = $command->createCommand($sql, $param)->save(false, $this))) {
+		if (!$command->createCommand($sql, $param)->save(false, $this)) {
 			$trance->rollback();
 			$result = false;
 		} else {
 			$trance->commit();
 
 			$result = $this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
+
+			var_dump($result);
 		}
 		return $result;
 	}
@@ -496,7 +498,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			$condition = [$primary => $this->getPrimaryValue()];
 		}
 
-		if (!$this->getIsCreate()) {
+		if (!$this->isNewExample) {
 			return $this->update($param, $condition, $attributes);
 		}
 		return $this->insert($attributes, $param);
