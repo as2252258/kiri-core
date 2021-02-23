@@ -76,18 +76,21 @@ class Middleware
 		if (count($annotation) < 1) {
 			return;
 		}
-		var_dump(count($annotation));
 		foreach ($annotation as $attribute) {
 			if ($attribute instanceof Interceptor) {
+				var_dump($attribute);
 				$node->addInterceptor($attribute->interceptor);
 			}
 			if ($attribute instanceof After) {
+				var_dump($attribute);
 				$node->addAfter($attribute->after);
 			}
 			if ($attribute instanceof RMiddleware) {
+				var_dump($attribute);
 				$node->addMiddleware($attribute->middleware);
 			}
 			if ($attribute instanceof Limits) {
+				var_dump($attribute);
 				$node->addLimits($attribute->limits);
 			}
 		}
