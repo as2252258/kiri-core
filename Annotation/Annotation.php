@@ -184,7 +184,7 @@ class Annotation extends Component
 	 * @param string $property
 	 * @return mixed|null
 	 */
-	public function getPropertyAnnotation($class, $property = ''): ?array
+	public function getProperty($class, $property = ''): ?array
 	{
 		if (is_object($class)) {
 			$class = get_class($class);
