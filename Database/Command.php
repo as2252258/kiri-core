@@ -246,10 +246,8 @@ class Command extends Component
 			return false;
 		}
 		if (($result = $this->prepare->execute($this->params)) === false) {
-			var_dump($result);
 			return $this->addError($connection->errorInfo()[2], 'mysql');
 		}
-		var_dump($result, $isInsert);
 		if ($isInsert === false) {
 			return true;
 		}
@@ -268,10 +266,10 @@ class Command extends Component
 	private function initPDOStatement(): PDO|bool|null
 	{
 		if (empty($this->sql)) {
-			return null;
+			return $this->addError('no sql.', 'mysql');
 		}
 		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
-			return null;
+			return $this->addError('get client error.', 'mysql');
 		}
 		$this->prepare = $connect->prepare($this->sql);
 		if (!($this->prepare instanceof PDOStatement)) {
