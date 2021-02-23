@@ -59,7 +59,7 @@ class Annotation extends Component
 	 * @param string $namespace
 	 * @param string $alias
 	 * @return $this
-	 * @throws ReflectionException|NotFindPropertyException
+	 * @throws ReflectionException|NotFindPropertyException|NotFindClassException
 	 */
 	public function readControllers(string $path, string $namespace, string $alias = 'root'): static
 	{
@@ -213,9 +213,6 @@ class Annotation extends Component
 		}
 
 		$name = get_class($object) . '_' . $method->getName();
-		if (!isset($this->_annotations[$alias])) {
-			$this->_annotations[$alias] = [];
-		}
 		if (!isset($this->_annotations[$alias][$name])) {
 			$this->_annotations[$alias][$name] = [];
 		}
@@ -239,9 +236,9 @@ class Annotation extends Component
 	 * @param $class
 	 * @param $method
 	 * @param string $alias
-	 * @return array|mixed
+	 * @return mixed
 	 */
-	public function getAnnotationByMethod($class, $method, $alias = '')
+	public function getAnnotationByMethod($class, $method, $alias = ''): mixed
 	{
 		if (!isset($this->_annotations[$alias])) {
 			return [];

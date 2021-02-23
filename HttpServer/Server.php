@@ -488,19 +488,6 @@ class Server extends HttpService
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$attributes = Snowflake::app()->getAttributes();
 			$attributes->readControllers(SOCKET_PATH, 'App\Websocket', 'sockets');
-
-			$aliases = $attributes->getAlias('sockets');
-			if (count($aliases) < 1) {
-				return;
-			}
-			foreach ($aliases as $alias) {
-				$handler = $alias['handler'];
-				foreach ($alias['attributes'] as $key => $attribute) {
-					if ($attribute instanceof IAnnotation) {
-						$attribute->execute($handler);
-					}
-				}
-			}
 		});
 	}
 
