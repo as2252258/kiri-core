@@ -471,9 +471,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$trance->commit();
 
-			$result = $this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
+			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
 
-			var_dump($result);
+			$result = true;
 		}
 		return $result;
 	}
