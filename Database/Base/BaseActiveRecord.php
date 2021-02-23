@@ -27,6 +27,7 @@ use Database\Relation;
 use Exception;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
+use static;
 use validator\Validator;
 use Database\IOrm;
 use Snowflake\Snowflake;
@@ -431,17 +432,20 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @param $lastId
 	 * @param $param
-	 * @return mixed
+	 * @return static
 	 * @throws Exception
 	 */
-	private function setPrimary($lastId, $param): mixed
+	private function setPrimary($lastId, $param): static
 	{
 		if ($this->hasAutoIncrement()) {
-			return $this->setAttribute($this->getAutoIncrement(), (int)$lastId);
+			$this->setAttribute($this->getAutoIncrement(), (int)$lastId);
+			return $this;
 		}
+
 		if (!$this->hasPrimary()) {
 			return $this;
 		}
+
 		$primary = $this->getPrimary();
 		if (!isset($param[$primary]) || empty($param[$primary])) {
 			$this->setAttribute($primary, (int)$lastId);
