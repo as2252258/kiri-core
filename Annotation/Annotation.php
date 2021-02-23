@@ -203,17 +203,14 @@ class Annotation extends Component
 			$this->_annotations[$name] = [];
 		}
 
-		$array = [];
 		foreach ($attributes as $attribute) {
 			/** @var IAnnotation $class */
 			$class = $this->instance($attribute);
 			if ($class === null) {
 				continue;
 			}
-			$array[] = $class->execute([$object, $method->getName()]);
+			$this->_annotations[$name][] = $class->execute([$object, $method->getName()]);
 		}
-
-		$this->_annotations[$name][] = $array;
 		return [];
 	}
 
