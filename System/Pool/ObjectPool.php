@@ -69,6 +69,9 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function release(string $name, mixed $object)
 	{
+		if (!isset($this->_waitRecover[$name])) {
+			$this->_waitRecover[$name] = [];
+		}
 		$this->_waitRecover[$name][] = $object;
 	}
 
