@@ -51,7 +51,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	public function createClient(string $name, mixed $config): mixed
 	{
 		// TODO: Implement createClient() method.
-		return Snowflake::createObject(array_shift($config));
+		return Snowflake::createObject($config);
 	}
 
 
