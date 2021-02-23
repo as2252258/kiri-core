@@ -59,14 +59,14 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	/**
 	 * @param string $name
 	 * @param $object
-	 * @throws ComponentException
 	 */
 	public function release(string $name, mixed $object)
 	{
-		if (method_exists($object, 'clean')) {
-			listen(Event::EVENT_AFTER_REQUEST,[$object,'clean']);
+		$newObject = clone $object;
+		if (method_exists($newObject, 'clean')) {
+			$newObject->clean();
 		}
-		$this->push($name, $object);
+		$this->push($name, $newObject);
 	}
 
 }
