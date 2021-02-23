@@ -204,13 +204,13 @@ class BaseObject implements Configure
         if (!is_string($message)) {
             $message = print_r($message, true);
         }
-        
+
         $content = (empty($method) ? '' : $method . ': ') . $message;
 
         $length = strlen('[ERROR][2021-02-20 08:32:02]:');
 
-        $message = "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . "\033[0m" . PHP_EOL;
-        $message .= "\033[41;37m" . str_pad($content, $length, ' ', STR_PAD_LEFT) . "\033[0m";
+        $message = "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . PHP_EOL . "\033[0m";
+        $message .= "\033[41;37m" . str_pad($content, $length, ' ', STR_PAD_LEFT) . PHP_EOL . "\033[0m";
         $message .= PHP_EOL;
 
         $socket = Snowflake::app()->getLogger();
