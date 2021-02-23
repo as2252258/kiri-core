@@ -13,6 +13,7 @@ use Exception;
 
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Error\Logger;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -114,6 +115,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
+	 * @throws ComponentException
 	 */
 	public function debug(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -123,9 +125,8 @@ class BaseObject implements Configure
 		$message = "\033[35m[DEBUG][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::getWebSocket();
-
-		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
+		$socket = Snowflake::app()->getLogger();
+		$socket->output($message);
 	}
 
 
@@ -133,6 +134,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
+	 * @throws ComponentException
 	 */
 	public function info(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -142,15 +144,15 @@ class BaseObject implements Configure
 		$message = "\033[34m[INFO][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::getWebSocket();
-
-		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
+		$socket = Snowflake::app()->getLogger();
+		$socket->output($message);
 	}
 
 	/**
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
+	 * @throws ComponentException
 	 */
 	public function success(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -161,9 +163,8 @@ class BaseObject implements Configure
 		$message = "\033[36m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::getWebSocket();
-
-		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
+		$socket = Snowflake::app()->getLogger();
+		$socket->output($message);
 	}
 
 
@@ -171,6 +172,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
+	 * @throws ComponentException
 	 */
 	public function warning(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -181,9 +183,9 @@ class BaseObject implements Configure
 		$message = "\033[33m[WARNING][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::getWebSocket();
 
-		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
+		$socket = Snowflake::app()->getLogger();
+		$socket->output($message);
 	}
 
 
@@ -191,6 +193,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param null $method
 	 * @param null $file
+	 * @throws ComponentException
 	 */
 	public function error(mixed $message, $method = null, $file = null)
 	{
@@ -210,9 +213,8 @@ class BaseObject implements Configure
 			str_pad($message, $length, ' ', STR_PAD_LEFT) . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::getWebSocket();
-
-		$socket->sendMessage($message, $socket->setting['worker_num'] - 1);
+		$socket = Snowflake::app()->getLogger();
+		$socket->output($message);
 	}
 
 }

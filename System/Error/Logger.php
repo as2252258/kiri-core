@@ -14,6 +14,8 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
+use Swoole\Coroutine\Channel;
 use Swoole\Process;
 use Throwable;
 
@@ -27,6 +29,21 @@ class Logger extends Component
 	private array $logs = [];
 
 	public int $worker_id;
+
+
+	private Channel $channel;
+
+
+	public function init()
+	{
+		$this->channel = new Channel(5000);
+		Coroutine::create(function () {
+			while ($message = $this->channel->pop(-1)) {
+				echo $message;
+			}
+		});
+	}
+
 
 	/**
 	 * @param $message
@@ -124,7 +141,7 @@ class Logger extends Component
 	 */
 	public function output($message)
 	{
-		echo $message;
+		$this->channel->push($message);
 	}
 
 
