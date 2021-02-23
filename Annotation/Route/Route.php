@@ -40,7 +40,6 @@ use Annotation\IAnnotation;
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
-		var_dump($this->uri, $handler, $this->method);
 		$router->addRoute($this->uri, $handler, $this->method);
 
 		return $router;

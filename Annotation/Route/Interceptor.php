@@ -34,16 +34,10 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return array|string
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public function execute(array $handler): array|string
 	{
-		// TODO: Implement execute() method.
-		foreach ($this->interceptor as $key => $item) {
-			$this->interceptor[$key] = [Snowflake::createObject($item), 'Interceptor'];
-		}
-		return $this->interceptor;
+		return $this;
 	}
 
 }
