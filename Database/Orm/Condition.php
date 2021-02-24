@@ -81,11 +81,7 @@ trait Condition
 		$_tmp = [];
 		if (empty($where)) return '';
 
-		var_dump($where);
 		foreach ($where as $value) {
-
-			var_dump($value);
-
 			$_value = is_string($value) ? $value : $this->conditionMap($value);
 
 			if (empty($_value)) continue;
