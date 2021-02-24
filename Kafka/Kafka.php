@@ -111,14 +111,11 @@ class Kafka extends \Snowflake\Process\Process
 				if (!class_exists($namespace)) {
 					return;
 				}
-				$class = objectPool($namespace);
+				$class = Snowflake::createObject($namespace);
 				if (!($class instanceof ConsumerInterface)) {
 					return;
 				}
-				$class->onHandler($Struct = objectPool(Struct::class, [$topic, $message]));
-
-				objectRecover($namespace, $class);
-				objectRecover(Struct::class, $Struct);
+				$class->onHandler(Snowflake::createObject(Struct::class, [$topic, $message]));
 			} catch (Throwable $exception) {
 				$this->application->error($exception);
 			}
