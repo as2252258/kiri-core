@@ -152,7 +152,6 @@ class ActiveRecord extends BaseActiveRecord
 		if (empty($condition)) {
 			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
 		}
-		$condition = static::find()->where($condition)->getCondition();
 		$execute = static::getDb()->createCommand()
 			->mathematics(self::getTable(), [$action => $columns], $condition);
 		if ($execute instanceof Command) {

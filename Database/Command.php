@@ -144,7 +144,7 @@ class Command extends Component
 	public function mathematics($tableName, $param, $condition): bool|static
 	{
 		$change = $this->db->getSchema()->getChange();
-		$sql = $change->mathematics($tableName, $param, $condition);
+		$sql = $change->mathematics($tableName, $param, [$condition]);
 		if ($sql === false) {
 			return false;
 		}

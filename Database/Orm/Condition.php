@@ -102,7 +102,6 @@ trait Condition
 	private function conditionMap($condition): string
 	{
 		$array = [];
-		var_dump($condition);
 		if (is_string($condition) || empty($condition)) {
 			return $condition;
 		}
@@ -225,27 +224,6 @@ trait Condition
 			return ' LIMIT ' . $query->offset . ',' . $query->limit;
 		}
 		return ' LIMIT ' . $query->limit;
-	}
-
-
-	/**
-	 * @param $value
-	 * @param bool $isSearch
-	 * @return int|string
-	 */
-	public function valueEncode($value, $isSearch = false): int|string
-	{
-		if ($isSearch) {
-			return $value;
-		}
-		if (is_numeric($value)) {
-			return $value;
-		} else {
-			if (!is_null(Json::decode($value))) {
-				return $value;
-			}
-			return '\'' . Str::encode($value) . '\'';
-		}
 	}
 
 }
