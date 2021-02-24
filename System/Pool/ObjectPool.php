@@ -77,12 +77,10 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 
 
 	/**
-	 * @throws ComponentException
 	 * 清理等待回收的对象
 	 */
 	public function destruct()
 	{
-		$this->warning('destruct object...');
 		if (empty($this->_waitRecover)) {
 			return;
 		}
