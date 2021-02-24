@@ -78,6 +78,7 @@ trait Condition
 		$_tmp = [];
 		if (empty($where)) return '';
 		foreach ($where as $key => $value) {
+			var_dump($value);
 			$_value = is_string($value) ? $value : $this->conditionMap($value);
 
 			if (empty($_value)) continue;
