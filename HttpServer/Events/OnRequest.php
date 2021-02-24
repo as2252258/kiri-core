@@ -15,6 +15,7 @@ use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -36,20 +37,21 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
+			Coroutine::defer(function () use ($request) {
+				write(Json::encode(get_object_vars($request)), 'request');
+				fire(Event::SYSTEM_RESOURCE_RELEASES);
+			});
 			[$req, $rep] = static::create($request, $response);
 			if ($req->is('favicon.ico')) {
 				return \send(null, 404);
 			}
 			return \router()->dispatch();
 		} catch (ExitException | Error | \Throwable $exception) {
-            $this->addError($exception);
+			$this->addError($exception);
 			if ($exception instanceof ExitException) {
 				return \send($exception->getMessage(), $exception->getCode());
 			}
 			return $this->sendErrorMessage($exception);
-		} finally {
-			write(Json::encode(get_object_vars($request)), 'request');
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
 		}
 	}
 

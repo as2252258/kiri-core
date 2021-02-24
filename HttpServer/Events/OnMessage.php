@@ -9,6 +9,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Context;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
@@ -31,19 +32,21 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
-			if ($frame->opcode != 0x08) {
-				$event = Snowflake::app()->getEvent();
-				$content = $this->resolve($event, $frame, $server);
-				if (!empty($content)) {
-					$server->send($frame->fd, $content);
-				}
+			Coroutine::defer(function () {
+				fire(Event::SYSTEM_RESOURCE_RELEASES);
+				Snowflake::app()->getLogger()->insert();
+			});
+			if ($frame->opcode == 0x08) {
+				return;
+			}
+			$event = Snowflake::app()->getEvent();
+			$content = $this->resolve($event, $frame, $server);
+			if (!empty($content)) {
+				$server->send($frame->fd, $content);
 			}
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
 		}
 	}
 
