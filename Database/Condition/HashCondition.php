@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Database\Condition;
 
 /**
@@ -22,7 +23,7 @@ class HashCondition extends Condition
 			if ($value === null) {
 				continue;
 			}
-			$array[] = $this->resolve($key, $value);
+			$array[] = sprintf('%s=%s', $key, addslashes($value));
 		}
 		return implode(' AND ', $array);
 	}

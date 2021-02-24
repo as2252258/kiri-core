@@ -12,6 +12,7 @@ namespace Database\Traits;
 
 use Database\ActiveQuery;
 use Database\ActiveRecord;
+use Database\Condition\MathematicsCondition;
 use Database\Orm\Select;
 use Exception;
 
@@ -421,42 +422,27 @@ trait QueryTrait
 	/**
 	 * @param array $conditionArray
 	 *
-	 * @return $this|array|ActiveQuery
-	 * @throws Exception
+	 * @return QueryTrait
 	 */
 	public function or(array $conditionArray = []): static
 	{
-		$conditions = [];
-		if (empty($conditionArray) || count($conditionArray) < 2) {
-			return $this;
-		}
-
-		$select = new Select();
-
-		$conditions[] = $select->getWhere($this->where);
-		$conditions[] = $select->getWhere($conditionArray);
-		if (empty($conditions[count($conditions) - 1])) {
-			return $this;
-		}
-		$this->where = ['(' . implode(' OR ', $conditions) . ')'];
-
+		$this->where = ['or', $conditionArray];
 		return $this;
 	}
 
 	/**
-	 * @param        $columns
-	 * @param string $oprea
-	 * @param null $value
+	 * @param string $columns
+	 * @param string|int|bool|null $value
 	 *
-	 * @return array|ActiveQuery|mixed
-	 * @throws Exception
+	 * @param string $opera
+	 * @return QueryTrait
 	 */
-	public function and($columns, $value = NULL, $oprea = '='): static
+	public function and(string $columns, string|int|null|bool $value = NULL, $opera = '='): static
 	{
 		if (!is_numeric($value) && !is_bool($value)) {
 			$value = '\'' . $value . '\'';
 		}
-		$this->where[] = $columns . $oprea . $value;
+		$this->where[] = $columns . $opera . $value;
 		return $this;
 	}
 
@@ -487,7 +473,7 @@ trait QueryTrait
 			$columns = 'CONCAT(' . implode(',^,', $columns) . ')';
 		}
 
-		$this->where[] = ['LIKE', $columns, $value];
+		$this->where[] = $columns . ' LIKE \'%' . addslashes($value) . '%\'';
 
 		return $this;
 	}
@@ -508,7 +494,7 @@ trait QueryTrait
 			$columns = 'CONCAT(' . implode(',^,', $columns) . ')';
 		}
 
-		$this->where[] = ['LLike', $columns, rtrim($value, '%')];
+		$this->where[] = $columns . ' LLike \'%' . addslashes($value) . '\'';
 
 		return $this;
 	}
@@ -529,7 +515,7 @@ trait QueryTrait
 			$columns = 'CONCAT(' . implode(',^,', $columns) . ')';
 		}
 
-		$this->where[] = ['RLike', $columns, ltrim($value, '%')];
+		$this->where[] = $columns . ' RLike \'' . addslashes($value) . '%\'';
 
 		return $this;
 	}
@@ -551,7 +537,7 @@ trait QueryTrait
 			$columns = 'CONCAT(' . implode(',^,', $columns) . ')';
 		}
 
-		$this->where[] = ['NOT LIKE', $columns, ltrim($value, '%')];
+		$this->where[] = $columns . ' NOT LIKE \'%' . addslashes($value) . '%\'';
 
 		return $this;
 	}
@@ -561,6 +547,7 @@ trait QueryTrait
 	 * @param int $value
 	 * @return $this
 	 * @throws Exception
+	 * @see MathematicsCondition
 	 */
 	public function eq(string $column, int $value): static
 	{
@@ -575,6 +562,7 @@ trait QueryTrait
 	 * @param int $value
 	 * @return $this
 	 * @throws Exception
+	 * @see MathematicsCondition
 	 */
 	public function neq(string $column, int $value): static
 	{
@@ -589,6 +577,7 @@ trait QueryTrait
 	 * @param int $value
 	 * @return $this
 	 * @throws Exception
+	 * @see MathematicsCondition
 	 */
 	public function gt(string $column, int $value): static
 	{
@@ -602,6 +591,7 @@ trait QueryTrait
 	 * @param int $value
 	 * @return $this
 	 * @throws Exception
+	 * @see MathematicsCondition
 	 */
 	public function egt(string $column, int $value): static
 	{
@@ -616,6 +606,7 @@ trait QueryTrait
 	 * @param int $value
 	 * @return $this
 	 * @throws Exception
+	 * @see MathematicsCondition
 	 */
 	public function lt(string $column, int $value): static
 	{
@@ -629,6 +620,7 @@ trait QueryTrait
 	 * @param int $value
 	 * @return $this
 	 * @throws Exception
+	 * @see MathematicsCondition
 	 */
 	public function elt(string $column, int $value): static
 	{
@@ -645,15 +637,8 @@ trait QueryTrait
 	 */
 	public function in($columns, $value): static
 	{
-		if ($value instanceof \Closure) {
-			$value = $this->makeNewQuery($value);
-		} else if (empty($value) || !is_array($value)) {
+		if (empty($value) || !is_array($value)) {
 			$value = [-1];
-		} else {
-			$value = array_filter($value, function ($value) {
-				return $value !== null;
-			});
-			$value = array_unique($value);
 		}
 		$this->where[] = ['IN', $columns, $value];
 		return $this;
@@ -684,42 +669,43 @@ trait QueryTrait
 	 */
 	public function notIn($columns, $value): static
 	{
+		if (empty($value) || !is_array($value)) {
+			$value = [-1];
+		}
 		$this->where[] = ['NOT IN', $columns, $value];
+		return $this;
+	}
+
+	/**
+	 * @param string $column
+	 * @param int $start
+	 * @param int $end
+	 * @return $this
+	 */
+	public function between(string $column, int $start, int $end): static
+	{
+		if (empty($column) || empty($start) || empty($end)) {
+			return $this;
+		}
+
+		$this->where[] = $column . ' BETWEEN' . $start . ' AND ' . $end;
 
 		return $this;
 	}
 
 	/**
 	 * @param string $column
-	 * @param string $start
-	 * @param string $end
+	 * @param int $start
+	 * @param int $end
 	 * @return $this
-	 * @throws Exception
 	 */
-	public function between(string $column, string $start, string $end): static
-	{
-		if (empty($column) || empty($start) || empty($end)) {
-			return $this;
-		}
-		$this->where[] = ['BETWEEN', $column, [$start, $end]];
-
-		return $this;
-	}
-
-	/**
-	 * @param string $column
-	 * @param string $start
-	 * @param string $end
-	 * @return $this
-	 * @throws Exception
-	 */
-	public function notBetween(string $column, string $start, string $end): static
+	public function notBetween(string $column, int $start, int $end): static
 	{
 		if (empty($column) || empty($start) || empty($end)) {
 			return $this;
 		}
 
-		$this->where[] = ['NOT BETWEEN', $column, [$start, $end]];
+		$this->where[] = $column . 'NOT BETWEEN' . $start . ' AND ' . $end;
 
 		return $this;
 	}
@@ -744,14 +730,7 @@ trait QueryTrait
 	 */
 	public function where(callable|array|string $conditions): static
 	{
-		if ($conditions instanceof \Closure) {
-			call_user_func($conditions, $this);
-		} else {
-			if (is_string($conditions)) {
-				$conditions = [$conditions];
-			}
-			$this->where[] = $conditions;
-		}
+		$this->where[] = $conditions;
 		return $this;
 	}
 

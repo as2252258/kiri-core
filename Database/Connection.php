@@ -138,7 +138,7 @@ class Connection extends Component
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	public function getSchema(): mixed
+	public function getSchema(): Schema
 	{
 		if ($this->_schema === null) {
 			$this->_schema = Snowflake::createObject([

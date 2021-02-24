@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
-
+use Database\Connection;
+use Database\Mysql\Schema;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
 use Database\ActiveQuery;
 use Exception;
+use Snowflake\Snowflake;
 
 /**
  * Class Change
@@ -51,20 +54,23 @@ class Change extends BaseObject
 
 	/**
 	 * @param string $table
+	 * @param Schema $db
 	 * @param array $attributes
 	 * @param $condition
 	 * @return array|string
-	 * @throws
+	 * @throws Exception
 	 */
-	public function batchUpdate(string $table, array $attributes, $condition): array|string
+	public function batchUpdate(string $table, Schema $db, array $attributes, $condition): array|string
 	{
 		$param = [];
 		$_attributes = [];
+
+		$format = $db->getColumns()->table($table);
 		foreach ($attributes as $key => $val) {
 			if ($val === null) {
 				continue;
 			}
-			$_attributes[':' . $key] = $this->valueEncode($val, true);
+			$_attributes[':' . $key] = $format->fieldFormat($key, $val);
 			$param[] = $key . '=:' . $key;
 		}
 		if (empty($param)) {
@@ -81,10 +87,10 @@ class Change extends BaseObject
 	 * @param $table
 	 * @param $params
 	 * @param $condition
-	 * @return string
+	 * @return string|bool
 	 * @throws Exception
 	 */
-	public function mathematics($table, $params, $condition): string
+	public function mathematics($table, $params, $condition): string|bool
 	{
 		$_tmp = $newParam = [];
 		if (isset($params['incr']) && is_array($params['incr'])) {
@@ -94,7 +100,7 @@ class Change extends BaseObject
 			$_tmp = $this->assemble($params['decr'], ' - ', $_tmp);
 		}
 		if (empty($_tmp)) {
-			throw new Exception('Not has IncrBy or DecrBy values.');
+			return $this->addError('Not has IncrBy or DecrBy values.');
 		}
 		$_tmp = implode(',', $_tmp);
 		if (!empty($condition)) {
@@ -112,40 +118,12 @@ class Change extends BaseObject
 	 */
 	private function assemble($params, $op, array $_tmp): array
 	{
-		$message = 'Incr And Decr action. The value must a numeric.';
 		foreach ($params as $key => $val) {
-			$_tmp[] = $key . '=' . $key . $op . $val;
-			if (!is_numeric($val)) {
-				throw new Exception($message);
-			}
+			$_tmp[] = sprintf('%s=%s%s%d', $key, $key, $op, $val);
 		}
-
 		return $_tmp;
 	}
 
-	/**
-	 * @param $table
-	 * @param array $params
-	 * @return string
-	 */
-	public function insertOrUpdateByDUPLICATE($table, array $params): string
-	{
-		$keys = implode(',', array_keys($params));
-
-		$onValues = [];
-		$values = array_values($params);
-		foreach ($values as $key => $val) {
-			$onValues[] = $this->valueEncode($val, true);
-		}
-
-		$onUpdates = [];
-		foreach ($params as $key => $val) {
-			$onUpdates[] = $key . '=' . $this->valueEncode($val, true);
-		}
-		$newSql = $this->inserts($table, $keys, '(' . implode(',', $onValues) . ')');
-
-		return $newSql . ' ON DUPLICATE KEY UPDATE ' . implode(',', $onUpdates);
-	}
 
 	/**
 	 * @param $table
@@ -171,24 +149,29 @@ class Change extends BaseObject
 
 	/**
 	 * @param $table
-	 * @param $attributes
+	 * @param Schema $db
 	 * @param array|NULL $params
 	 * @return array
 	 * @throws Exception
 	 */
-	public function batchInsert($table, $attributes, array $params = NULL): array
+	public function batchInsert($table, Schema $db, array $params = NULL): array
 	{
 		if (empty($params)) {
 			throw new Exception("save data param not find.");
 		}
 		$insert = $insertData = [];
+
+		$format = $db->getColumns()->table($table);
+
+		$attributes = array_keys(current($params));
+
 		foreach ($params as $key => $val) {
 			if (!is_array($val)) {
 				continue;
 			}
 			array_push($insert, '(:' . implode($key . ',:', $attributes) . $key . ')');
 			foreach ($attributes as $myVal) {
-				$insertData[':' . $myVal . $key] = $this->valueEncode($val[$myVal], true);
+				$insertData[':' . $myVal . $key] = $format->fieldFormat($myVal, $val[$myVal]);
 			}
 		}
 		if (empty($insertData) || empty($insert)) {
@@ -206,40 +189,9 @@ class Change extends BaseObject
 	 * @return string
 	 * 构建SQL语句
 	 */
-	private function inserts($table, $fields, $data): string
+	#[Pure] private function inserts($table, $fields, $data): string
 	{
-		$query = [
-			'INSERT IGNORE INTO', '%s', '(%s)', 'VALUES %s'
-		];
-		$query = implode(' ', $query);
-
-		return sprintf($query, $table, $fields, $data);
-	}
-
-
-	/**
-	 * @param $table
-	 * @param $attributes
-	 * @param $condition
-	 * @return bool|string
-	 * @throws Exception
-	 */
-	public function updateAll($table, $attributes, $condition): bool|string
-	{
-		$param = [];
-		foreach ($attributes as $key => $val) {
-			if ($val === null || $val === '') {
-				continue;
-			}
-			$param[] = $key . '=' . $this->valueEncode($val);
-		}
-		if (empty($param)) return true;
-
-		$param = implode(',', $param);
-		if (!empty($condition)) {
-			$param .= $this->builderWhere($condition);
-		}
-		return 'UPDATE ' . $table . ' SET ' . $param;
+		return sprintf('INSERT IGNORE INTO' . ' %s (%s) VALUES %s', $table, $fields, $data);
 	}
 
 

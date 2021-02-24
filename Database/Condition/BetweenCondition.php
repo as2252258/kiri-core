@@ -17,7 +17,7 @@ class BetweenCondition extends Condition
 	 */
 	public function builder(): string
 	{
-		return $this->column . ' BETWEEN ' . $this->value[0] . ' AND ' . $this->value[1];
+		return $this->column . ' BETWEEN ' . (int)$this->value[0] . ' AND ' . (int)$this->value[1];
 	}
 
 }

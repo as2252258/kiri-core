@@ -22,8 +22,7 @@ class RLikeCondition extends Condition
 		if (!is_string($this->value)) {
 			$this->value = array_shift($this->value);
 		}
-		$this->value = Str::encode($this->value);
-		return $this->column . ' LIKE \'' . $this->value . '%\'';
+		return sprintf('%s LIKE \'%s\'', $this->column, addslashes($this->value));
 	}
 
 }

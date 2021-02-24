@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace Database;
 
 
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Exception;
 use PDO;
 use PDOStatement;
 use Snowflake\Abstracts\Config;
+use Snowflake\Exception\NotFindClassException;
 
 /**
  * Class Command
@@ -88,8 +90,8 @@ class Command extends Component
 	 */
 	public function batchUpdate($tableName, $attributes, $condition): Command
 	{
-		$change = $this->db->getSchema()->getChange();
-		[$sql, $param] = $change->batchUpdate($tableName, $attributes, $condition);
+		$change = $this->db->getSchema();
+		[$sql, $param] = $change->getChange()->batchUpdate($tableName, $change, $attributes, $condition);
 		return $this->setSql($sql)->bindValues($param);
 	}
 
@@ -102,9 +104,8 @@ class Command extends Component
 	 */
 	public function batchInsert($tableName, $attributes): Command
 	{
-		$change = $this->db->getSchema()->getChange();
-		$attribute_key = array_keys(current($attributes));
-		[$sql, $param] = $change->batchInsert($tableName, $attribute_key, $attributes);
+		$change = $this->db->getSchema();
+		[$sql, $param] = $change->getChange()->batchInsert($tableName, $change, $attributes);
 		return $this->setSql($sql)->bindValues($param);
 	}
 
@@ -117,8 +118,8 @@ class Command extends Component
 	 */
 	public function insert($tableName, $attributes, $param): Command
 	{
-		$change = $this->db->getSchema()->getChange();
-		$sql = $change->insert($tableName, $attributes, $param);
+		$sql = $this->db->getSchema()
+			->getChange()->insert($tableName, $attributes, $param);
 		return $this->setSql($sql)->bindValues($param);
 	}
 
@@ -135,13 +136,18 @@ class Command extends Component
 	 * @param $tableName
 	 * @param $param
 	 * @param $condition
-	 * @return Command
+	 * @return bool|Command
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function mathematics($tableName, $param, $condition): static
+	public function mathematics($tableName, $param, $condition): bool|static
 	{
 		$change = $this->db->getSchema()->getChange();
 		$sql = $change->mathematics($tableName, $param, $condition);
+		if ($sql === false) {
+			return false;
+		}
 		return $this->setSql($sql);
 	}
 

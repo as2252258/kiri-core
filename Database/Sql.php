@@ -6,6 +6,7 @@
  * Time: 17:49
  */
 declare(strict_types=1);
+
 namespace Database;
 
 
@@ -19,9 +20,9 @@ use Exception;
  */
 class Sql
 {
-	
+
 	use QueryTrait;
-	
+
 	/**
 	 * @return string
 	 * @throws Exception
@@ -30,4 +31,16 @@ class Sql
 	{
 		return (new Select())->getQuery($this);
 	}
+
+
+	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getCondition(): string
+	{
+		return (new Select())->getWhere($this);
+	}
+
+
 }

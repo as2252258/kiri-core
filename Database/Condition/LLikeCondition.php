@@ -22,8 +22,7 @@ class LLikeCondition extends Condition
 		if (!is_string($this->value)) {
 			$this->value = array_shift($this->value);
 		}
-		$this->value = Str::encode($this->value);
-		return $this->column . ' LIKE \'%' . $this->value . '\'';
+		return $this->column . ' LIKE \'%' . addslashes($this->value) . '\'';
 	}
 
 }

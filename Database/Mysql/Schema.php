@@ -39,9 +39,9 @@ class Schema extends Component
 	}
 
 	/**
-	 * @return Change|null
+	 * @return Change
 	 */
-	public function getChange(): ?Change
+	public function getChange(): Change
 	{
 		if ($this->_change === null) {
 			$this->_change = new Change();

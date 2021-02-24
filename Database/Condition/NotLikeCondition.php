@@ -22,8 +22,7 @@ class NotLikeCondition extends Condition
 		if (!is_string($this->value)) {
 			$this->value = array_shift($this->value);
 		}
-		$this->value = Str::encode($this->value);
-		return $this->column . ' NOT LIKE \'%' . $this->value . '%\'';
+		return $this->column . ' NOT LIKE \'%' . addslashes($this->value) . '%\'';
 	}
 
 }

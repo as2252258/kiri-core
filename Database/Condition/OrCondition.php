@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database\Condition;
 
 
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class OrCondition
@@ -12,12 +13,15 @@ namespace Database\Condition;
 class OrCondition extends Condition
 {
 
+	public array $oldParams = [];
+
+
 	/**
 	 * @return string
 	 */
-	public function builder(): string
+	#[Pure] public function builder(): string
 	{
-		return 'OR ' . $this->resolve($this->column, $this->value, $this->opera);
+		return sprintf('(%s) OR %s', implode(' AND ', $this->oldParams), addslashes($this->value));
 	}
 
 }

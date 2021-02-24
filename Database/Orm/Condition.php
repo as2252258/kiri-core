@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
+use Database\Condition\OrCondition;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
 use Snowflake\Core\Str;
@@ -61,7 +63,7 @@ trait Condition
 	 * @param $join
 	 * @return string
 	 */
-	private function builderJoin($join): string
+	#[Pure] private function builderJoin($join): string
 	{
 		if (!empty($join)) {
 			return ' ' . implode(' ', $join);
@@ -76,76 +78,106 @@ trait Condition
 	 */
 	private function builderWhere($where): string
 	{
-		if (empty($where)) {
-			return '';
-		}
-		if (is_string($where)) {
-			return sprintf(' WHERE %s', $where);
-		}
 		$_tmp = [];
-		$where = array_filter($where);
-		foreach ($where as $key => $value) {
-			if (is_array($value)) {
-				$value = $this->arrayMap($value);
-			} else if (!is_numeric($key)) {
-				$value = $key . '=' . $this->valueEncode($value);
-			}
-			if ($value === null) {
-				continue;
-			}
+		if (empty($where)) return '';
+		foreach ($where as $value) {
+			$_value = is_string($value) ? $value : $this->conditionMap($value);
+
+			if (empty($_value)) continue;
+
 			$_tmp[] = $value;
 		}
-
 		if (!empty($_tmp)) {
-			return ' WHERE ' . implode(' AND ', $_tmp);
+			return sprintf(' WHERE %s', implode(' AND ', $_tmp));
 		}
 		return '';
 	}
 
+
 	/**
-	 * @param $value
-	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @param $condition
+	 * @return string
+	 * @throws Exception
 	 */
-	private function arrayMap($value): mixed
+	private function conditionMap($condition): string
 	{
-		$classMap = ConditionClassMap::$conditionMap;
-		if (isset($value[0])) {
-			if (!isset($classMap[strtoupper($value[0])])) {
-				return $value[0];
+		$array = [];
+		if (is_string($condition) || empty($condition)) {
+			return $condition;
+		}
+		foreach ($condition as $key => $value) {
+			if (empty($value)) continue;
+			if (!is_numeric($key)) {
+				$array[] = sprintf('%s=%s', $key, $value);
+			} else if (is_array($value)) {
+				$array = $this->_arrayMap($value, $array);
+			} else {
+				$array[] = sprintf('%s', $value);
 			}
-			$value[0] = strtoupper($value[0]);
-			$result = $this->classMap($value);
-		} else {
-			/** @var HashCondition $condition */
-			$condition = Snowflake::createObject(HashCondition::class);
-			$condition->setValue($value);
-			$condition->setOpera('=');
-			$result = $condition->builder();
 		}
-		return $result;
+		return implode(' AND ', $array);
 	}
 
+
 	/**
-	 * @param $value
-	 * @return mixed
+	 * @param $condition
+	 * @param $array
+	 * @return array
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function classMap($value): mixed
+	private function _arrayMap($condition, $array): mixed
 	{
-		[$option['opera'], $option['column'], $option['value']] = $value;
-
-		$class = ConditionClassMap::$conditionMap[strtoupper($option['opera'])];
-		if (!is_array($class)) {
-			$class = ['class' => $class];
+		if (!isset($condition[0])) {
+			return $this->_arrayHash($array, $condition);
 		}
-		$option = array_merge($option, $class);
-
-		/** @var Condition $class */
-		return Snowflake::createObject($option)->builder();
+		$stroppier = strtoupper($condition[0]);
+		if (str_contains($stroppier, 'OR')) {
+			if (!is_string($condition[2])) {
+				$condition[2] = $this->_hashMap($condition[2]);
+			}
+			return Snowflake::createObject(['class' => OrCondition::class, 'value' => $condition[2], 'column' => $condition[1], 'oldParams' => $array]);
+		}
+		if (isset(ConditionClassMap::$conditionMap[$stroppier])) {
+			$defaultConfig = ConditionClassMap::$conditionMap[$stroppier];
+			$create = array_merge($defaultConfig, ['column' => $condition[1], 'value' => $condition[2]]);
+			$array[] = Snowflake::createObject($create);
+		} else {
+			$array[] = Snowflake::createObject(['class' => HashCondition::class, 'value' => $condition]);
+		}
+		return $array;
 	}
+
+
+	/**
+	 * @param $array
+	 * @param $condition
+	 * @return mixed
+	 */
+	private function _arrayHash($array, $condition): array
+	{
+		$array[] = implode(' AND ', $this->_hashMap($condition));
+		return $array;
+	}
+
+
+	/**
+	 * @param $condition
+	 * @return array
+	 */
+	private function _hashMap($condition): array
+	{
+		$_array = [];
+		foreach ($condition as $key => $value) {
+			if (!is_numeric($key)) {
+				$_array[] = sprintf('%s=%s', $key, $value);
+			} else {
+				$_array[] = $value;
+			}
+		}
+		return $_array;
+	}
+
 
 	/**
 	 * @param $group
@@ -163,7 +195,7 @@ trait Condition
 	 * @param $order
 	 * @return string
 	 */
-	private function builderOrder($order): string
+	#[Pure] private function builderOrder($order): string
 	{
 		if (!empty($order)) {
 			return ' ORDER BY ' . implode(',', $order);
@@ -176,19 +208,15 @@ trait Condition
 	 * @param ActiveQuery $query
 	 * @return string
 	 */
-	private function builderLimit(ActiveQuery $query): string
+	#[Pure] private function builderLimit(ActiveQuery $query): string
 	{
-		$limit = $query->limit;
-		if (!is_numeric($limit) || $limit < 1) {
+		if (!is_numeric($query->limit) || $query->limit < 1) {
 			return "";
 		}
-		$offset = $query->offset;
-
-		if ($offset === null) {
-			return ' LIMIT ' . $limit;
+		if ($query->offset !== null) {
+			return ' LIMIT ' . $query->offset . ',' . $query->limit;
 		}
-
-		return ' LIMIT ' . $offset . ',' . $limit;
+		return ' LIMIT ' . $query->limit;
 	}
 
 

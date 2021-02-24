@@ -5,6 +5,7 @@ namespace Database\Condition;
 
 use Database\ActiveQuery;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class InCondition
@@ -18,18 +19,12 @@ class InCondition extends Condition
 	 * @return string
 	 * @throws Exception
 	 */
-	public function builder(): string
+	#[Pure] public function builder(): string
 	{
-		if ($this->value instanceof ActiveQuery) {
-			$this->value = $this->value->getBuild()->getQuery($this->value);
-		} else {
-			$this->value = array_filter($this->format($this->value));
-			if (empty($this->value)) {
-				return '';
-			}
-			$this->value = implode(',', $this->value);
+		if (is_array($this->value)) {
+			return sprintf('%s IN (\'%s\')', $this->column, implode('\',\'', $this->value));
 		}
-		return '`' . $this->column . '` in(' . $this->value . ')';
+		return '';
 	}
 
 }
