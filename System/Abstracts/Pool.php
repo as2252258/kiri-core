@@ -26,7 +26,7 @@ abstract class Pool extends Component
 	/** @var Channel[] */
 	private array $_items = [];
 
-	protected int $max = 60;
+	public int $max = 60;
 
 	use Timeout;
 
