@@ -14,9 +14,6 @@ use Snowflake\Snowflake;
 use Database\ActiveQuery;
 use Database\Base\ConditionClassMap;
 use Database\Condition\HashCondition;
-use Database\Sql;
-use Database\Traits\QueryTrait;
-use Database\Condition\Condition as CCondition;
 use Exception;
 
 /**
@@ -80,8 +77,6 @@ trait Condition
 	{
 		$_tmp = [];
 		if (empty($where)) return '';
-
-		var_dump($where);
 		foreach ($where as $key => $value) {
 			$_value = is_string($value) ? $value : $this->conditionMap($value);
 
@@ -107,6 +102,8 @@ trait Condition
 		if (is_string($condition) || empty($condition)) {
 			return $condition;
 		}
+
+		var_dump($condition);
 		foreach ($condition as $key => $value) {
 			$array = $this->resolve($array, $key, $value);
 		}

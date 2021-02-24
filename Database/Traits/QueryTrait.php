@@ -731,7 +731,6 @@ trait QueryTrait
 	public function where(callable|array|string $conditions): static
 	{
 		$this->where[] = $conditions;
-		var_dump($this->where);
 		return $this;
 	}
 
