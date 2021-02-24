@@ -25,14 +25,13 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 * ObjectPool constructor.
 	 * @param array $config
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function __construct($config = [])
 	{
 		$this->max = 5000;
 
-
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'destruct']);
+		listen(Event::EVENT_AFTER_REQUEST, [$this, 'destruct']);
 
 		parent::__construct($config);
 	}
