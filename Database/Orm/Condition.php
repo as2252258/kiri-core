@@ -88,7 +88,6 @@ trait Condition
 			$_tmp[] = $value;
 		}
 		if (!empty($_tmp)) {
-			var_dump($_tmp);
 			return sprintf(' WHERE %s', implode(' AND ', $_tmp));
 		}
 		return '';
@@ -129,6 +128,7 @@ trait Condition
 	 */
 	private function _arrayMap($condition, $array): string
 	{
+		var_dump($condition);
 		if (!isset($condition[0])) {
 			return implode(' AND ', $this->_hashMap($condition));
 		}
