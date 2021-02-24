@@ -104,7 +104,10 @@ class Application extends BaseApplication
 	public function start(Input $argv): bool|string
 	{
 		try {
-//			$this->scan_system_annotation();
+			ini_set('opcache.enable', 1);
+			ini_set('opcache.enable_cli', 1);
+			ini_set('opcache.jit_buffer_size', '100M');
+			ini_set('opcache.jit', 1255);
 
 			fire(Event::SERVER_BEFORE_START);
 
