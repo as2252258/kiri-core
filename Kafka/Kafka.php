@@ -126,6 +126,7 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param $kafka
 	 * @return array
+	 * @throws ComponentException
 	 */
 	private function kafkaConfig($kafka): array
 	{

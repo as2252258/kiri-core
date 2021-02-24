@@ -54,12 +54,13 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 * @param string $name
 	 * @param mixed $config
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public function createClient(string $name, mixed $config): mixed
 	{
-		return Snowflake::createObject(...$config);
+		if (isset($config[1])) {
+			return new $config[0](...$config[1]);
+		}
+		return new $config[0]();
 	}
 
 
