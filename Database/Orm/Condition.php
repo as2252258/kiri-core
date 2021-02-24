@@ -85,7 +85,7 @@ trait Condition
 
 			if (empty($_value)) continue;
 
-			$_tmp[] = $value;
+			$_tmp[] = $_value;
 		}
 		if (!empty($_tmp)) {
 			return sprintf(' WHERE %s', implode(' AND ', $_tmp));
