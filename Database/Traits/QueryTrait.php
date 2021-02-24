@@ -733,6 +733,8 @@ trait QueryTrait
 		if (is_array($conditions)) {
 			$conditions = [$conditions];
 		}
+		var_dump($conditions);
+
 		$this->where[] = $conditions;
 		return $this;
 	}
