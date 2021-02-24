@@ -502,7 +502,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		static::getDb()->enablingTransactions();
 		[$attributes, $condition, $param] = $this->filtration_and_separation();
 		if (($primary = $this->getPrimary()) !== null) {
-			$condition = [$primary => $this->getPrimaryValue()];
+			$condition = [[$primary => $this->getPrimaryValue()]];
 		}
 
 		if (!$this->isNewExample) {
