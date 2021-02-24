@@ -31,7 +31,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	{
 		$this->max = 5000;
 
-		listen(Event::EVENT_AFTER_REQUEST, [$this, 'destruct']);
+		listen(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'destruct']);
 
 		parent::__construct($config);
 	}
