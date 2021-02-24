@@ -122,14 +122,14 @@ trait Condition
 	/**
 	 * @param $condition
 	 * @param $array
-	 * @return array
+	 * @return string
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function _arrayMap($condition, $array): mixed
+	private function _arrayMap($condition, $array): string
 	{
 		if (!isset($condition[0])) {
-			return $this->_arrayHash($array, $condition);
+			return implode(' AND ', $this->_hashMap($condition));
 		}
 		$stroppier = strtoupper($condition[0]);
 		if (str_contains($stroppier, 'OR')) {
@@ -145,19 +145,7 @@ trait Condition
 		} else {
 			$array[] = Snowflake::createObject(['class' => HashCondition::class, 'value' => $condition]);
 		}
-		return $array;
-	}
-
-
-	/**
-	 * @param $array
-	 * @param $condition
-	 * @return mixed
-	 */
-	private function _arrayHash($array, $condition): array
-	{
-		$array[] = implode(' AND ', $this->_hashMap($condition));
-		return $array;
+		return implode(' AND ', $array);
 	}
 
 
