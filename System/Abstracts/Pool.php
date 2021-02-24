@@ -62,7 +62,7 @@ abstract class Pool extends Component
 			return $this->createClient($name, $callback);
 		}
 		if (!$this->hasItem($name)) {
-			if ($this->creates === -1) {
+			if ($this->creates === -1 && !is_callable($callback)) {
 				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 			}
 			if (!Context::hasContext('create::client::ing::' . $name)) {
