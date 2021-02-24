@@ -730,9 +730,11 @@ trait QueryTrait
 	 */
 	public function where(callable|array|string $conditions): static
 	{
+		var_dump($conditions);
 		if (is_array($conditions)) {
 			$conditions = [$conditions];
 		}
+		var_dump($conditions);
 		$this->where[] = $conditions;
 		return $this;
 	}

@@ -80,6 +80,8 @@ trait Condition
 	{
 		$_tmp = [];
 		if (empty($where)) return '';
+
+		var_dump($where);
 		foreach ($where as $value) {
 
 			var_dump($value);
