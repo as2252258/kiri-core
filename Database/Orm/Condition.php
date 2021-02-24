@@ -106,16 +106,34 @@ trait Condition
 			return $condition;
 		}
 		foreach ($condition as $key => $value) {
-			if (empty($value)) continue;
-			if (!is_numeric($key)) {
-				$array[] = sprintf('%s=%s', $key, $value);
-			} else if (is_array($value)) {
-				$array = $this->_arrayMap($value, $array);
-			} else {
-				$array[] = sprintf('%s', $value);
-			}
+			$array = $this->resolve($array, $key, $value);
 		}
-		return implode(' AND ', $array);
+		if (is_array($array)) {
+			return implode(' AND ', $array);
+		}
+		return $array;
+	}
+
+
+	/**
+	 * @param $array
+	 * @param $key
+	 * @param $value
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function resolve($array, $key, $value): mixed
+	{
+		if (empty($value)) return $array;
+		if (!is_numeric($key)) {
+			$array[] = sprintf('%s=%s', $key, $value);
+		} else if (is_array($value)) {
+			$array = $this->_arrayMap($value, $array);
+		} else {
+			$array[] = sprintf('%s', $value);
+		}
+		return $array;
 	}
 
 
@@ -128,7 +146,6 @@ trait Condition
 	 */
 	private function _arrayMap($condition, $array): string
 	{
-		var_dump($condition);
 		if (!isset($condition[0])) {
 			return implode(' AND ', $this->_hashMap($condition));
 		}
