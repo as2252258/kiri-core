@@ -34,9 +34,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 			return $config;
 		}
 
-		$className = hash('sha384', $config);
-
-		$object = $this->getFromChannel($className, [$config, $construct]);
+		$object = $this->getFromChannel($config, [$config, $construct]);
 		if (method_exists($object, 'clean')) {
 			$object->clean();
 		}
