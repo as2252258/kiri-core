@@ -730,7 +730,7 @@ trait QueryTrait
 	 */
 	public function where(callable|array|string $conditions): static
 	{
-		$this->where[] = $conditions;
+		$this->where[] = [$conditions];
 		return $this;
 	}
 
