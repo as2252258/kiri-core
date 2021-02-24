@@ -907,8 +907,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
+		$className = get_called_class();
+
 		/** @var static $model */
-		$model = objectPool(get_called_class());
+		$model = objectPool($className, function () use ($className) {
+			return new $className();
+		});
 		$model->attributes = $data;
 		$model->setIsCreate(false);
 		return $model;

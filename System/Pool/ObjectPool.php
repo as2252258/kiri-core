@@ -37,11 +37,11 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 
 	/**
 	 * @param array $config
-	 * @param array $construct
+	 * @param callable $construct
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function load(mixed $config, array $construct = []): mixed
+	public function load(mixed $config, callable $construct): mixed
 	{
 		if (is_object($config)) {
 			return $config;
@@ -57,10 +57,7 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function createClient(string $name, mixed $config): mixed
 	{
-		if (isset($config[1])) {
-			return new $config[0](...$config[1]);
-		}
-		return new $config[0]();
+		return call_user_func($config[1]);
 	}
 
 

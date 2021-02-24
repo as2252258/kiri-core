@@ -114,7 +114,13 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 */
 	public function getModel(): ActiveRecord
 	{
-		return objectPool($this->model);
+		$model = $this->model;;
+		if (is_object($model)) {
+			return $model;
+		}
+		return objectPool($model, function () use ($model) {
+			return new $model();
+		});
 	}
 
 

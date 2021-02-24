@@ -222,12 +222,11 @@ if (!function_exists('objectPool')) {
 
 	/**
 	 * @param string $className
-	 * @param array $construct
+	 * @param callable $construct
 	 * @return mixed
 	 * @throws ComponentException
-	 * @throws Exception
 	 */
-	function objectPool(mixed $className, array $construct = []): mixed
+	function objectPool(mixed $className, callable $construct): mixed
 	{
 		return Snowflake::app()->getObject()->load($className, $construct);
 	}
