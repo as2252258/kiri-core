@@ -10,6 +10,7 @@ use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 
 /**
  * Class ObjectPool
@@ -81,21 +82,23 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function destruct()
 	{
-		if (empty($this->_waitRecover)) {
-			return;
-		}
-		foreach ($this->_waitRecover as $name => $value) {
-			if (empty($value)) {
-				continue;
+		$this->async_create(function ($scope) {
+			if (empty($scope->_waitRecover)) {
+				return;
 			}
-			foreach ($value as $object) {
-				if (method_exists($object, 'clean')) {
-					$object->clean();
+			foreach ($scope->_waitRecover as $name => $value) {
+				if (empty($value)) {
+					continue;
 				}
-				$this->push($name, $object);
+				foreach ($value as $object) {
+					if (method_exists($object, 'clean')) {
+						$object->clean();
+					}
+					$scope->push($name, $object);
+				}
+				unset($scope->_waitRecover[$name]);
 			}
-		}
-		$this->_waitRecover = [];
+		}, $this);
 	}
 
 }
