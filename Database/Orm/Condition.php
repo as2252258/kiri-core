@@ -78,7 +78,6 @@ trait Condition
 		$_tmp = [];
 		if (empty($where)) return '';
 		foreach ($where as $key => $value) {
-			var_dump($value);
 			$_value = is_string($value) ? $value : $this->conditionMap($value);
 
 			if (empty($_value)) continue;
@@ -100,11 +99,11 @@ trait Condition
 	private function conditionMap($condition): string
 	{
 		$array = [];
+		var_dump($condition);
 		if (is_string($condition) || empty($condition)) {
 			return $condition;
 		}
 
-		var_dump($condition);
 		foreach ($condition as $key => $value) {
 			$array = $this->resolve($array, $key, $value);
 		}
