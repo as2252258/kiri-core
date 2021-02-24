@@ -22,16 +22,19 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 
 
 	/**
-	 * set pool max length
+	 * ObjectPool constructor.
+	 * @param array $config
 	 * @throws ComponentException
-	 * @throws Exception
 	 */
-	public function init()
+	public function __construct($config = [])
 	{
 		$this->max = 5000;
 
+
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::EVENT_AFTER_REQUEST, [$this, 'destruct']);
+
+		parent::__construct($config);
 	}
 
 
@@ -80,10 +83,10 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 	 */
 	public function destruct()
 	{
+		$this->warning('destruct object...');
 		if (empty($this->_waitRecover)) {
 			return;
 		}
-		$this->warning('destruct object...');
 		foreach ($this->_waitRecover as $name => $value) {
 			if (empty($value)) {
 				continue;
