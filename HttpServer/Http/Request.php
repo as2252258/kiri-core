@@ -36,19 +36,14 @@ defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
 class Request extends HttpService
 {
 
-	/** @var int $fd */
 	public int $fd = 0;
 
-	/** @var HttpParams */
-	public HttpParams $params;
+	public ?HttpParams $params;
 
-	/** @var HttpHeaders */
-	public HttpHeaders $headers;
+	public ?HttpHeaders $headers;
 
-	/** @var bool */
 	public bool $isCli = FALSE;
 
-	/** @var float */
 	public float $startTime;
 
 	public string $uri = '';
