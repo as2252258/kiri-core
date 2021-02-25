@@ -225,19 +225,17 @@ class Command extends Component
 	{
 		$connect = $this->db->getConnect($this->sql);
 		if (!($connect instanceof PDO)) {
-			return null;
+			return $this->addError('数据库繁忙, 请稍后再试.');
 		}
-		if (!($query = $connect->query($this->sql))) return null;
-		if ($type === static::ROW_COUNT) {
-			$result = $query->rowCount();
-		} else if ($type === static::FETCH_COLUMN) {
-			$result = $query->fetchColumn();
-		} else if ($type === static::FETCH_ALL) {
-			$result = $query->fetchAll(PDO::FETCH_ASSOC);
-		} else {
-			$result = $query->fetch(PDO::FETCH_ASSOC);
+		if (!($query = $connect->query($this->sql))) {
+			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
-		return $result;
+		return match ($type) {
+			self::ROW_COUNT => $query->rowCount(),
+			self::FETCH_COLUMN => $query->fetchColumn(),
+			self::FETCH_ALL => $query->fetchAll(PDO::FETCH_ASSOC),
+			default => $query->fetch(PDO::FETCH_ASSOC)
+		};
 	}
 
 	/**
@@ -258,7 +256,7 @@ class Command extends Component
 			return true;
 		}
 		$result = $connection->lastInsertId();
-		if ($result == 0 && $hasAutoIncrement->hasAutoIncrement()) {
+		if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
 			return $this->addError($connection->errorInfo()[2], 'mysql');
 		}
 		return $result == 0 ? true : $result;

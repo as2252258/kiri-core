@@ -167,13 +167,13 @@ class ActiveRecord extends BaseActiveRecord
 
 
 	/**
-	 * @param array $attributes
+	 * @param array $fields
 	 * @return ActiveRecord|bool
 	 * @throws Exception
 	 */
-	public function update(array $attributes): static|bool
+	public function update(array $fields): static|bool
 	{
-		return $this->save($attributes);
+		return $this->save($fields);
 	}
 
 	/**

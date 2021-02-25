@@ -190,10 +190,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @throws Exception
 	 */
-	public function hasAutoIncrement(): bool
+	public function isAutoIncrement(): bool
 	{
-		$autoIncrement = $this->getAutoIncrement();
-		return $autoIncrement !== null;
+		return $this->getAutoIncrement() !== null;
 	}
 
 	/**
@@ -434,7 +433,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	private function setPrimary($lastId, $param): static
 	{
-		if ($this->hasAutoIncrement()) {
+		if ($this->isAutoIncrement()) {
 			$this->setAttribute($this->getAutoIncrement(), (int)$lastId);
 			return $this;
 		}
