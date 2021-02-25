@@ -920,6 +920,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return new $className();
 		});
 		$model->setAttributes($data);
+		$model->setOldAttributes($data);
 		$model->setIsCreate(false);
 		return $model;
 	}
