@@ -14,6 +14,7 @@ use Annotation\Event;
 use Annotation\Inject;
 use Annotation\Model\Get;
 use ArrayAccess;
+use Database\SqlBuilder;
 use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
@@ -405,14 +406,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return FALSE;
 		}
 		$dbConnection = static::getDb();
-		$change = $dbConnection->getSchema()->getChange();
-		$sqlBuilder = $change->insert(static::getTable(), $attributes, $param);
+
+		[$sql, $param] = SqlBuilder::builder(static::find())->insert($param);
 
 		$trance = $dbConnection->beginTransaction();
 		try {
-			$commandExec = $dbConnection->createCommand($sqlBuilder, $param);
-			if (!($lastId = (int)$commandExec->save(true, $this))) {
-				throw new Exception('保存失败.' . $sqlBuilder);
+			if (!($lastId = (int)$dbConnection->createCommand($sql, $param)->save(true, $this))) {
+				throw new Exception('保存失败.' . $sql);
 			}
 			$trance->commit();
 			$lastId = $this->setPrimary($lastId, $param);
@@ -452,33 +452,36 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @param $param
+	 * @param $fields
 	 * @param $condition
-	 * @param $attributes
+	 * @param $param
 	 * @return $this|bool
 	 * @throws Exception
 	 */
-	private function update($attributes, $condition, $param): bool|static
+	private function update($fields, $condition, $param): bool|static
 	{
 		if (empty($param)) {
 			return true;
 		}
 		$command = static::getDb();
-		$change = $command->getSchema()->getChange();
-		$sql = $change->update(static::getTable(), $attributes, $condition, $param);
+
+		if ($this->hasPrimary()) {
+			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
+		}
+
+		[$sql, $param] = SqlBuilder::builder(static::find()->where($condition))->update($param);
 
 		$trance = $command->beginTransaction();
 		if (!$command->createCommand($sql, $param)->save(false, $this)) {
 			$trance->rollback();
-			$result = false;
-		} else {
-			$trance->commit();
-
-			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
-
-			$result = true;
+			return false;
 		}
-		return $result;
+
+		$trance->commit();
+
+		$this->event->dispatch(self::AFTER_SAVE, [$fields, $param]);
+
+		return true;
 	}
 
 	/**
@@ -488,9 +491,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function save($data = NULL): static|bool
 	{
-		if (is_array($data)) {
-			$this->_attributes = array_merge($this->_attributes, $data);
+		if (!is_null($data)) {
+			$this->attributes = $data;
 		}
+
 		if (!$this->validator($this->rules())) {
 			return false;
 		}
@@ -500,15 +504,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		}
 
 		static::getDb()->enablingTransactions();
-		[$attributes, $condition, $param] = $this->filtration_and_separation();
-		if (($primary = $this->getPrimary()) !== null) {
-			$condition = [[$primary => $this->getPrimaryValue()]];
-		}
+		[$change, $condition, $fields] = $this->filtration_and_separation();
 
 		if (!$this->isNewExample) {
-			return $this->update($param, $condition, $attributes);
+			return $this->update($fields, $condition, $change);
 		}
-		return $this->insert($attributes, $param);
+		return $this->insert($change, $fields);
 	}
 
 
@@ -574,8 +575,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$condition = [];
 		$columns = static::getColumns();
 		foreach ($this->_attributes as $key => $val) {
-			if ($val === NULL) continue;
 			$oldValue = $this->_oldAttributes[$key] ?? null;
+
 			if ($val !== $oldValue) {
 				$_tmp[$key] = $columns->fieldFormat($key, $val);
 			} else {

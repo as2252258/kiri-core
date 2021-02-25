@@ -47,7 +47,7 @@ class Change extends BaseObject
 		}
 		$where = implode(',', $_tmp);
 		if (!empty($condition)) {
-			$where .= $this->builderWhere($condition);
+			$where .= $this->where($condition);
 		}
 		return "UPDATE " . $model . ' SET ' . $where;
 	}
@@ -104,7 +104,7 @@ class Change extends BaseObject
 		}
 		$_tmp = implode(',', $_tmp);
 		if (!empty($condition)) {
-			$_tmp .= $this->builderWhere($condition);
+			$_tmp .= $this->where($condition);
 		}
 		return 'UPDATE ' . $table . ' SET ' . $_tmp;
 	}
@@ -206,7 +206,7 @@ class Change extends BaseObject
 			$query->from = $query->getTable();
 		}
 
-		$condition = $this->builderWhere($query->where);
+		$condition = $this->where($query->where);
 		if (empty($condition) && !$query->ifNotWhere) {
 			throw new Exception('clear data must has condition.');
 		}

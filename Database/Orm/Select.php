@@ -56,7 +56,7 @@ class Select extends BaseObject
 			$this->builderFrom($query->from),
 			$this->builderAlias($query->alias),
 			$this->builderJoin($query->join),
-			$this->builderWhere($query->where),
+			$this->where($query->where),
 			$this->builderGroup($query->group)
 		], function ($value) {
 			return !empty($value);
@@ -74,25 +74,6 @@ class Select extends BaseObject
 		return implode('', $builder);
 	}
 
-	/**
-	 * @param null $select
-	 * @param bool $isCount
-	 * @return string
-	 */
-	private function builderSelect($select = NULL, $isCount = false): string
-	{
-		if ($isCount === true) {
-			return 'SELECT COUNT(*)';
-		}
-		if (empty($select)) {
-			return "SELECT *";
-		}
-		if (is_array($select)) {
-			return "SELECT " . implode(',', $select);
-		} else {
-			return "SELECT " . $select;
-		}
-	}
 
 	/**
 	 * @param $table

@@ -13,9 +13,11 @@ namespace Database;
 use Annotation\Model\Get;
 use Exception;
 use Database\Base\BaseActiveRecord;
+use ReflectionException;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -113,12 +115,15 @@ class ActiveRecord extends BaseActiveRecord
 	/**
 	 * @param array $condition
 	 * @param array $attributes
-	 * @return mixed
+	 * @return bool|ActiveRecord
 	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public static function findOrCreate(array $condition, array $attributes = []): mixed
+	public static function findOrCreate(array $condition, array $attributes = []): bool|static
 	{
+		/** @var static $select */
 		$select = static::find()->where($condition)->first();
 		if (!empty($select)) {
 			return $select;
@@ -134,7 +139,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		$select->attributes = $attributes;
 		if (!$select->save()) {
-			throw new Exception($select->getLastError());
+			return \logger()->addError($select->getLastError(), 'mysql');
 		}
 		return $select;
 	}

@@ -165,20 +165,15 @@ class Collection extends AbstractCollection
 	public function delete(): bool
 	{
 		$model = $this->getModel();
-		if (!$model->hasPrimary()) {
-			return false;
-		}
+		if (!$model->hasPrimary()) return false;
 		$ids = [];
 		foreach ($this as $item) {
-			$ids[] = $item->getPrimaryValue();
+			$id = $item->getPrimaryValue();
+			if (!empty($id)) {
+				$ids[] = $id;
+			}
 		}
-		$ids = array_filter($ids);
-		if (empty($ids)) {
-			return false;
-		}
-		return $model::find()
-			->in($model->getPrimary(), $ids)
-			->delete();
+		return $model::find()->in($model->getPrimary(), $ids)->delete();
 	}
 
 	/**
@@ -240,7 +235,7 @@ class Collection extends AbstractCollection
 	/**
 	 * @return bool
 	 */
-	public function isEmpty(): bool
+	#[Pure] public function isEmpty(): bool
 	{
 		return $this->size() < 1;
 	}

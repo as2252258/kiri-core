@@ -13,6 +13,7 @@ use Snowflake\Abstracts\Component;
 use Database\Orm\Select;
 use Database\Traits\QueryTrait;
 use Exception;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -45,32 +46,26 @@ class ActiveQuery extends Component
 	public array $attributes = [];
 
 
+	private SqlBuilder $builder;
+
+
 	/**
 	 * Comply constructor.
 	 * @param $model
 	 * @param array $config
 	 * @throws
 	 */
-	public function __construct($model = null, $config = [])
+	public function __construct($model, $config = [])
 	{
-		if (empty($model)) {
-			return parent::__construct($config);
-		}
 		if (!is_object($model)) {
 			$model = Snowflake::createObject($model);
 		}
 		$this->modelClass = $model;
-		return parent::__construct($config);
+
+		$this->builder = SqlBuilder::builder($this);
+		parent::__construct($config);
 	}
 
-	/**
-	 *
-	 */
-	public function afterInit()
-	{
-		$this->debug(get_called_class() . ' AFTER INIT.');
-		$this->clear();
-	}
 
 	/**
 	 * 清除不完整数据
@@ -133,16 +128,24 @@ class ActiveQuery extends Component
 		return $this;
 	}
 
+
+	/**
+	 * @param $sql
+	 * @return mixed
+	 */
+	public function execute($sql): Command
+	{
+		return $this->modelClass::getDb()->createCommand($sql);
+	}
+
+
 	/**
 	 * @return ActiveRecord|array|null
 	 * @throws Exception
 	 */
 	public function first(): ActiveRecord|array|null
 	{
-		$data = $this->modelClass::getDb()
-			->createCommand($this->oneLimit()->queryBuilder())
-			->one();
-
+		$data = $this->execute($this->builder->one())->one();
 		if (empty($data)) {
 			return NULL;
 		}
@@ -168,8 +171,7 @@ class ActiveQuery extends Component
 	 */
 	public function flush(): array|bool|int|string|null
 	{
-		$sql = $this->getChange()->truncate($this->getTable());
-		return $this->command($sql)->flush();
+		return $this->execute($this->builder->truncate())->exec();
 	}
 
 
@@ -206,7 +208,7 @@ class ActiveQuery extends Component
 	 */
 	public function all(): Collection|array
 	{
-		$data = $this->modelClass::getDb()->createCommand($this->queryBuilder())->all();
+		$data = $this->execute($this->builder->all())->all();
 		$collect = new Collection($this, $data, $this->modelClass);
 		if ($this->asArray) {
 			return $collect->toArray();
@@ -251,9 +253,7 @@ class ActiveQuery extends Component
 	 */
 	public function count(): int
 	{
-		$data = $this->modelClass::getDb()
-			->createCommand($this->getBuild()->count($this))
-			->one();
+		$data = $this->execute($this->builder->count())->one();
 		if ($data && is_array($data)) {
 			return (int)array_shift($data);
 		}
@@ -268,8 +268,7 @@ class ActiveQuery extends Component
 	 */
 	public function batchUpdate(array $data): Command|array|bool|int|string
 	{
-		return $this->getDb()->createCommand()
-			->batchUpdate($this->getTable(), $data, $this->getCondition())
+		return $this->execute($this->builder->update($data))
 			->exec();
 	}
 
@@ -280,8 +279,7 @@ class ActiveQuery extends Component
 	 */
 	public function batchInsert(array $data): bool
 	{
-		return $this->getDb()->createCommand()
-			->batchInsert($this->getTable(), $data)
+		return $this->execute($this->builder->insert($data, true))
 			->exec();
 	}
 
@@ -293,8 +291,7 @@ class ActiveQuery extends Component
 	 */
 	public function value($filed)
 	{
-		$first = $this->first()->toArray();
-		return $first[$filed] ?? null;
+		return $this->first()[$filed] ?? null;
 	}
 
 	/**
@@ -303,10 +300,7 @@ class ActiveQuery extends Component
 	 */
 	public function exists(): bool
 	{
-		$column = $this->modelClass::getDb()
-			->createCommand($this->queryBuilder())
-			->fetchColumn();
-		return $column !== false;
+		return $this->execute($this->builder->one())->fetchColumn() !== false;
 	}
 
 
@@ -316,79 +310,6 @@ class ActiveQuery extends Component
 	 */
 	public function delete(): bool
 	{
-		return $this->modelClass::getDb()
-			->createCommand($this->queryBuilder())
-			->delete();
-	}
-
-	/**
-	 * @return string
-	 * @throws Exception
-	 */
-	public function getCondition(): string
-	{
-		return $this->getBuild()->getWhere($this->where);
-	}
-
-	/**
-	 * @return string
-	 * @throws Exception
-	 */
-	public function queryBuilder(): string
-	{
-		return $this->getBuild()->getQuery($this);
-	}
-
-	/**
-	 * @param $sql
-	 * @param array $attr
-	 * @return Command
-	 * @throws Exception
-	 */
-	private function command($sql, $attr = []): Command
-	{
-		if (!empty($attr) && is_array($attr)) {
-			$attr = array_merge($this->attributes, $attr);
-		} else {
-			$attr = $this->attributes;
-		}
-		return $this->getDb()->createCommand($sql, $attr)
-			->setModelName($this->modelClass);
-	}
-
-	/**
-	 * @return Select
-	 * @throws Exception
-	 */
-	public function getBuild(): Select
-	{
-		return $this->getDb()->getSchema()->getQueryBuilder();
-	}
-
-	/**
-	 * @return orm\Change
-	 * @throws Exception
-	 */
-	public function getChange(): orm\Change
-	{
-		return $this->getDb()->getSchema()->getChange();
-	}
-
-	/**
-	 * @return Connection
-	 * @throws Exception
-	 */
-	public function getDb(): Connection
-	{
-		return $this->modelClass::getDb();
-	}
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function getPrimary(): mixed
-	{
-		return $this->modelClass->getPrimary();
+		return $this->execute($this->builder->all())->delete();
 	}
 }
