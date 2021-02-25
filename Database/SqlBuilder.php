@@ -149,7 +149,7 @@ class SqlBuilder extends Component
 	{
 		$select = $this->builderSelect($this->query->select) . ' FROM ' . $this->tableName();
 		if (!empty($condition = $this->conditionToString())) {
-			$select = sprintf('%s %s', $select, $condition);
+			$select = sprintf('%s%s', $select, $condition);
 		}
 		if (!empty($this->query->group)) {
 			$select .= ' GROUP BY ' . $this->query->group;
