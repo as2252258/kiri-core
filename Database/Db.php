@@ -39,7 +39,6 @@ class Db
     public static function beginTransaction()
     {
     	static::$_inTransaction = true;
-//        Context::setContext('begin:transaction', true);
     }
 
     /**
