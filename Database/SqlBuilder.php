@@ -71,6 +71,8 @@ class SqlBuilder extends Component
 	public function mathematics(array $attributes, $opera = '+'): bool|array
 	{
 		$string = $array = [];
+
+		var_dump($attributes);
 		foreach ($attributes as $attribute => $value) {
 			$string[] = $attribute . '=' . $attribute . $opera . $value;
 		}
