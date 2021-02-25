@@ -4,7 +4,7 @@
 namespace Database;
 
 
-use Database\Traits\QueryTrait;
+use Database\Traits\Builder;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;

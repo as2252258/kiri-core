@@ -1,12 +1,14 @@
 <?php
 
 
-namespace Database;
+namespace Database\Traits;
 
 
+use Database\ActiveQuery;
 use Database\Base\ConditionClassMap;
 use Database\Condition\HashCondition;
 use Database\Condition\OrCondition;
+use Database\SqlBuilder;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Database\Orm;
 
 
-use Database\Builder;
+use Database\Traits\Builder;
 use Exception;
 
 /**
