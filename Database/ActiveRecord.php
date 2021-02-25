@@ -159,9 +159,11 @@ class ActiveRecord extends BaseActiveRecord
 		}
 
 		$activeQuery = static::find()->where($condition);
-		return static::getDb()
-			->createCommand(SqlBuilder::builder($activeQuery)->mathematics($columns, $action))
-			->exec();
+		$create = SqlBuilder::builder($activeQuery)->mathematics($columns, $action);
+		if (is_bool($create)) {
+			return false;
+		}
+		return static::getDb()->createCommand($create)->exec();
 	}
 
 
