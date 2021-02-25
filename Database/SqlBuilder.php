@@ -147,11 +147,7 @@ class SqlBuilder extends Component
 	 */
 	private function _prefix($hasOrder = false): string
 	{
-		$select = $this->builderSelect($this->query->select);
-		if (is_array($select)) {
-			$select = implode(',', $select);
-		}
-		$select = 'SELECT ' . $select . ' FROM ' . $this->tableName();
+		$select = $this->builderSelect($this->query->select) . ' FROM ' . $this->tableName();
 		if (!empty($condition = $this->conditionToString())) {
 			$select = sprintf('%s %s', $select, $condition);
 		}
