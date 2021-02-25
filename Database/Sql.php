@@ -17,7 +17,7 @@ use Exception;
  * Class Sql
  * @package Database
  */
-class Sql
+class Sql implements ISqlBuilder
 {
 
 	use QueryTrait;

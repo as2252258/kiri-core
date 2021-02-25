@@ -18,7 +18,7 @@ use Snowflake\Snowflake;
  * Class ActiveQuery
  * @package Database
  */
-class ActiveQuery extends Component
+class ActiveQuery extends Component implements ISqlBuilder
 {
 
 	use QueryTrait;

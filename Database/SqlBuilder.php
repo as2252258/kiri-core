@@ -27,7 +27,7 @@ class SqlBuilder extends Component
 	 * @param $query
 	 * @return $this
 	 */
-	public static function builder(QueryTrait|null $query): static
+	public static function builder(ISqlBuilder|null $query): static
 	{
 		return new static(['query' => $query]);
 	}
