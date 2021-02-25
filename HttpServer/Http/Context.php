@@ -60,12 +60,12 @@ class Context extends BaseContext
 	private static function setCoroutine($id, $context, $key = null): mixed
 	{
 		if (empty($key)) {
-			return Coroutine::getContext(Coroutine::getPcid())[$id] = $context;
+			return Coroutine::getContext()[$id] = $context;
 		}
-		if (!is_array(Coroutine::getContext(Coroutine::getPcid())[$id])) {
-			Coroutine::getContext(Coroutine::getPcid())[$id] = [$key => $context];
+		if (!is_array(Coroutine::getContext()[$id])) {
+			Coroutine::getContext()[$id] = [$key => $context];
 		} else {
-			Coroutine::getContext(Coroutine::getPcid())[$id][$key] = $context;
+			Coroutine::getContext()[$id][$key] = $context;
 		}
 		return $context;
 	}
@@ -81,10 +81,10 @@ class Context extends BaseContext
 		if (!static::inCoroutine()) {
 			return false;
 		}
-		if (!isset(Coroutine::getContext(Coroutine::getPcid())[$id][$key])) {
+		if (!isset(Coroutine::getContext()[$id][$key])) {
 			return false;
 		}
-		return Coroutine::getContext(Coroutine::getPcid())[$id][$key] += $value;
+		return Coroutine::getContext()[$id][$key] += $value;
 	}
 
 	/**
@@ -98,10 +98,10 @@ class Context extends BaseContext
 		if (!static::inCoroutine() || !static::hasContext($id)) {
 			return false;
 		}
-		if (!isset(Coroutine::getContext(Coroutine::getPcid())[$id][$key])) {
+		if (!isset(Coroutine::getContext()[$id][$key])) {
 			return false;
 		}
-		return Coroutine::getContext(Coroutine::getPcid())[$id][$key] -= $value;
+		return Coroutine::getContext()[$id][$key] -= $value;
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Context extends BaseContext
 	 */
 	private static function loadByContext($id, $key = null): mixed
 	{
-		$data = Coroutine::getContext(Coroutine::getPcid())[$id] ?? null;
+		$data = Coroutine::getContext()[$id] ?? null;
 		if ($data === null) {
 			return null;
 		}
@@ -184,9 +184,9 @@ class Context extends BaseContext
 			return;
 		}
 		if (!empty($key)) {
-			unset(Coroutine::getContext(Coroutine::getPcid())[$id][$key]);
+			unset(Coroutine::getContext()[$id][$key]);
 		} else {
-			unset(Coroutine::getContext(Coroutine::getPcid())[$id]);
+			unset(Coroutine::getContext()[$id]);
 		}
 	}
 
@@ -229,11 +229,11 @@ class Context extends BaseContext
 	 */
 	private static function searchByCoroutine($id, $key = null): bool
 	{
-		if (!isset(Coroutine::getContext(Coroutine::getPcid())[$id])) {
+		if (!isset(Coroutine::getContext()[$id])) {
 			return false;
 		}
 		if ($key !== null) {
-			return isset((Coroutine::getContext(Coroutine::getPcid())[$id] ?? [])[$key]);
+			return isset((Coroutine::getContext()[$id] ?? [])[$key]);
 		}
 		return true;
 	}
