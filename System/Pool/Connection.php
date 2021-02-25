@@ -65,7 +65,7 @@ class Connection extends Pool
         if (!Context::hasContext('begin_' . $coroutineName)) {
             Context::setContext('begin_' . $coroutineName, 0);
         }
-        Context::autoIncr('begin_' . $coroutineName);
+        Context::increment('begin_' . $coroutineName);
         if (!Context::getContext('begin_' . $coroutineName) !== 0) {
             return;
         }
@@ -84,7 +84,7 @@ class Connection extends Pool
         if (!Context::hasContext('begin_' . $coroutineName)) {
             return;
         }
-        if (Context::autoDecr('begin_' . $coroutineName) > 0) {
+        if (Context::decrement('begin_' . $coroutineName) > 0) {
             return;
         }
         $connection = Context::getContext($coroutineName);
@@ -117,7 +117,7 @@ class Connection extends Pool
         if (!Context::hasContext('begin_' . $coroutineName)) {
             return;
         }
-        if (Context::autoDecr('begin_' . $coroutineName) > 0) {
+        if (Context::decrement('begin_' . $coroutineName) > 0) {
             return;
         }
         if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
@@ -250,7 +250,7 @@ class Connection extends Pool
      */
     public function remove($coroutineName)
     {
-        Context::deleteContext($coroutineName);
+        Context::remove($coroutineName);
     }
 
     /**

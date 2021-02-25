@@ -154,7 +154,7 @@ abstract class Pool extends Component
 		}
 		if (!Context::hasContext('create::client::ing::' . $name)) {
 			$this->push($name, $this->createClient($name, $callback));
-			Context::deleteContext('create::client::ing::' . $name);
+			Context::remove('create::client::ing::' . $name);
 		}
 	}
 

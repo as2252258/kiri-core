@@ -119,7 +119,7 @@ class Redis extends Pool
      */
     public function remove(string $coroutineName)
     {
-        Context::deleteContext($coroutineName);
+        Context::remove($coroutineName);
     }
 
     /**

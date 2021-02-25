@@ -22,12 +22,15 @@ class Db
 {
     use QueryTrait;
 
+
+    private static bool $_inTransaction = false;
+
     /**
      * @return bool
      */
     public static function transactionsActive(): bool
     {
-        return Context::getContext('begin:transaction') === true;
+        return static::$_inTransaction === true;
     }
 
     /**
@@ -35,7 +38,8 @@ class Db
      */
     public static function beginTransaction()
     {
-        Context::setContext('begin:transaction', true);
+    	static::$_inTransaction = true;
+//        Context::setContext('begin:transaction', true);
     }
 
     /**
@@ -49,7 +53,7 @@ class Db
         $event = Snowflake::app()->getEvent();
         $event->trigger(Connection::TRANSACTION_COMMIT);
         $event->offName(Connection::TRANSACTION_COMMIT);
-        Context::deleteContext('begin:transaction');
+	    static::$_inTransaction = false;
     }
 
     /**
@@ -63,7 +67,7 @@ class Db
         $event = Snowflake::app()->getEvent();
         $event->trigger(Connection::TRANSACTION_ROLLBACK);
         $event->offName(Connection::TRANSACTION_ROLLBACK);
-        Context::deleteContext('begin:transaction');
+	    static::$_inTransaction = false;
     }
 
     /**
