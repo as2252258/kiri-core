@@ -38,11 +38,10 @@ class OnRequest extends Callback
 	{
 		try {
 			Coroutine::defer(function () use ($request) {
-				write(Json::encode(get_object_vars($request)), 'request');
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			});
-			[$req, $rep] = static::create($request, $response);
-			if ($req->is('favicon.ico')) {
+			[$request, $response] = static::create($request, $response);
+			if ($request->is('favicon.ico')) {
 				return \send(null, 404);
 			}
 			return \router()->dispatch();

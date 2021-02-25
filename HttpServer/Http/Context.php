@@ -13,9 +13,8 @@ use Swoole\Coroutine;
 class Context extends BaseContext
 {
 
-	protected static array $_requests = [];
+	protected static array $_contents = [];
 
-	protected static array $_response = [];
 
 
 	/**
@@ -37,18 +36,19 @@ class Context extends BaseContext
 	 * @param $id
 	 * @param $context
 	 * @param null $key
-	 * @return mixed
+	 * @return array
 	 */
-	private static function setStatic($id, $context, $key = null): mixed
+	private static function setStatic($id, $context, $key = null): array
 	{
 		if (empty($key)) {
-			return static::$_requests[$id] = $context;
+			return static::$_contents[$id] = $context;
 		}
-		if (!is_array(static::$_requests[$id])) {
-			return static::$_requests[$id] = [$key => $context];
+		if (!is_array(static::$_contents[$id])) {
+			static::$_contents[$id] = [$key => $context];
 		} else {
-			return static::$_requests[$id][$key] = $context;
+			static::$_contents[$id][$key] = $context;
 		}
+		return $context;
 	}
 
 	/**
@@ -60,12 +60,12 @@ class Context extends BaseContext
 	private static function setCoroutine($id, $context, $key = null): mixed
 	{
 		if (empty($key)) {
-			return Coroutine::getContext()[$id] = $context;
+			return Coroutine::getContext(Coroutine::getPcid())[$id] = $context;
 		}
-		if (!is_array(Coroutine::getContext()[$id])) {
-			Coroutine::getContext()[$id] = [$key => $context];
+		if (!is_array(Coroutine::getContext(Coroutine::getPcid())[$id])) {
+			Coroutine::getContext(Coroutine::getPcid())[$id] = [$key => $context];
 		} else {
-			Coroutine::getContext()[$id][$key] = $context;
+			Coroutine::getContext(Coroutine::getPcid())[$id][$key] = $context;
 		}
 		return $context;
 	}
@@ -81,10 +81,10 @@ class Context extends BaseContext
 		if (!static::inCoroutine()) {
 			return false;
 		}
-		if (!isset(Coroutine::getContext()[$id][$key])) {
+		if (!isset(Coroutine::getContext(Coroutine::getPcid())[$id][$key])) {
 			return false;
 		}
-		return Coroutine::getContext()[$id][$key] += $value;
+		return Coroutine::getContext(Coroutine::getPcid())[$id][$key] += $value;
 	}
 
 	/**
@@ -98,10 +98,10 @@ class Context extends BaseContext
 		if (!static::inCoroutine() || !static::hasContext($id)) {
 			return false;
 		}
-		if (!isset(Coroutine::getContext()[$id][$key])) {
+		if (!isset(Coroutine::getContext(Coroutine::getPcid())[$id][$key])) {
 			return false;
 		}
-		return Coroutine::getContext()[$id][$key] -= $value;
+		return Coroutine::getContext(Coroutine::getPcid())[$id][$key] -= $value;
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Context extends BaseContext
 	 */
 	private static function loadByContext($id, $key = null): mixed
 	{
-		$data = Coroutine::getContext()[$id] ?? null;
+		$data = Coroutine::getContext(Coroutine::getPcid())[$id] ?? null;
 		if ($data === null) {
 			return null;
 		}
@@ -147,7 +147,7 @@ class Context extends BaseContext
 	 */
 	private static function loadByStatic($id, $key = null): mixed
 	{
-		$data = static::$_requests[$id] ?? null;
+		$data = static::$_contents[$id] ?? null;
 		if ($data === null) {
 			return null;
 		}
@@ -166,7 +166,7 @@ class Context extends BaseContext
 		if (static::inCoroutine()) {
 			return Coroutine::getContext() ?? [];
 		} else {
-			return static::$_requests ?? [];
+			return static::$_contents ?? [];
 		}
 	}
 
@@ -180,13 +180,13 @@ class Context extends BaseContext
 			return;
 		}
 		if (static::inCoroutine()) {
-			unset(static::$_requests[$id]);
+			unset(static::$_contents[$id]);
 			return;
 		}
 		if (!empty($key)) {
-			unset(Coroutine::getContext()[$id][$key]);
+			unset(Coroutine::getContext(Coroutine::getPcid())[$id][$key]);
 		} else {
-			unset(Coroutine::getContext()[$id]);
+			unset(Coroutine::getContext(Coroutine::getPcid())[$id]);
 		}
 	}
 
@@ -212,10 +212,10 @@ class Context extends BaseContext
 	 */
 	private static function searchByStatic($id, $key = null): bool
 	{
-		if (!isset(static::$_requests[$id])) {
+		if (!isset(static::$_contents[$id])) {
 			return false;
 		}
-		if (!empty($key) && !isset(static::$_requests[$id][$key])) {
+		if (!empty($key) && !isset(static::$_contents[$id][$key])) {
 			return false;
 		}
 		return true;
@@ -229,11 +229,11 @@ class Context extends BaseContext
 	 */
 	private static function searchByCoroutine($id, $key = null): bool
 	{
-		if (!isset(Coroutine::getContext()[$id])) {
+		if (!isset(Coroutine::getContext(Coroutine::getPcid())[$id])) {
 			return false;
 		}
 		if ($key !== null) {
-			return isset((Coroutine::getContext()[$id] ?? [])[$key]);
+			return isset((Coroutine::getContext(Coroutine::getPcid())[$id] ?? [])[$key]);
 		}
 		return true;
 	}
