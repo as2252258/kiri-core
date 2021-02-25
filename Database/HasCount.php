@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Database;
 
 use Exception;
+use Database\Traits\HasBase;
 
 /**
  * Class HasCount

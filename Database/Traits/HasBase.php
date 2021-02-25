@@ -7,8 +7,12 @@
  */
 declare(strict_types=1);
 
-namespace Database;
+namespace Database\Traits;
 
+use Database\ActiveRecord;
+use Database\Collection;
+use Database\IOrm;
+use Database\Relation;
 use Exception;
 
 /**

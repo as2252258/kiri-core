@@ -10,16 +10,13 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Annotation\Model\Get;
 use Exception;
 use Database\Base\BaseActiveRecord;
 use ReflectionException;
-use Snowflake\Core\ArrayAccess;
-use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
+use Database\Traits\HasBase;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
 defined('FIND_OR_CREATE_MESSAGE') or define('FIND_OR_CREATE_MESSAGE', 'Create a new model, but the data cannot be empty.');
