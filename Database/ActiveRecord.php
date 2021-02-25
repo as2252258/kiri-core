@@ -206,17 +206,9 @@ class ActiveRecord extends BaseActiveRecord
 		$primary = $this->getPrimary();
 
 		if (!empty($primary)) {
-			$sul = static::deleteByCondition([$primary => $this->getAttribute($primary)]);
-		} else {
-			$sul = static::deleteByCondition($conditions);
+			$conditions = [$primary => $this->getAttribute($primary)];
 		}
-		if (!$sul) {
-			return false;
-		}
-		if (method_exists($this, 'afterDelete')) {
-			$this->afterDelete();
-		}
-		return true;
+		return static::deleteByCondition($conditions);
 	}
 
 
