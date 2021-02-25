@@ -40,12 +40,11 @@ class OnRequest extends Callback
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			});
 			[$request, $response] = static::create($request, $response);
-			if ($request->is('favicon.ico')) {
-				return \send(null, 404);
+			if (!$request->is('favicon.ico')) {
+				return \router()->dispatch();
 			}
-			return \router()->dispatch();
+			return \send(null);
 		} catch (ExitException | Error | \Throwable $exception) {
-			$this->addError($exception);
 			if ($exception instanceof ExitException) {
 				return \send($exception->getMessage(), $exception->getCode());
 			}
@@ -77,11 +76,10 @@ class OnRequest extends Callback
 	 */
 	protected function sendErrorMessage($sRequest, $sResponse, $exception): bool|string
 	{
+		$this->error($exception);
 		$params = Snowflake::app()->getLogger()->exception($exception);
 		if ($sResponse instanceof Response) {
-			$sResponse->header('Access-Control-Allow-Origin', '*');
-			$sResponse->status(200);
-			return $sResponse->end($params);
+			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
 
 		$sResponse->addHeader('Access-Control-Allow-Origin', '*');
