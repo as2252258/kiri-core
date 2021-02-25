@@ -10,7 +10,6 @@ use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
-use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -50,7 +49,7 @@ class OnRequest extends Callback
 			if ($exception instanceof ExitException) {
 				return \send($exception->getMessage(), $exception->getCode());
 			}
-			return $this->sendErrorMessage($exception);
+			return $this->sendErrorMessage($request, $response, $exception);
 		}
 	}
 
@@ -69,50 +68,26 @@ class OnRequest extends Callback
 
 
 	/**
-	 * @param $response
-	 * @throws Exception
-	 */
-	public static function shutdown($response)
-	{
-		try {
-			$error = error_get_last();
-			if (!isset($error['type'])) {
-				return;
-			}
-			$types = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR];
-			if (!in_array($error['type'], $types)) {
-				return;
-			}
-			$message = $error['message'] . ':' . microtime(true);
-			if ($response instanceof Response) {
-				$response->status(500);
-				$response->end($message);
-			}
-		} catch (\ErrorException $exception) {
-			$logger = Snowflake::app()->getLogger();
-			$logger->write($exception->getMessage(), 'shutdown');
-		} finally {
-			unset($response);
-		}
-	}
-
-	/**
+	 * @param $sRequest
+	 * @param $sResponse
 	 * @param $exception
 	 * @return bool|string
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	protected function sendErrorMessage($exception): bool|string
+	protected function sendErrorMessage($sRequest, $sResponse, $exception): bool|string
 	{
-
-		$sRequest = \request();
-		$sResponse = \response();
+		$params = Snowflake::app()->getLogger()->exception($exception);
+		if ($sResponse instanceof Response) {
+			$sResponse->header('Access-Control-Allow-Origin', '*');
+			$sResponse->status(200);
+			return $sResponse->end($params);
+		}
 
 		$sResponse->addHeader('Access-Control-Allow-Origin', '*');
 		$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->headers->get('access-control-request-headers'));
 		$sResponse->addHeader('Access-Control-Request-Method', $sRequest->headers->get('access-control-request-method'));
 
-		$params = Snowflake::app()->getLogger()->exception($exception);
 		return $sResponse->send($params, 200);
 	}
 

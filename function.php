@@ -511,7 +511,7 @@ if (!function_exists('send')) {
 	 * @return bool|Response|stdClass|string
 	 * @throws Exception
 	 */
-	function send($context, $statusCode = 200): Response|bool|string|stdClass
+	function send($context, $statusCode = 404): Response|bool|string|stdClass
 	{
 		return \response()->send($context, $statusCode);
 	}

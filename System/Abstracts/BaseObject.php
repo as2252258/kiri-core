@@ -210,23 +210,17 @@ class BaseObject implements Configure
 	 */
 	public function error(mixed $message, $method = null, $file = null)
 	{
+		$socket = Snowflake::app()->getLogger();
 		if (!empty($file)) {
-			echo "\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . "\033[0m";
-			echo PHP_EOL;
+			$socket->output("\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . PHP_EOL . "\033[0m");
 		}
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-
 		$content = (empty($method) ? '' : $method . ': ') . $message;
 
-		$length = strlen('[ERROR][2021-02-20 08:32:02]:');
+		$message = "\033[41;37m" . PHP_EOL . "[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $content . PHP_EOL . "\033[0m";
 
-		$message = "\033[41;37m" . PHP_EOL . "[ERROR][" . date('Y-m-d H:i:s') . ']: ' . PHP_EOL . "\033[0m";
-		$message .= "\033[41;37m" . str_pad($content, $length, ' ', STR_PAD_LEFT) . "\033[0m";
-		$message .= PHP_EOL;
-
-		$socket = Snowflake::app()->getLogger();
 		$socket->output($message);
 	}
 

@@ -454,7 +454,7 @@ class Request extends HttpService
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
-		$sRequest->headers = Snowflake::createObject(HttpHeaders::class, [array_merge($request->server, $request->header ?? [])]);
+		$sRequest->headers = Snowflake::createObject(HttpHeaders::class, [merge($request->server, $request->header)]);
 
 		$sRequest->parseUri();
 		return $sRequest;

@@ -472,14 +472,13 @@ class Router extends HttpService implements RouterInterface
 	public function dispatch(): mixed
 	{
 		if (!($node = $this->find_path(\request()))) {
-			return send(self::NOT_FOUND, 404);
-		} else {
-			send($response = $node->dispatch(), 200);
-			if (!$node->hasAfter()) {
-				return null;
-			}
-			return $node->afterDispatch($response);
+			return send(self::NOT_FOUND);
 		}
+		send($response = $node->dispatch(), 200);
+		if (!$node->hasAfter()) {
+			return null;
+		}
+		return $node->afterDispatch($response);
 	}
 
 
