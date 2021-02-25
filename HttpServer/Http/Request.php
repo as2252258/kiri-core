@@ -443,13 +443,13 @@ class Request extends HttpService
 		$sRequest = Context::setContext('request', Snowflake::createObject(Request::class));
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
-		$sRequest->uri = $request->server['request_uri'] ?? $request->header['request_uri'];
 
 		$sRequest->params = new HttpParams($request->rawContent(), $request->get, $request->files);
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
 		$sRequest->headers = Snowflake::createObject(HttpHeaders::class, [merge($request->server, $request->header)]);
+		$sRequest->uri = $sRequest->headers->get('request_uri');
 
 		$sRequest->parseUri();
 		return $sRequest;
