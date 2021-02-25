@@ -177,28 +177,13 @@ class ActiveRecord extends BaseActiveRecord
 		return $this->save($fields);
 	}
 
-	/**
-	 * @param array $params
-	 * @param array $condition
-	 * @return bool|static
-	 * @throws Exception
-	 */
-	public static function insertOrUpdate(array $params, array $condition): bool|static
-	{
-		$first = static::findOrCreate($condition, $params);
-		$first->attributes = $params;
-		if (!$first->save()) {
-			return false;
-		}
-		return $first;
-	}
 
 	/**
 	 * @param array $data
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function batchInsert(array $data): bool
+	public static function inserts(array $data): bool
 	{
 		/** @var static $class */
 		$class = Snowflake::createObject(static::className());
@@ -242,7 +227,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function batchUpdate($condition, $attributes = []): bool
+	public static function updateAll(mixed $condition, $attributes = []): bool
 	{
 		$condition = static::find()->where($condition);
 		return $condition->batchUpdate($attributes);

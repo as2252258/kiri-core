@@ -457,7 +457,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return $this|bool
 	 * @throws Exception
 	 */
-	private function update($fields, $condition, $param): bool|static
+	private function updateInternal($fields, $condition, $param): bool|static
 	{
 		if (empty($param)) {
 			return true;
@@ -509,7 +509,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		[$change, $condition, $fields] = $this->filtration_and_separation();
 
 		if (!$this->isNewExample) {
-			return $this->update($fields, $condition, $change);
+			return $this->updateInternal($fields, $condition, $change);
 		}
 		return $this->insert($change, $fields);
 	}
