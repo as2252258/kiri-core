@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Database\Orm\Select;
 use Database\Traits\QueryTrait;
 use Exception;
 
@@ -29,7 +28,7 @@ class Sql
 	 */
 	public function getSql(): string
 	{
-		return (new Select())->getQuery($this);
+		return SqlBuilder::builder($this)->get();
 	}
 
 
@@ -39,7 +38,7 @@ class Sql
 	 */
 	public function getCondition(): string
 	{
-		return (new Select())->getWhere($this);
+		return SqlBuilder::builder($this)->getCondition();
 	}
 
 

@@ -10,10 +10,8 @@ declare(strict_types=1);
 namespace Database;
 
 use Snowflake\Abstracts\Component;
-use Database\Orm\Select;
 use Database\Traits\QueryTrait;
 use Exception;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -268,8 +266,7 @@ class ActiveQuery extends Component
 	 */
 	public function batchUpdate(array $data): Command|array|bool|int|string
 	{
-		return $this->execute($this->builder->update($data))
-			->exec();
+		return $this->execute($this->builder->update($data))->exec();
 	}
 
 	/**
@@ -279,8 +276,7 @@ class ActiveQuery extends Component
 	 */
 	public function batchInsert(array $data): bool
 	{
-		return $this->execute($this->builder->insert($data, true))
-			->exec();
+		return $this->execute($this->builder->insert($data, true))->exec();
 	}
 
 	/**

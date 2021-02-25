@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Database\Mysql;
 
 
-
+use Database\SqlBuilder;
 use Snowflake\Abstracts\Component;
 use Database\Connection;
 use Exception;
@@ -276,7 +276,7 @@ class Columns extends Component
 	private function structure($table): array|static
 	{
 		if (!isset($this->columns[$table]) || empty($this->columns[$table])) {
-			$column = $this->db->createCommand($this->db->getBuild()->getColumn($table))->all();
+			$column = $this->db->createCommand(SqlBuilder::builder(null)->columns($table))->all();
 			if (empty($column)) {
 				throw new Exception("The table " . $table . " not exists.");
 			}

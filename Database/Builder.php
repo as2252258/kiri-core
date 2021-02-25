@@ -17,7 +17,6 @@ trait Builder
 {
 
 
-
 	/**
 	 * @param $alias
 	 * @return string
@@ -35,7 +34,7 @@ trait Builder
 	private function builderFrom($table): string
 	{
 		if ($table instanceof ActiveQuery) {
-			$table = '(' . $table->getBuild()->getQuery($table) . ')';
+			$table = '(' . SqlBuilder::builder($table)->get($table) . ')';
 		}
 		return " FROM " . $table;
 	}
@@ -109,7 +108,6 @@ trait Builder
 		}
 		return ' LIMIT ' . $query->limit;
 	}
-
 
 
 	/**

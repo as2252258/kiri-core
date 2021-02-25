@@ -13,7 +13,6 @@ namespace Database\Traits;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
-use Database\Orm\Select;
 use Exception;
 
 /**

@@ -5,8 +5,6 @@ namespace Database\Mysql;
 
 use Snowflake\Abstracts\Component;
 use Database\Connection;
-use Database\Orm\Change;
-use Database\Orm\Select;
 
 /**
  * Class Schema
@@ -18,36 +16,8 @@ class Schema extends Component
 	/** @var ?Connection */
 	public ?Connection $db;
 
-	/** @var ?Select */
-	private ?Select $_builder = null;
-
 	/** @var ?Columns $_column*/
 	private ?Columns $_column = null;
-
-	/** @var ?Change */
-	private ?Change $_change = null;
-
-	/**
-	 * @return Select|null
-	 */
-	public function getQueryBuilder(): ?Select
-	{
-		if ($this->_builder === null) {
-			$this->_builder = new Select();
-		}
-		return $this->_builder;
-	}
-
-	/**
-	 * @return Change
-	 */
-	public function getChange(): Change
-	{
-		if ($this->_change === null) {
-			$this->_change = new Change();
-		}
-		return $this->_change;
-	}
 
 
 	/**

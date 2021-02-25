@@ -14,7 +14,6 @@ namespace Database;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\Mysql\Schema;
-use Database\Orm\Select;
 use Exception;
 use PDO;
 use Snowflake\Event;
@@ -271,14 +270,6 @@ class Connection extends Component
 		return $command->bindValues($attributes);
 	}
 
-	/**
-	 * @return Select
-	 * @throws Exception
-	 */
-	public function getBuild(): Select
-	{
-		return $this->getSchema()->getQueryBuilder();
-	}
 
 	/**
 	 *

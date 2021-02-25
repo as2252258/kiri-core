@@ -65,63 +65,6 @@ class Command extends Component
 		return $this->execute(static::EXECUTE, $isInsert, $hasAutoIncrement);
 	}
 
-	/**
-	 * @param $model
-	 * @param $attributes
-	 * @param $condition
-	 * @param $param
-	 * @return Command
-	 * @throws Exception
-	 */
-	public function update($model, $attributes, $condition, $param): Command
-	{
-		$change = $this->db->getSchema()->getChange();
-		$sql = $change->update($model, $attributes, $condition, $param);
-		return $this->setSql($sql)->bindValues($param);
-	}
-
-
-	/**
-	 * @param $tableName
-	 * @param $attributes
-	 * @param $condition
-	 * @return Command
-	 * @throws Exception
-	 */
-	public function batchUpdate($tableName, $attributes, $condition): Command
-	{
-		$change = $this->db->getSchema();
-		[$sql, $param] = $change->getChange()->batchUpdate($tableName, $change, $attributes, $condition);
-		return $this->setSql($sql)->bindValues($param);
-	}
-
-
-	/**
-	 * @param $tableName
-	 * @param $attributes
-	 * @return Command
-	 * @throws Exception
-	 */
-	public function batchInsert($tableName, $attributes): Command
-	{
-		$change = $this->db->getSchema();
-		[$sql, $param] = $change->getChange()->batchInsert($tableName, $change, $attributes);
-		return $this->setSql($sql)->bindValues($param);
-	}
-
-	/**
-	 * @param $tableName
-	 * @param $attributes
-	 * @param $param
-	 * @return Command
-	 * @throws Exception
-	 */
-	public function insert($tableName, $attributes, $param): Command
-	{
-		$sql = $this->db->getSchema()
-			->getChange()->insert($tableName, $attributes, $param);
-		return $this->setSql($sql)->bindValues($param);
-	}
 
 	/**
 	 * @return int|bool|array|string|null
@@ -130,25 +73,6 @@ class Command extends Component
 	public function all(): int|bool|array|string|null
 	{
 		return $this->execute(static::FETCH_ALL);
-	}
-
-	/**
-	 * @param $tableName
-	 * @param $param
-	 * @param $condition
-	 * @return bool|Command
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 * @throws Exception
-	 */
-	public function mathematics($tableName, $param, $condition): bool|static
-	{
-		$change = $this->db->getSchema()->getChange();
-		$sql = $change->mathematics($tableName, $param, [$condition]);
-		if ($sql === false) {
-			return false;
-		}
-		return $this->setSql($sql);
 	}
 
 	/**

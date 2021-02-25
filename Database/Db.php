@@ -104,8 +104,7 @@ class Db
         if (empty($db)) {
             $db = Snowflake::app()->database;
         }
-        $query = $db->getSchema()->getQueryBuilder();
-        return $db->createCommand($query->getQuery($this))
+        return $db->createCommand(SqlBuilder::builder($this)->one())
             ->all();
     }
 
@@ -128,8 +127,7 @@ class Db
         if (empty($db)) {
             $db = Snowflake::app()->database;
         }
-        $query = $db->getSchema()->getQueryBuilder();
-        return $db->createCommand($query->getQuery($this))
+        return $db->createCommand(SqlBuilder::builder($this)->all())
             ->one();
     }
 
@@ -143,9 +141,8 @@ class Db
         if (empty($db)) {
             $db = Snowflake::app()->database;
         }
-        $query = $db->getSchema()->getQueryBuilder();
-        return $db->createCommand($query->count($this))
-            ->rowCount();
+        return $db->createCommand(SqlBuilder::builder($this)->count())
+	        ->exec();
     }
 
     /**
@@ -158,8 +155,7 @@ class Db
         if (empty($db)) {
             $db = Snowflake::app()->database;
         }
-        $query = $db->getSchema()->getQueryBuilder();
-        return $db->createCommand($query->getQuery($this))
+        return $db->createCommand(SqlBuilder::builder($this)->one())
             ->fetchColumn();
     }
 

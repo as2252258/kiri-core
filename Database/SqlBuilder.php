@@ -4,6 +4,7 @@
 namespace Database;
 
 
+use Database\Traits\QueryTrait;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
@@ -19,16 +20,26 @@ class SqlBuilder extends Component
 	use Builder;
 
 
-	public ActiveQuery $query;
+	public ActiveQuery|Sql $query;
 
 
 	/**
 	 * @param $query
 	 * @return $this
 	 */
-	public static function builder($query): static
+	public static function builder(QueryTrait|null $query): static
 	{
 		return new static(['query' => $query]);
+	}
+
+
+	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getCondition(): string
+	{
+		return $this->conditionToString();
 	}
 
 
@@ -48,6 +59,30 @@ class SqlBuilder extends Component
 		$update .= $this->builderLimit($this->query);
 
 		return [$update, $array];
+	}
+
+
+	/**
+	 * @param array $attributes
+	 * @param string $opera
+	 * @return bool|array
+	 * @throws Exception
+	 */
+	public function mathematics(array $attributes, $opera = '+'): bool|array
+	{
+		$string = $array = [];
+		foreach ($attributes as $attribute => $value) {
+			$string[] = $attribute . '=' . $attribute . $opera . $value;
+		}
+
+		if (empty($string) || empty($array)) {
+			return $this->addError('None data update.');
+		}
+
+		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $this->conditionToString();
+		$update .= $this->builderLimit($this->query);
+
+		return [$update, []];
 	}
 
 
@@ -116,7 +151,8 @@ class SqlBuilder extends Component
 	 */
 	public function one(): string
 	{
-		return $this->_prefix(true) . ' LIMIT 0,1';
+		$this->query->limit(0, 1);
+		return $this->_prefix(true);
 	}
 
 
@@ -126,7 +162,7 @@ class SqlBuilder extends Component
 	 */
 	public function all(): string
 	{
-		return $this->_prefix(true) . $this->builderLimit($this->query);
+		return $this->_prefix(true);
 	}
 
 
@@ -141,6 +177,16 @@ class SqlBuilder extends Component
 
 
 	/**
+	 * @param $table
+	 * @return string
+	 */
+	public function columns($table): string
+	{
+		return 'SHOW FULL FIELDS FROM ' . $table;
+	}
+
+
+	/**
 	 * @param bool $hasOrder
 	 * @return string
 	 * @throws Exception
@@ -148,6 +194,12 @@ class SqlBuilder extends Component
 	private function _prefix($hasOrder = false): string
 	{
 		$select = $this->builderSelect($this->query->select) . ' FROM ' . $this->tableName();
+		if (!empty($this->query->alias)) {
+			$select .= $this->builderAlias($this->query->alias);
+		}
+		if (!empty($this->query->join)) {
+			$select .= $this->builderJoin($this->query->join);
+		}
 		if (!empty($condition = $this->conditionToString())) {
 			$select = sprintf('%s%s', $select, $condition);
 		}
@@ -157,7 +209,21 @@ class SqlBuilder extends Component
 		if ($hasOrder === true && !empty($this->query->order)) {
 			$select .= $this->builderOrder($this->query->order);
 		}
-		return $select;
+		return $select . $this->builderLimit($this->query);
+	}
+
+
+	/**
+	 * @param false $isCount
+	 * @return string
+	 * @throws Exception
+	 */
+	public function get($isCount = false): string
+	{
+		if ($isCount === false) {
+			return $this->all();
+		}
+		return $this->count();
 	}
 
 

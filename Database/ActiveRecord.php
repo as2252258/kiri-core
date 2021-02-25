@@ -55,7 +55,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function increment(string $column, int $value): bool|ActiveRecord
 	{
-		if (!$this->mathematics(self::INCR, [$column => $value])) {
+		if (!$this->mathematics([$column => $value], '-')) {
 			return false;
 		}
 		$this->{$column} += $value;
@@ -71,7 +71,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function decrement(string $column, int $value): bool|ActiveRecord
 	{
-		if (!$this->mathematics(self::DECR, [$column => $value])) {
+		if (!$this->mathematics([$column => $value], '-')) {
 			return false;
 		}
 		$this->{$column} -= $value;
@@ -86,7 +86,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function increments(array $columns): bool|static
 	{
-		if (!$this->mathematics(self::INCR, $columns)) {
+		if (!$this->mathematics($columns, '+')) {
 			return false;
 		}
 		foreach ($columns as $key => $attribute) {
@@ -103,7 +103,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function decrements(array $columns): bool|static
 	{
-		if (!$this->mathematics(self::DECR, $columns)) {
+		if (!$this->mathematics($columns, '-')) {
 			return false;
 		}
 		foreach ($columns as $key => $attribute) {
@@ -152,17 +152,16 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return array|bool|int|string|null
 	 * @throws Exception
 	 */
-	private function mathematics($action, $columns, $condition = []): int|bool|array|string|null
+	private function mathematics($columns, $action, $condition = []): int|bool|array|string|null
 	{
 		if (empty($condition)) {
 			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
 		}
-		$execute = static::getDb()->createCommand()
-			->mathematics(self::getTable(), [$action => $columns], $condition);
-		if ($execute instanceof Command) {
-			return $execute->exec($this);
-		}
-		return false;
+
+		$activeQuery = static::find()->where($condition);
+		return static::getDb()
+			->createCommand(SqlBuilder::builder($activeQuery)->mathematics($columns, $action))
+			->exec();
 	}
 
 
