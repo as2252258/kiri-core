@@ -266,7 +266,11 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 */
 	public function batchUpdate(array $data): Command|array|bool|int|string
 	{
-		return $this->execute($this->builder->update($data))->exec();
+		$generate = $this->builder->update($data);
+		if (is_bool($generate)) {
+			return $generate;
+		}
+		return $this->execute(...$generate)->exec();
 	}
 
 	/**

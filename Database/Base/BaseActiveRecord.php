@@ -468,10 +468,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
 		}
 
-		[$sql, $param] = SqlBuilder::builder(static::find()->where($condition))->update($param);
+		$generate = SqlBuilder::builder(static::find()->where($condition))->update($param);
+		if (is_bool($generate)) {
+			return $generate;
+		}
 
 		$trance = $command->beginTransaction();
-		if (!$command->createCommand($sql, $param)->save(false, $this)) {
+		if (!$command->createCommand(...$generate)->save(false, $this)) {
 			$trance->rollback();
 			return false;
 		}
