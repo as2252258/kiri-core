@@ -135,7 +135,7 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		$message = "\033[35m[DEBUG][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message = "\033[35m[" . date('Y-m-d H:i:s') . '][DEBUG]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
 		$socket = Snowflake::app()->getLogger();
@@ -154,7 +154,7 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		$message = "\033[34m[INFO][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message = "\033[34m[" . date('Y-m-d H:i:s') . '][INFO]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
 		$socket = Snowflake::app()->getLogger();
@@ -173,7 +173,7 @@ class BaseObject implements Configure
 			$message = print_r($message, true);
 		}
 
-		$message = "\033[36m[SUCCESS][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message = "\033[36m[" . date('Y-m-d H:i:s') . '][SUCCESS]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
 		$socket = Snowflake::app()->getLogger();
@@ -193,7 +193,7 @@ class BaseObject implements Configure
 			$message = print_r($message, true);
 		}
 
-		$message = "\033[33m[WARNING][" . date('Y-m-d H:i:s') . ']: ' . $message . "\033[0m";
+		$message = "\033[33m[" . date('Y-m-d H:i:s') . '][WARNING]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
 
@@ -211,16 +211,16 @@ class BaseObject implements Configure
 	public function error(mixed $message, $method = null, $file = null)
 	{
 		$socket = Snowflake::app()->getLogger();
-		if (!empty($file)) {
-			$socket->output("\033[41;37m[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $file . PHP_EOL . "\033[0m");
-		}
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
 		$content = (empty($method) ? '' : $method . ': ') . $message;
 
-		$message = "\033[41;37m" . PHP_EOL . "[ERROR][" . date('Y-m-d H:i:s') . ']: ' . $content . PHP_EOL . "\033[0m";
+		$message = "\033[41;37m" . PHP_EOL . "[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $content . PHP_EOL . "\033[0m";
 
+		if (!empty($file)) {
+			$message .= "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . PHP_EOL . "\033[0m";
+		}
 		$socket->output($message);
 	}
 
