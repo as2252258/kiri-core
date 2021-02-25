@@ -205,7 +205,7 @@ class SqlBuilder extends Component
 			$select = sprintf('%s%s', $select, $condition);
 		}
 		if (!empty($this->query->group)) {
-			$select .= ' GROUP BY ' . $this->query->group;
+			$select .= $this->builderGroup($this->query->group);
 		}
 		if ($hasOrder === true && !empty($this->query->order)) {
 			$select .= $this->builderOrder($this->query->order);
