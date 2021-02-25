@@ -19,7 +19,7 @@ class SqlBuilder extends Component
 	use Builder;
 
 
-	private ActiveQuery $query;
+	public ActiveQuery $query;
 
 
 	/**
