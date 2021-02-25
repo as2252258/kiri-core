@@ -96,11 +96,9 @@ class SqlBuilder extends Component
 	public function insert(array $attributes, $isBatch = false): array
 	{
 		$update = sprintf('INSERT INTO %s', $this->tableName());
-		if ($isBatch === true) {
+		if ($isBatch === false) {
 			$attributes = [$attributes];
 		}
-
-		var_dump($attributes);
 		$update .= '(' . implode(',', $this->getFields($attributes)) . ') VALUES ';
 
 		$order = 0;
