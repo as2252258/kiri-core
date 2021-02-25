@@ -44,6 +44,8 @@ class SqlBuilder extends Component
 			return $this->addError('None data update.');
 		}
 
+		var_dump($string);
+
 		$update = 'UPDATE ' . $this->tableName() . ' SET ' . $string . $this->conditionToString();
 		$update .= $this->builderLimit($this->query);
 
