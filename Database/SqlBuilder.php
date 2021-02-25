@@ -51,7 +51,7 @@ class SqlBuilder extends Component
 	public function update(array $attributes): bool|array
 	{
 		[$string, $array] = $this->builderParams($attributes);
-		if (empty($string) || empty($array)) {
+		if (empty($string)) {
 			return $this->addError('None data update.');
 		}
 
