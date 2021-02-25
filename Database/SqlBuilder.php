@@ -99,6 +99,8 @@ class SqlBuilder extends Component
 		if ($isBatch === true) {
 			$attributes = [$attributes];
 		}
+
+		var_dump($attributes);
 		$update .= '(' . implode(',', $this->getFields($attributes)) . ') VALUES ';
 
 		$order = 0;
