@@ -76,10 +76,8 @@ trait Condition
 	private function builderWhere($where): string
 	{
 		$_tmp = [];
-		if (is_null($where)) {
-			return '';
-		}
-		if (empty($where) || is_string($where)) return $where;
+		if (empty($where)) return '';
+		if (is_string($where)) return $where;
 		foreach ($where as $key => $value) {
 			$_value = is_string($value) ? $value : $this->conditionMap($value);
 
