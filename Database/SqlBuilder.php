@@ -72,12 +72,11 @@ class SqlBuilder extends Component
 	{
 		$string = $array = [];
 
-		var_dump($attributes);
 		foreach ($attributes as $attribute => $value) {
 			$string[] = $attribute . '=' . $attribute . $opera . $value;
 		}
 
-		if (empty($string) || empty($array)) {
+		if (empty($string)) {
 			return $this->addError('None data update.');
 		}
 
