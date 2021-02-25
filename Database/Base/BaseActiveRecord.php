@@ -585,9 +585,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 				$condition[$key] = $val;
 			}
 		}
-
-		var_dump($this->_oldAttributes, $this->_attributes);
-
 		return [$_tmp, $condition, array_keys($_tmp)];
 	}
 
