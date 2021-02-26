@@ -37,12 +37,12 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-//        Coroutine::set([
-//            'enable_deadlock_check' => false,
+        Coroutine::set([
+            'enable_deadlock_check' => false,
 //            'exit_condition'        => function () {
 //                return Coroutine::stats()['coroutine_num'] === 0;
 //            }
-//        ]);
+        ]);
         putenv('workerId=' . $worker_id);
 
         $get_name = $this->get_process_name($server, $worker_id);
