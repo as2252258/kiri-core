@@ -53,8 +53,6 @@ class OnTask extends Callback
 			return $server->finish('null data');
 		}
 
-		Process::signal(SIGTERM | SIGKILL | SIGUSR1, [$this, 'onSignal']);
-
 		$finish = $this->runTaskHandler($data);
 		if (!$finish) {
 			$finish = [];
@@ -93,11 +91,6 @@ class OnTask extends Callback
 		return $task->finish(json_encode($finish));
 	}
 
-
-	public function onSignal()
-	{
-
-	}
 
 	/**
 	 * @param $data
