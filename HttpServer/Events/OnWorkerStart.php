@@ -69,11 +69,11 @@ class OnWorkerStart extends Callback
             var_dump($sigkill);
             if ($sigkill !== false) {
                 while (Snowflake::app()->isRun()) {
-                    Coroutine::sleep(1);
+                    Coroutine::sleep(0.01);
                 }
             }
             go(function () use ($server) {
-                Coroutine::waitPid($server->worker_pid);
+                var_dump(Coroutine::waitPid($server->worker_pid));
             });
             $server->stop($workerId);;
         } catch (\Throwable $exception) {
