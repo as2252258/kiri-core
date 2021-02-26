@@ -26,8 +26,6 @@ class OnFinish extends Callback
 		$data = json_decode($data, true);
 		$data['work_id'] = $task_id;
 		$this->write(var_export($data, true), 'Task');
-
-		Snowflake::app()->decrement();
 	}
 
 }

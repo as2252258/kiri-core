@@ -93,6 +93,13 @@ abstract class BaseApplication extends Service
 	}
 
 
+	public function stateInit()
+	{
+		$this->taskNumber = 0;
+		$this->state = 'SWOOLE_WORKER_IDLE';
+	}
+
+
 	public function decrement()
 	{
 		$this->taskNumber -= 1;

@@ -99,6 +99,9 @@ class OnTask extends Callback
 	private function runTaskHandler($data): ?array
 	{
 		Snowflake::app()->increment();
+		defer(function () {
+			Snowflake::app()->decrement();
+		});
 		try {
 			$serialize = $this->before($data);
 			$params = $serialize->getParams();
