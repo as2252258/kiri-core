@@ -80,21 +80,6 @@ class OnTask extends Callback
 			return $task->finish('null data');
 		}
 
-		Coroutine::getContext()['isComplete'] = false;
-		go(function () {
-			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2, -1);
-			var_dump($sigkill);
-			if ($sigkill === false) {
-				return;
-			}
-			while (true) {
-				$content = Coroutine::getContext(Coroutine::getPcid())['isComplete'];
-				if ($content === true) {
-					break;
-				}
-			}
-		});
-
 		$finish = $this->runTaskHandler($task->data);
 		Coroutine::getContext()['isComplete'] = true;
 		if (!$finish) {

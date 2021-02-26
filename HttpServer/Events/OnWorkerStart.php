@@ -10,6 +10,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Server;
 
 /**
@@ -38,11 +39,32 @@ class OnWorkerStart extends Callback
 		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
+
+			$this->onSign();
 		} else {
 			Snowflake::setWorkerId($server->worker_pid);
 			$this->setWorkerAction($worker_id);
 		}
 	}
+
+	public function onSign()
+	{
+		Coroutine::getContext()['isComplete'] = false;
+		go(function () {
+			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2, -1);
+			var_dump($sigkill);
+			if ($sigkill === false) {
+				return;
+			}
+			while (true) {
+				$content = Coroutine::getContext(Coroutine::getPcid())['isComplete'];
+				if ($content === true) {
+					break;
+				}
+			}
+		});
+	}
+
 
 	/**
 	 * @param $worker_id
