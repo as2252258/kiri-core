@@ -6,6 +6,7 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
+use Snowflake\Snowflake;
 use Swoole\Server;
 
 /**
@@ -25,6 +26,8 @@ class OnFinish extends Callback
 		$data = json_decode($data, true);
 		$data['work_id'] = $task_id;
 		$this->write(var_export($data, true), 'Task');
+
+		Snowflake::app()->decrement();
 	}
 
 }

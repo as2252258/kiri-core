@@ -98,8 +98,9 @@ class OnTask extends Callback
 	 */
 	private function runTaskHandler($data): ?array
 	{
-		$serialize = $this->before($data);
+		Snowflake::app()->increment();
 		try {
+			$serialize = $this->before($data);
 			$params = $serialize->getParams();
 			if (is_object($params)) {
 				$params = get_object_vars($params);

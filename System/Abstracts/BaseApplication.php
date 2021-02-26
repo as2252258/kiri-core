@@ -50,6 +50,12 @@ abstract class BaseApplication extends Service
 
 	use TraitApplication;
 
+
+	private string $state = '';
+
+
+	private int $taskNumber = 0;
+
 	/**
 	 * @var string
 	 */
@@ -75,6 +81,37 @@ abstract class BaseApplication extends Service
 		$this->enableEnvConfig();
 
 		parent::__construct($config);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isRun(): bool
+	{
+		return $this->state == 'SWOOLE_WORKER_BUSY';
+	}
+
+
+	public function decrement()
+	{
+		$this->taskNumber -= 1;
+		if ($this->taskNumber <= 0) {
+			$this->taskNumber = 0;
+			$this->state = 'SWOOLE_WORKER_IDLE';
+		}
+	}
+
+
+	public function increment()
+	{
+		$this->taskNumber += 1;
+		if ($this->taskNumber <= 0) {
+			$this->taskNumber = 0;
+			$this->state = 'SWOOLE_WORKER_IDLE';
+		} else {
+			$this->state = 'SWOOLE_WORKER_BUSY';
+		}
 	}
 
 

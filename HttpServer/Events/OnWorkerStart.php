@@ -22,6 +22,9 @@ class OnWorkerStart extends Callback
 {
 
 
+	private int $_taskTable = 0;
+
+
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
@@ -54,7 +57,6 @@ class OnWorkerStart extends Callback
 	 * @param Server $server
 	 * @param int $workerId
 	 * 异步任务管制
-	 * @throws ComponentException
 	 */
 	public function onTaskSignal(Server $server, int $workerId)
 	{
@@ -63,11 +65,7 @@ class OnWorkerStart extends Callback
 			if ($sigkill === false) {
 				return $server->stop($workerId);
 			}
-
-			$this->error(env('workerId') . '::' . $server->getWorkerStatus($workerId));
-			$this->error(env('workerId') . '::' . $server->stats()['coroutine_num']);
-
-			while ($server->getWorkerStatus($workerId) === SWOOLE_WORKER_BUSY) {
+			while (Snowflake::app()->isRun()) {
 				Coroutine::sleep(0.01);
 			}
 			return $server->stop($workerId);
