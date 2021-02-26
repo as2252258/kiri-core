@@ -211,7 +211,6 @@ class ServerInotify extends Process
 		Snowflake::reload();
 	}
 
-
 	/**
 	 * 清理所有inotify监听
 	 */
