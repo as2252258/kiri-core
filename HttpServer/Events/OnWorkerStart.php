@@ -36,10 +36,6 @@ class OnWorkerStart extends Callback
 			swoole_set_process_name($get_name);
 		}
 
-		go(function () use ($server) {
-			Coroutine\System::waitPid($server->worker_pid);
-		});
-
 		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
