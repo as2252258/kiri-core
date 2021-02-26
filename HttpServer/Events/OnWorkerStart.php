@@ -56,7 +56,6 @@ class OnWorkerStart extends Callback
     }
 
 
-
     /**
      * @param Server $server
      * @param int $workerId
@@ -68,9 +67,12 @@ class OnWorkerStart extends Callback
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
             var_dump($sigkill);
             if ($sigkill !== false) {
-                while (Snowflake::app()->isRun()) {
+                do {
+                    if (!Snowflake::app()->isRun()) {
+                        break;
+                    }
                     Coroutine::sleep(0.01);
-                }
+                } while (true);
             }
             go(function () use ($server) {
                 var_dump(Coroutine::waitPid($server->worker_pid));
