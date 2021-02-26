@@ -10,6 +10,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -69,7 +70,8 @@ class OnWorkerStart extends Callback
                         Coroutine::sleep(1);
                     }
                 }
-                $server->stop($server->worker_pid);
+                $server->stop();
+                Process::kill($server->worker_pid, SIGKILL);
             } catch (\Throwable $exception) {
                 $this->addError($exception);
             }
