@@ -57,9 +57,8 @@ class OnWorkerStart extends Callback
      * @param Server $server
      * @param int $workerId
      * 异步任务管制
-     * @return mixed
      */
-    public function onTaskSignal(Server $server, int $workerId): mixed
+    public function onTaskSignal(Server $server, int $workerId)
     {
         $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1, -1);
         if ($sigkill !== false) {
@@ -68,7 +67,6 @@ class OnWorkerStart extends Callback
             }
         }
         Snowflake::app()->stateInit();
-        return $server->stop($workerId);
     }
 
 
