@@ -42,7 +42,8 @@ class OnWorkerStart extends Callback
             swoole_set_process_name($get_name);
         }
         Coroutine\go(function () use ($server) {
-            Coroutine::waitPid($server->worker_pid);
+            var_dump(Coroutine::waitPid($server->worker_pid));
+            $server->stop();
         });
         $name = ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker');
 
