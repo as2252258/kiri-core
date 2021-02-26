@@ -382,6 +382,7 @@ class Snowflake
         }
     }
 
+
     /**
      * @return mixed
      * @throws Exception
