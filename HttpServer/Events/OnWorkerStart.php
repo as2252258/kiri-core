@@ -41,8 +41,6 @@ class OnWorkerStart extends Callback
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
 		}
-		$this->onTaskSignal($server, $worker_id);
-
 		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
@@ -50,6 +48,7 @@ class OnWorkerStart extends Callback
 			Snowflake::setWorkerId($server->worker_pid);
 			$this->setWorkerAction($worker_id);
 		}
+		$this->onTaskSignal($server, $worker_id);
 	}
 
 
@@ -57,20 +56,18 @@ class OnWorkerStart extends Callback
 	 * @param Server $server
 	 * @param int $workerId
 	 * 异步任务管制
+	 * @return mixed
 	 */
-	public function onTaskSignal(Server $server, int $workerId)
+	public function onTaskSignal(Server $server, int $workerId): mixed
 	{
-		go(function () use ($server, $workerId) {
-			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1, -1);
-			if ($sigkill === false) {
-				return $server->stop($workerId);
-			}
-			var_dump(Snowflake::app()->isRun());
-			while (Snowflake::app()->isRun()) {
-				Coroutine::sleep(0.01);
-			}
+		$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1, -1);
+		if ($sigkill === false) {
 			return $server->stop($workerId);
-		});
+		}
+		while ($server->stats()['coroutine_num'] > 0) {
+			Coroutine::sleep(0.01);
+		}
+		return $server->stop($workerId);
 	}
 
 
