@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use co;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
@@ -71,16 +72,17 @@ class OnWorkerStart extends Callback
         Coroutine\go(function (Server $server, $worker_id) {
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
             if ($sigkill !== false) {
-                return Process::kill($server->worker_pid,0);
+                return $server->stop();
             }
             do {
-                $number = Coroutine::stats()['coroutine_num'];
+                $number = Co::stats()['coroutine_num'];
+                var_dump($number);
                 if ($number === 0) {
                     break;
                 }
                 Coroutine::sleep(0.01);
             } while (true);
-            return Process::kill($server->worker_pid,0);
+            return $server->stop();
         }, $server, $worker_id);
     }
 
