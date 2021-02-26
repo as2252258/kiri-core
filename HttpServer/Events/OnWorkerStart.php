@@ -37,7 +37,7 @@ class OnWorkerStart extends Callback
     public function onHandler(Server $server, int $worker_id): void
     {
         Coroutine::set(['enable_deadlock_check' => false]);
-        Coroutine::create(function () use ($server, $worker_id) {
+        Coroutine\go(function () use ($server, $worker_id) {
             $this->onTaskSignal($server, $worker_id);
         });
 
