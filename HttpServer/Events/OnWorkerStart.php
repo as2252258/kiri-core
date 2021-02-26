@@ -64,6 +64,7 @@ class OnWorkerStart extends Callback
     public function onTaskSignal(Server $server, int $workerId)
     {
         try {
+            var_dump(Coroutine::waitPid($server->worker_id));
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
             var_dump($sigkill);
             if ($sigkill !== false) {
