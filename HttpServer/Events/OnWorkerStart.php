@@ -40,6 +40,9 @@ class OnWorkerStart extends Callback
         Coroutine\go(function () use ($server, $worker_id) {
             $this->onTaskSignal($server, $worker_id);
         });
+        Coroutine\go(function () use ($server) {
+            var_dump(Coroutine::waitPid($server->worker_pid));
+        });
 
         $get_name = $this->get_process_name($server, $worker_id);
         if (!empty($get_name) && !Snowflake::isMac()) {
@@ -75,11 +78,6 @@ class OnWorkerStart extends Callback
                     Coroutine::sleep(0.01);
                 } while (true);
             }
-
-            go(function () use ($server) {
-                var_dump(__LINE__);
-                var_dump(Coroutine::waitPid($server->worker_pid));
-            });
             $server->stop($workerId);;
         } catch (\Throwable $exception) {
             $this->addError($exception);
