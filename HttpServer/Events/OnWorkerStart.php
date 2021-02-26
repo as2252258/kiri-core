@@ -37,13 +37,6 @@ class OnWorkerStart extends Callback
     public function onHandler(Server $server, int $worker_id): void
     {
         Coroutine::set(['enable_deadlock_check' => false]);
-        Coroutine\go(function () use ($server, $worker_id) {
-            $this->onTaskSignal($server, $worker_id);
-        });
-        Coroutine\go(function () use ($server) {
-            var_dump(Coroutine::waitPid($server->worker_pid));
-        });
-
         $get_name = $this->get_process_name($server, $worker_id);
         if (!empty($get_name) && !Snowflake::isMac()) {
             swoole_set_process_name($get_name);
@@ -52,6 +45,12 @@ class OnWorkerStart extends Callback
         putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
             fire(Event::SERVER_TASK_START);
+            Coroutine\go(function () use ($server, $worker_id) {
+                $this->onTaskSignal($server, $worker_id);
+            });
+            Coroutine\go(function () use ($server) {
+                Coroutine::waitPid($server->worker_pid);
+            });
         } else {
             Snowflake::setWorkerId($server->worker_pid);
             $this->setWorkerAction($worker_id);
@@ -70,7 +69,6 @@ class OnWorkerStart extends Callback
     {
         try {
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
-            var_dump($sigkill, __LINE__);
             if ($sigkill !== false) {
                 do {
                     if (!Snowflake::app()->isRun()) {
