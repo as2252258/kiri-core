@@ -79,7 +79,6 @@ class OnTask extends Callback
 		}
 
 		$finish = $this->runTaskHandler($task->data);
-		Coroutine::getContext()['isComplete'] = true;
 		if (!$finish) {
 			$finish = [];
 		}

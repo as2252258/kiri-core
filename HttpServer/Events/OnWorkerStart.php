@@ -63,15 +63,8 @@ class OnWorkerStart extends Callback
 			if ($sigkill === false) {
 				return $server->stop($workerId);
 			}
-			while (true) {
-				$context = Coroutine::getContext(Coroutine::getPcid());
-				if (!isset($context['isComplete'])) {
-					break;
-				}
-				$content = $context['isComplete'];
-				if ($content === true) {
-					break;
-				}
+			while ($server->stats()['coroutine_num'] > 0) {
+				Coroutine::sleep(0.01);
 			}
 			return $server->stop($workerId);
 		});
