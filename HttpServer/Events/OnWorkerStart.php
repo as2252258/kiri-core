@@ -39,9 +39,9 @@ class OnWorkerStart extends Callback
     {
         Coroutine::set([
             'enable_deadlock_check' => false,
-//            'exit_condition'        => function () {
-//                return Coroutine::stats()['coroutine_num'] === 0;
-//            }
+            'exit_condition'        => function () {
+                return Coroutine::stats()['coroutine_num'] === 0;
+            }
         ]);
         putenv('workerId=' . $worker_id);
 
