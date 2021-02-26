@@ -245,7 +245,7 @@ class Snowflake
     public static function getMasterPid(): bool|string
     {
         $pid = Snowflake::app()->getSwoole()->setting['pid_file'];
-        
+
         return file_get_contents($pid);
     }
 
