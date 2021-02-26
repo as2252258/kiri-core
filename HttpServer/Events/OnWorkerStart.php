@@ -50,7 +50,7 @@ class OnWorkerStart extends Callback
             swoole_set_process_name($get_name);
         }
 
-        $this->onSignal($server, $worker_id);
+//        $this->onSignal($server, $worker_id);
 
         $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
