@@ -36,25 +36,34 @@ class OnWorkerStart extends Callback
 			swoole_set_process_name($get_name);
 		}
 
+		go(function () use ($server) {
+			Coroutine\System::waitPid($server->worker_pid);
+		});
+
 		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
 
-			$this->onSign();
+			$this->onTaskSignal($server, $worker_id);
 		} else {
 			Snowflake::setWorkerId($server->worker_pid);
 			$this->setWorkerAction($worker_id);
 		}
 	}
 
-	public function onSign()
+
+	/**
+	 * @param Server $server
+	 * @param int $workerId
+	 * 异步任务管制
+	 */
+	public function onTaskSignal(Server $server, int $workerId)
 	{
 		Coroutine::getContext()['isComplete'] = false;
-		go(function () {
+		go(function () use ($server, $workerId) {
 			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2, -1);
-			var_dump($sigkill);
 			if ($sigkill === false) {
-				return;
+				return $server->stop($workerId);
 			}
 			while (true) {
 				$context = Coroutine::getContext(Coroutine::getPcid());
@@ -66,6 +75,7 @@ class OnWorkerStart extends Callback
 					break;
 				}
 			}
+			return $server->stop($workerId);
 		});
 	}
 
