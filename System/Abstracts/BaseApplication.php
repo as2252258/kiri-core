@@ -119,6 +119,8 @@ abstract class BaseApplication extends Service
 		} else {
 			$this->state = 'SWOOLE_WORKER_BUSY';
 		}
+
+		return $this;
 	}
 
 
