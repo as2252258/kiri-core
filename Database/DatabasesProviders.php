@@ -35,7 +35,6 @@ class DatabasesProviders extends Providers
 
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
-		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 
 		$event->on(Event::SERVER_WORKER_START, [$this, 'scanModel']);
 		$event->on(Event::SERVER_TASK_START, [$this, 'scanModel']);

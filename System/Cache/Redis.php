@@ -40,7 +40,6 @@ class Redis extends Component
 		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'destroy']);
 		$event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'release']);
 		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
-		$event->on(Event::SERVER_TASK_START, [$this, 'createPool']);
 	}
 
 
