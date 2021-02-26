@@ -99,9 +99,6 @@ class OnTask extends Callback
 	private function runTaskHandler($data): ?array
 	{
 		Snowflake::app()->increment();
-		defer(function () {
-			Snowflake::app()->decrement();
-		});
 		try {
 			$serialize = $this->before($data);
 			$params = $serialize->getParams();
@@ -121,6 +118,7 @@ class OnTask extends Callback
 			$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
 			Timer::clearAll();
 		}
+		Snowflake::app()->decrement();
 		return $finish;
 	}
 
