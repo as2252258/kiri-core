@@ -54,8 +54,7 @@ class OnWorkerStart extends Callback
             $this->setWorkerAction($worker_id);
         }
     }
-
-
+    
 
     /**
      * @param Server $server
