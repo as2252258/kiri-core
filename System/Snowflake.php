@@ -388,7 +388,7 @@ class Snowflake
      */
     public static function reload(): mixed
     {
-        return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
+        return Process::kill((int)Snowflake::getMasterPid());
     }
 
 
