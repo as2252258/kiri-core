@@ -378,7 +378,6 @@ class Server extends HttpService
 	}
 
 
-
 	/**
 	 * @param $config
 	 * @param $newListener
