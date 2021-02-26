@@ -41,16 +41,15 @@ class OnWorkerStart extends Callback
         if (!empty($get_name) && !Snowflake::isMac()) {
             swoole_set_process_name($get_name);
         }
-
+        Coroutine\go(function () use ($server) {
+            Coroutine::waitPid($server->worker_pid);
+        });
         $this->debug(sprintf('Worker #%d is start.....', $worker_id));
         putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
             fire(Event::SERVER_TASK_START);
             Coroutine\go(function () use ($server, $worker_id) {
                 $this->onTaskSignal($server, $worker_id);
-            });
-            Coroutine\go(function () use ($server) {
-                Coroutine::waitPid($server->worker_pid);
             });
         } else {
             Snowflake::setWorkerId($server->worker_pid);
