@@ -220,12 +220,10 @@ class ServerInotify extends Process
 			try {
 				inotify_rm_watch($this->inotify, $wd);
 			} catch (\Throwable $exception) {
-				$this->application->debug($exception->getMessage());
-			} finally {
-				$this->watchFiles = [];
 			}
 		}
-	}
+        $this->watchFiles = [];
+    }
 
 	/**
 	 * @param $code
