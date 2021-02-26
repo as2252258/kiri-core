@@ -65,6 +65,7 @@ class OnWorkerStart extends Callback
 			if ($sigkill === false) {
 				return $server->stop($workerId);
 			}
+			var_dump(Snowflake::app()->isRun());
 			while (Snowflake::app()->isRun()) {
 				Coroutine::sleep(0.01);
 			}

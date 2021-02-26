@@ -51,7 +51,7 @@ abstract class BaseApplication extends Service
 	use TraitApplication;
 
 
-	private string $state = '';
+	private string $state = 'SWOOLE_WORKER_IDLE';
 
 
 	private int $taskNumber = 0;
@@ -106,7 +106,7 @@ abstract class BaseApplication extends Service
 	public function increment()
 	{
 		$this->taskNumber += 1;
-		if ($this->taskNumber <= 0) {
+		if ($this->taskNumber <= 1) {
 			$this->taskNumber = 0;
 			$this->state = 'SWOOLE_WORKER_IDLE';
 		} else {
