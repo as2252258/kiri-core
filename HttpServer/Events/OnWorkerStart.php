@@ -15,6 +15,7 @@ use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
+use Swoole\Timer;
 
 /**
  * Class OnWorkerStart
@@ -70,6 +71,8 @@ class OnWorkerStart extends Callback
     {
         Coroutine\go(function (Server $server, $worker_id) {
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
+
+            Timer::clearAll();
             if ($sigkill === false) {
                 do {
                     $number = Co::stats()['coroutine_num'];
