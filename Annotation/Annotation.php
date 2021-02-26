@@ -202,6 +202,20 @@ class Annotation extends Component
 
 
 	/**
+	 * @param $class
+	 * @return void
+	 */
+	public function setProperty($class): void
+	{
+		$lists = $this->getProperty($class);
+		if (empty($lists)) {
+			return;
+		}
+		Snowflake::configure($class, $lists);
+	}
+
+
+	/**
 	 * @param string $class
 	 * @return ReflectionClass|null
 	 * @throws ReflectionException|NotFindClassException

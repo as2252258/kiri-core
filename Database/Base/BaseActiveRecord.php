@@ -12,10 +12,10 @@ namespace Database\Base;
 
 use Annotation\Event;
 use Annotation\Inject;
-use Annotation\Model\Get;
 use ArrayAccess;
 use Database\SqlBuilder;
 use HttpServer\Http\Context;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\ActiveQuery;
@@ -68,6 +68,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	private array $_annotations = [];
 
+
+	private array $_fields = [];
+
 	/**
 	 * @var bool
 	 */
@@ -109,6 +112,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
+
+		$this->_fields = static::getColumns()->format();
+
 		$this->createAnnotation();
 	}
 
@@ -120,17 +126,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$annotation = Snowflake::app()->getAttributes();
 
-		$name = static::class;
+		$this->_annotations = $annotation->getMethods(get_called_class());
 
-		$this->_annotations = $annotation->getMethods($name);
-
-		$lists = $annotation->getProperty($name);
-		if (empty($lists)) {
-			return;
-		}
-		foreach ($lists as $name => $list) {
-			$this->{$name} = $list;
-		}
+		$annotation->setProperty($this);
 	}
 
 
@@ -576,11 +574,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$_tmp = [];
 		$condition = [];
 		$columns = static::getColumns();
+
+		$format = $columns->getAllField();
+
 		foreach ($this->_attributes as $key => $val) {
 			$oldValue = $this->_oldAttributes[$key] ?? null;
-
 			if ($val !== $oldValue) {
-				$_tmp[$key] = $columns->fieldFormat($key, $val);
+				$_tmp[$key] = $columns->encode($val, $columns->clean($format[$key]));
 			} else {
 				$condition[$key] = $val;
 			}
@@ -647,11 +647,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function has($attribute): bool
+	#[Pure] public function has($attribute): bool
 	{
-		$format = static::getColumns()->format();
-
-		return array_key_exists($attribute, $format);
+		return array_key_exists($attribute, $this->_fields);
 	}
 
 	/**ƒ

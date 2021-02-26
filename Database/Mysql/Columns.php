@@ -12,6 +12,7 @@ namespace Database\Mysql;
 
 
 use Database\SqlBuilder;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Database\Connection;
 use Exception;
@@ -139,10 +140,10 @@ class Columns extends Component
 	/**
 	 * @param $val
 	 * @param null $format
-	 * @return mixed
+	 * @return float|bool|int|string
 	 * @throws Exception
 	 */
-	public function encode($val, $format = null): mixed
+	public function encode($val, $format = null): float|bool|int|string
 	{
 		if (empty($format)) {
 			return $val;
@@ -163,7 +164,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isInt($format): bool
+	#[Pure] public function isInt($format): bool
 	{
 		return in_array($format, ['int', 'bigint', 'tinyint', 'smallint', 'mediumint']);
 	}
@@ -172,7 +173,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isFloat($format): bool
+	#[Pure] public function isFloat($format): bool
 	{
 		return in_array($format, ['float', 'double', 'decimal']);
 	}
@@ -181,7 +182,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isJson($format): bool
+	#[Pure] public function isJson($format): bool
 	{
 		return in_array($format, ['json']);
 	}
@@ -190,7 +191,7 @@ class Columns extends Component
 	 * @param $format
 	 * @return bool
 	 */
-	public function isString($format): bool
+	#[Pure] public function isString($format): bool
 	{
 		return in_array($format, ['varchar', 'char', 'text', 'longtext', 'tinytext', 'mediumtext']);
 	}
@@ -232,7 +233,7 @@ class Columns extends Component
 	 *
 	 * @throws Exception
 	 */
-	public function getFirstPrimary(): array|string|null
+	#[Pure] public function getFirstPrimary(): array|string|null
 	{
 		if (isset($this->_auto_increment[$this->table])) {
 			return $this->_auto_increment[$this->table];
@@ -334,7 +335,7 @@ class Columns extends Component
 	 * @param $type
 	 * @return string
 	 */
-	private function clean($type): string
+	public function clean($type): string
 	{
 		if (!str_contains($type, ')')) {
 			return $type;
@@ -353,14 +354,23 @@ class Columns extends Component
 	 */
 	public function get_fields($field = null): array|string|null
 	{
-		$fields = $this->columns('Type', 'Field');
+		$fields = $this->getAllField();
 		if (empty($field)) {
 			return $fields;
 		}
-		if (!isset($fields[$field])) {
-			return null;
+		if (isset($fields[$field])) {
+			return strtolower($fields[$field]);
 		}
-		return strtolower($fields[$field]);
+		return null;
+	}
+
+	/**
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getAllField(): array
+	{
+		return $this->columns('Type', 'Field');
 	}
 
 }
