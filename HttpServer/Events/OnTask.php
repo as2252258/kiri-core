@@ -77,9 +77,11 @@ class OnTask extends Callback
 		if (empty($task->data)) {
 			return $task->finish('null data');
 		}
-
-		$finish = $this->runTaskHandler($task->data);
-		if (!$finish) {
+		$app = Snowflake::app();
+        $app->increment();
+        $finish = $this->runTaskHandler($task->data);
+        $app->decrement();
+        if (!$finish) {
 			$finish = [];
 		}
 		$finish['runTime'] = [
@@ -98,7 +100,6 @@ class OnTask extends Callback
 	 */
 	private function runTaskHandler($data): ?array
 	{
-		Snowflake::app()->increment();
 		try {
 			$serialize = $this->before($data);
 			$params = $serialize->getParams();
@@ -118,7 +119,6 @@ class OnTask extends Callback
 			$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
 			Timer::clearAll();
 		}
-		Snowflake::app()->decrement();
 		return $finish;
 	}
 
