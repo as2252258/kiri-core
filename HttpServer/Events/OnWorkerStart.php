@@ -36,21 +36,26 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        Coroutine::set(['enable_deadlock_check' => false]);
+        Coroutine::set([
+            'enable_deadlock_check' => false,
+            'exit_condition'        => function () {
+                return Coroutine::stats()['coroutine_num'] === 0;
+            }
+        ]);
         $get_name = $this->get_process_name($server, $worker_id);
         if (!empty($get_name) && !Snowflake::isMac()) {
             swoole_set_process_name($get_name);
         }
-        Coroutine\go(function ($server, $worker_id) {
-            $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
-            if ($sigkill !== false) {
-                return $server->stop();
-            }
-            while (Snowflake::app()->isRun()) {
-                Coroutine::sleep(0.01);
-            }
-            return $server->stop();
-        }, $server, $worker_id);
+//        Coroutine\go(function ($server, $worker_id) {
+//            $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
+//            if ($sigkill !== false) {
+//                return $server->stop();
+//            }
+//            while (Snowflake::app()->isRun()) {
+//                Coroutine::sleep(0.01);
+//            }
+//            return $server->stop();
+//        }, $server, $worker_id);
 
         $name = ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker');
         $this->debug(sprintf($name . ' #%d is start.....', $worker_id));
@@ -62,8 +67,6 @@ class OnWorkerStart extends Callback
             $this->setWorkerAction($worker_id);
         }
     }
-
-
 
 
     /**
