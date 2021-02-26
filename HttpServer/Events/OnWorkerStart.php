@@ -79,7 +79,7 @@ class OnWorkerStart extends Callback
                 }
                 Coroutine::sleep(0.01);
             } while (true);
-            return Process::kill($server->worker_pid);
+            return Process::kill($server->worker_pid,0);
         }, $server, $worker_id);
     }
 
