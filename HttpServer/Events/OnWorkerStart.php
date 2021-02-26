@@ -63,6 +63,7 @@ class OnWorkerStart extends Callback
 			}
 
 			var_dump(env('workerId') . '::' . $server->getWorkerStatus($workerId));
+			var_dump(env('workerId') . '::' . $server->stats()['coroutine_num']);
 
 			while ($server->getWorkerStatus($workerId) === SWOOLE_WORKER_BUSY) {
 				Coroutine::sleep(0.01);
