@@ -61,6 +61,9 @@ class OnWorkerStart extends Callback
 			if ($sigkill === false) {
 				return $server->stop($workerId);
 			}
+
+			var_dump($server->getWorkerStatus($workerId));
+
 			while ($server->getWorkerStatus($workerId) === SWOOLE_WORKER_BUSY) {
 				Coroutine::sleep(0.01);
 			}
