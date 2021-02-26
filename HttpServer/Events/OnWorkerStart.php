@@ -39,9 +39,9 @@ class OnWorkerStart extends Callback
     {
         Coroutine::set([
             'enable_deadlock_check' => false,
-            'exit_condition'        => function () {
-                return Coroutine::stats()['coroutine_num'] === 0;
-            }
+//            'exit_condition'        => function () {
+//                return Coroutine::stats()['coroutine_num'] === 0;
+//            }
         ]);
         putenv('workerId=' . $worker_id);
 
@@ -50,7 +50,7 @@ class OnWorkerStart extends Callback
             swoole_set_process_name($get_name);
         }
 
-//        $this->onSignal($server, $worker_id);
+        $this->onSignal($server, $worker_id);
 
         $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
