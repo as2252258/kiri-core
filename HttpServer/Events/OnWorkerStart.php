@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -53,6 +54,7 @@ class OnWorkerStart extends Callback
 	 * @param Server $server
 	 * @param int $workerId
 	 * 异步任务管制
+	 * @throws ComponentException
 	 */
 	public function onTaskSignal(Server $server, int $workerId)
 	{
@@ -62,8 +64,8 @@ class OnWorkerStart extends Callback
 				return $server->stop($workerId);
 			}
 
-			var_dump(env('workerId') . '::' . $server->getWorkerStatus($workerId));
-			var_dump(env('workerId') . '::' . $server->stats()['coroutine_num']);
+			$this->error(env('workerId') . '::' . $server->getWorkerStatus($workerId));
+			$this->error(env('workerId') . '::' . $server->stats()['coroutine_num']);
 
 			while ($server->getWorkerStatus($workerId) === SWOOLE_WORKER_BUSY) {
 				Coroutine::sleep(0.01);
