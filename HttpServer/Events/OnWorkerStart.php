@@ -76,7 +76,7 @@ class OnWorkerStart extends Callback
                     Coroutine::sleep(0.01);
                 } while (true);
             }
-            $server->stop($workerId);;
+            $server->stop();;
         } catch (\Throwable $exception) {
             $this->addError($exception);
         }
