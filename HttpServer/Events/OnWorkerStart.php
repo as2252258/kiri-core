@@ -71,11 +71,8 @@ class OnWorkerStart extends Callback
                     Coroutine::sleep(1);
                 }
             }
-            go(function () use ($server) {
-                var_dump(Coroutine::waitPid($server->worker_id));
-
-            });
             $server->stop($workerId, true);
+            var_dump(Coroutine::waitPid($server->worker_id));
         } catch (\Throwable $exception) {
             $this->addError($exception);
         }
