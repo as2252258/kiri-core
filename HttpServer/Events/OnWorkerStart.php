@@ -53,7 +53,6 @@ class OnWorkerStart extends Callback
         }, $server, $worker_id);
 
         $name = ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker');
-
         $this->debug(sprintf($name . ' #%d is start.....', $worker_id));
         putenv('workerId=' . $name . '.' . $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
