@@ -47,6 +47,7 @@ class OnWorkerStart extends Callback
             swoole_set_process_name($get_name);
         }
 
+
 //        Coroutine\go(function ($server, $worker_id) {
 //            $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
 //            if ($sigkill !== false) {
