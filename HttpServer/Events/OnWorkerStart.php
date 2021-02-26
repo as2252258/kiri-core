@@ -61,6 +61,7 @@ class OnWorkerStart extends Callback
     }
 
 
+
     /**
      * @param $server
      * @param $worker_id
@@ -70,7 +71,7 @@ class OnWorkerStart extends Callback
         Coroutine\go(function (Server $server, $worker_id) {
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
             if ($sigkill !== false) {
-                return Process::kill($server->worker_pid);
+                return Process::kill($server->worker_pid,0);
             }
             do {
                 $number = Coroutine::stats()['coroutine_num'];
