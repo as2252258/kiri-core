@@ -42,8 +42,6 @@ class OnWorkerStart extends Callback
 			swoole_set_process_name($get_name);
 		}
 
-		Snowflake::app()->stateInit();
-
 		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
@@ -64,6 +62,9 @@ class OnWorkerStart extends Callback
 	public function onTaskSignal(Server $server, int $workerId): mixed
 	{
 		$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1, -1);
+		Coroutine\defer(function () {
+			Snowflake::app()->stateInit();
+		});
 		if ($sigkill === false) {
 			return $server->stop($workerId);
 		}
