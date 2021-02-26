@@ -57,10 +57,11 @@ class OnWorkerStart extends Callback
 				return;
 			}
 			while (true) {
-				if (!isset(Coroutine::getContext(Coroutine::getPcid())['isComplete'])) {
+				$context = Coroutine::getContext(Coroutine::getPcid());
+				if (!isset($context['isComplete'])) {
 					break;
 				}
-				$content = Coroutine::getContext(Coroutine::getPcid())['isComplete'];
+				$content = $context['isComplete'];
 				if ($content === true) {
 					break;
 				}
