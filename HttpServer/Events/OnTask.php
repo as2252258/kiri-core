@@ -82,7 +82,8 @@ class OnTask extends Callback
 
 		Coroutine::getContext()['isComplete'] = false;
 		go(function () {
-			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR1, -1);
+			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2, -1);
+			var_dump($sigkill);
 			if ($sigkill === false) {
 				return;
 			}
