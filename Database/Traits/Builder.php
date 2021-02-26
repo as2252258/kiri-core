@@ -172,7 +172,7 @@ trait Builder
 		if (!is_numeric($key)) {
 			$value = is_numeric($value) ? $value : '\'' . $value . '\'';
 
-			$array[] = sprintf("%s='%s'", $key, $value);
+			$array[] = sprintf("%s=%s", $key, $value);
 		} else if (is_array($value)) {
 			$array = $this->_arrayMap($value, $array);
 		} else {
