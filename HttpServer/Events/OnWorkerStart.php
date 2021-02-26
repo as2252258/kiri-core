@@ -41,19 +41,17 @@ class OnWorkerStart extends Callback
         if (!empty($get_name) && !Snowflake::isMac()) {
             swoole_set_process_name($get_name);
         }
-        Coroutine\go(function () use ($server, $worker_id) {
-
+        Coroutine\go(function ($server, $worker_id) {
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
             if ($sigkill !== false) {
-                do {
-                    if (!Snowflake::app()->isRun()) {
-                        break;
-                    }
-                    Coroutine::sleep(0.01);
-                } while (true);
+                return $server->stop();
             }
-            $server->stop();;
-        });
+            while (Snowflake::app()->isRun()) {
+                Coroutine::sleep(0.01);
+            }
+            return $server->stop();
+        }, $server, $worker_id);
+
         $name = ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker');
 
         $this->debug(sprintf($name . ' #%d is start.....', $worker_id));
