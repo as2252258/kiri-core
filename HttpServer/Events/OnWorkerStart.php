@@ -56,7 +56,6 @@ class OnWorkerStart extends Callback
     }
 
 
-
     /**
      * @param Server $server
      * @param int $workerId
@@ -65,14 +64,14 @@ class OnWorkerStart extends Callback
     public function onTaskSignal(Server $server, int $workerId)
     {
         try {
-            $sigkill = Coroutine::waitSignal(SIGKILL | SIGUSR1);
+            $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
             var_dump($sigkill);
             if ($sigkill !== false) {
                 while (Snowflake::app()->isRun()) {
                     Coroutine::sleep(1);
                 }
             }
-            $server->stop($workerId);
+            $server->stop();
         } catch (\Throwable $exception) {
             $this->addError($exception);
         }

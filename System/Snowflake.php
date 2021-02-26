@@ -244,9 +244,9 @@ class Snowflake
      */
     public static function getMasterPid(): bool|string
     {
-        $default = APP_PATH . 'storage/server.pid';
-        $server = Config::get('settings.pid_file', false, $default);
-        return file_get_contents($server);
+        $pid = Snowflake::app()->getSwoole()->setting['pid_file'];
+        
+        return file_get_contents($pid);
     }
 
 
@@ -389,7 +389,7 @@ class Snowflake
      */
     public static function reload(): mixed
     {
-        return Process::kill((int)Snowflake::app()->getSwoole()->getMasterPid(),SIGUSR1);
+        return Process::kill((int)Snowflake::getMasterPid(),SIGUSR1);
     }
 
 
