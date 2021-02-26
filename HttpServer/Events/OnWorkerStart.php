@@ -37,12 +37,12 @@ class OnWorkerStart extends Callback
 		if (!empty($get_name) && !Snowflake::isMac()) {
 			swoole_set_process_name($get_name);
 		}
+		$this->onTaskSignal($server, $worker_id);
 
 		putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			fire(Event::SERVER_TASK_START);
 
-			$this->onTaskSignal($server, $worker_id);
 		} else {
 			Snowflake::setWorkerId($server->worker_pid);
 			$this->setWorkerAction($worker_id);
@@ -57,9 +57,8 @@ class OnWorkerStart extends Callback
 	 */
 	public function onTaskSignal(Server $server, int $workerId)
 	{
-		Coroutine::getContext()['isComplete'] = false;
 		go(function () use ($server, $workerId) {
-			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2, -1);
+			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1, -1);
 			if ($sigkill === false) {
 				return $server->stop($workerId);
 			}
