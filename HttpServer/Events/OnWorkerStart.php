@@ -43,7 +43,6 @@ class OnWorkerStart extends Callback
         }
 
         $this->debug(sprintf('Worker #%d is start.....', $worker_id));
-
         putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
             fire(Event::SERVER_TASK_START);
