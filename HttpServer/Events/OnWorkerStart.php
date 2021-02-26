@@ -32,7 +32,7 @@ class OnWorkerStart extends Callback
 	 */
 	public function onHandler(Server $server, int $worker_id): void
 	{
-//		Coroutine::set(['enable_deadlock_check' => false]);
+		Coroutine::set(['enable_deadlock_check' => false]);
 
 		$get_name = $this->get_process_name($server, $worker_id);
 		if (!empty($get_name) && !Snowflake::isMac()) {
