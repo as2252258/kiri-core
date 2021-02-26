@@ -58,7 +58,7 @@ class Redis extends Pool
 	 */
     public function createClient(string $name, mixed $config): SRedis
     {
-        $this->printClients($config['host'], $name, true);
+//        $this->printClients($config['host'], $name, true);
         $redis = new SRedis();
         if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
             throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
