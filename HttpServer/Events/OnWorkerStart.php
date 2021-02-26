@@ -67,6 +67,7 @@ class OnWorkerStart extends Callback
             }
         }
         Snowflake::app()->stateInit();
+        $server->stop();
     }
 
 
