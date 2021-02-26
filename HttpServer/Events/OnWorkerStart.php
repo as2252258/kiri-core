@@ -59,8 +59,6 @@ class OnWorkerStart extends Callback
             Snowflake::setWorkerId($server->worker_pid);
             $this->setWorkerAction($worker_id);
         }
-
-
     }
 
 
