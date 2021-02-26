@@ -176,6 +176,10 @@ class Snowflake
     {
         $dir = storage(null, 'worker');
         foreach (glob($dir . '/*') as $file) {
+            clearstatcache();
+            if (!file_exists($file)) {
+                continue;
+            }
             @unlink($file);
         }
     }
@@ -389,7 +393,7 @@ class Snowflake
      */
     public static function reload(): mixed
     {
-        return Process::kill((int)Snowflake::getMasterPid(),SIGUSR1);
+        return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
     }
 
 
