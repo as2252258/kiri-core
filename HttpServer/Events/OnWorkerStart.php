@@ -71,18 +71,17 @@ class OnWorkerStart extends Callback
     {
         Coroutine\go(function (Server $server, $worker_id) {
             $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
-            if ($sigkill !== false) {
-                return $server->stop(null, true);
+            if ($sigkill === false) {
+                do {
+                    $number = Co::stats()['coroutine_num'];
+                    var_dump($number);
+                    if ($number === 0) {
+                        break;
+                    }
+                    Coroutine::sleep(0.01);
+                } while (true);
             }
-            do {
-                $number = Co::stats()['coroutine_num'];
-                var_dump($number);
-                if ($number === 0) {
-                    break;
-                }
-                Coroutine::sleep(0.01);
-            } while (true);
-            return $server->stop(null, true);
+            return $server->stop();
         }, $server, $worker_id);
     }
 
