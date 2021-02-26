@@ -41,6 +41,7 @@ class OnWorkerStart extends Callback
         if (!empty($get_name) && !Snowflake::isMac()) {
             swoole_set_process_name($get_name);
         }
+
         Coroutine\go(function () use ($server) {
             var_dump(Coroutine::waitPid($server->worker_pid));
             $server->stop();
