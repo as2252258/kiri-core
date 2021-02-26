@@ -58,6 +58,7 @@ class Event extends BaseObject
 	const SERVER_CLOSE = 'on close';
 
 
+
 	/**
 	 * @param $name
 	 * @param $callback
