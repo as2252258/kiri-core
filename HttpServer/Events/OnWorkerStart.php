@@ -42,6 +42,8 @@ class OnWorkerStart extends Callback
             swoole_set_process_name($get_name);
         }
 
+        $this->debug(sprintf('Worker #%d is start.....', $worker_id));
+
         putenv('workerId=' . ($worker_id >= $server->setting['worker_num'] ? 'Task' : 'Worker') . '.' . $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
             fire(Event::SERVER_TASK_START);
@@ -91,7 +93,6 @@ class OnWorkerStart extends Callback
     {
         $event = Snowflake::app()->getEvent();
         try {
-            $this->debug(sprintf('Worker #%d is start.....', $worker_id));
             $event->trigger(Event::SERVER_WORKER_START, [$worker_id]);
         } catch (\Throwable $exception) {
             $this->addError($exception);
