@@ -64,8 +64,8 @@ class OnWorkerStart extends Callback
 		if ($sigkill === false) {
 			return $server->stop($workerId);
 		}
-		while ($server->stats()['coroutine_num'] > 1) {
-			Coroutine::sleep(0.01);
+		while ($server->stats()['coroutine_num'] > 0) {
+			sleep(0.01);
 		}
 		return $server->stop($workerId);
 	}
