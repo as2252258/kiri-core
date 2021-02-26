@@ -10,6 +10,8 @@ use HttpServer\IInterface\Task;
 use HttpServer\IInterface\Task as ITask;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
+use Swoole\Process;
 use Swoole\Server;
 use Swoole\Timer;
 use Exception;
@@ -50,6 +52,9 @@ class OnTask extends Callback
 		if (empty($data)) {
 			return $server->finish('null data');
 		}
+
+		Process::signal(SIGTERM | SIGKILL | SIGUSR1, [$this, 'onSignal']);
+
 		$finish = $this->runTaskHandler($data);
 		if (!$finish) {
 			$finish = [];
@@ -74,7 +79,23 @@ class OnTask extends Callback
 		if (empty($task->data)) {
 			return $task->finish('null data');
 		}
+
+		Coroutine::getContext()['isComplete'] = false;
+		go(function () {
+			$sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR1, -1);
+			if ($sigkill === false) {
+				return;
+			}
+			while (true) {
+				$content = Coroutine::getContext(Coroutine::getPcid())['isComplete'];
+				if ($content === true) {
+					break;
+				}
+			}
+		});
+
 		$finish = $this->runTaskHandler($task->data);
+		Coroutine::getContext()['isComplete'] = true;
 		if (!$finish) {
 			$finish = [];
 		}
@@ -84,6 +105,12 @@ class OnTask extends Callback
 			'endTime'   => microtime(TRUE),
 		];
 		return $task->finish(json_encode($finish));
+	}
+
+
+	public function onSignal()
+	{
+
 	}
 
 	/**
