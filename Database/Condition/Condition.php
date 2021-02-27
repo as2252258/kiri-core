@@ -54,6 +54,10 @@ abstract class Condition extends BaseObject
         if (is_array($params)) {
             $values = [];
             foreach ($params as $item => $value) {
+                if (is_object($value)) {
+                    var_dump($value);
+                    continue;
+                };
                 $values[$item] = is_numeric($value) ? $value : '\'' . $value . '\'';
             }
             $this->value = $value;
