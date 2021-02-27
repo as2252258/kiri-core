@@ -122,73 +122,21 @@ trait Builder
         $_tmp = [];
         if (empty($where)) return '';
         if (is_string($where)) return $where;
-
-        var_dump($where);
-
-
         foreach ($where as $key => $value) {
-            if (is_string($value) || is_string($key)) {
-                $_value = is_string($key) ? sprintf('%s=\'%s\'', $key, $value) : $value;
+            if (is_string($key)) {
+                $_value = sprintf('%s=\'%s\'', $key, $value);
+            } else if (is_string($value)) {
+                $_value = $value;
             } else {
-                $_value = $this->conditionMap($value);
+                $_value = $this->_arrayMap($value, $_tmp);
             }
-
             if (empty($_value)) continue;
-
             $_tmp[] = $_value;
         }
         if (!empty($_tmp)) {
             return sprintf(' WHERE %s', implode(' AND ', $_tmp));
         }
         return '';
-    }
-
-
-    /**
-     * @param $condition
-     * @return string
-     * @throws Exception
-     */
-    private function conditionMap($condition): string
-    {
-        $array = [];
-        if (is_string($condition) || empty($condition)) {
-            return $condition;
-        }
-
-        var_dump($condition);
-
-        foreach ($condition as $key => $value) {
-            $array = $this->resolve($array, $key, $value);
-        }
-        if (is_array($array)) {
-            return implode(' AND ', $array);
-        }
-        return $array;
-    }
-
-
-    /**
-     * @param $array
-     * @param $key
-     * @param $value
-     * @return mixed
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     */
-    private function resolve($array, $key, $value): mixed
-    {
-        if (empty($value)) return $array;
-        if (!is_numeric($key)) {
-            $value = is_numeric($value) ? $value : '\'' . $value . '\'';
-
-            $array[] = sprintf("%s=%s", $key, $value);
-        } else if (is_array($value)) {
-            $array = $this->_arrayMap($value, $array);
-        } else {
-            $array[] = sprintf('%s', $value);
-        }
-        return $array;
     }
 
 
