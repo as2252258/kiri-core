@@ -156,6 +156,8 @@ trait Builder
             return $condition;
         }
 
+        var_dump($condition);
+
         foreach ($condition as $key => $value) {
             $array = $this->resolve($array, $key, $value);
         }
