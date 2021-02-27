@@ -92,6 +92,7 @@ class OnWorkerStart extends Callback
             $this->addError($exception);
             write($exception->getMessage(), 'worker');
         }
+
         try {
             $event->trigger(Event::SERVER_AFTER_WORKER_START, [$worker_id]);
         } catch (\Throwable $exception) {
