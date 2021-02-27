@@ -122,6 +122,10 @@ trait Builder
         $_tmp = [];
         if (empty($where)) return '';
         if (is_string($where)) return $where;
+
+        var_dump($where);
+
+
         foreach ($where as $key => $value) {
             if (is_string($value) || is_string($key)) {
                 $_value = is_string($key) ? sprintf('%s=\'%s\'', $key, $value) : $value;
