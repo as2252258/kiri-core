@@ -31,6 +31,7 @@ class OnManagerStart extends Callback
             $prefix = Config::get('id', false, 'system:');
             name($prefix . ': Server Manager.');
         }
+
     }
 
 }
