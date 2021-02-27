@@ -36,18 +36,16 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        putenv('workerId=' . $worker_id);
-
-        $get_name = $this->get_process_name($server, $worker_id);
-        if (!empty($get_name) && !Snowflake::isMac()) {
-            swoole_set_process_name($get_name);
-        }
-
         $container['enable_deadlock_check'] = false;
         $container['exit_condition'] = function () {
             return Co::stats()['coroutine_num'] === 0;
         };
         Coroutine::set($container);
+
+        $get_name = $this->get_process_name($server, $worker_id);
+        if (!empty($get_name) && !Snowflake::isMac()) {
+            swoole_set_process_name($get_name);
+        }
 
 //        $this->onSignal($server, $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
