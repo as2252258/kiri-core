@@ -4,18 +4,13 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
-use co;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Process\Process;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Server;
-use Swoole\Timer;
 
 /**
  * Class OnWorkerStart
