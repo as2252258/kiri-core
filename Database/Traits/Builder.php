@@ -200,15 +200,17 @@ trait Builder
 			if (!is_string($condition[2])) {
 				$condition[2] = $this->_hashMap($condition[2]);
 			}
-			return Snowflake::createObject(['class' => OrCondition::class, 'value' => $condition[2], 'column' => $condition[1], 'oldParams' => $array]);
-		}
-		if (isset(ConditionClassMap::$conditionMap[$stroppier])) {
+			$builder = Snowflake::createObject(['class' => OrCondition::class, 'value' => $condition[2], 'column' => $condition[1], 'oldParams' => $array]);
+		}else  if (isset(ConditionClassMap::$conditionMap[$stroppier])) {
 			$defaultConfig = ConditionClassMap::$conditionMap[$stroppier];
 			$create = array_merge($defaultConfig, ['column' => $condition[1], 'value' => $condition[2]]);
-			$array[] = Snowflake::createObject($create);
+            $builder = Snowflake::createObject($create);
 		} else {
-			$array[] = Snowflake::createObject(['class' => HashCondition::class, 'value' => $condition]);
+            $builder = Snowflake::createObject(['class' => HashCondition::class, 'value' => $condition]);
 		}
+
+		$array[] = $builder->builder();
+
 		return implode(' AND ', $array);
 	}
 
