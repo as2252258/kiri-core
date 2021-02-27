@@ -39,7 +39,7 @@ abstract class Process extends \Swoole\Process implements SProcess
      * @param Process $process
      * @throws \Snowflake\Exception\ComponentException
      */
-    private function _load(Process $process)
+    public function _load(Process $process)
     {
         putenv('environmental=' . Snowflake::PROCESS);
 
