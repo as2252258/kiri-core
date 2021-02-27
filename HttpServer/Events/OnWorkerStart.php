@@ -76,7 +76,7 @@ class OnWorkerStart extends Callback
             while (Co::stats()['coroutine_num'] > 0) {
                 Coroutine::sleep(0.01);
             }
-            return $server->stop();
+            return $server->stop(-1, true);
         }, $server);
     }
 
