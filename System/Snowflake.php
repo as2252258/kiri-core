@@ -400,6 +400,20 @@ class Snowflake
     private static array $_autoload = [];
 
 
+    const PROCESS = 'process';
+    const TASK = 'task';
+    const WORKER = 'worker';
+
+
+    /**
+     * @return string|null
+     */
+    public static function getEnvironmental(): ?string
+    {
+        return env('environmental');
+    }
+
+
     /**
      * @param $class
      * @param $file

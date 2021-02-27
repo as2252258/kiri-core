@@ -17,31 +17,47 @@ use Snowflake\Snowflake;
 abstract class Process extends \Swoole\Process implements SProcess
 {
 
-	/** @var Application $application */
-	protected Application $application;
+    /** @var Application $application */
+    protected Application $application;
 
 
-	/**
-	 * Process constructor.
-	 * @param $application
-	 * @param $name
-	 * @param bool $enable_coroutine
-	 * @throws Exception
-	 */
-	public function __construct($application, $name, $enable_coroutine = true)
-	{
-		$class = get_called_class();
-		parent::__construct(function ($process) use ($name, $class) {
-			fire(Event::SERVER_WORKER_START);
-			putenv('workerId=Process.0');
-			if (Snowflake::isLinux()) {
-				$prefix = ucfirst(rtrim(Snowflake::app()->id, ':'));
-				$this->name($prefix . ': ' . $class);
-			}
-			$this->onHandler($process);
-		}, false, 1, $enable_coroutine);
-		$this->application = $application;
-		Snowflake::setWorkerId($this->pid);
-	}
+    /**
+     * Process constructor.
+     * @param $application
+     * @param $name
+     * @param bool $enable_coroutine
+     * @throws Exception
+     */
+    public function __construct($application, $name, $enable_coroutine = true)
+    {
+        parent::__construct([$this, '_load'], true, 1, $enable_coroutine);
+        $this->application = $application;
+        Snowflake::setWorkerId($this->pid);
+    }
+
+    /**
+     * @param Process $process
+     * @throws \Snowflake\Exception\ComponentException
+     */
+    private function _load(Process $process)
+    {
+        putenv('environmental=' . Snowflake::PROCESS);
+
+        fire(Event::SERVER_WORKER_START);
+        if (Snowflake::isLinux()) {
+            $this->name($this->getPrefix());
+        }
+        $this->onHandler($process);
+    }
+
+
+    /**
+     * @return string
+     */
+    private function getPrefix(): string
+    {
+        return ucfirst(rtrim(Snowflake::app()->id, ':') . ': ' . get_called_class());
+    }
+
 
 }

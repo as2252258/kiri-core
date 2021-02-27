@@ -27,6 +27,8 @@ class OnWorkerStart extends Callback
 
     private int $_taskTable = 0;
 
+    private int $signal = SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1;
+
 
     /**
      * @param Server $server
@@ -38,12 +40,7 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        Coroutine::set([
-            'enable_deadlock_check' => false,
-            //            'exit_condition'        => function () {
-            //                return Coroutine::stats()['coroutine_num'] === 0;
-            //            }
-        ]);
+        Coroutine::set(['enable_deadlock_check' => false]);
         putenv('workerId=' . $worker_id);
 
         $get_name = $this->get_process_name($server, $worker_id);
@@ -52,11 +49,13 @@ class OnWorkerStart extends Callback
         }
 
         $this->onSignal($server, $worker_id);
-
-        $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
             fire(Event::SERVER_TASK_START);
+
+            putenv('environmental=' . Snowflake::TASK);
         } else {
+            putenv('environmental=' . Snowflake::WORKER);
+
             Snowflake::setWorkerId($server->worker_pid);
             $this->setWorkerAction($worker_id);
         }
@@ -68,22 +67,17 @@ class OnWorkerStart extends Callback
      */
     public function onSignal($server, $worker_id)
     {
-        Coroutine\go(function (Server $server, $worker_id) {
-            $sigkill = Coroutine::waitSignal(SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1);
-
-            Timer::clearAll();
+        $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
+        Coroutine\go(function (Server $server) {
+            $sigkill = Coroutine::waitSignal($this->signal);
             if ($sigkill === false) {
-                do {
-                    $number = Co::stats()['coroutine_num'];
-                    var_dump($number);
-                    if ($number === 0) {
-                        break;
-                    }
-                    Coroutine::sleep(0.01);
-                } while (true);
+                return $server->stop();
+            }
+            while (Co::stats()['coroutine_num'] > 0) {
+                Coroutine::sleep(0.01);
             }
             return $server->stop();
-        }, $server, $worker_id);
+        }, $server);
     }
 
 
