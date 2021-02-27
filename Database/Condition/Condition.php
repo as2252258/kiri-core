@@ -47,6 +47,10 @@ abstract class Condition extends BaseObject
      */
     public function setValue($params): void
     {
+        if (is_object($params)) {
+            var_dump($params);
+            $params = get_object_vars($params);
+        };
         if (is_array($params)) {
             $values = [];
             foreach ($params as $item => $value) {
