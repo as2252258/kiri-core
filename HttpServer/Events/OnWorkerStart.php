@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace HttpServer\Events;
 
-
+use co;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Server;
 
 /**
@@ -41,6 +42,12 @@ class OnWorkerStart extends Callback
         if (!empty($get_name) && !Snowflake::isMac()) {
             swoole_set_process_name($get_name);
         }
+
+        $container['enable_deadlock_check'] = false;
+        $container['exit_condition'] = function () {
+            return Co::stats()['coroutine_num'] === 0;
+        };
+        Coroutine::set($container);
 
 //        $this->onSignal($server, $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {

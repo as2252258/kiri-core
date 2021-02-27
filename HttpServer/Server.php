@@ -216,11 +216,6 @@ class Server extends HttpService
             return;
         }
         Runtime::enableCoroutine(true, $this->_types);
-        $container['enable_deadlock_check'] = false;
-        $container['exit_condition'] = function () {
-            return Co::stats()['coroutine_num'] === 0;
-        };
-        Coroutine::set($container);
     }
 
 
