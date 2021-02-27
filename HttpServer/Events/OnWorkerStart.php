@@ -68,18 +68,14 @@ class OnWorkerStart extends Callback
     public function onSignal($server, $worker_id)
     {
         $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
-        Coroutine\go(function (Server $server, $worker_id) {
-            $sigkill = Coroutine::waitSignal($this->signal);
-            if ($sigkill === false) {
-                return $server->stop($worker_id, true);
-            }
-            while (Co::stats()['coroutine_num'] > 0) {
-                var_dump(Co::stats()['coroutine_num']);
-                Coroutine::sleep(0.01);
-            }
-
-            return $server->stop($worker_id, true);
-        }, $server, $worker_id);
+//        Coroutine\go(function (Server $server, $worker_id) {
+        Coroutine::waitSignal($this->signal);
+        while (Co::stats()['coroutine_num'] > 0) {
+            var_dump(Co::stats()['coroutine_num']);
+            Coroutine::sleep(0.01);
+        }
+        return $server->stop($worker_id, true);
+//        }, $server, $worker_id);
     }
 
 
