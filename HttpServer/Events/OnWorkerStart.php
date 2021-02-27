@@ -72,7 +72,7 @@ class OnWorkerStart extends Callback
         Coroutine::waitSignal($this->signal);
         while (Co::stats()['coroutine_num'] > 0) {
             var_dump(Co::stats()['coroutine_num']);
-            Coroutine::sleep(0.01);
+            sleep(1);
         }
         return $server->stop($worker_id, true);
 //        }, $server, $worker_id);
