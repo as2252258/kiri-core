@@ -24,8 +24,10 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Biomonitoring;
 use Snowflake\Process\ServerInotify;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\Runtime;
+use co;
 
 /**
  * Class Server
@@ -194,6 +196,16 @@ class Server extends HttpService
         $this->stop($this);
     }
 
+    private int $_types = SWOOLE_HOOK_TCP |
+    SWOOLE_HOOK_UNIX |
+    SWOOLE_HOOK_UDP |
+    SWOOLE_HOOK_UDG |
+    SWOOLE_HOOK_SSL |
+    SWOOLE_HOOK_TLS |
+    SWOOLE_HOOK_SLEEP |
+    SWOOLE_HOOK_STREAM_FUNCTION |
+    SWOOLE_HOOK_PROC;
+
 
     /**
      * @param bool $isEnable
@@ -203,16 +215,12 @@ class Server extends HttpService
         if (!$isEnable) {
             return;
         }
-        Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
-            SWOOLE_HOOK_UNIX |
-            SWOOLE_HOOK_UDP |
-            SWOOLE_HOOK_UDG |
-            SWOOLE_HOOK_SSL |
-            SWOOLE_HOOK_TLS |
-            SWOOLE_HOOK_SLEEP |
-            SWOOLE_HOOK_STREAM_FUNCTION |
-            SWOOLE_HOOK_PROC
-        );
+        Runtime::enableCoroutine(true, $this->_types);
+        $container['enable_deadlock_check'] = false;
+        $container['exit_condition'] = function () {
+            return Co::stats()['coroutine_num'] === 0;
+        };
+        Coroutine::set($container);
     }
 
 

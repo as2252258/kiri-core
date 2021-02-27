@@ -40,7 +40,6 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        Coroutine::set(['enable_deadlock_check' => false]);
         putenv('workerId=' . $worker_id);
 
         $get_name = $this->get_process_name($server, $worker_id);
@@ -48,7 +47,7 @@ class OnWorkerStart extends Callback
             swoole_set_process_name($get_name);
         }
 
-        $this->onSignal($server, $worker_id);
+//        $this->onSignal($server, $worker_id);
         if ($worker_id >= $server->setting['worker_num']) {
             fire(Event::SERVER_TASK_START);
 
@@ -65,18 +64,18 @@ class OnWorkerStart extends Callback
      * @param $server
      * @param $worker_id
      */
-    public function onSignal($server, $worker_id)
-    {
-        $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
+//    public function onSignal($server, $worker_id)
+//    {
+//        $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
 //        Coroutine\go(function (Server $server, $worker_id) {
-        Coroutine::waitSignal($this->signal);
-        while (Co::stats()['coroutine_num'] > 0) {
-            var_dump(Co::stats()['coroutine_num']);
-            sleep(1);
-        }
-        return $server->stop($worker_id, true);
+//            Coroutine::waitSignal($this->signal);
+//            while (Co::stats()['coroutine_num'] > 0) {
+//                var_dump(Co::stats()['coroutine_num']);
+//                Coroutine::sleep(1);
+//            }
+//            return $server->stop($worker_id, true);
 //        }, $server, $worker_id);
-    }
+//    }
 
 
     /**
