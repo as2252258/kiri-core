@@ -45,14 +45,16 @@ abstract class Condition extends BaseObject
     /**
      * @param $value
      */
-    public function setValue($value): void
+    public function setValue($params): void
     {
-        if (is_array($value)) {
-            $this->value = array_map(function ($_value) {
-                return is_numeric($_value) ? $_value : '\'' . $_value . '\'';
-            }, $value);
+        if (is_array($params)) {
+            $values = [];
+            foreach ($params as $item => $value) {
+                $values[$item] = is_numeric($value) ? $value : '\'' . $value . '\'';
+            }
+            $this->value = $value;
         } else {
-            $this->value = is_numeric($value) ? $value : '\'' . $value . '\'';
+            $this->value = is_numeric($params) ? $params : '\'' . $params . '\'';
         }
     }
 
