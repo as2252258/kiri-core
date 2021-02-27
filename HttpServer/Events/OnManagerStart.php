@@ -10,6 +10,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
+use Swoole\Process;
 use Swoole\Server;
 
 class OnManagerStart extends Callback
@@ -30,7 +31,6 @@ class OnManagerStart extends Callback
             $prefix = Config::get('id', false, 'system:');
             name($prefix . ': Server Manager.');
         }
-        Coroutine::waitPid($server->manager_pid);
     }
 
 }
