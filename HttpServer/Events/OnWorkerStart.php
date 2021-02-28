@@ -90,12 +90,12 @@ class OnWorkerStart extends Callback
      */
     public function onSignal()
     {
-        Coroutine\go(function () {
+        Coroutine::create(function () {
             if (!Coroutine::waitSignal($this->signal)) {
                 return 0;
             }
             while (Snowflake::app()->isRun()) {
-                Coroutine::sleep(1);
+                sleep(1);
             }
             return Snowflake::app()->getSwoole()->stop();
         });
