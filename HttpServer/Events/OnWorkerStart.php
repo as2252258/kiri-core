@@ -39,12 +39,12 @@ class OnWorkerStart extends Callback
         Coroutine::set(['enable_deadlock_check' => false]);
         Snowflake::app()->stateInit();
 
+        $this->debug(sprintf('System#%d start.', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
             $this->onTask($server, $worker_id);
         } else {
             $this->onWorker($server, $worker_id);
         }
-        $this->debug(sprintf('%s#%d start.', Snowflake::getEnvironmental(), $worker_id));
 
         Coroutine::create([$this, 'onSignal'], $server, $worker_id);
     }
