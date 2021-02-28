@@ -49,6 +49,7 @@ abstract class Callback extends HttpService
 	}
 
 
+
 	const EVENT_ERROR = 'WORKER:ERROR';
 	const EVENT_STOP = 'WORKER:STOP';
 	const EVENT_EXIT = 'WORKER:EXIT';
