@@ -22,16 +22,15 @@ class OnManagerStart extends Callback
      */
     public function onHandler(Server $server)
     {
-        $this->debug('manager start.');
         Snowflake::setWorkerId($server->manager_pid);
 
         $events = Snowflake::app()->getEvent();
         $events->trigger(Event::SERVER_MANAGER_START, null, $server);
-        if (Snowflake::isLinux()) {
-            $prefix = Config::get('id', false, 'system:');
-            name($prefix . ': Server Manager.');
-        }
 
+        if (!Snowflake::isLinux()) {
+            return;
+        }
+        name(Config::get('id', false, 'system') . ' Server Manager.');
     }
 
 }
