@@ -43,6 +43,9 @@ class ServerInotify extends Process
 		if (extension_loaded('inotify')) {
 			$this->inotify = inotify_init();
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
+
+			var_dump($this->dirs);
+
 			foreach ($this->dirs as $dir) {
 				$this->watch($dir);
 			}
