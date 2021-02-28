@@ -108,7 +108,7 @@ class OnWorkerStart extends Callback
      * @return string
      * @throws ConfigException
      */
-    private function set_process_name($socket, $worker_id): string
+    private function set_process_name($socket, $worker_id): mixed
     {
         $prefix = Config::get('id', false, 'system');
         if ($worker_id >= $socket->setting['worker_num']) {
