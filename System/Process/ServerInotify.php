@@ -203,6 +203,7 @@ class ServerInotify extends Process
 		$this->tick();
 	}
 
+
 	/**
 	 * 重启
 	 * @throws Exception
