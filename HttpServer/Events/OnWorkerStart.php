@@ -68,7 +68,9 @@ class OnWorkerStart extends Callback
     {
         $this->debug(sprintf(workerName($worker_id) . ' #%d is start.....', $worker_id));
         Coroutine\go(function (Server $server, $worker_id) {
-            Coroutine::waitSignal($this->signal);
+            if (!Coroutine::waitSignal($this->signal)) {
+                return 0;
+            }
             while (Snowflake::app()->isRun()) {
                 Coroutine::sleep(1);
             }
