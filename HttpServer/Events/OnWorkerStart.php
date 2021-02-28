@@ -21,9 +21,6 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
-
-    private int $_taskTable = 0;
-
     private int $signal = SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1;
 
 
