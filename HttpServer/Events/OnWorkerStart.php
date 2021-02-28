@@ -44,7 +44,7 @@ class OnWorkerStart extends Callback
         } else {
             $this->onWorker($server, $worker_id);
         }
-        $this->onSignal();
+        $this->onSignal($server);
     }
 
 
@@ -89,9 +89,9 @@ class OnWorkerStart extends Callback
      * @param $server
      * @param $worker_id
      */
-    public function onSignal()
+    public function onSignal($server)
     {
-        Coroutine::create(function () {
+        Coroutine::create(function ($server) {
             $ret = Coroutine::waitSignal($this->signal, -1);
             if ($ret) {
                 while (Snowflake::app()->isRun()) {
@@ -99,8 +99,8 @@ class OnWorkerStart extends Callback
                     sleep(1);
                 }
             }
-            return Snowflake::app()->getSwoole()->stop();
-        });
+            return $server->stop();
+        }, $server);
     }
 
 
