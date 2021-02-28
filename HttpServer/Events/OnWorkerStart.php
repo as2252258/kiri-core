@@ -35,6 +35,8 @@ class OnWorkerStart extends Callback
     public function onHandler(Server $server, int $worker_id): void
     {
         Coroutine::set(['enable_deadlock_check' => false]);
+        Snowflake::app()->stateInit();
+
         if ($worker_id >= $server->setting['worker_num']) {
             $this->onTask($server, $worker_id);
         } else {

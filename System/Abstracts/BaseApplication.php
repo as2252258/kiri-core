@@ -93,13 +93,21 @@ abstract class BaseApplication extends Service
 	}
 
 
+    /**
+     * @return $this
+     */
 	public function stateInit()
 	{
 		$this->taskNumber = 0;
 		$this->state = 'SWOOLE_WORKER_IDLE';
+
+		return $this;
 	}
 
 
+    /**
+     * @return $this
+     */
 	public function decrement()
 	{
 		$this->taskNumber -= 1;
@@ -107,9 +115,13 @@ abstract class BaseApplication extends Service
 			$this->taskNumber = 0;
 			$this->state = 'SWOOLE_WORKER_IDLE';
 		}
+		return $this;
 	}
 
 
+    /**
+     * @return $this
+     */
 	public function increment()
 	{
 		$this->taskNumber += 1;
@@ -119,7 +131,6 @@ abstract class BaseApplication extends Service
 		} else {
 			$this->state = 'SWOOLE_WORKER_BUSY';
 		}
-
 		return $this;
 	}
 
