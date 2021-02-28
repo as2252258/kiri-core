@@ -30,7 +30,7 @@ abstract class Process extends \Swoole\Process implements SProcess
      */
     public function __construct($application, $name, $enable_coroutine = true)
     {
-        parent::__construct([$this, '_load'], true, 1, $enable_coroutine);
+        parent::__construct([$this, '_load'], false, 1, $enable_coroutine);
         $this->application = $application;
         Snowflake::setWorkerId($this->pid);
     }
