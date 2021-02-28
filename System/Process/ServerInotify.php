@@ -46,6 +46,7 @@ class ServerInotify extends Process
 
 			var_dump($this->dirs);
 
+
 			foreach ($this->dirs as $dir) {
 				$this->watch($dir);
 			}
