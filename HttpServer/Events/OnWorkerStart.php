@@ -11,6 +11,7 @@ use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
+use Swoole\Process;
 use Swoole\Server;
 
 /**
@@ -26,12 +27,6 @@ class OnWorkerStart extends Callback
     private int $signal = SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1;
 
 
-    public function init()
-    {
-        Coroutine::set(['enable_deadlock_check' => false]);
-    }
-
-
     /**
      * @param Server $server
      * @param int $worker_id
@@ -42,23 +37,52 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        $this->onSignal();
-        $get_name = $this->get_process_name($server, $worker_id);
-        if (!empty($get_name) && !Snowflake::isMac()) {
-            swoole_set_process_name($get_name);
-        }
-
+        Coroutine::set(['enable_deadlock_check' => false]);
         if ($worker_id >= $server->setting['worker_num']) {
-            fire(Event::SERVER_TASK_START);
-
-            putenv('environmental=' . Snowflake::TASK);
+            $this->onTask($server, $worker_id);
         } else {
-            putenv('environmental=' . Snowflake::WORKER);
-
-            Snowflake::setWorkerId($server->worker_pid);
-            $this->setWorkerAction($worker_id);
+            $this->onWorker($server, $worker_id);
         }
+        $this->onSignal();
     }
+
+
+    /**
+     * @param Server $server
+     * @param int $worker_id
+     * @throws \Snowflake\Exception\ComponentException
+     * OnTask Worker
+     */
+    public function onTask(Server $server, int $worker_id)
+    {
+        putenv('environmental=' . Snowflake::TASK);
+
+        fire(Event::SERVER_TASK_START);
+
+        $this->set_process_name($server, $worker_id);
+    }
+
+
+    /**
+     * @param Server $server
+     * @param int $worker_id
+     * @throws Exception
+     * onWorker
+     */
+    public function onWorker(Server $server, int $worker_id)
+    {
+        Snowflake::setWorkerId($server->worker_pid);
+
+        putenv('environmental=' . Snowflake::WORKER);
+        try {
+            fire(Event::SERVER_WORKER_START, [$worker_id]);
+        } catch (\Throwable $exception) {
+            $this->addError($exception);
+            write($exception->getMessage(), 'worker');
+        }
+        $this->set_process_name($server, $worker_id);
+    }
+
 
     /**
      * @param $server
@@ -79,41 +103,20 @@ class OnWorkerStart extends Callback
 
 
     /**
-     * @param $worker_id
-     * @throws Exception
-     */
-    private function setWorkerAction($worker_id)
-    {
-        $event = Snowflake::app()->getEvent();
-        try {
-            $event->trigger(Event::SERVER_WORKER_START, [$worker_id]);
-        } catch (\Throwable $exception) {
-            $this->addError($exception);
-            write($exception->getMessage(), 'worker');
-        }
-
-        try {
-            $event->trigger(Event::SERVER_AFTER_WORKER_START, [$worker_id]);
-        } catch (\Throwable $exception) {
-            $this->addError($exception);
-            write($exception->getMessage(), 'worker');
-        }
-    }
-
-    /**
      * @param $socket
      * @param $worker_id
      * @return string
      * @throws ConfigException
      */
-    private function get_process_name($socket, $worker_id): string
+    private function set_process_name($socket, $worker_id): string
     {
-        $prefix = rtrim(Config::get('id', false, 'system:'), ':');
+        $prefix = Config::get('id', false, 'system');
         if ($worker_id >= $socket->setting['worker_num']) {
-            return $prefix . ': Task: No.' . $worker_id;
+            $name = $prefix . ' Task: No.' . $worker_id;
         } else {
-            return $prefix . ': worker: No.' . $worker_id;
+            $name = $prefix . ' worker: No.' . $worker_id;
         }
+        return swoole_set_process_name($name);
     }
 
 
