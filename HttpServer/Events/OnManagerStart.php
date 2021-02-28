@@ -13,8 +13,21 @@ use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\Server;
 
+
+/**
+ * Class OnManagerStart
+ * @package HttpServer\Events
+ */
 class OnManagerStart extends Callback
 {
+
+
+    /** @var int|string 重启信号 */
+    private int $signal = SIGUSR1 | SIGUSR2;
+
+    /** @var bool 是否打印 */
+    private bool $isPrint = false;
+
 
     /**
      * @param Server $server
@@ -31,6 +44,29 @@ class OnManagerStart extends Callback
             return;
         }
         name(Config::get('id', false, 'system') . ' Server Manager.');
+
+        Coroutine\go([$this, 'onSignal'], $server);
+    }
+
+
+    /**
+     * @param $server
+     * @param $worker_id
+     */
+    public function onSignal($server)
+    {
+        $receive = Coroutine::waitSignal($this->signal, 30);
+        while ($receive === true) {
+            if ($this->isPrint === false) {
+                $this->warning(sprintf('Receive Worker stop event.'));
+                $this->isPrint = true;
+            }
+            if (!Snowflake::app()->isRun()) {
+                break;
+            }
+            sleep(1);
+        }
+        return $server->stop();
     }
 
 }
