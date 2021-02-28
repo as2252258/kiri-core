@@ -159,6 +159,8 @@ class Server extends HttpService
         $this->error(sprintf('Port %s::%d is already.', $host, $Port));
         if ($this->baseServer) {
             $this->baseServer->shutdown();
+        } else {
+            $this->shutdown();
         }
         return $this->baseServer;
     }
@@ -329,17 +331,23 @@ class Server extends HttpService
     private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
     {
         if (!($this->baseServer instanceof \Swoole\Server)) {
-            $this->parseServer($config, $settings);
-        } else {
-            if ($this->isUse($config['port'])) {
-                return $this->error_stop($config['host'], $config['port']);
-            }
-            $newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
-            if (isset($config['settings']) && is_array($config['settings'])) {
-                $newListener->set($config['settings']);
-            }
-            $this->onListenerBind($config, $this->baseServer);
+            return $this->parseServer($config, $settings);
         }
+        return $this->addListener($config);
+    }
+
+
+    private function addListener($config)
+    {
+        if ($this->isUse($config['port'])) {
+            return $this->error_stop($config['host'], $config['port']);
+        }
+        $newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
+        if (isset($config['settings']) && is_array($config['settings'])) {
+            $newListener->set($config['settings']);
+        }
+        $this->onListenerBind($config, $this->baseServer);
+
         return $this->baseServer;
     }
 
@@ -378,21 +386,22 @@ class Server extends HttpService
     /**
      * @param $config
      * @param $newListener
-     * @return void
+     * @return mixed
      * @throws ReflectionException
      * @throws Exception
      * @throws NotFindClassException
      */
-    private function onListenerBind($config, $newListener)
+    private function onListenerBind($config, $newListener): mixed
     {
         $this->debug(sprintf('Listener %s::%d -> %s', $config['host'], $config['port'], $config['mode']));
         if ($config['type'] == self::WEBSOCKET) {
             throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
-        } else if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
+        }
+        if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
             throw new Exception('Unknown server type(' . $config['type'] . ').');
         }
         if (in_array($config['type'], $this->listenTypes)) {
-            return;
+            return $this->baseServer;
         }
         if ($config['type'] == self::HTTP) {
             if (in_array($config['type'], $this->listenTypes)) {
@@ -402,7 +411,8 @@ class Server extends HttpService
         } else {
             $this->noHttp($newListener, $config);
         }
-        array_push($this->listenTypes, $config['type']);
+        $this->listenTypes[] = $config['type'];
+        return $this->baseServer;
     }
 
 
