@@ -286,6 +286,8 @@ abstract class Pool extends Component
 			unset($client);
 			$this->desc($name);
 		}
+        $this->_items[$name]->close();
+        $this->_items[$name] = null;
 	}
 
 
