@@ -98,6 +98,7 @@ class OnWorkerStart extends Callback
      */
     public function onSignal($server, $worker_id)
     {
+
 //        $env = ucfirst(Snowflake::getEnvironmental());
 //
 //        $receive = Coroutine::waitSignal($this->signal, 30);
