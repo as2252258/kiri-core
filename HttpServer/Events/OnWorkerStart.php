@@ -39,12 +39,14 @@ class OnWorkerStart extends Callback
         Coroutine::set(['enable_deadlock_check' => false]);
         Snowflake::app()->stateInit();
 
+        $this->debug(sprintf('Worker#%d start.', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
             $this->onTask($server, $worker_id);
         } else {
             $this->onWorker($server, $worker_id);
         }
-        $this->onSignal($server, $worker_id);
+
+        Coroutine::create([$this, 'onSignal'], $server, $worker_id);
     }
 
 
@@ -93,20 +95,17 @@ class OnWorkerStart extends Callback
      */
     public function onSignal($server, $worker_id)
     {
-        $this->debug(sprintf('Worker#%d start.', $worker_id));
-        Coroutine::create(function ($server, $worker_id) {
-            $env = ucfirst(Snowflake::getEnvironmental());
-            while (Coroutine::waitSignal($this->signal, -1)) {
-                if ($this->isPrint === false) {
-                    $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
-                }
-                if (!Snowflake::app()->isRun()) {
-                    break;
-                }
-                sleep(1);
+        $env = ucfirst(Snowflake::getEnvironmental());
+        while (Coroutine::waitSignal($this->signal, -1)) {
+            if ($this->isPrint === false) {
+                $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
             }
-            return $server->stop($worker_id);
-        }, $server, $worker_id);
+            if (!Snowflake::app()->isRun()) {
+                break;
+            }
+            sleep(1);
+        }
+        return $server->stop($worker_id);
     }
 
 
