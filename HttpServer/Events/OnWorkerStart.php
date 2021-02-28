@@ -72,6 +72,7 @@ class OnWorkerStart extends Callback
                 return 0;
             }
             while (Snowflake::app()->isRun()) {
+                var_dump(Snowflake::app()->isRun());
                 Coroutine::sleep(1);
             }
             return $server->stop($worker_id, true);
