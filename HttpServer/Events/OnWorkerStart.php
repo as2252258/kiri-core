@@ -22,6 +22,13 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
+    /** @var int|string 重启信号 */
+    private int $signal = SIGUSR1 | SIGUSR2;
+
+
+    /** @var bool 是否打印 */
+    private bool $isPrint = false;
+
     /**
      * @param Server $server
      * @param int $worker_id
@@ -35,6 +42,8 @@ class OnWorkerStart extends Callback
         Coroutine::set(['enable_deadlock_check' => false]);
         Snowflake::app()->stateInit();
 
+        $this->isPrint = false;
+
         $this->debug(sprintf('System#%d start.', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
             $this->onTask($server, $worker_id);
@@ -42,6 +51,7 @@ class OnWorkerStart extends Callback
             $this->onWorker($server, $worker_id);
         }
 
+        Coroutine\go([$this, 'onSignal'], $server, $worker_id);
     }
 
 
@@ -79,6 +89,30 @@ class OnWorkerStart extends Callback
             write($exception->getMessage(), 'worker');
         }
         $this->set_process_name($server, $worker_id);
+    }
+
+
+    /**
+     * @param $server
+     * @param $worker_id
+     */
+    public function onSignal($server, $worker_id)
+    {
+
+//        $env = ucfirst(Snowflake::getEnvironmental());
+//
+//        $receive = Coroutine::waitSignal($this->signal, 30);
+//        while ($receive === true) {
+//            if ($this->isPrint === false) {
+//                $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
+//                $this->isPrint = true;
+//            }
+//            if (!Snowflake::app()->isRun()) {
+//                break;
+//            }
+//            sleep(1);
+//        }
+//        return $server->stop($worker_id);
     }
 
 
