@@ -22,8 +22,11 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
+    /** @var int|string 重启信号 */
     private int $signal = SIGUSR1 | SIGUSR2;
 
+
+    /** @var bool 是否打印 */
     private bool $isPrint = false;
 
     /**
