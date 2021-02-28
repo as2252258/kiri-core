@@ -44,7 +44,7 @@ class OnWorkerStart extends Callback
         } else {
             $this->onWorker($server, $worker_id);
         }
-        $this->onSignal($server);
+        $this->onSignal($server, $worker_id);
     }
 
 
