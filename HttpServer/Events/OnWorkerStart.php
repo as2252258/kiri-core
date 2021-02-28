@@ -95,6 +95,7 @@ class OnWorkerStart extends Callback
             $ret = Coroutine::waitSignal($this->signal, -1);
             if ($ret) {
                 while (Snowflake::app()->isRun()) {
+                    var_dump(Snowflake::app()->isRun());
                     sleep(1);
                 }
             }
