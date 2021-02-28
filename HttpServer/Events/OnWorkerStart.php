@@ -23,7 +23,7 @@ class OnWorkerStart extends Callback
 {
 
     /** @var int|string 重启信号 */
-    private int $signal = SIGUSR1 | SIGUSR2;
+    private int $signal = SIGUSR1 | SIGUSR2 | SIGTERM;
 
 
     /** @var bool 是否打印 */
@@ -53,7 +53,6 @@ class OnWorkerStart extends Callback
 
         Coroutine\go([$this, 'onSignal'], $server, $worker_id);
     }
-
 
 
     /**
@@ -99,21 +98,20 @@ class OnWorkerStart extends Callback
      */
     public function onSignal($server, $worker_id)
     {
+        $env = ucfirst(Snowflake::getEnvironmental());
 
-//        $env = ucfirst(Snowflake::getEnvironmental());
-//
-//        $receive = Coroutine::waitSignal($this->signal, 30);
-//        while ($receive === true) {
-//            if ($this->isPrint === false) {
-//                $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
-//                $this->isPrint = true;
-//            }
-//            if (!Snowflake::app()->isRun()) {
-//                break;
-//            }
-//            sleep(1);
-//        }
-//        return $server->stop($worker_id);
+        $receive = Coroutine::waitSignal($this->signal, -1);
+        while ($receive === true) {
+            if ($this->isPrint === false) {
+                $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
+                $this->isPrint = true;
+            }
+            if (!Snowflake::app()->isRun()) {
+                break;
+            }
+            sleep(1);
+        }
+        return $server->stop($worker_id);
     }
 
 
