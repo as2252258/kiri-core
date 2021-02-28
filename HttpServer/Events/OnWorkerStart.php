@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace HttpServer\Events;
 
-use co;
+use Annotation\Target;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
@@ -18,6 +18,7 @@ use Swoole\Server;
  * Class OnWorkerStart
  * @package HttpServer\Events
  */
+#[Target]
 class OnWorkerStart extends Callback
 {
 
