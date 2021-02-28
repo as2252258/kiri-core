@@ -44,16 +44,13 @@ class ServerInotify extends Process
 			$this->inotify = inotify_init();
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 
-			var_dump($this->dirs);
-
-
 			foreach ($this->dirs as $dir) {
 				$this->watch($dir);
 			}
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			$this->loadByDir(APP_PATH . 'app');
+            $this->loadByDir(APP_PATH . 'app');
 			$this->loadByDir(APP_PATH . 'routes');
 			$this->loadByDir(__DIR__ . '/../../');
 
@@ -212,6 +209,7 @@ class ServerInotify extends Process
 	 */
 	public function trigger_reload()
 	{
+	    var_dump('trigger_reload');
 		Snowflake::reload();
 	}
 
