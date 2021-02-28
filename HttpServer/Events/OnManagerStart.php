@@ -45,7 +45,7 @@ class OnManagerStart extends Callback
         }
         name(Config::get('id', false, 'system') . ' Server Manager.');
 
-        Coroutine\go([$this, 'onSignal'], $server);
+        Process::signal($this->signal, [$this, 'onSignal']);
     }
 
 
@@ -53,20 +53,26 @@ class OnManagerStart extends Callback
      * @param $server
      * @param $worker_id
      */
-    public function onSignal($server)
+    public function onSignal()
     {
-        $receive = Coroutine::waitSignal($this->signal, 30);
-        while ($receive === true) {
-            if ($this->isPrint === false) {
-                $this->warning(sprintf('Receive Worker stop event.'));
-                $this->isPrint = true;
-            }
-            if (!Snowflake::app()->isRun()) {
-                break;
-            }
-            sleep(1);
+        while ($ret = Process::wait(false)) {
+            echo "PID={$ret['pid']}\n";
         }
-        return $server->stop();
+
+
+//
+//        $receive = Coroutine::waitSignal($this->signal, 30);
+//        while ($receive === true) {
+//            if ($this->isPrint === false) {
+//                $this->warning(sprintf('Receive Worker stop event.'));
+//                $this->isPrint = true;
+//            }
+//            if (!Snowflake::app()->isRun()) {
+//                break;
+//            }
+//            sleep(1);
+//        }
+//        return $server->stop();
     }
 
 }
