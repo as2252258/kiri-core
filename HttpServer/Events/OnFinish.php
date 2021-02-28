@@ -6,6 +6,7 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
 
@@ -15,17 +16,19 @@ use Swoole\Server;
  */
 class OnFinish extends Callback
 {
-	/**
-	 * @param Server $server
-	 * @param $task_id
-	 * @param $data
-	 * @throws Exception
-	 */
-	public function onHandler(Server $server, $task_id, $data)
-	{
-		$data = json_decode($data, true);
-		$data['work_id'] = $task_id;
-		$this->write(var_export($data, true), 'Task');
-	}
+    /**
+     * @param Server $server
+     * @param $task_id
+     * @param $data
+     * @throws Exception
+     */
+    public function onHandler(Server $server, $task_id, $data)
+    {
+        try {
+            fire(Event::TASK_FINISH, [$task_id, $data]);
+        } catch (\Throwable $exception) {
+            $this->addError($exception, 'task');
+        }
+    }
 
 }
