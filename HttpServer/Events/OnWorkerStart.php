@@ -22,7 +22,7 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
-    private int $signal = SIGUSR1;
+    private int $signal = SIGUSR1 | SIGUSR2;
 //    private int $signal = SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1;
 
 
