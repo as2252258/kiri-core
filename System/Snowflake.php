@@ -398,7 +398,6 @@ class Snowflake
         var_dump(Snowflake::getMasterPid());
 
         return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
-//        return Snowflake::app()->getSwoole()->reload();
     }
 
 
