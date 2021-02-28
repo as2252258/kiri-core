@@ -153,13 +153,17 @@ class Event extends BaseObject
      */
     public function get($name, $handler): mixed
     {
-        if (!$this->exists($name)) {
+        if (!$this->exists($name, $handler)) {
             return null;
+        }
+
+        if (empty($handler)) {
+            return $this->_events[$name];
         }
         foreach ($this->_events[$name] as $event) {
             [$callback, $parameter] = $event;
             if ($callback === $handler) {
-                return $event;
+                return [$event];
             }
         }
         return null;
@@ -193,27 +197,36 @@ class Event extends BaseObject
      */
     public function trigger($name, $parameter = null, $handler = null, $is_remove = false): bool
     {
+        $events = $this->get($name, $handler);
+        if (empty($events)) {
+            return true;
+        }
+        foreach ($events as $index => $event) {
+            $this->execute($event, $parameter);
+        }
+        if ($is_remove) {
+            $this->offName($name);
+        }
+        return true;
+    }
+
+
+    /**
+     * @param $event
+     * @param $parameter
+     * @return bool
+     * @throws Exception
+     */
+    private function execute($event, $parameter)
+    {
         try {
-            if (!$this->exists($name)) {
-                return true;
-            }
-            if (!empty($handler) && $this->exists($name, $handler)) {
-                $events = [$this->get($name, $handler)];
-            } else {
-                $events = $this->_events[$name];
-            }
-            foreach ($events as $index => $event) {
-                $meta = $this->mergeParams($event[1], $parameter);
-                if (call_user_func($event[0], ...$meta) === false) {
-                    return false;
-                }
-            }
-            if ($is_remove) {
-                $this->offName($name);
+            $meta = $this->mergeParams($event[1], $parameter);
+            if (call_user_func($event[0], ...$meta) === false) {
+                return false;
             }
             return true;
         } catch (\Throwable $throwable) {
-            return false;
+            return $this->addError($throwable);
         }
     }
 
