@@ -95,9 +95,10 @@ class OnWorkerStart extends Callback
     {
         $this->debug(sprintf('Worker#%d start.', $worker_id));
         Coroutine::create(function ($server, $worker_id) {
+            $env = ucfirst(Snowflake::getEnvironmental());
             while (Coroutine::waitSignal($this->signal, -1)) {
                 if ($this->isPrint === false) {
-                    $this->warning(sprintf('Receive Worker#%d stop event.', $worker_id));
+                    $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
                 }
                 if (!Snowflake::app()->isRun()) {
                     break;
