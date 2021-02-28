@@ -23,8 +23,8 @@ class OnWorkerStart extends Callback
 {
 
     private int $signal = SIGUSR1 | SIGUSR2;
-//    private int $signal = SIGTERM | SIGKILL | SIGUSR2 | SIGUSR1;
 
+    private bool $isPrint = false;
 
     /**
      * @param Server $server
@@ -38,6 +38,8 @@ class OnWorkerStart extends Callback
     {
         Coroutine::set(['enable_deadlock_check' => false]);
         Snowflake::app()->stateInit();
+
+        $this->isPrint = false;
 
         $this->debug(sprintf('System#%d start.', $worker_id));
         if ($worker_id >= $server->setting['worker_num']) {
@@ -86,8 +88,6 @@ class OnWorkerStart extends Callback
         $this->set_process_name($server, $worker_id);
     }
 
-    private bool $isPrint = false;
-
 
     /**
      * @param $server
@@ -99,6 +99,7 @@ class OnWorkerStart extends Callback
         while (Coroutine::waitSignal($this->signal, -1)) {
             if ($this->isPrint === false) {
                 $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
+                $this->isPrint = true;
             }
             if (!Snowflake::app()->isRun()) {
                 break;
