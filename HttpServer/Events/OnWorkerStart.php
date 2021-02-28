@@ -51,7 +51,7 @@ class OnWorkerStart extends Callback
             $this->onWorker($server, $worker_id);
         }
 
-        Coroutine::create([$this, 'onSignal'], $server, $worker_id);
+        Coroutine\go([$this, 'onSignal'], $server, $worker_id);
     }
 
 
@@ -101,6 +101,7 @@ class OnWorkerStart extends Callback
         $env = ucfirst(Snowflake::getEnvironmental());
 
         $receive = Coroutine::waitSignal($this->signal, -1);
+        var_dump($receive);
         while ($receive === true) {
             if ($this->isPrint === false) {
                 $this->warning(sprintf('Receive %s#%d stop event.', $env, $worker_id));
