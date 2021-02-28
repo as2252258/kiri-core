@@ -84,6 +84,8 @@ class OnWorkerStart extends Callback
         $this->set_process_name($server, $worker_id);
     }
 
+    private bool $isPrint = false;
+
 
     /**
      * @param $server
@@ -93,16 +95,15 @@ class OnWorkerStart extends Callback
     {
         $this->debug(sprintf('Worker#%d start.', $worker_id));
         Coroutine::create(function ($server, $worker_id) {
-
-            $data = Coroutine::waitSignal($this->signal, -1);
-            if ($data === true) {
-                $this->warning(sprintf('Receive Worker#%d stop event.', $worker_id));
-
-                while (Snowflake::app()->isRun()) {
-                    sleep(1);
+            while (Coroutine::waitSignal($this->signal, -1)) {
+                if ($this->isPrint === false) {
+                    $this->warning(sprintf('Receive Worker#%d stop event.', $worker_id));
                 }
+                if (!Snowflake::app()->isRun()) {
+                    break;
+                }
+                sleep(1);
             }
-
             return $server->stop($worker_id);
         }, $server, $worker_id);
     }
