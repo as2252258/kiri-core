@@ -393,9 +393,9 @@ class Snowflake
      */
     public static function reload(): mixed
     {
-        $pid = Snowflake::app()->getSwoole()->master_pid;
-        return Process::kill($pid, SIGUSR1);
-        return Snowflake::app()->getSwoole()->reload();
+//        $pid = Snowflake::app()->getSwoole()->master_pid;
+        return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
+//        return Snowflake::app()->getSwoole()->reload();
     }
 
 
