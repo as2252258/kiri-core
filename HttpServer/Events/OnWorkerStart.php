@@ -96,10 +96,11 @@ class OnWorkerStart extends Callback
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
 		Coroutine\go(function ($ret, Server $server, $worker_id) {
-			if ($server->getWorkerStatus($worker_id) == false) {
+			var_dump($server->getWorkerStatus());
+			if ($server->getWorkerStatus() == false) {
 				return 0;
 			}
-			if ($server->getWorkerStatus($worker_id) == 3) {
+			if ($server->getWorkerStatus() == 3) {
 				return 0;
 			}
 			if ($ret === true) {
