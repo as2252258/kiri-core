@@ -42,9 +42,7 @@ abstract class Callback extends HttpService
 			$logger->write($this->_MESSAGE[$message] . $worker_id);
 			$logger->clear();
 
-			$event = Snowflake::app()->getEvent();
-			$event->offName(Event::SYSTEM_RESOURCE_RELEASES);
-			$this->eventNotify($message, $event);
+			$this->eventNotify($message);
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 		}
@@ -65,20 +63,19 @@ abstract class Callback extends HttpService
 
 	/**
 	 * @param $message
-	 * @param Event $event
 	 * @throws Exception
 	 */
-	private function eventNotify($message, Event $event)
+	private function eventNotify($message)
 	{
 		switch ($message) {
 			case self::EVENT_ERROR:
-				$event->trigger(Event::SERVER_WORKER_ERROR);
+				fire(Event::SERVER_WORKER_ERROR);
 				break;
 			case self::EVENT_EXIT:
-				$event->trigger(Event::SERVER_WORKER_EXIT);
+				fire(Event::SERVER_WORKER_EXIT);
 				break;
 			case self::EVENT_STOP:
-				$event->trigger(Event::SERVER_WORKER_STOP);
+				fire(Event::SERVER_WORKER_STOP);
 				break;
 		}
 	}
