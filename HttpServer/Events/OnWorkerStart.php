@@ -102,7 +102,10 @@ class OnWorkerStart extends Callback
 	}
 
 
-	public function ticker()
+	/**
+	 * @return void
+	 */
+	private function ticker(): void
 	{
 		if (!Snowflake::app()->isRun()) {
 			return;
