@@ -86,6 +86,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return bool
+	 * @throws ComponentException
 	 */
 	public function isRun(): bool
 	{
@@ -116,6 +117,8 @@ abstract class BaseApplication extends Service
 		if ($this->taskNumber <= 0) {
 			$this->taskNumber = 0;
 			$this->state = 'SWOOLE_WORKER_IDLE';
+		} else {
+			$this->state = 'SWOOLE_WORKER_BUSY';
 		}
 		return $this->print_task_is_idle(__METHOD__);
 	}
