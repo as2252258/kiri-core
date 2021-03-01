@@ -104,7 +104,7 @@ class OnWorkerStart extends Callback
 			if (!Snowflake::app()->isRun()) {
 				break;
 			}
-			sleep(1);
+			Coroutine::sleep(1);
 		}
 		return $server->stop($worker_id);
 	}
