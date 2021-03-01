@@ -50,19 +50,16 @@ trait Action
 	 */
 	private function _shutdown($server)
 	{
-		$content = file_get_contents($this->getPidFile());
-		if (!file_exists($content)) {
+		$pid_file = $this->getPidFile();
+		if (!file_exists($pid_file)) {
 			return;
 		}
-		if (empty($content)) {
-			$this->close($server);
-		} else {
-			exec("ps -ef $content | grep $content", $output);
-			if (!empty($output)) {
-				exec("kill -15 $content");
-			}
-			$this->close($server);
+		$content = file_get_contents($pid_file);
+		exec("ps -ef $content | grep $content", $output);
+		if (!empty($output)) {
+			exec("kill -15 $content");
 		}
+		$this->close($server);
 	}
 
 
