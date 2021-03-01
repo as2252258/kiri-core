@@ -51,6 +51,9 @@ trait Action
 	private function _shutdown($server)
 	{
 		$content = file_get_contents($this->getPidFile());
+		if (!file_exists($content)) {
+			return;
+		}
 		if (empty($content)) {
 			$this->close($server);
 		} else {
