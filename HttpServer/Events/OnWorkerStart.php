@@ -98,7 +98,7 @@ class OnWorkerStart extends Callback
 		$receive = Coroutine::waitSignal($this->signal, -1);
 		while ($receive === true) {
 
-			var_dump(env('worker') . '::' . (string)Snowflake::app()->isRun());
+			var_dump(env('worker') . '::' . (int)Snowflake::app()->isRun());
 
 			if (!Snowflake::app()->isRun()) {
 				break;
