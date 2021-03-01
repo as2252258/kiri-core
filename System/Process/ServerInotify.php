@@ -228,6 +228,7 @@ class ServerInotify extends Process
 		$this->watchFiles = [];
 	}
 
+
 	/**
 	 * @param $code
 	 * @param $message
