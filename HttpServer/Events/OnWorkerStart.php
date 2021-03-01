@@ -37,12 +37,6 @@ class OnWorkerStart extends Callback
 	 */
 	public function onHandler(Server $server, int $worker_id): void
 	{
-		$query['exit_condition'] = function () {
-			return Coroutine::stats()['coroutine_num'] === 0;
-		};
-		$query['enable_deadlock_check'] = false;
-		Coroutine::set($query);
-
 		putenv('worker=' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
@@ -50,7 +44,7 @@ class OnWorkerStart extends Callback
 			$this->onWorker($server, $worker_id);
 		}
 		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
-//		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
+		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
 
