@@ -89,6 +89,7 @@ abstract class BaseApplication extends Service
 	 */
 	public function isRun(): bool
 	{
+		var_dump(Snowflake::getEnvironmental() . ':' . env('worker'));
 		return $this->state == 'SWOOLE_WORKER_BUSY';
 	}
 
@@ -115,6 +116,7 @@ abstract class BaseApplication extends Service
 			$this->taskNumber = 0;
 			$this->state = 'SWOOLE_WORKER_IDLE';
 		}
+		var_dump(Snowflake::getEnvironmental() . ':' . env('worker'));
 		var_dump($this->taskNumber, $this->state);
 		return $this;
 	}
@@ -132,6 +134,7 @@ abstract class BaseApplication extends Service
 		} else {
 			$this->state = 'SWOOLE_WORKER_BUSY';
 		}
+		var_dump(Snowflake::getEnvironmental() . ':' . env('worker'));
 		var_dump($this->taskNumber, $this->state);
 		return $this;
 	}
