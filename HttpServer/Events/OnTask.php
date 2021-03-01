@@ -48,17 +48,13 @@ class OnTask extends Callback
      */
     public function onTask(Server $server, int $task_id, int $from_id, string $data): mixed
     {
-        $app = Snowflake::app()->increment();
-        Coroutine\defer(function () use ($app) {
-            $app->decrement();
-        });
-
-        $time = microtime(TRUE);
+	    Snowflake::app()->increment();
         if (empty($data)) {
             return $server->finish('null data');
         }
 
-        $finish = $this->runTaskHandler($data);
+	    $time = microtime(TRUE);
+	    $finish = $this->runTaskHandler($data);
         if (!$finish) {
             $finish = [];
         }
@@ -78,16 +74,13 @@ class OnTask extends Callback
      */
     public function onContinueTask(Server $server, Server\Task $task): mixed
     {
-        $app = Snowflake::app()->increment();
-        Coroutine\defer(function () use ($app) {
-            $app->decrement();
-        });
-
-        $time = microtime(TRUE);
+        Snowflake::app()->increment();
         if (empty($task->data)) {
             return $task->finish('null data');
         }
-        $finish = $this->runTaskHandler($task->data);
+
+	    $time = microtime(TRUE);
+	    $finish = $this->runTaskHandler($task->data);
         if (!$finish) {
             $finish = [];
         }
