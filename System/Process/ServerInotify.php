@@ -12,6 +12,7 @@ namespace Snowflake\Process;
 
 use Exception;
 use Snowflake\Abstracts\Config;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Event;
@@ -50,7 +51,7 @@ class ServerInotify extends Process
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-            $this->loadByDir(APP_PATH . 'app');
+			$this->loadByDir(APP_PATH . 'app');
 			$this->loadByDir(APP_PATH . 'routes');
 			$this->loadByDir(__DIR__ . '/../../');
 
@@ -224,17 +225,21 @@ class ServerInotify extends Process
 			} catch (\Throwable $exception) {
 			}
 		}
-        $this->watchFiles = [];
-    }
+		$this->watchFiles = [];
+	}
 
 	/**
 	 * @param $code
 	 * @param $message
 	 * @param $file
 	 * @param $line
+	 * @throws ComponentException
 	 */
 	protected function onErrorHandler($code, $message, $file, $line)
 	{
+		if (str_contains($message, 'The file descriptor is not an inotify instance')) {
+			return;
+		}
 		$this->application->debug('Error:' . $message);
 		$this->application->debug($file . ':' . $line);
 	}
