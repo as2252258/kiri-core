@@ -210,7 +210,6 @@ class ServerInotify extends Process
 	 */
 	public function trigger_reload()
 	{
-	    var_dump('trigger_reload');
 		Snowflake::reload();
 	}
 
