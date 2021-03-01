@@ -118,6 +118,7 @@ class OnWorkerStart extends Callback
 		if (!Snowflake::app()->isRun()) {
 			return;
 		}
+		usleep(100);
 		$this->ticker();
 	}
 
