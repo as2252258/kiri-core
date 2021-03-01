@@ -350,20 +350,18 @@ class Server extends HttpService
 	 * @return Http|Packet|Receive|Websocket|null
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function addListener($config): Packet|Websocket|Receive|Http|null
 	{
 		if ($this->isUse($config['port'])) {
 			return $this->error_stop($config['host'], $config['port']);
 		}
+
 		$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 		if (!$newListener) {
-			var_dump($this->baseServer->getLastError());
+			exit($this->addError($this->baseServer->getLastError()));
 		}
-
-		var_dump(swoole_last_error());
-
-		var_dump($newListener, $config['host'], $config['port'], $config['mode']);
 
 		if (isset($config['settings']) && is_array($config['settings'])) {
 			$newListener->set($config['settings']);
