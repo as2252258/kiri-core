@@ -6,8 +6,10 @@ namespace Snowflake\Process;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Application;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -17,47 +19,47 @@ use Snowflake\Snowflake;
 abstract class Process extends \Swoole\Process implements SProcess
 {
 
-    /** @var Application $application */
-    protected Application $application;
+	/** @var Application $application */
+	protected Application $application;
 
 
-    /**
-     * Process constructor.
-     * @param $application
-     * @param $name
-     * @param bool $enable_coroutine
-     * @throws Exception
-     */
-    public function __construct($application, $name, $enable_coroutine = true)
-    {
-        parent::__construct([$this, '_load'], false, 1, $enable_coroutine);
-        $this->application = $application;
-        Snowflake::setWorkerId($this->pid);
-    }
+	/**
+	 * Process constructor.
+	 * @param $application
+	 * @param $name
+	 * @param bool $enable_coroutine
+	 * @throws Exception
+	 */
+	public function __construct($application, $name, $enable_coroutine = true)
+	{
+		parent::__construct([$this, '_load'], false, 1, $enable_coroutine);
+		$this->application = $application;
+		Snowflake::setWorkerId($this->pid);
+	}
 
-    /**
-     * @param Process $process
-     * @throws \Snowflake\Exception\ComponentException
-     */
-    public function _load(Process $process)
-    {
-        putenv('environmental=' . Snowflake::PROCESS);
+	/**
+	 * @param Process $process
+	 * @throws ComponentException
+	 */
+	public function _load(Process $process)
+	{
+		putenv('environmental=' . Snowflake::PROCESS);
 
-        fire(Event::SERVER_WORKER_START);
-        if (Snowflake::isLinux()) {
-            $this->name($this->getPrefix());
-        }
-        $this->onHandler($process);
-    }
+		fire(Event::SERVER_WORKER_START);
+		if (Snowflake::isLinux()) {
+			$this->name($this->getPrefix());
+		}
+		$this->onHandler($process);
+	}
 
 
-    /**
-     * @return string
-     */
-    private function getPrefix(): string
-    {
-        return ucfirst(rtrim(Snowflake::app()->id, ':') . ': ' . get_called_class());
-    }
+	/**
+	 * @return string
+	 */
+	#[Pure] private function getPrefix(): string
+	{
+		return Snowflake::app()->id . get_called_class();
+	}
 
 
 }
