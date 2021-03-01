@@ -96,11 +96,14 @@ class OnWorkerStart extends Callback
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
 		Coroutine\go(function ($ret, Server $server, $worker_id) {
-			if ($ret === true) {
-				$this->ticker();
+			if ($server->getWorkerStatus($worker_id) == false) {
+				return 0;
 			}
 			if ($server->getWorkerStatus($worker_id) == 3) {
-				return 1;
+				return 0;
+			}
+			if ($ret === true) {
+				$this->ticker();
 			}
 			return $server->stop($worker_id);
 		}, $ret, $server, $worker_id);
