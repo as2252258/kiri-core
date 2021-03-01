@@ -111,6 +111,8 @@ class OnWorkerStart extends Callback
 			return;
 		}
 
+		var_dump(__METHOD__);
+
 		sleep(1);
 
 		$this->ticker();
