@@ -157,6 +157,8 @@ class Server extends HttpService
 	 * @param $host
 	 * @param $Port
 	 * @return Packet|Websocket|Receive|Http|null
+	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
 	{
@@ -205,15 +207,7 @@ class Server extends HttpService
 		$this->stop($this);
 	}
 
-	private int $_types = SWOOLE_HOOK_TCP |
-	SWOOLE_HOOK_UNIX |
-	SWOOLE_HOOK_UDP |
-	SWOOLE_HOOK_UDG |
-	SWOOLE_HOOK_SSL |
-	SWOOLE_HOOK_TLS |
-	SWOOLE_HOOK_SLEEP |
-	SWOOLE_HOOK_STREAM_FUNCTION |
-	SWOOLE_HOOK_PROC;
+	private int $_types = SWOOLE_HOOK_TCP | SWOOLE_HOOK_UNIX | SWOOLE_HOOK_UDP | SWOOLE_HOOK_UDG | SWOOLE_HOOK_SSL | SWOOLE_HOOK_TLS | SWOOLE_HOOK_SLEEP | SWOOLE_HOOK_STREAM_FUNCTION | SWOOLE_HOOK_PROC;
 
 
 	/**
@@ -389,6 +383,7 @@ class Server extends HttpService
 		if (!isset($settings['pid_file'])) {
 			$settings['pid_file'] = PID_PATH;
 		}
+		$this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
 		if ($this->baseServer instanceof Websocket) {
 			$this->onLoadWebsocketHandler();
 		} else if ($this->baseServer instanceof Http) {
