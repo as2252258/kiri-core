@@ -96,12 +96,6 @@ class OnWorkerStart extends Callback
 	public function onSignal(Server $server, $worker_id): mixed
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
-		if ($server->getWorkerStatus() == false) {
-			return 0;
-		}
-		if ($server->getWorkerStatus() == 3) {
-			return 0;
-		}
 		if ($ret === true) {
 			$this->ticker();
 		}
@@ -118,7 +112,7 @@ class OnWorkerStart extends Callback
 		if (!Snowflake::app()->isRun()) {
 			return;
 		}
-		usleep(100);
+		sleep(1);
 		$this->ticker();
 	}
 
