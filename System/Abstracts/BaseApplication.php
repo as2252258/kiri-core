@@ -51,7 +51,7 @@ abstract class BaseApplication extends Service
 	use TraitApplication;
 
 
-	private string $state = 'SWOOLE_WORKER_IDLE';
+	private int $state = SWOOLE_WORKER_IDLE;
 
 
 	private int $taskNumber = 0;
@@ -91,7 +91,7 @@ abstract class BaseApplication extends Service
 	public function isRun(): bool
 	{
 		$this->print_task_is_idle(__METHOD__);
-		return $this->state == 'SWOOLE_WORKER_BUSY';
+		return $this->state == SWOOLE_WORKER_BUSY;
 	}
 
 
@@ -101,7 +101,7 @@ abstract class BaseApplication extends Service
 	public function stateInit(): static
 	{
 		$this->taskNumber = 0;
-		$this->state = 'SWOOLE_WORKER_IDLE';
+		$this->state = SWOOLE_WORKER_IDLE;
 
 		return $this;
 	}
@@ -116,9 +116,9 @@ abstract class BaseApplication extends Service
 		$this->taskNumber -= 1;
 		if ($this->taskNumber <= 0) {
 			$this->taskNumber = 0;
-			$this->state = 'SWOOLE_WORKER_IDLE';
+			$this->state = SWOOLE_WORKER_IDLE;
 		} else {
-			$this->state = 'SWOOLE_WORKER_BUSY';
+			$this->state = SWOOLE_WORKER_BUSY;
 		}
 		return $this->print_task_is_idle(__METHOD__);
 	}
@@ -131,7 +131,7 @@ abstract class BaseApplication extends Service
 	 */
 	private function print_task_is_idle($method): static
 	{
-		$this->warning(sprintf('%s %s:%d state %s has number %d', $method, Snowflake::getEnvironmental(), env('worker'), $this->state, $this->taskNumber));
+		$this->warning(sprintf('%s %s:%d state %d has number %d', $method, Snowflake::getEnvironmental(), env('worker'), $this->state, $this->taskNumber));
 		return $this;
 	}
 
@@ -145,9 +145,9 @@ abstract class BaseApplication extends Service
 		$this->taskNumber += 1;
 		if ($this->taskNumber < 1) {
 			$this->taskNumber = 0;
-			$this->state = 'SWOOLE_WORKER_IDLE';
+			$this->state = SWOOLE_WORKER_IDLE;
 		} else {
-			$this->state = 'SWOOLE_WORKER_BUSY';
+			$this->state = SWOOLE_WORKER_BUSY;
 		}
 		return $this->print_task_is_idle(__METHOD__);
 	}
