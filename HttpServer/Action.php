@@ -7,8 +7,10 @@ namespace HttpServer;
 use Exception;
 
 use JetBrains\PhpStorm\Pure;
+use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
 
@@ -63,11 +65,15 @@ trait Action
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
+	 * @throws ConfigException
 	 */
 	private function getPidFile(): string
 	{
-		return Snowflake::app()->getSwoole()->setting['pid_file'];
+		$settings = Config::get('settings', false, []);
+		if (!isset($settings['pid_file'])) {
+			return PID_PATH;
+		}
+		return $settings['pid_file'];
 	}
 
 
