@@ -89,7 +89,6 @@ abstract class BaseApplication extends Service
 	 */
 	public function isRun(): bool
 	{
-		var_dump(Snowflake::getEnvironmental() . ':' . env('worker'));
 		return $this->state == 'SWOOLE_WORKER_BUSY';
 	}
 
