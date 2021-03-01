@@ -88,7 +88,6 @@ class OnWorkerStart extends Callback
 	}
 
 
-
 	/**
 	 * @param $server
 	 * @param $worker_id
@@ -96,13 +95,22 @@ class OnWorkerStart extends Callback
 	 */
 	public function onSignal(Server $server, $worker_id): mixed
 	{
-		while (Coroutine::waitSignal($this->signal)) {
-			if (!Snowflake::app()->isRun()) {
-				break;
-			}
-			sleep(1);
+		$ret = Coroutine::waitSignal($this->signal);
+		if ($ret === true) {
+			$this->ticker();
 		}
 		return $server->stop($worker_id);
+	}
+
+
+	public function ticker()
+	{
+		if (!Snowflake::app()->isRun()) {
+			return;
+		}
+		sleep(1);
+
+		$this->ticker();
 	}
 
 
