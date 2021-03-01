@@ -30,8 +30,6 @@ class OnFinish extends Callback
 			fire(Event::TASK_FINISH, [$task_id, $data]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'task');
-		} finally {
-			Snowflake::app()->decrement();
 		}
 	}
 
