@@ -84,6 +84,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
 
+
 	/**
 	 * @throws Exception
 	 *
