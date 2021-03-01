@@ -93,13 +93,13 @@ class OnWorkerStart extends Callback
 	 * @param $worker_id
 	 * @return mixed
 	 */
-	public function onSignal($server, $worker_id): mixed
+	public function onSignal(Server $server, $worker_id): mixed
 	{
 		$receive = Coroutine::waitSignal($this->signal, -1);
+
+		var_dump($server->getWorkerStatus($worker_id));
+
 		while ($receive === true) {
-
-			var_dump(env('worker') . '::' . (int)Snowflake::app()->isRun());
-
 			if (!Snowflake::app()->isRun()) {
 				break;
 			}
