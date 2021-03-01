@@ -86,11 +86,10 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return bool
-	 * @throws ComponentException
 	 */
 	public function isRun(): bool
 	{
-		$this->print_task_is_idle(__METHOD__);
+//		$this->print_task_is_idle(__METHOD__);
 		return $this->taskNumber > 0;
 	}
 
