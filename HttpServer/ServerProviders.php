@@ -7,6 +7,7 @@ namespace HttpServer;
 use Console\Console;
 use Exception;
 use Snowflake\Abstracts\Providers;
+use Snowflake\Application;
 
 /**
  * Class DatabasesProviders
@@ -17,10 +18,10 @@ class ServerProviders extends Providers
 
 
 	/**
-	 * @param \Snowflake\Application $application
+	 * @param Application $application
 	 * @throws Exception
 	 */
-	public function onImport(\Snowflake\Application $application)
+	public function onImport(Application $application)
 	{
 		$application->set('server', ['class' => Server::class]);
 
