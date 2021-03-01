@@ -179,12 +179,17 @@ class Server extends HttpService
 		if (empty($port)) {
 			return false;
 		}
-		if (Snowflake::isLinux()) {
-			exec('netstat -tunlp | grep ' . $port[0]['port'], $output);
-		} else {
-			exec('lsof -i :' . $port[0]['port'] . ' | grep -i "LISTEN"', $output);
+		foreach ($port as $value) {
+			if (Snowflake::isLinux()) {
+				exec('netstat -tunlp | grep ' . $value['port'], $output);
+			} else {
+				exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
+			}
+			if (!empty($output)) {
+				return true;
+			}
 		}
-		return !empty($output);
+		return false;
 	}
 
 
@@ -340,7 +345,13 @@ class Server extends HttpService
 	}
 
 
-	private function addListener($config)
+	/**
+	 * @param $config
+	 * @return Http|Packet|Receive|Websocket|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function addListener($config): Packet|Websocket|Receive|Http|null
 	{
 		if ($this->isUse($config['port'])) {
 			return $this->error_stop($config['host'], $config['port']);
