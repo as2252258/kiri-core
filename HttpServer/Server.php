@@ -357,6 +357,9 @@ class Server extends HttpService
 			return $this->error_stop($config['host'], $config['port']);
 		}
 		$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
+
+		var_dump($newListener, $config['host'], $config['port'], $config['mode']);
+
 		if (isset($config['settings']) && is_array($config['settings'])) {
 			$newListener->set($config['settings']);
 		}
