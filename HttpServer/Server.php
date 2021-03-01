@@ -360,7 +360,7 @@ class Server extends HttpService
 
 		$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 		if (!$newListener) {
-			exit($this->addError($this->baseServer->getLastError()));
+			exit($this->addError(sprintf('Listen %s::%d fail.', $config['host'], $config['port'])));
 		}
 
 		if (isset($config['settings']) && is_array($config['settings'])) {
