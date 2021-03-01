@@ -219,9 +219,9 @@ class BaseObject implements Configure
 		$message = "\033[41;37m" . PHP_EOL . "[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $content . PHP_EOL . "\033[0m";
 
 		if (!empty($file)) {
-			$message .= "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . PHP_EOL . "\033[0m";
+			$message .= "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . "\033[0m";
 		}
-		$socket->output($message);
+		$socket->output($message . PHP_EOL);
 	}
 
 }
