@@ -13,6 +13,7 @@ use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
+use co;
 
 /**
  * Class OnWorkerStart
@@ -36,13 +37,13 @@ class OnWorkerStart extends Callback
 	 */
 	public function onHandler(Server $server, int $worker_id): void
 	{
-		putenv('worker=' . $worker_id);
 		$query['exit_condition'] = function () {
 			return Coroutine::stats()['coroutine_num'] === 0;
 		};
 		$query['enable_deadlock_check'] = false;
 		Coroutine::set($query);
 
+		putenv('worker=' . $worker_id);
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {
