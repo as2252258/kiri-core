@@ -96,11 +96,7 @@ class OnWorkerStart extends Callback
 	 */
 	public function onSignal(Server $server, $worker_id): mixed
 	{
-		$receive = Coroutine::waitSignal($this->signal, -1);
-		if ($server->getWorkerStatus($worker_id) == SWOOLE_WORKER_IDLE) {
-			return $server->stop($worker_id);
-		}
-		while ($receive === true) {
+		while (Coroutine::waitSignal($this->signal)) {
 			if (!Snowflake::app()->isRun()) {
 				return $server->stop($worker_id);
 			}
