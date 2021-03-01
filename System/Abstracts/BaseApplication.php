@@ -126,7 +126,7 @@ abstract class BaseApplication extends Service
 	 */
 	private function print_task_is_idle(): static
 	{
-		$this->debug(sprintf('%s:%d state %s has number %d', Snowflake::getEnvironmental(), env('worker'), $this->state, $this->taskNumber));
+		$this->warning(sprintf('%s:%d state %s has number %d', Snowflake::getEnvironmental(), env('worker'), $this->state, $this->taskNumber));
 		return $this;
 	}
 
