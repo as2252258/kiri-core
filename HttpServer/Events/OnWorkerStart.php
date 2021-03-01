@@ -12,7 +12,6 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
-use Swoole\Process;
 use Swoole\Server;
 
 /**
