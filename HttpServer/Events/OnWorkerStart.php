@@ -45,7 +45,7 @@ class OnWorkerStart extends Callback
 		} else {
 			$this->onWorker($server, $worker_id);
 		}
-		$this->debug(sprintf('%s#%d PID:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
+		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
 		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
