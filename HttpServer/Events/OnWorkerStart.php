@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -22,7 +23,7 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
-    /** @var int|string 重启信号 */
+    /** @var int 重启信号 */
     private int $signal = SIGUSR1 | SIGUSR2 | SIGTERM;
 
 
@@ -44,7 +45,6 @@ class OnWorkerStart extends Callback
         } else {
             $this->onWorker($server, $worker_id);
         }
-
         Coroutine\go([$this, 'onSignal'], $server, $worker_id);
     }
 
@@ -52,7 +52,7 @@ class OnWorkerStart extends Callback
     /**
      * @param Server $server
      * @param int $worker_id
-     * @throws \Snowflake\Exception\ComponentException
+     * @throws ComponentException|ConfigException
      * OnTask Worker
      */
     public function onTask(Server $server, int $worker_id)
@@ -86,11 +86,12 @@ class OnWorkerStart extends Callback
     }
 
 
-    /**
-     * @param $server
-     * @param $worker_id
-     */
-    public function onSignal($server, $worker_id)
+	/**
+	 * @param $server
+	 * @param $worker_id
+	 * @return mixed
+	 */
+    public function onSignal($server, $worker_id): mixed
     {
         $receive = Coroutine::waitSignal($this->signal, -1);
         while ($receive === true) {
