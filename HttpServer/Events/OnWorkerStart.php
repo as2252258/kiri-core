@@ -38,15 +38,14 @@ class OnWorkerStart extends Callback
 	public function onHandler(Server $server, int $worker_id): void
 	{
 		Coroutine::set(['enable_deadlock_check' => false]);
-
 		putenv('worker=' . $worker_id);
 
-		$this->debug(sprintf('System#%d start.', $worker_id));
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {
 			$this->onWorker($server, $worker_id);
 		}
+		$this->debug(sprintf('%s#%d start.', env('environmental'), $worker_id));
 		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
