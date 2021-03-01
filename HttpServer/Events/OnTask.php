@@ -8,6 +8,7 @@ namespace HttpServer\Events;
 use HttpServer\Abstracts\Callback;
 use HttpServer\IInterface\Task;
 use HttpServer\IInterface\Task as ITask;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -28,11 +29,13 @@ class OnTask extends Callback
 	 */
 	public function onHandler()
 	{
-		$parameter = func_get_args();
-		if (func_num_args() < 4) {
-			$this->onContinueTask(...$parameter);
+		$setting = Snowflake::app()->getSwoole();
+
+		$isCoroutineTask = $setting->setting['task_enable_coroutine'] ?? false;
+		if ($isCoroutineTask === true) {
+			call_user_func([$this, 'onContinueTask'], ...func_get_args());
 		} else {
-			$this->onTask(...$parameter);
+			call_user_func([$this, 'onTask'], ...func_get_args());
 		}
 	}
 
