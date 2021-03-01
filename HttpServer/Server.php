@@ -357,6 +357,11 @@ class Server extends HttpService
 			return $this->error_stop($config['host'], $config['port']);
 		}
 		$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
+		if (!$newListener) {
+			var_dump($this->baseServer->getLastError());
+		}
+
+		var_dump(swoole_last_error());
 
 		var_dump($newListener, $config['host'], $config['port'], $config['mode']);
 
