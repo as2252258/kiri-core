@@ -92,18 +92,21 @@ class OnWorkerStart extends Callback
 	 * @param $worker_id
 	 * @return mixed
 	 */
-	public function onSignal(Server $server, $worker_id): mixed
+	public function onSignal(Server $server, $worker_id): void
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
-		if ($ret === true) {
-			$this->ticker();
-		}
-		return $server->stop($worker_id);
+		Coroutine\go(function ($ret, $server, $worker_id) {
+			if ($ret === true) {
+				$this->ticker();
+			}
+			return $server->stop($worker_id);
+		}, $ret, $server, $worker_id);
 	}
 
 
 	/**
 	 * @return void
+	 * @throws ComponentException
 	 */
 	private function ticker(): void
 	{
