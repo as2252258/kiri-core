@@ -266,6 +266,7 @@ class Snowflake
     }
 
 
+
     /**
      * @param string $class
      * @param array $params
