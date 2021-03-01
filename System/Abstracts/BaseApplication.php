@@ -108,6 +108,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return $this
+	 * @throws ComponentException
 	 */
 	public function decrement(): static
 	{
@@ -116,14 +117,23 @@ abstract class BaseApplication extends Service
 			$this->taskNumber = 0;
 			$this->state = 'SWOOLE_WORKER_IDLE';
 		}
-		var_dump(Snowflake::getEnvironmental() . ':' . env('worker'));
-		var_dump($this->taskNumber, $this->state);
+		return $this->print_task_is_idle();
+	}
+
+
+	/**
+	 * @throws ComponentException
+	 */
+	private function print_task_is_idle(): static
+	{
+		$this->debug(sprintf('%s:%d state %s has number %d', Snowflake::getEnvironmental(), env('worker'), $this->state, $this->taskNumber));
 		return $this;
 	}
 
 
 	/**
 	 * @return $this
+	 * @throws ComponentException
 	 */
 	public function increment(): static
 	{
@@ -134,9 +144,7 @@ abstract class BaseApplication extends Service
 		} else {
 			$this->state = 'SWOOLE_WORKER_BUSY';
 		}
-		var_dump(Snowflake::getEnvironmental() . ':' . env('worker'));
-		var_dump($this->taskNumber, $this->state);
-		return $this;
+		return $this->print_task_is_idle();
 	}
 
 
