@@ -19,6 +19,7 @@ use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Biomonitoring;
@@ -338,6 +339,9 @@ class Server extends HttpService
 	 */
 	private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
 	{
+		if ($this->isUse($config['port'])) {
+			return $this->error_stop($config['host'], $config['port']);
+		}
 		if (!($this->baseServer instanceof \Swoole\Server)) {
 			return $this->parseServer($config, $settings);
 		}
@@ -354,10 +358,6 @@ class Server extends HttpService
 	 */
 	private function addListener($config): Packet|Websocket|Receive|Http|null
 	{
-		if ($this->isUse($config['port'])) {
-			return $this->error_stop($config['host'], $config['port']);
-		}
-
 		$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
 		if (!$newListener) {
 			exit($this->addError(sprintf('Listen %s::%d fail.', $config['host'], $config['port'])));
@@ -381,9 +381,6 @@ class Server extends HttpService
 	private function parseServer($config, $settings): Packet|Websocket|Receive|Http|null
 	{
 		$class = $this->dispatch($config['type']);
-		if ($this->isUse($config['port'])) {
-			return $this->error_stop($config['host'], $config['port']);
-		}
 		if (isset($config['settings']) && !empty($config['settings'])) {
 			$settings = array_merge($settings, $config['settings']);
 		}
@@ -406,17 +403,14 @@ class Server extends HttpService
 	/**
 	 * @param $config
 	 * @param $newListener
-	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws Exception
+	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws Exception
 	 */
-	private function onListenerBind($config, $newListener): mixed
+	private function onListenerBind($config, $newListener): Packet|Websocket|Receive|Http|null
 	{
-		$this->debug(sprintf('Listener %s::%d -> %s', $config['host'], $config['port'], $config['mode']));
-		if ($config['type'] == self::WEBSOCKET) {
-			throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
-		}
 		if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
@@ -424,13 +418,11 @@ class Server extends HttpService
 			return $this->baseServer;
 		}
 		if ($config['type'] == self::HTTP) {
-			if (in_array($config['type'], $this->listenTypes)) {
-				throw new Exception('Base server must instanceof \Swoole\Websocket\Server::class.');
-			}
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
 		} else {
 			$this->noHttp($newListener, $config);
 		}
+		$this->debug(sprintf('Listen %s::%d -> ok', $config['host'], $config['port']));
 		$this->listenTypes[] = $config['type'];
 		return $this->baseServer;
 	}
@@ -468,10 +460,10 @@ class Server extends HttpService
 		if (in_array($name, $this->listening)) {
 			return;
 		}
+		array_push($this->listening, $name);
 		if ($name === 'request') {
 			$this->onLoadHttpHandler();
 		}
-		array_push($this->listening, $name);
 		$server->on($name, $callback);
 	}
 
@@ -512,13 +504,12 @@ class Server extends HttpService
 	 */
 	private function dispatch($type): string
 	{
-		$default = [
-			self::HTTP      => Http::class,
+		return match ($type) {
+			self::HTTP => Http::class,
 			self::WEBSOCKET => Websocket::class,
-			self::TCP       => Receive::class,
-			self::PACKAGE   => Packet::class
-		];
-		return $default[$type] ?? Receive::class;
+			self::PACKAGE => Packet::class,
+			default => Receive::class
+		};
 	}
 
 	/**
