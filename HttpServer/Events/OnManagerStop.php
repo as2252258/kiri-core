@@ -26,8 +26,6 @@ class OnManagerStop extends Callback
 		$this->warning('manager stop.');
 
 		fire(Event::SERVER_MANAGER_STOP, [$server]);
-
-		Snowflake::clearWorkerId();
 	}
 
 }

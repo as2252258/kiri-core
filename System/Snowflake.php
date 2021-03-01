@@ -170,22 +170,6 @@ class Snowflake
 
 
     /**
-     * @throws Exception
-     */
-    public static function clearWorkerId()
-    {
-        $dir = storage(null, 'worker');
-        foreach (glob($dir . '/*') as $file) {
-            clearstatcache();
-            if (!file_exists($file)) {
-                continue;
-            }
-            @unlink($file);
-        }
-    }
-
-
-    /**
      * @param $fileName
      * @param $content
      * @param null $is_append

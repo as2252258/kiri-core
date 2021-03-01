@@ -48,23 +48,26 @@ trait Action
 	 */
 	private function _shutdown($server)
 	{
-		$socket = storage('socket.sock');
-		if (!file_exists($socket)) {
+		$content = file_get_contents($this->getPidFile());
+		if (empty($content)) {
 			$this->close($server);
 		} else {
-			$pathId = file_get_contents($socket);
-			@unlink($socket);
-			if (empty($pathId)) {
-				$this->close($server);
-			} else {
-				exec("ps -ef $pathId | grep $pathId", $output);
-				if (!empty($output)) {
-					exec("kill -TERM $pathId");
-				}
-				$this->close($server);
+			exec("ps -ef $content | grep $content", $output);
+			if (!empty($output)) {
+				exec("kill -15 $content");
 			}
+			$this->close($server);
 		}
-		Snowflake::clearWorkerId();
+	}
+
+
+	/**
+	 * @return mixed
+	 * @throws ComponentException
+	 */
+	private function getPidFile(): string
+	{
+		return Snowflake::app()->getSwoole()->setting['pid_file'];
 	}
 
 
@@ -144,10 +147,12 @@ trait Action
 	 */
 	private function closeByPid($pid)
 	{
-		exec("ps -ef $pid | grep $pid", $output);
-		if (!empty($output)) {
-			exec("kill -TERM $pid");
-		}
+		exec("ps -ef | grep $pid | grep -v grep | grep -v kill
+if [ $? -eq 0 ];then
+	kill -9 `ps -ef | grep $pid  | grep -v grep | grep -v kill | awk '{print $2}'`
+else
+	echo $pid' No Found Process'
+fi");
 	}
 
 
