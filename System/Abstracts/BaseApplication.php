@@ -89,7 +89,6 @@ abstract class BaseApplication extends Service
 	 */
 	public function isRun(): bool
 	{
-//		$this->print_task_is_idle(__METHOD__);
 		return $this->taskNumber > 0;
 	}
 
