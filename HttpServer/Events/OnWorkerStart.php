@@ -100,6 +100,7 @@ class OnWorkerStart extends Callback
 		if ($server->getWorkerStatus($worker_id) == SWOOLE_WORKER_IDLE) {
 			return $server->stop($worker_id);
 		}
+
 		while ($receive === true) {
 			if (!Snowflake::app()->isRun()) {
 				return $server->stop($worker_id);
