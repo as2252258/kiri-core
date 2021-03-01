@@ -317,8 +317,8 @@ class Connection extends Component
 	public function disconnect()
 	{
 		$connections = $this->connections();
-		$connections->disconnect($this->cds);
-		$connections->disconnect($this->slaveConfig['cds']);
+		$connections->disconnect($this->cds, true);
+		$connections->disconnect($this->slaveConfig['cds'], false);
 	}
 
 }

@@ -104,13 +104,11 @@ class Redis extends Pool
     {
         $name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
         $coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
-        if (!Context::hasContext($coroutineName)) {
-            return;
+        if (Context::hasContext($coroutineName)) {
+	        $this->desc($coroutineName);
+
+	        $this->remove($coroutineName);
         }
-
-        $this->desc($coroutineName);
-
-        $this->remove($coroutineName);
         $this->clean($coroutineName);
     }
 
