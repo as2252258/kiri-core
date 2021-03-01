@@ -422,7 +422,7 @@ class Server extends HttpService
 		} else {
 			$this->noHttp($newListener, $config);
 		}
-		$this->debug(sprintf('Listen %s::%d -> ok', $config['host'], $config['port']));
+		$this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
 		$this->listenTypes[] = $config['type'];
 		return $this->baseServer;
 	}
