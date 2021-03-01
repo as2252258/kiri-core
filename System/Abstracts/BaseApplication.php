@@ -115,7 +115,7 @@ abstract class BaseApplication extends Service
 			$this->taskNumber = 0;
 			$this->state = 'SWOOLE_WORKER_IDLE';
 		}
-		var_dump($this->state);
+		var_dump($this->taskNumber, $this->state);
 		return $this;
 	}
 
@@ -132,7 +132,7 @@ abstract class BaseApplication extends Service
 		} else {
 			$this->state = 'SWOOLE_WORKER_BUSY';
 		}
-		var_dump($this->state);
+		var_dump($this->taskNumber, $this->state);
 		return $this;
 	}
 
