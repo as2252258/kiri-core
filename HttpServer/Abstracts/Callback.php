@@ -10,6 +10,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
+use Snowflake\Error\LoggerProcess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -38,7 +39,7 @@ abstract class Callback extends HttpService
 			Snowflake::clearProcessId($server->worker_pid);
 
 			/** @var Process $logger */
-			$logger = Snowflake::app()->get('logger_process');
+			$logger = Snowflake::app()->get(LoggerProcess::class);
 			$logger->write(Json::encode([$this->_MESSAGE[$message] . $worker_id, 'app']));
 
 			$this->eventNotify($message);
