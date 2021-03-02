@@ -10,10 +10,8 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
-use Swoole\Runtime;
 use Swoole\Server;
 
 /**
@@ -110,7 +108,7 @@ class OnWorkerStart extends Callback
 			return;
 		}
 
-		Coroutine\System::sleep(1);
+		sleep(1);
 
 		$this->ticker();
 	}
