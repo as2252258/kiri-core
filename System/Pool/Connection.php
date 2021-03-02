@@ -156,7 +156,6 @@ class Connection extends Pool
 	 * @param string $name
 	 * @param mixed $config
 	 * @return PDO
-	 * @throws ComponentException
 	 */
 	public function createClient(string $name, mixed $config): PDO
 	{
@@ -183,7 +182,6 @@ class Connection extends Pool
 	 * @param $cds
 	 * @param $coroutineName
 	 * @param false $isBefore
-	 * @throws ComponentException
 	 */
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{

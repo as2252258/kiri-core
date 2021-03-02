@@ -8,8 +8,10 @@ use Exception;
 
 use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
+use Phalcon\Mvc\Model\Query\Lang;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
@@ -146,9 +148,9 @@ abstract class Pool extends Component
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
-//		if ($this->creates === -1 && !is_callable($callback)) {
-//			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
-//		}
+		if ($this->creates === -1 && !is_callable($callback)) {
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
+		}
 		if (!Context::hasContext('create::client::ing::' . $name)) {
 			$this->push($name, $this->createClient($name, $callback));
 			Context::remove('create::client::ing::' . $name);
