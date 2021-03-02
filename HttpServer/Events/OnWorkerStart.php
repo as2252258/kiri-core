@@ -14,8 +14,6 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Runtime;
 use Swoole\Server;
-use co;
-use Swoole\Timer;
 
 /**
  * Class OnWorkerStart
@@ -114,7 +112,7 @@ class OnWorkerStart extends Callback
 			return;
 		}
 
-		sleep(1);
+		Coroutine\System::sleep(1);
 
 		$this->ticker();
 	}
