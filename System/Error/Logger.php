@@ -167,7 +167,11 @@ class Logger extends Component
 
 		$files = glob(storage(null, $dirName) . '/*');
 		if (count($files) >= 15) {
-			Coroutine\System::exec('find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;');
+			$command = 'find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;';
+			if (Context::inCoroutine())
+				Coroutine\System::exec($command);
+			else
+				exec($command);
 		}
 	}
 

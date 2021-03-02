@@ -25,6 +25,7 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Exception\NotFindPropertyException;
 use stdClass;
 use Swoole\Timer;
+use function Co\run;
 
 /**
  * Class Init
@@ -98,10 +99,10 @@ class Application extends BaseApplication
 
 	/**
 	 * @param Input $argv
-	 * @return bool|string
+	 * @return void
 	 * @throws Exception
 	 */
-	public function start(Input $argv): bool|string
+	public function start(Input $argv): void
 	{
 		try {
 			ini_set('opcache.enable', '1');
@@ -111,14 +112,16 @@ class Application extends BaseApplication
 
 			fire(Event::SERVER_BEFORE_START);
 
-			$this->set('input', $argv);
+			run(function () use ($argv) {
+				$this->set('input', $argv);
 
-			$manager = Snowflake::app()->get('console');
-			$manager->setParameters($argv);
-			$class = $manager->search();
-			return response()->send($manager->execCommand($class));
+				$manager = Snowflake::app()->get('console');
+				$manager->setParameters($argv);
+				$class = $manager->search();
+				response()->send($manager->execCommand($class));
+			});
 		} catch (\Throwable $exception) {
-			return response()->send(implode("\n", [
+			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
 				'File: ' . $exception->getFile()
