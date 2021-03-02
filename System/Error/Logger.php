@@ -163,7 +163,7 @@ class Logger extends Component
 		$logFile = '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL;
 
 		/** @var Process $logger */
-		$logger = Snowflake::app()->get('logger_process', false);
+		$logger = Snowflake::app()->get(LoggerProcess::class, false);
 		if (empty($logger)) {
 			return;
 		}
