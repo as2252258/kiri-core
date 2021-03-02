@@ -593,7 +593,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param $value
 	 * @return mixed
 	 */
-	public function toFormat($columns, $format, $key, $value)
+	public function toFormat($columns, $format, $key, $value): mixed
 	{
 		if (isset($format[$key])) {
 			return $columns->encode($value, $columns->clean($format[$key]));
