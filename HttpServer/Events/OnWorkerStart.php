@@ -22,6 +22,11 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
+	/** @var int 重启信号 */
+	private int $signal = SIGUSR1 | SIGKILL | SIGKILL;
+
+
+
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
@@ -41,6 +46,7 @@ class OnWorkerStart extends Callback
 		}
 
 		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
+		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
 
