@@ -217,6 +217,7 @@ abstract class Pool extends Component
 		throw new Exception('Undefined system processing function.');
 	}
 
+
 	/**
 	 * @param array $config
 	 * @param $isMaster
