@@ -46,12 +46,13 @@ class Kafka extends \Snowflake\Process\Process
 
 	/**
 	 * @param array $kafkaServer
+	 * @throws ComponentException
 	 */
 	private function waite(array $kafkaServer)
 	{
 		try {
-			$prefix = ucfirst(rtrim(Snowflake::app()->id, ':'));
-			swoole_set_process_name($prefix . ': Kafka Consumer ' . $kafkaServer['topic']);
+			$prefix = rtrim(Snowflake::app()->id, ':');
+			swoole_set_process_name($prefix . ' Kafka Consumer ' . $kafkaServer['topic']);
 
 			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
 			if (empty($config) && empty($topic) && empty($conf)) {
@@ -73,6 +74,7 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param ConsumerTopic $topic
 	 * @param $interval
+	 * @throws ComponentException
 	 */
 	private function resolve(ConsumerTopic $topic, $interval)
 	{
