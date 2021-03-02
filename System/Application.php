@@ -112,14 +112,12 @@ class Application extends BaseApplication
 
 			fire(Event::SERVER_BEFORE_START);
 
-			run(function () use ($argv) {
-				$this->set('input', $argv);
+			$this->set('input', $argv);
 
-				$manager = Snowflake::app()->get('console');
-				$manager->setParameters($argv);
-				$class = $manager->search();
-				response()->send($manager->execCommand($class));
-			});
+			$manager = Snowflake::app()->get('console');
+			$manager->setParameters($argv);
+			$class = $manager->search();
+			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
 			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
