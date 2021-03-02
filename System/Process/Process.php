@@ -58,7 +58,7 @@ abstract class Process extends \Swoole\Process implements SProcess
 	 */
 	#[Pure] private function getPrefix(): string
 	{
-		return Snowflake::app()->id . get_called_class();
+		return Snowflake::app()->id . ' ' . get_called_class();
 	}
 
 
