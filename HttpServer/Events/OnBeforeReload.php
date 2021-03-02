@@ -9,6 +9,7 @@ use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
+use Swoole\Timer;
 
 /**
  * Class OnBeforeReload
@@ -23,6 +24,8 @@ class OnBeforeReload extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
+		Timer::clearAll();
+
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_BEFORE_RELOAD, [$server]);
 
