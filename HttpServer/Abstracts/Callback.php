@@ -8,16 +8,14 @@ use Database\Connection;
 use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use ReflectionException;
 use Snowflake\Abstracts\Config;
-use Snowflake\Error\Logger;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\Server;
-use Swoole\Timer;
+use Swoole\Process;
+use Swoole\Server;
 
 
 /**
@@ -34,14 +32,14 @@ abstract class Callback extends HttpService
 	 * @param $message
 	 * @throws Exception
 	 */
-	protected function clear($server, $worker_id, $message)
+	protected function clear(Server $server, $worker_id, $message)
 	{
 		try {
 			Snowflake::clearProcessId($server->worker_pid);
 
-			$logger = Snowflake::app()->getLogger();
-			$logger->write($this->_MESSAGE[$message] . $worker_id);
-			$logger->clear();
+			/** @var Process $logger */
+			$logger = Snowflake::app()->get('logger_process');
+			$logger->write(Json::encode([$this->_MESSAGE[$message] . $worker_id, 'app']));
 
 			$this->eventNotify($message);
 		} catch (\Throwable $exception) {
@@ -154,7 +152,6 @@ abstract class Callback extends HttpService
 			$connection->disconnect();
 		}
 	}
-
 
 
 	/**

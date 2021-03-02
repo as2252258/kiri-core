@@ -160,19 +160,11 @@ class Logger extends Component
 		if (empty($messages)) {
 			return;
 		}
-		$fileName = 'server-' . date('Y-m-d') . '.log';
-		$dirName = 'log/' . (empty($method) ? 'app' : $method);
 		$logFile = '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL;
-		Snowflake::writeFile(storage($fileName, $dirName), $logFile, FILE_APPEND);
 
-		$files = glob(storage(null, $dirName) . '/*');
-		if (count($files) >= 15) {
-			$command = 'find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;';
-			if (Context::inCoroutine())
-				Coroutine\System::exec($command);
-			else
-				\shell_exec($command);
-		}
+		/** @var Process $logger */
+		$logger = Snowflake::app()->get('logger_process');
+		$logger->write(Json::encode([$logFile, $method]));
 	}
 
 	/**

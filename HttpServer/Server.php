@@ -3,6 +3,7 @@
 
 namespace HttpServer;
 
+use HttpServer\Abstracts\Callback;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Events\OnClose;
 use HttpServer\Events\OnConnect;
@@ -69,7 +70,8 @@ class Server extends HttpService
 
 
 	private array $process = [
-		'biomonitoring' => Biomonitoring::class
+		'biomonitoring'  => Biomonitoring::class,
+		'logger_process' => Callback::class
 	];
 
 	private array $params = [];
@@ -99,13 +101,11 @@ class Server extends HttpService
 	/**
 	 * @param array $configs
 	 * @return Packet|Websocket|Receive|Http|null
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	public function initCore(array $configs): Packet|Websocket|Receive|Http|null
 	{
 		$this->orders($configs);
-		$this->onProcessListener();
 		return $this->getServer();
 	}
 
@@ -375,6 +375,8 @@ class Server extends HttpService
 			$this->onLoadHttpHandler();
 		}
 		$this->baseServer->set($settings);
+
+		$this->onProcessListener();
 
 		return $this->baseServer;
 	}
