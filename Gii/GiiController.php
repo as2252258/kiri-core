@@ -61,6 +61,7 @@ namespace {$namespace};
 
 use Snowflake;
 use exception;
+use Annotation\Target;
 use Snowflake\Core\Str;
 use Snowflake\Core\JSON;
 use HttpServer\Http\Request;
@@ -82,7 +83,7 @@ use {$model_namespace}\\{$managerName};
  *
  * @package controller
  */
-class {$controllerName}Controller extends Controller
+#[Target] class {$controllerName}Controller extends Controller
 {
 
 ";

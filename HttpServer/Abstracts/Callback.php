@@ -33,6 +33,8 @@ abstract class Callback extends HttpService
 	protected function clear($server, $worker_id, $message)
 	{
 		try {
+			Timer::clearAll();
+
 			fire(Event::SYSTEM_RESOURCE_CLEAN);
 
 		    \logger()->insert();

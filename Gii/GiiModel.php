@@ -70,6 +70,7 @@ class GiiModel extends GiiBase
 namespace ' . $namespace . ';
 
 use Exception;
+use Annotation\Target;
 use Snowflake\Core\JSON;
 use Database\Connection;
 use Database\ActiveRecord;';
@@ -90,7 +91,7 @@ use Database\ActiveRecord;';
  *' . implode('', $this->visible) . '
  * @sql
  */
-class ' . $managerName . ' extends ActiveRecord
+#[Target] class ' . $managerName . ' extends ActiveRecord
 {';
 
 		if (!empty($class)) {

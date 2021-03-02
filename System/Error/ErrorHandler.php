@@ -76,8 +76,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		$this->category = 'exception';
 
-		var_dump($exception);
-
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
 
