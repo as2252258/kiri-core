@@ -18,6 +18,7 @@ use Exception;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
+use Snowflake\Error\LoggerProcess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -71,7 +72,7 @@ class Server extends HttpService
 
 	private array $process = [
 		'biomonitoring'  => Biomonitoring::class,
-		'logger_process' => Callback::class
+		'logger_process' => LoggerProcess::class
 	];
 
 	private array $params = [];
