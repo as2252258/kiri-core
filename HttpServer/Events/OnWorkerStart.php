@@ -52,7 +52,6 @@ class OnWorkerStart extends Callback
 	 * @param Server $server
 	 * @param int $worker_id
 	 * @throws ComponentException|ConfigException
-	 * OnTask Worker
 	 */
 	public function onTask(Server $server, int $worker_id)
 	{
