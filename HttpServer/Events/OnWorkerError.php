@@ -20,6 +20,7 @@ use Swoole\Server;
 class OnWorkerError extends Callback
 {
 
+
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
