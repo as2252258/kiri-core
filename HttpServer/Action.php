@@ -56,9 +56,9 @@ trait Action
 			return;
 		}
 		$content = file_get_contents($pid_file);
-		$output = Coroutine\System::exec("ps -ef $content | grep $content");
+		exec("ps -ef $content | grep $content", $output);
 		if (!empty($output)) {
-			Coroutine\System::exec("kill -15 $content");
+			exec("kill -15 $content");
 		}
 		$this->close($server);
 	}
@@ -108,7 +108,7 @@ trait Action
 		}
 		foreach ($files as $file) {
 			$content = file_get_contents($file->getRealPath());
-			$output = Coroutine\System::exec("ps -ax | awk '{ print $1 }' | grep -e '^{$content}$'");
+			exec("ps -ax | awk '{ print $1 }' | grep -e '^{$content}$'", $output);
 			if (count($output) > 0) {
 				$this->closeByPid($content);
 			} else {
@@ -138,9 +138,9 @@ trait Action
 			return false;
 		}
 		if (Snowflake::isLinux()) {
-			$output = Coroutine\System::exec('netstat -tunlp | grep ' . $port);
+			exec('netstat -tunlp | grep ' . $port, $output);
 		} else {
-			$output = Coroutine\System::exec('lsof -i :' . $port . ' | grep -i "LISTEN"');
+			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
 		}
 		if (empty($output)) {
 			return false;
@@ -154,7 +154,7 @@ trait Action
 	 */
 	private function closeByPid($pid)
 	{
-		Coroutine\System::exec("ps -ef | grep $pid | grep -v grep | grep -v kill
+		exec("ps -ef | grep $pid | grep -v grep | grep -v kill
 if [ $? -eq 0 ];then
 	kill -9 `ps -ef | grep $pid  | grep -v grep | grep -v kill | awk '{print $2}'`
 else

@@ -104,8 +104,6 @@ class Server extends HttpService
 	 */
 	public function initCore(array $configs): Packet|Websocket|Receive|Http|null
 	{
-		$this->enableCoroutine((bool)Config::get('settings.enable_coroutine'));
-
 		$this->orders($configs);
 		$this->onProcessListener();
 		return $this->getServer();
@@ -145,6 +143,9 @@ class Server extends HttpService
 		if (!$baseServer) {
 			return 'ok';
 		}
+
+		$this->enableCoroutine();
+
 		return $baseServer->start();
 	}
 
@@ -180,9 +181,9 @@ class Server extends HttpService
 		}
 		foreach ($port as $value) {
 			if (Snowflake::isLinux()) {
-				$output = Coroutine\System::exec('netstat -tunlp | grep ' . $value['port']);
+				exec('netstat -tunlp | grep ' . $value['port'], $output);
 			} else {
-				$output = Coroutine\System::exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"');
+				exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
 			}
 			if (!empty($output)) {
 				return true;
@@ -202,7 +203,6 @@ class Server extends HttpService
 	{
 		$this->stop($this);
 	}
-
 
 
 	/**
