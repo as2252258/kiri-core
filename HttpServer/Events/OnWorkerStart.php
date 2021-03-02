@@ -14,6 +14,7 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
 use co;
+use Swoole\Timer;
 
 /**
  * Class OnWorkerStart
@@ -86,32 +87,30 @@ class OnWorkerStart extends Callback
 	/**
 	 * @param $server
 	 * @param $worker_id
-	 * @return mixed
-	 * @throws ComponentException
+	 * @return void
 	 */
-	public function onSignal(Server $server, $worker_id): mixed
+	public function onSignal(Server $server, $worker_id): void
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
-		var_dump($ret);
 		if ($ret === true) {
-			$this->ticker();
+			$this->ticker($server);
+		} else {
+			$server->stop();
 		}
-		return $server->stop();
 	}
 
 
 	/**
+	 * @param Server $server
 	 * @return void
-	 * @throws ComponentException
-	 *
 	 */
-	private function ticker(): void
+	private function ticker(Server $server): void
 	{
-		sleep(1);
 		if (!Snowflake::app()->isRun()) {
+			$server->stop();
 			return;
 		}
-		$this->ticker();
+		Timer::after(1000, [$this, 'ticker'], $server);
 	}
 
 
