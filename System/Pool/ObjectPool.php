@@ -55,6 +55,14 @@ class ObjectPool extends \Snowflake\Abstracts\Pool
 
 	/**
 	 * @param string $name
+	 */
+	public function desc(string $name)
+	{
+
+	}
+
+	/**
+	 * @param string $name
 	 * @param $object
 	 */
 	public function release(string $name, mixed $object)
