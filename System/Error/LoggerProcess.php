@@ -27,7 +27,6 @@ class LoggerProcess extends Process
 	public function onHandler(\Swoole\Process $process): void
 	{
 		// TODO: Implement onHandler() method.
-
 		$this->message($process);
 	}
 
@@ -54,6 +53,7 @@ class LoggerProcess extends Process
 				else
 					\shell_exec($command);
 			}
+			var_dump($message);
 		}
 
 		Coroutine\System::sleep(1);
