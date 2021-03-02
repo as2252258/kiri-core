@@ -180,9 +180,9 @@ class Server extends HttpService
 		}
 		foreach ($port as $value) {
 			if (Snowflake::isLinux()) {
-				Coroutine\System::exec('netstat -tunlp | grep ' . $value['port'], $output);
+				$output = Coroutine\System::exec('netstat -tunlp | grep ' . $value['port']);
 			} else {
-				Coroutine\System::exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
+				$output = Coroutine\System::exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"');
 			}
 			if (!empty($output)) {
 				return true;
