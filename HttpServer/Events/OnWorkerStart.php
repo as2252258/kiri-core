@@ -24,7 +24,7 @@ class OnWorkerStart extends Callback
 {
 
 	/** @var int 重启信号 */
-	private int $signal = SIGUSR1 | SIGUSR2 | SIGTERM;
+	private int $signal = SIGUSR1 | SIGUSR2;
 
 
 	/**
@@ -93,8 +93,6 @@ class OnWorkerStart extends Callback
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
 		if ($ret === true) {
-			var_dump(Coroutine::waitPid($server->worker_pid, 1));
-
 			$this->ticker();
 		}
 		return $server->stop();
@@ -108,11 +106,10 @@ class OnWorkerStart extends Callback
 	 */
 	private function ticker(): void
 	{
-		if (!Snowflake::app()->isRun()) {
-			return;
+		Coroutine::sleep(1);
+		if (Snowflake::app()->isRun()) {
+			$this->ticker();
 		}
-		usleep(500);
-		$this->ticker();
 	}
 
 
