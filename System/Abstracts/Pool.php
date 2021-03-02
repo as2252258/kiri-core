@@ -279,7 +279,7 @@ abstract class Pool extends Component
 	{
 		Timer::clear($this->creates);
 		$this->warning('release ' . get_called_class() . ' pool...');
-		if (!Context::inCoroutine() || !isset($this->_items[$name])) {
+		if (!isset($this->_items[$name])) {
 			return;
 		}
 		$channel = $this->_items[$name];
