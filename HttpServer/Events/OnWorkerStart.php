@@ -104,6 +104,7 @@ class OnWorkerStart extends Callback
 	/**
 	 * @return void
 	 * @throws ComponentException
+	 *
 	 */
 	private function ticker(): void
 	{
