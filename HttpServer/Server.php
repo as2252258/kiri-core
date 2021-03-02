@@ -144,8 +144,6 @@ class Server extends HttpService
 			return 'ok';
 		}
 
-		$this->enableCoroutine();
-
 		return $baseServer->start();
 	}
 
@@ -202,17 +200,6 @@ class Server extends HttpService
 	public function shutdown()
 	{
 		$this->stop($this);
-	}
-
-
-	/**
-	 * @param bool $isEnable
-	 */
-	private function enableCoroutine($isEnable = true)
-	{
-		if ($isEnable === true) {
-			Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-		}
 	}
 
 
