@@ -26,6 +26,7 @@ class OnWorkerStart extends Callback
 	private int $signal = SIGUSR1 | SIGKILL | SIGKILL;
 
 
+
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
