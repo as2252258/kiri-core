@@ -51,6 +51,7 @@ class OnTask extends Callback
 	 */
 	public function onTask(Server $server, int $task_id, int $from_id, string $data): mixed
 	{
+		var_dump($task_id, $from_id, $data);
 		if (empty($data)) {
 			return $server->finish('null data');
 		}
@@ -76,6 +77,7 @@ class OnTask extends Callback
 	 */
 	public function onContinueTask(Server $server, Server\Task $task): mixed
 	{
+		var_dump($task);
 		if (empty($task->data)) {
 			return $task->finish('null data');
 		}
