@@ -42,7 +42,7 @@ class OnWorkerStart extends Callback
 	{
 		putenv('worker=' . $worker_id);
 
-		Process::signal($this->signal, function () {
+		Process::signal(SIGUSR1 | SIGUSR2, function () {
 			var_dump(func_get_args());
 		});
 
