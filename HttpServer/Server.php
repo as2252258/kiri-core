@@ -3,7 +3,6 @@
 
 namespace HttpServer;
 
-use Annotation\IAnnotation;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Events\OnClose;
 use HttpServer\Events\OnConnect;
@@ -23,12 +22,9 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Biomonitoring;
-use Snowflake\Process\ServerInotify;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
-use Swoole\Process;
 use Swoole\Runtime;
-use co;
 
 
 defined('PID_PATH') or define('PID_PATH', APP_PATH . 'storage/server.pid');
@@ -184,9 +180,9 @@ class Server extends HttpService
 		}
 		foreach ($port as $value) {
 			if (Snowflake::isLinux()) {
-				exec('netstat -tunlp | grep ' . $value['port'], $output);
+				Coroutine\System::exec('netstat -tunlp | grep ' . $value['port'], $output);
 			} else {
-				exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
+				Coroutine\System::exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
 			}
 			if (!empty($output)) {
 				return true;
