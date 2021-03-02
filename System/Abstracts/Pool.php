@@ -274,7 +274,7 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
-		if (Timer::exists($this->creates)) {
+		if ($this->creates > -1 && Timer::exists($this->creates)) {
 			Timer::clear($this->creates);
 		}
 		if (!Context::inCoroutine() || !isset($this->_items[$name])) {
