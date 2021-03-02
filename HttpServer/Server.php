@@ -144,7 +144,7 @@ class Server extends HttpService
 			return 'ok';
 		}
 
-		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION | SWOOLE_HOOK_CURL);
+		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
 
 //		Coroutine::set(['enable_deadlock_check' => false]);
 
