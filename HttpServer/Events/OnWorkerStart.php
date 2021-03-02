@@ -95,6 +95,8 @@ class OnWorkerStart extends Callback
 	public function onSignal(Server $server, $worker_id): mixed
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
+
+		var_dump($ret);
 		if ($ret === true) {
 
 			var_dump(Coroutine::waitPid($server->worker_pid, -1));
