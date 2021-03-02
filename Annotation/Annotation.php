@@ -132,6 +132,10 @@ class Annotation extends Component
 	 */
 	private function resolveMethod(ReflectionClass $reflect, $class, $alias, $object)
 	{
+		$targets = $reflect->getAttributes(Target::class);
+		if (empty($targets)) {
+			return;
+		}
 		foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
 			if ($method->class != $class) {
 				continue;
