@@ -188,6 +188,7 @@ class Logger extends Component
 		return $logFile;
 	}
 
+
 	/**
 	 * @throws Exception
 	 * 写入日志
