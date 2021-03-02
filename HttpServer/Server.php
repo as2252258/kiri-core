@@ -207,7 +207,6 @@ class Server extends HttpService
 		$this->stop($this);
 	}
 
-	private int $_types = SWOOLE_HOOK_TCP | SWOOLE_HOOK_UNIX | SWOOLE_HOOK_UDP | SWOOLE_HOOK_UDG | SWOOLE_HOOK_SSL | SWOOLE_HOOK_TLS | SWOOLE_HOOK_SLEEP | SWOOLE_HOOK_STREAM_FUNCTION | SWOOLE_HOOK_PROC;
 
 
 	/**
@@ -215,10 +214,9 @@ class Server extends HttpService
 	 */
 	private function enableCoroutine($isEnable = true)
 	{
-		if (!$isEnable) {
-			return;
+		if ($isEnable === true) {
+			Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
 		}
-		Runtime::enableCoroutine(true, $this->_types);
 	}
 
 
