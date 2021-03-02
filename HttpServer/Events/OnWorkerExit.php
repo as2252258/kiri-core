@@ -6,6 +6,8 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
+use Snowflake\Event;
+use Snowflake\Snowflake;
 
 /**
  * Class OnWorkerExit
@@ -21,6 +23,10 @@ class OnWorkerExit extends Callback
 	 */
 	public function onHandler($server, $worker_id)
 	{
+		$event = Snowflake::app()->getEvent();
+		$event->trigger(Event::SERVER_WORKER_EXIT);
+		$event->offName(Event::SERVER_WORKER_EXIT);
+
 		$this->clear($server, $worker_id, self::EVENT_EXIT);
 	}
 

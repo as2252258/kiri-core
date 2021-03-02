@@ -7,7 +7,9 @@ namespace HttpServer\Events;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Abstracts\Config;
+use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
 
@@ -28,6 +30,10 @@ class OnWorkerError extends Callback
 	 */
 	public function onHandler(Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
 	{
+		$event = Snowflake::app()->getEvent();
+		$event->trigger(Event::SERVER_WORKER_ERROR);
+		$event->offName(Event::SERVER_WORKER_ERROR);
+
 		$this->clear($server, $worker_id, self::EVENT_ERROR);
 		if (!Config::has('email')) {
 			return;

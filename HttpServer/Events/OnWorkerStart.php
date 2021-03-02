@@ -13,6 +13,7 @@ use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
+use Swoole\Timer;
 
 /**
  * Class OnWorkerStart
@@ -24,7 +25,6 @@ class OnWorkerStart extends Callback
 
 	/** @var int 重启信号 */
 	private int $signal = SIGUSR1 | SIGKILL | SIGKILL;
-
 
 
 	/**
@@ -44,9 +44,7 @@ class OnWorkerStart extends Callback
 		} else {
 			$this->onWorker($server, $worker_id);
 		}
-
 		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
-//		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
 
@@ -83,7 +81,6 @@ class OnWorkerStart extends Callback
 		}
 		$this->set_process_name($server, $worker_id);
 	}
-
 
 
 	/**

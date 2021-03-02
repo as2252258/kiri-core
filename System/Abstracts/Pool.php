@@ -9,6 +9,7 @@ use Exception;
 use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
 use Phalcon\Mvc\Model\Query\Lang;
+use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -145,11 +146,18 @@ abstract class Pool extends Component
 	/**
 	 * @param $name
 	 * @param mixed $callback
+	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
+
+			$event = Snowflake::app()->getEvent();
+			$event->on(Event::SERVER_WORKER_STOP, function () {
+				Timer::clear($this->creates);
+			});
 		}
 		if (!Context::hasContext('create::client::ing::' . $name)) {
 			$this->push($name, $this->createClient($name, $callback));
