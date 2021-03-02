@@ -129,27 +129,6 @@ class Application extends BaseApplication
 		}
 	}
 
-
-	/**
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindPropertyException|NotFindClassException
-	 */
-	public function scan_system_annotation()
-	{
-		$this->debug('scan system files...');
-
-		$annotation = Snowflake::app()->getAttributes();
-		$annotation->read(__DIR__ . '/../Console/', 'Console', 'system');
-		$annotation->read(__DIR__ . '/../Database/', 'Database', 'system');
-		$annotation->read(__DIR__ . '/../Gii/', 'Gii', 'system');
-		$annotation->read(__DIR__ . '/../HttpServer/', 'HttpServer', 'system');
-		$annotation->read(__DIR__ . '/../Kafka/', 'Kafka', 'system');
-		$annotation->read(__DIR__ . '/../System/', 'Snowflake', 'system');
-		$annotation->read(__DIR__ . '/../Validator/', 'Validator', 'system');
-	}
-
-
 	/**
 	 * @param $className
 	 * @param null $abstracts
