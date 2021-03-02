@@ -152,11 +152,11 @@ abstract class Pool extends Component
 	private function createByCallback($name, mixed $callback)
 	{
 		if ($this->creates === -1 && !is_callable($callback)) {
-			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
+			$this->creates = $creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 
 			$event = Snowflake::app()->getEvent();
-			$event->on(Event::SERVER_WORKER_STOP, function () {
-				Timer::clear($this->creates);
+			$event->on(Event::SERVER_WORKER_STOP, function () use ($creates) {
+				Timer::clear($creates);
 			});
 		}
 		if (!Context::hasContext('create::client::ing::' . $name)) {
