@@ -26,7 +26,7 @@ class OnWorkerStart extends Callback
 {
 
 	/** @var int 重启信号 */
-	private int $signal = SIGUSR1 | SIGUSR2;
+	private int $signal = SIGUSR1 | SIGUSR2 | SIGKILL | SIGTERM;
 
 
 	/**
@@ -95,7 +95,7 @@ class OnWorkerStart extends Callback
 	 */
 	public function onSignal(Server $server, $worker_id): mixed
 	{
-		$ret = Coroutine::waitSignal($this->signal, 1);
+		$ret = Coroutine::waitSignal($this->signal, -1);
 
 		Runtime::enableCoroutine(false);
 		if ($ret === true) {
