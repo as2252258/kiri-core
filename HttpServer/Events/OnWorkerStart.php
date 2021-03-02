@@ -45,10 +45,6 @@ class OnWorkerStart extends Callback
 		}
 		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
 		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
-		Coroutine\go(function (Server $server) {
-			$result = Coroutine::waitPid($server->worker_pid, -1);
-			var_dump($result);
-		}, $server);
 	}
 
 
