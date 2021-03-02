@@ -272,6 +272,7 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
+		Timer::clear($this->creates);
 		if (!Context::inCoroutine()) {
 			return;
 		}
