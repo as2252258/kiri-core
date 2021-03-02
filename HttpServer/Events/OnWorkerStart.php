@@ -97,10 +97,6 @@ class OnWorkerStart extends Callback
 		if ($ret === true) {
 			$this->ticker();
 		}
-
-
-		var_dump(Coroutine::waitPid($server->worker_pid, -1));
-
 		return $server->stop();
 	}
 
