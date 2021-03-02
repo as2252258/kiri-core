@@ -38,6 +38,7 @@ class OnWorkerStart extends Callback
 	public function onHandler(Server $server, int $worker_id): void
 	{
 		putenv('worker=' . $worker_id);
+		putenv('state=start');
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);

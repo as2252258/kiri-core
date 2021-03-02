@@ -51,6 +51,10 @@ abstract class Pool extends Component
 	 */
 	public function Heartbeat_detection()
 	{
+		if (env('state') == 'exit') {
+			$this->flush(0);
+			return;
+		}
 		if ($this->lastTime == 0) {
 			return;
 		}

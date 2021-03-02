@@ -43,6 +43,9 @@ class Application extends BaseApplication
 	public string $id = 'uniqueId';
 
 
+	public string $state = '';
+
+
 	/**
 	 * @throws NotFindClassException
 	 */
