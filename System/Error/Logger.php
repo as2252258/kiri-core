@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Snowflake\Error;
 
 use Exception;
+use HttpServer\Http\Context;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
@@ -166,7 +167,8 @@ class Logger extends Component
 
 		$files = glob(storage(null, $dirName) . '/*');
 		if (count($files) >= 15) {
-			shell_exec('find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;');
+			$command = 'find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;';
+			Context::inCoroutine() ? Coroutine\System::exec($command) : exec($command);
 		}
 	}
 
@@ -177,7 +179,7 @@ class Logger extends Component
 	private function getSource($logFile): string
 	{
 		if (!file_exists($logFile)) {
-			shell_exec('echo 3 > /proc/sys/vm/drop_caches');
+			Coroutine\System::exec('echo 3 > /proc/sys/vm/drop_caches');
 			touch($logFile);
 		}
 		if (is_writeable($logFile)) {
