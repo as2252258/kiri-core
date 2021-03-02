@@ -277,8 +277,8 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
-		Timer::clear($this->creates);
-		$this->warning('release ' . get_called_class() . ' pool...');
+		var_dump(Timer::clear($this->creates));
+//		$this->warning('release ' . get_called_class() . ' pool...');
 		if (!isset($this->_items[$name])) {
 			return;
 		}
