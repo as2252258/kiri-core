@@ -4,13 +4,17 @@ declare(strict_types=1);
 namespace HttpServer\Abstracts;
 
 
+use Database\Connection;
 use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
+use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Server;
 use Swoole\Timer;
@@ -130,6 +134,41 @@ abstract class Callback extends HttpService
 		} catch (\Throwable $e) {
 			$this->addError($e, 'email');
 		}
+	}
+
+
+	/**
+	 * @throws ConfigException
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	protected function clearMysqlClient()
+	{
+		$databases = Config::get('databases', false, []);
+		if (empty($databases)) {
+			return;
+		}
+		$application = Snowflake::app();
+		foreach ($databases as $name => $database) {
+			/** @var Connection $connection */
+			$connection = $application->get('databases.' . $name, false);
+			if (empty($connection)) {
+				continue;
+			}
+			$connection->disconnect();
+		}
+	}
+
+
+	/**
+	 * @throws ConfigException
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	protected function clearRedisClient()
+	{
+		$redis = Snowflake::app()->getRedis();
+		$redis->destroy();
 	}
 
 }

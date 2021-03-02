@@ -146,19 +146,13 @@ abstract class Pool extends Component
 	/**
 	 * @param $name
 	 * @param mixed $callback
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
-//		if ($this->creates === -1 && !is_callable($callback)) {
-//			$this->creates = $creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
-//
-//			$event = Snowflake::app()->getEvent();
-//			$event->on(Event::SERVER_WORKER_STOP, function () use ($creates) {
-//				Timer::clear($creates);
-//			});
-//		}
+		if ($this->creates === -1 && !is_callable($callback)) {
+			$this->creates = $creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
+		}
 		if (!Context::hasContext('create::client::ing::' . $name)) {
 			$this->push($name, $this->createClient($name, $callback));
 			Context::remove('create::client::ing::' . $name);
@@ -283,6 +277,7 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
+		Timer::clear($this->creates);
 		if (!Context::inCoroutine() || !isset($this->_items[$name])) {
 			return;
 		}
