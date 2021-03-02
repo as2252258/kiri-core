@@ -40,6 +40,9 @@ class OnWorkerStart extends Callback
 	public function onHandler(Server $server, int $worker_id): void
 	{
 		putenv('worker=' . $worker_id);
+
+		Coroutine::set(['enable_deadlock_check' => false]);
+
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {
@@ -92,7 +95,7 @@ class OnWorkerStart extends Callback
 	 */
 	public function onSignal(Server $server, $worker_id): mixed
 	{
-		$ret = Coroutine::waitSignal($this->signal, -1);
+		$ret = Coroutine::waitSignal($this->signal, 1);
 
 		Runtime::enableCoroutine(false);
 		if ($ret === true) {
