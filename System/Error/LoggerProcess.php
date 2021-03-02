@@ -69,7 +69,7 @@ class LoggerProcess extends Process
 	 */
 	private function checkLogFile($dirName)
 	{
-		$files = new \DirectoryIterator(storage(null, $dirName) . '/*.log');
+		$files = new \DirectoryIterator(storage(null, $dirName));
 		if ($files->getSize() < 15) {
 			return;
 		}
