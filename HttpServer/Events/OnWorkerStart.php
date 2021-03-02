@@ -92,9 +92,6 @@ class OnWorkerStart extends Callback
 	 */
 	public function onSignal(Server $server, $worker_id): mixed
 	{
-		pcntl_signal($this->signal, function () {
-			var_dump(func_get_args());
-		});
 		$ret = Coroutine::waitSignal($this->signal, -1);
 		if ($ret === true) {
 			$this->ticker();
