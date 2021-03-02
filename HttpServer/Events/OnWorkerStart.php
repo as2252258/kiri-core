@@ -27,7 +27,7 @@ class OnWorkerStart extends Callback
 	/** @var int 重启信号 */
 	private int $signal = SIGUSR1 | SIGUSR2 | SIGKILL;
 
-	private int $hook = SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL | ~SWOOLE_HOOK_BLOCKING_FUNCTION;
+	private int $hook = SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION | SWOOLE_HOOK_CURL;
 
 
 	/**
