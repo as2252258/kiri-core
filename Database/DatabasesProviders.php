@@ -38,7 +38,7 @@ class DatabasesProviders extends Providers
 
 
 		$event->on(Event::SERVER_WORKER_START, [$this, 'scanModel']);
-//		$event->on(Event::SERVER_TASK_START, [$this, 'scanModel']);
+		$event->on(Event::SERVER_TASK_START, [$this, 'scanModel']);
 	}
 
 
