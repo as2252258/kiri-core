@@ -272,7 +272,6 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
-		var_dump($name);
 		if (Timer::exists($this->creates)) {
 			Timer::clear($this->creates);
 		}
