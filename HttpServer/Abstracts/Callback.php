@@ -37,10 +37,6 @@ abstract class Callback extends HttpService
 	protected function clear($server, $worker_id, $message)
 	{
 		try {
-			fire(Event::SYSTEM_RESOURCE_CLEAN);
-
-			\logger()->insert();
-
 			Snowflake::clearProcessId($server->worker_pid);
 
 			$logger = Snowflake::app()->getLogger();

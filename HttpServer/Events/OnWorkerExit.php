@@ -30,6 +30,8 @@ class OnWorkerExit extends Callback
 		$event->offName(Event::SERVER_WORKER_EXIT);
 
 		$this->clear($server, $worker_id, self::EVENT_EXIT);
+
+		\logger()->insert();
 	}
 
 }
