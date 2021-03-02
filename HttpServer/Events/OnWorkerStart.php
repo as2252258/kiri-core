@@ -27,7 +27,6 @@ class OnWorkerStart extends Callback
 	/** @var int 重启信号 */
 	private int $signal = SIGUSR1 | SIGUSR2 | SIGKILL;
 
-	private int $hook = SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION | SWOOLE_HOOK_CURL;
 
 
 	/**
@@ -41,10 +40,6 @@ class OnWorkerStart extends Callback
 	public function onHandler(Server $server, int $worker_id): void
 	{
 		putenv('worker=' . $worker_id);
-
-		Runtime::enableCoroutine(true, $this->hook);
-
-		Coroutine::set(['enable_deadlock_check' => false]);
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
