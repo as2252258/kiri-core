@@ -35,6 +35,8 @@ abstract class Callback extends HttpService
 		try {
 		    fire(Event::SYSTEM_RESOURCE_CLEAN);
 
+		    Timer::clearAll();
+
 		    \logger()->insert();
 
 			Snowflake::clearProcessId($server->worker_pid);
