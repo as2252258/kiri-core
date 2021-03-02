@@ -10,6 +10,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Runtime;
@@ -41,6 +42,10 @@ class OnWorkerStart extends Callback
 	{
 		putenv('worker=' . $worker_id);
 
+		Process::signal($this->signal, function () {
+			var_dump(func_get_args());
+		});
+
 		Runtime::enableCoroutine(true, $this->hook);
 
 		Coroutine::set(['enable_deadlock_check' => false]);
@@ -51,7 +56,7 @@ class OnWorkerStart extends Callback
 			$this->onWorker($server, $worker_id);
 		}
 		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
-		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
+//		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
 
