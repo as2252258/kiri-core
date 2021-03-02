@@ -272,11 +272,11 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
-		Timer::clear($this->creates);
-		if (!Context::inCoroutine()) {
-			return;
+		var_dump($name);
+		if (Timer::exists($this->creates)) {
+			Timer::clear($this->creates);
 		}
-		if (!isset($this->_items[$name])) {
+		if (!Context::inCoroutine() || !isset($this->_items[$name])) {
 			return;
 		}
 		$channel = $this->_items[$name];
