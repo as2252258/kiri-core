@@ -42,10 +42,6 @@ class OnWorkerStart extends Callback
 	{
 		putenv('worker=' . $worker_id);
 
-		Process::signal(SIGUSR1 | SIGUSR2, function () {
-			var_dump(func_get_args());
-		});
-
 		Runtime::enableCoroutine(true, $this->hook);
 
 		Coroutine::set(['enable_deadlock_check' => false]);
