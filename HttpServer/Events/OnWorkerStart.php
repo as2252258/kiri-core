@@ -23,7 +23,7 @@ class OnWorkerStart extends Callback
 {
 
 	/** @var int 重启信号 */
-	private int $signal = SIGUSR1 | SIGKILL;
+	private int $signal = SIGUSR1 | SIGKILL | SIGKILL;
 
 
 	/**
