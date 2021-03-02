@@ -22,11 +22,6 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
-	/** @var int 重启信号 */
-	private int $signal = SIGUSR1 | SIGKILL | SIGKILL;
-
-
-
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
@@ -46,7 +41,6 @@ class OnWorkerStart extends Callback
 		}
 
 		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
-		Coroutine\go([$this, 'onSignal'], $server, $worker_id);
 	}
 
 
@@ -82,21 +76,6 @@ class OnWorkerStart extends Callback
 			write($exception->getMessage(), 'worker');
 		}
 		$this->set_process_name($server, $worker_id);
-	}
-
-
-	/**
-	 * @param $server
-	 * @param $worker_id
-	 * @return void
-	 */
-	public function onSignal(Server $server, $worker_id): mixed
-	{
-		$ret = Coroutine::waitSignal($this->signal, -1);
-		if ($ret === true) {
-			$this->ticker();
-		}
-		return $server->stop();
 	}
 
 
