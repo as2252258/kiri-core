@@ -173,7 +173,7 @@ class Logger extends Component
 			if (Context::inCoroutine())
 				Coroutine\System::exec($command);
 			else
-				exec($command);
+				\exec($command);
 		}
 	}
 
