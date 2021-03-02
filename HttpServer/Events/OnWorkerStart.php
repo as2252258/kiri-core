@@ -12,6 +12,7 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
+use Swoole\Runtime;
 use Swoole\Server;
 use co;
 use Swoole\Timer;
@@ -89,28 +90,30 @@ class OnWorkerStart extends Callback
 	 * @param $worker_id
 	 * @return void
 	 */
-	public function onSignal(Server $server, $worker_id): void
+	public function onSignal(Server $server, $worker_id): mixed
 	{
 		$ret = Coroutine::waitSignal($this->signal, -1);
+
+		Runtime::enableCoroutine(false);
 		if ($ret === true) {
-			$this->ticker($server);
-		} else {
-			$server->stop();
+			$this->ticker();
 		}
+		return $server->stop();
 	}
 
 
 	/**
-	 * @param Server $server
 	 * @return void
 	 */
-	private function ticker(Server $server): void
+	private function ticker(): void
 	{
 		if (!Snowflake::app()->isRun()) {
-			$server->stop();
 			return;
 		}
-		Timer::after(1000, [$this, 'ticker'], $server);
+
+		sleep(1);
+
+		$this->ticker();
 	}
 
 
