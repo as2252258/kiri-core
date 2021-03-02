@@ -73,7 +73,6 @@ class OnWorkerStart extends Callback
 	public function onWorker(Server $server, int $worker_id)
 	{
 		Snowflake::setWorkerId($server->worker_pid);
-
 		putenv('environmental=' . Snowflake::WORKER);
 		try {
 			fire(Event::SERVER_WORKER_START, [$worker_id]);
