@@ -465,7 +465,7 @@ class Server extends HttpService
 			$router = Snowflake::app()->getRouter();
 			$router->loadRouterSetting();
 
-			recursive_directory(SOCKET_PATH);
+			recursive_directory(CONTROLLER_PATH);
 		});
 	}
 
@@ -480,7 +480,6 @@ class Server extends HttpService
 			recursive_directory(SOCKET_PATH);
 		});
 	}
-
 
 
 	/**
