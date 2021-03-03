@@ -187,6 +187,8 @@ class Loader extends BaseObject
 				$this->_classes[$replace->getName()] = $_array;
 			} catch (Throwable $throwable) {
 				$this->error($throwable->getMessage());
+				$this->error($throwable->getFile());
+				$this->error($throwable->getLine());
 			}
 		}
 	}
@@ -205,6 +207,8 @@ class Loader extends BaseObject
 		$replace = str_replace(DIRECTORY_SEPARATOR, '\\', $replace);
 		$explode = explode('\\', $replace);
 		array_shift($explode);
+
+		echo $namespace . '\\' . implode('\\', $explode) . PHP_EOL;
 
 		return $namespace . '\\' . implode('\\', $explode);
 	}
