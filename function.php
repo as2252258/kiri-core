@@ -74,16 +74,14 @@ if (!function_exists('recursive_directory')) {
 	 */
 	function recursive_directory(string $path, array|Closure $callback)
 	{
-		$array = [];
 		$directoryIterators = new \DirectoryIterator($path);
 		foreach ($directoryIterators as $directoryIterator) {
 			if ($directoryIterator->isDir()) {
 				Recursive_directory($directoryIterator->getRealPath(), $callback);
 			} else {
-				$array[] = $directoryIterator;
+				call_user_func($callback, $directoryIterator);
 			}
 		}
-		call_user_func_array($callback, $array);
 	}
 
 
