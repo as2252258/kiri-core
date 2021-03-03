@@ -76,6 +76,9 @@ if (!function_exists('recursive_directory')) {
 	{
 		$directoryIterators = new \DirectoryIterator($path);
 		foreach ($directoryIterators as $directoryIterator) {
+			if ($directoryIterator->getFilename() === '.' || $directoryIterator->getFilename() === '..') {
+				continue;
+			}
 			if ($directoryIterator->isDir()) {
 				Recursive_directory($directoryIterator->getRealPath(), $callback);
 			} else {
