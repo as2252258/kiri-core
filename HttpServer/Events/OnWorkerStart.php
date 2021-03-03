@@ -94,6 +94,9 @@ class OnWorkerStart extends Callback
 		} else {
 			$name = $prefix . ' worker: No.' . $worker_id;
 		}
+		if (Snowflake::isMac()) {
+			return 1;
+		}
 		return swoole_set_process_name($name);
 	}
 
