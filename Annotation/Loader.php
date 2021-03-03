@@ -133,7 +133,7 @@ class Loader extends BaseObject
 				continue;
 			}
 
-			$replace = str_replace(__DIR__ . '/', '', $path->getPathname());
+			$replace = str_replace(APP_PATH . '/', '', $path->getPathname());
 
 			$replace = str_replace('.php', '', $replace);
 			$replace = str_replace(DIRECTORY_SEPARATOR, '\\', $replace);
