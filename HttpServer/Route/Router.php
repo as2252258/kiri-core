@@ -500,7 +500,7 @@ class Router extends HttpService implements RouterInterface
 	 * 树干搜索
 	 * @throws ConfigException
 	 */
-	private function find_path(Request $request): ?Node
+	public function find_path(Request $request): ?Node
 	{
 		$useTree = Config::get('router', false, ROUTER_TREE);
 		if ($useTree === ROUTER_TREE) {
