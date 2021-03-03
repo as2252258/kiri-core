@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HttpServer\Http;
 
+use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
@@ -452,6 +453,31 @@ class Request extends HttpService
 		$sRequest->uri = $sRequest->headers->get('request_uri');
 
 		$sRequest->parseUri();
+		return $sRequest;
+	}
+
+
+	/**
+	 * @param $frame
+	 * @param $route
+	 * @param string $event
+	 * @return Request
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public static function socketQuery($frame, $event = Socket::MESSAGE, $route = 'event'): Request
+	{
+		/** @var Request $sRequest */
+		$sRequest = Snowflake::createObject(Request::class);
+		$sRequest->fd = $frame->fd;
+		$sRequest->startTime = microtime(true);
+
+		$sRequest->params = new HttpParams([], [], []);
+		$sRequest->headers = new HttpHeaders([]);
+		$sRequest->headers->replace('request_method', 'sw::socket');
+		$sRequest->headers->replace('request_uri', $event . '::' . $route);
+		$sRequest->parseUri();
+
 		return $sRequest;
 	}
 

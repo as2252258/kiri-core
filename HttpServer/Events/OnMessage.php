@@ -8,10 +8,16 @@ use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Context;
+use HttpServer\Http\HttpHeaders;
+use HttpServer\Http\HttpParams;
+use HttpServer\Http\Request;
+use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\WebSocket\Frame;
@@ -52,32 +58,43 @@ class OnMessage extends Callback
 
 	/**
 	 * @param $event
-	 * @param $frame
+	 * @param Frame $frame
 	 * @param $server
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function resolve($event, $frame, $server): mixed
+	private function resolve($event, Frame $frame, $server): mixed
 	{
 		if ($event->exists(Event::SERVER_MESSAGE)) {
 			$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
 		} else {
 			$frame->data = json_decode($frame->data, true);
 		}
-		if (empty($route = $frame->data['route'] ?? null)) {
-			throw new Exception('Format error.');
+		if (!empty($route = $frame->data['route'] ?? null)) {
+			return $this->loadNode($frame, $route, $server);
 		}
-		$router = Snowflake::app()->getRouter();
-		$context = Config::get('router', false, ROUTER_TREE);
-		if ($context === ROUTER_TREE) {
-			$node = $router->tree_search(explode('/', Socket::MESSAGE . '::' . $route), 'sw::socket');
-		} else {
-			$node = $router->search('/' . Socket::MESSAGE . '::' . $route, 'sw::socket');
+		return null;
+	}
+
+
+	/**
+	 * @param $frame
+	 * @param $route
+	 * @param $server
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+	private function loadNode($frame, $route, $server): mixed
+	{
+		$query = Request::socketQuery($frame, Socket::MESSAGE, $route);
+		if (($node = router()->find_path($query)) !== null) {
+			return $node->dispatch($frame, $server);
 		}
-		if ($node === null) {
-			throw new Exception('Page not found.');
-		}
-		return $node->dispatch($frame, $server);
+		return null;
 	}
 
 }

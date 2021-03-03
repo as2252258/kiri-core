@@ -6,10 +6,13 @@ namespace HttpServer\Events;
 
 use Annotation\Route\Socket;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Http\Request;
 use HttpServer\Route\Node;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -46,25 +49,31 @@ class OnClose extends Callback
 	private function execute(Server $server, int $fd): void
 	{
 		try {
-			$router = Snowflake::app()->getRouter();
-			if (!($server instanceof WServer) || !$server->isEstablished($fd)) {
-				return;
-			}
-
-			$context = Config::get('router', false, ROUTER_TREE);
-			if ($context === ROUTER_TREE) {
-				$node = $router->tree_search(explode('/', Socket::CLOSE . '::event'), 'sw::socket');
-			} else {
-				$node = $router->search('/' . Socket::CLOSE . '::event', 'sw::socket');
-			}
-			if ($node instanceof Node) {
-				$node->dispatch($server, $fd);
-			}
+			$this->loadNode($server, $fd);
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 		} finally {
 			$logger = Snowflake::app()->getLogger();
 			$logger->insert();
 		}
+	}
+
+
+	/**
+	 * @param $server
+	 * @param $fd
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+	private function loadNode($server, $fd): mixed
+	{
+		$query = Request::socketQuery((object)['fd' => $fd], Socket::CLOSE);
+		if (($node = router()->find_path($query)) !== null) {
+			return $node->dispatch($server, $fd);
+		}
+		return null;
 	}
 }
