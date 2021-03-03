@@ -109,7 +109,7 @@ class Application extends BaseApplication
 	{
 		try {
 			$annotation = $this->getAttributes();
-			$annotation->read(APP_PATH . 'app', 'App\\');
+			$annotation->read(APP_PATH . 'app', 'App');
 
 			fire(Event::SERVER_BEFORE_START);
 
