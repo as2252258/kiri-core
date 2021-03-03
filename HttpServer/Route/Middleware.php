@@ -76,21 +76,18 @@ class Middleware
 		if (empty($annotation)) {
 			return;
 		}
-		var_export($annotation);
-		foreach ($annotation as $name => $_attribute) {
-			foreach ($_attribute as $attribute) {
-				if ($attribute instanceof Interceptor) {
-					$node->addInterceptor($attribute->interceptor);
-				}
-				if ($attribute instanceof After) {
-					$node->addAfter($attribute->after);
-				}
-				if ($attribute instanceof RMiddleware) {
-					$node->addMiddleware($attribute->middleware);
-				}
-				if ($attribute instanceof Limits) {
-					$node->addLimits($attribute->limits);
-				}
+		foreach ($annotation as $name => $attribute) {
+			if ($attribute instanceof Interceptor) {
+				$node->addInterceptor($attribute->interceptor);
+			}
+			if ($attribute instanceof After) {
+				$node->addAfter($attribute->after);
+			}
+			if ($attribute instanceof RMiddleware) {
+				$node->addMiddleware($attribute->middleware);
+			}
+			if ($attribute instanceof Limits) {
+				$node->addLimits($attribute->limits);
 			}
 		}
 	}
