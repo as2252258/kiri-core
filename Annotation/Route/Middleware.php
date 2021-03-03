@@ -25,14 +25,16 @@ use Snowflake\Snowflake;
 		if (is_string($this->middleware)) {
 			$this->middleware = [$this->middleware];
 		}
+
+		$array = [];
 		foreach ($this->middleware as $key => $value) {
 			$sn = Snowflake::createObject($value);
-
 			if (!($sn instanceof \HttpServer\IInterface\Middleware)) {
 				continue;
 			}
-			$this->middleware[$key] = [$sn, 'onHandler'];
+			$array[] = [$sn, 'onHandler'];
 		}
+		$this->middleware = $array;
 	}
 
 
