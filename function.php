@@ -84,12 +84,14 @@ if (!function_exists('recursive_directory')) {
 			return;
 		}
 
-		/** @var Attribute $attribute */
+		/** @var Attribute $value */
 		foreach ($annotations['methods'] as $name => $attribute) {
-			if (!($attribute instanceof Attribute)) {
-				continue;
+			foreach ($attribute as $value) {
+				if (!($value instanceof Attribute)) {
+					continue;
+				}
+				$value->execute([$annotations['handler'], $name]);
 			}
-			$attribute->execute([$annotations['handler'], $name]);
 		}
 	}
 
