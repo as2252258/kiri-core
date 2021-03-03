@@ -49,6 +49,12 @@ class OnClose extends Callback
 	private function execute(Server $server, int $fd): void
 	{
 		try {
+			if (!$server instanceof WServer) {
+				return;
+			}
+			if (!$server->isEstablished($fd)) {
+				return;
+			}
 			$this->loadNode($server, $fd);
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
