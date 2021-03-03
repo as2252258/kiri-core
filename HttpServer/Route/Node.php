@@ -406,6 +406,9 @@ class Node extends HttpService
 			$class = [$class];
 		}
 		foreach ($class as $closure) {
+			if (is_string($closure)) {
+				$closure = [Snowflake::createObject($closure), 'onHandler'];
+			}
 			if (in_array($closure, $this->middleware)) {
 				continue;
 			}
