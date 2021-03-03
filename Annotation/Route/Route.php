@@ -43,7 +43,7 @@ use Snowflake\Snowflake;
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
-		$router->addRoute($this->uri . $this->version, $handler, $this->method);
+		$router->addRoute($this->uri, $handler, $this->method);
 
 		return $router;
 	}
