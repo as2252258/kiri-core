@@ -149,6 +149,10 @@ class Loader extends BaseObject
 					continue;
 				}
 
+				if (!$replace->getAttributes(Target::class)) {
+					continue;
+				}
+
 				$_array = ['handler' => $replace->newInstanceWithoutConstructor(), 'target' => [], 'methods' => [], 'property' => []];
 				foreach ($replace->getAttributes() as $attribute) {
 					if ($attribute->getName() == Attribute::class) {
