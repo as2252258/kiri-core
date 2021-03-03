@@ -24,6 +24,9 @@ class Loader extends BaseObject
 	private array $_classes = [];
 
 
+	private array $_fileMap = [];
+
+
 	/**
 	 * @param $path
 	 * @param $namespace
@@ -143,7 +146,7 @@ class Loader extends BaseObject
 					continue;
 				}
 
-				$_array = ['target' => [], 'methods' => [], 'property' => []];
+				$_array = ['handler' => $replace->newInstanceWithoutConstructor(), 'target' => [], 'methods' => [], 'property' => []];
 				foreach ($replace->getAttributes() as $attribute) {
 					if ($attribute->getName() == Attribute::class) {
 						continue;
@@ -175,10 +178,26 @@ class Loader extends BaseObject
 					$_array['property'][$method->getName()] = $_property;
 				}
 
+				$this->_fileMap[$replace->getFileName()] = $replace->getName();
+
+
 				$this->_classes[$replace->getName()] = $_array;
 			} catch (Throwable $throwable) {
 				echo $throwable->getMessage() . PHP_EOL;
 			}
 		}
+	}
+
+
+	/**
+	 * @param string $filename
+	 * @return mixed
+	 */
+	public function getClassByFilepath(string $filename): mixed
+	{
+		if (!isset($this->_fileMap[$filename])) {
+			return null;
+		}
+		return $this->_classes[$this->_fileMap[$filename]];
 	}
 }

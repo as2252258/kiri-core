@@ -3,6 +3,7 @@
 
 namespace HttpServer;
 
+use Annotation\Attribute;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Events\OnClose;
@@ -464,7 +465,18 @@ class Server extends HttpService
 			$router->loadRouterSetting();
 
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->read(CONTROLLER_PATH, 'App\Http\Controllers', 'controllers');
+
+			recursive_directory(CONTROLLER_PATH, function (\DirectoryIterator $file) use ($attributes) {
+				$annotations = $attributes->getFilename($file->getRealPath());
+
+				/** @var Attribute $attribute */
+				foreach ($annotations['methods'] as $name => $attribute) {
+					if (!($attribute instanceof Attribute)) {
+						continue;
+					}
+					$attribute->execute([$annotations['handler'], $name]);
+				}
+			});
 		});
 	}
 
@@ -477,7 +489,18 @@ class Server extends HttpService
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$attributes = Snowflake::app()->getAttributes();
-			$attributes->read(SOCKET_PATH, 'App\Websocket', 'sockets');
+
+			recursive_directory(SOCKET_PATH, function (\DirectoryIterator $file) use ($attributes) {
+				$annotations = $attributes->getFilename($file->getRealPath());
+
+				/** @var Attribute $attribute */
+				foreach ($annotations['methods'] as $name => $attribute) {
+					if (!($attribute instanceof Attribute)) {
+						continue;
+					}
+					$attribute->execute([$annotations['handler'], $name]);
+				}
+			});
 		});
 	}
 

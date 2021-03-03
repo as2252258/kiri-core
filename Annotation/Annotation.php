@@ -56,4 +56,14 @@ class Annotation extends Component
 		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
 	}
 
+
+	/**
+	 * @param string $filename
+	 * @return mixed
+	 */
+	public function getFilename(string $filename): mixed
+	{
+		return $this->_loader->getClassByFilepath($filename);
+	}
+
 }
