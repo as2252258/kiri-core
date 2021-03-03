@@ -28,6 +28,9 @@ class Loader extends BaseObject
 	private array $_fileMap = [];
 
 
+	private array $_directoryMap = [];
+
+
 	/**
 	 * @param $path
 	 * @param $namespace
@@ -119,6 +122,7 @@ class Loader extends BaseObject
 	 */
 	public function _scanDir(DirectoryIterator $paths, $namespace)
 	{
+		$DIRECTORY = $this->createDirectoryMap($paths);
 		foreach ($paths as $path) {
 			if ($path->getFilename() === '.' || $path->getFilename() === '..') {
 				continue;
@@ -130,19 +134,17 @@ class Loader extends BaseObject
 				$this->_scanDir(new DirectoryIterator($path->getRealPath()), $namespace);
 				continue;
 			}
+
 			if ($path->getExtension() !== 'php') {
 				continue;
 			}
 
-			$replace = str_replace(APP_PATH . '/', '', $path->getRealPath());
-
-			$replace = str_replace('.php', '', $replace);
-			$replace = str_replace(DIRECTORY_SEPARATOR, '\\', $replace);
-			$explode = explode('\\', $replace);
-			array_shift($explode);
+			if (!in_array($path->getRealPath(), $this->_directoryMap[$DIRECTORY])) {
+				$this->_directoryMap[$DIRECTORY][] = $path->getRealPath();
+			}
 
 			try {
-				$replace = Snowflake::getDi()->getReflect($namespace . implode('\\', $explode));
+				$replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
 				if (empty($replace) || !$replace->isInstantiable()) {
 					continue;
 				}
@@ -187,6 +189,55 @@ class Loader extends BaseObject
 				echo $throwable->getMessage() . PHP_EOL;
 			}
 		}
+	}
+
+
+	/**
+	 * @param DirectoryIterator $path
+	 * @param string $namespace
+	 * @return string
+	 */
+	private function explodeFileName(DirectoryIterator $path, string $namespace): string
+	{
+		$replace = str_replace(APP_PATH . '/', '', $path->getRealPath());
+
+		$replace = str_replace('.php', '', $replace);
+		$replace = str_replace(DIRECTORY_SEPARATOR, '\\', $replace);
+		$explode = explode('\\', $replace);
+		array_shift($explode);
+
+		return $namespace . implode('\\', $explode);
+	}
+
+
+	/**
+	 * @param DirectoryIterator $directoryIterator
+	 * @return string
+	 */
+	public function createDirectoryMap(DirectoryIterator $directoryIterator): string
+	{
+		$DIRECTORY = explode(DIRECTORY_SEPARATOR, $directoryIterator->getRealPath());
+		array_pop($DIRECTORY);
+
+		$DIRECTORY = implode(DIRECTORY_SEPARATOR, $DIRECTORY);
+
+		if (!isset($this->_directoryMap[$DIRECTORY])) {
+			$this->_directoryMap[$DIRECTORY] = [];
+		}
+		return $DIRECTORY;
+	}
+
+
+	/**
+	 * @param string $Directory
+	 * @return array
+	 */
+	public function getDirectoryFiles(string $Directory): array
+	{
+		if (!isset($this->_directoryMap[$Directory])) {
+			return [];
+		}
+		return $this->_directoryMap[$Directory];
 	}
 
 
