@@ -370,11 +370,12 @@ class Server extends HttpService
 			$settings['pid_file'] = PID_PATH;
 		}
 		$this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
-		if ($this->baseServer instanceof Websocket) {
-			$this->onLoadWebsocketHandler();
-		} else if ($this->baseServer instanceof Http) {
+
+		$this->onLoadWebsocketHandler();
+		if ($this->baseServer instanceof Http) {
 			$this->onLoadHttpHandler();
 		}
+
 		$this->baseServer->set($settings);
 
 		$this->onProcessListener();

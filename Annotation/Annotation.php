@@ -82,6 +82,9 @@ class Annotation extends Component
 	 */
 	private function scanDir(array $paths, string $namespace, string $alias): static
 	{
+		if ($alias == 'sockets') {
+			var_dump($paths);
+		}
 		foreach ($paths as $path) {
 			$explode = explode('/', $path);
 
