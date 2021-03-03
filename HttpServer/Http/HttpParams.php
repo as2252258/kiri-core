@@ -161,7 +161,7 @@ class HttpParams
 	 */
 	#[Pure] public function load(): array
 	{
-		return array_merge($this->files, $this->body, $this->gets);
+		return array_merge($this->files ?? [], $this->body ?? [], $this->gets ?? []);
 	}
 
 	/**
