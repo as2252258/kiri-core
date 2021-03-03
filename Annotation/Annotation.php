@@ -26,12 +26,13 @@ class Annotation extends Component
 
 	/**
 	 * @param string $className
+	 * @param string $method
 	 * @return array 根据类名获取注解
 	 * 根据类名获取注解
 	 */
-	public function getMethods(string $className): array
+	public function getMethods(string $className, string $method = ''): array
 	{
-		return $this->_loader->getMethod($className);
+		return $this->_loader->getMethod($className, $method);
 	}
 
 
