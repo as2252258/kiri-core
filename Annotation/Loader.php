@@ -10,6 +10,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Snowflake\Abstracts\BaseObject;
+use Snowflake\Snowflake;
 use Throwable;
 
 
@@ -141,7 +142,7 @@ class Loader extends BaseObject
 			array_shift($explode);
 
 			try {
-				$replace = new ReflectionClass($namespace . implode('\\', $explode));
+				$replace = Snowflake::getDi()->getReflect($namespace . implode('\\', $explode));
 				if (!$replace->isInstantiable()) {
 					continue;
 				}
