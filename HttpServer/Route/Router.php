@@ -291,8 +291,11 @@ class Router extends HttpService implements RouterInterface
 			$node->addMiddleware($this->middleware);
 		}
 
-
-		$node->addMiddleware($name);
+		if (is_array($name)) foreach ($name as $value) {
+			$node->addMiddleware($value);
+		} else {
+			$node->addMiddleware($value);
+		}
 
 		return $node;
 	}
