@@ -143,7 +143,7 @@ class Loader extends BaseObject
 
 			try {
 				$replace = Snowflake::getDi()->getReflect($namespace . implode('\\', $explode));
-				if (!$replace->isInstantiable()) {
+				if (empty($replace) || !$replace->isInstantiable()) {
 					continue;
 				}
 
