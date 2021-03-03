@@ -51,7 +51,6 @@ class OnTask extends Callback
 	 */
 	public function onTask(Server $server, int $task_id, int $from_id, string $data): mixed
 	{
-		var_dump($task_id, $from_id, $data);
 		if (empty($data)) {
 			return $server->finish('null data');
 		}
@@ -77,7 +76,6 @@ class OnTask extends Callback
 	 */
 	public function onContinueTask(Server $server, Server\Task $task): mixed
 	{
-		var_dump($task);
 		if (empty($task->data)) {
 			return $task->finish('null data');
 		}
@@ -103,7 +101,6 @@ class OnTask extends Callback
 	 */
 	private function runTaskHandler($data): ?array
 	{
-		$app = Snowflake::app()->increment();
 		try {
 			$serialize = $this->before($data);
 			$params = $serialize->getParams();
@@ -118,8 +115,6 @@ class OnTask extends Callback
 			$finish['status'] = 'error';
 			$finish['info'] = $this->format($exception);
 			$this->error($exception, 'Task');
-		} finally {
-			$app->decrement();
 		}
 		return $finish;
 	}

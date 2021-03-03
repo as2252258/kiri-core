@@ -23,10 +23,6 @@ use Swoole\Timer;
 class OnWorkerStart extends Callback
 {
 
-	
-	/** @var int 重启信号 */
-	private int $signal = SIGUSR1 | SIGKILL | SIGKILL;
-
 
 	/**
 	 * @param Server $server
@@ -82,36 +78,6 @@ class OnWorkerStart extends Callback
 			write($exception->getMessage(), 'worker');
 		}
 		$this->set_process_name($server, $worker_id);
-	}
-
-
-	/**
-	 * @param $server
-	 * @param $worker_id
-	 * @return void
-	 */
-	public function onSignal(Server $server, $worker_id): mixed
-	{
-		$ret = Coroutine::waitSignal($this->signal, -1);
-		if ($ret === true) {
-			$this->ticker();
-		}
-		return $server->stop();
-	}
-
-
-	/**
-	 * @return void
-	 */
-	private function ticker(): void
-	{
-		if (!Snowflake::app()->isRun()) {
-			return;
-		}
-
-		sleep(1);
-
-		$this->ticker();
 	}
 
 
