@@ -206,7 +206,7 @@ class Loader extends BaseObject
 		$explode = explode('\\', $replace);
 		array_shift($explode);
 
-		return $namespace . implode('\\', $explode);
+		return $namespace . '\\' . implode('\\', $explode);
 	}
 
 
