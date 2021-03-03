@@ -55,8 +55,6 @@ class ErrorHandler extends Component implements ErrorInterface
 			return;
 		}
 
-		var_dump($lastError);
-
 		$this->category = 'shutdown';
 
 		$messages = explode(PHP_EOL, $lastError['message']);
@@ -94,9 +92,6 @@ class ErrorHandler extends Component implements ErrorInterface
 		if (str_contains($error[2], 'vendor/Reboot.php')) {
 			return;
 		}
-
-		var_dump(func_get_args());
-
 
 		$path = ['file' => $error[2], 'line' => $error[3]];
 

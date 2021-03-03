@@ -60,7 +60,7 @@ class GiiModel extends GiiBase
 
 				$html = $this->getUseContent($class, $classFileName);
 			} catch (\Throwable $e) {
-				var_dump($e->getMessage());
+				logger()->error($e->getMessage());
 			}
 		}
 
