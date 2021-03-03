@@ -72,8 +72,8 @@ class Middleware
 		}
 		[$controller, $action] = $node->handler;
 		$attributes = Snowflake::app()->getAttributes();
-		$annotation = $attributes->getMethods($controller, $action);
-		if (count($annotation) < 1) {
+		$annotation = $attributes->getMethods(get_class($controller), $action);
+		if (empty($annotation)) {
 			return;
 		}
 		foreach ($annotation as $attribute) {
