@@ -405,10 +405,9 @@ class Node extends HttpService
 			$class = [$class];
 		}
 		foreach ($class as $closure) {
-			var_dump($closure);
-			if (in_array($closure, $this->middleware)) {
-				continue;
-			}
+//			if (in_array($closure, $this->middleware)) {
+//				continue;
+//			}
 			$this->middleware[] = $closure;
 		}
 		return $this;
