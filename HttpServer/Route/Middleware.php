@@ -73,6 +73,7 @@ class Middleware
 		[$controller, $action] = $node->handler;
 		$attributes = Snowflake::app()->getAttributes();
 		$annotation = $attributes->getMethods(get_class($controller), $action);
+		var_dump($annotation);
 		if (empty($annotation)) {
 			return;
 		}
