@@ -820,11 +820,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
+	 * @param string $type
 	 * @return array
 	 */
-	protected function getAnnotation(): array
+	protected function getAnnotation($type = 'get'): array
 	{
-		return $this->_annotations;
+		return $this->_annotations[$type] ?? [];
 	}
 
 

@@ -275,11 +275,11 @@ class ActiveRecord extends BaseActiveRecord
 	public function toArray(): array
 	{
 		$data = $this->_attributes;
-		foreach ($this->getAnnotation() as $key => $item) {
+		foreach ($this->getAnnotation('get') as $key => $item) {
 			if (!isset($data[$key])) {
 				continue;
 			}
-			$data[$key] = call_user_func([$this, $item[1]], $data[$key]);
+			$data[$key] = call_user_func($item, $data[$key]);
 		}
 		$data = array_merge($data, $this->runRelate());
 		$this->recover();
