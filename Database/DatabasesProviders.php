@@ -42,16 +42,9 @@ class DatabasesProviders extends Providers
 	}
 
 
-	/**
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 * @throws NotFindPropertyException
-	 */
 	public function scanModel()
 	{
-		$attributes = Snowflake::app()->getAttributes();
-		$attributes->read(MODEL_PATH, 'App\Models', 'models');
+		recursive_directory(MODEL_PATH);
 	}
 
 
