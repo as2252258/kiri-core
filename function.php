@@ -10,6 +10,7 @@ use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use HttpServer\Http\Context;
 use Snowflake\Core\ArrayAccess;
@@ -69,10 +70,33 @@ if (!function_exists('recursive_directory')) {
 
 
 	/**
-	 * @param string $path
-	 * @param array|Closure $callback
+	 * @param DirectoryIterator $file
+	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	function recursive_directory(string $path, array|Closure $callback)
+	function recursive_callback(DirectoryIterator $file)
+	{
+		$attributes = Snowflake::app()->getAttributes();
+
+		$annotations = $attributes->getFilename($file->getRealPath());
+		if (empty($annotations)) {
+			return;
+		}
+
+		/** @var Attribute $attribute */
+		foreach ($annotations['methods'] as $name => $attribute) {
+			if (!($attribute instanceof Attribute)) {
+				continue;
+			}
+			$attribute->execute([$annotations['handler'], $name]);
+		}
+	}
+
+	/**
+	 * @param string $path
+	 */
+	function recursive_directory(string $path)
 	{
 		$directoryIterators = new \DirectoryIterator($path);
 		foreach ($directoryIterators as $directoryIterator) {
@@ -80,9 +104,9 @@ if (!function_exists('recursive_directory')) {
 				continue;
 			}
 			if ($directoryIterator->isDir()) {
-				Recursive_directory($directoryIterator->getRealPath(), $callback);
+				Recursive_directory($directoryIterator->getRealPath());
 			} else {
-				call_user_func($callback, $directoryIterator);
+				call_user_func('recursive_callback', $directoryIterator);
 			}
 		}
 		unset($directoryIterators);

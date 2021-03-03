@@ -465,7 +465,7 @@ class Server extends HttpService
 			$router = Snowflake::app()->getRouter();
 			$router->loadRouterSetting();
 
-			recursive_directory(SOCKET_PATH, [$this, 'recursive_callback']);
+			recursive_directory(SOCKET_PATH);
 		});
 	}
 
@@ -477,34 +477,10 @@ class Server extends HttpService
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
-			recursive_directory(SOCKET_PATH, [$this, 'recursive_callback']);
+			recursive_directory(SOCKET_PATH);
 		});
 	}
 
-
-	/**
-	 * @param DirectoryIterator $file
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	public function recursive_callback(DirectoryIterator $file)
-	{
-		$attributes = Snowflake::app()->getAttributes();
-
-		$annotations = $attributes->getFilename($file->getRealPath());
-		if (empty($annotations)) {
-			return;
-		}
-
-		/** @var Attribute $attribute */
-		foreach ($annotations['methods'] as $name => $attribute) {
-			if (!($attribute instanceof Attribute)) {
-				continue;
-			}
-			$attribute->execute([$annotations['handler'], $name]);
-		}
-	}
 
 
 	/**
