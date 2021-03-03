@@ -96,7 +96,7 @@ class Loader extends BaseObject
 	public function getMethod(string $class, string $method = ''): mixed
 	{
 		if (!isset($this->_classes[$class])) {
-			return [];
+			return null;
 		}
 		$properties = $this->_classes[$class]['methods'];
 		if (!empty($property) && isset($properties[$method])) {

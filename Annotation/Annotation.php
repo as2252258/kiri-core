@@ -30,7 +30,7 @@ class Annotation extends Component
 	 * @return array 根据类名获取注解
 	 * 根据类名获取注解
 	 */
-	public function getMethods(string $className, string $method = ''): array
+	public function getMethods(string $className, string $method = ''): mixed
 	{
 		return $this->_loader->getMethod($className, $method);
 	}
