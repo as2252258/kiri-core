@@ -391,6 +391,7 @@ class Node extends HttpService
 	 */
 	public function addMiddleware(Closure|string|array $class): static
 	{
+		if (empty($class)) return $this;
 		if (is_string($class)) {
 			$class = $this->resolve_aop($class);
 			if ($class === null) {
