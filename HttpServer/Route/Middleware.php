@@ -76,6 +76,7 @@ class Middleware
 		if (empty($annotation)) {
 			return;
 		}
+		var_export($annotation);
 		foreach ($annotation as $name => $_attribute) {
 			foreach ($_attribute as $attribute) {
 				if ($attribute instanceof Interceptor) {
