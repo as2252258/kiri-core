@@ -173,9 +173,10 @@ class Loader extends BaseObject
 					$_array['methods'][$method->getName()] = $_method;
 				}
 
-				$methods = $replace->getProperties(ReflectionMethod::IS_PUBLIC ^ ReflectionProperty::IS_STATIC);
+				$methods = $replace->getProperties();
 				foreach ($methods as $method) {
 					$_property = [];
+					if ($method->isStatic()) continue;
 					foreach ($method->getAttributes() as $attribute) {
 						if (!class_exists($attribute->getName())) {
 							continue;
