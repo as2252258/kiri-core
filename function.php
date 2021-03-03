@@ -82,6 +82,7 @@ if (!function_exists('recursive_directory')) {
 				call_user_func($callback, $directoryIterator);
 			}
 		}
+		unset($directoryIterators);
 	}
 
 
