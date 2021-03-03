@@ -8,11 +8,8 @@ use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Request;
-use Snowflake\Abstracts\Config;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Http\Request as SRequest;
 use Swoole\Http\Response as SResponse;
 use Swoole\WebSocket\Server;
@@ -113,7 +110,7 @@ class OnHandshake extends Callback
 			$sRequest->uri = '/' . Socket::HANDSHAKE . '::event';
 			$sRequest->headers->replace('request_method', 'sw::socket');
 			$sRequest->headers->replace('request_uri', $sRequest->uri);
-			$sRequest->parseUri();;
+			$sRequest->parseUri();
 
 			if (($node = $router->find_path($sRequest)) === null) {
 				return $this->disconnect($response, 502);

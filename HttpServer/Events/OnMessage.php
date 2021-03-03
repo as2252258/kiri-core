@@ -38,10 +38,6 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
-			Coroutine::defer(function () {
-				fire(Event::SYSTEM_RESOURCE_RELEASES);
-				Snowflake::app()->getLogger()->insert();
-			});
 			if ($frame->opcode == 0x08) {
 				return;
 			}
@@ -53,6 +49,9 @@ class OnMessage extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
+		} finally {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
 		}
 	}
 
