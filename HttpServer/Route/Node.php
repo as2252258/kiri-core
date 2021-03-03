@@ -397,7 +397,11 @@ class Node extends HttpService
 				return $this;
 			}
 		}
-		if (!is_array($class) || is_object($class[0])) {
+		if (is_array($class)) {
+			if (isset($class[0]) && is_object($class[0])) {
+				$class = [$class];
+			}
+		} else {
 			$class = [$class];
 		}
 		foreach ($class as $closure) {
