@@ -201,7 +201,7 @@ class Loader extends BaseObject
 	 */
 	private function explodeFileName(DirectoryIterator $path, string $namespace): string
 	{
-		$replace = str_replace(APP_PATH . '/', '', $path->getRealPath());
+		$replace = str_replace(APP_PATH . 'app', '', $path->getRealPath());
 
 		$replace = str_replace('.php', '', $replace);
 		$replace = str_replace(DIRECTORY_SEPARATOR, '\\', $replace);
