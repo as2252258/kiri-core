@@ -475,6 +475,7 @@ class Node extends HttpService
 //			return $this->runWith(...func_get_args());
 //		}
 		if (empty($this->restructure()->callback)) {
+			var_dump('404');
 			return Json::to(404, $this->errorMsg());
 		}
 		return $this->runWith(...func_get_args());
