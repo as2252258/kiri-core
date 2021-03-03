@@ -405,7 +405,6 @@ class Node extends HttpService
 		} else {
 			$class = [$class];
 		}
-		$this->debug($this->path . ':' . var_export($class, true));
 		foreach ($class as $closure) {
 			if (in_array($closure, $this->middleware)) {
 				continue;
