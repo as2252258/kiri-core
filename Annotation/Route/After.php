@@ -4,30 +4,32 @@
 namespace Annotation\Route;
 
 
-use Annotation\IAnnotation;
-use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
+use Annotation\Attribute;
 use Snowflake\Snowflake;
 
 /**
  * Class Interceptor
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class After implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class After extends Attribute
 {
-
-	use Node;
 
 	/**
 	 * Interceptor constructor.
 	 * @param \HttpServer\IInterface\After|\HttpServer\IInterface\After[] $after
 	 * @throws
 	 */
-	#[Pure] public function __construct(public string|array $after)
+	public function __construct(public string|array $after)
 	{
 		if (is_string($this->after)) {
 			$this->after = [$this->after];
+		}
+		foreach ($this->after as $key => $value) {
+			$sn = Snowflake::createObject($value);
+			if (!($sn instanceof \HttpServer\IInterface\After)) {
+				continue;
+			}
+			$this->after[$key] = [$sn, 'onHandler'];
 		}
 	}
 

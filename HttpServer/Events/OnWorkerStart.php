@@ -19,7 +19,6 @@ use Swoole\Timer;
  * Class OnWorkerStart
  * @package HttpServer\Events
  */
-#[Target]
 class OnWorkerStart extends Callback
 {
 

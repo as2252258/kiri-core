@@ -4,10 +4,7 @@
 namespace Annotation\Route;
 
 
-use Annotation\IAnnotation;
-use Closure;
-use Exception;
-use HttpServer\Route\Node;
+use Annotation\Attribute;
 use HttpServer\Route\Router;
 use ReflectionException;
 use Snowflake\Exception\ComponentException;
@@ -19,7 +16,7 @@ use Snowflake\Snowflake;
  * Class Socket
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Socket implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class Socket extends Attribute
 {
 
 	const CLOSE = 'CLOSE';
@@ -30,10 +27,12 @@ use Snowflake\Snowflake;
 	 * Socket constructor.
 	 * @param string $event
 	 * @param string|null $uri
+	 * @param string $version
 	 */
 	public function __construct(
 		public string $event,
-		public ?string $uri = null
+		public ?string $uri = null,
+		public string $version = 'v.1.0'
 	)
 	{
 	}
@@ -44,6 +43,8 @@ use Snowflake\Snowflake;
 	 * @return Router
 	 * @throws ComponentException
 	 * @throws ConfigException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function execute(array $handler): Router
 	{
@@ -52,7 +53,7 @@ use Snowflake\Snowflake;
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		$router->addRoute($method, $handler, 'sw::socket');
+		$router->addRoute($method . $this->version, $handler, 'sw::socket');
 
 		return $router;
 	}

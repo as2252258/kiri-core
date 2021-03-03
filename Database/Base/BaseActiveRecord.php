@@ -11,11 +11,13 @@ namespace Database\Base;
 
 
 use Annotation\Event;
+use Annotation\IAnnotation;
 use Annotation\Inject;
+use Annotation\Model\Get;
+use Annotation\Model\Set;
 use ArrayAccess;
 use Database\SqlBuilder;
 use HttpServer\Http\Context;
-use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\ActiveQuery;
@@ -106,6 +108,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function init()
 	{
+		$this->_annotations = [];
 		if (!Context::hasContext(Relation::class)) {
 			$relation = Snowflake::createObject(Relation::class);
 			$this->_relation = Context::setContext(Relation::class, $relation);
@@ -118,14 +121,53 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	/**
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	private function createAnnotation()
 	{
 		$annotation = Snowflake::app()->getAttributes();
+		$annotation->injectProperty($this);
 
-		$this->_annotations = $annotation->getMethods(get_called_class());
+		$methods = $annotation->getMethods(get_called_class());
+		foreach ($methods as $method => $attributes) {
+			foreach ($attributes as $attribute) {
+				if (!($attribute instanceof Get) && !($attribute instanceof Set)) {
+					continue;
+				}
+				$attribute->execute([$this, $method]);
+			}
+		}
+	}
 
-		$annotation->setProperty($this);
+
+	/**
+	 * @param $name
+	 * @param $method
+	 * @return static
+	 */
+	public function addGets($name, $method): static
+	{
+		if (!isset($this->_annotations['get'])) {
+			$this->_annotations['get'] = [];
+		}
+		$this->_annotations['get'][$name] = [$this, $method];
+		return $this;
+	}
+
+
+	/**
+	 * @param $name
+	 * @param $method
+	 * @return static
+	 */
+	public function addSets($name, $method): static
+	{
+		if (!isset($this->_annotations['set'])) {
+			$this->_annotations['set'] = [];
+		}
+		$this->_annotations['set'][$name] = [$this, $method];
+		return $this;
 	}
 
 
@@ -157,9 +199,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	/**
 	 * @return mixed
-	 *
-	 * get last exception or other error
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * get last exception or other error
 	 */
 	public function getLastError(): mixed
 	{
@@ -745,14 +788,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		if (!$this->has($name)) {
 			parent::__set($name, $value);
+			return;
+		}
+		if ($this->hasAnnotation($name, 'set')) {
+			call_user_func($this->_annotations['set'][$name], $value);
 		} else {
-			$sets = 'set' . ucfirst($name) . 'Attribute';
-			if (method_exists($this, $sets)) {
-				$value = $this->$sets($value);
-			}
 			$this->_attributes[$name] = $value;
 		}
 	}
+
 
 	/**
 	 * @param $name
@@ -763,16 +807,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$value = $this->_attributes[$name] ?? null;
 		if ($this->hasAnnotation($name)) {
-			return call_user_func($this->_annotations[$name], $value);
+			return call_user_func($this->_annotations['get'][$name], $value);
 		}
 		if (array_key_exists($name, $this->_attributes)) {
 			return static::getColumns()->_decode($name, $value);
 		}
 		if (isset($this->_relate[$name])) {
-			$gets = $this->{$this->_relate[$name]}();
-		}
-		if (isset($gets)) {
-			return $this->resolveClass($gets);
+			return $this->resolveClass($this->{$this->_relate[$name]}());
 		}
 		return parent::__get($name);
 	}
@@ -789,11 +830,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	/**
 	 * @param $name
+	 * @param string $type
 	 * @return bool
 	 */
-	protected function hasAnnotation($name): bool
+	protected function hasAnnotation($name, $type = 'get'): bool
 	{
-		return isset($this->_annotations[$name]);
+		if (!isset($this->_annotations[$type])) {
+			return false;
+		}
+		return isset($this->_annotations[$type][$name]);
 	}
 
 

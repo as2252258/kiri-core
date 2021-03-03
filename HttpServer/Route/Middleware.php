@@ -78,16 +78,16 @@ class Middleware
 		}
 		foreach ($annotation as $attribute) {
 			if ($attribute instanceof Interceptor) {
-				$node->addInterceptor($attribute->reflectClass($attribute->interceptor));
+				$node->addInterceptor($attribute->interceptor);
 			}
 			if ($attribute instanceof After) {
-				$node->addAfter($attribute->reflectClass($attribute->after));
+				$node->addAfter($attribute->after);
 			}
 			if ($attribute instanceof RMiddleware) {
-				$node->addMiddleware($attribute->reflectClass($attribute->middleware));
+				$node->addMiddleware($attribute->middleware);
 			}
 			if ($attribute instanceof Limits) {
-				$node->addLimits($attribute->reflectClass($attribute->limits));
+				$node->addLimits($attribute->limits);
 			}
 		}
 	}

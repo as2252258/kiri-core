@@ -10,6 +10,9 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use Exception;
 
+use HttpServer\IInterface\After;
+use HttpServer\IInterface\Interceptor;
+use HttpServer\IInterface\Limits;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
@@ -380,34 +383,19 @@ class Node extends HttpService
 
 
 	/**
-	 * @param $middles
-	 * @throws
-	 */
-	public function bindMiddleware(array $middles)
-	{
-		$_tmp = [];
-		if (empty($middles)) {
-			return;
-		}
-		$this->middleware = $this->each($middles, $_tmp);
-	}
-
-
-	/**
 	 * @param array|Closure|string $class
+	 * @return Node
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function addMiddleware(Closure|string|array $class)
+	public function addMiddleware(Closure|string|array $class): static
 	{
-		if (empty($class)) return;
 		if (is_string($class)) {
-			$class = Snowflake::createObject($class);
-			if (!($class instanceof \HttpServer\IInterface\Middleware)) {
-				return;
+			$class = $this->resolve_aop($class);
+			if ($class === null) {
+				return $this;
 			}
-			$class = [[$class, 'onHandler']];
 		}
 		if (!is_array($class) || is_object($class[0])) {
 			$class = [$class];
@@ -417,6 +405,30 @@ class Node extends HttpService
 				continue;
 			}
 			$this->middleware[] = $closure;
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @return array|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function resolve_aop(string $class): array|null
+	{
+		$class = Snowflake::createObject($class);
+		if ($class instanceof \HttpServer\IInterface\Middleware) {
+			return [$class, 'onHandler'];
+		} else if ($class instanceof Interceptor) {
+			return [$class, 'Interceptor'];
+		} else if ($class instanceof After) {
+			return [$class, 'onHandler'];
+		} else if ($class instanceof Limits) {
+			return [$class, 'next'];
+		} else {
+			return null;
 		}
 	}
 
@@ -451,13 +463,22 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		if (empty($this->callback)) {
-			$this->restructure();
-			if (empty($this->callback)) {
-				return Json::to(404, $node->_error ?? 'Page not found.');
-			}
+		if (!empty($this->callback)) {
+			return $this->runWith(...func_get_args());
 		}
+		if (empty($this->restructure()->callback)) {
+			return Json::to(404, $this->errorMsg());
+		}
+		return $this->runWith(...func_get_args());
+	}
 
+
+	/**
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function runWith(): mixed
+	{
 		$requestParams = func_get_args();
 		if (func_num_args() > 0) {
 			return call_user_func($this->callback, ...$requestParams);
@@ -468,27 +489,11 @@ class Node extends HttpService
 
 
 	/**
-	 * @param $array
-	 * @param $_temp
-	 * @return array
-	 * @throws Exception
+	 * @return string
 	 */
-	private function each($array, $_temp): array
+	private function errorMsg(): string
 	{
-		if (!is_array($array)) {
-			return $_temp;
-		}
-		foreach ($array as $class) {
-			if (is_array($class)) {
-				$_temp = $this->each($class, $_temp);
-				continue;
-			}
-
-			if (!class_exists($class)) {
-				continue;
-			}
-			$_temp[] = Snowflake::createObject($class);
-		}
-		return $_temp;
+		return $this->_error ?? 'Page not found.';
 	}
+
 }

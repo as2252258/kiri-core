@@ -11,7 +11,7 @@ use validator\Validator;
  * Class RequestValidator
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class RequestValidator implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class RequestValidator extends Attribute
 {
 
 	/**

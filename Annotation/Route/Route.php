@@ -4,26 +4,27 @@
 namespace Annotation\Route;
 
 
-use Closure;
-use Exception;
-use HttpServer\Route\Node;
+use Annotation\Attribute;
 use HttpServer\Route\Router;
+use ReflectionException;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Annotation\IAnnotation;
 
-#[\Attribute(\Attribute::TARGET_METHOD)] class Route implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class Route extends Attribute
 {
 
 	/**
 	 * Route constructor.
 	 * @param string $uri
 	 * @param string $method
+	 * @param string $version
 	 */
 	public function __construct(
 		public string $uri,
-		public string $method
+		public string $method,
+		public string $version = 'v.1.0'
 	)
 	{
 	}
@@ -34,13 +35,15 @@ use Annotation\IAnnotation;
 	 * @return Router
 	 * @throws ComponentException
 	 * @throws ConfigException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function execute(array $handler): Router
 	{
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
-		$router->addRoute($this->uri, $handler, $this->method);
+		$router->addRoute($this->uri . $this->version, $handler, $this->method);
 
 		return $router;
 	}

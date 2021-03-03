@@ -13,7 +13,7 @@ use Snowflake\Snowflake;
  * Class Event
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Event implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class Event extends Attribute
 {
 
 

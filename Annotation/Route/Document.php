@@ -4,13 +4,13 @@
 namespace Annotation\Route;
 
 
-use Annotation\IAnnotation;
+use Annotation\Attribute;
 
 /**
  * Class Document
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Document implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class Document extends Attribute
 {
 
 	const INTEGER = 'int';

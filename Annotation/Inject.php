@@ -13,7 +13,7 @@ use Snowflake\Snowflake;
  * Class Inject
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_PROPERTY)] class Inject implements IAnnotation
+#[\Attribute(\Attribute::TARGET_PROPERTY)] class Inject extends Attribute
 {
 
 
@@ -35,9 +35,20 @@ use Snowflake\Snowflake;
 	 */
 	public function execute(array $handler): mixed
 	{
-		if (Snowflake::app()->has($this->className)) {
-			return Snowflake::app()->get($this->className);
+		[$object, $property] = $handler;
+		if (class_exists($this->className)) {
+			return $object->$property = Snowflake::createObject($this->className, $this->args);
 		}
-		return Snowflake::createObject($this->className, $this->args);
+
+		$application = Snowflake::app();
+		if (!$application->has($this->className)) {
+			return $object;
+		}
+
+		$object->$property = $application->get($this->className);
+		if (!empty($this->args) && is_object($object->$property)) {
+			Snowflake::configure($object->$property, $this->args);
+		}
+		return $object;
 	}
 }

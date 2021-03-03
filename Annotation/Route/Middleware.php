@@ -4,20 +4,15 @@
 namespace Annotation\Route;
 
 
-use Annotation\IAnnotation;
-use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
+use Annotation\Attribute;
 use Snowflake\Snowflake;
 
 /**
  * Class Middleware
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Middleware implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class Middleware extends Attribute
 {
-
-	use Node;
 
 
 	/**
@@ -25,10 +20,18 @@ use Snowflake\Snowflake;
 	 * @param string|array $middleware
 	 * @throws
 	 */
-	#[Pure] public function __construct(public string|array $middleware)
+	public function __construct(public string|array $middleware)
 	{
 		if (is_string($this->middleware)) {
 			$this->middleware = [$this->middleware];
+		}
+		foreach ($this->middleware as $key => $value) {
+			$sn = Snowflake::createObject($value);
+
+			if (!($sn instanceof \HttpServer\IInterface\Middleware)) {
+				continue;
+			}
+			$this->middleware[$key] = [$sn, 'onHandler'];
 		}
 	}
 

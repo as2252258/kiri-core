@@ -4,30 +4,36 @@
 namespace Annotation\Route;
 
 
-use Annotation\IAnnotation;
-use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
+use Annotation\Attribute;
 use Snowflake\Snowflake;
 
 /**
  * Class Limits
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Limits implements IAnnotation
+#[\Attribute(\Attribute::TARGET_METHOD)] class Limits extends Attribute
 {
 
-	use Node;
 
 	/**
 	 * Limits constructor.
 	 * @param string|array $limits
 	 * @throws
 	 */
-	#[Pure] public function __construct(public string|array $limits)
+	public function __construct(public string|array $limits)
 	{
 		if (is_string($this->limits)) {
 			$this->limits = [$this->limits];
+		}
+
+		foreach ($this->limits as $key => $value) {
+			$sn = Snowflake::createObject($value);
+
+			if (!($sn instanceof \HttpServer\IInterface\Limits)) {
+				continue;
+			}
+
+			$this->limits[$key] = [$sn, 'next'];
 		}
 	}
 

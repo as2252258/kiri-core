@@ -9,6 +9,7 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -27,6 +28,8 @@ class Router extends HttpService implements RouterInterface
 	public array $nodes = [];
 	public array $groupTacks = [];
 	public ?string $dir = 'App\\Http\\Controllers';
+
+	public array $hashMap = [];
 
 	const NOT_FOUND = 'Page not found or method not allowed.';
 
@@ -109,7 +112,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param $path
 	 * @return string
 	 */
-	private function resolve($path): string
+	#[Pure] private function resolve($path): string
 	{
 		$paths = array_column($this->groupTacks, 'prefix');
 		if (empty($paths)) {
@@ -287,7 +290,9 @@ class Router extends HttpService implements RouterInterface
 		if ($this->middleware instanceof \Closure) {
 			$node->addMiddleware($this->middleware);
 		}
-		$node->bindMiddleware($name);
+
+
+		$node->addMiddleware($name);
 
 		return $node;
 	}
