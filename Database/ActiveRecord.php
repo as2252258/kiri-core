@@ -315,7 +315,7 @@ class ActiveRecord extends BaseActiveRecord
 	public function setWith($data): static
 	{
 		echo '--------------->' . PHP_EOL;
-		var_dump($this->_with, get_called_class());
+		var_dump($data, get_called_class());
 		echo '<---------------' . PHP_EOL;
 		if (empty($data)) {
 			return $this;
