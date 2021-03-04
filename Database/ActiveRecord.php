@@ -297,13 +297,15 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$relates = [];
 		if (empty($with = $this->getWith())) {
+			var_dump($with);
 			return $relates;
 		}
-		foreach ($this->_with as $val) {
+		foreach ($with as $val) {
 			$relates[$val] = $this->resolveObject($val);
 		}
 		return $relates;
 	}
+
 
 	/**
 	 * @param $data
