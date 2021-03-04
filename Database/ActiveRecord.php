@@ -296,6 +296,7 @@ class ActiveRecord extends BaseActiveRecord
 	private function runRelate(): array
 	{
 		$relates = [];
+		var_dump($this);
 		if (empty($this->_with)) {
 			return $relates;
 		}
