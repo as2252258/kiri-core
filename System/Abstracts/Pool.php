@@ -291,6 +291,12 @@ abstract class Pool extends Component
 		}
 		$this->_items[$name]->close();
 		$this->_items[$name] = null;
+
+		if ($this->creates > -1) {
+			Timer::clear($this->creates);
+			$this->debug('clean timer.');
+		}
+
 	}
 
 
