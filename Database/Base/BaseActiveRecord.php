@@ -50,6 +50,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	const BEFORE_SAVE = 'before::save';
 
 
+	const ANNOTATION_GET = 'get';
+	const ANNOTATION_SET = 'set';
+
+
 	#[Inject(SEvent::class)]
 	protected ?SEvent $event;
 
@@ -161,10 +165,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function addGets($name, $method): static
 	{
-		if (!isset($this->_annotations['get'])) {
-			$this->_annotations['get'] = [];
+		if (!isset($this->_annotations[self::ANNOTATION_GET])) {
+			$this->_annotations[self::ANNOTATION_GET] = [];
 		}
-		$this->_annotations['get'][$name] = [$this, $method];
+		$this->_annotations[self::ANNOTATION_GET][$name] = [$this, $method];
 		return $this;
 	}
 
@@ -176,10 +180,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function addSets($name, $method): static
 	{
-		if (!isset($this->_annotations['set'])) {
-			$this->_annotations['set'] = [];
+		if (!isset($this->_annotations[self::ANNOTATION_SET])) {
+			$this->_annotations[self::ANNOTATION_SET] = [];
 		}
-		$this->_annotations['set'][$name] = [$this, $method];
+		$this->_annotations[self::ANNOTATION_SET][$name] = [$this, $method];
 		return $this;
 	}
 
@@ -613,12 +617,22 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function getAttribute(string $name)
 	{
-		$method = 'get' . ucfirst($name) . 'Attribute';
-
-		if (method_exists($this, $method)) {
-			return $this->$method($this->_attributes[$name]);
+		if ($this->hasAnnotation($name)) {
+			return $this->runAnnotation($name, $this->_attributes[$name]);
 		}
 		return $this->_attributes[$name] ?? null;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @param string $type
+	 * @return mixed
+	 */
+	protected function runAnnotation(string $name, mixed $value, string $type = self::ANNOTATION_GET): mixed
+	{
+		return call_user_func($this->_annotations[$type][$name], $value);
 	}
 
 
@@ -819,7 +833,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return;
 		}
 		if ($this->hasAnnotation($name, 'set')) {
-			call_user_func($this->_annotations['set'][$name], $value);
+			$this->runAnnotation($name, $value, self::ANNOTATION_SET);
 		} else {
 			$this->_attributes[$name] = $value;
 		}
@@ -835,7 +849,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$value = $this->_attributes[$name] ?? null;
 		if ($this->hasAnnotation($name)) {
-			return call_user_func($this->_annotations['get'][$name], $value);
+			return $this->runAnnotation($name, $value);
 		}
 		if (array_key_exists($name, $this->_attributes)) {
 			return static::getColumns()->_decode($name, $value);
@@ -851,7 +865,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getAnnotation($type = 'get'): array
+	protected function getAnnotation($type = self::ANNOTATION_GET): array
 	{
 		return $this->_annotations[$type] ?? [];
 	}
@@ -862,7 +876,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return bool
 	 */
-	protected function hasAnnotation($name, $type = 'get'): bool
+	protected function hasAnnotation($name, $type = self::ANNOTATION_GET): bool
 	{
 		if (!isset($this->_annotations[$type])) {
 			return false;
