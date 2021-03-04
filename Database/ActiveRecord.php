@@ -296,46 +296,13 @@ class ActiveRecord extends BaseActiveRecord
 	private function runRelate(): array
 	{
 		$relates = [];
-
-		echo '--------------->' . PHP_EOL;
-		var_dump($this->_with, get_called_class());
-		echo '<---------------' . PHP_EOL;
-
-		if (empty($this->_with)) {
+		if (empty($with = $this->getWith())) {
 			return $relates;
 		}
-		foreach ($this->_with as $val) {
+		foreach ($with as $val) {
 			$relates[$val] = $this->resolveObject($val);
 		}
-		$this->_with = [];
 		return $relates;
-	}
-
-	private array $_with = [];
-
-	/**
-	 * @param $data
-	 * @return ActiveRecord
-	 */
-	public function setWith($data): static
-	{
-		echo '--------------->' . PHP_EOL;
-		var_dump($data, get_called_class());
-		echo '<---------------' . PHP_EOL;
-		if (empty($data)) {
-			return $this;
-		}
-		$this->_with = $data;
-		return $this;
-	}
-
-
-	/**
-	 * @return array|null
-	 */
-	public function getWith(): array|null
-	{
-		return $this->_with;
 	}
 
 

@@ -88,6 +88,32 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	protected ?Relation $_relation;
 
 
+	private array $_with = [];
+
+	/**
+	 * @param $data
+	 * @return ActiveRecord
+	 */
+	public function setWith($data): static
+	{
+		if (empty($data)) {
+			return $this;
+		}
+		$this->_with = $data;
+		return $this;
+	}
+
+
+	/**
+	 * @return array|null
+	 */
+	public function getWith(): array|null
+	{
+		return $this->_with;
+	}
+
+
+
 	/**
 	 * @param SEvent $event
 	 * 默认注入
@@ -839,7 +865,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (array_key_exists($name, $this->_attributes)) {
 			return static::getColumns()->_decode($name, $value);
 		}
-		if (isset($this->_relate[$name])) {
+		if (isset($this->_with[$name])) {
 			return $this->resolveClass($this->{$this->_relate[$name]}());
 		}
 		return parent::__get($name);
