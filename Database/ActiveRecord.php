@@ -302,6 +302,7 @@ class ActiveRecord extends BaseActiveRecord
 		foreach ($this->_with as $val) {
 			$relates[$val] = $this->resolveObject($val);
 		}
+		$this->_with = [];
 		return $relates;
 	}
 
