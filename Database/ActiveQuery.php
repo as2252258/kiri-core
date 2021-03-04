@@ -235,14 +235,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 		if (empty($this->with) || !is_array($this->with)) {
 			return $model;
 		}
-		foreach ($this->with as $val) {
-			$method = 'get' . ucfirst($val);
-			if (!method_exists($model, $method)) {
-				continue;
-			}
-			$model->setRelate($val, $method);
-		}
-		return $model;
+		return $model->setWith($this->with);
 	}
 
 	/**

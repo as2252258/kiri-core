@@ -245,7 +245,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	private function resolveObject($method): mixed
 	{
-		$resolve = $this->$method();
+		$resolve = $this->{$this->getRelate($method)}();
 		if ($resolve instanceof HasBase) {
 			$resolve = $resolve->get();
 		}
@@ -296,11 +296,11 @@ class ActiveRecord extends BaseActiveRecord
 	private function runRelate(): array
 	{
 		$relates = [];
-		if (empty($this->_relate)) {
+		if (empty($this->_with)) {
 			return $relates;
 		}
-		foreach ($this->_relate as $key => $val) {
-			$relates[$key] = $this->resolveObject($val);
+		foreach ($this->_with as $val) {
+			$relates[$val] = $this->resolveObject($val);
 		}
 		return $relates;
 	}

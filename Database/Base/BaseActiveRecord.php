@@ -144,6 +144,17 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
+	 * @param $data
+	 * @return BaseActiveRecord
+	 */
+	public function setWith($data): static
+	{
+		$this->_with = $data;
+		return $this;
+	}
+
+
+	/**
 	 * @param $name
 	 * @param $method
 	 * @return static

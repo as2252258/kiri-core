@@ -28,16 +28,16 @@ use JetBrains\PhpStorm\Pure;
 
 	/**
 	 * @param array $handler
-	 * @return mixed
+	 * @return bool
 	 */
-	#[Pure] public function execute(array $handler): mixed
+	public function execute(array $handler): bool
 	{
-//		/** @var ActiveRecord $activeRecord */
-//		[$activeRecord, $method] = $handler;
-//
-//		$activeRecord->setRelate($this->name, $method);
+		/** @var ActiveRecord $activeRecord */
+		[$activeRecord, $method] = $handler;
 
-		return parent::execute($handler);
+		$activeRecord->setRelate($this->name, $method);
+
+		return true;
 	}
 
 }
