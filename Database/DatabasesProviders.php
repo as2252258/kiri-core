@@ -42,9 +42,12 @@ class DatabasesProviders extends Providers
 	}
 
 
+	/**
+	 * @throws ComponentException
+	 */
 	public function scanModel()
 	{
-		recursive_directory(MODEL_PATH);
+		annotation()->instanceDirectoryFiles(MODEL_PATH);
 	}
 
 
