@@ -51,7 +51,6 @@ class OnWorkerStart extends Callback
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
-	 * @param $prefix
 	 * @throws ComponentException
 	 * @throws ConfigException
 	 */
@@ -59,11 +58,7 @@ class OnWorkerStart extends Callback
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
-		$prefix = sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid);
-
-		$start = microtime(true);
 		fire(Event::SERVER_TASK_START);
-		$this->debug(sprintf('%s use time %s', $prefix, microtime(true) - $start));
 
 		$this->set_process_name($server, $worker_id);
 	}
@@ -82,12 +77,8 @@ class OnWorkerStart extends Callback
 		Snowflake::setWorkerId($server->worker_pid);
 		putenv('environmental=' . Snowflake::WORKER);
 
-		$prefix = sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid);
-
 		try {
-			$start = microtime(true);
 			fire(Event::SERVER_WORKER_START, [$worker_id]);
-			$this->debug(sprintf('%s use time %s', $prefix, microtime(true) - $start));
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 			write($exception->getMessage(), 'worker');
@@ -101,6 +92,7 @@ class OnWorkerStart extends Callback
 	 * @param $worker_id
 	 * @return string
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	private function set_process_name($socket, $worker_id): mixed
 	{
@@ -110,7 +102,7 @@ class OnWorkerStart extends Callback
 		} else {
 			$name = $prefix . ' worker: No.' . $worker_id;
 		}
-		if (Snowflake::isMac()) {
+		if (Snowflake::getPlatform()->isMac()) {
 			return 1;
 		}
 		return swoole_set_process_name($name);

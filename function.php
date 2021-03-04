@@ -542,10 +542,11 @@ if (!function_exists('name')) {
 
 	/**
 	 * @param string $name
+	 * @throws Exception
 	 */
 	function name(string $name)
 	{
-		if (Snowflake::isMac()) {
+		if (Snowflake::getPlatform()->isMac()) {
 			return;
 		}
 		swoole_set_process_name($name);

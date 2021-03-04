@@ -31,7 +31,7 @@ class OnManagerStart extends Callback
         $events = Snowflake::app()->getEvent();
         $events->trigger(Event::SERVER_MANAGER_START, [$server]);
 
-        if (!Snowflake::isLinux()) {
+        if (!Snowflake::getPlatform()->isLinux()) {
             return;
         }
         name(Config::get('id', false, 'system') . ' Server Manager.');

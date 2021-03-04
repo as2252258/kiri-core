@@ -177,6 +177,7 @@ class Server extends HttpService
 	/**
 	 * @return bool
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function isRunner(): bool
 	{
@@ -185,7 +186,7 @@ class Server extends HttpService
 			return false;
 		}
 		foreach ($port as $value) {
-			if (Snowflake::isLinux()) {
+			if (Snowflake::getPlatform()->isLinux()) {
 				exec('netstat -tunlp | grep ' . $value['port'], $output);
 			} else {
 				exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);

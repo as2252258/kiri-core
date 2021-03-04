@@ -40,13 +40,14 @@ abstract class Process extends \Swoole\Process implements SProcess
 	/**
 	 * @param Process $process
 	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function _load(Process $process)
 	{
 		putenv('environmental=' . Snowflake::PROCESS);
 
 		fire(Event::SERVER_WORKER_START);
-		if (Snowflake::isLinux()) {
+		if (Snowflake::getPlatform()->isLinux()) {
 			$this->name($this->getPrefix());
 		}
 		$this->onHandler($process);

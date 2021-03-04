@@ -8,6 +8,7 @@ namespace Snowflake;
 use Exception;
 use HttpServer\IInterface\Task;
 
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
@@ -293,7 +294,7 @@ class Snowflake
 	 * @param $v2
 	 * @return float
 	 */
-	public static function distance(array $v1, array $v2): float
+	#[Pure] public static function distance(array $v1, array $v2): float
 	{
 		$maxX = max($v1['x'], $v2['x']);
 		$minX = min($v1['x'], $v2['x']);
@@ -315,6 +316,8 @@ class Snowflake
 	/**
 	 * @param $process
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public static function shutdown($process): void
 	{
@@ -343,32 +346,13 @@ class Snowflake
 
 
 	/**
-	 * @return bool
+	 * @return Environmental
+	 * @throws Exception
 	 */
-	public static function isMac(): bool
+	public static function getPlatform(): Environmental
 	{
-		$output = strtolower(PHP_OS | PHP_OS_FAMILY);
-		if (str_contains('mac', $output)) {
-			return true;
-		} else if (str_contains('darwin', $output)) {
-			return true;
-		} else {
-			return false;
-		}
+		return Snowflake::createObject(Environmental::class);
 	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isLinux(): bool
-	{
-		if (!static::isMac()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 
 
 	/**
@@ -378,7 +362,6 @@ class Snowflake
 	public static function reload(): mixed
 	{
 		return Snowflake::app()->getSwoole()->reload();
-		return Process::kill((int)Snowflake::getMasterPid(), SIGUSR1);
 	}
 
 

@@ -53,7 +53,7 @@ class Kafka extends \Snowflake\Process\Process
 		try {
 			$prefix = rtrim(Snowflake::app()->id, ':');
 
-			if (!Snowflake::isMac()) {
+			if (!Snowflake::getPlatform()->isMac()) {
 				swoole_set_process_name($prefix . ' Kafka Consumer ' . $kafkaServer['topic']);
 			}
 

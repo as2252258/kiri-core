@@ -131,13 +131,14 @@ trait Action
 	/**
 	 * @param $port
 	 * @return bool|array
+	 * @throws Exception
 	 */
 	private function isUse($port): bool|array
 	{
 		if (empty($port)) {
 			return false;
 		}
-		if (Snowflake::isLinux()) {
+		if (Snowflake::getPlatform()->isLinux()) {
 			exec('netstat -tunlp | grep ' . $port, $output);
 		} else {
 			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
