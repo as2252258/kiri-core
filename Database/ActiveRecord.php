@@ -296,13 +296,32 @@ class ActiveRecord extends BaseActiveRecord
 	private function runRelate(): array
 	{
 		$relates = [];
-		if (empty($this->_with)) {
+		if (empty($with = $this->getWith())) {
 			return $relates;
 		}
 		foreach ($this->_with as $val) {
 			$relates[$val] = $this->resolveObject($val);
 		}
 		return $relates;
+	}
+
+	/**
+	 * @param $data
+	 * @return ActiveRecord
+	 */
+	public function setWith($data): static
+	{
+		$this->_with = $data;
+		return $this;
+	}
+
+
+	/**
+	 * @return array|null
+	 */
+	public function getWith(): array|null
+	{
+		return $this->_with;
 	}
 
 
