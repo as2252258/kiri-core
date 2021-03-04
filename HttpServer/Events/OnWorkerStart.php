@@ -40,12 +40,11 @@ class OnWorkerStart extends Callback
 		annotation()->read(APP_PATH . 'app', 'App');
 		$this->debug(sprintf('scan app dir use time %s', microtime(true) - $start));
 
-		$prefix = sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid);
 
 		if ($worker_id >= $server->setting['worker_num']) {
-			$this->onTask($server, $worker_id, $prefix);
+			$this->onTask($server, $worker_id);
 		} else {
-			$this->onWorker($server, $worker_id, $prefix);
+			$this->onWorker($server, $worker_id);
 		}
 	}
 
@@ -57,9 +56,11 @@ class OnWorkerStart extends Callback
 	 * @throws ComponentException
 	 * @throws ConfigException
 	 */
-	public function onTask(Server $server, int $worker_id, $prefix)
+	public function onTask(Server $server, int $worker_id)
 	{
 		putenv('environmental=' . Snowflake::TASK);
+
+		$prefix = sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid);
 
 
 		$start = microtime(true);
@@ -78,10 +79,13 @@ class OnWorkerStart extends Callback
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function onWorker(Server $server, int $worker_id, $prefix)
+	public function onWorker(Server $server, int $worker_id)
 	{
 		Snowflake::setWorkerId($server->worker_pid);
 		putenv('environmental=' . Snowflake::WORKER);
+
+		$prefix = sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid);
+
 		try {
 			$start = microtime(true);
 			fire(Event::SERVER_WORKER_START, [$worker_id]);
