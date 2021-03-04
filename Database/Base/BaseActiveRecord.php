@@ -58,8 +58,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	protected ?SEvent $event;
 
 
-
-
 	/** @var array */
 	protected array $_attributes = [];
 
@@ -111,7 +109,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		return $this->_with;
 	}
-
 
 
 	/**
@@ -865,7 +862,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (array_key_exists($name, $this->_attributes)) {
 			return static::getColumns()->_decode($name, $value);
 		}
-		if (isset($this->_with[$name])) {
+		if (in_array($name, $this->_with)) {
 			return $this->resolveClass($this->{$this->_relate[$name]}());
 		}
 		return parent::__get($name);
