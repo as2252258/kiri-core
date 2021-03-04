@@ -296,7 +296,6 @@ class ActiveRecord extends BaseActiveRecord
 	private function runRelate(): array
 	{
 		$relates = [];
-		var_dump($this);
 		if (empty($this->_with)) {
 			return $relates;
 		}
@@ -315,6 +314,9 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function setWith($data): static
 	{
+		echo '--------------->' . PHP_EOL;
+		var_dump($this->_with, get_called_class());
+		echo '<---------------' . PHP_EOL;
 		if (empty($data)) {
 			return $this;
 		}
