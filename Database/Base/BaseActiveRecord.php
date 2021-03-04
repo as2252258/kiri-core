@@ -858,6 +858,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$value = $this->_attributes[$name] ?? null;
 		if ($this->hasAnnotation($name)) {
+			var_dump($name, $value);
 			return $this->runAnnotation($name, $value);
 		}
 		if (array_key_exists($name, $this->_attributes)) {
