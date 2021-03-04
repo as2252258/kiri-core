@@ -206,11 +206,15 @@ class Loader extends BaseObject
 	 */
 	public function loadByDirectory(string $path)
 	{
-		foreach ($this->_fileMap as $value) {
-			if (!str_starts_with($value, $path)) {
+		foreach ($this->_fileMap as $fileName => $className) {
+			if (!str_starts_with($fileName, $path)) {
 				continue;
 			}
-			$annotations = $this->getClassByFilepath($path);
+			if (!isset($this->_classes[$className])) {
+				continue;
+			}
+
+			$annotations = $this->_classes[$className];
 
 			foreach ($annotations['methods'] as $name => $attribute) {
 				foreach ($attribute as $value) {
