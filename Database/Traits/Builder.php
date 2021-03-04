@@ -153,6 +153,7 @@ trait Builder
         if (!isset($condition[0])) {
             return implode(' AND ', $this->_hashMap($condition));
         }
+        var_dump($condition);
         $stroppier = strtoupper($condition[0]);
         if (str_contains($stroppier, 'OR')) {
             if (!is_string($condition[2])) {
