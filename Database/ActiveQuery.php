@@ -227,10 +227,10 @@ class ActiveQuery extends Component implements ISqlBuilder
 
 
 	/**
-	 * @param $model
-	 * @return mixed
+	 * @param ActiveRecord $model
+	 * @return ActiveRecord
 	 */
-	public function getWith($model): mixed
+	public function getWith(ActiveRecord $model): ActiveRecord
 	{
 		if (empty($this->with) || !is_array($this->with)) {
 			return $model;

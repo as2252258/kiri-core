@@ -11,7 +11,6 @@ namespace Database\Base;
 
 
 use Annotation\Event;
-use Annotation\IAnnotation;
 use Annotation\Inject;
 use Annotation\Model\Get;
 use Annotation\Model\Set;
@@ -53,6 +52,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	#[Inject(SEvent::class)]
 	protected ?SEvent $event;
+
+
+	protected array $_with = [];
 
 
 	/** @var array */
@@ -657,6 +659,17 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$this->_relate[$name] = $value;
 	}
+
+
+	/**
+	 * @param $name
+	 * @return bool
+	 */
+	public function hasRelate($name): bool
+	{
+		return isset($this->_relate[$name]);
+	}
+
 
 	/**
 	 * @param array $relates
