@@ -40,11 +40,6 @@ class OnWorkerStart extends Callback
 		annotation()->read(APP_PATH . 'app', 'App');
 		$this->debug(sprintf('scan app dir use time %s', microtime(true) - $start));
 
-		$config = sweep(APP_PATH . '/config');
-		foreach ($config as $key => $value) {
-			Config::set($key, $value);
-		}
-
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {
