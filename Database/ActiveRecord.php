@@ -313,6 +313,9 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function setWith($data): static
 	{
+		if (empty($data)) {
+			return $this;
+		}
 		$this->_with = $data;
 		return $this;
 	}
