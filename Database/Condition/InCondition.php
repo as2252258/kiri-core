@@ -21,6 +21,7 @@ class InCondition extends Condition
 	 */
 	#[Pure] public function builder(): string
 	{
+		var_dump($this->value);
 		if (is_array($this->value)) {
 			return sprintf('%s IN (%s)', $this->column, implode(',', $this->value));
 		}
