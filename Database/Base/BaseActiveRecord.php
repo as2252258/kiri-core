@@ -1031,7 +1031,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$model = objectPool($className, function () use ($className) {
 			return new $className();
 		});
-		$model->setOldAttributes($data);
+		$model->_annotations = $data;
 		$model->refresh();
 		return $model;
 	}
