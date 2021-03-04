@@ -6,6 +6,7 @@ namespace Annotation;
 
 use DirectoryIterator;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\ComponentException;
 
 /**
  * Class Annotation
@@ -50,11 +51,21 @@ class Annotation extends Component
 	 * @param string $namespace
 	 * @param string $alias
 	 * @return void
+	 * @throws ComponentException
 	 */
 	public function read(string $path, string $namespace, string $alias = 'root'): void
 	{
 
 		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
+	}
+
+
+	/**
+	 * @param string $dir
+	 */
+	public function instanceDirectoryFiles(string $dir)
+	{
+		$this->_loader->loadByDirectory($dir);
 	}
 
 

@@ -10,6 +10,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Snowflake\Abstracts\BaseObject;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 use Throwable;
 
@@ -119,6 +120,7 @@ class Loader extends BaseObject
 	/**
 	 * @param DirectoryIterator $paths
 	 * @param $namespace
+	 * @throws ComponentException
 	 */
 	public function _scanDir(DirectoryIterator $paths, $namespace)
 	{
@@ -194,6 +196,29 @@ class Loader extends BaseObject
 				$this->error($throwable->getMessage());
 				$this->error($throwable->getFile());
 				$this->error($throwable->getLine());
+			}
+		}
+	}
+
+
+	/**
+	 * @param string $path
+	 */
+	public function loadByDirectory(string $path)
+	{
+		foreach ($this->_fileMap as $value) {
+			if (!str_starts_with($value, $path)) {
+				continue;
+			}
+			$annotations = $this->getClassByFilepath($path);
+
+			foreach ($annotations['methods'] as $name => $attribute) {
+				foreach ($attribute as $value) {
+					if (!($value instanceof \Annotation\Attribute)) {
+						continue;
+					}
+					$value->execute([$annotations['handler'], $name]);
+				}
 			}
 		}
 	}
