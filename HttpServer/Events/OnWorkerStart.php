@@ -36,7 +36,9 @@ class OnWorkerStart extends Callback
 		putenv('worker=' . $worker_id);
 		putenv('state=start');
 
+		$start = microtime(true);
 		annotation()->read(APP_PATH . 'app', 'App');
+		$this->debug(sprintf('scan app dir use time %s', microtime(true) - $start));
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
@@ -56,7 +58,10 @@ class OnWorkerStart extends Callback
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
+
+		$start = microtime(true);
 		fire(Event::SERVER_TASK_START);
+		$this->debug(sprintf('Event::SERVER_WORKER_START use time %s', microtime(true) - $start));
 
 		$this->set_process_name($server, $worker_id);
 	}
@@ -73,7 +78,9 @@ class OnWorkerStart extends Callback
 		Snowflake::setWorkerId($server->worker_pid);
 		putenv('environmental=' . Snowflake::WORKER);
 		try {
+			$start = microtime(true);
 			fire(Event::SERVER_WORKER_START, [$worker_id]);
+			$this->debug(sprintf('Event::SERVER_WORKER_START use time %s', microtime(true) - $start));
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 			write($exception->getMessage(), 'worker');
