@@ -239,32 +239,25 @@ class ActiveRecord extends BaseActiveRecord
 	}
 
 	/**
-	 * @param $data
+	 * @param $method
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function resolveObject($data): mixed
+	private function resolveObject($method): mixed
 	{
-		if (is_numeric($data) || !is_string($data)) {
-			return $data;
-		}
-		if (!method_exists($this, $data)) {
-			return $data;
-		}
-		$resolve = $this->{$data}();
+		$resolve = $this->$method();
 		if ($resolve instanceof HasBase) {
 			$resolve = $resolve->get();
 		}
 		if ($resolve instanceof Collection) {
 			return $resolve->toArray();
-		}
-		if ($resolve instanceof ActiveRecord) {
+		} else if ($resolve instanceof ActiveRecord) {
 			return $resolve->toArray();
-		}
-		if (is_object($resolve)) {
+		} else if (is_object($resolve)) {
 			return get_object_vars($resolve);
+		} else {
+			return $resolve;
 		}
-		return $resolve;
 	}
 
 
