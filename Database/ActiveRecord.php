@@ -52,7 +52,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function increment(string $column, int $value): bool|ActiveRecord
 	{
-		if (!$this->mathematics([$column => $value], '-')) {
+		if (!$this->mathematics([$column => $value], '+')) {
 			return false;
 		}
 		$this->{$column} += $value;
