@@ -300,6 +300,9 @@ class ActiveRecord extends BaseActiveRecord
 			return $relates;
 		}
 		foreach ($this->_with as $val) {
+
+			var_dump($val);
+
 			$relates[$val] = $this->resolveObject($val);
 		}
 		return $relates;
