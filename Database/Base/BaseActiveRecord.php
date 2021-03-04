@@ -16,6 +16,7 @@ use Annotation\Model\Get;
 use Annotation\Model\Set;
 use ArrayAccess;
 use Database\SqlBuilder;
+use Database\Traits\HasBase;
 use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
@@ -863,8 +864,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return static::getColumns()->_decode($name, $value);
 		}
 		if (in_array($name, $this->_with)) {
-			var_dump($this->{$this->_relate[$name]}());
-			return $this->resolveClass($this->{$this->_relate[$name]}());
+			$data = $this->{$this->_relate[$name]}();
+			if ($data instanceof HasBase) {
+				return $data->get();
+			}
+			return $data;
 		}
 		return parent::__get($name);
 	}
