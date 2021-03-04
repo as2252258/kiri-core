@@ -42,9 +42,9 @@ abstract class Condition extends BaseObject
         $this->opera = $opera;
     }
 
-    /**
-     * @param $value
-     */
+	/**
+	 * @param $params
+	 */
     public function setValue($params): void
     {
         if (is_array($params)) {
@@ -52,7 +52,7 @@ abstract class Condition extends BaseObject
             foreach ($params as $item => $value) {
                 $values[$item] = is_numeric($value) ? $value : '\'' . $value . '\'';
             }
-            $this->value = $value;
+            $this->value = $values;
         } else {
             $this->value = is_numeric($params) ? $params : '\'' . $params . '\'';
         }
