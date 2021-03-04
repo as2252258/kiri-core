@@ -138,9 +138,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$methods = $annotation->getMethods(get_called_class());
 		foreach ($methods as $method => $attributes) {
 			foreach ($attributes as $attribute) {
-				if (!($attribute instanceof Get) && !($attribute instanceof Set)) {
-					continue;
-				}
 				$attribute->execute([$this, $method]);
 			}
 		}

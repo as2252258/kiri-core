@@ -313,7 +313,6 @@ class ActiveRecord extends BaseActiveRecord
 	public function setWith($data): static
 	{
 		$this->_with = $data;
-		var_dump(get_called_class(), $this->_with);
 		return $this;
 	}
 
@@ -323,7 +322,6 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function getWith(): array|null
 	{
-		var_dump(get_called_class(), $this->_with);
 		return $this->_with;
 	}
 
