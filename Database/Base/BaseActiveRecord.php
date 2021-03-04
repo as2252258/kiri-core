@@ -58,7 +58,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	protected ?SEvent $event;
 
 
-	protected array $_with = [];
 
 
 	/** @var array */
