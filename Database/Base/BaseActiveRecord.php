@@ -863,7 +863,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return static::getColumns()->_decode($name, $value);
 		}
 		if (in_array($name, $this->_with)) {
-			var_dump($this->_relate[$name]);
+			var_dump($this->{$this->_relate[$name]}());
 			return $this->resolveClass($this->{$this->_relate[$name]}());
 		}
 		return parent::__get($name);
