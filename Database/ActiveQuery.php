@@ -235,7 +235,6 @@ class ActiveQuery extends Component implements ISqlBuilder
 		if (empty($this->with) || !is_array($this->with)) {
 			return $model;
 		}
-		var_dump($this->with);
 		return $model->setWith($this->with);
 	}
 
