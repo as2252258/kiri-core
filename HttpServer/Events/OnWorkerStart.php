@@ -40,28 +40,31 @@ class OnWorkerStart extends Callback
 		annotation()->read(APP_PATH . 'app', 'App');
 		$this->debug(sprintf('scan app dir use time %s', microtime(true) - $start));
 
+		$prefix = sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid);
+
 		if ($worker_id >= $server->setting['worker_num']) {
-			$this->onTask($server, $worker_id);
+			$this->onTask($server, $worker_id, $prefix);
 		} else {
-			$this->onWorker($server, $worker_id);
+			$this->onWorker($server, $worker_id, $prefix);
 		}
-		$this->debug(sprintf('%s #%d Pid:%d start.', ucfirst(env('environmental')), $worker_id, $server->worker_pid));
 	}
 
 
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
-	 * @throws ComponentException|ConfigException
+	 * @param $prefix
+	 * @throws ComponentException
+	 * @throws ConfigException
 	 */
-	public function onTask(Server $server, int $worker_id)
+	public function onTask(Server $server, int $worker_id, $prefix)
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
 
 		$start = microtime(true);
 		fire(Event::SERVER_TASK_START);
-		$this->debug(sprintf('Event::SERVER_WORKER_START use time %s', microtime(true) - $start));
+		$this->debug(sprintf('%s use time %s', $prefix, microtime(true) - $start));
 
 		$this->set_process_name($server, $worker_id);
 	}
@@ -70,17 +73,19 @@ class OnWorkerStart extends Callback
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
+	 * @param $prefix
+	 * @throws ComponentException
+	 * @throws ConfigException
 	 * @throws Exception
-	 * onWorker
 	 */
-	public function onWorker(Server $server, int $worker_id)
+	public function onWorker(Server $server, int $worker_id, $prefix)
 	{
 		Snowflake::setWorkerId($server->worker_pid);
 		putenv('environmental=' . Snowflake::WORKER);
 		try {
 			$start = microtime(true);
 			fire(Event::SERVER_WORKER_START, [$worker_id]);
-			$this->debug(sprintf('Event::SERVER_WORKER_START use time %s', microtime(true) - $start));
+			$this->debug(sprintf('%s use time %s', $prefix, microtime(true) - $start));
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 			write($exception->getMessage(), 'worker');
