@@ -36,6 +36,8 @@ class OnWorkerStart extends Callback
 		putenv('worker=' . $worker_id);
 		putenv('state=start');
 
+		annotation()->read(APP_PATH . 'app', 'App');
+
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {

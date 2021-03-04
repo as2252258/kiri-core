@@ -108,9 +108,6 @@ class Application extends BaseApplication
 	public function start(Input $argv): void
 	{
 		try {
-			$annotation = $this->getAttributes();
-			$annotation->read(APP_PATH . 'app', 'App');
-
 			fire(Event::SERVER_BEFORE_START);
 
 			$this->set('input', $argv);
