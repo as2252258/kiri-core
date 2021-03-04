@@ -827,7 +827,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	public function refresh(): static
 	{
 		$this->_oldAttributes = $this->_attributes;
-		return $this;
+        $this->setIsCreate(false);
+        return $this;
 	}
 
 	/**
