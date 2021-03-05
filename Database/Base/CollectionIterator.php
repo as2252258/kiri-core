@@ -74,6 +74,7 @@ class CollectionIterator extends \ArrayIterator
 	public function current(): mixed
 	{
 		$current = parent::current();
+		var_dump($current);
 		if (!($current instanceof ActiveRecord)) {
 			$current = $this->newModel($current);
 		}
