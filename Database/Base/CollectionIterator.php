@@ -72,7 +72,7 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	public function current(): ActiveRecord
 	{
-		if (!(($current = parent::current()) instanceof ActiveRecord)) {
+		if (is_array($current = parent::current())) {
 			$current = $this->newModel($current);
 		}
 		return $this->query->getWith($current);
