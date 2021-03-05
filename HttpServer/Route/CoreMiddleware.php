@@ -30,6 +30,8 @@ class CoreMiddleware implements Middleware
 	{
 		$headers = $request->headers;
 
+		var_dump(get_called_class());
+
 		/** @var Response $response */
 		$response = Context::getContext('response');
 		$response->addHeader('Access-Control-Allow-Origin', '*');
