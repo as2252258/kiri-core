@@ -281,7 +281,6 @@ class Response extends HttpService
 
 		$stat = fstat($open);
 		$this->response->setHeader('Content-Length', $stat['size']);
-
 		while ($file = fread($open, $limit)) {
 			$this->response->write($file);
 			fseek($open, $offset);
@@ -291,7 +290,6 @@ class Response extends HttpService
 			}
 			$offset += $limit;
 		}
-		$this->response = null;
 	}
 
 
