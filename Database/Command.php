@@ -131,7 +131,7 @@ class Command extends Component
 				$this->prepare->closeCursor();
 			}
 
-			logger()->write($this->sql . var_export($this->params, true), 'mysql');
+			logger()->debug($this->sql . var_export($this->params, true), 'mysql');
 
 			if (Config::get('debug.enable', false, false)) {
 				$this->debug($this->sql . '。 Run-time: ' . (microtime(true) - $time));
