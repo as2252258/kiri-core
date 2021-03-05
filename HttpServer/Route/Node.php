@@ -8,6 +8,7 @@ namespace HttpServer\Route;
 use Annotation\Route\Middleware;
 use Closure;
 use HttpServer\Abstracts\HttpService;
+use HttpServer\Controller;
 use HttpServer\Http\Request;
 use Exception;
 
@@ -80,11 +81,11 @@ class Node extends HttpService
 			$this->_error = 'Controller is con\'t exec.';
 		} else {
 			[$controller, $action] = $this->handler = $handler;
+			if ($controller instanceof Controller) {
+				$this->annotationInject(get_class($controller), $action);
 
-			$this->annotationInject(get_class($controller), $action);
-		}
-		if (!empty($this->handler)) {
-			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
+				$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
+			}
 		}
 		return $this;
 	}
@@ -307,7 +308,6 @@ class Node extends HttpService
 
 
 	/**
-	 * @param Node $node
 	 * @param string $className
 	 * @param string $action
 	 * @return Node
