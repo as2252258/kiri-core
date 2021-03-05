@@ -75,6 +75,8 @@ class Node extends HttpService
 				$controller = implode('\\', $this->namespace) . '\\' . $controller;
 			}
 			$this->handler = $this->getReflect($controller, $action);
+
+			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
 		} else if ($handler instanceof Closure) {
@@ -278,7 +280,7 @@ class Node extends HttpService
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
 
-			$this->annotationInject($reflect->getName(), $action);
+			$this->annotationInject(get_class($controller), $action);
 
 			return [$reflect->newInstance(), $action];
 		} catch (Throwable $exception) {
