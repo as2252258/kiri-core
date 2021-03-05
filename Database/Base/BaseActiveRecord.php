@@ -759,8 +759,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (empty($this->_fields)) {
 			$this->_fields = static::getColumns()->format();
 		}
-		var_dump($attribute, $this->_fields);
-		return array_key_exists($attribute, $this->_fields);
+		return isset($this->_fields[$attribute]);
 	}
 
 	/**ƒ
