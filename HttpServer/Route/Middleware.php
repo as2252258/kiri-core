@@ -54,43 +54,11 @@ class Middleware
 	 */
 	public function getGenerate(Node $node): mixed
 	{
-		$this->set_attributes($node);
 		return $node->callback = Reduce::reduce(function () use ($node) {
 			return Dispatch::create($node->handler, func_get_args())->dispatch();
 		}, $this->annotation($node));
 	}
 
-
-	/**
-	 * @param $node
-	 * @throws Exception
-	 */
-	private function set_attributes(Node $node)
-	{
-		if (!is_array($node->handler)) {
-			return;
-		}
-		[$controller, $action] = $node->handler;
-		$attributes = Snowflake::app()->getAttributes();
-		$annotation = $attributes->getMethods(get_class($controller), $action);
-		if (empty($annotation)) {
-			return;
-		}
-		foreach ($annotation as $name => $attribute) {
-			if ($attribute instanceof Interceptor) {
-				$node->addInterceptor($attribute->interceptor);
-			}
-			if ($attribute instanceof After) {
-				$node->addAfter($attribute->after);
-			}
-			if ($attribute instanceof RMiddleware) {
-				$node->addMiddleware($attribute->middleware);
-			}
-			if ($attribute instanceof Limits) {
-				$node->addLimits($attribute->limits);
-			}
-		}
-	}
 
 
 	/**

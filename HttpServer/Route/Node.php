@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HttpServer\Route;
 
 
+use Annotation\Route\Middleware as RMiddleware;
 use Closure;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
@@ -79,7 +80,7 @@ class Node extends HttpService
 		} else {
 			$this->handler = $handler;
 		}
-		return $this;
+		return $this->restructure();
 	}
 
 
@@ -212,12 +213,49 @@ class Node extends HttpService
 			if (!empty($action) && !$reflect->hasMethod($action)) {
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
+
+			$this->annotationInject($reflect->getName(), $action);
+
 			return [$reflect->newInstance(), $action];
 		} catch (Throwable $exception) {
 			$this->_error = $exception->getMessage();
 			$this->error($exception, 'router');
 			return null;
 		}
+	}
+
+
+	/**
+	 * @param string $className
+	 * @param string $action
+	 * @return $this
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function annotationInject(string $className, string $action): static
+	{
+		$attributes = Snowflake::app()->getAttributes();
+		$annotation = $attributes->getMethods($className, $action);
+		if (empty($annotation)) {
+			return $this;
+		}
+		foreach ($annotation as $name => $attribute) {
+			if ($attribute instanceof \Annotation\Route\Interceptor) {
+				$this->addInterceptor($attribute->interceptor);
+			}
+			if ($attribute instanceof \Annotation\Route\After) {
+				$this->addAfter($attribute->after);
+			}
+			if ($attribute instanceof RMiddleware) {
+				$this->addMiddleware($attribute->middleware);
+			}
+			if ($attribute instanceof \Annotation\Route\Limits) {
+				$this->addLimits($attribute->limits);
+			}
+		}
+		return $this;
 	}
 
 
@@ -471,9 +509,6 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		if (!empty($this->callback)) {
-			return $this->runWith(...func_get_args());
-		}
 		if (empty($this->restructure()->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
