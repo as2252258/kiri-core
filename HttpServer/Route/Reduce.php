@@ -8,7 +8,6 @@ use Closure;
 use HttpServer\IInterface\After;
 use HttpServer\IInterface\Middleware;
 use Snowflake\Core\Json;
-use Snowflake\Event;
 
 class Reduce
 {

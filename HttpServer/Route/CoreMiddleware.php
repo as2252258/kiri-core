@@ -10,13 +10,14 @@ use Exception;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
+use HttpServer\IInterface\Middleware;
 
 /**
  * Class CoreMiddleware
  * @package Snowflake\Snowflake\Route
  * 跨域中间件
  */
-class CoreMiddleware implements \HttpServer\IInterface\Middleware
+class CoreMiddleware implements Middleware
 {
 
 	/**

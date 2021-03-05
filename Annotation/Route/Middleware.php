@@ -6,6 +6,7 @@ namespace Annotation\Route;
 
 use Annotation\Attribute;
 use Snowflake\Snowflake;
+use HttpServer\IInterface\Middleware as IMiddleware;
 
 /**
  * Class Middleware
@@ -29,7 +30,7 @@ use Snowflake\Snowflake;
 		$array = [];
 		foreach ($this->middleware as $key => $value) {
 			$sn = Snowflake::createObject($value);
-			if (!($sn instanceof \HttpServer\IInterface\Middleware)) {
+			if (!($sn instanceof IMiddleware)) {
 				continue;
 			}
 			$array[] = [$sn, 'onHandler'];
