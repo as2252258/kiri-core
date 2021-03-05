@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HttpServer\Route;
 
 
-use Annotation\Route\Middleware as RMiddleware;
+use Annotation\Route\Middleware;
 use Closure;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
@@ -331,7 +331,7 @@ class Node extends HttpService
 			if ($attribute instanceof \Annotation\Route\After) {
 				$node->addAfter($attribute->after);
 			}
-			if ($attribute instanceof RMiddleware) {
+			if ($attribute instanceof Middleware) {
 				$node->addMiddleware($attribute->middleware);
 			}
 			if ($attribute instanceof \Annotation\Route\Limits) {
@@ -511,6 +511,9 @@ class Node extends HttpService
 		foreach ($class as $closure) {
 			if (is_string($closure)) {
 				$closure = [Snowflake::createObject($closure), 'onHandler'];
+			}
+			if (str_contains($this->path, 'switch/map')) {
+				var_dump($closure);
 			}
 			if (in_array($closure, $this->middleware)) {
 				continue;
