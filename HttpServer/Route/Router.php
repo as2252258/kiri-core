@@ -219,7 +219,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function options($route, $handler): ?Node
 	{
-		var_dump($route, $handler);
+		var_dump($route);
 		return $this->addRoute($route, $handler, 'options');
 	}
 
