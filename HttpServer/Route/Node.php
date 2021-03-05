@@ -111,6 +111,7 @@ class Node extends HttpService
 	protected function annotation(): array
 	{
 		$middleWares = $this->getMiddleWares();
+		var_dump($middleWares);
 		$middleWares = $this->annotation_limit($this, $middleWares);
 		$middleWares = $this->annotation_interceptor($this, $middleWares);
 		return $middleWares;
