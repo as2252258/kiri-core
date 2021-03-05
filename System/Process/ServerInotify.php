@@ -40,6 +40,13 @@ class ServerInotify extends Process
 	public function onHandler(\Swoole\Process $process): void
 	{
 		set_error_handler([$this, 'onErrorHandler']);
+		if (env('debug') !== 'true') {
+			Timer::tick(100000, function () {
+
+			});
+			return;
+		}
+
 		$this->dirs = Config::get('inotify', false, [APP_PATH]);
 		if (extension_loaded('inotify')) {
 			$this->inotify = inotify_init();
