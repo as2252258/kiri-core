@@ -550,19 +550,6 @@ class Node extends HttpService
 	}
 
 
-	/**
-	 * @throws Exception
-	 */
-	public function restructure(): static
-	{
-		if (empty($this->handler)) {
-			return $this;
-		}
-		/** @var Middleware $made */
-		$made = Snowflake::createObject(Middleware::class);
-		$made->getGenerate($this);
-		return $this;
-	}
 
 
 	/**
@@ -571,7 +558,7 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		if (empty($this->restructure()->callback)) {
+		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
 		return $this->runWith(...func_get_args());
