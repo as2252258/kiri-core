@@ -138,9 +138,9 @@ class Router extends HttpService implements RouterInterface
 
 		$parent = $this->nodes[$method][$first] ?? null;
 		if (empty($parent)) {
-			$parent = $this->NodeInstance($first, 0, $method);
-			$this->nodes[$method][$first] = $parent;
+			$this->nodes[$method][$first] = $this->NodeInstance('/', 0, $method);
 		}
+
 		if ($first !== '/') {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
@@ -219,7 +219,6 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function options($route, $handler): ?Node
 	{
-		var_dump($route);
 		return $this->addRoute($route, $handler, 'options');
 	}
 
