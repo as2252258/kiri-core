@@ -16,6 +16,7 @@ use Exception;
 use PDO;
 use PDOStatement;
 use Snowflake\Abstracts\Config;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 
 /**
@@ -127,14 +128,9 @@ class Command extends Component
 			} else {
 				$result = $this->search($type);
 			}
+			$this->setExecuteLog($time);
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
-			}
-
-			logger()->debug($this->sql . var_export($this->params, true), 'mysql');
-
-			if (Config::get('debug.enable', false, false)) {
-				$this->debug($this->sql . '。 Run-time: ' . (microtime(true) - $time));
 			}
 		} catch (\Throwable $exception) {
 			$result = $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
@@ -142,6 +138,22 @@ class Command extends Component
 			return $result;
 		}
 	}
+
+
+	/**
+	 * @param $time
+	 * @throws ComponentException
+	 * @throws Exception
+	 */
+	private function setExecuteLog($time)
+	{
+		$export['sql'] = $this->sql;
+		$export['param'] = $this->params;
+		$export['time'] = microtime(true) - $time;
+
+		logger()->debug(var_export($export, true), 'mysql');
+	}
+
 
 	/**
 	 * @param $type
