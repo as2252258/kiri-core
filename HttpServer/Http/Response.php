@@ -291,7 +291,7 @@ class Response extends HttpService
 			}
 			$offset += $limit;
 		}
-		$this->response->end();
+		$this->response = null;
 	}
 
 
