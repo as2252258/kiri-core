@@ -321,9 +321,6 @@ class Node extends HttpService
 		if (empty($annotation)) {
 			return $node;
 		}
-		if (str_contains($node->path, 'switch/map')) {
-			var_dump($className, $action, $annotation);
-		}
 		foreach ($annotation as $name => $attribute) {
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
 				$node->addInterceptor($attribute->interceptor);
@@ -337,6 +334,9 @@ class Node extends HttpService
 			if ($attribute instanceof \Annotation\Route\Limits) {
 				$node->addLimits($attribute->limits);
 			}
+		}
+		if (!empty($node->handler)) {
+			$node->callback = Reduce::reduce($node->createDispatch(), $node->annotation($node));
 		}
 		return $node;
 	}
@@ -511,9 +511,6 @@ class Node extends HttpService
 		foreach ($class as $closure) {
 			if (is_string($closure)) {
 				$closure = [Snowflake::createObject($closure), 'onHandler'];
-			}
-			if (str_contains($this->path, 'switch/map')) {
-				var_dump($closure, $this->middleware);
 			}
 			if (in_array($closure, $this->middleware)) {
 				continue;
