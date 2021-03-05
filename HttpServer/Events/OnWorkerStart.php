@@ -33,12 +33,12 @@ class OnWorkerStart extends Callback
 	 */
 	public function onHandler(Server $server, int $worker_id): void
 	{
-		putenv('worker=' . $worker_id);
 		putenv('state=start');
+		putenv('worker=' . $worker_id);
 
-		$start = microtime(true);
-		annotation()->read(APP_PATH . 'app', 'App');
-		$this->debug(sprintf('scan app dir use time %s', microtime(true) - $start));
+		if (env('debug') === 'true') {
+			annotation()->read(APP_PATH . 'app', 'App');
+		}
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);

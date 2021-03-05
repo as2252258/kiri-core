@@ -1,6 +1,7 @@
 <?php
 
-defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../../');
+defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
+
 
 use Annotation\Annotation;
 use Annotation\Attribute;
