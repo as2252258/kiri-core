@@ -111,7 +111,6 @@ class Node extends HttpService
 	protected function annotation(): array
 	{
 		$middleWares = $this->getMiddleWares();
-		var_dump($middleWares);
 		$middleWares = $this->annotation_limit($this, $middleWares);
 		$middleWares = $this->annotation_interceptor($this, $middleWares);
 		return $middleWares;
@@ -325,6 +324,9 @@ class Node extends HttpService
 		$annotation = annotation()->getMethods($className, $action);
 		if (empty($annotation)) {
 			return $this;
+		}
+		if ($this->path == 'user/attributes') {
+			var_dump($annotation);
 		}
 		foreach ($annotation as $name => $attribute) {
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
