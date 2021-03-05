@@ -580,11 +580,11 @@ class Router extends HttpService implements RouterInterface
 		if ($node instanceof Node) {
 			return $node;
 		}
-		var_dump($request->isOption);
 		if (!$request->isOption) {
 			return null;
 		}
 		$node = $this->tree_search(['*'], $request->getMethod());
+		var_dump($node);
 		if (!($node instanceof Node)) {
 			return null;
 		}
