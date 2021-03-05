@@ -207,6 +207,9 @@ class ActiveQuery extends Component implements ISqlBuilder
 	public function all(): Collection|array
 	{
 		$data = $this->execute($this->builder->all())->all();
+
+		var_dump($data);
+
 		$collect = new Collection($this, $data, $this->modelClass);
 		if ($this->asArray) {
 			return $collect->toArray();
