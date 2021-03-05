@@ -276,7 +276,7 @@ class Node extends HttpService
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
 
-			$this->annotationInject($reflect->getName(), $action);
+			static::annotationInject($this, $reflect->getName(), $action);
 
 			return [$reflect->newInstance(), $action];
 		} catch (Throwable $exception) {
@@ -284,40 +284,6 @@ class Node extends HttpService
 			$this->error($exception, 'router');
 			return null;
 		}
-	}
-
-
-	/**
-	 * @param string $className
-	 * @param string $action
-	 * @return $this
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	private function annotationInject(string $className, string $action): static
-	{
-		$annotation = annotation()->getMethods($className, $action);
-		if (empty($annotation)) {
-			return $this;
-		}
-		foreach ($annotation as $name => $attribute) {
-			var_dump($this->path . ':' . get_class($attribute));
-			if ($attribute instanceof \Annotation\Route\Interceptor) {
-				$this->addInterceptor($attribute->interceptor);
-			}
-			if ($attribute instanceof \Annotation\Route\After) {
-				$this->addAfter($attribute->after);
-			}
-			if ($attribute instanceof RMiddleware) {
-				$this->addMiddleware($attribute->middleware);
-			}
-			if ($attribute instanceof \Annotation\Route\Limits) {
-				$this->addLimits($attribute->limits);
-			}
-		}
-		return $this;
 	}
 
 
@@ -336,6 +302,40 @@ class Node extends HttpService
 			}
 			$this->_interceptors[] = $closure;
 		}
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param string $className
+	 * @param string $action
+	 * @return Node
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	public static function annotationInject(Node $node, string $className, string $action): Node
+	{
+		$annotation = annotation()->getMethods($className, $action);
+		if (empty($annotation)) {
+			return $node;
+		}
+		foreach ($annotation as $name => $attribute) {
+			if ($attribute instanceof \Annotation\Route\Interceptor) {
+				$node->addInterceptor($attribute->interceptor);
+			}
+			if ($attribute instanceof \Annotation\Route\After) {
+				$node->addAfter($attribute->after);
+			}
+			if ($attribute instanceof RMiddleware) {
+				$node->addMiddleware($attribute->middleware);
+			}
+			if ($attribute instanceof \Annotation\Route\Limits) {
+				$node->addLimits($attribute->limits);
+			}
+		}
+		return $node;
 	}
 
 
