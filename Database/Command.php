@@ -148,7 +148,7 @@ class Command extends Component
 		$export['param'] = $this->params;
 		$export['time'] = microtime(true) - $time;
 
-		logger()->debug(var_export($export, true), 'mysql');
+		logger()->debug(print_r($export, true), 'mysql');
 	}
 
 
