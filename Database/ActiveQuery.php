@@ -208,8 +208,6 @@ class ActiveQuery extends Component implements ISqlBuilder
 	{
 		$data = $this->execute($this->builder->all())->all();
 
-		var_dump($data);
-
 		$collect = new Collection($this, $data, $this->modelClass);
 		if ($this->asArray) {
 			return $collect->toArray();

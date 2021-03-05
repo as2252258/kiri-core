@@ -433,7 +433,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return $this;
 		}
 		foreach ($param as $key => $val) {
-			var_dump($param, $val);
 			if (!$this->has($key)) {
 				$this->setAttribute($key, $val);
 			} else {
@@ -760,6 +759,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (empty($this->_fields)) {
 			$this->_fields = static::getColumns()->format();
 		}
+		var_dump($attribute, $this->_fields);
 		return array_key_exists($attribute, $this->_fields);
 	}
 
