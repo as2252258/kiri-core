@@ -277,7 +277,7 @@ class Node extends HttpService
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
 
-			static::annotationInject($this, $reflect->getName(), $action);
+			$this->annotationInject($reflect->getName(), $action);
 
 			return [$reflect->newInstance(), $action];
 		} catch (Throwable $exception) {
