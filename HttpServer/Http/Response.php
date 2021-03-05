@@ -274,6 +274,7 @@ class Response extends HttpService
 	 * @param string $path
 	 * @param int $offset
 	 * @param int $limit
+	 * @param int $sleep
 	 */
 	public function sendFile(string $path, $offset = 0, $limit = 1024000, $sleep = 0)
 	{
