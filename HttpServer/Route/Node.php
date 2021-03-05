@@ -79,10 +79,12 @@ class Node extends HttpService
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
 		} else {
-			$this->handler = $handler;
+			[$controller, $action] = $this->handler = $handler;
+
+			$this->annotationInject(get_class($controller), $action);
 		}
 		if (!empty($this->handler)) {
-			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation($this));
+			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
 		}
 		return $this;
 	}
@@ -100,14 +102,13 @@ class Node extends HttpService
 
 
 	/**
-	 * @param Node $node
 	 * @return array
 	 */
-	protected function annotation(Node $node): array
+	protected function annotation(): array
 	{
-		$middleWares = $node->getMiddleWares();
-		$middleWares = $this->annotation_limit($node, $middleWares);
-		$middleWares = $this->annotation_interceptor($node, $middleWares);
+		$middleWares = $this->getMiddleWares();
+		$middleWares = $this->annotation_limit($this, $middleWares);
+		$middleWares = $this->annotation_interceptor($this, $middleWares);
 		return $middleWares;
 	}
 
@@ -315,30 +316,27 @@ class Node extends HttpService
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function annotationInject(Node $node, string $className, string $action): Node
+	public function annotationInject(string $className, string $action): Node
 	{
 		$annotation = annotation()->getMethods($className, $action);
 		if (empty($annotation)) {
-			return $node;
+			return $this;
 		}
 		foreach ($annotation as $name => $attribute) {
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
-				$node->addInterceptor($attribute->interceptor);
+				$this->addInterceptor($attribute->interceptor);
 			}
 			if ($attribute instanceof \Annotation\Route\After) {
-				$node->addAfter($attribute->after);
+				$this->addAfter($attribute->after);
 			}
 			if ($attribute instanceof Middleware) {
-				$node->addMiddleware($attribute->middleware);
+				$this->addMiddleware($attribute->middleware);
 			}
 			if ($attribute instanceof \Annotation\Route\Limits) {
-				$node->addLimits($attribute->limits);
+				$this->addLimits($attribute->limits);
 			}
 		}
-		if (!empty($node->handler)) {
-			$node->callback = Reduce::reduce($node->createDispatch(), $node->annotation($node));
-		}
-		return $node;
+		return $this;
 	}
 
 

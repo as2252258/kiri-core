@@ -53,9 +53,7 @@ use Snowflake\Snowflake;
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		$node = $router->addRoute($method, $handler, 'sw::socket');
-
-		$node::annotationInject($node, get_class($handler[0]), $handler[1]);
+		$router->addRoute($method, $handler, 'sw::socket');
 
 		return $router;
 	}
