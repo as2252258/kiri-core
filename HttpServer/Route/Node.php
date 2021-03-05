@@ -69,9 +69,7 @@ class Node extends HttpService
 	 */
 	public function bindHandler($handler): static
 	{
-		if ($handler instanceof Closure) {
-			$this->handler = $handler;
-		} else if (is_string($handler) && str_contains($handler, '@')) {
+		if (is_string($handler) && str_contains($handler, '@')) {
 			list($controller, $action) = explode('@', $handler);
 			if (!empty($this->namespace)) {
 				$controller = implode('\\', $this->namespace) . '\\' . $controller;
@@ -79,13 +77,15 @@ class Node extends HttpService
 			$this->handler = $this->getReflect($controller, $action);
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
+		} else if ($handler instanceof Closure) {
+			$this->handler = $handler;
 		} else {
 			[$controller, $action] = $this->handler = $handler;
-			if ($controller instanceof Controller) {
-				$this->annotationInject(get_class($controller), $action);
-
-				$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
+			if (!($controller instanceof Controller)) {
+				return $this;
 			}
+			$this->annotationInject(get_class($controller), $action);
+			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
 		}
 		return $this;
 	}
