@@ -68,14 +68,11 @@ class CollectionIterator extends \ArrayIterator
 
 
 	/**
-	 * @return mixed
 	 * @throws Exception
 	 */
-	public function current(): mixed
+	public function current(): ActiveRecord
 	{
-		$current = parent::current();
-		var_dump($current);
-		if (!($current instanceof ActiveRecord)) {
+		if (!(($current = parent::current()) instanceof ActiveRecord)) {
 			$current = $this->newModel($current);
 		}
 		return $this->query->getWith($current);
