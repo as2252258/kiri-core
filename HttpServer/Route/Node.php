@@ -82,20 +82,20 @@ class Node extends HttpService
 			$this->handler = $handler;
 		}
 		if (!empty($this->handler)) {
-			$this->callback = Reduce::reduce([$this, 'createDispatch'], $this->annotation($this));
+			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation($this));
 		}
 		return $this;
 	}
 
 
 	/**
-	 * @return mixed
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @return Closure
 	 */
-	public function createDispatch(): mixed
+	public function createDispatch(): Closure
 	{
-		return Dispatch::create($this->handler, func_get_args())->dispatch();
+		return function () {
+			return Dispatch::create($this->handler, func_get_args())->dispatch();
+		};
 	}
 
 
@@ -548,8 +548,6 @@ class Node extends HttpService
 	{
 		return $this->middleware;
 	}
-
-
 
 
 	/**
