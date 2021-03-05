@@ -513,7 +513,7 @@ class Node extends HttpService
 				$closure = [Snowflake::createObject($closure), 'onHandler'];
 			}
 			if (str_contains($this->path, 'switch/map')) {
-				var_dump($closure);
+				var_dump($closure, $this->middleware);
 			}
 			if (in_array($closure, $this->middleware)) {
 				continue;
