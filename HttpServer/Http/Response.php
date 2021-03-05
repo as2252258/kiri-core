@@ -14,6 +14,7 @@ use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Help;
 use Snowflake\Snowflake;
 use Swoole\Http\Response as SResponse;
@@ -270,6 +271,31 @@ class Response extends HttpService
 
 
 	/**
+	 * @param string $path
+	 * @param int $offset
+	 * @param int $limit
+	 */
+	public function sendFile(string $path, $offset = 0, $limit = 1024000)
+	{
+		$open = fopen($path, 'r');
+
+		$stat = fstat($open);
+		$this->response->setHeader('Content-Length', $stat['size']);
+
+		while ($file = fread($open, $limit)) {
+			$this->response->write($file);
+			fseek($open, $offset);
+
+			if ($offset >= $stat['size']) {
+				break;
+			}
+			$offset += $limit;
+		}
+		$this->response->end();
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	public function sendNotFind()
@@ -281,7 +307,7 @@ class Response extends HttpService
 	/**
 	 * @return string
 	 */
-	public function getRuntime(): string
+	#[Pure] public function getRuntime(): string
 	{
 		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
 	}
