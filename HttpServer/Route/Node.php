@@ -89,6 +89,9 @@ class Node extends HttpService
 			$this->annotationInject(get_class($controller), $action);
 			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
 		}
+		if ($this->path == 'user/attributes') {
+			var_dump($this);
+		}
 		return $this;
 	}
 
@@ -324,9 +327,6 @@ class Node extends HttpService
 		$annotation = annotation()->getMethods($className, $action);
 		if (empty($annotation)) {
 			return $this;
-		}
-		if ($this->path == 'user/attributes') {
-			var_dump($annotation);
 		}
 		foreach ($annotation as $name => $attribute) {
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
