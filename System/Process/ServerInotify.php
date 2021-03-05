@@ -40,7 +40,7 @@ class ServerInotify extends Process
 	public function onHandler(\Swoole\Process $process): void
 	{
 		set_error_handler([$this, 'onErrorHandler']);
-		if (env('debug') !== 'true') {
+		if (env('debug') != 'true') {
 			Timer::tick(100000, function () {
 
 			});

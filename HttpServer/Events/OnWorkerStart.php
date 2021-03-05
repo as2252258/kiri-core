@@ -36,8 +36,9 @@ class OnWorkerStart extends Callback
 		putenv('state=start');
 		putenv('worker=' . $worker_id);
 
-		if (env('debug') === 'true') {
-			annotation()->read(APP_PATH . 'app', 'App');
+		if (env('debug', 'false') == 'true') {
+			$attribute = Snowflake::app()->getAttributes();
+			$attribute->read(directory('app'), 'App');
 		}
 
 		if ($worker_id >= $server->setting['worker_num']) {

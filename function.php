@@ -9,6 +9,7 @@ use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -113,6 +114,21 @@ if (!function_exists('recursive_directory')) {
 			}
 		}
 		unset($directoryIterators);
+	}
+
+
+}
+
+
+if (!function_exists('directory')) {
+
+	/**
+	 * @param $name
+	 * @return string
+	 */
+	#[Pure] function directory($name): string
+	{
+		return realpath(APP_PATH . $name);
 	}
 
 

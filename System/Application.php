@@ -109,9 +109,9 @@ class Application extends BaseApplication
 	{
 		try {
 			fire(Event::SERVER_BEFORE_START);
-			if (env('debug') === 'false') {
+			if (env('debug') == 'false') {
 				$annotation = Snowflake::app()->getAttributes();
-				$annotation->read(APP_PATH . 'app', 'App');
+				$annotation->read(directory('app'), 'App');
 			}
 			$manager = Snowflake::app()->get('console');
 			$manager->setParameters($argv);

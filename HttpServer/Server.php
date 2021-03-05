@@ -464,7 +464,7 @@ class Server extends HttpService
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$annotation = Snowflake::app()->getAttributes();
-			if (env('debug') !== 'true') {
+			if (env('debug') != 'true') {
 				return;
 			}
 			$router = Snowflake::app()->getRouter();
@@ -484,7 +484,7 @@ class Server extends HttpService
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			$annotation = Snowflake::app()->getAttributes();
-			if (env('debug') !== 'true') {
+			if (env('debug') != 'true') {
 				return;
 			}
 			$annotation->instanceDirectoryFiles(SOCKET_PATH);
