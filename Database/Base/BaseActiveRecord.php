@@ -827,7 +827,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	public function refresh(): static
 	{
 		$this->_oldAttributes = $this->_attributes;
-        return $this;
+		return $this;
 	}
 
 	/**
@@ -864,13 +864,23 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return static::getColumns()->_decode($name, $value);
 		}
 		if (in_array($name, $this->_with)) {
-			$data = $this->{$this->_relate[$name]}();
-			if ($data instanceof HasBase) {
-				return $data->get();
-			}
-			return $data;
+			return $this->with($name);
 		}
 		return parent::__get($name);
+	}
+
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	private function with($name): mixed
+	{
+		$data = $this->{$this->_relate[$name]}();
+		if ($data instanceof HasBase) {
+			return $data->get();
+		}
+		return $data;
 	}
 
 
@@ -1032,8 +1042,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return new $className();
 		});
 		$model->_attributes = $data;
-        $model->setIsCreate(false);
-        $model->refresh();
+		$model->setIsCreate(false);
+		$model->refresh();
 		return $model;
 	}
 
