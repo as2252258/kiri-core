@@ -298,12 +298,12 @@ class Node extends HttpService
 	 */
 	private function annotationInject(string $className, string $action): static
 	{
-		$attributes = Snowflake::app()->getAttributes();
-		$annotation = $attributes->getMethods($className, $action);
+		$annotation = annotation()->getMethods($className, $action);
 		if (empty($annotation)) {
 			return $this;
 		}
 		foreach ($annotation as $name => $attribute) {
+			var_dump(get_class($attribute));
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
 				$this->addInterceptor($attribute->interceptor);
 			}
