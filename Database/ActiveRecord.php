@@ -269,6 +269,10 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$data = $this->_attributes;
 		foreach ($this->getAnnotation(self::ANNOTATION_GET) as $key => $item) {
+
+			var_dump($data, $key);
+			if (!isset($data[$key])) continue;
+
 			$data[$key] = $this->runAnnotation($key, $data[$key] ?? null);
 		}
 		$data = array_merge($data, $this->runRelate());
