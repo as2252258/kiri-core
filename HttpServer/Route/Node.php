@@ -321,7 +321,9 @@ class Node extends HttpService
 		if (empty($annotation)) {
 			return $node;
 		}
-//		var_dump($className, $action, $annotation);
+		if (str_contains($node->path, 'switch/map')) {
+			var_dump($className, $action, $annotation);
+		}
 		foreach ($annotation as $name => $attribute) {
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
 				$node->addInterceptor($attribute->interceptor);
@@ -505,9 +507,6 @@ class Node extends HttpService
 			}
 		} else {
 			$class = [$class];
-		}
-		if (str_contains($this->path,'switch/map')) {
-			var_dump($class);
 		}
 		foreach ($class as $closure) {
 			if (is_string($closure)) {
