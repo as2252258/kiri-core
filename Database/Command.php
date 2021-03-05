@@ -118,37 +118,42 @@ class Command extends Component
 	 */
 	private function execute($type, $isInsert = null, $hasAutoIncrement = null): int|bool|array|string|null
 	{
+		$time = microtime(true);
 		try {
-			$time = microtime(true);
 			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
 				$result = $this->search($type);
 			}
-			$this->setExecuteLog($time);
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
 			}
 		} catch (\Throwable $exception) {
-			$result = $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
+			$message = $this->sql . '. error: ' . $exception->getMessage();
+
+			$result = $this->addError($message, 'mysql');
 		} finally {
-			return $result;
+			return $this->setExecuteLog($time, $result);
 		}
 	}
 
 
 	/**
 	 * @param $time
+	 * @param $result
+	 * @return mixed
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	private function setExecuteLog($time)
+	private function setExecuteLog($time, $result): mixed
 	{
 		$export['sql'] = $this->sql;
 		$export['param'] = $this->params;
 		$export['time'] = microtime(true) - $time;
 
 		logger()->debug(print_r($export, true), 'mysql');
+
+		return $result;
 	}
 
 
