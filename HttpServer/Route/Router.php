@@ -481,6 +481,7 @@ class Router extends HttpService implements RouterInterface
 	public function dispatch(): mixed
 	{
 		if (!($node = $this->find_path(\request()))) {
+			var_dump(\request(), $node);
 			return send(self::NOT_FOUND);
 		}
 		send($response = $node->dispatch(), 200);
