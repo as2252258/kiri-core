@@ -149,7 +149,7 @@ class Server extends HttpService
 
 		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
 
-//		Coroutine::set(['enable_deadlock_check' => false]);
+		Coroutine::set(['enable_deadlock_check' => false]);
 
 		return $baseServer->start();
 	}

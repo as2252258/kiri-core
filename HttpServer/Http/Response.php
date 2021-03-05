@@ -275,21 +275,32 @@ class Response extends HttpService
 	 * @param int $offset
 	 * @param int $limit
 	 */
-	public function sendFile(string $path, $offset = 0, $limit = 1024000)
+	public function sendFile(string $path, $offset = 0, $limit = 1024000, $sleep = 0)
 	{
 		$open = fopen($path, 'r');
 
+		$name = explode(DIRECTORY_SEPARATOR, $path);
+
 		$stat = fstat($open);
 		$this->response->setHeader('Content-Length', $stat['size']);
+		$this->response->setHeader('Content-Type', 'application/octet-stream');
+		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
+		$this->response->setHeader('Content-Transfer-Encoding', 'binary');
+
 		while ($file = fread($open, $limit)) {
 			$this->response->write($file);
 			fseek($open, $offset);
-
+			if ($sleep > 0) {
+				sleep($sleep);
+			}
 			if ($offset >= $stat['size']) {
 				break;
 			}
 			$offset += $limit;
 		}
+
+		$this->response->end();
+		$this->response = null;
 	}
 
 
