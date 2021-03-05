@@ -163,6 +163,9 @@ class Response extends HttpService
 		if ($this->response instanceof SResponse) {
 			return $this->sendData($sendData, $statusCode);
 		} else {
+			if (!empty(request()->fd)) {
+				return '';
+			}
 			return $this->printResult($sendData);
 		}
 	}
@@ -275,8 +278,9 @@ class Response extends HttpService
 	 * @param int $offset
 	 * @param int $limit
 	 * @param int $sleep
+	 * @return string
 	 */
-	public function sendFile(string $path, $offset = 0, $limit = 1024000, $sleep = 0)
+	public function sendFile(string $path, $offset = 0, $limit = 1024000, $sleep = 0): string
 	{
 		$open = fopen($path, 'r');
 
@@ -302,6 +306,8 @@ class Response extends HttpService
 
 		$this->response->end();
 		$this->response = null;
+
+		return '';
 	}
 
 
