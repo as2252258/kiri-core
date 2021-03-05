@@ -46,6 +46,10 @@ use Snowflake\Snowflake;
 		$node = $router->addRoute($this->uri, $handler, $this->method);
 		$node::annotationInject($node, get_class($handler[0]), $handler[1]);
 
+		if ($this->uri == 'switch/map') {
+			var_dump($node);
+		}
+
 		return $router;
 	}
 
