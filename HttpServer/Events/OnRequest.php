@@ -35,10 +35,11 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response): mixed
 	{
+		Coroutine::defer(function () use ($request) {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
+		});
 		try {
-			Coroutine::defer(function () use ($request) {
-				fire(Event::SYSTEM_RESOURCE_RELEASES);
-			});
 			[$request, $response] = static::create($request, $response);
 			if (!$request->is('favicon.ico')) {
 				return \router()->dispatch();

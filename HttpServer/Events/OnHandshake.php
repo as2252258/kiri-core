@@ -88,6 +88,7 @@ class OnHandshake extends Callback
 	{
 		$this->execute($request, $response);
 		fire(Event::SYSTEM_RESOURCE_RELEASES);
+		logger()->insert();
 	}
 
 
@@ -119,6 +120,9 @@ class OnHandshake extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 			return $this->disconnect($response, 500);
+		} finally {
+			fire(Event::SYSTEM_RESOURCE_CLEAN);
+			logger()->insert();
 		}
 	}
 

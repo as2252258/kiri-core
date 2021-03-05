@@ -223,23 +223,11 @@ class Connection extends Pool
 
 	/**
 	 * batch release
+	 * @throws Exception
 	 */
 	public function connection_clear()
 	{
-		$connections = Context::getAllContext();
-		foreach ($connections as $name => $connection) {
-			if (empty($connection) || !($connection instanceof PDO)) {
-				continue;
-			}
-			/** @var PDO $pdoClient */
-			if ($connection->inTransaction()) {
-				$connection->commit();
-			}
-			$this->push($name, $connection);
-			$this->remove($name);
-		}
-		$this->hasCreate = [];
-		$this->creates = 0;
+		$this->flush(0);
 	}
 
 

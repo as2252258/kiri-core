@@ -29,6 +29,9 @@ class OnConnect extends Callback
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::RECEIVE_CONNECTION, [$server, $fd, $reactorId]);
+
+		fire(Event::SYSTEM_RESOURCE_RELEASES);
+		logger()->insert();
 	}
 
 

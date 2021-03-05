@@ -7,17 +7,14 @@ namespace HttpServer\Events;
 use Annotation\Route\Socket;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Request;
-use HttpServer\Route\Node;
-use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Server;
 use Exception;
-use Swoole\WebSocket\Server as WServer;
+use Swoole\WebSocket\Server as WebsocketServer;
 
 /**
  * Class OnClose
@@ -49,7 +46,7 @@ class OnClose extends Callback
 	private function execute(Server $server, int $fd): void
 	{
 		try {
-			if (!$server instanceof WServer) {
+			if (!$server instanceof WebsocketServer) {
 				return;
 			}
 			if (!$server->isEstablished($fd)) {
@@ -59,8 +56,8 @@ class OnClose extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 		} finally {
-			$logger = Snowflake::app()->getLogger();
-			$logger->insert();
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
 		}
 	}
 

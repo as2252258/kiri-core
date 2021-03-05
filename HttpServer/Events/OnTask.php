@@ -101,6 +101,10 @@ class OnTask extends Callback
 	 */
 	private function runTaskHandler($data): ?array
 	{
+		Coroutine\defer(function () {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
+		});
 		try {
 			$serialize = $this->before($data);
 			$params = $serialize->getParams();

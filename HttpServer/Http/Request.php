@@ -78,6 +78,8 @@ class Request extends HttpService
 	/**
 	 * @return array|null
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function getConnectInfo(): array|null
 	{

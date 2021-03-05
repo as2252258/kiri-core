@@ -49,8 +49,8 @@ class OnPacket extends Callback
 			$response = DataResolve::pack($this->pack, $response);
 			return $server->sendto($clientInfo['address'], $clientInfo['port'], $response);
 		} finally {
-			$event = Snowflake::app()->getEvent();
-			$event->trigger(Event::SERVER_WORKER_STOP);
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
 		}
 	}
 

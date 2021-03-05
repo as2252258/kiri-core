@@ -285,18 +285,12 @@ abstract class Pool extends Component
 			return;
 		}
 		$channel = $this->_items[$name];
-		while ($client = $channel->pop(0.001)) {
-			unset($client);
-			$this->desc($name);
-		}
-		$this->_items[$name]->close();
-		$this->_items[$name] = null;
-
+		$this->pop($channel, $name, 0);
 		if ($this->creates > -1) {
 			Timer::clear($this->creates);
 			$this->debug('clean timer.');
 		}
-
+		$this->_items[$name] = null;
 	}
 
 

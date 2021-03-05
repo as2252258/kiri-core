@@ -53,7 +53,8 @@ class OnReceive extends Callback
 			return $server->send($fd, $response);
 		} finally {
 			$event = Snowflake::app()->getEvent();
-			$event->trigger(Event::SERVER_WORKER_STOP);
+			$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
 		}
 	}
 
