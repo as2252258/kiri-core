@@ -14,6 +14,7 @@ use Exception;
 use HttpServer\IInterface\After;
 use HttpServer\IInterface\Interceptor;
 use HttpServer\IInterface\Limits;
+use HttpServer\Route\Dispatch\Dispatch;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
@@ -80,7 +81,68 @@ class Node extends HttpService
 		} else {
 			$this->handler = $handler;
 		}
-		return $this->restructure();
+		if (!empty($this->handler)) {
+			$this->callback = Reduce::reduce([$this, 'createDispatch'], $this->annotation($this));
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public function createDispatch(): mixed
+	{
+		return Dispatch::create($this->handler, func_get_args())->dispatch();
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @return array
+	 */
+	protected function annotation(Node $node): array
+	{
+		$middleWares = $node->getMiddleWares();
+		$middleWares = $this->annotation_limit($node, $middleWares);
+		$middleWares = $this->annotation_interceptor($node, $middleWares);
+		return $middleWares;
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $middleWares
+	 * @return array
+	 */
+	protected function annotation_interceptor(Node $node, $middleWares = []): array
+	{
+		if (!$node->hasInterceptor()) {
+			return $middleWares;
+		}
+		foreach ($node->getInterceptor() as $item) {
+			$middleWares[] = $item;
+		}
+		return $middleWares;
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param $middleWares
+	 * @return array
+	 */
+	protected function annotation_limit(Node $node, $middleWares = []): array
+	{
+		if (!$node->hasLimits()) {
+			return $middleWares;
+		}
+		foreach ($node->getLimits() as $item) {
+			$middleWares[] = $item;
+		}
+		return $middleWares;
 	}
 
 
