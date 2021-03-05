@@ -303,7 +303,7 @@ class Node extends HttpService
 			return $this;
 		}
 		foreach ($annotation as $name => $attribute) {
-			var_dump(get_class($attribute));
+			var_dump($this->path . ':' . get_class($attribute));
 			if ($attribute instanceof \Annotation\Route\Interceptor) {
 				$this->addInterceptor($attribute->interceptor);
 			}
