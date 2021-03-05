@@ -89,9 +89,6 @@ class Node extends HttpService
 			$this->annotationInject(get_class($controller), $action);
 			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
 		}
-		if ($this->path == 'user/attributes') {
-			var_dump($this);
-		}
 		return $this;
 	}
 
@@ -101,9 +98,8 @@ class Node extends HttpService
 	 */
 	public function createDispatch(): Closure
 	{
-		$handler = $this->handler;
-		return function () use ($handler) {
-			return Dispatch::create($handler, func_get_args())->dispatch();
+		return function () {
+			return Dispatch::create($this->handler, func_get_args())->dispatch();
 		};
 	}
 
