@@ -81,7 +81,9 @@ class Node extends HttpService
 			$this->_error = 'Controller is con\'t exec.';
 		} else if ($handler instanceof Closure) {
 			$this->handler = $handler;
-		} else {
+
+            $this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
+        } else {
 			[$controller, $action] = $this->handler = $handler;
 			if (!($controller instanceof Controller)) {
 				return $this;
