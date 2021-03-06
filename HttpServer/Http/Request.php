@@ -10,6 +10,7 @@ use HttpServer\IInterface\AuthIdentity;
 
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
+use Snowflake\Core\ArrayAccess;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -451,7 +452,7 @@ class Request extends HttpService
         if (!empty($request->post)) {
             $sRequest->params->setPosts($request->post ?? []);
         }
-        $sRequest->headers = new HttpHeaders(merge($request->server, $request->header));
+        $sRequest->headers = new HttpHeaders(ArrayAccess::merge($request->server, $request->header));
         $sRequest->uri = $sRequest->headers->get('request_uri');
 
         $sRequest->parseUri();
