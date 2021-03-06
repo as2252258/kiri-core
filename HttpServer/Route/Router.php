@@ -577,6 +577,7 @@ class Router extends HttpService implements RouterInterface
 		if ($node instanceof Node) {
 			return $node;
 		}
+		var_dump($request->isOption);
 		if (!$request->isOption) {
 			return null;
 		}
