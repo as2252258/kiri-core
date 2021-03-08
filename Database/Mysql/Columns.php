@@ -230,6 +230,7 @@ class Columns extends Component
 	 */
 	public function hasField(string $name): bool
 	{
+		var_dump($this->getFields());
 		return isset($this->getFields()[$name]);
 	}
 
