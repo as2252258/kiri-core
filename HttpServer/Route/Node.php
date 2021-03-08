@@ -394,7 +394,7 @@ class Node extends HttpService
 	 */
 	public function addChild(Node $node, string $field): Node
 	{
-		$field = 'node_' . $field;
+		$field = (string)$field;
 		/** @var Node $oLod */
 		$oLod = $this->childes[$field] ?? null;
 		if (!empty($oLod)) {
@@ -435,8 +435,6 @@ class Node extends HttpService
 			return null;
 		}
 
-
-		$search = 'node_' . $search;
 		if (isset($this->childes[$search])) {
 			return $this->childes[$search];
 		}
