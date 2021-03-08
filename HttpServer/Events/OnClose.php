@@ -32,8 +32,14 @@ class OnClose extends Callback
 	 */
 	public function onHandler(Server $server, int $fd)
 	{
-		$this->execute($server, $fd);
-		fire(Event::SYSTEM_RESOURCE_RELEASES);
+		try {
+			$this->execute($server, $fd);
+		} catch (\Throwable $exception) {
+			$this->addError($exception);
+		} finally {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
+		}
 	}
 
 
@@ -45,18 +51,11 @@ class OnClose extends Callback
 	 */
 	private function execute(Server $server, int $fd): void
 	{
-		try {
-			if (!$this->isWebsocket($server, $fd)) {
-				$client = $server->getClientInfo($fd);
-				fire($this->name($client['server_port']), [$server, $fd]);
-			} else {
-				$this->loadNode($server, $fd);
-			}
-		} catch (\Throwable $exception) {
-			$this->addError($exception);
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
+		if (!$this->isWebsocket($server, $fd)) {
+			$client = $server->getClientInfo($fd);
+			fire($this->name($client['server_port']), [$server, $fd]);
+		} else {
+			$this->loadNode($server, $fd);
 		}
 	}
 

@@ -288,7 +288,6 @@ abstract class Pool extends Component
 		$this->pop($channel, $name, 0);
 		if ($this->creates > -1) {
 			Timer::clear($this->creates);
-			$this->debug('clean timer.');
 		}
 		$this->_items[$name] = null;
 	}

@@ -50,6 +50,8 @@ class OnPacket extends Callback
 
 			return $server->sendto($host, $port, $dispatch);
 		} catch (\Throwable $exception) {
+			$this->addError($exception, 'packet');
+
 			$response = Json::encode(['state' => 500, 'message' => $exception->getMessage()]);
 
 			return $server->sendto($clientInfo['address'], $clientInfo['port'], $response);

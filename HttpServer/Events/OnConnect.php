@@ -30,9 +30,13 @@ class OnConnect extends Callback
 
 		$clientInfo = $server->getClientInfo($fd);
 
-		$name = 'listen ' . $clientInfo['server_port'] . ' ' . Event::RECEIVE_CONNECTION;
+		try {
+			$name = 'listen ' . $clientInfo['server_port'] . ' ' . Event::RECEIVE_CONNECTION;
 
-		$event->trigger($name, [$server, $fd, $reactorId]);
+			$event->trigger($name, [$server, $fd, $reactorId]);
+		} catch (\Throwable $throwable) {
+			$this->addError($throwable, 'connect');
+		}
 
 		fire(Event::SYSTEM_RESOURCE_RELEASES);
 		logger()->insert();

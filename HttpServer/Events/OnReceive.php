@@ -48,6 +48,8 @@ class OnReceive extends Callback
 
 			return $server->send($fd, $dispatch);
 		} catch (\Throwable $exception) {
+			$this->addError($exception, 'receive');
+
 			return $server->send($fd, Json::encode(['state' => 500, 'message' => $exception->getMessage()]));
 		} finally {
 			$event = Snowflake::app()->getEvent();
