@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace Snowflake\Cache;
 
 use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -44,12 +46,14 @@ class Redis extends Component
 
 
 	/**
-	 * @throws ConfigException
 	 * @throws ComponentException
+	 * @throws ConfigException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function createPool()
 	{
-		$connections = Snowflake::app()->getPool()->getRedis();
+		$connections = Snowflake::app()->getRedisFromPool();
 
 		$config = $this->get_config();
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
@@ -110,13 +114,14 @@ SCRIPT;
 
 
 	/**
-	 * 释放连接池
-	 * @throws ConfigException
 	 * @throws ComponentException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function release()
 	{
-		$connections = Snowflake::app()->getPool()->getRedis();
+		$connections = Snowflake::app()->getRedisFromPool();
 		$connections->release($this->get_config(), true);
 	}
 
@@ -128,7 +133,7 @@ SCRIPT;
 	 */
 	public function destroy()
 	{
-		$connections = Snowflake::app()->getPool()->getRedis();
+		$connections = Snowflake::app()->getRedisFromPool();
 		$connections->destroy($this->get_config(), true);
 	}
 
@@ -138,7 +143,7 @@ SCRIPT;
 	 */
 	public function proxy(): \Redis
 	{
-		$connections = Snowflake::app()->getPool()->getRedis();
+		$connections = Snowflake::app()->getRedisFromPool();
 
 		$client = $connections->get($this->get_config(), true);
 		if (!($client instanceof \Redis)) {

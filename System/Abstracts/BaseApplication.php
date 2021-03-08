@@ -286,24 +286,27 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Connection
+	 * @throws ComponentException
+	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
 	 */
-	public function getConnections(): Connection
+	public function getMysqlFromPool(): Connection
 	{
-		return $this->get('connections');
+		return $this->get('pool')->getDb();
 	}
 
 
 	/**
-	 * @return SPool
+	 * @throws ComponentException
+	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @return SRedis
 	 */
-	public function getPool(): SPool
+	public function getRedisFromPool(): SRedis
 	{
-		return $this->get('pool');
+		return $this->get('pool')->getRedis();
 	}
+
 
 	/**
 	 * @return Response

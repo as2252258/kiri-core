@@ -199,10 +199,12 @@ class Connection extends Component
 	/**
 	 * @return \Snowflake\Pool\Connection
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	private function connections(): \Snowflake\Pool\Connection
 	{
-		return Snowflake::app()->getConnections();
+		return Snowflake::app()->getMysqlFromPool();
 	}
 
 
@@ -286,8 +288,9 @@ class Connection extends Component
 
 
 	/**
-	 * 临时回收
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function recovery()
 	{
