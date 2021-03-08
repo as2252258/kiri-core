@@ -383,6 +383,33 @@ class Snowflake
 
 
 	/**
+	 * @return bool
+	 */
+	public static function isTask(): bool
+	{
+		return static::getEnvironmental() == static::TASK;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public static function isWorker(): bool
+	{
+		return static::getEnvironmental() == static::WORKER;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public static function isProcess(): bool
+	{
+		return static::getEnvironmental() == static::PROCESS;
+	}
+
+
+	/**
 	 * @param $class
 	 * @param $file
 	 */
