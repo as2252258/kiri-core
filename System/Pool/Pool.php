@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Snowflake\Pool;
 
 
+use ReflectionException;
+use Snowflake\Abstracts\BaseObject;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -15,12 +18,14 @@ use Snowflake\Snowflake;
  * @property Connection $db
  * @property $memcached
  */
-class Pool extends \Snowflake\Abstracts\Pool
+class Pool extends BaseObject
 {
 
 	/**
 	 * @return Redis
 	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function getRedis(): Redis
 	{
@@ -30,21 +35,12 @@ class Pool extends \Snowflake\Abstracts\Pool
 	/**
 	 * @return Connection
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function getDb(): Connection
 	{
 		return Snowflake::app()->get('connections');
 	}
 
-
-	/**
-	 * @param string $name
-	 * @param mixed $config
-	 * @return mixed
-	 */
-	public function createClient(string $name, mixed $config): mixed
-	{
-		// TODO: Implement createClient() method.
-		return null;
-	}
 }

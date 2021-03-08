@@ -6,11 +6,10 @@ namespace Snowflake\Pool;
 use HttpServer\Http\Context;
 use PDO;
 use Exception;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ComponentException;
 use Swoole\Coroutine;
 use Snowflake\Abstracts\Pool;
-use Swoole\Timer;
+use Swoole\Error;
+use Throwable;
 
 /**
  * Class Connection
@@ -239,12 +238,14 @@ class Connection extends Pool
 		Context::remove($coroutineName);
 	}
 
+
 	/**
-	 * @param $name
-	 * @param $client
+	 * @param string $name
+	 * @param mixed $client
 	 * @return bool
+	 * @throws Exception
 	 */
-	public function checkCanUse($name, $client): bool
+	public function checkCanUse(string $name, mixed $client): bool
 	{
 		try {
 			if (empty($client) || !($client instanceof PDO)) {
@@ -254,7 +255,8 @@ class Connection extends Pool
 				return $result = false;
 			}
 			return $result = true;
-		} catch (\Swoole\Error | \Throwable $exception) {
+		} catch (Error | Throwable $exception) {
+			$this->addError($exception, 'mysql');
 			return $result = false;
 		} finally {
 			if (!$result) {

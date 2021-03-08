@@ -7,12 +7,10 @@ namespace Snowflake\Pool;
 
 use HttpServer\Http\Context;
 use Redis as SRedis;
-use RedisException;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\RedisConnectException;
-use Swoole\Coroutine;
 use Exception;
-use Swoole\Timer;
+use Snowflake\Abstracts\Pool;
 
 /**
  * Class RedisClient
@@ -54,11 +52,12 @@ class Redis extends Pool
 	 * @param string $name
 	 * @param mixed $config
 	 * @return SRedis
-	 * @throws RedisConnectException|ComponentException
+	 * @throws RedisConnectException
+	 * @throws ComponentException
 	 */
     public function createClient(string $name, mixed $config): SRedis
     {
-//        $this->printClients($config['host'], $name, true);
+        $this->printClients($config['host'], $name, true);
         $redis = new SRedis();
         if (!$redis->connect($config['host'], (int)$config['port'], $config['timeout'])) {
             throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -120,13 +119,12 @@ class Redis extends Pool
         Context::remove($coroutineName);
     }
 
-    /**
-     * @param $name
-     * @param $time
-     * @param $client
-     * @return bool
-     * @throws Exception
-     */
+	/**
+	 * @param string $name
+	 * @param mixed $client
+	 * @return bool
+	 * @throws Exception
+	 */
     public function checkCanUse(string $name, mixed $client): bool
     {
         try {
@@ -138,7 +136,7 @@ class Redis extends Pool
                 $result = true;
             }
         } catch (\Throwable $exception) {
-            $this->error($exception);
+	        $this->addError($exception, 'redis');
             $result = false;
         } finally {
             if (!$result) {

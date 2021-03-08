@@ -12,8 +12,10 @@ namespace Snowflake\Abstracts;
 use Exception;
 
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -128,7 +130,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function debug(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -147,7 +149,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function info(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -165,7 +167,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function success(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -185,7 +187,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function warning(mixed $message, string $method = __METHOD__, string $file = __FILE__)
 	{
@@ -206,7 +208,7 @@ class BaseObject implements Configure
 	 * @param mixed $message
 	 * @param null $method
 	 * @param null $file
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function error(mixed $message, $method = null, $file = null)
 	{
