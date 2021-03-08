@@ -67,7 +67,7 @@ class OnClose extends Callback
 	 */
 	private function name($server_port): string
 	{
-		return 'listen ' . $server_port . ' ' . Event::SERVER_CLOSE;
+		return 'listen ' . $server_port . ' ' . Event::SERVER_CLIENT_CLOSE;
 	}
 
 

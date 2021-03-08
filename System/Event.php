@@ -57,6 +57,7 @@ class Event extends BaseObject
     const SERVER_HANDSHAKE = 'on handshake';
     const SERVER_MESSAGE = 'on message';
     const SERVER_CLOSE = 'on close';
+    const SERVER_CLIENT_CLOSE = 'SERVER:CLIENT:CLOSE';
 
 
     /**
