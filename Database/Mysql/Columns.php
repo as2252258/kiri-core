@@ -55,6 +55,9 @@ class Columns extends Component
 	 */
 	private array $_auto_increment = [];
 
+
+	private array $_fields = [];
+
 	/**
 	 * @param string $table
 	 * @return $this
@@ -206,6 +209,31 @@ class Columns extends Component
 		return $this->columns('Default', 'Field');
 	}
 
+
+	/**
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function getFields(): array
+	{
+		if (empty($this->_fields)) {
+			$this->structure($this->table);
+		}
+		return $this->_fields[$this->table];
+	}
+
+
+	/**
+	 * @param $name
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function hasField(string $name): bool
+	{
+		return isset($this->getFields()[$name]);
+	}
+
+
 	/**
 	 * @return int|string|null
 	 * @throws Exception
@@ -282,7 +310,6 @@ class Columns extends Component
 				throw new Exception("The table " . $table . " not exists.");
 			}
 			return $this->columns[$table] = $this->resolve($column, $table);
-
 		}
 		return $this->columns[$table];
 	}
@@ -299,6 +326,9 @@ class Columns extends Component
 			$this->addPrimary($item, $table);
 			$column[$key]['Type'] = $this->clean($item['Type']);
 		}
+
+		$this->_fields[$table] = array_column($column, 'Default', 'Field');
+
 		return $column;
 	}
 

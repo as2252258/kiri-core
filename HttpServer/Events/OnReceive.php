@@ -36,7 +36,7 @@ class OnReceive extends Callback
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onHandler(\Swoole\Server $server, int $fd, int $reID, string $data): mixed
+	public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
 	{
 		try {
 			$client = $server->getClientInfo($fd, $reID);

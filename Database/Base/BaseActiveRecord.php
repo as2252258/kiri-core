@@ -12,8 +12,6 @@ namespace Database\Base;
 
 use Annotation\Event;
 use Annotation\Inject;
-use Annotation\Model\Get;
-use Annotation\Model\Set;
 use ArrayAccess;
 use Database\SqlBuilder;
 use Database\Traits\HasBase;
@@ -74,8 +72,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	private array $_annotations = [];
 
-
-	private array $_fields = [];
 
 	/**
 	 * @var bool
@@ -756,10 +752,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function has($attribute): bool
 	{
-		if (empty($this->_fields)) {
-			$this->_fields = static::getColumns()->format();
-		}
-		return isset($this->_fields[$attribute]);
+		return static::getColumns()->hasField($attribute);
 	}
 
 	/**ƒ
