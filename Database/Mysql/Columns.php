@@ -232,7 +232,8 @@ class Columns extends Component
 	{
 		$fields = $this->getFields();
 		if (!isset($fields[$name])) {
-			var_dump($name, $fields);
+			var_dump($name . '->' . (string)array_key_exists($name, $fields));
+			var_dump($fields);
 		}
 		return isset($fields[$name]);
 	}
