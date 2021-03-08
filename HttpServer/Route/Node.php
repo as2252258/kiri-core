@@ -435,13 +435,14 @@ class Node extends HttpService
 			return null;
 		}
 
+
+		$search = 'node_' . $search;
 		if (isset($this->childes[$search])) {
 			return $this->childes[$search];
 		}
 
 		$_searchMatch = '/<(\w+)?:(.+)?>/';
 		foreach ($this->childes as $key => $val) {
-			$key = 'node_' . $key;
 			if (preg_match($_searchMatch, $key, $match)) {
 				Input()->addGetParam($match[1] ?? '--', $search);
 				return $this->childes[$key];
