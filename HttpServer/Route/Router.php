@@ -10,9 +10,11 @@ use HttpServer\Http\Request;
 use HttpServer\IInterface\RouterInterface;
 
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 defined('ROUTER_TREE') or define('ROUTER_TREE', 1);
@@ -71,11 +73,24 @@ class Router extends HttpService implements RouterInterface
 
 	/**
 	 * @param $port
-	 * @param Closure|array $closure
-	 * @throws
+	 * @param Closure|array|string $closure
+	 * @param null $method
+	 * @throws ConfigException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
-	public function addPortListen($port, Closure|array $closure)
+	public function addPortListen($port, Closure|array|string $closure, $method = null)
 	{
+		if (is_string($closure)) {
+			if (empty($method)) {
+				throw new NotFindClassException($closure . '::' . $method);
+			}
+			$_closure = Snowflake::createObject($closure);
+			if (!method_exists($_closure, $method)) {
+				throw new NotFindClassException($closure . '::' . $method);
+			}
+		}
 		$this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
 	}
 
