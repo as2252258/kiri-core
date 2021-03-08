@@ -230,12 +230,7 @@ class Columns extends Component
 	 */
 	public function hasField(string $name): bool
 	{
-		$fields = $this->getFields();
-		if (!isset($fields[$name])) {
-			var_dump($name . '->' . (string)array_key_exists($name, $fields));
-			var_dump($fields);
-		}
-		return isset($fields[$name]);
+		return array_key_exists($name, $this->getFields());
 	}
 
 
