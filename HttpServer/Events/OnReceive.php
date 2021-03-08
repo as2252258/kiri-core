@@ -42,7 +42,11 @@ class OnReceive extends Callback
 			if (($node = $router->find_path($request)) === null) {
 				return $server->send($fd, Json::encode(['state' => 404]));
 			}
-			return $server->send($fd, $node->dispatch());
+
+			$dispatch = $node->dispatch();
+			if (!is_string($dispatch)) $dispatch = Json::encode($dispatch);
+
+			return $server->send($fd, $dispatch);
 		} catch (\Throwable $exception) {
 			return $server->send($fd, Json::encode(['state' => 500, 'message' => $exception->getMessage()]));
 		} finally {

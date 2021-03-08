@@ -44,7 +44,11 @@ class OnPacket extends Callback
 			if (($node = $router->find_path($request)) === null) {
 				return $server->sendto($host, $port, Json::encode(['state' => 404]));
 			}
-			return $server->sendto($host, $port, $node->dispatch());
+
+			$dispatch = $node->dispatch();
+			if (!is_string($dispatch)) $dispatch = Json::encode($dispatch);
+
+			return $server->sendto($host, $port, $dispatch);
 		} catch (\Throwable $exception) {
 			$response = Json::encode(['state' => 500, 'message' => $exception->getMessage()]);
 
