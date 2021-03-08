@@ -75,10 +75,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param $port
 	 * @param Closure|array|string $closure
 	 * @param null $method
-	 * @throws ConfigException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 * @throws Exception
+	 * @throws
 	 */
 	public function addPortListen($port, Closure|array|string $closure, $method = null)
 	{
