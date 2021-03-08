@@ -87,6 +87,8 @@ class Router extends HttpService implements RouterInterface
 			if (!method_exists($_closure, $method)) {
 				throw new NotFindClassException($closure . '::' . $method);
 			}
+
+			$closure = [$closure, $method];
 		}
 		$this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
 	}
