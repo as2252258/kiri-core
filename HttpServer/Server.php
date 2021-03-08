@@ -308,7 +308,7 @@ class Server extends HttpService
 		}
 		$event = Snowflake::app()->getEvent();
 		foreach ($config['events'] as $name => $_event) {
-			$event->on($name, $_event);
+			$event->on('listen ' . $config['port'] . ' ' . $name, $_event);
 		}
 	}
 
