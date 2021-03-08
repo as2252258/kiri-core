@@ -72,7 +72,7 @@ class Router extends HttpService implements RouterInterface
 	/**
 	 * @param $port
 	 * @param Closure|array $closure
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public function addPortListen($port, Closure|array $closure)
 	{
