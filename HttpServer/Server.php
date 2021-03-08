@@ -431,8 +431,8 @@ class Server extends HttpService
 		} else {
 			$this->onBind($newListener, 'packet', [$class = new OnPacket(), 'onHandler']);
 		}
-		$class->pack = $config['resolve']['pack'] ?? null;
-		$class->unpack = $config['resolve']['unpack'] ?? null;
+		$class->host = $config['host'];
+		$class->port = $config['port'];
 	}
 
 

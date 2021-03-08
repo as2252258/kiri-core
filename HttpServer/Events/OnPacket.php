@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
-use Closure;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Http\Request;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
 use Exception;
-use HttpServer\Events\Utility\DataResolve;
 
 /**
  * Class OnPacket
@@ -20,12 +20,10 @@ class OnPacket extends Callback
 {
 
 
-	/** @var ?Closure */
-	public ?Closure $unpack = null;
+	public int $port = 0;
 
 
-	/** @var ?Closure */
-	public ?Closure $pack = null;
+	public string $host = '';
 
 
 	/**
@@ -38,15 +36,18 @@ class OnPacket extends Callback
 	public function onHandler(Server $server, string $data, array $clientInfo): mixed
 	{
 		try {
-			$data = DataResolve::unpack($this->unpack, $clientInfo['address'], $clientInfo['port'], $data);
-			if (empty($data)) {
-				throw new Exception('Format error.');
+			$request = Request::createListenRequest($clientInfo, $server, $data);
+
+			[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
+
+			$router = Snowflake::app()->getRouter();
+			if (($node = $router->find_path($request)) === null) {
+				return $server->sendto($host, $port, Json::encode(['state' => 404]));
 			}
-			return $server->sendto($clientInfo['address'], $clientInfo['port'], DataResolve::pack($this->pack, $data));
+			return $server->sendto($host, $port, $node->dispatch());
 		} catch (\Throwable $exception) {
-			$response['message'] = $exception->getMessage();
-			$response['state'] = 500;
-			$response = DataResolve::pack($this->pack, $response);
+			$response = Json::encode(['state' => 500, 'message' => $exception->getMessage()]);
+
 			return $server->sendto($clientInfo['address'], $clientInfo['port'], $response);
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);

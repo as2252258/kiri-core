@@ -72,6 +72,16 @@ class HttpParams
 		}
 	}
 
+
+	/**
+	 * @return mixed
+	 */
+	public function getBody(): mixed
+	{
+		return $this->body;
+	}
+
+
 	/**
 	 * @param string $key
 	 * @param string $value
