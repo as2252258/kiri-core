@@ -45,9 +45,10 @@ class Json
 	 */
 	public static function decode($data, $asArray = true): mixed
 	{
-		if (is_array($data)) {
+		if (is_array($data) || is_numeric($data)) {
 			return $data;
 		}
+		if (!is_string($data)) return null;
 		return json_decode($data, $asArray);
 	}
 
