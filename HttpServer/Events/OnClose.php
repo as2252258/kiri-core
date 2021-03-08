@@ -46,19 +46,39 @@ class OnClose extends Callback
 	private function execute(Server $server, int $fd): void
 	{
 		try {
-			if (!$server instanceof WebsocketServer) {
-				return;
+			if (!$this->isWebsocket($server, $fd)) {
+				$client = $server->getClientInfo($fd);
+				fire($this->name($client['server_port']), [$server, $fd]);
+			} else {
+				$this->loadNode($server, $fd);
 			}
-			if (!$server->isEstablished($fd)) {
-				return;
-			}
-			$this->loadNode($server, $fd);
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);
 			logger()->insert();
 		}
+	}
+
+
+	/**
+	 * @param $server_port
+	 * @return string
+	 */
+	private function name($server_port): string
+	{
+		return 'listen ' . $server_port . ' ' . Event::SERVER_CLOSE;
+	}
+
+
+	/**
+	 * @param $server
+	 * @param $fd
+	 * @return bool
+	 */
+	private function isWebsocket($server, $fd): bool
+	{
+		return $server instanceof WebsocketServer && $server->isEstablished($fd);
 	}
 
 
