@@ -304,19 +304,21 @@ class Response extends HttpService
 //		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
 //		$this->response->gzip(5);
 
-		while ($file = fread($open, $limit)) {
-			$this->response->write($file);
-			fseek($open, $offset);
-			if ($sleep > 0) {
-				sleep($sleep);
-			}
-			if ($offset >= $stat['size']) {
-				break;
-			}
-			$offset += $limit;
-		}
-
-		$this->response->end();
+		$this->response->sendfile($path);
+//
+//		while ($file = fread($open, $limit)) {
+//			$this->response->write($file);
+//			fseek($open, $offset);
+//			if ($sleep > 0) {
+//				sleep($sleep);
+//			}
+//			if ($offset >= $stat['size']) {
+//				break;
+//			}
+//			$offset += $limit;
+//		}
+//
+//		$this->response->end();
 		$this->response = null;
 
 		return '';
