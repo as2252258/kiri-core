@@ -177,6 +177,9 @@ class Response extends HttpService
 	 */
 	private function parseData($context): mixed
 	{
+		if ($context === null) {
+			return '';
+		}
 		if (isset($this->_format_maps[$this->format])) {
 			$config['class'] = $this->_format_maps[$this->format];
 		} else {
