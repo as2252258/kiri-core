@@ -5,6 +5,7 @@ namespace Snowflake\Jwt;
 
 use Exception;
 use HttpServer\Http\HttpHeaders;
+use ReflectionException;
 use Snowflake\Cache\Redis;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Str;
@@ -12,6 +13,7 @@ use Snowflake\Exception\AuthException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 
@@ -453,6 +455,8 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @return Redis|\Redis
 	 * @throws ComponentException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	private function getRedis(): Redis|\Redis
 	{
