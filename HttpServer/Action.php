@@ -105,6 +105,7 @@ trait Action
 		echo '.';
 		$files = new \DirectoryIterator($this->getWorkerPath());
 		if ($files->getSize() < 1) {
+			unset($files);
 			return false;
 		}
 		foreach ($files as $file) {
@@ -117,7 +118,9 @@ trait Action
 			} else {
 				@unlink($file->getRealPath());
 			}
+			unset($file);
 		}
+		unset($files);
 		return true;
 	}
 

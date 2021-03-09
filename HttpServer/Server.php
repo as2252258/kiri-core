@@ -191,6 +191,7 @@ class Server extends HttpService
 				exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
 			}
 			if (!empty($output)) {
+				unset($output);
 				return true;
 			}
 		}
