@@ -294,10 +294,14 @@ class Response extends HttpService
 		$name = explode(DIRECTORY_SEPARATOR, $path);
 
 		$stat = fstat($open);
-		$this->response->setHeader('Content-Length', $stat['size']);
 		$this->response->setHeader('Content-Type', 'model/gltf-binary');
-		$this->response->setHeader('content-encoding', 'gzip');
+		$this->response->setHeader('accept-ranges', 'bytes');
+		$this->response->setHeader('age', '0');
+		$this->response->setHeader('cache-control', 'max-age=600');
+		$this->response->setHeader('vary', 'Accept-Encoding');
+		$this->response->setHeader('via', '1.1 varnish');
 		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
+		$this->response->gzip(5);
 
 		while ($file = fread($open, $limit)) {
 			$this->response->write($file);
