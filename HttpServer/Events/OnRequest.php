@@ -10,6 +10,7 @@ use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -47,7 +48,7 @@ class OnRequest extends Callback
 			return \send(null);
 		} catch (ExitException | Error | \Throwable $exception) {
 			if ($exception instanceof ExitException) {
-				return \send($exception->getMessage(), $exception->getCode());
+				return \send(Json::to($exception->getCode(), $exception->getMessage()));
 			}
 			return $this->sendErrorMessage($request, $response, $exception);
 		}
