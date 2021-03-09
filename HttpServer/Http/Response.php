@@ -295,9 +295,9 @@ class Response extends HttpService
 
 		$stat = fstat($open);
 		$this->response->setHeader('Content-Length', $stat['size']);
-		$this->response->setHeader('Content-Type', 'application/octet-stream');
+		$this->response->setHeader('Content-Type', 'model/gltf-binary');
+		$this->response->setHeader('content-encoding', 'gzip');
 		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
-		$this->response->setHeader('Content-Transfer-Encoding', 'binary');
 
 		while ($file = fread($open, $limit)) {
 			$this->response->write($file);
