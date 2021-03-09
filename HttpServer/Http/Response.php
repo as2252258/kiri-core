@@ -219,7 +219,11 @@ class Response extends HttpService
 		$this->response->status($status);
 		$this->response->header('Content-Type', $this->getContentType());
 		$this->response->header('Run-Time', $this->getRuntime());
-		$this->response->end($this->headers($sendData));
+		if (!empty($sendData)) {
+			$this->response->end($this->headers($sendData));
+		} else {
+			$this->response->end();
+		}
 		$this->response = null;
 		unset($this->response);
 		return $sendData;
