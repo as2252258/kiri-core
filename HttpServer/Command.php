@@ -11,6 +11,7 @@ use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindPropertyException;
+use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 
 /**
@@ -48,7 +49,7 @@ class Command extends \Console\Command
 			return 'Service is running. Please use restart.';
 		}
 
-		$manager->shutdown();
+		Process::kill(Snowflake::getMasterPid(), SIGTERM);
 		if ($dtl->get('action') == 'stop') {
 			return 'shutdown success.';
 		}
