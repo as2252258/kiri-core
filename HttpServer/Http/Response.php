@@ -291,36 +291,22 @@ class Response extends HttpService
 	{
 		$open = fopen($path, 'r');
 
-		$name = explode(DIRECTORY_SEPARATOR, $path);
-
 		$stat = fstat($open);
-		$this->response->setHeader('Content-Type', 'model/gltf-binary');
-		$this->response->setHeader('accept-ranges', 'bytes');
-		$this->response->setHeader('age', '0');
-		$this->response->setHeader('cache-control', 'max-age=600');
-		$this->response->setHeader('vary', 'Accept-Encoding');
-		$this->response->setHeader('via', '1.1 varnish');
-//		$this->response->setHeader('content-encoding', 'gzip');
-//		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
-		$this->response->gzip(5);
 
-		$this->response->sendfile($path);
-//
-//		while ($file = fread($open, $limit)) {
-//			$this->response->write($file);
-//			fseek($open, $offset);
-//			if ($sleep > 0) {
-//				sleep($sleep);
-//			}
-//			if ($offset >= $stat['size']) {
-//				break;
-//			}
-//			$offset += $limit;
-//		}
-//
-//		$this->response->end();
+		$this->headers(null);
+		while ($file = fread($open, $limit)) {
+			$this->response->write($file);
+			fseek($open, $offset);
+			if ($sleep > 0) {
+				sleep($sleep);
+			}
+			if ($offset >= $stat['size']) {
+				break;
+			}
+			$offset += $limit;
+		}
+		$this->response->end();
 		$this->response = null;
-
 		return '';
 	}
 
