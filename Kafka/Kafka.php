@@ -46,16 +46,12 @@ class Kafka extends \Snowflake\Process\Process
 
 	/**
 	 * @param array $kafkaServer
-	 * @throws ComponentException
+	 * @throws \Exception
 	 */
 	private function waite(array $kafkaServer)
 	{
 		try {
-			$prefix = rtrim(Snowflake::app()->id, ':');
-
-			if (!Snowflake::getPlatform()->isMac()) {
-				swoole_set_process_name($prefix . ' Kafka Consumer ' . $kafkaServer['topic']);
-			}
+			name('Kafka Consumer ' . $kafkaServer['topic']);
 
 			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
 			if (empty($config) && empty($topic) && empty($conf)) {

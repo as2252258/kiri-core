@@ -10,6 +10,7 @@ use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
+use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -566,6 +567,9 @@ if (!function_exists('name')) {
 		if (Snowflake::getPlatform()->isMac()) {
 			return;
 		}
+
+		$name = Config::get('id', false, 'system') .' '. $name;
+
 		swoole_set_process_name($name);
 	}
 

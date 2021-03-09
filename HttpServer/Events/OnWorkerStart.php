@@ -28,7 +28,6 @@ class OnWorkerStart extends Callback
 	 * @param int $worker_id
 	 *
 	 * @return mixed
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	public function onHandler(Server $server, int $worker_id): void
@@ -40,6 +39,8 @@ class OnWorkerStart extends Callback
 			$attribute = Snowflake::app()->getAttributes();
 			$attribute->read(directory('app'), 'App');
 		}
+
+		$this->set_process_name($server, $worker_id);
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
@@ -53,24 +54,20 @@ class OnWorkerStart extends Callback
 	 * @param Server $server
 	 * @param int $worker_id
 	 * @throws ComponentException
-	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function onTask(Server $server, int $worker_id)
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
 		fire(Event::SERVER_TASK_START);
-
-		$this->set_process_name($server, $worker_id);
 	}
 
 
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
-	 * @param $prefix
 	 * @throws ComponentException
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	public function onWorker(Server $server, int $worker_id)
@@ -84,29 +81,21 @@ class OnWorkerStart extends Callback
 			$this->addError($exception);
 			write($exception->getMessage(), 'worker');
 		}
-		$this->set_process_name($server, $worker_id);
 	}
 
 
 	/**
 	 * @param $socket
 	 * @param $worker_id
-	 * @return string
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	private function set_process_name($socket, $worker_id): mixed
+	private function set_process_name($socket, $worker_id): void
 	{
-		$prefix = Config::get('id', false, 'system');
 		if ($worker_id >= $socket->setting['worker_num']) {
-			$name = $prefix . ' Task: No.' . $worker_id;
+			name('Task: No.' . $worker_id);
 		} else {
-			$name = $prefix . ' worker: No.' . $worker_id;
+			name('Worker: No.' . $worker_id);
 		}
-		if (Snowflake::getPlatform()->isMac()) {
-			return 1;
-		}
-		return swoole_set_process_name($name);
 	}
 
 
