@@ -300,7 +300,7 @@ class Response extends HttpService
 		$this->response->setHeader('cache-control', 'max-age=600');
 		$this->response->setHeader('vary', 'Accept-Encoding');
 		$this->response->setHeader('via', '1.1 varnish');
-		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
+//		$this->response->setHeader('Content-Disposition', ' attachment; filename="' . end($name) . '"');
 //		$this->response->gzip(5);
 
 		while ($file = fread($open, $limit)) {
