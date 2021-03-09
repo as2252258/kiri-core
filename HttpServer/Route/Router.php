@@ -12,6 +12,7 @@ use HttpServer\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
@@ -515,7 +516,9 @@ class Router extends HttpService implements RouterInterface
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 
-			return send($exception->getMessage(), 200);
+			$Code = $exception->getCode() == 0 ? 500 : $exception->getCode();
+
+			return send(Json::to($Code, $exception->getMessage()), 200);
 		}
 	}
 
