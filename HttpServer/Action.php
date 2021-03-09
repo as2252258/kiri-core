@@ -60,6 +60,7 @@ trait Action
 		if (!empty($output)) {
 			exec("kill -15 $content");
 		}
+		unset($content);
 		$this->close($server);
 	}
 
@@ -90,7 +91,7 @@ trait Action
 			if (!$this->masterIdCheck()) {
 				break;
 			}
-			usleep(100);
+			sleep(1);
 		}
 		echo PHP_EOL;
 	}
@@ -107,6 +108,8 @@ trait Action
 			return false;
 		}
 		foreach ($files as $file) {
+			clearstatcache(true, $file->getFilename());
+
 			$content = file_get_contents($file->getRealPath());
 			exec("ps -ax | awk '{ print $1 }' | grep -e '^{$content}$'", $output);
 			if (count($output) > 0) {

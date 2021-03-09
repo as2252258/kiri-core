@@ -159,7 +159,6 @@ class Server extends HttpService
 	 * @param $host
 	 * @param $Port
 	 * @return Packet|Websocket|Receive|Http|null
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
