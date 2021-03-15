@@ -197,8 +197,7 @@ abstract class BaseApplication extends Service
 	/**
 	 * @param $name
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function clone($name): mixed
 	{
@@ -233,8 +232,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Logger
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getLogger(): Logger
 	{
@@ -244,8 +242,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Producer
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getKafka(): Producer
 	{
@@ -255,8 +252,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return \Redis|Redis
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getRedis(): Redis|\Redis
 	{
@@ -275,8 +271,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return ErrorHandler
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getError(): ErrorHandler
 	{
@@ -310,8 +305,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Response
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getResponse(): Response
 	{
@@ -320,8 +314,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Request
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getRequest(): Request
 	{
@@ -332,8 +325,7 @@ abstract class BaseApplication extends Service
 	/**
 	 * @param $name
 	 * @return Table
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getTable($name): Table
 	{
@@ -343,8 +335,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Config
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getConfig(): Config
 	{
@@ -354,8 +345,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Router
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getRouter(): Router
 	{
@@ -365,8 +355,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Event
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getEvent(): Event
 	{
@@ -376,8 +365,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Jwt
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getJwt(): Jwt
 	{
@@ -387,8 +375,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Server
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getServer(): Server
 	{
@@ -398,8 +385,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Http|Packet|Receive|Websocket|null
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getSwoole(): Packet|Websocket|Receive|Http|null
 	{
@@ -409,9 +395,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return SAnnotation
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function getAttributes(): SAnnotation
 	{
@@ -421,8 +405,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Async
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getAsync(): Async
 	{
@@ -432,8 +415,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return ObjectPool
-	 * @throws ReflectionException
-	 * @throws NotFindClassException|ComponentException
+	 * @throws Exception
 	 */
 	public function getObject(): ObjectPool
 	{
