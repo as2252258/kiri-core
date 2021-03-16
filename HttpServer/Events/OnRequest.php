@@ -69,7 +69,7 @@ class OnRequest extends Callback
 		} catch (ExitException | Error | \Throwable $exception) {
 			return $this->sendErrorMessage($request, $response, $exception);
 		} finally {
-			file(Event::SYSTEM_RESOURCE_RELEASES);
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
 			\logger()->insert();
 		}
 	}
