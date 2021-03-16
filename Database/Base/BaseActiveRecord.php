@@ -133,7 +133,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function init()
 	{
-		$this->_annotations = [];
 		if (!Context::hasContext(Relation::class)) {
 			$relation = Snowflake::createObject(Relation::class);
 			$this->_relation = Context::setContext(Relation::class, $relation);
@@ -145,9 +144,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function createAnnotation()
 	{
