@@ -58,7 +58,7 @@ class CollectionIterator extends \ArrayIterator
 	{
 		$model = $this->model;
 		if (is_object($model)) {
-			return $model->setAttributes($current);
+			$model = get_class($model);
 		}
 		return objectPool($model, function () use ($model) {
 			return new $model();
