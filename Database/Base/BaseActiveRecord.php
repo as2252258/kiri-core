@@ -425,16 +425,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (empty($param)) {
 			return $this;
 		}
-
 		$this->_attributes = array_merge($this->_attributes, $param);
-//
-//		foreach ($param as $key => $val) {
-//			if ($this->has($key)) {
-//				$this->setAttribute($key, $val);
-//			} else {
-//				$this->$key = $val;
-//			}
-//		}
 		return $this;
 	}
 
