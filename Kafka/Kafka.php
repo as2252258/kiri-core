@@ -11,15 +11,9 @@ use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\WaitGroup;
-use Swoole\IDEHelper\StubGenerators\Swoole;
 use Swoole\Process;
-use Snowflake\Abstracts\Config as SConfig;
-use Swoole\Timer;
 use Throwable;
 
 /**
@@ -73,7 +67,7 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param ConsumerTopic $topic
 	 * @param $interval
-	 * @throws ComponentException
+	 * @throws \Exception
 	 */
 	private function resolve(ConsumerTopic $topic, $interval)
 	{
@@ -100,7 +94,7 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param $topic
 	 * @param $message
-	 * @throws ComponentException
+	 * @throws \Exception
 	 */
 	protected function handlerExecute($topic, $message)
 	{
@@ -127,7 +121,7 @@ class Kafka extends \Snowflake\Process\Process
 	/**
 	 * @param $kafka
 	 * @return array
-	 * @throws ComponentException
+	 * @throws \Exception
 	 */
 	private function kafkaConfig($kafka): array
 	{
