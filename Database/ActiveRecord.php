@@ -268,6 +268,9 @@ class ActiveRecord extends BaseActiveRecord
 	public function toArray(): array
 	{
 		$data = $this->_attributes;
+
+		var_dump($this->getAnnotation(self::ANNOTATION_GET));
+
 		foreach ($this->getAnnotation(self::ANNOTATION_GET) as $key => $item) {
 			if (!isset($data[$key])) continue;
 
