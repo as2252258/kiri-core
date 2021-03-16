@@ -56,23 +56,20 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-			$this->event->trigger(self::BEFORE_REQUEST, [$request]);
+			/** @var HRequest $request */
+			[$request, $response] = OnRequest::createContext($request, $response);
 
-			[$request, $response] = static::create($request, $response);
-			if (!$request->is('favicon.ico')) {
-				return \router()->dispatch();
-			}
+			$this->event->dispatch(self::BEFORE_REQUEST, [$request]);
 
-			return \send(null);
+			$result = $request->dispatch();
+
+			$this->event->dispatch(self::AFTER_REQUEST, [$request, $result]);
+
+			return $result;
 		} catch (ExitException | Error | \Throwable $exception) {
-			if ($exception instanceof ExitException) {
-				return \send(Json::to($exception->getCode(), $exception->getMessage()));
-			}
 			return $this->sendErrorMessage($request, $response, $exception);
 		} finally {
 			$this->event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
-			$this->event->trigger(self::AFTER_REQUEST, [$request]);
-
 			$this->logger->insert();
 		}
 	}
@@ -85,7 +82,7 @@ class OnRequest extends Callback
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public static function create($request, $response): array
+	public static function createContext($request, $response): array
 	{
 		return [HRequest::create($request), HResponse::create($response)];
 	}
@@ -96,13 +93,13 @@ class OnRequest extends Callback
 	 * @param $sResponse
 	 * @param $exception
 	 * @return bool|string
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	protected function sendErrorMessage($sRequest, $sResponse, $exception): bool|string
 	{
-		$this->error($exception);
-		$params = Snowflake::app()->getLogger()->exception($exception);
+		$this->error($exception->getMessage());
+		$this->event->dispatch(self::AFTER_REQUEST, [$sRequest, $exception]);
+
 		if ($sResponse instanceof Response) {
 			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
@@ -111,7 +108,11 @@ class OnRequest extends Callback
 		$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->headers->get('access-control-request-headers'));
 		$sResponse->addHeader('Access-Control-Request-Method', $sRequest->headers->get('access-control-request-method'));
 
-		return $sResponse->send($params, 200);
+		if (!($exception instanceof ExitException)) {
+			return $sResponse->send(\logger()->exception($exception), 200);
+		} else {
+			return $sResponse->send($exception->getMessage(), 200);
+		}
 	}
 
 }

@@ -177,12 +177,13 @@ class Event extends BaseObject
     }
 
 
-    /**
-     * @param $name
-     * @param array $params
-     * @param null $scope
-     * @return bool
-     */
+	/**
+	 * @param $name
+	 * @param array $params
+	 * @param null $scope
+	 * @return bool
+	 * @throws Exception
+	 */
     public function dispatch($name, $params = [], $scope = null): bool
     {
         return $this->trigger($name, $params, $scope);
@@ -219,7 +220,7 @@ class Event extends BaseObject
      * @return bool
      * @throws Exception
      */
-    private function execute($event, $parameter)
+    private function execute($event, $parameter): bool
     {
         try {
             $meta = $this->mergeParams($event[1], $parameter);

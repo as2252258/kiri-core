@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 
+use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\ArrayAccess;
@@ -15,6 +16,7 @@ use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use stdClass;
 use Swoole\Server;
 use function router;
 
@@ -434,6 +436,16 @@ class Request extends HttpService
 	public function isNotFound(): bool
 	{
 		return Json::to(404, 'Page ' . $this->getUri() . ' not found.');
+	}
+
+
+	/**
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function dispatch(): mixed
+	{
+		return $this->is('favicon.ico') ? \send(null) : \router();
 	}
 
 

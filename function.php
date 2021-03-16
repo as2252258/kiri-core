@@ -592,10 +592,10 @@ if (!function_exists('send')) {
 	/**
 	 * @param $context
 	 * @param $statusCode
-	 * @return bool|Response|stdClass|string
+	 * @return mixed
 	 * @throws Exception
 	 */
-	function send($context, $statusCode = 404): Response|bool|string|stdClass
+	function send($context, $statusCode = 404): mixed
 	{
 		return \response()->send($context, $statusCode);
 	}
