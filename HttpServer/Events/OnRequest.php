@@ -11,6 +11,7 @@ use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
 use Snowflake\Core\Json;
+use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -28,6 +29,24 @@ class OnRequest extends Callback
 {
 
 
+	public Event $event;
+	public Logger $logger;
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function init()
+	{
+		$this->event = Snowflake::app()->getEvent();
+		$this->logger = Snowflake::app()->getLogger();
+	}
+
+
+	const BEFORE_REQUEST = 'beforeRequest';
+	const AFTER_REQUEST = 'afterRequest';
+
+
 	/**
 	 * @param Request $request
 	 * @param Response $response
@@ -36,21 +55,25 @@ class OnRequest extends Callback
 	 */
 	public function onHandler(Request $request, Response $response): mixed
 	{
-		Coroutine::defer(function () use ($request) {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
-		});
 		try {
+			$this->event->trigger(self::BEFORE_REQUEST, [$request]);
+
 			[$request, $response] = static::create($request, $response);
 			if (!$request->is('favicon.ico')) {
 				return \router()->dispatch();
 			}
+
 			return \send(null);
 		} catch (ExitException | Error | \Throwable $exception) {
 			if ($exception instanceof ExitException) {
 				return \send(Json::to($exception->getCode(), $exception->getMessage()));
 			}
 			return $this->sendErrorMessage($request, $response, $exception);
+		} finally {
+			$this->event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
+			$this->event->trigger(self::AFTER_REQUEST, [$request]);
+
+			$this->logger->insert();
 		}
 	}
 
