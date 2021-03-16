@@ -426,8 +426,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return $this;
 		}
 		foreach ($param as $key => $val) {
-			var_dump($this->has($key), $key);
-			if (!$this->has($key)) {
+			if ($this->has($key)) {
 				$this->setAttribute($key, $val);
 			} else {
 				$this->$key = $val;
