@@ -215,18 +215,13 @@ class Response extends HttpService
 	/**
 	 * @param $sendData
 	 * @param $status
-	 * @return mixed
+	 * @return string
 	 */
-	private function sendData($sendData, $status): mixed
+	private function sendData($sendData, $status): string
 	{
-		$this->response->status($status);
-		$this->response->header('Content-Type', $this->getContentType());
-		$this->response->header('Run-Time', $this->getRuntime());
-		if (!empty($sendData)) {
-			$this->response->end($this->headers($sendData));
-		} else {
-			$this->response->end();
-		}
+		$sendData = $this->setHeaders($status, $sendData);
+
+		$this->response->end($sendData);
 		$this->response = null;
 		unset($this->response);
 		return $sendData;
@@ -234,17 +229,21 @@ class Response extends HttpService
 
 
 	/**
+	 * @param $status
 	 * @param $sendData
 	 * @return string
 	 */
-	private function headers($sendData): string
+	private function setHeaders($status, $sendData): string
 	{
-		if (!empty($this->headers) && is_array($this->headers)) {
-			var_dump($this->headers);
-			foreach ($this->headers as $key => $header) {
-				$this->response->header($key, $header, true);
-			}
-			$this->headers = [];
+		$this->response->status($status);
+		$this->response->header('Content-Type', $this->getContentType());
+		$this->response->header('Run-Time', $this->getRuntime());
+
+		if (empty($this->headers) || !is_array($this->headers)) {
+			return $sendData == null ? '' : $sendData;
+		}
+		foreach ($this->headers as $key => $header) {
+			$this->response->header($key, $header, true);
 		}
 		return $sendData == null ? '' : $sendData;
 	}
