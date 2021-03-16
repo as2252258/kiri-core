@@ -12,8 +12,6 @@ use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use HttpServer\Http\Context;
 use Snowflake\Core\ArrayAccess;
@@ -58,7 +56,7 @@ if (!function_exists('annotation')) {
 
 	/**
 	 * @return Annotation
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	function annotation(): Annotation
 	{
@@ -74,9 +72,7 @@ if (!function_exists('recursive_directory')) {
 
 	/**
 	 * @param DirectoryIterator $file
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	function recursive_callback(DirectoryIterator $file)
 	{
@@ -144,7 +140,7 @@ if (!function_exists('isUrl')) {
 	 * @param bool $get_info
 	 * @return false|array
 	 */
-	function isUrl($url, $get_info = true)
+	function isUrl($url, $get_info = true): bool|array
 	{
 		$queryMatch = '/((http[s]?):\/\/)?(([\w\-\_]+\.)+\w+(:\d+)?)(\/.*)?/';
 		if (!preg_match($queryMatch, $url, $outPut)) {
@@ -273,7 +269,7 @@ if (!function_exists('write')) {
 	/**
 	 * @param string $messages
 	 * @param string $category
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	function write(string $messages, $category = 'app')
 	{
@@ -288,7 +284,7 @@ if (!function_exists('fire')) {
 	/**
 	 * @param string $event
 	 * @param array $params
-	 * @throws ComponentException
+	 * @throws Exception
 	 * @throws Exception
 	 */
 	function fire(string $event, array $params = [])
@@ -305,7 +301,7 @@ if (!function_exists('objectPool')) {
 	 * @param string $className
 	 * @param callable $construct
 	 * @return mixed
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	function objectPool(mixed $className, callable $construct): mixed
 	{
@@ -319,7 +315,7 @@ if (!function_exists('objectRecover')) {
 	 * @param string $className
 	 * @param $object
 	 * @return mixed
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	function objectRecover(mixed $className, $object): void
 	{
@@ -362,7 +358,7 @@ if (!function_exists('logger')) {
 
 	/**
 	 * @return Logger
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	function logger(): Logger
 	{
@@ -530,7 +526,7 @@ if (!function_exists('listen')) {
 	 * @param $callback
 	 * @param $params
 	 * @param $isAppend
-	 * @throws ComponentException
+	 * @throws Exception
 	 * @throws Exception
 	 */
 	function listen($name, $callback, $params = [], $isAppend = true)
@@ -678,7 +674,7 @@ if (!function_exists('router')) {
 
 	/**
 	 * @return Router
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	function router(): Router
 	{
