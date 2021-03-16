@@ -189,13 +189,14 @@ class Event extends BaseObject
     }
 
 
-    /**
-     * @param $name
-     * @param null $parameter
-     * @param null $handler
-     * @param false $is_remove
-     * @return bool
-     */
+	/**
+	 * @param $name
+	 * @param null $parameter
+	 * @param null $handler
+	 * @param false $is_remove
+	 * @return bool
+	 * @throws Exception
+	 */
     public function trigger($name, $parameter = null, $handler = null, $is_remove = false): bool
     {
         $events = $this->get($name, $handler);
@@ -237,7 +238,7 @@ class Event extends BaseObject
      * @param $parameter
      * @return array
      */
-    #[Pure] private function mergeParams($defaultParameter, $parameter = []): array
+    private function mergeParams($defaultParameter, $parameter = []): array
     {
         if (empty($defaultParameter)) {
             $defaultParameter = $parameter;
