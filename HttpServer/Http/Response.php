@@ -240,8 +240,9 @@ class Response extends HttpService
 	private function headers($sendData): string
 	{
 		if (!empty($this->headers) && is_array($this->headers)) {
+			var_dump($this->headers);
 			foreach ($this->headers as $key => $header) {
-				$this->response->header($key, $header);
+				$this->response->header($key, $header, true);
 			}
 			$this->headers = [];
 		}

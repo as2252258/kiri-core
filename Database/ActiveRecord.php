@@ -280,7 +280,7 @@ class ActiveRecord extends BaseActiveRecord
 
 
 	/**
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function recover()
 	{
