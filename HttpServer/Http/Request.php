@@ -445,7 +445,7 @@ class Request extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		return $this->is('favicon.ico') ? \send(null) : \router();
+		return $this->is('favicon.ico') ? \send(null) : \router()->dispatch();
 	}
 
 
