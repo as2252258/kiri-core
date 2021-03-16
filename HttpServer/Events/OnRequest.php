@@ -36,15 +36,11 @@ class OnRequest extends Callback
 	/**
 	 * @throws Exception
 	 */
-//	public function init()
-//	{
-////		$this->event = Snowflake::app()->getEvent();
-//		$this->logger = Snowflake::app()->getLogger();
-//	}
-
-
-	const BEFORE_REQUEST = 'beforeRequest';
-	const AFTER_REQUEST = 'afterRequest';
+	public function init()
+	{
+		$this->event = Snowflake::app()->getEvent();
+		$this->logger = Snowflake::app()->getLogger();
+	}
 
 
 	/**
@@ -59,18 +55,18 @@ class OnRequest extends Callback
 			/** @var HRequest $request */
 			[$request, $response] = OnRequest::createContext($request, $response);
 
-//			$this->event->dispatch(Event::EVENT_BEFORE_REQUEST, [$request]);
+			$this->event->dispatch(Event::EVENT_BEFORE_REQUEST, [$request]);
 
 			$result = $request->dispatch();
 
-//			$this->event->dispatch(Event::EVENT_AFTER_REQUEST, [$request, $result]);
+			$this->event->dispatch(Event::EVENT_AFTER_REQUEST, [$request, $result]);
 
 			return $result;
 		} catch (ExitException | Error | \Throwable $exception) {
 			return $this->sendErrorMessage($request, $response, $exception);
 		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			\logger()->insert();
+			$this->event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
+			$this->logger->insert();
 		}
 	}
 
@@ -102,7 +98,7 @@ class OnRequest extends Callback
 			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
 
-//		$this->event->dispatch(Event::EVENT_AFTER_REQUEST, [$sRequest, $exception]);
+		$this->event->dispatch(Event::EVENT_AFTER_REQUEST, [$sRequest, $exception]);
 
 		$headers = $sRequest->headers->get('access-control-request-headers');
 		$methods = $sRequest->headers->get('access-control-request-method');
