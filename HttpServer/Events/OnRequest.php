@@ -104,9 +104,12 @@ class OnRequest extends Callback
 			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
 
+		$headers = $sRequest->headers->get('access-control-request-headers');
+		$methods = $sRequest->headers->get('access-control-request-method');
+
 		$sResponse->addHeader('Access-Control-Allow-Origin', '*');
-		$sResponse->addHeader('Access-Control-Allow-Headers', $sRequest->headers->get('access-control-request-headers'));
-		$sResponse->addHeader('Access-Control-Request-Method', $sRequest->headers->get('access-control-request-method'));
+		$sResponse->addHeader('Access-Control-Allow-Headers', $headers);
+		$sResponse->addHeader('Access-Control-Request-Method', $methods);
 
 		if (!($exception instanceof ExitException)) {
 			return $sResponse->send(\logger()->exception($exception), 200);
