@@ -213,8 +213,8 @@ class BaseObject implements Configure
 	public function error(mixed $message, $method = null, $file = null)
 	{
 		$socket = Snowflake::app()->getLogger();
-		if (!is_string($message)) {
-			$message = print_r($message, true);
+		if ($message instanceof \Throwable) {
+			$message = $message->getMessage() . " on line " . $message->getLine() . " at file " . $message->getFile();
 		}
 		$content = (empty($method) ? '' : $method . ': ') . $message;
 
