@@ -51,7 +51,6 @@ class OnWorkerStart extends Callback
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function onTask(Server $server, int $worker_id)
@@ -65,7 +64,6 @@ class OnWorkerStart extends Callback
 	/**
 	 * @param Server $server
 	 * @param int $worker_id
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function onWorker(Server $server, int $worker_id)
