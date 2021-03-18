@@ -62,10 +62,13 @@ class OnMessage extends Callback
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function resolve($event, Frame $frame, $server): mixed
+	private function resolve($event, Frame $frame,Server $server): mixed
 	{
-		if ($event->exists(Event::SERVER_MESSAGE)) {
-			$event->trigger(Event::SERVER_MESSAGE, [$server, $frame]);
+		$clientInfo = $server->getClientInfo($frame->fd);
+
+		$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
+		if ($event->exists($eventName)) {
+			$event->trigger($eventName, [$server, $frame]);
 		} else {
 			$frame->data = json_decode($frame->data, true);
 		}

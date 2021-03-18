@@ -86,9 +86,22 @@ class OnHandshake extends Callback
 	 */
 	public function onHandler(SRequest $request, SResponse $response): void
 	{
-		$this->execute($request, $response);
-		fire(Event::SYSTEM_RESOURCE_RELEASES);
-		logger()->insert();
+		try {
+			$this->execute($request, $response);
+
+			$clientInfo = Snowflake::getWebSocket()->getClientInfo($request->fd);
+
+			$event = Snowflake::app()->getEvent();
+
+			$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_HANDSHAKE;
+			$event->trigger($eventName, [$request, $response]);
+		} catch (\Throwable $exception) {
+			$this->addError($exception);
+			$this->disconnect($response, 500);
+		} finally {
+			fire(Event::SYSTEM_RESOURCE_CLEAN);
+			logger()->insert();
+		}
 	}
 
 
@@ -100,30 +113,22 @@ class OnHandshake extends Callback
 	 */
 	private function execute(SRequest $request, SResponse $response): mixed
 	{
-		try {
-			$this->resolveParse($request, $response);
-			if (isset($request->get['debug']) && $request->get['debug'] == 'test') {
-				return $this->connect($response, 101);
-			}
-			$router = Snowflake::app()->getRouter();
-
-			$sRequest = Request::create($request);
-			$sRequest->uri = '/' . Socket::HANDSHAKE . '::event';
-			$sRequest->headers->replace('request_method', 'sw::socket');
-			$sRequest->headers->replace('request_uri', $sRequest->uri);
-			$sRequest->parseUri();
-
-			if (($node = $router->find_path($sRequest)) === null) {
-				return $this->disconnect($response, 502);
-			}
-			return $node->dispatch($request, $response);
-		} catch (\Throwable $exception) {
-			$this->addError($exception);
-			return $this->disconnect($response, 500);
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_CLEAN);
-			logger()->insert();
+		$this->resolveParse($request, $response);
+		if (isset($request->get['debug']) && $request->get['debug'] == 'test') {
+			return $this->connect($response, 101);
 		}
+		$router = Snowflake::app()->getRouter();
+
+		$sRequest = Request::create($request);
+		$sRequest->uri = '/' . Socket::HANDSHAKE . '::event';
+		$sRequest->headers->replace('request_method', 'sw::socket');
+		$sRequest->headers->replace('request_uri', $sRequest->uri);
+		$sRequest->parseUri();
+
+		if (($node = $router->find_path($sRequest)) === null) {
+			return $this->disconnect($response, 502);
+		}
+		return $node->dispatch($request, $response);
 	}
 
 
