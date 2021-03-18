@@ -35,10 +35,8 @@ class OnWorkerStart extends Callback
 		putenv('state=start');
 		putenv('worker=' . $worker_id);
 
-		if (env('debug', 'false') == 'true') {
-			$attribute = Snowflake::app()->getAttributes();
-			$attribute->read(directory('app'), 'App');
-		}
+		$attribute = Snowflake::app()->getAttributes();
+		$attribute->read(directory('app'), 'App');
 
 		$this->set_process_name($server, $worker_id);
 
