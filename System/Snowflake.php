@@ -39,8 +39,8 @@ class Snowflake
 	public static Container $container;
 
 
-	/** @var Application */
-	private static Application $service;
+	/** @var ?Application */
+	private static ?Application $service = null;
 
 
 	/**
@@ -54,9 +54,9 @@ class Snowflake
 	}
 
 	/**
-	 * @return mixed
+	 * @return Application|null
 	 */
-	public static function app(): Application
+	public static function app(): ?Application
 	{
 		return static::$service;
 	}
