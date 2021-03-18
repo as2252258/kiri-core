@@ -38,7 +38,7 @@ class Context extends BaseContext
 	 * @param null $key
 	 * @return array
 	 */
-	private static function setStatic($id, $context, $key = null): array
+	private static function setStatic($id, $context, $key = null): mixed
 	{
 		if (empty($key)) {
 			return static::$_contents[$id] = $context;
