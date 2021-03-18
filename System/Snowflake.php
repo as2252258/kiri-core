@@ -263,7 +263,7 @@ class Snowflake
 	 */
 	public static function localhost(): mixed
 	{
-		return Snowflake::app()->getFirstLocal();
+		return current(swoole_get_local_ip());
 	}
 
 
