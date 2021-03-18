@@ -254,7 +254,16 @@ class SqlBuilder extends Component
 	 */
 	public function tableName(): string
 	{
-		return $this->query->modelClass::getTable();
+		if ($this->query->from instanceof \Closure) {
+			$this->query->from = call_user_func($this->query->from, new ActiveQuery($this->query->modelClass));
+		}
+		if ($this->query->from instanceof ActiveQuery) {
+			$this->query->from = '(' . SqlBuilder::builder($this->query->from)->get($this->query->from) . ')';
+		}
+		if (empty($this->query->from)) {
+			return $this->query->modelClass::getTable();
+		}
+		return $this->query->from;
 	}
 
 }
