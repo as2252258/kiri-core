@@ -60,6 +60,17 @@ class Producer extends Component
 
 
 	/**
+	 * @param string $groupId
+	 * @return Producer
+	 */
+	public function setGroupId(string $groupId): static
+	{
+		$this->conf->set('group.id', $groupId);
+		return $this;
+	}
+
+
+	/**
 	 * @param $servers
 	 * @return Producer
 	 */
