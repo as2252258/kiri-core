@@ -41,13 +41,6 @@ class ServerInotify extends Process
 	public function onHandler(\Swoole\Process $process): void
 	{
 		set_error_handler([$this, 'onErrorHandler']);
-		if (env('debug') != 'true') {
-			Timer::tick(100000, function () {
-
-			});
-			return;
-		}
-
 		$this->dirs = Config::get('inotify', false, [APP_PATH]);
 		if (extension_loaded('inotify')) {
 			$this->inotify = inotify_init();
@@ -72,7 +65,10 @@ class ServerInotify extends Process
 	private function loadDirs($isReload = false)
 	{
 		foreach ($this->dirs as $value) {
-			$this->loadByDir(realpath($value), $isReload);
+			if (is_bool($path = realpath($value))) {
+				continue;
+			}
+			$this->loadByDir($path, $isReload);
 		}
 	}
 
@@ -103,6 +99,9 @@ class ServerInotify extends Process
 	 */
 	private function loadByDir($path, $isReload = false): void
 	{
+		if (!is_string($path)) {
+			return;
+		}
 		$path = rtrim($path, '/');
 		foreach (glob(realpath($path) . '/*') as $value) {
 			if (is_dir($value)) {
