@@ -13,6 +13,7 @@ namespace Snowflake\Process;
 use Exception;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Event;
@@ -58,11 +59,20 @@ class ServerInotify extends Process
 			Event::add($this->inotify, [$this, 'check']);
 			Event::wait();
 		} else {
-			$this->loadByDir(APP_PATH . 'app');
-			$this->loadByDir(APP_PATH . 'routes');
-			$this->loadByDir(__DIR__ . '/../../');
-
+			$this->loadDirs();
 			$this->tick();
+		}
+	}
+
+
+	/**
+	 * @param bool $isReload
+	 * @throws Exception
+	 */
+	private function loadDirs($isReload = false)
+	{
+		foreach ($this->dirs as $value) {
+			$this->loadByDir(realpath($value), $isReload);
 		}
 	}
 
@@ -78,9 +88,8 @@ class ServerInotify extends Process
 		if ($this->isReloading) {
 			return;
 		}
-		$this->loadByDir(APP_PATH . 'app', true);
-		$this->loadByDir(APP_PATH . 'routes', true);
-		$this->loadByDir(__DIR__ . '/../../', true);
+
+		$this->loadDirs(true);
 
 		Timer::after(2000, [$this, 'tick']);
 	}
@@ -201,9 +210,7 @@ class ServerInotify extends Process
 		$this->trigger_reload();
 		$this->int = -1;
 
-		$this->loadByDir(APP_PATH . 'app');
-		$this->loadByDir(APP_PATH . 'routes');
-		$this->loadByDir(__DIR__ . '/../../');
+		$this->loadDirs();
 
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
@@ -241,7 +248,7 @@ class ServerInotify extends Process
 	 * @param $message
 	 * @param $file
 	 * @param $line
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	protected function onErrorHandler($code, $message, $file, $line)
 	{
