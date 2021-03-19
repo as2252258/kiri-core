@@ -106,6 +106,7 @@ class CrontabProcess extends Process
             return;
         }
         $this->names[$name]->clearTimer();
+        unset($this->names[$name]);
     }
 
 
