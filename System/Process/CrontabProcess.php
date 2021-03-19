@@ -33,7 +33,6 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-
         while (true) {
             try {
                 $content = $process->read();
