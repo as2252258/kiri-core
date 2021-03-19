@@ -4,17 +4,10 @@
 namespace Snowflake\Process;
 
 
-use ReflectionException;
-use Snowflake\Core\Json;
 use Snowflake\Crontab;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
 use Swoole\Coroutine;
-use Swoole\Coroutine\Barrier;
+use Swoole\Coroutine\WaitGroup;
 use Swoole\Coroutine\Channel;
-use Swoole\Exception;
 use Swoole\Timer;
 
 /**
@@ -26,7 +19,7 @@ class CrontabProcess extends Process
 
 
     private Channel $channel;
-    private Coroutine\WaitGroup $waitGroup;
+    private WaitGroup $waitGroup;
 
 
     /** @var Crontab[] $names */
@@ -39,17 +32,23 @@ class CrontabProcess extends Process
     public function onHandler(\Swoole\Process $process): void
     {
         $this->channel = new Channel(1000);
-
-        $this->waitGroup = new Coroutine\WaitGroup();
-        Coroutine::create(function () {
-            $this->waitGroup->add(1);
-            $this->readByCha();
+        Coroutine\go(function () {
+            $this->waitGroup();
         });
-        $this->waitGroup->wait(-1);
-
         while (true) {
             $this->channel->push($process->read());
         }
+    }
+
+
+    private function waitGroup()
+    {
+        $this->waitGroup = new WaitGroup();
+        $this->waitGroup->add();
+        Coroutine\go(function () {
+            $this->readByCha();
+        });
+        $this->waitGroup->wait(-1);
     }
 
 
@@ -118,7 +117,8 @@ class CrontabProcess extends Process
 //        };
 //        $timer = $content->getTickTime() * 10;
 
-        $this->waitGroup->add(1);
+        $this->waitGroup->add();
+
 
         var_dump(serialize($content));
 
