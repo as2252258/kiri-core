@@ -4,7 +4,7 @@
 namespace Snowflake\Process;
 
 
-use Snowflake\Exception\ComponentException;
+use Exception;
 use Snowflake\Snowflake;
 use Swoole\Timer;
 
@@ -18,7 +18,7 @@ class Biomonitoring extends Process
 
 	/**
 	 * @param \Swoole\Process $process
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function onHandler(\Swoole\Process $process): void
 	{

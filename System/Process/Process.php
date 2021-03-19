@@ -39,7 +39,6 @@ abstract class Process extends \Swoole\Process implements SProcess
 
 	/**
 	 * @param Process $process
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function _load(Process $process)
