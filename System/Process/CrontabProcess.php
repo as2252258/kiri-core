@@ -95,13 +95,25 @@ class CrontabProcess extends Process
             $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
             $content->execute($this);
         };
-        $timer = $content->getTickTime() * 10;
-        if ($content->isLoop()) {
-            $content->setTimerId(Timer::tick($timer, $runTicker));
-        } else {
-            $content->setTimerId(Timer::after($timer, $runTicker));
-        }
-        $this->names[$content->getName()] = $content;
+//        $timer = $content->getTickTime() * 10;
+
+        Timer::after(10000, function () use ($content) {
+            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
+            $content->execute($this);
+        });
+
+//        if ($content->isLoop()) {
+//            $content->setTimerId(Timer::tick($timer, function () use ($content) {
+//                $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
+//                $content->execute($this);
+//            }));
+//        } else {
+//            $content->setTimerId(Timer::after($timer, function () use ($content) {
+//                $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
+//                $content->execute($this);
+//            }));
+//        }
+//        $this->names[$content->getName()] = $content;
     }
 
 
