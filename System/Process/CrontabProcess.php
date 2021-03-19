@@ -54,6 +54,8 @@ class CrontabProcess extends Process
             }
         } catch (\Throwable $exception) {
             $this->application->error($exception->getMessage());
+        } finally {
+            $this->waitGroup();
         }
     }
 
