@@ -35,7 +35,7 @@ class Crontab extends Component
 
 		$crontab = ['isLoop' => $isLoop, 'handler' => $handler, 'tick' => $tickTime, 'params' => $params];
 
-		$redis->zAdd('system:crontab', $executeTime, serialize($crontab));
+		$redis->zAdd('system:crontab', (string)$executeTime, serialize($crontab));
 	}
 
 }

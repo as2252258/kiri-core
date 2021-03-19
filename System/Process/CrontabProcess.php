@@ -73,8 +73,9 @@ class CrontabProcess extends Process
 		$score = time();
 		$redis = Snowflake::app()->getRedis();
 
-		$lists = $redis->zRangeByScore('system:crontab', (string)$score, (string)$score);
-		$redis->zRemRangeByScore('system:crontab', (string)$score, (string)$score);
+		$lists = $redis->zRangeByScore('system:crontab', '0', (string)$score);
+		var_dump($lists);
+		$redis->zRemRangeByScore('system:crontab', '0', (string)$score);
 
 		$barrier = Barrier::make();
 		foreach ($lists as $list) {
