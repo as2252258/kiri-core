@@ -91,15 +91,15 @@ class CrontabProcess extends Process
     {
         /** @var Crontab $content */
         $content = unserialize($content);
-        $runTicker = function (Crontab $crontab) {
+        $runTicker = function () use ($content) {
             $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-            $crontab->execute($this);
+            $content->execute($this);
         };
         $timer = $content->getTickTime() * 10;
         if ($content->isLoop()) {
-            $content->setTimerId(Timer::tick($timer, $runTicker, $content));
+            $content->setTimerId(Timer::tick($timer, $runTicker));
         } else {
-            $content->setTimerId(Timer::after($timer, $runTicker, $content));
+            $content->setTimerId(Timer::after($timer, $runTicker));
         }
         $this->names[$content->getName()] = $content;
     }
