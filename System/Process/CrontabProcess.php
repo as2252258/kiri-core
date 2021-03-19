@@ -120,8 +120,8 @@ class CrontabProcess extends Process
             Timer::clear($this->names[$name]);
         }
         $callback = function () use ($content) {
-            var_dump('executes');
-            $content->execute($this);
+            var_dump('executes', Timer::stats());
+//            $content->execute($this);
         };
         $runTicker = [$content->getTickTime() * 1000, $callback];
         if ($content->isLoop()) {
@@ -129,7 +129,7 @@ class CrontabProcess extends Process
         } else {
             $this->names[$name] = Timer::after(...$runTicker);
         }
-        var_dump($this->names, Timer::stats());
+        var_dump($this->names);
     }
 
 
