@@ -297,7 +297,7 @@ class HttpParams
 	private function between($_length, $min, $max)
 	{
 		if ($min !== NULL && $_length < $min) {
-			throw new RequestException("The minimum value cannot be lower than $min");
+			throw new RequestException("The minimum value cannot be lower than $min, has length $_length");
 		}
 		if ($max !== NULL && $_length > $max) {
 			throw new RequestException("Maximum cannot exceed $max, has length " . $_length);
