@@ -6,13 +6,13 @@ namespace Snowflake;
 
 use Closure;
 use Exception;
-use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\BaseObject;
 
 /**
  * Class Async
  * @package Snowflake
  */
-class Crontab extends Component
+class Crontab extends BaseObject
 {
 
 
@@ -35,6 +35,62 @@ class Crontab extends Component
 
 
 	private int $execute_number = 0;
+
+	/**
+	 * @return array|Closure
+	 */
+	public function getHandler(): array|Closure
+	{
+		return $this->handler;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName(): string
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getParams(): mixed
+	{
+		return $this->params;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTickTime(): int
+	{
+		return $this->tickTime;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isLoop(): bool
+	{
+		return $this->isLoop;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getMaxExecuteNumber(): int
+	{
+		return $this->max_execute_number;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getExecuteNumber(): int
+	{
+		return $this->execute_number;
+	}
 
 
 	/**
@@ -91,19 +147,6 @@ class Crontab extends Component
 	public function setExecuteNumber(int $execute_number): void
 	{
 		$this->execute_number = $execute_number;
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function dispatch()
-	{
-		$redis = Snowflake::app()->getRedis();
-
-		$executeTime = $this->tickTime + time();
-
-		$redis->zAdd('system:crontab', (string)$executeTime, serialize($this));
 	}
 
 
