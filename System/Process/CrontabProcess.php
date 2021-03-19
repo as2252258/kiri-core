@@ -46,7 +46,7 @@ class CrontabProcess extends Process
     {
         $this->channel->push($process->read());
 
-        Coroutine::sleep(0.01);
+//        Coroutine::sleep(0.01);
 
         $this->readByWorker($process);
     }
@@ -58,7 +58,7 @@ class CrontabProcess extends Process
     private function waitGroup()
     {
         try {
-            $content = $this->channel->pop(-1);
+            $content = $this->channel->pop();
 
             $_content = json_decode($content, true);
             if (is_null($_content)) {
