@@ -129,7 +129,7 @@ class CrontabProcess extends Process
             $worker = Timer::after($content->getTickTime() * 1000, $runTicker);
         }
 //        $content->setTimerId($worker);
-        $this->names[$content->getName()] = $content;
+//        $this->names[$content->getName()] = $content;
     }
 
 
