@@ -114,7 +114,9 @@ class CrontabProcess extends Process
     {
         /** @var Crontab $content */
         $content = unserialize($content);
-        $runTicker = [$content->getTickTime() * 1000, [$content, 'execute']];
+        $runTicker = [$content->getTickTime() * 1000, function () use ($content) {
+            $content->execute($this);
+        }];
         if ($content->isLoop()) {
             $this->names[$content->getName()] = Timer::tick(...$runTicker);
         } else {
