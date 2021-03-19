@@ -95,16 +95,15 @@ class Crontab extends Component
 
 
 	/**
-	 * @param Crontab $crontab
 	 * @throws Exception
 	 */
-	public function dispatch(Crontab $crontab)
+	public function dispatch()
 	{
 		$redis = Snowflake::app()->getRedis();
 
 		$executeTime = $this->tickTime + time();
 
-		$redis->zAdd('system:crontab', (string)$executeTime, serialize($crontab));
+		$redis->zAdd('system:crontab', (string)$executeTime, serialize($this));
 	}
 
 
