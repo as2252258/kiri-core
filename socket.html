@@ -29,17 +29,17 @@
         format.insertBefore(div, count[0]);
     }
 
-    function close() {
+    function close(even) {
         setTimeout(function () {
             connect();
             sock.onmessage = message;
             sock.onclose = close;
         }, 3000);
-        console.log('onClose')
+        console.log(even, 'onClose')
     }
 
     function connect() {
-        sock = new WebSocket('ws://47.92.194.207:9530');
+        sock = new WebSocket('ws://47.92.194.207:9530?token=de5cfdf897-e2f-65de-b5686aca2-5575fe&access_token='+encodeURIComponent('ZgHcxCzVuV7kKQsf/j07N5J7BnC1VE5sS32/07utoibiLHLBXLa9htX3LMsik2DY2w0n+MUibQayG0diedcD8g==')+'&iv=iv340f0be2Fx0VvP');
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
