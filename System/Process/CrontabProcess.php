@@ -40,7 +40,7 @@ class CrontabProcess extends Process
             if (is_null($_content)) {
                 $this->jobDelivery($content);
             } else {
-                $this->otherAction($content);
+                $this->otherAction($_content);
             }
         }
     }
