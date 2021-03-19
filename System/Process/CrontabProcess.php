@@ -31,34 +31,8 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        $this->channel = new Channel(1000);
-        Coroutine\go(function () {
-            $this->waitGroup();
-        });
-        $this->readByWorker($process);
-    }
-
-
-    /**
-     * @param $process
-     */
-    private function readByWorker($process)
-    {
-        $this->channel->push($process->read());
-
-//        Coroutine::sleep(0.01);
-
-        $this->readByWorker($process);
-    }
-
-
-    /**
-     * @throws \Exception
-     */
-    private function waitGroup()
-    {
         try {
-            $content = $this->channel->pop();
+            $content = $process->read();
 
             $_content = json_decode($content, true);
             if (is_null($_content)) {
@@ -69,7 +43,7 @@ class CrontabProcess extends Process
         } catch (\Throwable $exception) {
             $this->application->error($exception->getMessage());
         } finally {
-            $this->waitGroup();
+            $this->onHandler($process);
         }
     }
 
