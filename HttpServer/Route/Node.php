@@ -575,27 +575,25 @@ class Node extends HttpService
 	 */
 	private function httpFilter(): mixed
 	{
-		if (!is_array($this->handler)) {
-			return $this->runWith(...func_get_args());
-		}
-
 		try {
-			[$class, $method] = $this->handler;
-
+			if (!is_array($this->handler)) {
+				return $this->runWith(...func_get_args());
+			}
 			/** @var HttpFilter $filter */
 			$filter = Snowflake::app()->get('filter');
-			$validator = $filter->check(get_class($class), $method);
-			if ($validator instanceof Validator && !$validator->validation()) {
-				response()->statusCode = 401;
-
+			$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
+			if (!($validator instanceof Validator)) {
+				return $this->runWith(...func_get_args());
+			}
+			if (!$validator->validation()) {
+				var_dump($validator->getError());
 				return Json::to(401, $validator->getError());
 			}
+			return $this->runWith(...func_get_args());
 		} catch (Throwable $throwable) {
 			$this->error($throwable->getMessage());
 			return Json::to(401, $throwable->getMessage());
 		}
-
-		return $this->runWith(...func_get_args());
 	}
 
 
