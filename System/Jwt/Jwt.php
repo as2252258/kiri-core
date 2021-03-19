@@ -384,9 +384,36 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 * @return mixed
 	 * @throws
 	 */
-	public function getCurrentOnlineUser(): mixed
+	public function getCurrentOnlineUser(): int
 	{
 		$this->data = request()->headers->getHeaders();
+
+		return $this->loadByCache();
+	}
+
+
+	/**
+	 * @param string $token
+	 * @param string $source
+	 * @return mixed
+	 * @throws AuthException
+	 */
+	public function getOnlineUserByToken(string $token, string $source = 'BROWSER'): int
+	{
+		$this->data['token'] = $token;
+		$this->data['source'] = $source;
+
+		return $this->loadByCache();
+	}
+
+
+	/**
+	 * @return int
+	 * @throws AuthException
+	 * @throws Exception
+	 */
+	private function loadByCache(): int
+	{
 		$model = $this->getUserModel();
 		if (empty($model)) {
 			throw new AuthException('授权信息已过期！');
@@ -397,16 +424,17 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		if (!$this->check($this->data, (int)$model['user'])) {
 			throw new AuthException('授权信息不合法！');
 		}
+
 		$this->expireRefresh();
 
-		return $model['user'];
+		return (int)$model['user'];
 	}
+
 
 	/**
 	 * @param array $header
 	 * @return mixed
 	 * @throws AuthException
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public static function checkAuth(array $header = []): mixed
@@ -454,9 +482,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 	/**
 	 * @return Redis|\Redis
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws
 	 */
 	private function getRedis(): Redis|\Redis
 	{
