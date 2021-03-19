@@ -78,6 +78,7 @@ class CrontabProcess extends Process
      */
     private function jobDelivery($content)
     {
+        /** @var Crontab $content */
         $content = unserialize($content);
         $this->names[$content->getName()] = $content;
 

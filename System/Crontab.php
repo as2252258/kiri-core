@@ -188,10 +188,10 @@ class Crontab extends BaseObject
     public function execute(): void
     {
         try {
+            var_dump('execute');
             call_user_func($this->handler, $this->params);
             $this->execute_number += 1;
-
-            if ($this->execute_number < $this->max_execute_number) {
+            if ($this->execute_number >= $this->max_execute_number) {
                 $this->clearTimer();
             }
         } catch (\Throwable $throwable) {
