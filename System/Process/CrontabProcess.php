@@ -35,6 +35,7 @@ class CrontabProcess extends Process
     {
         while (true) {
             $content = $process->read();
+            var_dump($content);
             $_content = json_decode($content, true);
             if (is_null($_content)) {
                 $this->jobDelivery($content);
