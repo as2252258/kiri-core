@@ -207,14 +207,14 @@ class HttpParams
 	/**
 	 * @param $name
 	 * @param bool $isNeed
-	 * @return array|null
+	 * @return mixed
 	 * @throws RequestException
 	 */
-	private function required($name, $isNeed = false): ?array
+	private function required($name, $isNeed = false): mixed
 	{
 		$body = array_merge($this->body?? [], $this->socket ?? []);
 
-		$int = $body ?? NULL;
+		$int = $body[$name] ?? NULL;
 		if (is_null($int) && $isNeed === true) {
 			throw new RequestException("You need to add request parameter $name");
 		}
