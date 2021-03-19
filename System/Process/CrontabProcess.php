@@ -35,8 +35,8 @@ class CrontabProcess extends Process
     {
         while (true) {
             $content = $process->read();
-            var_dump($content);
             $_content = json_decode($content, true);
+            var_dump($content, $_content);
             if (is_null($_content)) {
                 $this->jobDelivery($content);
             } else {
@@ -66,7 +66,7 @@ class CrontabProcess extends Process
             default => function () {
                 $this->application->error('unknown action');
             }
-        });
+        }, $content);
     }
 
 
@@ -76,6 +76,7 @@ class CrontabProcess extends Process
     private function jobDelivery($content)
     {
         $content = unserialize($content);
+        var_dump($content);
         $this->names[$content->getName()] = $content;
         if (!($content instanceof Crontab)) {
             return;
