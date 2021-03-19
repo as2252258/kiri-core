@@ -11,11 +11,13 @@ use HttpServer\Client\Curl;
 use HttpServer\Client\Http2;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
+use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 use Kafka\Producer;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
+use Snowflake\Crontab;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
@@ -43,6 +45,8 @@ use Snowflake\Pool\Pool as SPool;
  * @property Producer $kafka
  * @property Client $client
  * @property Curl $curl
+ * @property Crontab $crontab
+ * @property HttpFilter $filter
  */
 trait TraitApplication
 {

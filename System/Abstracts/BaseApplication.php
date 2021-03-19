@@ -28,6 +28,7 @@ use Annotation\Annotation as SAnnotation;
 use ReflectionException;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
+use Snowflake\Crontab;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
@@ -41,7 +42,6 @@ use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Snowflake\Event;
 use Snowflake\Pool\Pool as SPool;
-use Database\DatabasesProviders;
 use Swoole\Table;
 
 /**
@@ -445,6 +445,7 @@ abstract class BaseApplication extends Service
 			'jwt'               => ['class' => Jwt::class],
 			'async'             => ['class' => Async::class],
 			'filter'            => ['class' => HttpFilter::class],
+			'crontab'            => ['class' => Crontab::class],
 			'object'            => ['class' => ObjectPool::class],
 			'goto'              => ['class' => BaseGoto::class],
 			'http2'             => ['class' => Http2::class],
