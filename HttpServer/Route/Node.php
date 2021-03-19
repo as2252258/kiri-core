@@ -571,9 +571,6 @@ class Node extends HttpService
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function httpFilter(): mixed
@@ -589,6 +586,8 @@ class Node extends HttpService
 			$filter = Snowflake::app()->get('filter');
 			$validator = $filter->check(get_class($class), $method);
 			if ($validator instanceof Validator && !$validator->validation()) {
+				response()->statusCode = 401;
+
 				return Json::to(401, $validator->getError());
 			}
 		} catch (Throwable $throwable) {

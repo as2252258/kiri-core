@@ -33,17 +33,20 @@ class HttpParams
 
 	/** @var array */
 	private array $files = [];
+	private array $socket = [];
 
 	/**
 	 * HttpParams constructor.
 	 * @param $body
 	 * @param $get
 	 * @param $files
+	 * @param array $socket
 	 */
-	public function __construct($body, $get, $files)
+	public function __construct($body, $get, $files, $socket = [])
 	{
 		$this->gets = $get ?? [];
 		$this->files = $files ?? [];
+		$this->socket = $socket ?? [];
 		if (!is_array($body)) {
 			$this->body = Help::toArray($body);
 		} else {
@@ -172,7 +175,7 @@ class HttpParams
 	 */
 	#[Pure] public function load(): array
 	{
-		return array_merge($this->files ?? [], $this->body ?? [], $this->gets ?? []);
+		return array_merge($this->files ?? [], $this->body ?? [], $this->gets ?? [], $this->socket ?? []);
 	}
 
 	/**

@@ -7,6 +7,7 @@ namespace HttpServer\Events;
 use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -119,10 +120,14 @@ class OnHandshake extends Callback
 		}
 		$router = Snowflake::app()->getRouter();
 
+		/** @var Request $sRequest */
 		$sRequest = Request::create($request);
 		$sRequest->uri = '/' . Socket::HANDSHAKE . '::event';
 		$sRequest->headers->replace('request_method', 'sw::socket');
 		$sRequest->headers->replace('request_uri', $sRequest->uri);
+
+		$sRequest->params = new HttpParams();
+
 		$sRequest->parseUri();
 
 		if (($node = $router->find_path($sRequest)) === null) {
