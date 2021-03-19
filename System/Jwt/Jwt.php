@@ -458,10 +458,18 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	}
 
 	/**
+	 * @param null $token
+	 * @param null $source
 	 * @throws Exception
 	 */
-	private function expireRefresh()
+	public function expireRefresh($token = null, $source = null)
 	{
+		if (!empty($token)) {
+			$this->data['token'] = $token;
+		}
+		if (!empty($source)) {
+			$this->data['source'] = $source;
+		}
 		$key = $this->authKey($this->getSource(), $this->data['token']);
 		$this->getRedis()->expire($key, $this->timeout);
 	}
