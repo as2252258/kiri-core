@@ -69,6 +69,11 @@ class CrontabProcess extends Process
 		$lists = $redis->zRangeByScore('system:crontab', '0', (string)$score);
 		$redis->zRemRangeByScore('system:crontab', '0', (string)$score);
 
+		if (empty($lists)) {
+			$redis->release();
+			return;
+		}
+
 		$barrier = Barrier::make();
 		foreach ($lists as $list) {
 			$list = unserialize($list);

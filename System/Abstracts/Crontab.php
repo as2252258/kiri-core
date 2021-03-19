@@ -38,7 +38,9 @@ class Crontab extends Component
 		$redis = Snowflake::app()->getRedis();
 
 		$data = $redis->zRevRange('system:crontab', 0, -1);
-
+		if (empty($data)) {
+			return;
+		}
 		foreach ($data as $datum) {
 			/** @var \Snowflake\Crontab $crontab */
 			$crontab = unserialize($datum);
@@ -57,7 +59,7 @@ class Crontab extends Component
 	{
 		$redis = Snowflake::app()->getRedis();
 
-		$redis->zRemRangeByRank('system:crontab', '0', '-1');
+		$redis->del('system:crontab');
 	}
 
 
