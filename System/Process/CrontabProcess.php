@@ -43,17 +43,6 @@ class CrontabProcess extends Process
 
     private function waitGroup()
     {
-        $this->waitGroup = new WaitGroup();
-        $this->waitGroup->add();
-        Coroutine\go(function () {
-            $this->readByCha();
-        });
-        $this->waitGroup->wait(-1);
-    }
-
-
-    private function readByCha()
-    {
         try {
             $content = $this->channel->pop(-1);
 
@@ -117,14 +106,10 @@ class CrontabProcess extends Process
 //        };
 //        $timer = $content->getTickTime() * 10;
 
-        $this->waitGroup->add();
-
 
         var_dump(serialize($content));
 
         Timer::after(3000, function () use ($content) {
-            $this->waitGroup->add(-1);
-
             $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
             $content->execute($this);
         });
