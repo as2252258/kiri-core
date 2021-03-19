@@ -129,7 +129,7 @@ class CrontabProcess extends Process
         } else {
             $this->names[$name] = Timer::after(...$runTicker);
         }
-        var_dump($this->names);
+        var_dump($this->names, Timer::stats());
     }
 
 
