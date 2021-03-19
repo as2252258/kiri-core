@@ -80,18 +80,18 @@ class CrontabProcess extends Process
     {
         /** @var Crontab $content */
         $content = unserialize($content);
-        $this->names[$content->getName()] = $content;
-
         $runTicker = function (Crontab $crontab) {
+            var_dump(get_called_class());
             $crontab->execute();
         };
         $timer = $content->getTickTime() * 1000;
+        var_dump($timer);
         if ($content->isLoop()) {
-            $timerId = Timer::tick($timer, $runTicker, $content);
+            $content->setTimerId(Timer::tick($timer, $runTicker, $content));
         } else {
-            $timerId = Timer::after($timer, $runTicker, $content);
+            $content->setTimerId(Timer::after($timer, $runTicker, $content));
         }
-        $content->setTimerId($timerId);
+        $this->names[$content->getName()] = $content;
     }
 
 
