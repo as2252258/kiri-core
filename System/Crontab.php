@@ -158,7 +158,7 @@ class Crontab extends BaseObject
 		$redis = Snowflake::app()->getRedis();
 		try {
 			$this->execute_number += 1;
-			call_user_func($this->handler, $list['params'] ?? null);
+			call_user_func($this->handler, $this->params);
 			if ($this->isLoop === false) {
 				return;
 			}
