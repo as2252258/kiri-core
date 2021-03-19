@@ -116,7 +116,7 @@ class CrontabProcess extends Process
         $content = unserialize($content);
 
         $name = $content->getName();
-        if (isset($this->names)) {
+        if (isset($this->names[$name])) {
             Timer::clear($this->names[$name]);
         }
         $callback = function () use ($content) {
