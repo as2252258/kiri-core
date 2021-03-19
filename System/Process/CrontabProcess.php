@@ -34,13 +34,16 @@ class CrontabProcess extends Process
     public function onHandler(\Swoole\Process $process): void
     {
         while (true) {
-            $content = $process->read();
-            $_content = json_decode($content, true);
-            var_dump($content, $_content);
-            if (is_null($_content)) {
-                $this->jobDelivery($content);
-            } else {
-                $this->otherAction($_content);
+            try {
+                $content = $process->read();
+                $_content = json_decode($content, true);
+                if (is_null($_content)) {
+                    $this->jobDelivery($content);
+                } else {
+                    $this->otherAction($_content);
+                }
+            } catch (\Throwable $exception) {
+                $this->application->error($exception->getMessage());
             }
         }
     }
@@ -77,6 +80,7 @@ class CrontabProcess extends Process
     {
         $content = unserialize($content);
         $this->names[$content->getName()] = $content;
+        var_dump($content);
         if (!($content instanceof Crontab)) {
             return;
         }
