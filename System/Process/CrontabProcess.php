@@ -33,6 +33,7 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
+        Timer::set(['enable_coroutine' => false]);
         while (true) {
             try {
                 $content = $process->read();
@@ -92,7 +93,7 @@ class CrontabProcess extends Process
         /** @var Crontab $content */
         $content = unserialize($content);
         $runTicker = function (Crontab $crontab) {
-            $this->application->warning('execute crontab '.date('Y-m-d H:i:s'));
+            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
 
             if (!file_exists(APP_PATH . 'runTicker.log')) {
                 touch(APP_PATH . 'runTicker.log');
