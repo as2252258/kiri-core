@@ -114,6 +114,8 @@ class CrontabProcess extends Process
             $content->execute($this);
         });
 
+        var_dump(Timer::stats());
+
 //        if ($content->isLoop()) {
 //            $content->setTimerId(Timer::tick($timer, function () use ($content) {
 //                $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
