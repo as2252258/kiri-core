@@ -74,13 +74,12 @@ class CrontabProcess extends Process
 		$redis = Snowflake::app()->getRedis();
 
 		$lists = $redis->zRangeByScore('system:crontab', '0', (string)$score);
-		var_dump($lists);
 		$redis->zRemRangeByScore('system:crontab', '0', (string)$score);
 
 		$barrier = Barrier::make();
 		foreach ($lists as $list) {
 			$list = unserialize($list);
-			if (!isset($_list['handler']) || !is_callable($_list, true)) {
+			if (!isset($_list['handler']) || !is_callable($_list['handler'], true)) {
 				continue;
 			}
 			$this->channel->push($list);
