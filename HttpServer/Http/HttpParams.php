@@ -15,6 +15,7 @@ use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Help;
 use Snowflake\Core\Json;
+use Snowflake\Core\Str;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -275,7 +276,7 @@ class HttpParams
 		if (!is_string($string)) {
 			$string = json_encode($string, JSON_UNESCAPED_UNICODE);
 		}
-		$_length = strlen($string);
+		$_length = mb_strlen($string);
 		if (is_array($length)) {
 			if (count($length) < 2) {
 				array_unshift($length, 0);
