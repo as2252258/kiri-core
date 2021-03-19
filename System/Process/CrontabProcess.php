@@ -5,6 +5,7 @@ namespace Snowflake\Process;
 
 
 use ReflectionException;
+use Snowflake\Crontab;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
@@ -44,18 +45,10 @@ class CrontabProcess extends Process
 	 */
 	public function execute()
 	{
-		$redis = Snowflake::app()->getRedis();
 		while (true) {
+			/** @var Crontab $list */
 			$list = $this->channel->pop(-1);
-			if (isset($list['isLoop']) && isset($list['tick']) && $list['isLoop'] == 1) {
-				$redis->zAdd('system:crontab', time() + $list['tick'], serialize($list));
-			}
-			try {
-				call_user_func($list['handler'], $list['params'] ?? null);
-			} catch (\Throwable $throwable) {
-				$this->application->addError($throwable->getMessage());
-			}
-			$redis->release();
+			$list->execute();
 		}
 	}
 
@@ -79,7 +72,7 @@ class CrontabProcess extends Process
 		$barrier = Barrier::make();
 		foreach ($lists as $list) {
 			$list = unserialize($list);
-			if (!isset($list['handler']) || !is_callable($list['handler'], true)) {
+			if (!($list instanceof Crontab)) {
 				continue;
 			}
 			$this->channel->push($list);
