@@ -7,6 +7,7 @@ namespace Snowflake;
 use Closure;
 use Exception;
 use Snowflake\Abstracts\BaseObject;
+use Snowflake\Process\CrontabProcess;
 use Swoole\Timer;
 
 /**
@@ -185,7 +186,7 @@ class Crontab extends BaseObject
     /**
      * @throws Exception
      */
-    public function execute(): void
+    public function execute(CrontabProcess $process): void
     {
         try {
             var_dump('execute');
@@ -193,6 +194,9 @@ class Crontab extends BaseObject
             $this->execute_number += 1;
             if ($this->execute_number >= $this->max_execute_number) {
                 $this->clearTimer();
+                $process->clear($this->getName());
+            } else if (!$this->isLoop()) {
+                $process->clear($this->getName());
             }
         } catch (\Throwable $throwable) {
             $this->addError($throwable->getMessage());

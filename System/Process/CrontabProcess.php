@@ -56,20 +56,31 @@ class CrontabProcess extends Process
     {
         call_user_func(match ($content['action']) {
             'clear' => function ($content) {
-                if (!isset($this->names[$content['name']])) {
-                    return;
-                }
-                $this->names[$content['name']]->clearTimer();
+                $this->clear($content['name']);
             },
             'clearAll' => function () {
                 foreach ($this->names as $name => $crontab) {
                     $crontab->clearTimer();
+
+                    unset($this->names[$name], $crontab);
                 }
             },
             default => function () {
                 $this->application->error('unknown action');
             }
         }, $content);
+    }
+
+
+    /**
+     * @param string $name
+     */
+    public function clear(string $name)
+    {
+        if (!isset($this->names[$name])) {
+            return;
+        }
+        $this->names[$name]->clearTimer();
     }
 
 
@@ -82,7 +93,7 @@ class CrontabProcess extends Process
         $content = unserialize($content);
         $runTicker = function (Crontab $crontab) {
             var_dump(get_called_class());
-            $crontab->execute();
+            $crontab->execute($this);
         };
         $timer = $content->getTickTime() * 1000;
         var_dump($timer);
