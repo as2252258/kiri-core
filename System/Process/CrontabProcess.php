@@ -26,6 +26,7 @@ class CrontabProcess extends Process
 
 
     private Channel $channel;
+    private Coroutine\WaitGroup $waitGroup;
 
 
     /** @var Crontab[] $names */
@@ -38,9 +39,14 @@ class CrontabProcess extends Process
     public function onHandler(\Swoole\Process $process): void
     {
         $this->channel = new Channel(1000);
+
+        $this->waitGroup = new Coroutine\WaitGroup();
         Coroutine::create(function () {
+            $this->waitGroup->add(1);
             $this->readByCha();
         });
+        $this->waitGroup->wait(-1);
+
         while (true) {
             $this->channel->push($process->read());
         }
@@ -54,7 +60,6 @@ class CrontabProcess extends Process
 
             $_content = json_decode($content, true);
             if (is_null($_content)) {
-                var_dump($content);
                 $this->jobDelivery($content);
             } else {
                 $this->otherAction($_content);
@@ -113,7 +118,11 @@ class CrontabProcess extends Process
         };
 //        $timer = $content->getTickTime() * 10;
 
+        $this->waitGroup->add(1);
+
         Timer::after(10000, function () use ($content) {
+            $this->waitGroup->add(-1);
+
             $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
             $content->execute($this);
         });
