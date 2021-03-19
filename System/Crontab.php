@@ -18,11 +18,12 @@ class Crontab extends Component
 
 	/**
 	 * @param array|Closure $handler
+	 * @param mixed $params
 	 * @param int $tickTime
 	 * @param bool $isLoop
 	 * @throws Exception
 	 */
-	public function dispatch(array|Closure $handler, $tickTime = 1, $isLoop = false)
+	public function dispatch(array|Closure $handler, mixed $params = null, $tickTime = 1, $isLoop = false)
 	{
 		$redis = Snowflake::app()->getRedis();
 
@@ -32,9 +33,9 @@ class Crontab extends Component
 
 		$executeTime = time() + $tickTime;
 
-		$crontab = ['isLoop' => $isLoop, 'handler' => $handler, 'tick' => $tickTime];
+		$crontab = ['isLoop' => $isLoop, 'handler' => $handler, 'tick' => $tickTime, 'params' => $params];
 
-		$redis->sAdd('system:crontab', $executeTime, serialize($crontab));
+		$redis->zAdd('system:crontab', $executeTime, serialize($crontab));
 	}
 
 }

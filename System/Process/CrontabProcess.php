@@ -51,7 +51,7 @@ class CrontabProcess extends Process
 				$redis->zAdd('system:crontab', 0, time() + $list['tick'], serialize($list));
 			}
 			try {
-				call_user_func($list['handler']);
+				call_user_func($list['handler'], $list['params'] ?? null);
 			} catch (\Throwable $throwable) {
 				$this->application->addError($throwable->getMessage());
 			}
