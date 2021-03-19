@@ -116,34 +116,17 @@ class CrontabProcess extends Process
     {
         /** @var Crontab $content */
         $content = unserialize($content);
-//        $runTicker = function () use ($content) {
-//            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-//            $content->execute($this);
-//        };
-//        $timer = $content->getTickTime() * 10;
-
-
-        var_dump(serialize($content));
-
-        Timer::after(3000, function () use ($content) {
+        $runTicker = function () use ($content) {
             $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-//            $content->execute($this);
-        });
-
-        var_dump(Timer::stats());
-
-//        if ($content->isLoop()) {
-//            $content->setTimerId(Timer::tick($timer, function () use ($content) {
-//                $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-//                $content->execute($this);
-//            }));
-//        } else {
-//            $content->setTimerId(Timer::after($timer, function () use ($content) {
-//                $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-//                $content->execute($this);
-//            }));
-//        }
-//        $this->names[$content->getName()] = $content;
+            $content->execute($this);
+        };
+        $timer = $content->getTickTime() * 10;
+        if ($content->isLoop()) {
+            $content->setTimerId(Timer::tick($timer, $runTicker));
+        } else {
+            $content->setTimerId(Timer::after($timer, $runTicker));
+        }
+        $this->names[$content->getName()] = $content;
     }
 
 
