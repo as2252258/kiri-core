@@ -80,10 +80,7 @@ class CrontabProcess extends Process
     {
         $content = unserialize($content);
         $this->names[$content->getName()] = $content;
-        var_dump($content);
-        if (!($content instanceof Crontab)) {
-            return;
-        }
+
         $runTicker = function (Crontab $crontab) {
             $crontab->execute();
         };
