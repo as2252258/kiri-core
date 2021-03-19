@@ -44,7 +44,6 @@ class Crontab extends Component
 			$crontab = unserialize($datum);
 			if ($crontab->getName() == $name) {
 				$redis->zRem('system:crontab', $datum);
-				break;
 			}
 		}
 
