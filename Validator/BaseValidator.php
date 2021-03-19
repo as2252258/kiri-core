@@ -22,8 +22,7 @@ abstract class BaseValidator
 
 	protected array $params = [];
 
-	/** @var ActiveRecord */
-	protected ActiveRecord $model;
+	protected ?ActiveRecord $model = null;
 
 
 	/**
@@ -35,9 +34,9 @@ abstract class BaseValidator
 	}
 
 	/**
-	 * @return ActiveRecord
+	 * @return ActiveRecord|null
 	 */
-	public function getModel(): ActiveRecord
+	public function getModel(): ?ActiveRecord
 	{
 		return $this->model;
 	}
