@@ -112,8 +112,10 @@ class CrontabProcess extends Process
         var_dump(serialize($content));
 
         Timer::after(3000, function () use ($content) {
-            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-            $content->execute($this);
+//            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
+//            $content->execute($this);
+
+            var_dump(Timer::stats());
         });
 
         var_dump(Timer::stats());
