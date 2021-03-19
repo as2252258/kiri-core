@@ -79,7 +79,7 @@ class CrontabProcess extends Process
 		$barrier = Barrier::make();
 		foreach ($lists as $list) {
 			$list = unserialize($list);
-			if (!isset($_list['handler']) || !is_callable($_list['handler'], true)) {
+			if (!isset($list['handler']) || !is_callable($list['handler'], true)) {
 				continue;
 			}
 			$this->channel->push($list);
