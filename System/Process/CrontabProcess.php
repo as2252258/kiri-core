@@ -84,11 +84,8 @@ class CrontabProcess extends Process
                 $this->clear($content['name']);
             },
             'clearAll' => function () {
-                foreach ($this->names as $name => $crontab) {
-                    $crontab->clearTimer();
-
-                    unset($this->names[$name], $crontab);
-                }
+                $this->names = [];
+                Timer::clearAll();
             },
             default => function () {
                 $this->application->error('unknown action');
@@ -105,7 +102,7 @@ class CrontabProcess extends Process
         if (!isset($this->names[$name])) {
             return;
         }
-        $this->names[$name]->clearTimer();
+        Timer::exists($this->names[$name]) && Timer::clear($this->names[$name]);
         unset($this->names[$name]);
     }
 
@@ -117,19 +114,12 @@ class CrontabProcess extends Process
     {
         /** @var Crontab $content */
         $content = unserialize($content);
-        $runTicker = function () use ($content) {
-            var_dump('execute crontab ' . date('Y-m-d H:i:s'));
-//            $content->execute($this);
-        };
-        var_dump($content->getTickTime());
-        var_dump($content->isLoop());
+        $runTicker = [$content->getTickTime() * 1000, [$content, 'execute']];
         if ($content->isLoop()) {
-            $worker = Timer::tick($content->getTickTime() * 1000, $runTicker);
+            $this->names[$content->getName()] = Timer::tick(...$runTicker);
         } else {
-            $worker = Timer::after($content->getTickTime() * 1000, $runTicker);
+            $this->names[$content->getName()] = Timer::after(...$runTicker);
         }
-//        $content->setTimerId($worker);
-//        $this->names[$content->getName()] = $content;
     }
 
 
