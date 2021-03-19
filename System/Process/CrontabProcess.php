@@ -112,15 +112,17 @@ class CrontabProcess extends Process
     {
         /** @var Crontab $content */
         $content = unserialize($content);
-        $runTicker = function () use ($content) {
-            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
-            $content->execute($this);
-        };
+//        $runTicker = function () use ($content) {
+//            $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
+//            $content->execute($this);
+//        };
 //        $timer = $content->getTickTime() * 10;
 
         $this->waitGroup->add(1);
 
-        Timer::after(10000, function () use ($content) {
+        var_dump(serialize($content));
+
+        Timer::after(3000, function () use ($content) {
             $this->waitGroup->add(-1);
 
             $this->application->warning('execute crontab ' . date('Y-m-d H:i:s'));
