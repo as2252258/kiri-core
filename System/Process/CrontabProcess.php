@@ -92,14 +92,25 @@ class CrontabProcess extends Process
         /** @var Crontab $content */
         $content = unserialize($content);
         $runTicker = function (Crontab $crontab) {
-            var_dump(get_called_class());
+            $this->application->warning('execute crontab '.date('Y-m-d H:i:s'));
+
+            if (!file_exists(APP_PATH . 'runTicker.log')) {
+                touch(APP_PATH . 'runTicker.log');
+            }
+
+            file_put_contents(APP_PATH . 'runTicker.log', date('Y-m-d H:i:s'), FILE_APPEND);
+
             $crontab->execute($this);
         };
-        $timer = $content->getTickTime() * 1000;
-        var_dump($timer);
+        $timer = $content->getTickTime() * 10;
         if ($content->isLoop()) {
+
+            $this->application->warning('loop crontab');
+
             $content->setTimerId(Timer::tick($timer, $runTicker, $content));
         } else {
+            $this->application->warning('after crontab');
+
             $content->setTimerId(Timer::after($timer, $runTicker, $content));
         }
         $this->names[$content->getName()] = $content;
