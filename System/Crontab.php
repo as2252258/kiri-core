@@ -16,48 +16,93 @@ class Crontab extends Component
 {
 
 
-	public array|Closure $handler;
+	private array|Closure $handler;
 
 
-	public mixed $params;
+	private string $name = '';
 
 
-	public int $tickTime = 1;
+	private mixed $params;
 
 
-	public bool $isLoop = false;
+	private int $tickTime = 1;
 
 
-	public int $max_execute_number = -1;
+	private bool $isLoop = false;
 
 
-	public int $execute_number = 0;
+	private int $max_execute_number = -1;
+
+
+	private int $execute_number = 0;
 
 
 	/**
 	 * @param array|Closure $handler
+	 */
+	private function setHandler(array|Closure $handler): void
+	{
+		$this->handler = $handler;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	private function setName(string $name): void
+	{
+		$this->name = $name;
+	}
+
+	/**
 	 * @param mixed $params
+	 */
+	private function setParams(mixed $params): void
+	{
+		$this->params = $params;
+	}
+
+	/**
 	 * @param int $tickTime
+	 */
+	private function setTickTime(int $tickTime): void
+	{
+		$this->tickTime = $tickTime;
+	}
+
+	/**
 	 * @param bool $isLoop
+	 */
+	private function setIsLoop(bool $isLoop): void
+	{
+		$this->isLoop = $isLoop;
+	}
+
+	/**
 	 * @param int $max_execute_number
+	 */
+	private function setMaxExecuteNumber(int $max_execute_number): void
+	{
+		$this->max_execute_number = $max_execute_number;
+	}
+
+	/**
+	 * @param int $execute_number
+	 */
+	private function setExecuteNumber(int $execute_number): void
+	{
+		$this->execute_number = $execute_number;
+	}
+
+
+	/**
+	 * @param Crontab $crontab
 	 * @throws Exception
 	 */
-	public function dispatch(array|Closure $handler, mixed $params = null, $tickTime = 1, bool $isLoop = false, $max_execute_number = -1)
+	public function dispatch(Crontab $crontab)
 	{
 		$redis = Snowflake::app()->getRedis();
 
-		if (is_array($handler) && is_string($handler[0])) {
-			$handler[0] = Snowflake::createObject($handler[0]);
-		}
-
-		$executeTime = time() + $tickTime;
-
-		$crontab = new Crontab();
-		$crontab->max_execute_number = $max_execute_number;
-		$crontab->handler = $handler;
-		$crontab->params = $params;
-		$crontab->tickTime = $tickTime;
-		$crontab->isLoop = $isLoop;
+		$executeTime = $this->tickTime + time();
 
 		$redis->zAdd('system:crontab', (string)$executeTime, serialize($crontab));
 	}
