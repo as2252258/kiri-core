@@ -48,7 +48,7 @@ class CrontabProcess extends Process
 		while (true) {
 			$list = $this->channel->pop(-1);
 			if (isset($list['isLoop']) && isset($list['tick']) && $list['isLoop'] == 1) {
-				$redis->zAdd('system:crontab', 0, time() + $list['tick'], serialize($list));
+				$redis->zAdd('system:crontab', time() + $list['tick'], serialize($list));
 			}
 			try {
 				call_user_func($list['handler'], $list['params'] ?? null);
@@ -73,8 +73,8 @@ class CrontabProcess extends Process
 		$score = time();
 		$redis = Snowflake::app()->getRedis();
 
-		$lists = $redis->zRangeByScore('system:crontab', $score, $score);
-		$redis->zRemRangeByScore('system:crontab', $score, $score);
+		$lists = $redis->zRangeByScore('system:crontab', (string)$score, (string)$score);
+		$redis->zRemRangeByScore('system:crontab', (string)$score, (string)$score);
 
 		$barrier = Barrier::make();
 		foreach ($lists as $list) {
