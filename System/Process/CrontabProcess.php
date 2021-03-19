@@ -35,12 +35,26 @@ class CrontabProcess extends Process
         Coroutine\go(function () {
             $this->waitGroup();
         });
-        while (true) {
-            $this->channel->push($process->read());
-        }
+        $this->readByWorker($process);
     }
 
 
+    /**
+     * @param $process
+     */
+    private function readByWorker($process)
+    {
+        $this->channel->push($process->read());
+
+        Coroutine::sleep(0.01);
+
+        $this->readByWorker($process);
+    }
+
+
+    /**
+     * @throws \Exception
+     */
     private function waitGroup()
     {
         try {
