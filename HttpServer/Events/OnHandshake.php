@@ -126,7 +126,7 @@ class OnHandshake extends Callback
 		$sRequest->headers->replace('request_method', 'sw::socket');
 		$sRequest->headers->replace('request_uri', $sRequest->uri);
 
-		$sRequest->params = new HttpParams();
+		$sRequest->params = new HttpParams([], [], [], $request->get);
 
 		$sRequest->parseUri();
 
