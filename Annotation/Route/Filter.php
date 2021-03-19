@@ -5,6 +5,11 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
+use HttpServer\HttpFilter;
+use ReflectionException;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 
 /**
  * Class Filter
@@ -15,9 +20,9 @@ use Annotation\Attribute;
 
 	/**
 	 * Filter constructor.
-	 * @param string $uri
+	 * @param array $rules
 	 */
-	public function __construct(public string $uri)
+	public function __construct(public array $rules)
 	{
 	}
 
@@ -25,10 +30,18 @@ use Annotation\Attribute;
 	/**
 	 * @param array $handler
 	 * @return array
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindClassException
 	 */
 	public function execute(array $handler): array
 	{
-		// TODO: Implement execute() method.
+		[$class, $method] = $handler;
+
+		/** @var HttpFilter $filter */
+		$filter = Snowflake::app()->get('filter');
+		$filter->register(get_class($class), $method, $this->rules);
+
 		return $handler;
 	}
 

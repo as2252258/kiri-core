@@ -35,6 +35,7 @@ class Loader extends BaseObject
 	/**
 	 * @param $path
 	 * @param $namespace
+	 * @throws ComponentException
 	 */
 	public function loader($path, $namespace)
 	{

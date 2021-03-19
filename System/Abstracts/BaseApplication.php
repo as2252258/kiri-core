@@ -14,6 +14,7 @@ use Exception;
 use HttpServer\Client\Http2;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
+use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 
@@ -292,10 +293,10 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @throws ComponentException
+	 * @return SRedis
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @return SRedis
+	 * @throws ComponentException
 	 */
 	public function getRedisFromPool(): SRedis
 	{
@@ -443,6 +444,7 @@ abstract class BaseApplication extends Service
 			'redis'             => ['class' => Redis::class],
 			'jwt'               => ['class' => Jwt::class],
 			'async'             => ['class' => Async::class],
+			'filter'            => ['class' => HttpFilter::class],
 			'object'            => ['class' => ObjectPool::class],
 			'goto'              => ['class' => BaseGoto::class],
 			'http2'             => ['class' => Http2::class],

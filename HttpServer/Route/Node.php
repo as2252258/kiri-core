@@ -12,6 +12,7 @@ use HttpServer\Controller;
 use HttpServer\Http\Request;
 use Exception;
 
+use HttpServer\HttpFilter;
 use HttpServer\IInterface\After;
 use HttpServer\IInterface\Interceptor;
 use HttpServer\IInterface\Limits;
@@ -24,6 +25,7 @@ use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Throwable;
+use validator\Validator;
 use function Input;
 
 /**
@@ -563,6 +565,31 @@ class Node extends HttpService
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
+		return $this->httpFilter(...func_get_args());
+	}
+
+
+	/**
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function httpFilter(): mixed
+	{
+		if (!is_array($this->handler)) {
+			return $this->runWith(...func_get_args());
+		}
+		[$class, $method] = $this->handler;
+
+		/** @var HttpFilter $filter */
+		$filter = Snowflake::app()->get('filter');
+		$validator = $filter->check(get_class($class), $method);
+		if ($validator instanceof Validator && !$validator->validation()) {
+			return Json::to(401, $validator->getError());
+		}
+
 		return $this->runWith(...func_get_args());
 	}
 
