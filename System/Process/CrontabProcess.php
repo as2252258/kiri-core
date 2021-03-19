@@ -24,6 +24,10 @@ use Swoole\Timer;
 class CrontabProcess extends Process
 {
 
+
+    private Channel $channel;
+
+
     /** @var Crontab[] $names */
     public array $names = [];
 
@@ -33,18 +37,29 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
+        $this->channel = new Channel(1000);
+        Coroutine::create(function () {
+            $this->readByCha();
+        });
         while (true) {
-            try {
-                $content = $process->read();
-                $_content = json_decode($content, true);
-                if (is_null($_content)) {
-                    $this->jobDelivery($content);
-                } else {
-                    $this->otherAction($_content);
-                }
-            } catch (\Throwable $exception) {
-                $this->application->error($exception->getMessage());
+            $this->channel->push($process->read());
+        }
+    }
+
+
+    private function readByCha()
+    {
+        try {
+            $content = $this->channel->pop(-1);
+
+            $_content = json_decode($content, true);
+            if (is_null($_content)) {
+                $this->jobDelivery($content);
+            } else {
+                $this->otherAction($_content);
             }
+        } catch (\Throwable $exception) {
+            $this->application->error($exception->getMessage());
         }
     }
 
