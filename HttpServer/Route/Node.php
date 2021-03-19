@@ -581,13 +581,19 @@ class Node extends HttpService
 		if (!is_array($this->handler)) {
 			return $this->runWith(...func_get_args());
 		}
-		[$class, $method] = $this->handler;
 
-		/** @var HttpFilter $filter */
-		$filter = Snowflake::app()->get('filter');
-		$validator = $filter->check(get_class($class), $method);
-		if ($validator instanceof Validator && !$validator->validation()) {
-			return Json::to(401, $validator->getError());
+		try {
+			[$class, $method] = $this->handler;
+
+			/** @var HttpFilter $filter */
+			$filter = Snowflake::app()->get('filter');
+			$validator = $filter->check(get_class($class), $method);
+			if ($validator instanceof Validator && !$validator->validation()) {
+				return Json::to(401, $validator->getError());
+			}
+		} catch (Throwable $throwable) {
+			$this->error($throwable->getMessage());
+			return Json::to(401, $throwable->getMessage());
 		}
 
 		return $this->runWith(...func_get_args());
