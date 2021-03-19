@@ -27,7 +27,6 @@ class Crontab extends Component
     {
         /** @var CrontabProcess $redis */
         $redis = Snowflake::app()->get(CrontabProcess::class);
-        var_dump($redis);
         $redis->write(serialize($crontab));
     }
 
@@ -40,7 +39,6 @@ class Crontab extends Component
     {
         /** @var CrontabProcess $redis */
         $redis = Snowflake::app()->get(CrontabProcess::class);
-        var_dump($redis);
         $redis->write(Json::encode(['action' => 'clear', 'name' => $name]));
     }
 
@@ -52,7 +50,6 @@ class Crontab extends Component
     {
         /** @var CrontabProcess $redis */
         $redis = Snowflake::app()->get(CrontabProcess::class);
-        var_dump($redis);
         $redis->write(Json::encode(['action' => 'clearAll']));
     }
 
