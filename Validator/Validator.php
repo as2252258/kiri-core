@@ -148,10 +148,14 @@ class Validator extends BaseValidator
 	{
 		$define = ['field' => $field];
 		foreach ($rule as $key => $val) {
-			if (is_string($val) && method_exists($model, $val)) {
-				$this->validators[] = [$model, $val];
-				continue;
+
+			if (!is_null($model)) {
+				if (is_string($val) && method_exists($model, $val)) {
+					$this->validators[] = [$model, $val];
+					continue;
+				}
 			}
+
 			if (is_string($key)) {
 				$type = strtolower($key);
 				$define['value'] = $val;
