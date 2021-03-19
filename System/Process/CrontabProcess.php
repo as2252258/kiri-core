@@ -93,15 +93,14 @@ class CrontabProcess extends Process
         if (isset($this->names[$name])) {
             Timer::clear($this->names[$name]);
         }
-        $callback = function () use ($content) {
-            var_dump('executes', Timer::stats());
-//            $content->execute($this);
-        };
-        $runTicker = [$content->getTickTime() * 1000, $callback];
         if ($content->isLoop()) {
-            $this->names[$name] = Timer::tick(...$runTicker);
+            $this->names[$name] = Timer::tick(intval($content->getTickTime() * 1000), function ($content) {
+                $content->execute($this);
+            }, $content);
         } else {
-            $this->names[$name] = Timer::after(...$runTicker);
+            $this->names[$name] = Timer::after(intval($content->getTickTime() * 1000), function ($content) {
+                $content->execute($this);
+            }, $content);
         }
         var_dump($this->names);
     }
