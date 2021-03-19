@@ -40,7 +40,7 @@ class Crontab extends Component
 	/**
 	 * @param array|Closure $handler
 	 */
-	private function setHandler(array|Closure $handler): void
+	public function setHandler(array|Closure $handler): void
 	{
 		$this->handler = $handler;
 	}
@@ -48,7 +48,7 @@ class Crontab extends Component
 	/**
 	 * @param string $name
 	 */
-	private function setName(string $name): void
+	public function setName(string $name): void
 	{
 		$this->name = $name;
 	}
@@ -56,7 +56,7 @@ class Crontab extends Component
 	/**
 	 * @param mixed $params
 	 */
-	private function setParams(mixed $params): void
+	public function setParams(mixed $params): void
 	{
 		$this->params = $params;
 	}
@@ -64,7 +64,7 @@ class Crontab extends Component
 	/**
 	 * @param int $tickTime
 	 */
-	private function setTickTime(int $tickTime): void
+	public function setTickTime(int $tickTime): void
 	{
 		$this->tickTime = $tickTime;
 	}
@@ -72,7 +72,7 @@ class Crontab extends Component
 	/**
 	 * @param bool $isLoop
 	 */
-	private function setIsLoop(bool $isLoop): void
+	public function setIsLoop(bool $isLoop): void
 	{
 		$this->isLoop = $isLoop;
 	}
@@ -80,7 +80,7 @@ class Crontab extends Component
 	/**
 	 * @param int $max_execute_number
 	 */
-	private function setMaxExecuteNumber(int $max_execute_number): void
+	public function setMaxExecuteNumber(int $max_execute_number): void
 	{
 		$this->max_execute_number = $max_execute_number;
 	}
@@ -88,7 +88,7 @@ class Crontab extends Component
 	/**
 	 * @param int $execute_number
 	 */
-	private function setExecuteNumber(int $execute_number): void
+	public function setExecuteNumber(int $execute_number): void
 	{
 		$this->execute_number = $execute_number;
 	}
