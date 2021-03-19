@@ -122,6 +122,7 @@ class CrontabProcess extends Process
 //            $content->execute($this);
         };
         var_dump($content->getTickTime());
+        var_dump($content->isLoop());
         if ($content->isLoop()) {
             $worker = Timer::tick($content->getTickTime() * 1000, $runTicker);
         } else {
