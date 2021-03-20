@@ -65,6 +65,11 @@ class Request extends HttpService
 	const PLATFORM_WINDOWS = 'windows';
 
 
+	const HTTP_POST = 'post';
+	const HTTP_GET = 'get';
+	const HTTP_SOCKET = 'sw::socket';
+
+
 	/**
 	 * @var AuthIdentity|null
 	 */
