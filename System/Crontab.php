@@ -80,7 +80,7 @@ class Crontab extends BaseObject
      */
     public function getTickTime(): int
     {
-        return $this->tickTime * 1000;
+        return $this->tickTime;
     }
 
     /**
