@@ -47,6 +47,7 @@ class CrontabProcess extends Process
             $redis->zRemRangeByScore(ACrontab::CRONTAB_KEY, '0', (string)$startTime);
             foreach ($range as $value) {
                 $crontab = $redis->get('crontab:' . md5($value));
+                var_dump($value, $crontab);
                 if (empty($crontab) || !($crontab = unserialize($crontab))) {
                     continue;
                 }
