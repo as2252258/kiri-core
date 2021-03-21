@@ -41,6 +41,16 @@ class Crontab extends BaseObject
 
     private int $execute_number = 0;
 
+
+    /**
+     * @return $this
+     */
+    public function increment(): static
+    {
+        $this->execute_number += 1;
+        return $this;
+    }
+
     /**
      * @return array|Closure
      */
@@ -70,7 +80,7 @@ class Crontab extends BaseObject
      */
     public function getTickTime(): int
     {
-        return $this->tickTime;
+        return $this->tickTime * 1000;
     }
 
     /**
@@ -186,18 +196,10 @@ class Crontab extends BaseObject
     /**
      * @throws Exception
      */
-    public function execute(CrontabProcess $process): void
+    public function execute(): void
     {
         try {
-            $this->warning('execute crontab.');
-
             call_user_func($this->handler, $this->params);
-            $this->execute_number += 1;
-            if ($this->execute_number >= $this->max_execute_number) {
-                $process->clear($this->getName());
-            } else if (!$this->isLoop()) {
-                $process->clear($this->getName());
-            }
         } catch (\Throwable $throwable) {
             $this->addError($throwable->getMessage());
         } finally {

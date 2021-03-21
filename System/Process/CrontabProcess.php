@@ -26,25 +26,72 @@ class CrontabProcess extends Process
     public array $names = [];
 
 
+    public array $scores = [];
+    public array $timers = [];
+
+
     /**
      * @param \Swoole\Process $process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        try {
-            $content = $process->read();
+        $this->readBySocket($process);
+        Timer::tick(1000, function () {
+            $startTime = time();
 
-            $_content = json_decode($content, true);
-            if (is_null($_content)) {
-                $this->jobDelivery($content);
-            } else {
-                $this->otherAction($_content);
+            $time = $this->scores[$startTime];
+            unset($this->scores[$startTime]);
+            foreach ($time as $value) {
+                Coroutine::create(function (Crontab $value, int $startTime) {
+                    $this->dispatch($value, $startTime);
+                }, $value, $startTime);
+            }
+        });
+    }
+
+
+    /**
+     * @param Crontab $value
+     * @param int $startTime
+     * @throws \Exception
+     */
+    private function dispatch(Crontab $value, int $startTime)
+    {
+        try {
+            $value->increment()->execute();
+            if ($value->getExecuteNumber() < $value->getMaxExecuteNumber()) {
+                $this->addTask($value, $startTime + $value->getTickTime());
+            } else if ($value->isLoop()) {
+                $this->addTask($value, $startTime + $value->getTickTime());
             }
         } catch (\Throwable $exception) {
             $this->application->error($exception->getMessage());
-        } finally {
-            $this->onHandler($process);
         }
+    }
+
+
+    /**
+     * @param \Swoole\Process $process
+     * @throws \Exception
+     */
+    public function readBySocket(\Swoole\Process $process)
+    {
+        Coroutine::create(function (\Swoole\Process $process) {
+            try {
+                $content = $process->read();
+
+                $_content = json_decode($content, true);
+                if (is_null($_content)) {
+                    $this->jobDelivery($content);
+                } else {
+                    $this->otherAction($_content);
+                }
+            } catch (\Throwable $exception) {
+                $this->application->error($exception->getMessage());
+            } finally {
+                $this->onHandler($process);
+            }
+        }, $process);
     }
 
 
@@ -76,8 +123,13 @@ class CrontabProcess extends Process
         if (!isset($this->names[$name])) {
             return;
         }
-        Timer::exists($this->names[$name]) && Timer::clear($this->names[$name]);
-        unset($this->names[$name]);
+        $timers = $this->timers[$name];
+
+        $search = array_search($name, $this->scores[$timers]);
+        if ($search !== false) {
+            unset($this->scores[$timers][$search]);
+        }
+        unset($this->timers[$name], $this->names[$name]);
     }
 
 
@@ -89,22 +141,35 @@ class CrontabProcess extends Process
         /** @var Crontab $content */
         $content = unserialize($content);
 
+        $ticker = intval($content->getTickTime() * 1000) + time();
+
+        $this->addTask($content, $ticker);
+    }
+
+
+    /**
+     * @param Crontab $content
+     * @param $ticker
+     */
+    private function addTask(Crontab $content, $ticker)
+    {
         $name = $content->getName();
         if (isset($this->names[$name])) {
-            Timer::clear($this->names[$name]);
+            unset($this->names[$content->getName()]);
+
+            $search = array_search($content->getName(), $this->scores);
+            unset($this->scores[$search]);
         }
-        if ($content->isLoop()) {
-            $this->names[$name] = Timer::tick(intval($content->getTickTime() * 1000), function ($content) {
-                var_dump(Timer::class);
-//                $content->execute($this);
-            }, $content);
-        } else {
-            $this->names[$name] = Timer::after(intval($content->getTickTime() * 1000), function ($content) {
-                var_dump(Timer::class);
-//                $content->execute($this);
-            }, $content);
+
+        if (!isset($this->scores[$ticker])) {
+            $this->scores[$ticker] = [];
         }
-        var_dump($this->names);
+
+        $this->timers[$content->getName()] = $ticker;
+        $this->scores[$ticker][] = $content->getName();
+        $this->names[$content->getName()] = $content;
+
+        ksort($this->scores, SORT_NUMERIC);
     }
 
 
