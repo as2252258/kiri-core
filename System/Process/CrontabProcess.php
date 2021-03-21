@@ -4,6 +4,7 @@
 namespace Snowflake\Process;
 
 
+use Exception;
 use Snowflake\Crontab;
 use Snowflake\Abstracts\Crontab as ACrontab;
 use Snowflake\Event;
@@ -38,9 +39,8 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        $redis = Snowflake::app()->getRedis();
-        $redis->del(ACrontab::CRONTAB_KEY);
-        $redis->release();
+        $crontab = Snowflake::app()->get('crontab');
+        $crontab->clearAll();
 
         Timer::tick(1000, function () {
             $startTime = time();
@@ -51,6 +51,7 @@ class CrontabProcess extends Process
             $redis->zRemRangeByScore(ACrontab::CRONTAB_KEY, '0', (string)$startTime);
             foreach ($range as $value) {
                 $crontab = $redis->get('crontab:' . md5($value));
+                $redis->del('crontab:' . md5($value));
                 if (empty($crontab) || !($crontab = unserialize($crontab))) {
                     continue;
                 }

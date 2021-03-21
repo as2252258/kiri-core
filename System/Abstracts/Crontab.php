@@ -63,6 +63,7 @@ class Crontab extends Component
         foreach ($data as $datum) {
             $redis->del('crontab:' . md5($datum));
         }
+        $redis->release();
     }
 
 
