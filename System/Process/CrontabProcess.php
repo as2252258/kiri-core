@@ -6,6 +6,7 @@ namespace Snowflake\Process;
 
 use Snowflake\Crontab;
 use Snowflake\Abstracts\Crontab as ACrontab;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
@@ -53,6 +54,7 @@ class CrontabProcess extends Process
                     $this->dispatch($value);
                 }, $crontab, $startTime);
             }
+            $redis->release();
         });
     }
 
@@ -73,6 +75,8 @@ class CrontabProcess extends Process
             }
         } catch (\Throwable $exception) {
             $this->application->error($exception->getMessage());
+        } finally {
+            fire(Event::SYSTEM_RESOURCE_RELEASES);
         }
     }
 
