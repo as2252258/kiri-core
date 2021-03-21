@@ -42,7 +42,7 @@ class CrontabProcess extends Process
 
             $redis = Snowflake::app()->getRedis();
 
-            $range = $redis->zRangeByScore(ACrontab::CRONTAB_KEY, 0, $startTime);
+            $range = $redis->zRangeByScore(ACrontab::CRONTAB_KEY, '0', (string)$startTime);
             $redis->zRemRangeByScore(ACrontab::CRONTAB_KEY, 0, $startTime);
             foreach ($range as $value) {
                 $crontab = $redis->get('crontab:' . md5($value));
