@@ -5,6 +5,8 @@ namespace Snowflake\Process;
 
 
 use Snowflake\Crontab;
+use Snowflake\Abstracts\Crontab as ACrontab;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Coroutine\Channel;
@@ -35,18 +37,21 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        $this->readBySocket($process);
         Timer::tick(1000, function () {
             $startTime = time();
 
-            var_dump($startTime);
+            $redis = Snowflake::app()->getRedis();
 
-            $time = $this->scores[$startTime];
-            unset($this->scores[$startTime]);
-            foreach ($time as $value) {
+            $range = $redis->zRangeByScore(ACrontab::CRONTAB_KEY, 0, $startTime);
+            $redis->zRemRangeByScore(ACrontab::CRONTAB_KEY, 0, $startTime);
+            foreach ($range as $value) {
+                $crontab = $redis->get('crontab:' . md5($value));
+                if (empty($crontab) || !($crontab = unserialize($crontab))) {
+                    continue;
+                }
                 Coroutine::create(function (Crontab $value, int $startTime) {
-                    $this->dispatch($value, $startTime);
-                }, $value, $startTime);
+                    $this->dispatch($value);
+                }, $crontab, $startTime);
             }
         });
     }
@@ -57,63 +62,18 @@ class CrontabProcess extends Process
      * @param int $startTime
      * @throws \Exception
      */
-    private function dispatch(Crontab $value, int $startTime)
+    private function dispatch(Crontab $value)
     {
         try {
             $value->increment()->execute();
             if ($value->getExecuteNumber() < $value->getMaxExecuteNumber()) {
-                $this->addTask($value, $startTime + $value->getTickTime());
+                $this->addTask($value);
             } else if ($value->isLoop()) {
-                $this->addTask($value, $startTime + $value->getTickTime());
+                $this->addTask($value);
             }
         } catch (\Throwable $exception) {
             $this->application->error($exception->getMessage());
         }
-    }
-
-
-    /**
-     * @param \Swoole\Process $process
-     * @throws \Exception
-     */
-    public function readBySocket(\Swoole\Process $process)
-    {
-        Coroutine::create(function (\Swoole\Process $process) {
-            try {
-                $content = $process->read();
-
-                $_content = json_decode($content, true);
-                if (is_null($_content)) {
-                    $this->jobDelivery($content);
-                } else {
-                    $this->otherAction($_content);
-                }
-            } catch (\Throwable $exception) {
-                $this->application->error($exception->getMessage());
-            } finally {
-                $this->onHandler($process);
-            }
-        }, $process);
-    }
-
-
-    /**
-     * @param $content
-     */
-    private function otherAction($content)
-    {
-        call_user_func(match ($content['action']) {
-            'clear' => function ($content) {
-                $this->clear($content['name']);
-            },
-            'clearAll' => function () {
-                $this->names = [];
-                Timer::clearAll();
-            },
-            default => function () {
-                $this->application->error('unknown action');
-            }
-        }, $content);
     }
 
 
@@ -136,42 +96,20 @@ class CrontabProcess extends Process
 
 
     /**
-     * @param $content
-     */
-    private function jobDelivery($content)
-    {
-        /** @var Crontab $content */
-        $content = unserialize($content);
-
-        $ticker = intval($content->getTickTime() * 1000) + time();
-
-        $this->addTask($content, $ticker);
-    }
-
-
-    /**
      * @param Crontab $content
      * @param $ticker
      */
-    private function addTask(Crontab $content, $ticker)
+    private function addTask(Crontab $crontab)
     {
-        $name = $content->getName();
-        if (isset($this->names[$name])) {
-            unset($this->names[$content->getName()]);
+        $redis = Snowflake::app()->getRedis();
 
-            $search = array_search($content->getName(), $this->scores);
-            unset($this->scores[$search]);
-        }
+        $name = md5($crontab->getName());
 
-        if (!isset($this->scores[$ticker])) {
-            $this->scores[$ticker] = [];
-        }
+        $redis->set('crontab:' . $name, serialize($crontab));
 
-        $this->timers[$content->getName()] = $ticker;
-        $this->scores[$ticker][] = $content->getName();
-        $this->names[$content->getName()] = $content;
+        $tickTime = time() + $crontab->getTickTime();
 
-        ksort($this->scores, SORT_NUMERIC);
+        $redis->zAdd(ACrontab::CRONTAB_KEY, $tickTime, $crontab->getName());
     }
 
 

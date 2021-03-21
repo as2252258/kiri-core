@@ -17,6 +17,8 @@ use Exception;
 class Crontab extends Component
 {
 
+    const CRONTAB_KEY = 'system:crontab';
+
 
     /**
      * @param \Snowflake\Crontab $crontab
@@ -25,9 +27,15 @@ class Crontab extends Component
      */
     public function dispatch(\Snowflake\Crontab $crontab)
     {
-        /** @var CrontabProcess $redis */
-        $redis = Snowflake::app()->get(CrontabProcess::class);
-        $redis->write(serialize($crontab));
+        $redis = Snowflake::app()->getRedis();
+
+        $name = md5($crontab->getName());
+
+        $redis->set('crontab:' . $name, serialize($crontab));
+
+        $tickTime = time() + $crontab->getTickTime() * 1000;
+
+        $redis->zAdd(self::CRONTAB_KEY, $tickTime, $crontab->getName());
     }
 
 
@@ -37,9 +45,10 @@ class Crontab extends Component
      */
     public function clear(string $name)
     {
-        /** @var CrontabProcess $redis */
-        $redis = Snowflake::app()->get(CrontabProcess::class);
-        $redis->write(Json::encode(['action' => 'clear', 'name' => $name]));
+        $redis = Snowflake::app()->getRedis();
+
+        $redis->zRem(self::CRONTAB_KEY, $name);
+        $redis->del('crontab:' . md5($name));
     }
 
 
@@ -48,9 +57,12 @@ class Crontab extends Component
      */
     public function clearAll()
     {
-        /** @var CrontabProcess $redis */
-        $redis = Snowflake::app()->get(CrontabProcess::class);
-        $redis->write(Json::encode(['action' => 'clearAll']));
+        $redis = Snowflake::app()->getRedis();
+        $data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
+        $redis->del(self::CRONTAB_KEY);
+        foreach ($data as $datum) {
+            $redis->del('crontab:' . md5($datum));
+        }
     }
 
 
