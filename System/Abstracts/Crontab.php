@@ -33,7 +33,7 @@ class Crontab extends Component
 
         $redis->set('crontab:' . $name, serialize($crontab));
 
-        $tickTime = time() + $crontab->getTickTime() * 1000;
+        $tickTime = time() + $crontab->getTickTime();
 
         $redis->zAdd(self::CRONTAB_KEY, $tickTime, $crontab->getName());
     }

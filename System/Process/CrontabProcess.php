@@ -38,6 +38,10 @@ class CrontabProcess extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
+        $redis = Snowflake::app()->getRedis();
+        $redis->del(ACrontab::CRONTAB_KEY);
+        $redis->release();
+
         Timer::tick(1000, function () {
             $startTime = time();
 
