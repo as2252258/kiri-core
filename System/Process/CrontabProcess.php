@@ -39,6 +39,8 @@ class CrontabProcess extends Process
         Timer::tick(1000, function () {
             $startTime = time();
 
+            var_dump($startTime);
+
             $time = $this->scores[$startTime];
             unset($this->scores[$startTime]);
             foreach ($time as $value) {
