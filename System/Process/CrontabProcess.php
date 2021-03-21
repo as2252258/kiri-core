@@ -71,18 +71,13 @@ class CrontabProcess extends Process
      */
     private function dispatch(Crontab $value)
     {
-        try {
-            $value->increment()->execute();
-            if ($value->getExecuteNumber() < $value->getMaxExecuteNumber()) {
-                $this->addTask($value);
-            } else if ($value->isLoop()) {
-                $this->addTask($value);
-            }
-        } catch (\Throwable $exception) {
-            $this->application->error($exception->getMessage());
-        } finally {
-            fire(Event::SYSTEM_RESOURCE_RELEASES);
+        $value->increment()->execute();
+        if ($value->getExecuteNumber() < $value->getMaxExecuteNumber()) {
+            $this->addTask($value);
+        } else if ($value->isLoop()) {
+            $this->addTask($value);
         }
+        fire(Event::SYSTEM_RESOURCE_RELEASES);
     }
 
 
