@@ -18,29 +18,29 @@ class OnConnect extends Callback
 {
 
 
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 * @param int $reactorId
-	 * @throws Exception
-	 */
-	public function onHandler(Server $server, int $fd, int $reactorId)
-	{
-		$event = Snowflake::app()->getEvent();
+    /**
+     * @param Server $server
+     * @param int $fd
+     * @param int $reactorId
+     * @throws Exception
+     */
+    public function onHandler(Server $server, int $fd, int $reactorId)
+    {
+        $event = Snowflake::app()->getEvent();
 
-		$clientInfo = $server->getClientInfo($fd);
+        $clientInfo = $server->getClientInfo($fd);
 
-		try {
-			$name = 'listen ' . $clientInfo['server_port'] . ' ' . Event::RECEIVE_CONNECTION;
+        try {
+            $name = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_CONNECT;
 
-			$event->trigger($name, [$server, $fd, $reactorId]);
-		} catch (\Throwable $throwable) {
-			$this->addError($throwable, 'connect');
-		}
+            $event->trigger($name, [$server, $fd, $reactorId]);
+        } catch (\Throwable $throwable) {
+            $this->addError($throwable, 'connect');
+        }
 
-		fire(Event::SYSTEM_RESOURCE_RELEASES);
-		logger()->insert();
-	}
+        fire(Event::SYSTEM_RESOURCE_RELEASES);
+        logger()->insert();
+    }
 
 
 }
