@@ -27,7 +27,7 @@ class Producer extends Component
      * @throws \Snowflake\Exception\ConfigException
      * @throws \Snowflake\Exception\NotFindClassException
      */
-    public function get($name): Producer|bool
+    public function get($name): Client|bool
     {
         if (empty($this->producers)) {
             $this->producers = Config::get('rpc.producers');
