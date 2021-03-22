@@ -3,9 +3,12 @@
 namespace Rpc;
 
 
+use HttpServer\Service\Http;
+use HttpServer\Service\Packet;
+use HttpServer\Service\Receive;
+use HttpServer\Service\Websocket;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
-use Snowflake\Snowflake;
 
 
 /**
@@ -19,14 +22,12 @@ class Service extends Component
     /**
      * @throws \Snowflake\Exception\ConfigException
      */
-    public function instance(): void
+    public function instance(Packet|Websocket|Receive|null|Http $server): void
     {
         $services = Config::get('rpc.service', false, []);
         if (empty($services)) {
             return;
         }
-
-        $server = Snowflake::app()->getSwoole();
         foreach ($services as $service) {
             $mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
             $rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
