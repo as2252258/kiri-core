@@ -67,6 +67,7 @@ class Request extends HttpService
 
 	const HTTP_POST = 'post';
 	const HTTP_GET = 'get';
+	const HTTP_CMD = 'cmd';
 	const HTTP_SOCKET = 'sw::socket';
 
 
