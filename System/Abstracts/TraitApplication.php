@@ -22,6 +22,7 @@ use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\Connection;
 use Snowflake\Pool\Pool as SPool;
+use Rpc\Producer as RPCProducer;
 
 /**
  * Trait TraitApplication
@@ -46,6 +47,7 @@ use Snowflake\Pool\Pool as SPool;
  * @property Curl $curl
  * @property Crontab $crontab
  * @property HttpFilter $filter
+ * @property RPCProducer $rpc
  */
 trait TraitApplication
 {
