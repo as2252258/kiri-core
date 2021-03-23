@@ -18,31 +18,13 @@ use Swoole\Coroutine\Client as CClient;
 class Client extends Component
 {
 
-	private array $config = [];
+	public array $config = [];
 
 
-	private string $service = '';
+	public string $service = '';
 
 
 	private CClient $client;
-
-
-	/**
-	 * @param $name
-	 */
-	public function setConfig($name)
-	{
-		$this->config = $name;
-	}
-
-
-	/**
-	 * @param $value
-	 */
-	public function setService($value)
-	{
-    	$this->service = $value;
-	}
 
 
 	/**
