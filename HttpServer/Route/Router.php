@@ -75,10 +75,10 @@ class Router extends HttpService implements RouterInterface
 	 * @param $port
 	 * @param Closure|array|string $closure
 	 * @param null $method
-	 * @return mixed
+	 * @return Node|bool|null
 	 * @throws Exception
 	 */
-	public function addPortListen($port, Closure|array|string $closure, $method = null): mixed
+	public function addPortListen($port, Closure|array|string $closure, $method = null): Node|null|bool
 	{
 		try {
 			if (!is_string($closure)) {

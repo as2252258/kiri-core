@@ -28,7 +28,7 @@ use Snowflake\Snowflake;
 	 */
 	#[Pure] public function __construct(public string $cmd, public int $port)
 	{
-		$this->uri = 'rpc/' . $this->port . '/' . ltrim($this->cmd, '/');
+		$this->uri = 'rpc/p' . $this->port . '/' . ltrim($this->cmd, '/');
 	}
 
 
