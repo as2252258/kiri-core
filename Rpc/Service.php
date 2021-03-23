@@ -95,18 +95,17 @@ class Service extends Component
 	public static function replace(Request $request, array $service): Request
 	{
 		if (!is_array($body = $request->params->getBodyAndClear())) {
-			var_dump($body);
 			throw new Exception('Protocol format error.');
 		}
-		if (!isset($serialize['cmd'])) {
+		if (!isset($body['cmd'])) {
 			throw new Exception('Protocol format error.');
 		}
-		$request->params->setPosts($serialize);
+		$request->params->setPosts($body);
 
-		$serialize['cmd'] = ltrim($serialize['cmd'], '/');
+		$body['cmd'] = ltrim($body['cmd'], '/');
 
 		$header = $request->headers;
-		$header->replace('request_uri', 'rpc/p' . $service['port'] . '/' . $serialize['cmd']);
+		$header->replace('request_uri', 'rpc/p' . $service['port'] . '/' . $body['cmd']);
 		$header->replace('request_method', Request::HTTP_CMD);
 
 		return $request;
