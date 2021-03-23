@@ -128,7 +128,7 @@ class Container extends BaseObject
 			$dependencies[$index] = $param;
 		}
 
-		var_dump($reflect->getName());
+		var_dump($reflect);
 		if (!$reflect->isInstantiable()) {
 			throw new NotFindClassException($reflect->getName());
 		}
