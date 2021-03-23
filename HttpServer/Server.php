@@ -104,29 +104,17 @@ class Server extends HttpService
 
 
 	/**
-	 * @param array $configs
-	 * @return Packet|Websocket|Receive|Http|null
-	 * @throws Exception
-	 */
-	public function initCore(array $configs): Packet|Websocket|Receive|Http|null
-	{
-		$this->orders($configs);
-		return $this->getServer();
-	}
-
-
-	/**
 	 * @param $configs
 	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws Exception
 	 */
-	private function orders($configs): Packet|Websocket|Receive|Http|null
+	private function initCore($configs): Packet|Websocket|Receive|Http|null
 	{
 		$servers = $this->sortServers($configs);
 		foreach ($servers as $server) {
 			$this->create($server);
 			if (!$this->baseServer) {
-				return null;
+				throw new Exception('Base service create fail.');
 			}
 		}
 		return $this->startRpcService();
