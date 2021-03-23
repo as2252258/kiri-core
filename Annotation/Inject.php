@@ -31,12 +31,36 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return mixed
+	 * @throws ComponentException
 	 * @throws NotFindClassException
-	 * @throws ReflectionException|ComponentException
+	 * @throws ReflectionException
 	 */
 	public function execute(array $handler): mixed
 	{
-		[$object, $property] = $handler;
+		$injectValue = $this->parseInjectValue();
+
+		/** @var ReflectionProperty $property */
+		if ($property->isPrivate() || $property->isProtected()) {
+			$method = 'set' . ucfirst($property->getName());
+			if (!method_exists($handler[0], $method)) {
+				return false;
+			}
+			$handler[0]->$method($injectValue);
+		} else {
+			$handler[0]->{$property->getName()} = $injectValue;
+		}
+		return $handler[0];
+	}
+
+
+	/**
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function parseInjectValue(): mixed
+	{
 		if (class_exists($this->className)) {
 			$injectValue = Snowflake::createObject($this->className, $this->args);
 		} else if (Snowflake::app()->has($this->className)) {
@@ -47,15 +71,7 @@ use Snowflake\Snowflake;
 		if (!empty($this->args) && is_object($injectValue)) {
 			Snowflake::configure($injectValue, $this->args);
 		}
-		/** @var ReflectionProperty $property */
-		if ($property->isPrivate() || $property->isProtected()) {
-			if (!method_exists($handler[0], 'set' . ucfirst($property->getName()))) {
-				return false;
-			}
-			$object->{'set' . ucfirst($property->getName())}($injectValue);
-		} else {
-			$object->$property = $injectValue;
-		}
-		return $object;
+		return $injectValue;
 	}
+
 }
