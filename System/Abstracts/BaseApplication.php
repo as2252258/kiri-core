@@ -186,10 +186,20 @@ abstract class BaseApplication extends Service
 					throw new InitException("Class {$value} does not exists.");
 				}
 				$value = Snowflake::createObject($value);
-			} else if (is_array($value) && !is_callable($value, true)) {
-				throw new InitException("Class does not hav callback.");
 			}
-			$event->on($key, $value);
+			if (is_array($value) && isset($value[0]) && is_object($value[0])) {
+				if (!is_callable($value, true)) {
+					throw new InitException("Class does not hav callback.");
+				}
+				$event->on($key, $value);
+			} else {
+				foreach ($value as $item) {
+					if (!is_callable($item, true)) {
+						throw new InitException("Class does not hav callback.");
+					}
+					$event->on($key, $item);
+				}
+			}
 		}
 	}
 
