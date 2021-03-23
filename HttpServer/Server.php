@@ -364,7 +364,7 @@ class Server extends HttpService
      * @throws NotFindClassException
      * @throws ReflectionException
      */
-    private function startRpcService()
+    private function startRpcService(): Packet|Websocket|Receive|Http|null
     {
         $rpcService = Config::get('rpc.service', false, []);
         if (is_array($rpcService) && !empty($rpcService)) {
