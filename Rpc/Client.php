@@ -4,6 +4,7 @@
 namespace Rpc;
 
 
+use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
@@ -32,37 +33,37 @@ class Client extends Component
     }
 
 
-    /**
-     * @param string $route
-     * @param array $param
-     * @return mixed|string|null
-     * @throws ConfigException
-     */
-    public function request(string $route, array $param)
+	/**
+	 * @param string $route
+	 * @param array $param
+	 * @return mixed
+	 * @throws Exception
+	 */
+    public function request(string $route, array $param): mixed
     {
         $service = $this->config;
         if (empty($service)) {
             return null;
         }
         if (!($this->client instanceof CClient)) {
-            $client = $this->getClient();
+	        $this->client = $this->getClient();
         }
         if (!$this->client->isConnected()) {
-            if (!$client->connect($service['host'], $service['port'], $service['timeout'])) {
-                return $client->errCode . ':' . $client->errMsg;
+            if (!$this->client->connect($service['host'], $service['port'], $service['timeout'])) {
+                return $this->client->errCode . ':' . $this->client->errMsg;
             }
         }
-        $isSend = $client->send(serialize(['route' => $route, 'body' => $param]));
+        $isSend = $this->client->send(serialize(['route' => $route, 'body' => $param]));
         if ($isSend === false) {
-            return $client->errCode . ':' . $client->errMsg;
+            return $this->client->errCode . ':' . $this->client->errMsg;
         }
-        return unserialize($client->recv());
+        return unserialize($this->client->recv());
     }
 
 
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getClient(): CClient
     {

@@ -9,6 +9,7 @@ use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
+use Snowflake\Exception\ConfigException;
 
 
 /**
@@ -19,9 +20,10 @@ class Service extends Component
 {
 
 
-    /**
-     * @throws \Snowflake\Exception\ConfigException
-     */
+	/**
+	 * @param Packet|Websocket|Receive|Http|null $server
+	 * @throws ConfigException
+	 */
     public function instance(Packet|Websocket|Receive|null|Http $server): void
     {
         $services = Config::get('rpc.service', false, []);
