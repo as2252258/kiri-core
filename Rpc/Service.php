@@ -70,10 +70,14 @@ class Service extends Component
 			try {
 				/** @var Request $request */
 				$request = Context::getContext('request');
-				if (($node = router()->find_path($this->replace($request, $service))) === null) {
+				if (($node = router()->find_path(Service::replace($request, $service))) === null) {
 					throw new Exception('Cmd not find.');
 				}
-				return Json::encode($node->dispatch());
+				$response = $node->dispatch();
+				if (is_string($response)) {
+					return $response;
+				}
+				return Json::encode($response);
 			} catch (\Throwable $exception) {
 				$this->addError($exception);
 				return Json::encode(['state' => 'fail', 'message' => $exception->getMessage()]);
@@ -88,7 +92,7 @@ class Service extends Component
 	 * @return Request
 	 * @throws Exception
 	 */
-	public function replace(Request $request, array $service): Request
+	public static function replace(Request $request, array $service): Request
 	{
 		$body = $request->params->getBodyAndClear();
 		if (is_null($serialize = unserialize($body))) {

@@ -53,10 +53,7 @@ class Client extends Component
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
 
-		$response = $this->client->recv();
-		$this->client->close();
-
-		if (is_bool($unpack = Json::decode($response))) {
+		if (is_bool($unpack = Json::decode($this->client->recv()))) {
 			return $this->addError('Service return data format error(500)');
 		}
 		return $unpack;
