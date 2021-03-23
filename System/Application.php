@@ -107,26 +107,26 @@ class Application extends BaseApplication
 	 */
 	public function start(Input $argv): void
 	{
-		try {
-			fire(Event::SERVER_BEFORE_START);
-			if (env('debug') == 'false') {
-				$annotation = Snowflake::app()->getAttributes();
-				$annotation->read(directory('app'), 'App');
-			}
-			$manager = Snowflake::app()->get('console');
-			$manager->setParameters($argv);
-			$class = $manager->search();
-			response()->send($manager->execCommand($class));
-		} catch (\Throwable $exception) {
-			var_dump($exception);
-//			response()->send(implode("\n", [
-//				'Msg: ' . $exception->getMessage(),
-//				'Line: ' . $exception->getLine(),
-//				'File: ' . $exception->getFile()
-//			]));
-		} finally {
-			Timer::clearAll();
+//		try {
+		fire(Event::SERVER_BEFORE_START);
+		if (env('debug') == 'false') {
+			$annotation = Snowflake::app()->getAttributes();
+			$annotation->read(directory('app'), 'App');
 		}
+		$manager = Snowflake::app()->get('console');
+		$manager->setParameters($argv);
+		$class = $manager->search();
+		response()->send($manager->execCommand($class));
+//		} catch (\Throwable $exception) {
+//			var_dump($exception);
+////			response()->send(implode("\n", [
+////				'Msg: ' . $exception->getMessage(),
+////				'Line: ' . $exception->getLine(),
+////				'File: ' . $exception->getFile()
+////			]));
+//		} finally {
+//			Timer::clearAll();
+//		}
 	}
 
 	/**
