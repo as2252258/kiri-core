@@ -443,7 +443,7 @@ class Node extends HttpService
 
 		$_searchMatch = '/<(\w+)?:(.+)?>/';
 		foreach ($this->childes as $key => $val) {
-			if (preg_match($_searchMatch, $key, $match)) {
+			if (preg_match($_searchMatch, (string)$key, $match)) {
 				Input()->addGetParam($match[1] ?? '--', $search);
 				return $this->childes[$key];
 			}
