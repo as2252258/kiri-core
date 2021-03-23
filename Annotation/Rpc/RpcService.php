@@ -27,16 +27,18 @@ use Snowflake\Snowflake;
 	 * @param string $cmd
 	 * @param string $host
 	 * @param int $port
+	 * @param int $timeout
 	 * @param int $mode
 	 */
 	public function __construct(
 		public string $cmd,
 		public string $host,
 		public int $port,
+		public int $timeout = 1,
 		public int $mode = SWOOLE_SOCK_TCP6
 	)
 	{
-		$this->config = ['host' => $this->host, 'port' => $this->port, 'mode' => $this->mode];
+		$this->config = ['host' => $host, 'port' => $port, 'mode' => $mode, 'timeout' => $timeout];
 	}
 
 
