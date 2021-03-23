@@ -32,18 +32,15 @@ class Service extends Component
         }
         foreach ($services as $service) {
             $mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
-
-            var_dump($service,$mode);
-//
-//            $rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
-//            $rpcServer->set([
-//                'open_tcp_keepalive'      => true,
-//                'tcp_keepidle'            => 30,
-//                'tcp_keepinterval'        => 10,
-//                'tcp_keepcount'           => 10,
-//                'open_http_protocol'      => false,
-//                'open_websocket_protocol' => false,
-//            ]);
+            $rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
+            $rpcServer->set([
+                'open_tcp_keepalive'      => true,
+                'tcp_keepidle'            => 30,
+                'tcp_keepinterval'        => 10,
+                'tcp_keepcount'           => 10,
+                'open_http_protocol'      => false,
+                'open_websocket_protocol' => false,
+            ]);
         }
     }
 

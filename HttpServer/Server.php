@@ -129,7 +129,7 @@ class Server extends HttpService
 				return null;
 			}
 		}
-		return $this->baseServer;
+		return $this->startRpcService();
 	}
 
 
@@ -353,7 +353,7 @@ class Server extends HttpService
 		}
 		$this->onListenerBind($config, $this->baseServer);
 
-		return $this->startRpcService();
+		return $this->baseServer;
 	}
 
 
