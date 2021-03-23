@@ -88,9 +88,7 @@ class Request extends HttpService
 
 	/**
 	 * @return array|null
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function getConnectInfo(): array|null
 	{
@@ -112,9 +110,9 @@ class Request extends HttpService
 	}
 
 	/**
-	 * @return mixed
+	 * @return AuthIdentity|null
 	 */
-	public function getIdentity(): mixed
+	public function getIdentity(): ?AuthIdentity
 	{
 		return $this->_grant;
 	}
@@ -237,7 +235,7 @@ class Request extends HttpService
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function adapter(): mixed
 	{
@@ -398,7 +396,7 @@ class Request extends HttpService
 	/**
 	 * @return string
 	 */
-	public function getRuntime(): string
+	#[Pure] public function getRuntime(): string
 	{
 		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
 	}
@@ -514,25 +512,41 @@ class Request extends HttpService
 	 * @return Request
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public static function createListenRequest($fd, $port, Server $server, $data, $reID = 0): Request
 	{
 		/** @var Request $sRequest */
 		$sRequest = Snowflake::createObject(Request::class);
-		if (is_array($fd)) {
-			$sRequest->fd = 0;
-			$sRequest->clientInfo = $fd;
-		} else {
-			$sRequest->fd = $fd;
-			$sRequest->clientInfo = $server->getClientInfo($fd, $reID);
-		}
+
+		$sRequest->fd = is_array($fd) ? 0 : $fd;
+		$sRequest->clientInfo = self::getClientInfo($fd, $reID);
 		$sRequest->startTime = microtime(true);
+
 		$sRequest->params = new HttpParams(['body' => $data], [], []);
+
 		$sRequest->headers = new HttpHeaders([]);
 		$sRequest->headers->replace('request_method', 'listen');
 		$sRequest->headers->replace('request_uri', 'add-port-listen/port_' . $port);
 		$sRequest->parseUri();
+
 		return Context::setContext('request', $sRequest);
+	}
+
+
+	/**
+	 * @param $fd
+	 * @param int $re
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private static function getClientInfo($fd, $re = 0): mixed
+	{
+		$server = Snowflake::app()->getSwoole();
+		if (!is_array($fd)) {
+			return $server->getClientInfo($fd, $re);
+		}
+		return $fd;
 	}
 
 
