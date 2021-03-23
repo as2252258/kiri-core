@@ -24,7 +24,7 @@ class Client extends Component
 	public string $service = '';
 
 
-	private ?CClient $client;
+	private ?CClient $client = null;
 
 
 	/**
@@ -35,15 +35,17 @@ class Client extends Component
 	 */
 	public function dispatch(string $cmd, array $param): mixed
 	{
-		$service = $this->config;
-		if (empty($service)) {
+		if (empty($this->config)) {
 			return null;
 		}
 		if (!($this->client instanceof CClient)) {
 			$this->client = $this->getClient();
 		}
 		if (!$this->client->isConnected()) {
-			if (!$this->client->connect($service['host'], $service['port'], $service['timeout'] ?? 1)) {
+			if (!$this->client->connect(
+				$this->config['host'], $this->config['port'],
+				$this->config['timeout'] ?? 1
+			)) {
 				return $this->client->errCode . ':' . $this->client->errMsg;
 			}
 		}
