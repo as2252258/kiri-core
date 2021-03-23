@@ -94,8 +94,7 @@ class Service extends Component
 	 */
 	public static function replace(Request $request, array $service): Request
 	{
-		$body = $request->params->getBodyAndClear();
-		if (is_null($serialize = Json::decode($body))) {
+		if (!is_array($body = $request->params->getBodyAndClear())) {
 			throw new Exception('Protocol format error.');
 		}
 		if (!isset($serialize['cmd'])) {
