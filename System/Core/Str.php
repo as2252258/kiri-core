@@ -266,17 +266,4 @@ class Str
         return preg_replace('/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/', '$1-$2-$3-$4-$5', $md5);
     }
 
-
-    /**
-     * @param int $userId
-     * @return string
-     */
-    public static function getNo(int $userId)
-    {
-        $explode = explode(' ', str_replace('0.', '', microtime()));
-
-        return 'No.' . sprintf('%09d', $userId) . '.' . date('YmdHis') . '.' . current($explode);
-    }
-
-
 }
