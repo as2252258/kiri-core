@@ -185,7 +185,12 @@ class Loader extends BaseObject
 						if (!class_exists($attribute->getName())) {
 							continue;
 						}
-						$_property[] = $attribute->newInstance();
+						$property = $attribute->newInstance();
+						if ($property instanceof Inject) {
+							$property->execute([$_array['handler'], $method->getName()]);
+						} else {
+							$_property[] = $attribute->newInstance();
+						}
 					}
 					$_array['property'][$method->getName()] = $_property;
 				}

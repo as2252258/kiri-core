@@ -56,9 +56,6 @@ use Snowflake\Snowflake;
 		$rpc = Snowflake::app()->getRpc();
 		$rpc->addProducer($this->cmd, $handler, $this->config);
 
-		$attributes = Snowflake::app()->getAttributes();
-		$attributes->injectProperty($handler[0]);
-
 		return parent::execute($handler);
 	}
 
