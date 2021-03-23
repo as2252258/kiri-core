@@ -73,10 +73,10 @@ class Service extends Component
 				if (($node = router()->find_path($this->replace($request, $service))) === null) {
 					throw new Exception('Cmd not find.');
 				}
-				return serialize($node->dispatch());
+				return Json::encode($node->dispatch());
 			} catch (\Throwable $exception) {
 				$this->addError($exception);
-				return serialize(['state' => 'fail', 'message' => $exception->getMessage()]);
+				return Json::encode(['state' => 'fail', 'message' => $exception->getMessage()]);
 			}
 		});
 	}

@@ -7,6 +7,7 @@ namespace Rpc;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\Json;
 use Snowflake\Exception\ConfigException;
 use Swoole\Coroutine\Client as CClient;
 
@@ -47,12 +48,12 @@ class Client extends Component
 				return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 			}
 		}
-		$isSend = $this->client->send(serialize(['cmd' => $cmd, 'body' => $param]));
+		$isSend = $this->client->send(Json::encode(['cmd' => $cmd, 'body' => $param]));
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
 
-		if (is_bool($unpack = unserialize($this->client->recv()))) {
+		if (is_bool($unpack = Json::decode($this->client->recv()))) {
 			return $this->addError('Service return data format error(500)');
 		}
 		return $unpack;
