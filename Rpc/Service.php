@@ -95,6 +95,7 @@ class Service extends Component
 	public static function replace(Request $request, array $service): Request
 	{
 		if (!is_array($body = $request->params->getBodyAndClear())) {
+			var_dump($body);
 			throw new Exception('Protocol format error.');
 		}
 		if (!isset($serialize['cmd'])) {
