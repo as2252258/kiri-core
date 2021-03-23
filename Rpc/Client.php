@@ -62,7 +62,7 @@ class Client extends Component
 	public function getClient(): CClient
 	{
 		return objectPool(CClient::class, function () {
-			$client = new CClient(SWOOLE_SOCK_TCP6);
+			$client = new CClient($this->config['mode'] ?? SWOOLE_SOCK_TCP);
 			$client->set([
 				'timeout'            => 0.5,
 				'connect_timeout'    => 1.0,
@@ -70,6 +70,7 @@ class Client extends Component
 				'read_timeout'       => 0.5,
 				'open_tcp_keepalive' => true,
 			]);
+			return $client;
 		});
 	}
 
