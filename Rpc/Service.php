@@ -104,7 +104,7 @@ class Service extends Component
 		$serialize['cmd'] = ltrim($serialize['cmd'], '/');
 
 		$header = $request->headers;
-		$header->replace('request_uri', 'rpc/' . $service['port'] . '/' . $serialize['cmd']);
+		$header->replace('request_uri', 'rpc/p' . $service['port'] . '/' . $serialize['cmd']);
 		$header->replace('request_method', Request::HTTP_CMD);
 
 		return $request;
