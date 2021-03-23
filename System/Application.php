@@ -119,11 +119,11 @@ class Application extends BaseApplication
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
 			var_dump($exception);
-			response()->send(implode("\n", [
-				'Msg: ' . $exception->getMessage(),
-				'Line: ' . $exception->getLine(),
-				'File: ' . $exception->getFile()
-			]));
+//			response()->send(implode("\n", [
+//				'Msg: ' . $exception->getMessage(),
+//				'Line: ' . $exception->getLine(),
+//				'File: ' . $exception->getFile()
+//			]));
 		} finally {
 			Timer::clearAll();
 		}
