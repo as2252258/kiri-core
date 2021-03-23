@@ -43,7 +43,7 @@ class Client extends Component
 			$this->client = $this->getClient();
 		}
 		if (!$this->client->isConnected()) {
-			if (!$this->client->connect($service['host'], $service['port'], $service['timeout'])) {
+			if (!$this->client->connect($service['host'], $service['port'], $service['timeout'] ?? 1)) {
 				return $this->client->errCode . ':' . $this->client->errMsg;
 			}
 		}
