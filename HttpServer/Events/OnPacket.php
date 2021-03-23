@@ -36,7 +36,7 @@ class OnPacket extends Callback
 	public function onHandler(Server $server, string $data, array $clientInfo): mixed
 	{
 		try {
-			$request = Request::createListenRequest($clientInfo, $this->port, $server, $data);
+			$request = Request::createListenRequest($clientInfo, $server, $data);
 
 			[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
 

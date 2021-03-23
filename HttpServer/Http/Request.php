@@ -505,7 +505,6 @@ class Request extends HttpService
 
 	/**
 	 * @param $fd
-	 * @param $port
 	 * @param Server $server
 	 * @param $data
 	 * @param int $reID
@@ -514,7 +513,7 @@ class Request extends HttpService
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function createListenRequest($fd, $port, Server $server, $data, $reID = 0): Request
+	public static function createListenRequest($fd, Server $server, $data, $reID = 0): Request
 	{
 		/** @var Request $sRequest */
 		$sRequest = Snowflake::createObject(Request::class);
@@ -522,6 +521,8 @@ class Request extends HttpService
 		$sRequest->fd = is_array($fd) ? 0 : $fd;
 		$sRequest->clientInfo = self::getClientInfo($fd, $reID);
 		$sRequest->startTime = microtime(true);
+
+		$port = $sRequest->clientInfo['server_port'];
 
 		$sRequest->params = new HttpParams(['body' => $data], [], []);
 
