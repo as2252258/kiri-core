@@ -36,22 +36,20 @@ class Client extends Component
 	public function dispatch(string $cmd, array $param): mixed
 	{
 		if (empty($this->config)) {
-			return null;
+			return $this->addError('Related service not found(404)');
 		}
 		if (!($this->client instanceof CClient)) {
 			$this->client = $this->getClient();
 		}
 		if (!$this->client->isConnected()) {
-			if (!$this->client->connect(
-				$this->config['host'], $this->config['port'],
-				$this->config['timeout'] ?? 1
-			)) {
-				return $this->client->errCode . ':' . $this->client->errMsg;
+			$settings = [$this->config['host'], $this->config['port'], $this->config['timeout'] ?? 1];
+			if (!$this->client->connect(...$settings)) {
+				return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 			}
 		}
 		$isSend = $this->client->send(serialize(['cmd' => $cmd, 'body' => $param]));
 		if ($isSend === false) {
-			return $this->client->errCode . ':' . $this->client->errMsg;
+			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
 		return unserialize($this->client->recv());
 	}
