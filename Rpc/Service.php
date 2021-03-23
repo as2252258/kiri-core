@@ -98,13 +98,15 @@ class Service extends Component
 		if (is_string($body) && is_null($body = Json::decode($body))) {
 			throw new Exception('Protocol format error.');
 		}
-		var_dump($body);
+
 		if (!isset($body['cmd'])) {
 			throw new Exception('Unknown system cmd.');
 		}
 		$request->params->setPosts($body);
 
 		$body['cmd'] = ltrim($body['cmd'], '/');
+
+		var_dump('rpc/p' . $service['port'] . '/' . $body['cmd']);
 
 		$header = $request->headers;
 		$header->replace('request_uri', 'rpc/p' . $service['port'] . '/' . $body['cmd']);
