@@ -4,7 +4,7 @@
 namespace Snowflake\Core;
 
 
-class No
+class Number
 {
 
 
