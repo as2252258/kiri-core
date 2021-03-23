@@ -118,6 +118,7 @@ class Application extends BaseApplication
 			$class = $manager->search();
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
+			var_dump($exception);
 			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
