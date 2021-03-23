@@ -24,7 +24,7 @@ class Client extends Component
 	public string $service = '';
 
 
-	private CClient $client;
+	private ?CClient $client;
 
 
 	/**
