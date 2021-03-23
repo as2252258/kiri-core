@@ -391,7 +391,7 @@ class Server extends HttpService
 		if (!isset($settings['pid_file'])) {
 			$settings['pid_file'] = PID_PATH;
 		}
-		$this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
+		$this->debug(Snowflake::listen($config));
 
 		$this->onLoadWebsocketHandler();
 		if ($this->baseServer instanceof Http) {

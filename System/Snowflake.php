@@ -103,6 +103,16 @@ class Snowflake
 
 
 	/**
+	 * @param $service
+	 * @return string
+	 */
+	#[Pure] public static function listen($service): string
+	{
+		return sprintf('Check listen %s::%d -> ok', $service['host'], $service['port']);
+	}
+
+
+	/**
 	 * @param $className
 	 * @param array $construct
 	 * @return mixed

@@ -59,9 +59,9 @@ class Service extends Component
 		$mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
 
 		if (Snowflake::port_already($service['port'])) {
-			throw new Exception(sprintf('Port %s::%d is already.', $service['host'], $service['port']));
+			throw new Exception($this->already($service));
 		}
-		$this->debug(sprintf('Port %s::%d is already.', $service['host'], $service['port']));
+		$this->debug(Snowflake::listen($service));
 
 		$rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
 		$rpcServer->set([
@@ -72,7 +72,28 @@ class Service extends Component
 			'open_http_protocol'      => false,
 			'open_websocket_protocol' => false,
 		]);
-		$router->addPortListen($service['port'], function () use ($service, $mode) {
+		$this->listenPort($service, $mode);
+	}
+
+
+	/**
+	 * @param $service
+	 * @return string
+	 */
+	private function already($service): string
+	{
+		return sprintf('Port %s::%d is already.', $service['host'], $service['port']);
+	}
+
+
+	/**
+	 * @param $service
+	 * @param $mode
+	 * @throws Exception
+	 */
+	private function listenPort($service, $mode)
+	{
+		router()->addPortListen($service['port'], function () use ($service, $mode) {
 			try {
 				/** @var Request $request */
 				$request = Context::getContext('request');
