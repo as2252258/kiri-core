@@ -476,6 +476,8 @@ class Server extends HttpService
 
 			$annotation = Snowflake::app()->getAttributes();
 			$annotation->instanceDirectoryFiles(CONTROLLER_PATH);
+			$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
+			$annotation->instanceDirectoryFiles(RPC_CLIENT_PATH);
 		});
 	}
 

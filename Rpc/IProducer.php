@@ -8,7 +8,7 @@ interface IProducer
 {
 
 
-	public function getConfig(): array;
+	public function initClient(): array;
 
 
 }

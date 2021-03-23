@@ -6,6 +6,7 @@ namespace Annotation;
 
 use Attribute;
 use DirectoryIterator;
+use Exception;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -121,7 +122,7 @@ class Loader extends BaseObject
 	/**
 	 * @param DirectoryIterator $paths
 	 * @param $namespace
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function _scanDir(DirectoryIterator $paths, $namespace)
 	{
@@ -216,6 +217,11 @@ class Loader extends BaseObject
 			}
 
 			$annotations = $this->_classes[$className];
+			if (isset($_array['target']) && !empty($_array['target'])) {
+				foreach ($_array['target'] as $value) {
+					$value->execute([$annotations['handler']]);
+				}
+			}
 
 			foreach ($annotations['methods'] as $name => $attribute) {
 				foreach ($attribute as $value) {

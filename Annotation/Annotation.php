@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use DirectoryIterator;
+use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Exception\ComponentException;
 
@@ -51,7 +52,7 @@ class Annotation extends Component
 	 * @param string $namespace
 	 * @param string $alias
 	 * @return void
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function read(string $path, string $namespace, string $alias = 'root'): void
 	{

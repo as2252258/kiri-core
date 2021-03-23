@@ -68,11 +68,9 @@ class Service extends Component
 		]);
 		$router->addPortListen($service['port'], function () use ($service, $mode) {
 			try {
+				/** @var Request $request */
 				$request = Context::getContext('request');
-				$request->headers->replace('request_method', Request::HTTP_CMD);
-
-				$router = Snowflake::app()->getRouter();
-				if (($node = $router->find_path($request)) === null) {
+				if (($node = router()->find_path($this->replace($request, $service))) === null) {
 					throw new Exception('Cmd not find.');
 				}
 				return $node->dispatch();
@@ -83,6 +81,33 @@ class Service extends Component
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			}
 		});
+	}
+
+
+	/**
+	 * @param Request $request
+	 * @param array $service
+	 * @return Request
+	 * @throws Exception
+	 */
+	public function replace(Request $request, array $service): Request
+	{
+		$body = $request->params->getBodyAndClear();
+		if (is_null($serialize = unserialize($body))) {
+			throw new Exception('Protocol format error.');
+		}
+		if (!isset($serialize['cmd'])) {
+			throw new Exception('Protocol format error.');
+		}
+		$request->params->setPosts($serialize);
+
+		$serialize['cmd'] = ltrim($serialize['cmd'], '/');
+
+		$header = $request->headers;
+		$header->replace('request_uri', 'rpc/' . $service['port'] . '/' . $serialize['cmd']);
+		$header->replace('request_method', Request::HTTP_CMD);
+
+		return $request;
 	}
 
 
