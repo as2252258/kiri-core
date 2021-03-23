@@ -8,8 +8,7 @@ interface IProducer
 {
 
 
-
-	public function getConfig();
+	public function getConfig(): array;
 
 
 }
