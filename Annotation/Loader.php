@@ -222,8 +222,8 @@ class Loader extends BaseObject
 			}
 
 			$annotations = $this->_classes[$className];
-			if (isset($_array['target']) && !empty($_array['target'])) {
-				foreach ($_array['target'] as $value) {
+			if (isset($annotations['target']) && !empty($annotations['target'])) {
+				foreach ($annotations['target'] as $value) {
 					$value->execute([$annotations['handler']]);
 				}
 			}
