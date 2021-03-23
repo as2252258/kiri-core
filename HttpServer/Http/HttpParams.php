@@ -118,7 +118,7 @@ class HttpParams
 	 */
 	public function getBodyAndClear(): mixed
 	{
-		$data = $this->body;
+		$data = $this->body['body'];
 		$this->clearBody();
 		return $data;
 	}
