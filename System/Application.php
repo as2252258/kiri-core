@@ -108,7 +108,7 @@ class Application extends BaseApplication
 	public function start(Input $argv): void
 	{
 //		try {
-		fire(Event::SERVER_BEFORE_START);
+//		fire(Event::SERVER_BEFORE_START);
 		if (env('debug') == 'false') {
 			$annotation = Snowflake::app()->getAttributes();
 			$annotation->read(directory('app'), 'App');
