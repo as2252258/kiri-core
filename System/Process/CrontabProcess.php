@@ -5,9 +5,12 @@ namespace Snowflake\Process;
 
 
 use Exception;
+use ReflectionException;
 use Snowflake\Crontab;
 use Snowflake\Abstracts\Crontab as ACrontab;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
@@ -34,9 +37,12 @@ class CrontabProcess extends Process
     public array $timers = [];
 
 
-    /**
-     * @param \Swoole\Process $process
-     */
+	/**
+	 * @param \Swoole\Process $process
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 */
     public function onHandler(\Swoole\Process $process): void
     {
         $crontab = Snowflake::app()->get('crontab');
@@ -64,11 +70,10 @@ class CrontabProcess extends Process
     }
 
 
-    /**
-     * @param Crontab $value
-     * @param int $startTime
-     * @throws \Exception
-     */
+	/**
+	 * @param Crontab $value
+	 * @throws Exception
+	 */
     private function dispatch(Crontab $value)
     {
         $value->increment()->execute();
@@ -99,10 +104,10 @@ class CrontabProcess extends Process
     }
 
 
-    /**
-     * @param Crontab $content
-     * @param $ticker
-     */
+	/**
+	 * @param Crontab $crontab
+	 * @throws Exception
+	 */
     private function addTask(Crontab $crontab)
     {
         $redis = Snowflake::app()->getRedis();
