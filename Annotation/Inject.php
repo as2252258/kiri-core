@@ -39,15 +39,15 @@ use Snowflake\Snowflake;
 	{
 		$injectValue = $this->parseInjectValue();
 
-		/** @var ReflectionProperty $property */
-		if ($property->isPrivate() || $property->isProtected()) {
-			$method = 'set' . ucfirst($property->getName());
+		/** @var ReflectionProperty $handler[1] */
+		if ($handler[1]->isPrivate() || $handler[1]->isProtected()) {
+			$method = 'set' . ucfirst($handler[1]->getName());
 			if (!method_exists($handler[0], $method)) {
 				return false;
 			}
 			$handler[0]->$method($injectValue);
 		} else {
-			$handler[0]->{$property->getName()} = $injectValue;
+			$handler[0]->{$handler[1]->getName()} = $injectValue;
 		}
 		return $handler[0];
 	}
