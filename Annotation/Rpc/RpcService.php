@@ -56,6 +56,10 @@ use Snowflake\Snowflake;
 		$rpc = Snowflake::app()->getRpc();
 		$rpc->addProducer($this->cmd, $handler, $this->config);
 
+		if ($handler[0] instanceof IProducer) {
+			$handler[0]->initClient();
+		}
+
 		return parent::execute($handler);
 	}
 
