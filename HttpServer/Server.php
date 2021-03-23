@@ -412,7 +412,6 @@ class Server extends HttpService
 	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	private function onListenerBind($config, $newListener): Packet|Websocket|Receive|Http|null

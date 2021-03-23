@@ -633,7 +633,7 @@ if (!function_exists('env')) {
      * @param null $default
      * @return array|string|null
      */
-    function env($key, $default = null): null|array|string
+    #[Pure] function env($key, $default = null): null|array|string
     {
         $env = getenv($key);
         if ($env === false) {
