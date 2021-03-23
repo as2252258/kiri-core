@@ -42,6 +42,10 @@ class Producer extends Component
 		$this->consumers[$name] = $handler[0];
 
 		$this->producers[$name] = $node;
+
+		if ($handler[0] instanceof IProducer) {
+			$handler[0]->initClient();
+		}
 	}
 
 
