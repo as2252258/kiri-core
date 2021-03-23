@@ -58,6 +58,18 @@ class Client extends Component
 
 
 	/**
+	 * 断开链接
+	 */
+	public function close()
+	{
+		if (!$this->client || !$this->client->isConnected()) {
+			return;
+		}
+		$this->client->close();
+	}
+
+
+	/**
 	 * @return mixed
 	 * @throws Exception
 	 */
