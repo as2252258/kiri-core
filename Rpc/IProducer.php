@@ -8,7 +8,11 @@ interface IProducer
 {
 
 
-	public function initClient(): array;
+	/**
+	 * @return Client
+	 * 初始化一个客户端
+	 */
+	public function initClient(): Client;
 
 
 }
