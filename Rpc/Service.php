@@ -77,8 +77,6 @@ class Service extends Component
 			} catch (\Throwable $exception) {
 				$this->addError($exception);
 				return serialize(['state' => 'fail', 'message' => $exception->getMessage()]);
-			} finally {
-				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			}
 		});
 	}
