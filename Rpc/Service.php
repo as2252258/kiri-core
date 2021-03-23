@@ -94,11 +94,12 @@ class Service extends Component
 	 */
 	public static function replace(Request $request, array $service): Request
 	{
-		if (!is_array($body = $request->params->getBodyAndClear())) {
+		$body = $request->params->getBodyAndClear();
+		if (is_string($body) && is_null($body = Json::decode($body))) {
 			throw new Exception('Protocol format error.');
 		}
 		if (!isset($body['cmd'])) {
-			throw new Exception('Protocol format error.');
+			throw new Exception('Unknown system cmd.');
 		}
 		$request->params->setPosts($body);
 
