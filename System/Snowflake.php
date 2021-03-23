@@ -84,6 +84,25 @@ class Snowflake
 
 
 	/**
+	 * @param $port
+	 * @return bool|array
+	 * @throws Exception
+	 */
+	public static function port_already($port): bool
+	{
+		if (empty($port)) {
+			return false;
+		}
+		if (Snowflake::getPlatform()->isLinux()) {
+			exec('netstat -tunlp | grep ' . $port, $output);
+		} else {
+			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
+		}
+		return !empty($output);
+	}
+
+
+	/**
 	 * @param $className
 	 * @param array $construct
 	 * @return mixed

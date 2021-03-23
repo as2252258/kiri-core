@@ -175,17 +175,27 @@ class Server extends HttpService
 			return false;
 		}
 		foreach ($port as $value) {
-			if (Snowflake::getPlatform()->isLinux()) {
-				exec('netstat -tunlp | grep ' . $value['port'], $output);
-			} else {
-				exec('lsof -i :' . $value['port'] . ' | grep -i "LISTEN"', $output);
-			}
-			if (!empty($output)) {
-				unset($output);
+			if ($this->checkPort($value['port'])) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+
+	/**
+	 * @param $port
+	 * @return bool
+	 * @throws Exception
+	 */
+	private function checkPort($port): bool
+	{
+		if (Snowflake::getPlatform()->isLinux()) {
+			exec('netstat -tunlp | grep ' . $port, $output);
+		} else {
+			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
+		}
+		return !empty($output);
 	}
 
 
@@ -312,7 +322,7 @@ class Server extends HttpService
 	 */
 	private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
 	{
-		if ($this->isUse($config['port'])) {
+		if (Snowflake::port_already($config['port'])) {
 			return $this->error_stop($config['host'], $config['port']);
 		}
 		if (!($this->baseServer instanceof \Swoole\Server)) {

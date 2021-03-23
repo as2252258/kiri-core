@@ -57,6 +57,12 @@ class Service extends Component
 	private function addService($router, $server, $service)
 	{
 		$mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
+
+		if (Snowflake::port_already($service['port'])) {
+			throw new Exception(sprintf('Port %s::%d is already.', $service['host'], $service['port']));
+		}
+		$this->debug(sprintf('Port %s::%d is already.', $service['host'], $service['port']));
+
 		$rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
 		$rpcServer->set([
 			'open_tcp_keepalive'      => true,
