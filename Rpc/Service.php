@@ -30,8 +30,11 @@ class Service extends Component
         if (empty($services)) {
             return;
         }
-//        foreach ($services as $service) {
-//            $mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
+        foreach ($services as $service) {
+            $mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
+
+            var_dump($service,$mode);
+//
 //            $rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
 //            $rpcServer->set([
 //                'open_tcp_keepalive'      => true,
@@ -41,7 +44,7 @@ class Service extends Component
 //                'open_http_protocol'      => false,
 //                'open_websocket_protocol' => false,
 //            ]);
-//        }
+        }
     }
 
 
