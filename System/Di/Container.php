@@ -124,11 +124,13 @@ class Container extends BaseObject
 	private function resolve($class, $constrict, $config): object
 	{
 		[$reflect, $dependencies] = $this->resolveDependencies($class, $constrict);
+		if (empty($reflect)) {
+			throw new NotFindClassException($class);
+		}
 		foreach ($constrict as $index => $param) {
 			$dependencies[$index] = $param;
 		}
 
-		var_dump($reflect);
 		if (!$reflect->isInstantiable()) {
 			throw new NotFindClassException($reflect->getName());
 		}
@@ -173,7 +175,7 @@ class Container extends BaseObject
 	{
 		if (!isset($this->_reflection[$class])) {
 			if (!class_exists($class)) {
-        		return null;
+				return null;
 			}
 			$reflection = new ReflectionClass($class);
 			if (!$reflection->isInstantiable()) {
