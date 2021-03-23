@@ -182,12 +182,9 @@ abstract class BaseApplication extends Service
 		$event = Snowflake::app()->getEvent();
 		foreach ($config['events'] as $key => $value) {
 			if (is_string($value)) {
-				if (!class_exists($value)) {
-					throw new InitException("Class {$value} does not exists.");
-				}
 				$value = Snowflake::createObject($value);
 			}
-			if (is_array($value) && isset($value[0]) && is_object($value[0])) {
+			if (is_array($value) && isset($value[0]) && !($value[0] instanceof \Closure)) {
 				if (!is_callable($value, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
