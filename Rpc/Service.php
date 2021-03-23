@@ -98,6 +98,7 @@ class Service extends Component
 		if (is_string($body) && is_null($body = Json::decode($body))) {
 			throw new Exception('Protocol format error.');
 		}
+		var_dump($body);
 		if (!isset($body['cmd'])) {
 			throw new Exception('Unknown system cmd.');
 		}
