@@ -106,11 +106,10 @@ class Service extends Component
 
 		$body['cmd'] = ltrim($body['cmd'], '/');
 
-		var_dump('rpc/p' . $service['port'] . '/' . $body['cmd']);
-
 		$header = $request->headers;
 		$header->replace('request_uri', 'rpc/p' . $service['port'] . '/' . $body['cmd']);
 		$header->replace('request_method', Request::HTTP_CMD);
+		$request->parseUri();
 
 		return $request;
 	}
