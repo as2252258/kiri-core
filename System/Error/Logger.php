@@ -127,6 +127,9 @@ class Logger extends Component
 	 */
 	public function output($message)
 	{
+		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
+			return;
+		}
 		echo $message;
 	}
 
