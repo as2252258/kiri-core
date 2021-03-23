@@ -187,7 +187,7 @@ class Loader extends BaseObject
 						}
 						$property = $attribute->newInstance();
 						if ($property instanceof Inject) {
-							$property->execute([$_array['handler'], $method->getName()]);
+							$property->execute([$_array['handler'], $method]);
 						} else {
 							$_property[] = $attribute->newInstance();
 						}

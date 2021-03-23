@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use ReflectionException;
+use ReflectionProperty;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -37,17 +38,23 @@ use Snowflake\Snowflake;
 	{
 		[$object, $property] = $handler;
 		if (class_exists($this->className)) {
-			return $object->$property = Snowflake::createObject($this->className, $this->args);
+			$injectValue = Snowflake::createObject($this->className, $this->args);
+		} else if (Snowflake::app()->has($this->className)) {
+			$injectValue = Snowflake::app()->get($this->className);
+		} else {
+			$injectValue = $this->className;
 		}
-
-		$application = Snowflake::app();
-		if (!$application->has($this->className)) {
-			return $object;
+		if (!empty($this->args) && is_object($injectValue)) {
+			Snowflake::configure($injectValue, $this->args);
 		}
-
-		$object->$property = $application->get($this->className);
-		if (!empty($this->args) && is_object($object->$property)) {
-			Snowflake::configure($object->$property, $this->args);
+		/** @var ReflectionProperty $property */
+		if ($property->isPrivate() || $property->isProtected()) {
+			if (!method_exists($handler[0], 'set' . ucfirst($property->getName()))) {
+				return false;
+			}
+			$object->{'set' . ucfirst($property->getName())}($injectValue);
+		} else {
+			$object->$property = $injectValue;
 		}
 		return $object;
 	}
