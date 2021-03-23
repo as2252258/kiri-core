@@ -75,13 +75,15 @@ class Router extends HttpService implements RouterInterface
 	 * @param $port
 	 * @param Closure|array|string $closure
 	 * @param null $method
-	 * @throws
+	 * @return mixed
+	 * @throws Exception
 	 */
-	public function addPortListen($port, Closure|array|string $closure, $method = null)
+	public function addPortListen($port, Closure|array|string $closure, $method = null): mixed
 	{
-		if (!is_string($closure)) {
-			$this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
-		} else {
+		try {
+			if (!is_string($closure)) {
+				return $this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
+			}
 			if (empty($method)) {
 				throw new NotFindClassException($closure . '::' . $method);
 			}
@@ -89,7 +91,9 @@ class Router extends HttpService implements RouterInterface
 			if (!method_exists($_closure, $method)) {
 				throw new NotFindClassException($closure . '::' . $method);
 			}
-			$this->addRoute('add-port-listen/port_' . $port, [$_closure, $method], 'listen');
+			return $this->addRoute('add-port-listen/port_' . $port, [$_closure, $method], 'listen');
+		} catch (\Throwable $exception) {
+			return $this->addError($exception);
 		}
 	}
 
