@@ -92,9 +92,7 @@ class Producer extends Component
 	 * @param string $topic
 	 * @param array $params
 	 * @param string|null $groupId
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function dispatch(string $topic, array $params = [], string $groupId = null)
 	{
@@ -102,13 +100,16 @@ class Producer extends Component
 		if (empty($consumers) || !is_array($consumers)) {
 			return;
 		}
-
+		if (!isset($consumers['brokers'])) {
+			throw new Exception('You need set brokers config.');
+		}
 		if (!empty($groupId)) {
 			$consumers['groupId'] = $groupId;
 		} else if (!isset($consumers['groupId'])) {
 			$consumers['groupId'] = $topic . ':' . Snowflake::localhost();
 		}
 		$this->setGroupId($groupId)->setTopic($topic)
+			->setBrokers($consumers['brokers'])
 			->delivery(swoole_serialize($params));
 	}
 
