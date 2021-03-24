@@ -5,21 +5,17 @@ namespace Rpc;
 
 use Exception;
 use HttpServer\Http\Context;
-use HttpServer\Http\HttpHeaders;
-use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Service\Http;
 use HttpServer\Service\Packet;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
-use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Server;
 
 
 /**
@@ -37,25 +33,10 @@ class Service extends Component
 	 */
 	public function instance(Packet|Websocket|Receive|null|Http $server): void
 	{
-		$services = Config::get('rpc.service', false, []);
+		$service = Config::get('rpc.service', false, []);
 		if (empty($services)) {
 			return;
 		}
-		$router = Snowflake::app()->getRouter();
-		foreach ($services as $service) {
-			$this->addService($router, $server, $service);
-		}
-	}
-
-
-	/**
-	 * @param $router
-	 * @param $server
-	 * @param $service
-	 * @throws Exception
-	 */
-	private function addService($router, $server, $service)
-	{
 		$mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
 
 		if (Snowflake::port_already($service['port'])) {
@@ -64,15 +45,21 @@ class Service extends Component
 		$this->debug(Snowflake::listen($service));
 
 		$rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
-		$rpcServer->set([
-			'open_tcp_keepalive'      => true,
-			'tcp_keepidle'            => 30,
-			'tcp_keepinterval'        => 10,
-			'tcp_keepcount'           => 10,
-			'open_http_protocol'      => false,
-			'open_websocket_protocol' => false,
-		]);
+		$rpcServer->set($service['setting'] ?? [
+				'open_tcp_keepalive'      => true,
+				'tcp_keepidle'            => 30,
+				'tcp_keepinterval'        => 10,
+				'tcp_keepcount'           => 10,
+				'open_http_protocol'      => false,
+				'open_websocket_protocol' => false,
+			]);
 		$this->listenPort($service, $mode);
+	}
+
+
+	public function zookeeper()
+	{
+
 	}
 
 
@@ -80,7 +67,7 @@ class Service extends Component
 	 * @param $service
 	 * @return string
 	 */
-	private function already($service): string
+	#[Pure] private function already($service): string
 	{
 		return sprintf('Port %s::%d is already.', $service['host'], $service['port']);
 	}
