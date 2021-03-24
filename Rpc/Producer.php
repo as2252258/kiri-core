@@ -116,21 +116,22 @@ class Producer extends Component
 
 	/**
 	 * @param string $name
-	 * @param array|null $config
+	 * @param string|null $host
 	 * @return mixed
-	 * @throws ReflectionException
 	 * @throws ComponentException
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function getClient(string $name, array $config = null): Client
+	public function getClient(string $name, string $host = null): Client
 	{
-		$producer = $config ?? $this->producers[$name] ?? null;
+		$producer = $this->producers[$name] ?? null;
 		if ($producer === null) {
 			throw new Exception('Unknown rpc client config.');
 		}
-
-		if (!isset($producer['host'])) {
+		if (!empty($host)) {
+			$producer['host'] = $host;
+		} else if (!isset($producer['host'])) {
 			$producer['host'] = Snowflake::localhost();
 		}
 		$producerName = $this->getName($name, $producer);
