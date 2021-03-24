@@ -9,8 +9,11 @@ use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Config;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -37,6 +40,10 @@ class Producer extends Component
 	private ?\RdKafka\Producer $producer = null;
 
 
+	/**
+	 * Producer constructor.
+	 * @param array $config
+	 */
 	public function __construct($config = [])
 	{
 		parent::__construct($config);
@@ -82,12 +89,32 @@ class Producer extends Component
 
 
 	/**
+	 * @param string $topic
+	 * @param array $params
+	 * @param string|null $groupId
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws ConfigException
+	 */
+	public function dispatch(string $topic, array $params = [], string $groupId = null)
+	{
+		if ($groupId === null || empty($groupId)) {
+			$consumers = Config::get('kafka.consumers.' . $topic);
+			if (empty($consumers)) {
+				$consumers = ['groupId' => $topic . ':' . Snowflake::localhost()];
+			}
+			$groupId = $consumers['groupId'];
+		}
+		$this->setGroupId($groupId)->setTopic($topic)->delivery(Json::encode($params));
+	}
+
+
+	/**
 	 * @param $message
 	 * @param null $key
 	 * @param bool $isAck
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function delivery($message, $key = null, $isAck = false)
@@ -114,9 +141,8 @@ class Producer extends Component
 	}
 
 
-	/** @var ProducerTopic[] $topics  */
+	/** @var ProducerTopic[] $topics */
 	private array $topics = [];
-
 
 
 	/**
@@ -125,7 +151,7 @@ class Producer extends Component
 	 */
 	private function push($message, $key)
 	{
-		if(!isset($this->topics[$this->_topic])){
+		if (!isset($this->topics[$this->_topic])) {
 			$this->topics[$this->_topic] = $this->producer->newTopic($this->_topic, $this->topicConf);
 		}
 		$this->topics[$this->_topic]->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
