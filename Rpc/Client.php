@@ -40,21 +40,35 @@ class Client extends Component
 		if (!($this->client instanceof CClient)) {
 			$this->client = $this->getClient();
 		}
-		if (!$this->client->isConnected()) {
-			$settings = [$this->config['host'], $this->config['port'], $this->config['timeout'] ?? 1];
-			if (!$this->client->connect(...$settings)) {
-				return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
-			}
+		if (!$this->client->isConnected() || !$this->connect()) {
+			return false;
 		}
 		$isSend = $this->client->send(Json::encode(['cmd' => $cmd, 'body' => $param]));
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
-
 		if (is_bool($unpack = Json::decode($this->client->recv()))) {
 			return $this->addError('Service return data format error(500)');
 		}
 		return $unpack;
+	}
+
+
+	/**
+	 * @return bool
+	 * @throws Exception
+	 */
+	private function connect(): bool
+	{
+		$host = $this->config['host'] ?? '127.0.0.1';
+		if (!isset($this->config['port'])) {
+			return $this->addError('Related service not have port(404)');
+		}
+		$timeout = $this->config['timeout'] ?? 0.2;
+		if (!$this->client->connect($host, $this->config['port'], $timeout)) {
+			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
+		}
+		return true;
 	}
 
 
