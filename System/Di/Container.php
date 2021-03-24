@@ -9,11 +9,14 @@ declare(strict_types=1);
 
 namespace Snowflake\Di;
 
+use Annotation\Inject;
+use Annotation\Target;
 use Database\Connection;
 use HttpServer\Http\HttpHeaders;
 use ReflectionClass;
 use Snowflake\Abstracts\BaseObject;
 use ReflectionException;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -120,9 +123,11 @@ class Container extends BaseObject
 	 * @return object
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws ComponentException
 	 */
 	private function resolve($class, $constrict, $config): object
 	{
+		/** @var ReflectionClass $reflect */
 		[$reflect, $dependencies] = $this->resolveDependencies($class, $constrict);
 		if (empty($reflect)) {
 			throw new NotFindClassException($class);
@@ -136,19 +141,44 @@ class Container extends BaseObject
 		}
 
 		if (empty($config) || !is_array($config)) {
-			return $reflect->newInstanceArgs($dependencies);
-		}
-
-		if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
+			$object = $reflect->newInstanceArgs($dependencies);
+		} else if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
 			$dependencies[count($dependencies) - 1] = $config;
-			return $reflect->newInstanceArgs($dependencies);
+			$object = $reflect->newInstanceArgs($dependencies);
+		} else {
+			if (!empty($config)) $this->_param[$class] = $config;
+
+			$object = $this->onAfterInit($reflect->newInstanceArgs($dependencies), $config);
 		}
-
-		if (!empty($config)) $this->_param[$class] = $config;
-
-
-		return $this->onAfterInit($reflect->newInstanceArgs($dependencies), $config);
+		return $this->propertyInject($reflect, $object);
 	}
+
+
+	/**
+	 * @param ReflectionClass $reflect
+	 * @param $object
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 */
+	private function propertyInject(ReflectionClass $reflect, $object): mixed
+	{
+		$inject = $reflect->getProperties(
+			\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED |
+			\ReflectionProperty::IS_PUBLIC
+		);
+		foreach ($inject as $reflectionProperty) {
+			$attributes = $reflectionProperty->getAttributes(Inject::class);
+			foreach ($attributes as $attribute) {
+				/** @var Inject $class */
+				$class = $attribute->newInstance();
+				$class->execute([$object, $reflectionProperty->getName()]);
+			}
+		}
+		return $object;
+	}
+
 
 	/**
 	 * @param $object
