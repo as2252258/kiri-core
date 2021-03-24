@@ -15,7 +15,7 @@ use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
-#[\Attribute(\Attribute::TARGET_METHOD)] class RpcService extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD)] class RpcClient extends Attribute
 {
 
 	private string $uri = '';
