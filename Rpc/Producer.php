@@ -5,6 +5,7 @@ namespace Rpc;
 
 
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Exception\ComponentException;
@@ -128,6 +129,10 @@ class Producer extends Component
 		if ($producer === null) {
 			throw new Exception('Unknown rpc client config.');
 		}
+
+		if (!isset($producer['host'])) {
+			$producer['host'] = Snowflake::localhost();
+		}
 		$producerName = $this->getName($name, $producer);
 
 		$snowflake = Snowflake::app();
@@ -144,6 +149,7 @@ class Producer extends Component
 	 * @param $producer
 	 * @return array
 	 */
+	#[ArrayShape(['class' => "string", 'service' => "", 'config' => ""])]
 	private function definer($name, $producer): array
 	{
 		return ['class' => Client::class, 'service' => $name, 'config' => $producer];
@@ -163,12 +169,12 @@ class Producer extends Component
 
 	/**
 	 * @param $name
-	 * @param $rand
+	 * @param $config
 	 * @return string
 	 */
-	private function getName($name, $rand): string
+	private function getName($name, $config): string
 	{
-		return 'rpc.client.' . $name . '.' . $rand['host'];
+		return 'rpc.client.' . $name . '.' . $config['host'];
 	}
 
 }
