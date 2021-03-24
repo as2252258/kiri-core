@@ -24,7 +24,6 @@ class Struct
 	 */
 	public function __construct($topic, Message $message)
 	{
-		var_dump($message->payload);
 		$message->payload = swoole_unserialize($message->payload);
 
 		$this->topic = $topic;
