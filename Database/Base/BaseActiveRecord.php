@@ -26,6 +26,7 @@ use Database\HasOne;
 use Database\Mysql\Columns;
 use Database\Relation;
 use Exception;
+use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use validator\Validator;
@@ -44,6 +45,10 @@ use Snowflake\Event as SEvent;
  */
 abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 {
+
+
+	use TraitApplication;
+
 
 	const AFTER_SAVE = 'after::save';
 	const BEFORE_SAVE = 'before::save';
@@ -847,6 +852,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		}
 		if (in_array($name, $this->_with)) {
 			return $this->with($name);
+		}
+		if (Snowflake::app()->has($name)) {
+			return Snowflake::app()->get($name);
 		}
 		return parent::__get($name);
 	}
