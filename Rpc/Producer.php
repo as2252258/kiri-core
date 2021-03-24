@@ -43,11 +43,10 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param string $name
-     * @param array $handler
-     * @param array $node
-     */
+	/**
+	 * @param string $cmd
+	 * @param array $handler
+	 */
     public function addConsumer(string $cmd, array $handler)
     {
         $class = get_class($handler[0]);
@@ -62,12 +61,12 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param $cmd
-     * @param mixed ...$params
-     * @return false|mixed
-     */
-    public function dispatch($cmd, mixed ...$params)
+	/**
+	 * @param $cmd
+	 * @param mixed ...$params
+	 * @return mixed
+	 */
+    public function dispatch($cmd, mixed ...$params): mixed
     {
         $handler = $this->cmds[$cmd] ?? null;
         if (empty($handler)) {
