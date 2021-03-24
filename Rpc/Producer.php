@@ -146,6 +146,20 @@ class Producer extends Component
 
 
 	/**
+	 * @param string $name
+	 * @param string|null $host
+	 * @return Client
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public function consumer(string $name, string $host = null): Client
+	{
+		return $this->getClient($name, $host);
+	}
+
+
+	/**
 	 * @param $name
 	 * @param $producer
 	 * @return array
