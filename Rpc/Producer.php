@@ -5,7 +5,11 @@ namespace Rpc;
 
 
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 
@@ -112,26 +116,38 @@ class Producer extends Component
 
 	/**
 	 * @param string $name
+	 * @param array|null $config
 	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function getClient(string $name): Client
+	public function getClient(string $name, array $config = null): Client
 	{
-		if (!is_array($producer = $this->producers[$name] ?? null)) {
+		$producer = $config ?? $this->producers[$name] ?? null;
+		if ($producer === null) {
 			throw new Exception('Unknown rpc client config.');
 		}
 		$producerName = $this->getName($name, $producer);
 
 		$snowflake = Snowflake::app();
 		if (!$snowflake->has($producerName)) {
-			return $snowflake->set($producerName, [
-				'class'   => Client::class,
-				'service' => $name,
-				'config'  => $producer
-			]);
+			return $snowflake->set($producerName, $this->definer($name, $producer));
 		} else {
 			return $snowflake->get($producerName);
 		}
+	}
+
+
+	/**
+	 * @param $name
+	 * @param $producer
+	 * @return array
+	 */
+	private function definer($name, $producer): array
+	{
+		return ['class' => Client::class, 'service' => $name, 'config' => $producer];
 	}
 
 
