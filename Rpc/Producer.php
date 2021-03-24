@@ -5,7 +5,6 @@ namespace Rpc;
 
 
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Exception\ComponentException;
