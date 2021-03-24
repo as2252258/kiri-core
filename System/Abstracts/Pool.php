@@ -168,7 +168,7 @@ abstract class Pool extends Component
 	 * @param $cds
 	 * @param $coroutineName
 	 * @param false $isBefore
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{
