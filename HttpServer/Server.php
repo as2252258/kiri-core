@@ -364,8 +364,8 @@ class Server extends HttpService
 	 */
 	private function startRpcService(): Packet|Websocket|Receive|Http|null
 	{
-		$rpcService = Config::get('rpc.service', false, []);
-		if (is_array($rpcService) && !empty($rpcService)) {
+		$rpcService = Config::get('rpc.enable', false, []);
+		if ($rpcService === true) {
 			/** @var Service $service */
 			$service = Snowflake::app()->get('rpc-service');
 			$service->instance($this->baseServer);

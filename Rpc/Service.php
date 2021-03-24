@@ -33,7 +33,7 @@ class Service extends Component
 	 */
 	public function instance(Packet|Websocket|Receive|null|Http $server): void
 	{
-		$service = Config::get('rpc.service', false, []);
+		$service = Config::get('rpc', false, []);
 		if (empty($services)) {
 			return;
 		}
