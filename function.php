@@ -671,7 +671,7 @@ if (!function_exists('swoole_serialize')) {
 	 */
 	function swoole_serialize($data): string
 	{
-		var_dump(class_exists('swoole_serialize'), \swoole_serialize::pack($data));
+		var_dump(class_exists('swoole_serialize'));
 		if (class_exists('swoole_serialize')) {
 			return \swoole_serialize::pack($data);
 		} else {
