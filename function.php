@@ -688,7 +688,7 @@ if (!function_exists('swoole_unserialize')) {
 	 * @param $data
 	 * @return string
 	 */
-	function swoole_unserialize($data): string
+	function swoole_unserialize($data): mixed
 	{
 		if (class_exists('swoole_serialize')) {
 			return \swoole_serialize::unpack($data);
