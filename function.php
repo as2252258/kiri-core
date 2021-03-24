@@ -672,6 +672,7 @@ if (!function_exists('swoole_serialize')) {
 	function swoole_serialize($data): string
 	{
 		if (class_exists('swoole_serialize')) {
+			var_dump(\swoole_serialize::pack($data));
 			return \swoole_serialize::pack($data);
 		} else {
 			return serialize($data);
