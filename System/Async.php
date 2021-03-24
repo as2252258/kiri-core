@@ -35,7 +35,7 @@ class Async extends Component
 	 * @param array $params
 	 * @throws Exception
 	 */
-	public function dispatch(string $name, array $params)
+	public function dispatch(string $name, array $params = [])
 	{
 		$server = Snowflake::app()->getSwoole();
 		if (!isset($server->setting['task_worker_num'])) {
