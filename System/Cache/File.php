@@ -32,7 +32,7 @@ class File extends Component implements ICache
 	public function set($key, $val): string|int
 	{
 		if (is_array($val) || is_object($val)) {
-			$val = serialize($val);
+			$val = swoole_serialize($val);
 		}
 		$tmpFile = $this->getCacheKey($key);
 		if (!$this->exists($tmpFile)) {
@@ -128,7 +128,7 @@ class File extends Component implements ICache
 			return false;
 		}
 		$content = file_get_contents($tmpFile);
-		return unserialize($content);
+		return swoole_unserialize($content);
 	}
 
 	/**

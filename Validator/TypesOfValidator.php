@@ -87,7 +87,7 @@ class TypesOfValidator extends BaseValidator
 		if (!is_string($value) || is_numeric($value)) {
 			return $this->addError('The ' . $this->field . ' not is serialize data.');
 		}
-		if (false === unserialize($value)) {
+		if (false === swoole_unserialize($value)) {
 			return $this->addError('The ' . $this->field . ' not is serialize data.');
 		}
 		return true;

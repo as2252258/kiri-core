@@ -105,7 +105,7 @@ class Producer extends Component
 			}
 			$groupId = $consumers['groupId'];
 		}
-		$this->setGroupId($groupId)->setTopic($topic)->delivery(Json::encode($params));
+		$this->setGroupId($groupId)->setTopic($topic)->delivery(swoole_serialize($params));
 	}
 
 

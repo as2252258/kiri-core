@@ -316,7 +316,7 @@ class Snowflake
 		$class = static::createObject($class);
 		$class->setParams($params);
 
-		$server->task(serialize($class));
+		$server->task(swoole_serialize($class));
 	}
 
 

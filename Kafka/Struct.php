@@ -24,6 +24,8 @@ class Struct
 	 */
 	public function __construct($topic, Message $message)
 	{
+		$message->payload = swoole_unserialize($message->payload);
+
 		$this->topic = $topic;
 		$this->offset = $message->offset;
 		$this->part = $message->partition;

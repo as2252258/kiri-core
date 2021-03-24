@@ -101,12 +101,11 @@ class OnTask extends Callback
 	 */
 	private function runTaskHandler($data): ?array
 	{
-		Coroutine\defer(function () {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
-		});
 		try {
 			$serialize = $this->before($data);
+			if ($serialize === null) {
+				throw new Exception('unpack error.');
+			}
 			$params = $serialize->getParams();
 			if (is_object($params)) {
 				$params = get_object_vars($params);
@@ -115,12 +114,17 @@ class OnTask extends Callback
 			$finish['params'] = $params;
 			$finish['status'] = 'success';
 			$finish['info'] = $serialize->onHandler();
+			return $finish;
 		} catch (\Throwable $exception) {
 			$finish['status'] = 'error';
 			$finish['info'] = $this->format($exception);
 			$this->error($exception, 'Task');
+
+			return $finish;
+		} finally {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+			logger()->insert();
 		}
-		return $finish;
 	}
 
 
@@ -130,7 +134,7 @@ class OnTask extends Callback
 	 */
 	protected function before($data): ?Task
 	{
-		if (empty($serialize = unserialize($data))) {
+		if (empty($serialize = swoole_unserialize($data))) {
 			return null;
 		}
 		if (!($serialize instanceof ITask)) {

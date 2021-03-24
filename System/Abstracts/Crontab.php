@@ -31,7 +31,7 @@ class Crontab extends Component
 
         $name = md5($crontab->getName());
 
-        $redis->set('crontab:' . $name, serialize($crontab));
+        $redis->set('crontab:' . $name, swoole_serialize($crontab));
 
         $tickTime = time() + $crontab->getTickTime();
 

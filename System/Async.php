@@ -52,7 +52,7 @@ class Async extends Component
 
 		$randWorkerId = random_int(0, $server->setting['task_worker_num'] - 1);
 
-		$server->task(serialize($class), $randWorkerId);
+		$server->task(swoole_serialize($class), $randWorkerId);
 	}
 
 }

@@ -58,7 +58,7 @@ class CrontabProcess extends Process
             foreach ($range as $value) {
                 $crontab = $redis->get('crontab:' . md5($value));
                 $redis->del('crontab:' . md5($value));
-                if (empty($crontab) || !($crontab = unserialize($crontab))) {
+                if (empty($crontab) || !($crontab = swoole_unserialize($crontab))) {
                     continue;
                 }
                 Coroutine::create(function (Crontab $value, int $startTime) {
@@ -114,7 +114,7 @@ class CrontabProcess extends Process
 
         $name = md5($crontab->getName());
 
-        $redis->set('crontab:' . $name, serialize($crontab));
+        $redis->set('crontab:' . $name, swoole_serialize($crontab));
 
         $tickTime = time() + $crontab->getTickTime();
 

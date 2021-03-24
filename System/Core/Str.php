@@ -105,7 +105,7 @@ class Str
      */
     public static function isSerialize($data, $callBack = null): bool
     {
-        $false = !empty($data) && unserialize($data) !== false;
+        $false = !empty($data) && swoole_unserialize($data) !== false;
         if ($false && is_callable($callBack, true)) {
             return call_user_func($callBack, $data);
         }
