@@ -9,13 +9,10 @@ use Exception;
 use HttpServer\Http\Request;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
-#[\Attribute(\Attribute::TARGET_METHOD)] class RpcClient extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD)] class RpcProducer extends Attribute
 {
 
 	private string $uri = '';

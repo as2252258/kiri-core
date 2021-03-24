@@ -17,7 +17,7 @@ use Snowflake\Snowflake;
  * Class RpcClient
  * @package Annotation\Rpc
  */
-#[\Attribute(\Attribute::TARGET_CLASS)] class RpcProducer extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS)] class RpcClient extends Attribute
 {
 
 	private array $config;
