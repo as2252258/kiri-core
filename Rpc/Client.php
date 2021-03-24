@@ -6,9 +6,7 @@ namespace Rpc;
 
 use Exception;
 use Snowflake\Abstracts\Component;
-use Swoole;
 use Snowflake\Core\Json;
-use Snowflake\Exception\ConfigException;
 use Swoole\Coroutine\Client as CClient;
 
 

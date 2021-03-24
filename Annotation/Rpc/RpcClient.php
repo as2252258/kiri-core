@@ -33,8 +33,8 @@ use Snowflake\Snowflake;
 	public function __construct(
 		public string $cmd,
 		public int $port,
-		public int $timeout = 1,
-		public int $mode = SWOOLE_SOCK_TCP6
+		public int $timeout,
+		public int $mode
 	)
 	{
 		$this->config = ['port' => $port, 'mode' => $mode, 'timeout' => $timeout];
@@ -53,10 +53,6 @@ use Snowflake\Snowflake;
 	{
 		$rpc = Snowflake::app()->getRpc();
 		$rpc->addProducer($this->cmd, $handler, $this->config);
-
-		if ($handler[0] instanceof IProducer) {
-			$handler[0]->initClient();
-		}
 
 		return parent::execute($handler);
 	}
