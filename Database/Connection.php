@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Database;
 
 
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\Mysql\Schema;
@@ -105,8 +106,9 @@ class Connection extends Component
 
 
 	/**
-	 * 初始化 Channel
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function fill()
 	{
@@ -151,7 +153,7 @@ class Connection extends Component
 	 * @param $sql
 	 * @return bool
 	 */
-	public function isWrite($sql): bool
+	#[Pure] public function isWrite($sql): bool
 	{
 		if (empty($sql)) return false;
 
@@ -163,6 +165,8 @@ class Connection extends Component
 	/**
 	 * @return mixed
 	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function getCacheDriver(): mixed
 	{
