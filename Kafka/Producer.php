@@ -98,14 +98,18 @@ class Producer extends Component
 	 */
 	public function dispatch(string $topic, array $params = [], string $groupId = null)
 	{
-		if ($groupId === null || empty($groupId)) {
-			$consumers = Config::get('kafka.consumers.' . $topic);
-			if (empty($consumers)) {
-				$consumers = ['groupId' => $topic . ':' . Snowflake::localhost()];
-			}
-			$groupId = $consumers['groupId'];
+		$consumers = Config::get('kafka.consumers.' . $topic);
+		if (empty($consumers) || !is_array($consumers)) {
+			return;
 		}
-		$this->setGroupId($groupId)->setTopic($topic)->delivery(swoole_serialize($params));
+
+		if (!empty($groupId)) {
+			$consumers['groupId'] = $groupId;
+		} else if (!isset($consumers['groupId'])) {
+			$consumers['groupId'] = $topic . ':' . Snowflake::localhost();
+		}
+		$this->setGroupId($groupId)->setTopic($topic)
+			->delivery(swoole_serialize($params));
 	}
 
 
