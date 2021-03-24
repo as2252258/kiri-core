@@ -14,7 +14,7 @@ class Struct
 	public Message $message;
 	public string $topic;
 
-	public ?string $value;
+	public mixed $value;
 	public int $part;
 
 	/**
