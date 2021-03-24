@@ -91,6 +91,26 @@ class Producer extends Component
 
 
 	/**
+	 * @return array
+	 */
+	public function getService(): array
+	{
+		$array = [];
+		foreach (array_keys($this->cods) as $key) {
+			$explode = explode('.', $key);
+			$prefix = array_shift($explode);
+
+			$explode = implode('.', $explode);
+			if (!isset($array[$prefix])) {
+				$array[$prefix] = [];
+			}
+			$array[$prefix][] = $explode;
+		}
+		return $array;
+	}
+
+
+	/**
 	 * @param string $name
 	 * @return mixed
 	 * @throws Exception
