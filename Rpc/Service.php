@@ -33,8 +33,8 @@ class Service extends Component
 	 */
 	public function instance(Packet|Websocket|Receive|null|Http $server): void
 	{
-		$service = Config::get('rpc', false, []);
-		if (empty($services)) {
+		$service = Config::get('rpc');
+		if (empty($service) || !is_array($service)) {
 			return;
 		}
 		$mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
