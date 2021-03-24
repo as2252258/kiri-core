@@ -15,6 +15,11 @@ use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
+
+/**
+ * Trait Builder
+ * @package Database\Traits
+ */
 trait Builder
 {
 
