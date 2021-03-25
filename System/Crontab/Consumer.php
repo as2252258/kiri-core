@@ -29,7 +29,7 @@ class Consumer extends Process
         $process->name('Crontab consumer');
 
         $this->channel = new Coroutine\Channel(2000);
-        Coroutine\go(function () {
+        go(function () {
             $this->popChannel();
         });
         $this->tick($process);
