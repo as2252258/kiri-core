@@ -50,7 +50,7 @@ class GiiController extends GiiBase
 
 		$controllerName = $managerName;
 
-		$html = $this->getUseContent($class, $controller);
+		$html = $class instanceof \ReflectionClass ? $this->getUseContent($class, $controller) : null;
 
 
 		if (empty($html)) {
