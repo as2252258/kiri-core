@@ -57,12 +57,6 @@ class Service extends Component
 	}
 
 
-	public function zookeeper()
-	{
-
-	}
-
-
 	/**
 	 * @param $service
 	 * @return string

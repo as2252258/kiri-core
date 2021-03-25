@@ -181,9 +181,10 @@ class Crontab extends BaseObject
     }
 
 
-    /**
-     *
-     */
+	/**
+	 *
+	 * @throws Exception
+	 */
     public function clearTimer()
     {
         $this->warning('crontab timer clear.');
@@ -199,7 +200,7 @@ class Crontab extends BaseObject
     public function execute(): void
     {
         try {
-            call_user_func($this->handler, $this->params);
+            call_user_func($this->handler, $this->params, $this->name);
         } catch (\Throwable $throwable) {
             $this->addError($throwable->getMessage());
         } finally {
