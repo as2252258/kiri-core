@@ -58,7 +58,7 @@ class Consumer extends Process
      */
     public function tick(\Swoole\Process $process)
     {
-        [$value, $startTime] = swoole_unserialize($process->read(-1));
+        [$value, $startTime] = swoole_unserialize($process->read());
 
         $redis = Snowflake::app()->getRedis();
 
