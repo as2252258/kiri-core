@@ -26,10 +26,10 @@ class GiiController extends GiiBase
 
 
 	/**
-	 * @return string
-	 * @throws Exception
+	 * @return string|bool
+	 * @throws \ReflectionException
 	 */
-	public function generate(): string
+	public function generate(): string|bool
 	{
 		$path = $this->getControllerPath();
 		$modelPath = $this->getModelPath();
@@ -50,10 +50,14 @@ namespace {$namespace};
 
 ';
 		if (file_exists($path['path'] . '/' . $managerName . 'Controller.php')) {
-			$class = Snowflake::getDi()->getReflect($controller);
+			try {
+				$class = new \ReflectionClass($controller);
 
-			$import = $this->getImports($path['path'] . '/' . $managerName . 'Controller.php', $class);
-		}else{
+				$import = $this->getImports($path['path'] . '/' . $managerName . 'Controller.php', $class);
+			} catch (\Throwable $exception) {
+				return logger()->addError($exception);
+			}
+		} else {
 			$import = "use Snowflake;
 use exception;
 use Annotation\Target;
