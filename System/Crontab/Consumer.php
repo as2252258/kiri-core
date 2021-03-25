@@ -32,8 +32,8 @@ class Consumer extends Process
         while (true) {
             [$value, $startTime] = swoole_unserialize($process->read());
 
-            $crontab = $redis->get('crontab:' . md5($value));
-            $redis->del('crontab:' . md5($value));
+            $crontab = $redis->get($value);
+            $redis->del($value);
             if (empty($crontab) || !($crontab = swoole_unserialize($crontab))) {
                 continue;
             }
