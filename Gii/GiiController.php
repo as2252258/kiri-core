@@ -92,18 +92,20 @@ use {$model_namespace}\\{$managerName};
 
 ";
 
-		$default = ['actionLoadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];
 
 		$funcNames = [];
 		if (is_object($class)) {
 			$html .= $this->getClassProperty($class);
-			$html .= $this->getClassMethods($class, $default);
+			$html .= $this->getClassMethods($class);
 		}
-		if (!$this->input->get('--controller-empty', false)) {
-			foreach ($default as $key => $val) {
-				if (in_array($val, $funcNames)) continue;
-				$html .= $this->{'controllerMethod' . str_replace('action', '', $val)}($this->fields, $managerName, $managerName) . "\n";
+
+		$default = ['loadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];
+
+		foreach ($default as $key => $val) {
+			if (str_contains($html, 'public function ' . $val . '(')) {
+				continue;
 			}
+			$html .= $this->{'controllerMethod' . str_replace('action', '', $val)}($this->fields, $managerName, $managerName) . "\n";
 		}
 
 		$html .= '
