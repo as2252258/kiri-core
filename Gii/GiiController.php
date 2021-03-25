@@ -211,7 +211,7 @@ use {$model_namespace}\\{$managerName};
 	 */
 	public function actionUpdate()
 	{
-		$model = ' . $className . '::findOne(Input()->post(\'id\', 0));
+		$model = ' . $className . '::findOne($this->input->post(\'id\', 0));
 		if (empty($model)) {
 			return JSON::to(500, SELECT_IS_NULL);
 		}
@@ -240,8 +240,8 @@ use {$model_namespace}\\{$managerName};
 	 */
 	public function actionBatchDelete()
 	{
-		$_key = Input()->array(\'ids\');
-		$pass = Input()->string(\'password\', true, 32);		
+		$_key = $this->input->array(\'ids\');
+		$pass = $this->input->string(\'password\', true, 32);		
 		if (empty($_key)) {
 			return JSON::to(500, PARAMS_IS_NULL);
 		}
@@ -275,7 +275,7 @@ use {$model_namespace}\\{$managerName};
 	 */
     public function actionDetail()
     {
-        $model = ' . $managerName . '::findOne(Input()->get(\'id\'));
+        $model = ' . $managerName . '::findOne($this->input->get(\'id\'));
         if(empty($model)){
             return JSON::to(404, SELECT_IS_NULL);
         }
@@ -299,8 +299,8 @@ use {$model_namespace}\\{$managerName};
 	 */
     public function actionDelete()
     {
-		$_key = Input()->int(\'id\', true);
-		$pass = Input()->string(\'password\', true, 32);		
+		$_key = $this->input->int(\'id\', true);
+		$pass = $this->input->string(\'password\', true, 32);		
 		
 		$user = $this->request->identity;
 		if (strcmp(Str::encrypt($pass), $user->password)) {
@@ -338,10 +338,10 @@ use {$model_namespace}\\{$managerName};
         $pWhere = array();' . $this->getWhere($fields) . '
         
         //分页处理
-	    $count   = Input()->get(\'count\', -1);
-	    $order   = Input()->get(\'order\', \'id\');
+	    $count   = $this->input->get(\'count\', -1);
+	    $order   = $this->input->get(\'order\', \'id\');
 	    if(!empty($order)) {
-	        $order .= !Input()->get(\'isDesc\', 0) ? \' asc\' : \' desc\';
+	        $order .= !$this->input->get(\'isDesc\', 0) ? \' asc\' : \' desc\';
 	    }else{
 	        $order = \'id desc\';
 	    }
@@ -353,7 +353,7 @@ use {$model_namespace}\\{$managerName};
 		    $count = $model->count();
 	    }
 	    if($count != -100){
-		    $model->limit(Input()->offset() ,Input()->size());
+		    $model->limit($this->input->offset() ,$this->input->size());
 	    }
 	    
 		$data = $model->all()->toArray();
@@ -387,13 +387,13 @@ use {$model_namespace}\\{$managerName};
 				if ($type == 'date' || $type == 'datetime' || $type == 'time') {
 					switch ($type) {
 						case 'date':
-							$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d\'))';
+							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d\'))';
 							break;
 						case 'time':
-							$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', date(\'H:i:s\'))';
+							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'H:i:s\'))';
 							break;
 						default:
-							$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d H:i:s\'))';
+							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d H:i:s\'))';
 					}
 					$html .= '
             \'' . str_pad($val['Field'] . '\'', $length, ' ', STR_PAD_RIGHT) . ' => ' . str_pad($_tps . ',', 60, ' ', STR_PAD_RIGHT) . $comment;
@@ -411,21 +411,21 @@ use {$model_namespace}\\{$managerName};
 						}
 					}
 					if ($key == 'string') {
-						$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . $tmp . ')';
+						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . $tmp . ')';
 					} else if ($type == 'int') {
 						if ($number[0] == 10) {
-							$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', time())';
+							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', time())';
 						} else {
-							$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
+							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
 						}
 					} else if ($type == 'float') {
-						$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . ($number[3] ?? '2') . ')';
+						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . ($number[3] ?? '2') . ')';
 					} else if ($key == 'email') {
-						$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
+						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
 					} else if ($key == 'timestamp') {
-						$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', time())';
+						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', time())';
 					} else {
-						$_tps = 'Input()->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
+						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
 					}
 					$html .= '
             \'' . str_pad($val['Field'] . '\'', $length, ' ', STR_PAD_RIGHT) . ' => ' . str_pad($_tps . ',', 60, ' ', STR_PAD_RIGHT) . $comment;
@@ -474,14 +474,14 @@ use {$model_namespace}\\{$managerName};
 				if (!in_array(strtolower($first), $value)) continue;
 				$comment = '//' . $val['Comment'];
 				if ($type == 'date' || $type == 'datetime' || $type == 'time') {
-					$_tps = 'Input()->get(\'' . $val['Field'] . '\', null)';
+					$_tps = '$this->input->get(\'' . $val['Field'] . '\', null)';
 					$html .= '
         $pWhere[\'' . str_pad($val['Field'] . ' <=\']', $length, ' ', STR_PAD_RIGHT) . ' = ' . str_pad($_tps . ';', 60, ' ', STR_PAD_RIGHT) . $comment;
 					$html .= '
         $pWhere[\'' . str_pad($val['Field'] . ' >=\']', $length, ' ', STR_PAD_RIGHT) . ' = ' . str_pad($_tps . ';', 60, ' ', STR_PAD_RIGHT) . $comment;
 				} else {
 
-					$_tps = 'Input()->get(\'' . $val['Field'] . '\', null)';
+					$_tps = '$this->input->get(\'' . $val['Field'] . '\', null)';
 					$html .= '
         $pWhere[\'' . str_pad($val['Field'] . '\']', $length, ' ', STR_PAD_RIGHT) . ' = ' . str_pad($_tps . ';', 60, ' ', STR_PAD_RIGHT) . $comment;
 				}
