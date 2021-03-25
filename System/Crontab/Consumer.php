@@ -70,8 +70,6 @@ class Consumer extends Process
 
         $redis->release();
 
-        Coroutine::sleep(0.05);
-
         $this->tick($process);
     }
 
