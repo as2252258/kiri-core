@@ -199,7 +199,11 @@ class Crontab extends BaseObject
      */
     public function execute(): void
     {
-        var_dump(call_user_func($this->handler, $this->params, $this->name));
+
+
+        var_dump(($this->handler)());
+
+//        var_dump(call_user_func($this->handler, $this->params, $this->name));
 
     }
 
