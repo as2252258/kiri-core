@@ -162,7 +162,7 @@ use Database\ActiveRecord;
 
 		$out = ['rules', 'tableName', 'attributes'];
 		if (is_object($class)) {
-			$methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+			$methods = $class->getMethods();
 
 			$classFileName = str_replace(APP_PATH, '', $class->getFileName());
 
@@ -176,7 +176,8 @@ use Database\ActiveRecord;
 				$attributes = $val->getAttributes();
 				if (!empty($attributes)) {
 					foreach ($attributes as $attribute) {
-						$over .= "	#[\\" . $attribute->getName() . "('" . implode('\',\'', $attribute->getArguments()) . "')]
+						$explode = explode('\\', $attribute->getName());
+						$over .= "	#[" . env($explode) . "('" . implode('\',\'', $attribute->getArguments()) . "')]
 ";
 					}
 				}
