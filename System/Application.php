@@ -56,9 +56,7 @@ class Application extends BaseApplication
         $this->import(DatabasesProviders::class);
         $this->import(ServerProviders::class);
 
-        if (Config::get('crontab.enable') !== true) {
-            $this->import(CrontabProviders::class);
-        }
+        $this->import(CrontabProviders::class);
     }
 
 

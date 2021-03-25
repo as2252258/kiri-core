@@ -23,11 +23,10 @@ class CrontabProviders extends Providers
     public function onImport(Application $application)
     {
         $server = $application->getServer();
+        $application->set('crontab', ['class' => Producer::class]);
         if (Config::get('crontab.enable') !== true) {
             return;
         }
-        $application->set('crontab', ['class' => Producer::class]);
-
         $server->addProcess('CrontabZookeeper', ZookeeperProcess::class);
         $server->addProcess('Consumer', Consumer::class);
     }
