@@ -24,7 +24,7 @@ class Crontab extends BaseObject
     private string $name = '';
 
 
-    private mixed $params;
+    private mixed $params = null;
 
 
     private int $tickTime = 1;
