@@ -43,7 +43,7 @@ class GiiController extends GiiBase
 		$managerName = str_replace(ucfirst($prefix), '', $managerName);
 
 		$class = '';
-		$controller = str_replace('\\\\','\\',"$namespace\\{$managerName}Controller");
+		$controller = str_replace('\\\\', '\\', "$namespace\\{$managerName}Controller");
 
 		$html = "<?php
 namespace {$namespace};
@@ -92,14 +92,14 @@ use {$model_namespace}\\{$managerName};
 
 ";
 
+		$default = ['actionLoadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];
+
 		$funcNames = [];
 		if (is_object($class)) {
 			$html .= $this->getClassProperty($class);
-			$html .= $this->getClassMethods($class);
+			$html .= $this->getClassMethods($class, $default);
 		}
 		if (!$this->input->get('--controller-empty', false)) {
-			$default = ['actionLoadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];
-
 			foreach ($default as $key => $val) {
 				if (in_array($val, $funcNames)) continue;
 				$html .= $this->{'controllerMethod' . str_replace('action', '', $val)}($this->fields, $managerName, $managerName) . "\n";
