@@ -671,11 +671,11 @@ if (!function_exists('swoole_serialize')) {
      */
     function swoole_serialize($data): string
     {
-        if (class_exists('swoole_serialize')) {
-            return \swoole_serialize::pack($data);
-        } else {
-            return serialize($data);
-        }
+//        if (class_exists('swoole_serialize')) {
+//            return \swoole_serialize::pack($data);
+//        } else {
+        return serialize($data);
+//        }
     }
 
 }
@@ -693,11 +693,11 @@ if (!function_exists('swoole_unserialize')) {
         if (empty($data)) {
             return null;
         }
-        if (class_exists('swoole_serialize')) {
-            return \swoole_serialize::unpack($data);
-        } else {
-            return unserialize($data);
-        }
+//        if (class_exists('swoole_serialize')) {
+//            return \swoole_serialize::unpack($data);
+//        } else {
+        return unserialize($data);
+//        }
     }
 
 }
