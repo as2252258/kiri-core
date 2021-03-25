@@ -160,10 +160,10 @@ use {$model_namespace}\\{$managerName};
 	{
 		return '
     /**
-	 * @return array
+	 * @return string
 	 * @throws Exception
 	 */
-	public function actionAdd()
+	public function actionAdd(): string
 	{
 		$model = new ' . $className . '();
 		$model->attributes = $this->loadParam();
