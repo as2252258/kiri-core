@@ -177,7 +177,7 @@ use Database\ActiveRecord;
 				if (!empty($attributes)) {
 					foreach ($attributes as $attribute) {
 						$explode = explode('\\', $attribute->getName());
-						$over .= "	#[" . env($explode) . "('" . implode('\',\'', $attribute->getArguments()) . "')]
+						$over .= "	#[" . end($explode) . "('" . implode('\',\'', $attribute->getArguments()) . "')]
 ";
 					}
 				}
