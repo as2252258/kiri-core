@@ -252,7 +252,7 @@ class Server extends HttpService
             }
             $system = Snowflake::createObject($process, [Snowflake::app(), $name, true]);
             if (isset($this->params[$name]) && !empty($this->params[$name])) {
-                $system->write(Json::encode($this->params[$name]));
+                $system->write(swoole_serialize($this->params[$name]));
             }
             $this->baseServer->addProcess($system);
             $application->set($process, $system);
