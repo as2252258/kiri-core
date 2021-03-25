@@ -88,6 +88,7 @@ class Consumer extends Process
         } else if ($value->isLoop()) {
             $this->addTask($value);
         }
+        var_dump($value);
         fire(Event::SYSTEM_RESOURCE_RELEASES);
     }
 
