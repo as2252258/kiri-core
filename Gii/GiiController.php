@@ -43,12 +43,12 @@ class GiiController extends GiiBase
 		$managerName = str_replace(ucfirst($prefix), '', $managerName);
 
 		$class = '';
-		$controller = "$namespace\{$managerName}Controller";
+		$controller = str_replace('\\\\','\\',"$namespace\\{$managerName}Controller");
 
-		$html = '<?php
+		$html = "<?php
 namespace {$namespace};
 
-';
+";
 		if (file_exists($path['path'] . '/' . $managerName . 'Controller.php')) {
 			try {
 				$class = new \ReflectionClass($controller);
