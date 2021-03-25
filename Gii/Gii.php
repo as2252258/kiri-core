@@ -35,10 +35,10 @@ class Gii
 	/** @var Input */
 	private Input $input;
 
-	public string $modelPath = APP_PATH . '/app/Models/';
+	public string $modelPath = APP_PATH . 'app/Models/';
 	public string $modelNamespace = 'App\\Models\\';
 
-	public string $controllerPath = APP_PATH . '/app/Http/Controllers/';
+	public string $controllerPath = APP_PATH . 'app/Http/Controllers/';
 	public string $controllerNamespace = 'App\\Http\\Controllers\\';
 
 

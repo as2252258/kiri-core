@@ -275,7 +275,7 @@ class ServerInotify extends Process
 			return FALSE;
 		}
 
-		if (in_array($dir, [APP_PATH . '/config', APP_PATH . '/commands', APP_PATH . '/.git', APP_PATH . '/.gitee'])) {
+		if (in_array($dir, [APP_PATH . 'config', APP_PATH . 'commands', APP_PATH . '.git', APP_PATH . '.gitee'])) {
 			return FALSE;
 		}
 

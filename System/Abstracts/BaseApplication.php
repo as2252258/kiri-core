@@ -56,9 +56,9 @@ abstract class BaseApplication extends Service
 	/**
 	 * @var string
 	 */
-	public string $storage = APP_PATH . '/storage';
+	public string $storage = APP_PATH . 'storage';
 
-	public string $envPath = APP_PATH . '/.env';
+	public string $envPath = APP_PATH . '.env';
 
 	/**
 	 * Init constructor.

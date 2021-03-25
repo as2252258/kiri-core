@@ -650,7 +650,7 @@ if (!function_exists('sweep')) {
 	 * @param string $configPath
 	 * @return array|false|string|null
 	 */
-	function sweep($configPath = APP_PATH . '/config'): bool|array|string|null
+	function sweep($configPath = APP_PATH . 'config'): bool|array|string|null
 	{
 		$array = [];
 		foreach (glob($configPath . '/*') as $config) {

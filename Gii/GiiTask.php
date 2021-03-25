@@ -78,7 +78,7 @@ class ' . $managerName . ' implements Task
 
 }';
 
-		$file = APP_PATH . '/app/Async/' . $managerName . '.php';
+		$file = APP_PATH . 'app/Async/' . $managerName . '.php';
 		if (file_exists($file)) {
 			unlink($file);
 		}

@@ -24,10 +24,10 @@ abstract class GiiBase
 	/** @var Input */
 	protected Input $input;
 
-	public string $modelPath = APP_PATH . '/app/Models/';
+	public string $modelPath = APP_PATH . 'app/Models/';
 	public string $modelNamespace = 'App\Models\\';
 
-	public string $controllerPath = APP_PATH . '/app/Http/Controllers/';
+	public string $controllerPath = APP_PATH . 'app/Http/Controllers/';
 	public string $controllerNamespace = 'App\\Http\\Controllers\\';
 
 	public ?string $module = null;
