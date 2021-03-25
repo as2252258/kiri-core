@@ -45,7 +45,7 @@ use Rpc\Producer as RPCProducer;
  * @property Producer $kafka
  * @property Client $client
  * @property Curl $curl
- * @property Crontab $crontab
+ * @property \Snowflake\Crontab\Producer $crontab
  * @property HttpFilter $filter
  * @property RPCProducer $rpc
  */

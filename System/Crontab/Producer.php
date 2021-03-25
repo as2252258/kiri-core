@@ -1,31 +1,30 @@
 <?php
 
 
-namespace Snowflake\Abstracts;
+namespace Snowflake\Crontab;
 
 
-use Snowflake\Core\Json;
-use Snowflake\Process\CrontabProcess;
+use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
 use Exception;
 
 
 /**
- * Class Crontab
+ * Class Producer
  * @package Snowflake\Abstracts
  */
-class Crontab extends Component
+class Producer extends Component
 {
 
     const CRONTAB_KEY = 'system:crontab';
 
 
     /**
-     * @param \Snowflake\Crontab $crontab
+     * @param Crontab $crontab
      * @param $executeTime
      * @throws Exception
      */
-    public function dispatch(\Snowflake\Crontab $crontab)
+    public function dispatch(Crontab $crontab)
     {
         $redis = Snowflake::app()->getRedis();
 
