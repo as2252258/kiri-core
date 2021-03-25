@@ -280,6 +280,7 @@ abstract class GiiBase
 
 			$content[] = $over . $func;
 		}
+		return implode(PHP_EOL, $content);
 	}
 
 
