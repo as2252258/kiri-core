@@ -34,6 +34,8 @@ class Consumer extends Process
 
             $crontab = $redis->get($value);
             $redis->del($value);
+
+            var_dump($crontab);
             if (empty($crontab) || !($crontab = swoole_unserialize($crontab))) {
                 continue;
             }
