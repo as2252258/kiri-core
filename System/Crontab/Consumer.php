@@ -41,12 +41,22 @@ class Consumer extends Process
      */
     public function popChannel()
     {
+        /** @var Crontab $crontab */
         $crontab = $this->channel->pop(-1);
-
         go(function () use ($crontab) {
-            $this->dispatch($crontab);
+            try {
+                $crontab->increment()->execute();
+                if ($crontab->getExecuteNumber() < $crontab->getMaxExecuteNumber()) {
+                    Consumer::addTask($crontab);
+                } else if ($crontab->isLoop()) {
+                    Consumer::addTask($crontab);
+                }
+            } catch (\Throwable $throwable) {
+                $this->application->addError($throwable->getMessage());
+            } finally {
+                fire(Event::SYSTEM_RESOURCE_RELEASES);
+            }
         });
-
         $this->popChannel();
     }
 
@@ -77,27 +87,10 @@ class Consumer extends Process
 
 
     /**
-     * @param Crontab $value
-     * @throws Exception
-     */
-    private function dispatch(Crontab $value)
-    {
-        $value->increment()->execute();
-        if ($value->getExecuteNumber() < $value->getMaxExecuteNumber()) {
-            $this->addTask($value);
-        } else if ($value->isLoop()) {
-            $this->addTask($value);
-        }
-        var_dump($value);
-        fire(Event::SYSTEM_RESOURCE_RELEASES);
-    }
-
-
-    /**
      * @param Crontab $crontab
      * @throws Exception
      */
-    private function addTask(Crontab $crontab)
+    private static function addTask(Crontab $crontab)
     {
         $redis = Snowflake::app()->getRedis();
 
