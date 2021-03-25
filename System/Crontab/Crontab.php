@@ -200,8 +200,8 @@ class Crontab extends BaseObject
     public function execute(): void
     {
         try {
-            $result = call_user_func($this->handler, $this->params, $this->name);
-            var_dump($result);
+//            $result = call_user_func($this->handler, $this->params, $this->name);
+            var_dump(($this->handler)($this->params, $this->name));
         } catch (\Throwable $throwable) {
             $this->addError($throwable->getMessage());
         } finally {

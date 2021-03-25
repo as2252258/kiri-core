@@ -8,7 +8,6 @@ use Exception;
 use Snowflake\Event;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 
 
 /**
@@ -34,8 +33,6 @@ class Consumer extends Process
 
             $crontab = swoole_unserialize($redis->get($value));
             $redis->del($value);
-
-            var_dump($crontab);
             if (!is_object($crontab)) {
                 continue;
             }
