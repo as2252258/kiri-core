@@ -43,9 +43,9 @@ class Consumer extends Process
     {
         $crontab = $this->channel->pop(-1);
 
-        var_dump($crontab);
-
-        $this->dispatch($crontab);
+        go(function () use ($crontab) {
+            $this->dispatch($crontab);
+        });
 
         $this->popChannel();
     }
