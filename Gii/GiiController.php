@@ -102,7 +102,7 @@ use {$model_namespace}\\{$managerName};
 		$default = ['loadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];
 
 		foreach ($default as $key => $val) {
-			if (str_contains($html, 'public function ' . $val . '(')) {
+			if (str_contains($html, ' function ' . $val . '(')) {
 				continue;
 			}
 			$html .= $this->{'controllerMethod' . str_replace('action', '', $val)}($this->fields, $managerName, $managerName) . "\n";
