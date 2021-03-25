@@ -60,7 +60,7 @@ class CrontabZookeeperProcess extends Process
             $consumer = Snowflake::app()->get(Consumer::class);
 
             foreach ($range as $value) {
-                $consumer->write(swoole_serialize(['crontab:' . md5($value), $startTime]));
+                $consumer->write('crontab:' . md5($value));
             }
             $redis->release();
         });
