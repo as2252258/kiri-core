@@ -43,9 +43,9 @@ class GiiController extends GiiBase
 		$managerName = str_replace(ucfirst($prefix), '', $managerName);
 
 		$class = '';
-		$controller = $namespace . '\\' . $managerName . 'Controller';
+		$controller = "$namespace\{$managerName}Controller";
 		if (file_exists($path['path'] . '/' . $managerName . 'Controller.php')) {
-			$class = new \ReflectionClass($controller);
+			$class = Snowflake::getDi()->getReflect($controller);
 		}
 
 		$controllerName = $managerName;

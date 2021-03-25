@@ -56,7 +56,7 @@ class GiiModel extends GiiBase
 
 		if (file_exists($modelPath['path'] . '/' . $managerName . '.php')) {
 			try {
-				$class = new \ReflectionClass($modelPath['namespace'] . '\\' . $managerName);
+				$class = Snowflake::getDi()->getReflect("{$modelPath['namespace']}\{$managerName}");
 
 				$html = $this->getUseContent($class, $classFileName);
 			} catch (\Throwable $e) {
