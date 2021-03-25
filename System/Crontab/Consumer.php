@@ -8,6 +8,7 @@ use Exception;
 use Snowflake\Event;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 
 
 /**
@@ -17,27 +18,61 @@ use Snowflake\Snowflake;
 class Consumer extends Process
 {
 
+    public Coroutine\Channel $channel;
+
 
     /**
      * @param \Swoole\Process $process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        // TODO: Implement onHandler() method.
-        $redis = Snowflake::app()->getRedis();
-
         $process->name('Crontab consumer');
 
-        while (true) {
-            [$value, $startTime] = swoole_unserialize($process->read());
+        $this->channel = new Coroutine\Channel(2000);
+        Coroutine\go(function () {
+            $this->popChannel();
+        });
+        $this->tick($process);
+    }
 
-            $crontab = swoole_unserialize($redis->get($value));
-            $redis->del($value);
-            if (!is_object($crontab)) {
-                continue;
-            }
-            $this->dispatch($crontab);
+
+    /**
+     * @throws Exception
+     */
+    public function popChannel()
+    {
+        $crontab = $this->channel->pop(-1);
+
+        $this->dispatch($crontab);
+
+        $this->popChannel();
+    }
+
+
+    /**
+     * @param \Swoole\Process $process
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\ComponentException
+     * @throws \Snowflake\Exception\ConfigException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+    public function tick(\Swoole\Process $process)
+    {
+        [$value, $startTime] = swoole_unserialize($process->read(-1));
+
+        $redis = Snowflake::app()->getRedis();
+
+        $crontab = swoole_unserialize($redis->get($value));
+        $redis->del($value);
+        if (is_object($crontab)) {
+            $this->channel->push($crontab);
         }
+
+        $redis->release();
+
+        Coroutine::sleep(0.05);
+
+        $this->tick($process);
     }
 
 
