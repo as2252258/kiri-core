@@ -54,12 +54,12 @@ namespace {$namespace};
 				$class = new \ReflectionClass($controller);
 
 				$import = $this->getImports($path['path'] . '/' . $managerName . 'Controller.php', $class);
-			} catch (\Throwable $exception) {
-				exit(logger()->addError($exception));
+			} catch (\Throwable $Exception) {
+				exit(logger()->addError($Exception));
 			}
 		} else {
 			$import = "use Snowflake;
-use exception;
+use Exception;
 use Annotation\Target;
 use Snowflake\Core\Str;
 use Snowflake\Core\JSON;
@@ -161,7 +161,7 @@ use {$model_namespace}\\{$managerName};
 		return '
     /**
 	 * @return array
-	 * @throws exception
+	 * @throws Exception
 	 */
 	public function actionAdd()
 	{
@@ -188,7 +188,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return array
 	 * @throws Exception
 	 */
-	private function loadParam()
+	private function loadParam(): array
 	{
 		return [' . $this->getData($fields) . '
 		];
@@ -206,10 +206,10 @@ use {$model_namespace}\\{$managerName};
 	{
 		return '
     /**
-	 * @return array
-	 * @throws exception
+	 * @return string
+	 * @throws Exception
 	 */
-	public function actionUpdate()
+	public function actionUpdate(): string
 	{
 		$model = ' . $className . '::findOne($this->input->post(\'id\', 0));
 		if (empty($model)) {
@@ -235,27 +235,21 @@ use {$model_namespace}\\{$managerName};
 	{
 		return '
     /**
-	 * @return array
-	 * @throws exception
+	 * @return string
+	 * @throws Exception
 	 */
-	public function actionBatchDelete()
+	public function actionBatchDelete(): string
 	{
-		$_key = $this->input->array(\'ids\');
-		$pass = $this->input->string(\'password\', true, 32);		
+		$_key = $this->input->array(\'ids\');		
 		if (empty($_key)) {
 			return JSON::to(500, PARAMS_IS_NULL);
-		}
-		
-		$user = $this->request->identity;
-		if (strcmp(Str::encrypt($pass), $user->password)) {
-			return JSON::to(500, \'密码错误\');
 		}
 		
 		$model = ' . $className . '::find()->in(\'id\', $_key);
         if(!$model->delete()){
 			return JSON::to(500, DB_ERROR_BUSY);
         }
-        return JSON::to(0, $model->toArray());
+        return JSON::to(0, $model);
 	}';
 	}
 
@@ -270,10 +264,10 @@ use {$model_namespace}\\{$managerName};
 	{
 		return '
     /**
-	 * @return array
-	 * @throws exception
+	 * @return string
+	 * @throws Exception
 	 */
-    public function actionDetail()
+    public function actionDetail(): string
     {
         $model = ' . $managerName . '::findOne($this->input->get(\'id\'));
         if(empty($model)){
@@ -294,18 +288,12 @@ use {$model_namespace}\\{$managerName};
 	{
 		return '
     /**
-	 * @return array
-	 * @throws exception
+	 * @return string
+	 * @throws Exception
 	 */
-    public function actionDelete()
+    public function actionDelete(): string
     {
 		$_key = $this->input->int(\'id\', true);
-		$pass = $this->input->string(\'password\', true, 32);		
-		
-		$user = $this->request->identity;
-		if (strcmp(Str::encrypt($pass), $user->password)) {
-			return JSON::to(500, \'密码错误\');
-		}
 		
 		$model = ' . $managerName . '::findOne($_key);
 		if (empty($model)) {
@@ -330,10 +318,10 @@ use {$model_namespace}\\{$managerName};
 	{
 		return '
     /**
-	 * @return array
-	 * @throws exception
+	 * @return string
+	 * @throws Exception
 	 */
-    public function actionList()
+    public function actionList(): string
     {
         $pWhere = array();' . $this->getWhere($fields) . '
         
