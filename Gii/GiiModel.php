@@ -66,7 +66,7 @@ namespace ' . $namespace . ';
 ';
 				$imports = $this->getImports($modelPath['path'] . '/' . $managerName . '.php', $class);
 				if (!empty($imports)) {
-					$html .= $imports . PHP_EOL. PHP_EOL;
+					$html .= $imports . PHP_EOL;
 				}
 			} catch (\Throwable $e) {
 				logger()->error($e->getMessage());
