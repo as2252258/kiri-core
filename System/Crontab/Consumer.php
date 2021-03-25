@@ -32,17 +32,14 @@ class Consumer extends Process
         while (true) {
             [$value, $startTime] = swoole_unserialize($process->read());
 
-            $crontab = $redis->get($value);
+            $crontab = swoole_unserialize($redis->get($value));
             $redis->del($value);
 
             var_dump($crontab);
-            if (empty($crontab) || !($crontab = swoole_unserialize($crontab))) {
+            if (!is_object($crontab)) {
                 continue;
             }
-
-            Coroutine::create(function (Crontab $value, int $startTime) {
-                $this->dispatch($value);
-            }, $crontab, $startTime);
+            $this->dispatch($crontab);
         }
     }
 
