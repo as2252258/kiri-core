@@ -44,22 +44,17 @@ class GiiController extends GiiBase
 
 		$class = '';
 		$controller = "$namespace\{$managerName}Controller";
-		if (file_exists($path['path'] . '/' . $managerName . 'Controller.php')) {
-			$class = Snowflake::getDi()->getReflect($controller);
-		}
 
-		$controllerName = $managerName;
-
-		$html = $class instanceof \ReflectionClass ? $this->getUseContent($class, $controller) : null;
-
-
-		if (empty($html)) {
-
-
-			$html .= "<?php
+		$html = '<?php
 namespace {$namespace};
 
-use Snowflake;
+';
+		if (file_exists($path['path'] . '/' . $managerName . 'Controller.php')) {
+			$class = Snowflake::getDi()->getReflect($controller);
+
+			$import = $this->getImports($path['path'] . '/' . $managerName . 'Controller.php', $class);
+		}else{
+			$import = "use Snowflake;
 use exception;
 use Annotation\Target;
 use Snowflake\Core\Str;
@@ -70,6 +65,11 @@ use HttpServer\Controller;
 use {$model_namespace}\\{$managerName};
 ";
 		}
+		if (!empty($import)) {
+			$html .= $import;
+		}
+
+		$controllerName = $managerName;
 
 		$historyModel = "use {$model_namespace}\\{$managerName};";
 		if (!str_contains($html, $historyModel)) {
@@ -90,17 +90,8 @@ use {$model_namespace}\\{$managerName};
 
 		$funcNames = [];
 		if (is_object($class)) {
-			$methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
-			$funcNames = array_column($methods, 'name');
-
-			$classFileName = str_replace(APP_PATH, '', $class->getFileName());
-
-			if (!empty($methods)) foreach ($methods as $key => $val) {
-				if ($val->class != $class->getName()) continue;
-				$html .= "
-	" . $val->getDocComment() . "\n";
-				$html .= $this->getFuncLineContent($class, $classFileName, $val->name) . "\n";
-			}
+			$html .= $this->getClassProperty($class);
+			$html .= $this->getClassMethods($class);
 		}
 		if (!$this->input->get('--controller-empty', false)) {
 			$default = ['actionLoadParam', 'actionAdd', 'actionUpdate', 'actionDetail', 'actionDelete', 'actionBatchDelete', 'actionList'];

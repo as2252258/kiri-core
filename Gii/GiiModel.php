@@ -49,7 +49,6 @@ class GiiModel extends GiiBase
 		$managerName = $this->classFileName;
 
 		$namespace = rtrim($modelPath['namespace'], '\\');
-		$classFileName = rtrim($modelPath['namespace'], '\\') . '\\' . $managerName;
 
 		$prefix = str_replace('_', '', $this->db->tablePrefix);
 		$managerName = str_replace(ucfirst($prefix), '', $managerName);
@@ -106,49 +105,7 @@ use Database\ActiveRecord;
 {';
 
 		if (!empty($class)) {
-			foreach ($class->getConstants() as $key => $val) {
-				if (is_numeric($val)) {
-					$html .= '
-    const ' . $key . ' = ' . $val . ';' . "\n";
-				} else {
-					$html .= '
-    const ' . $key . ' = \'' . $val . '\';' . "\n";
-				}
-			}
-
-			foreach ($class->getDefaultProperties() as $key => $val) {
-				$property = $class->getProperty($key);
-				if ($property->class != $class->getName()) continue;
-				if (is_array($val)) {
-					$val = '[\'' . implode('\', \'', $val) . '\']';
-				} else if (!is_numeric($val)) {
-					$val = '\'' . $val . '\'';
-				}
-
-				if ($property->isProtected()) {
-					$debug = 'protected';
-				} else if ($property->isPrivate()) {
-					$debug = 'private';
-				} else {
-					$debug = 'public';
-				}
-				if ($property->hasType()) {
-					$type = ' ' . $property->getType() . ' $' . $key . ' = ' . $val . ';' . "\n";
-				} else {
-					$type = ' $' . $key . ' = ' . $val . ';' . "\n";
-				}
-				if ($property->isStatic()) {
-					$html .= '
-    ' . $debug . ' static' . $type;
-				} else {
-					if ($key == 'primary') {
-						continue;
-					}
-					$html .= '
-    ' . $debug . $type;
-				}
-
-			}
+			$html .= $this->getClassProperty($class);
 		}
 
 		$primary = $this->createPrimary($this->fields);
@@ -160,35 +117,8 @@ use Database\ActiveRecord;
 
 		$html .= $this->createRules($this->fields);
 
-		$out = ['rules', 'tableName', 'attributes'];
 		if (is_object($class)) {
-			$methods = $class->getMethods();
-
-			$classFileName = str_replace(APP_PATH, '', $class->getFileName());
-
-			$content = [];
-			if (!empty($methods)) foreach ($methods as $key => $val) {
-				if ($val->class != $class->getName()) continue;
-				if (in_array($val->name, $out)) continue;
-				$over = "
-	" . $val->getDocComment() . "\n";
-
-				$attributes = $val->getAttributes();
-				if (!empty($attributes)) {
-					foreach ($attributes as $attribute) {
-						$explode = explode('\\', $attribute->getName());
-						$over .= "	#[" . end($explode) . "('" . implode('\',\'', $attribute->getArguments()) . "')]
-";
-					}
-				}
-
-				$func = $this->getFuncLineContent($class, $classFileName, $val->name) . "\n";
-
-				$content[] = $over . $func;
-			}
-			if (!empty($content)) {
-				$html .= implode($content);
-			}
+			$html .= $this->getClassMethods($class, ['rules', 'tableName', 'attributes']);
 		} else {
 			$html .= $this->createDatabaseSource();
 			$other = $this->generate_json_function($html, $this->fields);
