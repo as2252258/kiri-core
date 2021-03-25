@@ -12,6 +12,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\Input;
+use Snowflake\Core\Json;
 
 /**
  * Class GiiBase
@@ -229,7 +230,48 @@ abstract class GiiBase
 			if (!empty($attributes)) {
 				foreach ($attributes as $attribute) {
 					$explode = explode('\\', $attribute->getName());
-					$over .= "	#[" . end($explode) . "('" . implode('\',\'', $attribute->getArguments()) . "')]
+
+					$_array = [];
+					foreach ($attribute->getArguments() as $_key => $argument) {
+						if (is_numeric($_key)) {
+							$_array[] = '\'' . $argument . '\'';
+						} else {
+							if (is_array($argument)) {
+								$__array = [];
+								foreach ($argument as $key => $value) {
+									if (is_string($value)) {
+										if (str_contains($value, '\\') && class_exists($value)) {
+											$explode_class = explode('\\', $value);
+
+											$__array[] = end($explode_class) . '::class';
+										} else {
+											$__array[] = '\'' . $value . '\'';
+										}
+									} else {
+										$value = str_replace('{', '[', Json::encode($value));
+										$value = str_replace('}', ']', Json::encode($value));
+										$value = str_replace(':', '=>', Json::encode($value));
+
+										$value = preg_replace('/"\d+"\=\>/', '', $value);
+
+										$__array[] = $value;
+									}
+								}
+
+								$argument = '[' . implode(', ', $__array) . ']';
+							} else {
+								$argument = '\'' . $argument . '\'';
+							}
+
+							if (is_numeric($_key)) {
+								$_array[] = $argument;
+							} else {
+								$_array[] = $_key . ': ' . $argument . '';
+							}
+
+						}
+					}
+					$over .= "	#[" . end($explode) . "(" . implode(',', $_array) . ")]
 ";
 				}
 			}
@@ -238,7 +280,6 @@ abstract class GiiBase
 
 			$content[] = $over . $func;
 		}
-		return implode($content);
 	}
 
 
