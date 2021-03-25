@@ -29,7 +29,7 @@ class Json
 	public static function encode($data): bool|string
 	{
 		if (empty($data)) {
-			return $data;
+			return false;
 		}
 		if (is_array($data)) {
 			return json_encode($data, JSON_UNESCAPED_UNICODE);

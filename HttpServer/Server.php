@@ -133,7 +133,6 @@ class Server extends HttpService
     public function start(): string
     {
         $configs = Config::get('servers', true);
-        var_dump(Config::get('crontab.enable'));
         if (Config::get('crontab.enable') === true) {
             $this->addProcess('CrontabZookeeper', CrontabZookeeperProcess::class);
             $this->addProcess('CrontabConsumer', Consumer::class);
