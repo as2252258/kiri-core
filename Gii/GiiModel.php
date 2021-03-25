@@ -56,9 +56,18 @@ class GiiModel extends GiiBase
 
 		if (file_exists($modelPath['path'] . '/' . $managerName . '.php')) {
 			try {
-				$class = Snowflake::getDi()->getReflect("{$modelPath['namespace']}\{$managerName}");
+				$className = str_replace('\\\\', '\\', "{$modelPath['namespace']}\\{$managerName}");
 
-				$html = $this->getUseContent($class, $classFileName);
+				$class = Snowflake::getDi()->getReflect($className);
+
+				$html = '<?php
+namespace ' . $namespace . ';
+
+';
+				$imports = $this->getImports($modelPath['path'] . '/' . $managerName . '.php', $class);
+				if (!empty($imports)) {
+					$html .= $imports . PHP_EOL. PHP_EOL;
+				}
 			} catch (\Throwable $e) {
 				logger()->error($e->getMessage());
 			}
@@ -69,11 +78,13 @@ class GiiModel extends GiiBase
 			$html = '<?php
 namespace ' . $namespace . ';
 
+
 use Exception;
 use Annotation\Target;
 use Snowflake\Core\JSON;
 use Database\Connection;
-use Database\ActiveRecord;';
+use Database\ActiveRecord;
+' . PHP_EOL;
 		}
 
 		$createSql = $this->setCreateSql($this->tableName);

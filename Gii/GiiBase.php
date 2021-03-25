@@ -127,6 +127,29 @@ abstract class GiiBase
 
 
 	/**
+	 * @param string $fileName
+	 * @param ReflectionClass $class
+	 * @return string
+	 */
+	protected function getImports(string $fileName, ReflectionClass $class): string
+	{
+		$startLine = 1;
+		$array = [];
+		$fileOpen = fopen($fileName, 'r');
+		while (($content = fgets($fileOpen)) !== false) {
+			if (str_starts_with($content, 'use ')) {
+				$array[] = $content;
+			}
+			if ($startLine == $class->getStartLine()) {
+				break;
+			}
+			++$startLine;
+		}
+		return implode($array);
+	}
+
+
+	/**
 	 * @param $fields
 	 * @return mixed 返回表主键
 	 * 返回表主键
