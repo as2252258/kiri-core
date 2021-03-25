@@ -33,7 +33,7 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function onHandler(Process $process): void
 	{
-		$this->waite(json_decode($process->read(), true));
+		$this->waite(swoole_unserialize($process->read()));
 	}
 
 
