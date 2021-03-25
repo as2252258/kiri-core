@@ -23,7 +23,7 @@ use Rpc\Service;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Crontab\Consumer;
-use Snowflake\Crontab\CrontabZookeeperProcess;
+use Snowflake\Crontab\ZookeeperProcess;
 use Snowflake\Error\LoggerProcess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
@@ -133,10 +133,7 @@ class Server extends HttpService
     public function start(): string
     {
         $configs = Config::get('servers', true);
-        if (Config::get('crontab.enable') === true) {
-            $this->addProcess('CrontabZookeeper', CrontabZookeeperProcess::class);
-            $this->addProcess('CrontabConsumer', Consumer::class);
-        }
+
         $baseServer = $this->initCore($configs);
         if (!$baseServer) {
             return 'ok';

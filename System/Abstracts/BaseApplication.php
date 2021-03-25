@@ -463,7 +463,6 @@ abstract class BaseApplication extends Service
             'jwt'               => ['class' => Jwt::class],
             'async'             => ['class' => Async::class],
             'filter'            => ['class' => HttpFilter::class],
-            'crontab'           => ['class' => \Snowflake\Crontab\Producer::class],
             'object'            => ['class' => ObjectPool::class],
             'goto'              => ['class' => BaseGoto::class],
             'rpc'               => ['class' => \Rpc\Producer::class],

@@ -17,10 +17,10 @@ use Swoole\Coroutine\Channel;
 use Swoole\Timer;
 
 /**
- * Class CrontabZookeeperProcess
+ * Class ZookeeperProcess
  * @package Snowflake\Process
  */
-class CrontabZookeeperProcess extends Process
+class ZookeeperProcess extends Process
 {
 
 
