@@ -23,7 +23,7 @@ class HashCondition extends Condition
 			if ($value === null) {
 				continue;
 			}
-			$array[] = sprintf("%s='%s'", $key, addslashes($value));
+			$array[] = sprintf("%s = '%s'", $key, addslashes($value));
 		}
 		return implode(' AND ', $array);
 	}

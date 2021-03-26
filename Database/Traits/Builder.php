@@ -151,7 +151,7 @@ trait Builder
 	private function resolveCondition($field, $condition, $_tmp): string
 	{
 		if (is_string($field)) {
-			$_value = sprintf('%s=\'%s\'', $field, $condition);
+			$_value = sprintf('%s = \'%s\'', $field, $condition);
 		} else if (is_string($condition)) {
 			$_value = $condition;
 		} else {
@@ -204,7 +204,7 @@ trait Builder
 		foreach ($condition as $key => $value) {
 			$value = is_numeric($value) ? $value : '\'' . $value . '\'';
 			if (!is_numeric($key)) {
-				$_array[] = sprintf('%s=%s', $key, $value);
+				$_array[] = sprintf('%s = %s', $key, $value);
 			} else {
 				$_array[] = $value;
 			}

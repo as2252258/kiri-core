@@ -94,7 +94,7 @@ trait QueryTrait
 		if (!is_string($condition2)) {
 			$condition2 = $this->conditionToString($condition2);
 		}
-		$this->where[] = 'IF(' . $condition . ',' . $condition1 . ',' . $condition2 . ')';
+		$this->where[] = 'IF(' . $condition . ', ' . $condition1 . ', ' . $condition2 . ')';
 		return $this;
 	}
 
