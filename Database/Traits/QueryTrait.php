@@ -15,6 +15,10 @@ use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
 use Database\Sql;
 use Exception;
+use JetBrains\PhpStorm\Pure;
+use ReflectionException;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 
 /**
  * Trait QueryTrait
@@ -55,6 +59,17 @@ trait QueryTrait
 		$this->from = '';
 		$this->alias = 't1';
 		$this->filter = [];
+	}
+
+
+	/**
+	 * @param string $column
+	 * @param callable $callable
+	 * @return CaseWhen
+	 */
+	public function case(string $column, callable $callable): CaseWhen
+	{
+		return call_user_func($callable, new CaseWhen($column, $this));
 	}
 
 
@@ -675,6 +690,17 @@ trait QueryTrait
 			$activeQuery->from($activeQuery->modelClass::getTable());
 		}
 		return $activeQuery;
+	}
+
+
+	/**
+	 * @return Sql
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	public function makeNewSqlGenerate(): Sql
+	{
+		return Snowflake::createObject(Sql::class);
 	}
 
 
