@@ -133,7 +133,7 @@ class SqlBuilder extends Component
 
         $this->query->from = null;
 
-        return $delete . $this->_prefix(true);
+        return $delete . ' WHERE ' . $this->_prefix(true);
     }
 
 
