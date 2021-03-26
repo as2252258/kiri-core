@@ -813,7 +813,7 @@ trait QueryTrait
 	public function where(callable|array|string $conditions): static
 	{
 		if ($conditions instanceof Closure) {
-			$conditions = '(' . $this->makeClosureFunction($conditions) . ')';
+			$conditions = $this->makeClosureFunction($conditions);
 		}
 		$this->where[] = $conditions;
 		return $this;
@@ -828,7 +828,7 @@ trait QueryTrait
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function makeClosureFunction(Closure|array $closure, $onlyWhere = false): string
+	public function makeClosureFunction(Closure|array $closure, $onlyWhere = false): string
 	{
 		$generate = $this->makeNewSqlGenerate();
 		if ($closure instanceof Closure) {
@@ -839,7 +839,7 @@ trait QueryTrait
 		if ($onlyWhere === true) {
 			return $generate->getCondition();
 		}
-		return $generate->getSql();
+		return '(' . $generate->getSql() . ')';
 	}
 
 
