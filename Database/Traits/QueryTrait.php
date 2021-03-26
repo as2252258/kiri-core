@@ -839,7 +839,7 @@ trait QueryTrait
 		if ($onlyWhere === true) {
 			return $generate->getCondition();
 		}
-		return '(' . $generate->getSql() . ')';
+		return $generate->getSql();
 	}
 
 
