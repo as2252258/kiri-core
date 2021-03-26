@@ -28,6 +28,7 @@ use Annotation\Annotation as SAnnotation;
 use ReflectionException;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
+use Snowflake\Channel;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
@@ -443,31 +444,44 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return Channel
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public function getChannel(): Channel
+	{
+		return $this->get('channel');
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	protected function moreComponents(): void
 	{
 		$this->setComponents([
-            'error'             => ['class' => ErrorHandler::class],
-            'event'             => ['class' => Event::class],
-            'connections'       => ['class' => Connection::class],
-            'redis_connections' => ['class' => SRedis::class],
-            'pool'              => ['class' => SPool::class],
-            'response'          => ['class' => Response::class],
-            'request'           => ['class' => Request::class],
-            'config'            => ['class' => Config::class],
-            'logger'            => ['class' => Logger::class],
-            'attributes'        => ['class' => SAnnotation::class],
-            'router'            => ['class' => Router::class],
-            'redis'             => ['class' => Redis::class],
-            'jwt'               => ['class' => Jwt::class],
-            'async'             => ['class' => Async::class],
-            'filter'            => ['class' => HttpFilter::class],
-            'object'            => ['class' => ObjectPool::class],
-            'goto'              => ['class' => BaseGoto::class],
-            'rpc'               => ['class' => \Rpc\Producer::class],
-            'rpc-service'       => ['class' => \Rpc\Service::class],
-            'http2'             => ['class' => Http2::class],
+			'error'             => ['class' => ErrorHandler::class],
+			'event'             => ['class' => Event::class],
+			'connections'       => ['class' => Connection::class],
+			'redis_connections' => ['class' => SRedis::class],
+			'pool'              => ['class' => SPool::class],
+			'response'          => ['class' => Response::class],
+			'request'           => ['class' => Request::class],
+			'config'            => ['class' => Config::class],
+			'logger'            => ['class' => Logger::class],
+			'attributes'        => ['class' => SAnnotation::class],
+			'router'            => ['class' => Router::class],
+			'redis'             => ['class' => Redis::class],
+			'jwt'               => ['class' => Jwt::class],
+			'async'             => ['class' => Async::class],
+			'filter'            => ['class' => HttpFilter::class],
+			'object'            => ['class' => ObjectPool::class],
+			'goto'              => ['class' => BaseGoto::class],
+			'channel'           => ['class' => Channel::class],
+			'rpc'               => ['class' => \Rpc\Producer::class],
+			'rpc-service'       => ['class' => \Rpc\Service::class],
+			'http2'             => ['class' => Http2::class],
 		]);
 	}
 }

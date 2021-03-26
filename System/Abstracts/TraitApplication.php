@@ -17,6 +17,7 @@ use HttpServer\Server;
 use Kafka\Producer;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
+use Snowflake\Channel;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
@@ -48,6 +49,7 @@ use Rpc\Producer as RPCProducer;
  * @property \Snowflake\Crontab\Producer $crontab
  * @property HttpFilter $filter
  * @property RPCProducer $rpc
+ * @property Channel $channel
  */
 trait TraitApplication
 {
