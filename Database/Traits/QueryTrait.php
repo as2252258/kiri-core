@@ -810,7 +810,7 @@ trait QueryTrait
 	public function where(callable|array|string $conditions): static
 	{
 		if ($conditions instanceof Closure) {
-			$conditions = $this->makeClosureFunction($conditions);
+			$conditions = '(' . $this->makeClosureFunction($conditions) . ')';
 		}
 		$this->where[] = $conditions;
 		return $this;
