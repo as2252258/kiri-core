@@ -702,7 +702,10 @@ trait QueryTrait
 	 */
 	public function in($columns, $value): static
 	{
-		if (empty($value) || !is_array($value)) {
+		if ($value instanceof Closure) {
+			$value = $this->makeClosureFunction($value);
+		}
+		if (empty($value)) {
 			$value = [-1];
 		}
 		$this->where[] = ['IN', $columns, $value];

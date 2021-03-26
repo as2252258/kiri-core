@@ -23,8 +23,9 @@ class InCondition extends Condition
 	{
 		if (is_array($this->value)) {
 			return sprintf('%s IN (%s)', $this->column, implode(',', $this->value));
+		} else {
+			return sprintf('%s IN (%s)', $this->column, $this->value);
 		}
-		return '';
 	}
 
 }
