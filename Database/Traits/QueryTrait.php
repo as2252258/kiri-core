@@ -86,14 +86,37 @@ trait QueryTrait
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function if(string $condition, string|array $condition1, string|array $condition2): static
+	public function if(string $condition, string $condition1, string|array $condition2): static
 	{
-		$condition1 = (new Sql())->where($condition1)->getCondition();
-		$condition2 = (new Sql())->where($condition2)->getCondition();
-
+		if (!is_string($condition1)) {
+			$condition1 = $this->conditionToString($condition1);
+		}
+		if (!is_string($condition2)) {
+			$condition2 = $this->conditionToString($condition2);
+		}
 		$this->where[] = 'IF(' . $condition . ',' . $condition1 . ',' . $condition2 . ')';
 		return $this;
 	}
+
+
+	/**
+	 * @param $condition
+	 * @return string
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function conditionToString($condition): string
+	{
+		$newSql = $this->makeNewSqlGenerate();
+		if ($condition instanceof \Closure) {
+			call_user_func($condition, $newSql);
+		} else {
+			$newSql->where($condition);
+		}
+		return $newSql->getCondition();
+	}
+
 
 	/**
 	 * @param $bool
