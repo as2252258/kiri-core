@@ -836,7 +836,10 @@ trait QueryTrait
 		} else {
 			$generate->where($closure);
 		}
-		return '(' . ($onlyWhere ? $generate->getCondition() : $generate->getSql()) . ')';
+		if ($onlyWhere !== true) {
+			return '(' . $generate->getSql() . ')';
+		}
+		return $generate->getCondition();
 	}
 
 
