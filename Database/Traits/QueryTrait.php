@@ -828,7 +828,11 @@ trait QueryTrait
 	private function makeClosureFunction(Closure|array $closure, $onlyWhere = false): string
 	{
 		$generate = $this->makeNewSqlGenerate();
-		call_user_func($closure, $generate);
+		if ($closure instanceof Closure) {
+			call_user_func($closure, $generate);
+		} else {
+			$generate->where($closure);
+		}
 		if ($onlyWhere === true) {
 			return $generate->getCondition();
 		}
