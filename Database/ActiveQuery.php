@@ -155,6 +155,17 @@ class ActiveQuery extends Component implements ISqlBuilder
 		return $newModel;
 	}
 
+
+	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	public function toSql(): string
+	{
+		return $this->builder->get();
+	}
+
+
 	/**
 	 * @return array|Collection
 	 */
