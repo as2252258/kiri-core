@@ -86,7 +86,7 @@ trait QueryTrait
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function if(string $condition, string $condition1, string|array $condition2): static
+	public function if(string $condition, string|array|\Closure $condition1, string|array|\Closure $condition2): static
 	{
 		if (!is_string($condition1)) {
 			$condition1 = $this->conditionToString($condition1);
