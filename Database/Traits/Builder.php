@@ -41,7 +41,7 @@ trait Builder
 	private function builderFrom($table): string
 	{
 		if ($table instanceof ActiveQuery) {
-			$table = '(' . SqlBuilder::builder($table)->get($table) . ')';
+			$table = '(' . $table->toSql() . ')';
 		}
 		return " FROM " . $table;
 	}
