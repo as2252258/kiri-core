@@ -14,7 +14,7 @@ use Closure;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
-use Database\Sql;
+use Database\Query;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
@@ -730,13 +730,13 @@ trait QueryTrait
 
 
 	/**
-	 * @return Sql
+	 * @return Query
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	public function makeNewSqlGenerate(): Sql
+	public function makeNewSqlGenerate(): Query
 	{
-		return Snowflake::createObject(Sql::class);
+		return Snowflake::createObject(Query::class);
 	}
 
 

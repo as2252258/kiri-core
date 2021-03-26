@@ -5,7 +5,7 @@ namespace Database\Traits;
 
 
 use Database\ActiveQuery;
-use Database\Sql;
+use Database\Query;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 

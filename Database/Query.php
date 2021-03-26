@@ -14,10 +14,10 @@ use Database\Traits\QueryTrait;
 use Exception;
 
 /**
- * Class Sql
+ * Class Query
  * @package Database
  */
-class Sql implements ISqlBuilder
+class Query implements ISqlBuilder
 {
 
 	use QueryTrait;

@@ -8,7 +8,7 @@ use Database\ActiveQuery;
 use Database\Base\ConditionClassMap;
 use Database\Condition\HashCondition;
 use Database\Condition\OrCondition;
-use Database\Sql;
+use Database\Query;
 use Database\SqlBuilder;
 use Exception;
 use JetBrains\PhpStorm\Pure;
@@ -103,10 +103,10 @@ trait Builder
 	}
 
 	/**
-	 * @param ActiveQuery|Sql $query
+	 * @param ActiveQuery|Query $query
 	 * @return string
 	 */
-	#[Pure] private function builderLimit(ActiveQuery|Sql $query): string
+	#[Pure] private function builderLimit(ActiveQuery|Query $query): string
 	{
 		if (!is_numeric($query->limit) || $query->limit < 1) {
 			return "";

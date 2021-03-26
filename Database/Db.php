@@ -320,7 +320,7 @@ class Db
 
         $table = ['	const TABLE = \'select * from %s  where REFERENCED_TABLE_NAME=%s\';'];
 
-        return $db->createCommand((new Sql())
+        return $db->createCommand((new Query())
             ->select('*')
             ->from('INFORMATION_SCHEMA.KEY_COLUMN_USAGE')
             ->where(['REFERENCED_TABLE_NAME' => $table])
