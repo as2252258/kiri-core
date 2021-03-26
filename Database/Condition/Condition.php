@@ -70,10 +70,10 @@ abstract class Condition extends BaseObject
 			return $params;
 		}
 
-		$check = ltrim($params,'(');
+		$check = ltrim($params, '(');
 		$check = strtolower(substr($check, 0, 6));
 		if (in_array($check, ['update', 'select', 'insert', 'delete'])) {
-			return $params;
+			return trim($params, '()');
 		} else {
 			return sprintf('\'%s\'', $params);
 		}
