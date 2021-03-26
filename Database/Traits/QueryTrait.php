@@ -34,7 +34,7 @@ trait QueryTrait
 	public ?int $offset = NULL;
 	public ?int $limit = NULL;
 	public string $group = '';
-	public string|Closure|ActiveQuery $from = '';
+	public string|Closure|ActiveQuery|null $from = '';
 	public string $alias = 't1';
 	public array $filter = [];
 
