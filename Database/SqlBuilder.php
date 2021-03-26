@@ -55,7 +55,12 @@ class SqlBuilder extends Component
 			return $this->addError('None data update.');
 		}
 
-		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $this->conditionToString();
+		$condition = $this->conditionToString();
+		if (!empty($condition)) {
+			$condition = ' WHERE ' . $condition;
+		}
+
+		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $condition;
 		$update .= $this->builderLimit($this->query);
 
 		return [$update, $array];
@@ -80,7 +85,12 @@ class SqlBuilder extends Component
 			return $this->addError('None data update.');
 		}
 
-		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $this->conditionToString();
+		$condition = $this->conditionToString();
+		if (!empty($condition)) {
+			$condition = ' WHERE ' . $condition;
+		}
+
+		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $condition;
 		$update .= $this->builderLimit($this->query);
 
 		return [$update, []];
@@ -202,7 +212,7 @@ class SqlBuilder extends Component
 			$select .= $this->builderJoin($this->query->join);
 		}
 		if (!empty($condition = $this->conditionToString())) {
-			$select = sprintf('%s%s', $select, $condition);
+			$select = sprintf('%s WHERE %s', $select, $condition);
 		}
 		if (!empty($this->query->group)) {
 			$select .= $this->builderGroup($this->query->group);

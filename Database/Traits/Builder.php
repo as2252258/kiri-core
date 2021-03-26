@@ -134,7 +134,7 @@ trait Builder
 			$_tmp[] = $_value;
 		}
 		if (!empty($_tmp)) {
-			return sprintf(' WHERE %s', implode(' AND ', $_tmp));
+			return implode(' AND ', $_tmp);
 		}
 		return '';
 	}
