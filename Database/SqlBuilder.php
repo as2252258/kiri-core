@@ -204,16 +204,11 @@ class SqlBuilder extends Component
 	 */
 	private function _prefix($hasOrder = false): string
 	{
-		$select = $this->builderSelect($this->query->select) . ' FROM ' . $this->tableName();
-		if (!empty($this->query->alias)) {
-			$select .= $this->builderAlias($this->query->alias);
+		$select = '';
+		if (!empty($this->query->from)) {
+			$select = $this->_selectPrefix();
 		}
-		if (!empty($this->query->join)) {
-			$select .= $this->builderJoin($this->query->join);
-		}
-		if (!empty($condition = $this->conditionToString())) {
-			$select = sprintf('%s WHERE %s', $select, $condition);
-		}
+		$select = $this->_wherePrefix($select);
 		if (!empty($this->query->group)) {
 			$select .= $this->builderGroup($this->query->group);
 		}
@@ -221,6 +216,40 @@ class SqlBuilder extends Component
 			$select .= $this->builderOrder($this->query->order);
 		}
 		return $select . $this->builderLimit($this->query);
+	}
+
+
+	/**
+	 * @param $select
+	 * @return string
+	 * @throws Exception
+	 */
+	private function _wherePrefix($select): string
+	{
+		$condition = $this->conditionToString();
+		if (empty($condition)) {
+			return $select;
+		} else if (empty($select)) {
+			return $condition;
+		}
+		return sprintf('%s WHERE %s', $select, $condition);
+	}
+
+
+	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	private function _selectPrefix(): string
+	{
+		$select = $this->builderSelect($this->query->select) . ' FROM ' . $this->tableName();
+		if (!empty($this->query->alias)) {
+			$select .= $this->builderAlias($this->query->alias);
+		}
+		if (!empty($this->query->join)) {
+			$select .= $this->builderJoin($this->query->join);
+		}
+		return $select;
 	}
 
 

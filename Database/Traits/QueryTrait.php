@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Database\Traits;
 
 
+use Closure;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
@@ -33,7 +34,7 @@ trait QueryTrait
 	public ?int $offset = NULL;
 	public ?int $limit = NULL;
 	public string $group = '';
-	public string|\Closure|ActiveQuery $from = '';
+	public string|Closure|ActiveQuery $from = '';
 	public string $alias = 't1';
 	public array $filter = [];
 
@@ -86,16 +87,16 @@ trait QueryTrait
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function if(string|array $condition, string|array|\Closure $condition1, string|array|\Closure $condition2): static
+	public function if(string|array $condition, string|array|Closure $condition1, string|array|Closure $condition2): static
 	{
 		if (!is_string($condition)) {
-			$condition = $this->conditionToString($condition);
+			$condition = $this->makeClosureFunction($condition, true);
 		}
 		if (!is_string($condition1)) {
-			$condition1 = $this->conditionToString($condition1);
+			$condition1 = $this->makeClosureFunction($condition1, true);
 		}
 		if (!is_string($condition2)) {
-			$condition2 = $this->conditionToString($condition2);
+			$condition2 = $this->makeClosureFunction($condition2, true);
 		}
 		$this->where[] = 'IF(' . $condition . ', ' . $condition1 . ', ' . $condition2 . ')';
 		return $this;
@@ -112,7 +113,7 @@ trait QueryTrait
 	private function conditionToString($condition): string
 	{
 		$newSql = $this->makeNewSqlGenerate();
-		if ($condition instanceof \Closure) {
+		if ($condition instanceof Closure) {
 			call_user_func($condition, $newSql);
 		} else {
 			$newSql->where($condition);
@@ -231,11 +232,11 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param string|\Closure $tableName
+	 * @param string|Closure $tableName
 	 *
 	 * @return $this
 	 */
-	public function from(string|\Closure $tableName): static
+	public function from(string|Closure $tableName): static
 	{
 		$this->from = $tableName;
 		return $this;
@@ -802,12 +803,38 @@ trait QueryTrait
 	/**
 	 * @param callable|array|string $conditions
 	 * @return $this
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function where(callable|array|string $conditions): static
 	{
+		if ($conditions instanceof Closure) {
+			$conditions = $this->makeClosureFunction($conditions);
+		}
 		$this->where[] = $conditions;
 		return $this;
 	}
+
+
+	/**
+	 * @param Closure|array $closure
+	 * @param bool $onlyWhere
+	 * @return string
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function makeClosureFunction(Closure|array $closure, $onlyWhere = false): string
+	{
+		$generate = $this->makeNewSqlGenerate();
+		call_user_func($closure, $generate);
+		if ($onlyWhere === true) {
+			return $generate->getCondition();
+		}
+		return $generate->getSql();
+	}
+
 
 	/**
 	 * @param string $name
