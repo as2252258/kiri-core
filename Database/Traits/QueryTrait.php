@@ -69,7 +69,7 @@ trait QueryTrait
 	 */
 	public function case(string $column, callable $callable): static
 	{
-		$caseWhen = new CaseWhen($column, $this);
+		$caseWhen = new When($column, $this);
 
 		call_user_func($callable, $caseWhen);
 

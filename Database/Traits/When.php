@@ -14,7 +14,7 @@ use JetBrains\PhpStorm\Pure;
  * Class CaseWhen
  * @package Database\Traits
  */
-class CaseWhen
+class When
 {
 
 	public ActiveQuery|QueryTrait $query;
