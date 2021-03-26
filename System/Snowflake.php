@@ -346,9 +346,7 @@ class Snowflake
 
 	/**
 	 * @param $process
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public static function shutdown($process): void
 	{
@@ -407,7 +405,7 @@ class Snowflake
 	/**
 	 * @return string|null
 	 */
-	public static function getEnvironmental(): ?string
+	#[Pure] public static function getEnvironmental(): ?string
 	{
 		return env('environmental');
 	}
@@ -416,7 +414,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isTask(): bool
+	#[Pure] public static function isTask(): bool
 	{
 		return static::getEnvironmental() == static::TASK;
 	}
@@ -425,7 +423,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isWorker(): bool
+	#[Pure] public static function isWorker(): bool
 	{
 		return static::getEnvironmental() == static::WORKER;
 	}
@@ -434,7 +432,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isProcess(): bool
+	#[Pure] public static function isProcess(): bool
 	{
 		return static::getEnvironmental() == static::PROCESS;
 	}
