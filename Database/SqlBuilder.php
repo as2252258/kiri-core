@@ -294,10 +294,10 @@ class SqlBuilder extends Component
 	public function tableName(): string
 	{
 		if ($this->query->from instanceof \Closure) {
-			$this->query->from = '(' . $this->query->makeClosureFunction($this->query->from) . ')';
+			$this->query->from = $this->query->makeClosureFunction($this->query->from);
 		}
 		if ($this->query->from instanceof ActiveQuery) {
-			$this->query->from = '(' . SqlBuilder::builder($this->query->from)->get($this->query->from) . ')';
+			$this->query->from = SqlBuilder::builder($this->query->from)->get($this->query->from);
 		}
 		if (empty($this->query->from)) {
 			return $this->query->modelClass::getTable();
