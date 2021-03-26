@@ -265,7 +265,9 @@ class SqlBuilder extends Component
 	public function tableName(): string
 	{
 		if ($this->query->from instanceof \Closure) {
-			$this->query->from = call_user_func($this->query->from, new ActiveQuery($this->query->modelClass));
+			$activeQuery = new ActiveQuery($this->query->modelClass);
+			call_user_func($this->query->from, $activeQuery);
+			$this->query->from = $activeQuery->toSql();
 		}
 		if ($this->query->from instanceof ActiveQuery) {
 			$this->query->from = '(' . SqlBuilder::builder($this->query->from)->get($this->query->from) . ')';
