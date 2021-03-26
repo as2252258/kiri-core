@@ -65,11 +65,17 @@ trait QueryTrait
 	/**
 	 * @param string $column
 	 * @param callable $callable
-	 * @return CaseWhen
+	 * @return $this
 	 */
-	public function case(string $column, callable $callable): CaseWhen
+	public function case(string $column, callable $callable): static
 	{
-		return call_user_func($callable, new CaseWhen($column, $this));
+		$caseWhen = new CaseWhen($column, $this);
+
+		call_user_func($callable, $caseWhen);
+
+		$this->where[] = $caseWhen->end();
+
+		return $this;
 	}
 
 
