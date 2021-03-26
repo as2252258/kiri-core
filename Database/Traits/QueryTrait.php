@@ -13,6 +13,7 @@ namespace Database\Traits;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
+use Database\Sql;
 use Exception;
 
 /**
@@ -54,6 +55,23 @@ trait QueryTrait
 		$this->from = '';
 		$this->alias = 't1';
 		$this->filter = [];
+	}
+
+
+	/**
+	 * @param $condition
+	 * @param $condition1
+	 * @param $condition2
+	 * @return $this
+	 * @throws Exception
+	 */
+	public function if(string $condition, string|array $condition1, string|array $condition2): static
+	{
+		$condition1 = (new Sql())->where($condition1)->getCondition();
+		$condition2 = (new Sql())->where($condition2)->getCondition();
+
+		$this->where[] = 'IF(' . $condition . ',' . $condition1 . ',' . $condition2 . ')';
+		return $this;
 	}
 
 	/**
