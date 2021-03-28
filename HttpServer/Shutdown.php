@@ -81,6 +81,9 @@ class Shutdown extends Component
      */
     public function pidIsExists($content): bool
     {
+        if (intval($content) < 1) {
+            return false;
+        }
         $shell = 'ps -eo pid,cmd,state | grep %d | grep -v grep';
         exec(sprintf($shell, $content), $output, $code);
         var_dump(sprintf($shell, $content), $output, $code);
