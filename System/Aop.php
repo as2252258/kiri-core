@@ -42,11 +42,13 @@ class Aop extends Component
     final public function dispatch()
     {
         $get_args = func_get_args();
-        [$class, $method] = array_shift($get_args);
+        if (($close = array_shift($get_args)) instanceof \Closure) {
+            return call_user_func($close, ...$get_args);
+        }
 
-        $aopName = get_class($class) . '::' . $method;
+        $aopName = get_class($close[0]) . '::' . $close[1];
         if (!isset($this->_aop[$aopName])) {
-            return call_user_func($get_args, ...$get_args);
+            return call_user_func($close, ...$get_args);
         }
 
         $reflect = new \ReflectionClass($this->_aop[$aopName]);
@@ -55,7 +57,7 @@ class Aop extends Component
         }
         $method = $reflect->getMethod('invoke');
 
-        $data = $method->invokeArgs($reflect->newInstance([$class, $method]), $get_args);
+        $data = $method->invokeArgs($reflect->newInstance($close), $get_args);
         if ($method->getReturnType() !== null) {
             return $data;
         }
