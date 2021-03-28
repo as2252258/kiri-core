@@ -12,7 +12,7 @@ interface IAspect
      * IAspect constructor.
      * @param array $handler
      */
-    public function __construct(array $handler, bool $needRetruen);
+    public function __construct(array $handler);
 
 
     /**
