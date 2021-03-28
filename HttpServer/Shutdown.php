@@ -95,6 +95,8 @@ class Shutdown extends Component
         }
         foreach ($dir as $value) {
             /** @var \DirectoryIterator $value */
+            if ($value->isDot()) continue;
+
             if (!$value->valid()) continue;
 
             $this->close($value->getRealPath());
