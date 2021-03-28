@@ -118,7 +118,11 @@ class Shutdown extends Component
             exec('kill -15 ' . $content);
             sleep(1);
         }
-        @unlink($value);
+
+        clearstatcache($value);
+        if (file_exists($value)) {
+            @unlink($value);
+        }
     }
 
 
