@@ -52,9 +52,9 @@ class OnWorkerStart extends Callback
 	 */
 	private function loadDirectory()
 	{
-		if (env('debug','true') === 'false') {
-			return;
-		}
+//		if (env('debug','true') === 'false') {
+//			return;
+//		}
 		$attribute = Snowflake::app()->getAttributes();
 		$attribute->read(directory('app'), 'App');
 	}
