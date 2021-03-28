@@ -69,7 +69,9 @@ class OnWorkerStart extends Callback
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
-		fire(Event::SERVER_TASK_START);
+        Snowflake::setTaskId($server->worker_pid);
+
+        fire(Event::SERVER_TASK_START);
 	}
 
 

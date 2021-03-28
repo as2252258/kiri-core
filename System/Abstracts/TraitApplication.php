@@ -14,6 +14,7 @@ use HttpServer\Http\Response;
 use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
+use HttpServer\Shutdown;
 use Kafka\Producer;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
@@ -50,6 +51,7 @@ use Rpc\Producer as RPCProducer;
  * @property HttpFilter $filter
  * @property RPCProducer $rpc
  * @property Channel $channel
+ * @property Shutdown $shutdown
  */
 trait TraitApplication
 {

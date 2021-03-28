@@ -36,8 +36,6 @@ abstract class Callback extends HttpService
 	protected function clear(Server $server, $worker_id, $message)
 	{
 		try {
-			Snowflake::clearProcessId($server->worker_pid);
-
 			/** @var Process $logger */
 			$logger = Snowflake::app()->get(LoggerProcess::class);
 			$logger->write(Json::encode([$this->_MESSAGE[$message] . $worker_id, 'app']));

@@ -9,6 +9,10 @@ use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
+use HttpServer\Service\Http;
+use HttpServer\Service\Packet;
+use HttpServer\Service\Receive;
+use HttpServer\Service\Websocket;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
@@ -467,6 +471,20 @@ if (!function_exists('Input')) {
 
 }
 
+if (!function_exists('Server')) {
+
+
+    /**
+     * @return Http|Packet|Receive|Websocket|null
+     * @throws Exception
+     */
+    function Server(): Http|Packet|Receive|Websocket|null
+    {
+        return Snowflake::app()->getSwoole();
+    }
+
+}
+
 if (!function_exists('storage')) {
 
     /**
@@ -477,14 +495,18 @@ if (!function_exists('storage')) {
      */
     function storage($fileName = '', $path = ''): string
     {
-        $basePath = Snowflake::getStoragePath();
-        if (empty($path)) {
-            $fileName = rtrim($basePath, '/') . '/' . $fileName;
-        } else if (empty($fileName)) {
-            return rtrim(initDir($basePath, $path));
-        } else {
-            $fileName = rtrim(initDir($basePath, $path)) . '/' . $fileName;
+
+        $basePath = rtrim(Snowflake::getStoragePath(), '/');
+        if (!empty($path)) {
+            $path = ltrim($path, '/');
+            if (!is_dir($basePath . '/' . $path)) {
+                mkdir($basePath . '/' . $path, 0777, true);
+            }
         }
+        if (empty($fileName)) {
+            return $basePath . '/' . $path . '/';
+        }
+        $fileName = $basePath . '/' . $path . '/' . $fileName;
         if (!file_exists($fileName)) {
             touch($fileName);
         }
@@ -498,20 +520,9 @@ if (!function_exists('storage')) {
      * @return false|string
      * @throws Exception
      */
-    function initDir($basePath, $path): bool|string
+    function initDir($path): bool|string
     {
-        $explode = array_filter(explode('/', $path));
-        $_path = '/' . trim($basePath, '/') . '/';
-        foreach ($explode as $value) {
-            $_path .= $value . '/';
-            if (!is_dir(rtrim($_path, '/'))) {
-                mkdir(rtrim($_path, '/'));
-            }
-            if (!is_dir($_path)) {
-                throw new Exception('System error, directory ' . $_path . ' is not writable');
-            }
-        }
-        return realpath($_path);
+        return mkdir($path, 0777, true);
     }
 
 
