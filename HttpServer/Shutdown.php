@@ -38,7 +38,7 @@ class Shutdown extends Component
     {
         clearstatcache(storage());
         exec('ls -alh /.dockerenv', $output, $cod);
-        if ($cod !== 0 && empty($output)) {
+        if ($cod === 0 && !empty($output)) {
             return;
         }
 
