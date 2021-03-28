@@ -36,27 +36,11 @@ class OnWorkerStart extends Callback
 		putenv('worker=' . $worker_id);
 
 		$this->set_process_name($server, $worker_id);
-
-		$this->loadDirectory();
-
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {
 			$this->onWorker($server, $worker_id);
 		}
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	private function loadDirectory()
-	{
-//		if (env('debug','true') === 'false') {
-//			return;
-//		}
-		$attribute = Snowflake::app()->getAttributes();
-		$attribute->read(directory('app'), 'App');
 	}
 
 
