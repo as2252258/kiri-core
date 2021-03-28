@@ -38,7 +38,6 @@ class Shutdown extends Component
     {
         clearstatcache(storage());
         $master_pid = Server()->setting['pid_file'] ?? PID_PATH;
-        var_dump($master_pid);
         if (file_exists($master_pid)) {
             $this->close($master_pid);
         }
@@ -125,7 +124,7 @@ class Shutdown extends Component
         fclose($resource);
 
         while ($this->pidIsExists($content)) {
-//            exec('kill -15 ' . $content);
+            exec('kill -15 ' . $content);
             sleep(1);
         }
 
