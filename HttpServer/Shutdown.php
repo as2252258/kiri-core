@@ -67,6 +67,10 @@ class Shutdown extends Component
     {
         $master_pid = Server()->setting['pid_file'] ?? PID_PATH;
 
+        if (!file_exists($master_pid)) {
+            return false;
+        }
+
         return $this->pidIsExists($master_pid);
     }
 
