@@ -22,7 +22,7 @@ class LoggerAspect implements IAspect
      * LoggerAspect constructor.
      * @param array $handler
      */
-    public function __construct(public array $handler, $needReturn)
+    public function __construct(public array $handler)
     {
         $this->className = get_class($this->handler[0]);
         $this->methodName = $this->handler[1];
