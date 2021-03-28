@@ -42,19 +42,19 @@ class ServerInotify extends Process
 	{
 		set_error_handler([$this, 'onErrorHandler']);
 		$this->dirs = Config::get('inotify', false, [APP_PATH]);
-//		if (extension_loaded('inotify')) {
-//			$this->inotify = inotify_init();
-//			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
-//
-//			foreach ($this->dirs as $dir) {
-//				$this->watch($dir);
-//			}
-//			Event::add($this->inotify, [$this, 'check']);
-//			Event::wait();
-//		} else {
+		if (extension_loaded('inotify')) {
+			$this->inotify = inotify_init();
+			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
+
+			foreach ($this->dirs as $dir) {
+				$this->watch($dir);
+			}
+			Event::add($this->inotify, [$this, 'check']);
+			Event::wait();
+		} else {
 			$this->loadDirs();
 			$this->tick();
-//		}
+		}
 	}
 
 
