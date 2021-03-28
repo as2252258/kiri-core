@@ -27,6 +27,7 @@ use JetBrains\PhpStorm\Pure;
 use Kafka\Producer;
 use Annotation\Annotation as SAnnotation;
 use ReflectionException;
+use Snowflake\Aop;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
 use Snowflake\Channel;
@@ -474,6 +475,7 @@ abstract class BaseApplication extends Service
             'attributes'        => ['class' => SAnnotation::class],
             'router'            => ['class' => Router::class],
             'redis'             => ['class' => Redis::class],
+            'aop'               => ['class' => Aop::class],
             'jwt'               => ['class' => Jwt::class],
             'async'             => ['class' => Async::class],
             'filter'            => ['class' => HttpFilter::class],
