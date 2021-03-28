@@ -298,6 +298,21 @@ if (!function_exists('fire')) {
     }
 }
 
+if (!function_exists('aop')) {
+
+
+    /**
+     * @param string $event
+     * @param array $params
+     * @throws Exception
+     * @throws Exception
+     */
+    function aop(mixed $handler, array $params = [])
+    {
+        return Snowflake::app()->get('aop')->dispatch($handler, ...$params);
+    }
+}
+
 
 if (!function_exists('objectPool')) {
 

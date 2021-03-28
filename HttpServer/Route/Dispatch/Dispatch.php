@@ -22,78 +22,76 @@ use Snowflake\Snowflake;
 class Dispatch
 {
 
-	/** @var Closure|array */
-	protected array|Closure $handler;
+    /** @var Closure|array */
+    protected array|Closure $handler;
 
-	protected mixed $request;
-
-
-	/**
-	 * @param $handler
-	 * @param $request
-	 * @return static
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	public static function create($handler, $request): static
-	{
-		$class = new static();
-		$class->handler = $handler;
-		$class->request = $request;
-		if ($handler instanceof Closure) {
-			$class->bind();
-		}
-		$class->bindParam();
-		return $class;
-	}
+    protected mixed $request;
 
 
-	/**
-	 * @return mixed
-	 * 执行函数
-	 */
-	public function dispatch(): mixed
-	{
-        /** @var Aop $aop */
-        $aop = Snowflake::app()->get('aop');
-		return call_user_func([$aop, 'dispatch'], $this->handler, ...$this->request);
-	}
+    /**
+     * @param $handler
+     * @param $request
+     * @return static
+     * @throws NotFindClassException
+     * @throws ReflectionException
+     */
+    public static function create($handler, $request): static
+    {
+        $class = new static();
+        $class->handler = $handler;
+        $class->request = $request;
+        if ($handler instanceof Closure) {
+            $class->bind();
+        }
+        $class->bindParam();
+        return $class;
+    }
 
 
-	/**
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 */
-	protected function bind()
-	{
-		$class = $this->bindRequest(Snowflake::createObject(Controller::class));
-		$this->handler = Closure::bind($this->handler, $class);
-	}
+    /**
+     * @return mixed
+     * 执行函数
+     */
+    public function dispatch(): mixed
+    {
+        return \aop($this->handler, $this->request);
+    }
 
 
-	/**
-	 * @param $controller
-	 * @return mixed
-	 */
-	protected function bindRequest($controller): mixed
-	{
-		$controller->request = Context::getContext('request');
-		$controller->headers = $controller->request?->headers;
-		$controller->input = $controller->request?->params;
-		return $controller;
-	}
+    /**
+     * @throws ReflectionException
+     * @throws NotFindClassException
+     */
+    protected function bind()
+    {
+        $class = $this->bindRequest(Snowflake::createObject(Controller::class));
+        $this->handler = Closure::bind($this->handler, $class);
+    }
 
 
-	/**
-	 * 参数绑定
-	 */
-	protected function bindParam()
-	{
-		if ($this->handler instanceof Closure) {
-			return;
-		}
-		$controller = $this->handler[0];
-		$this->bindRequest($controller);
-	}
+    /**
+     * @param $controller
+     * @return mixed
+     */
+    protected function bindRequest($controller): mixed
+    {
+        $controller->request = Context::getContext('request');
+        $controller->headers = $controller->request?->headers;
+        $controller->input = $controller->request?->params;
+        return $controller;
+    }
+
+
+    /**
+     * 参数绑定
+     */
+    protected function bindParam()
+    {
+        if ($this->handler instanceof Closure) {
+            return;
+        }
+        $controller = $this->handler[0];
+        $this->bindRequest($controller);
+    }
 
 }
