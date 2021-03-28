@@ -39,7 +39,9 @@ class LoggerAspect implements IAspect
         $data = call_user_func($this->handler, func_get_args());
 
         $this->print_runtime($startTime);
-
+        if ($data === null) {
+            return;
+        }
         return $data;
     }
 
