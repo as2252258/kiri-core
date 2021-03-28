@@ -10,6 +10,7 @@ use HttpServer\Controller;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use ReflectionException;
+use Snowflake\Aop;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -53,7 +54,9 @@ class Dispatch
 	 */
 	public function dispatch(): mixed
 	{
-		return call_user_func($this->handler, ...$this->request);
+        /** @var Aop $aop */
+        $aop = Snowflake::app()->get('aop');
+		return call_user_func([$aop, 'dispatch'], $this->handler, ...$this->request);
 	}
 
 
