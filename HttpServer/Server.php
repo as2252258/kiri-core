@@ -3,9 +3,6 @@
 
 namespace HttpServer;
 
-use Annotation\Attribute;
-use DirectoryIterator;
-use HttpServer\Abstracts\Callback;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Events\OnClose;
 use HttpServer\Events\OnConnect;
@@ -18,12 +15,8 @@ use HttpServer\Service\Packet;
 use HttpServer\Service\Websocket;
 use Exception;
 use ReflectionException;
-use Rpc\Producer;
 use Rpc\Service;
 use Snowflake\Abstracts\Config;
-use Snowflake\Core\Json;
-use Snowflake\Crontab\Consumer;
-use Snowflake\Crontab\ZookeeperProcess;
 use Snowflake\Error\LoggerProcess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
@@ -53,7 +46,6 @@ defined('PID_PATH') or define('PID_PATH', APP_PATH . 'storage/server.pid');
  */
 class Server extends HttpService
 {
-    use Action;
 
     const HTTP = 'HTTP';
     const TCP = 'TCP';
@@ -209,7 +201,9 @@ class Server extends HttpService
      */
     public function shutdown()
     {
-        $this->stop($this);
+        /** @var Shutdown $shutdown */
+        $shutdown = Snowflake::app()->get('shutdown');
+        $shutdown->shutdown();
     }
 
 
