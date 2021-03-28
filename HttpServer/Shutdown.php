@@ -36,8 +36,9 @@ class Shutdown extends Component
      */
     public function shutdown(): void
     {
+        clearstatcache(storage());
         $master_pid = Server()->setting['pid_file'] ?? PID_PATH;
-        clearstatcache($master_pid);
+        var_dump($master_pid);
         if (file_exists($master_pid)) {
             $this->close($master_pid);
         }
