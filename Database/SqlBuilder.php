@@ -177,6 +177,9 @@ class SqlBuilder extends Component
     public function one(): string
     {
         $this->query->limit(0, 1);
+        if (empty($this->from)) {
+            $this->query->from($this->query->getTable());
+        }
         return $this->_prefix(true);
     }
 
@@ -187,6 +190,9 @@ class SqlBuilder extends Component
      */
     public function all(): string
     {
+        if (empty($this->from)) {
+            $this->query->from($this->query->getTable());
+        }
         return $this->_prefix(true);
     }
 
@@ -197,6 +203,9 @@ class SqlBuilder extends Component
      */
     public function count(): string
     {
+        if (empty($this->from)) {
+            $this->query->from($this->query->getTable());
+        }
         return $this->_prefix();
     }
 
