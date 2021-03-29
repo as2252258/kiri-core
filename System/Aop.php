@@ -4,7 +4,10 @@
 namespace Snowflake;
 
 
+use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\NotFindClassException;
 
 defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implement ');
 
@@ -20,10 +23,10 @@ class Aop extends Component
     private array $_aop = [];
 
 
-    /**
-     * @param $className
-     * @param null $method
-     */
+	/**
+	 * @param array $handler
+	 * @param string $aspect
+	 */
     public function aop_add(array $handler, string $aspect)
     {
         [$class, $method] = $handler;
@@ -35,11 +38,13 @@ class Aop extends Component
     }
 
 
-    /**
-     * @return mixed|void
-     * @throws \ReflectionException
-     */
-    final public function dispatch()
+	/**
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+    final public function dispatch(): mixed
     {
         $get_args = func_get_args();
         if (($close = array_shift($get_args)) instanceof \Closure) {
@@ -53,7 +58,7 @@ class Aop extends Component
 
         $reflect = Snowflake::getDi()->getReflect($this->_aop[$aopName]);
         if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
-            throw new \Exception(ASPECT_ERROR . IAspect::class);
+            throw new Exception(ASPECT_ERROR . IAspect::class);
         }
         $method = $reflect->getMethod('invoke');
 
