@@ -94,9 +94,9 @@ class Shutdown extends Component
 		if (intval($content) < 1) {
 			return false;
 		}
-		$shell = 'ps -eo pid,state | grep %d | grep %s | grep -v grep';
+		$shell = 'ps -eo pid,state | grep %d | grep \'%s\' | grep -v grep';
 		exec(sprintf($shell, intval($content), Config::get('id')), $output, $code);
-		var_dump(sprintf($shell, intval($content)));
+		var_dump(sprintf($shell, intval($content), Config::get('id')));
 		if (empty($output)) {
 			return false;
 		}
