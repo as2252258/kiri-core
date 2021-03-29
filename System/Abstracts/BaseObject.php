@@ -14,14 +14,12 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
-use function Amp\any;
 
 /**
  * Class BaseObject
  * @method defer()
  * @package Snowflake\Snowflake\Base
  * @method afterInit
- * @method initialization
  */
 class BaseObject implements Configure
 {
@@ -37,14 +35,14 @@ class BaseObject implements Configure
 		if (!empty($config) && is_array($config)) {
 			Snowflake::configure($this, $config);
 		}
-		$this->init();
 		if (Snowflake::app()->has('attributes')) {
 			annotation()->injectProperty($this);
 		}
+		$this->initialization();
 	}
 
 
-	public function init()
+	public function initialization()
 	{
 
 	}
