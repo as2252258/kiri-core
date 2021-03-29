@@ -128,14 +128,13 @@ class Shutdown extends Component
 
 	/**
 	 * @param string $value
-	 * @throws ConfigException
 	 */
 	public function close(string $value)
 	{
 		$content = file_get_contents($value);
 
 		while ($this->pidIsExists($content)) {
-//			exec('kill -15 ' . $content);
+			exec('kill -15 ' . $content);
 			sleep(1);
 		}
 
