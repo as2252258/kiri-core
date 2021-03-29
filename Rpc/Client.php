@@ -49,10 +49,12 @@ class Client extends Component
 			return false;
 		}
 		$isSend = $this->client->send(Json::encode(['cmd' => $cmd, 'body' => $param]));
-		$this->recover();
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
+		\Swoole\Coroutine\defer(function () {
+			$this->recover();
+		});
 		if (is_bool($unpack = Json::decode($this->client->recv()))) {
 			return $this->addError('Service return data format error(500)');
 		}
