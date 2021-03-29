@@ -6,7 +6,9 @@ namespace Rpc;
 
 use Exception;
 use Snowflake\Abstracts\Component;
+use Snowflake\Channel;
 use Snowflake\Core\Json;
+use Snowflake\Snowflake;
 use Swoole\Coroutine\Client as CClient;
 
 
@@ -90,7 +92,9 @@ class Client extends Component
 	 */
 	public function getClient(): CClient
 	{
-		return objectPool(CClient::class, function () {
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		return $channel->pop(CClient::class, function () {
 			$client = new CClient($this->config['mode'] ?? SWOOLE_SOCK_TCP);
 			$client->set([
 				'timeout'            => 0.5,

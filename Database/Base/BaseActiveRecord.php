@@ -29,6 +29,7 @@ use Database\Mysql\Columns;
 use Database\Relation;
 use Exception;
 use Snowflake\Abstracts\TraitApplication;
+use Snowflake\Channel;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use validator\Validator;
@@ -1032,8 +1033,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$className = get_called_class();
 
-		/** @var static $model */
-		$model = objectPool($className, function () use ($className) {
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		$model = $channel->pop($className, function () use ($className) {
 			return new $className();
 		});
 		$model->_attributes = $data;

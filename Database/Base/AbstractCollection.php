@@ -18,6 +18,7 @@ use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Database\ActiveRecord;
+use Snowflake\Channel;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -35,7 +36,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 */
 	protected array $_item = [];
 
-	protected ?ActiveRecord $model;
+	protected ActiveRecord|string|null $model;
 
 	protected ActiveQuery $query;
 
@@ -119,7 +120,10 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 		if (is_object($model)) {
 			return $model;
 		}
-		return objectPool($model, function () use ($model) {
+
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		return $channel->pop($model, function () use ($model) {
 			return new $model();
 		});
 	}

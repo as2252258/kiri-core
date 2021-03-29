@@ -9,6 +9,7 @@ use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Exception;
 use ReflectionException;
+use Snowflake\Channel;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -56,14 +57,18 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	protected function newModel($current): ActiveRecord
 	{
+		/** @var ActiveRecord|string $model */
 		$model = $this->model;
 		if (is_object($model)) {
 			$model = get_class($model);
 		}
-		return objectPool($model, function () use ($model) {
-			return new $model();
-		})->setAttributes($current);
 
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		$model = $channel->pop($model, function () use ($model) {
+			return new $model();
+		});
+		return $model->setAttributes($current);
 	}
 
 

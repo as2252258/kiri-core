@@ -16,7 +16,9 @@ use HttpServer\Service\Websocket;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\Logger;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use HttpServer\Http\Context;
 use Snowflake\Core\ArrayAccess;
@@ -303,43 +305,16 @@ if (!function_exists('aop')) {
 
 
 	/**
-	 * @param string $event
+	 * @param mixed $handler
 	 * @param array $params
-	 * @throws Exception
-	 * @throws Exception
+	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindClassException
 	 */
-	function aop(mixed $handler, array $params = [])
+	function aop(mixed $handler, array $params = []): mixed
 	{
 		return Snowflake::app()->get('aop')->dispatch($handler, ...$params);
-	}
-}
-
-
-if (!function_exists('objectPool')) {
-
-	/**
-	 * @param string $className
-	 * @param callable $construct
-	 * @return mixed
-	 * @throws Exception
-	 */
-	function objectPool(mixed $className, callable $construct): mixed
-	{
-		return Snowflake::app()->getObject()->load($className, $construct);
-	}
-}
-
-if (!function_exists('objectRecover')) {
-
-	/**
-	 * @param string $className
-	 * @param $object
-	 * @return mixed
-	 * @throws Exception
-	 */
-	function objectRecover(mixed $className, $object): void
-	{
-		Snowflake::app()->getObject()->release($className, $object);
 	}
 }
 

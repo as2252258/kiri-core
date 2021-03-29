@@ -13,6 +13,7 @@ namespace Database;
 use Exception;
 use Database\Base\BaseActiveRecord;
 use ReflectionException;
+use Snowflake\Channel;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -130,7 +131,10 @@ class ActiveRecord extends BaseActiveRecord
 		}
 
 		$className = get_called_class();
-		$select = objectPool($className, function () use ($className) {
+
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		$select = $channel->pop($className, function () use ($className) {
 			return new $className();
 		});
 
@@ -284,7 +288,9 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function recover()
 	{
-		objectRecover(get_called_class(), $this);
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		return $channel->push($this, get_called_class());
 	}
 
 
