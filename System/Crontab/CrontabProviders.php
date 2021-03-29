@@ -4,9 +4,14 @@
 namespace Snowflake\Crontab;
 
 
+use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 
 
 /**
@@ -17,9 +22,14 @@ class CrontabProviders extends Providers
 {
 
 
-    /**
-     * @param Application $application
-     */
+	/**
+	 * @param Application $application
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
     public function onImport(Application $application)
     {
         $server = $application->getServer();

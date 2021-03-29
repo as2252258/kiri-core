@@ -19,11 +19,10 @@ class Producer extends Component
     const CRONTAB_KEY = 'system:crontab';
 
 
-    /**
-     * @param Crontab $crontab
-     * @param $executeTime
-     * @throws Exception
-     */
+	/**
+	 * @param Crontab $crontab
+	 * @throws Exception
+	 */
     public function dispatch(Crontab $crontab)
     {
         $redis = Snowflake::app()->getRedis();
