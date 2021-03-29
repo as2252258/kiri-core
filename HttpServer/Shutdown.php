@@ -32,8 +32,6 @@ class Shutdown extends Component
 	 */
 	public function init()
 	{
-		exec('ps -eo pid', $this->_pids);
-
 		$this->taskDirectory = storage(null, 'pid/task');
 		$this->workerDirectory = storage(null, 'pid/worker');
 		$this->managerDirectory = storage(null, 'pid/manager');
@@ -99,12 +97,9 @@ class Shutdown extends Component
 		if (intval($content) < 1) {
 			return false;
 		}
-
-		$id = Config::get('id', false, 'system');
-
-		$shell = 'ps -eo pid,state | grep \'%s\' | grep -v grep';
-		exec(sprintf($shell, $id . '[' . intval($content) . ']'), $output, $code);
-		if (empty($output)) {
+		exec('ps -eo pid', $this->_pids);
+		var_dump($this->_pids);
+		if (in_array($content, $this->_pids)) {
 			return false;
 		}
 		return true;
@@ -114,6 +109,7 @@ class Shutdown extends Component
 	/**
 	 * @param string $path
 	 * @return bool
+	 * @throws ConfigException
 	 */
 	public function directoryCheck(string $path): bool
 	{
@@ -134,13 +130,14 @@ class Shutdown extends Component
 
 	/**
 	 * @param string $value
+	 * @throws ConfigException
 	 */
 	public function close(string $value)
 	{
 		$content = file_get_contents($value);
 
 		while ($this->pidIsExists($content)) {
-			exec('kill -15 ' . $content);
+//			exec('kill -15 ' . $content);
 			sleep(1);
 		}
 
