@@ -38,10 +38,11 @@ use Snowflake\Snowflake;
 	public function execute(array $handler): mixed
 	{
 		$injectValue = $this->parseInjectValue();
-		var_dump($injectValue);
 		if (!($handler[1] instanceof ReflectionProperty)) {
 			$handler[1] = new ReflectionProperty($handler[0], $handler[1]);
 		}
+
+		var_dump(get_class($handler[0]) . '::' . $handler[1]);
 		/** @var ReflectionProperty $handler [1] */
 		if ($handler[1]->isPrivate() || $handler[1]->isProtected()) {
 			$method = 'set' . ucfirst($handler[1]->getName());
