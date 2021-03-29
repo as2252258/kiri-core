@@ -52,10 +52,12 @@ class Client extends Component
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
+		defer(function () {
+			$this->clientRecover();
+		});
 		if (is_bool($unpack = Json::decode($this->client->recv()))) {
 			$unpack = $this->addError('Service return data format error(500)');
 		}
-		$this->clientRecover();
 		return $unpack;
 	}
 
