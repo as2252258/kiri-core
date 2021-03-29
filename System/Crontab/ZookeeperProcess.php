@@ -58,6 +58,7 @@ class ZookeeperProcess extends Process
 
 			$range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
 			$redis->zRemRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
+			$redis->release();
 
 			/** @var Consumer $consumer */
 			$consumer = Snowflake::app()->get(Consumer::class);
@@ -65,7 +66,6 @@ class ZookeeperProcess extends Process
 			foreach ($range as $value) {
 				$consumer->write('crontab:' . md5($value));
 			}
-			$redis->release();
 		});
 	}
 
