@@ -48,7 +48,7 @@ class Application extends BaseApplication
     /**
      * @throws NotFindClassException
      */
-    #[Aspect(InjectProperty::class)] public function init()
+    public function init()
     {
         $this->import(ConsoleProviders::class);
         $this->import(DatabasesProviders::class);

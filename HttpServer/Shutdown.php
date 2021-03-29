@@ -32,7 +32,7 @@ class Shutdown extends Component
 	/**
 	 * @throws Exception
 	 */
-	#[Aspect(InjectProperty::class)] public function init()
+	public function init()
 	{
 		$this->taskDirectory = storage(null, 'pid/task');
 		$this->workerDirectory = storage(null, 'pid/worker');

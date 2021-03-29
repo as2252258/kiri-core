@@ -81,7 +81,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @throws ConfigException
 	 */
-	#[Aspect(InjectProperty::class)] public function init()
+	public function init()
 	{
 		if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
 			return;

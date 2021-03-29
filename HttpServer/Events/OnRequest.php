@@ -38,7 +38,7 @@ class OnRequest extends Callback
 	/**
 	 * @throws Exception
 	 */
-	#[Aspect(InjectProperty::class)] public function init()
+	public function init()
 	{
 		$this->event = Snowflake::app()->getEvent();
 		$this->logger = Snowflake::app()->getLogger();

@@ -59,7 +59,7 @@ class Router extends HttpService implements RouterInterface
 	 * @throws ConfigException
 	 * 初始化函数路径
 	 */
-	#[Aspect(InjectProperty::class)] public function init()
+	public function init()
 	{
 		$this->dir = Config::get('http.namespace', false, $this->dir);
 	}

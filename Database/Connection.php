@@ -67,7 +67,7 @@ class Connection extends Component
 	/**
 	 * @throws Exception
 	 */
-	#[Aspect(InjectProperty::class)] public function init()
+	public function init()
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'disconnect']);

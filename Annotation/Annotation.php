@@ -21,7 +21,7 @@ class Annotation extends Component
 	private Loader $_loader;
 
 
-	#[Aspect(InjectProperty::class)] public function init(): void
+	public function init(): void
 	{
 		$this->_loader = new Loader();
 	}
