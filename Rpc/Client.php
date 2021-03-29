@@ -63,16 +63,23 @@ class Client extends Component
 
 
 	/**
-	 * @throws ReflectionException
+	 * @return Client
 	 * @throws ComponentException
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function clientRecover(): static
 	{
+		$host = $this->config['host'] ?? '127.0.0.1';
+		$port = $this->config['port'] ?? 0;
+		if ($port < 0) {
+			return $this;
+		}
+
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
-		$channel->push($this->client, CClient::class);
+		$channel->push($this->client, $host . $port . CClient::class);
 		$this->client = null;
 		return $this;
 	}
@@ -110,13 +117,23 @@ class Client extends Component
 
 	/**
 	 * @return mixed
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function getClient(): CClient
 	{
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
-		return $channel->pop(CClient::class, function () {
+
+		$host = $this->config['host'] ?? '127.0.0.1';
+		$port = $this->config['port'] ?? 0;
+		if ($port < 0) {
+			throw new Exception('Related service not have port(404)');
+		}
+
+		return $channel->pop($host . $port . CClient::class, function () {
 			$client = new CClient($this->config['mode'] ?? SWOOLE_SOCK_TCP);
 			$client->set([
 				'timeout'            => 0.5,
