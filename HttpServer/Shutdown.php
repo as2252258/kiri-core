@@ -127,6 +127,7 @@ class Shutdown extends Component
 	 */
 	public function close(string $value)
 	{
+		var_dump($value);
 		$content = file_get_contents($value);
 
 		while ($this->pidIsExists($content)) {
