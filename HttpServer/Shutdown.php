@@ -127,9 +127,7 @@ class Shutdown extends Component
 	 */
 	public function close(string $value)
 	{
-		$resource = fopen($value, 'r');
-		$content = fgets($resource);
-		fclose($resource);
+		$content = file_get_contents($value);
 
 		while ($this->pidIsExists($content)) {
 //			exec('kill -15 ' . $content);
