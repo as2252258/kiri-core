@@ -93,6 +93,7 @@ class Shutdown extends Component
 		}
 		$shell = 'ps -eo pid,cmd,state | grep %d | grep -v grep';
 		exec(sprintf($shell, intval($content)), $output, $code);
+		var_dump(sprintf($shell, intval($content)));
 		if (empty($output)) {
 			return false;
 		}
@@ -131,7 +132,7 @@ class Shutdown extends Component
 		fclose($resource);
 
 		while ($this->pidIsExists($content)) {
-			exec('kill -15 ' . $content);
+//			exec('kill -15 ' . $content);
 			sleep(1);
 		}
 
