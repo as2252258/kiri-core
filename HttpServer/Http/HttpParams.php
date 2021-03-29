@@ -331,7 +331,7 @@ class HttpParams
 	 */
 	private function between($string, $min, $max): mixed
 	{
-		$_length = mb_strlen($string);
+		$_length = mb_strlen((string)$string);
 		if ($min !== NULL && $_length < $min) {
 			throw new RequestException("The minimum value cannot be lower than $min, has length $_length");
 		}
