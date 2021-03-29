@@ -52,12 +52,10 @@ class Client extends Component
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
-		\Swoole\Coroutine\defer(function () {
-			$this->recover();
-		});
 		if (is_bool($unpack = Json::decode($this->client->recv()))) {
-			return $this->addError('Service return data format error(500)');
+			$unpack = $this->addError('Service return data format error(500)');
 		}
+		$this->clientRecover();
 		return $unpack;
 	}
 
@@ -68,7 +66,7 @@ class Client extends Component
 	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function recover(): static
+	public function clientRecover(): static
 	{
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
