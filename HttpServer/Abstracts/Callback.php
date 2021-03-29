@@ -38,7 +38,7 @@ abstract class Callback extends HttpService
 		try {
 			/** @var Process $logger */
 			$logger = Snowflake::app()->get(LoggerProcess::class);
-			$logger->write(Json::encode([$this->_MESSAGE[$message] . $worker_id, 'app']));
+			$logger->write(Json::encode([$this->_MESSAGE[$message] . $worker_id, 'log/app']));
 
 			$this->eventNotify($message);
 		} catch (\Throwable $exception) {
