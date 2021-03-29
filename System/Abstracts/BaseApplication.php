@@ -39,7 +39,6 @@ use Snowflake\Exception\InitException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\Connection;
-use Snowflake\Pool\ObjectPool;
 use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Snowflake\Event;
@@ -424,16 +423,6 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return ObjectPool
-	 * @throws Exception
-	 */
-	public function getObject(): ObjectPool
-	{
-		return $this->get('object');
-	}
-
-
-	/**
 	 * @return \Rpc\Producer
 	 * @throws ComponentException
 	 * @throws NotFindClassException
@@ -479,7 +468,6 @@ abstract class BaseApplication extends Service
 			'jwt'               => ['class' => Jwt::class],
 			'async'             => ['class' => Async::class],
 			'filter'            => ['class' => HttpFilter::class],
-			'object'            => ['class' => ObjectPool::class],
 			'goto'              => ['class' => BaseGoto::class],
 			'channel'           => ['class' => Channel::class],
 			'rpc'               => ['class' => \Rpc\Producer::class],
