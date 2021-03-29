@@ -154,10 +154,10 @@ class BaseObject implements Configure
 	 */
 	public function __call(string $name, array $arguments): mixed
 	{
+		var_dump(get_called_class() . '::' . $name);
 		if (!Snowflake::app()->has('aop')) {
 			return call_user_func([$this, $name], $arguments);
 		}
-		var_dump(get_called_class() . '::' . $name);
 		return \aop([$this, $name], $arguments);
 	}
 
