@@ -14,6 +14,7 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
+use function Amp\any;
 
 /**
  * Class BaseObject
@@ -29,6 +30,7 @@ class BaseObject implements Configure
 	 * BaseAbstract constructor.
 	 *
 	 * @param array $config
+	 * @throws Exception
 	 */
 	public function __construct($config = [])
 	{
@@ -36,6 +38,9 @@ class BaseObject implements Configure
 			Snowflake::configure($this, $config);
 		}
 		$this->init();
+		if (Snowflake::app()->has('attributes')) {
+			annotation()->injectProperty($this);
+		}
 	}
 
 

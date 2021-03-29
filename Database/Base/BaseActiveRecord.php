@@ -164,7 +164,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 				$attribute->execute([$this, $method]);
 			}
 		}
-		$annotation->injectProperty($this);
 	}
 
 
