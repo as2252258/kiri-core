@@ -97,9 +97,11 @@ class Shutdown extends Component
 		if (intval($content) < 1) {
 			return false;
 		}
-		exec('ps -eo pid', $this->_pids);
-		var_dump($this->_pids);
-		if (in_array($content, $this->_pids)) {
+		exec('ps -eo pid', $output);
+		$output = array_filter($output, function ($value) {
+			return intval($value);
+		});
+		if (in_array(intval($content), $output)) {
 			return false;
 		}
 		return true;
