@@ -44,7 +44,6 @@ class Annotation extends Component
 	 */
 	public function injectProperty(object $class)
 	{
-		var_dump(__METHOD__);
 		$this->_loader->injectProperty(get_class($class), $class);
 	}
 

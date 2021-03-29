@@ -165,6 +165,7 @@ class BaseObject implements Configure
 	 */
 	public static function __callStatic(string $name, array $arguments): mixed
 	{
+		var_dump(get_called_class() . '::' . $name);
 		if (!Snowflake::app()->has('aop')) {
 			return call_user_func([get_called_class(), $name], $arguments);
 		}
