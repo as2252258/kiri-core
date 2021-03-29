@@ -70,7 +70,7 @@ class Client extends Component
 	{
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
-		$channel->push(CClient::class, $this->client);
+		$channel->push($this->client, CClient::class);
 		$this->client = null;
 		return $this;
 	}
