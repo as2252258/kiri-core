@@ -12,6 +12,7 @@ namespace Snowflake\Abstracts;
 use Exception;
 
 use JetBrains\PhpStorm\Pure;
+use Snowflake\Application;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -35,9 +36,8 @@ class BaseObject implements Configure
 		if (!empty($config) && is_array($config)) {
 			Snowflake::configure($this, $config);
 		}
-
 		$app = Snowflake::app();
-		if ($app != null && $app->has('attributes')) {
+		if ($app instanceof Application && $app->has('attributes')) {
 			annotation()->injectProperty($this);
 		}
 		$this->initialization();
