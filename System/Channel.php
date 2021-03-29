@@ -4,6 +4,7 @@
 namespace Snowflake;
 
 
+use Closure;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Swoole\Coroutine\Channel as CChannel;
@@ -68,20 +69,21 @@ class Channel extends Component
 
 
 	/**
+	 * @param Closure $closure
 	 * @param int $timeout
 	 * @param string $name
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function pop($timeout = 1, string $name = ''): mixed
+	public function pop(Closure $closure, $timeout = 1, string $name = ''): mixed
 	{
-		if ($channel = $this->channelInit(0, $name)) {
+		if (($channel = $this->channelInit(0, $name)) == false) {
 			return $this->addError('Channel is full.');
 		}
 		if (!$channel->isEmpty()) {
 			return $channel->pop($timeout);
 		}
-		return null;
+		return call_user_func($closure);
 	}
 
 
