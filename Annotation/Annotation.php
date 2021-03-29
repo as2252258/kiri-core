@@ -4,6 +4,7 @@
 namespace Annotation;
 
 
+use Database\InjectProperty;
 use DirectoryIterator;
 use Exception;
 use Snowflake\Abstracts\Component;
@@ -20,7 +21,7 @@ class Annotation extends Component
 	private Loader $_loader;
 
 
-	public function init(): void
+	#[Aspect(InjectProperty::class)] public function init(): void
 	{
 		$this->_loader = new Loader();
 	}

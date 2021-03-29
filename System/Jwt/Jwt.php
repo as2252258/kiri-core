@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Snowflake\Jwt;
 
+use Annotation\Aspect;
+use Database\InjectProperty;
 use Exception;
 use HttpServer\Http\HttpHeaders;
 use ReflectionException;
@@ -79,7 +81,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	/**
 	 * @throws ConfigException
 	 */
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
 			return;

@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace HttpServer\Route;
 
+use Annotation\Aspect;
 use Closure;
+use Database\InjectProperty;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
@@ -57,7 +59,7 @@ class Router extends HttpService implements RouterInterface
 	 * @throws ConfigException
 	 * 初始化函数路径
 	 */
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		$this->dir = Config::get('http.namespace', false, $this->dir);
 	}

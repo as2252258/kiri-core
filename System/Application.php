@@ -10,9 +10,11 @@ declare(strict_types=1);
 namespace Snowflake;
 
 
+use Annotation\Aspect;
 use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
+use Database\InjectProperty;
 use Exception;
 use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
@@ -46,7 +48,7 @@ class Application extends BaseApplication
     /**
      * @throws NotFindClassException
      */
-    public function init()
+    #[Aspect(InjectProperty::class)] public function init()
     {
         $this->import(ConsoleProviders::class);
         $this->import(DatabasesProviders::class);

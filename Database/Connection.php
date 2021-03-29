@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Database;
 
 
+use Annotation\Aspect;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
@@ -66,7 +67,7 @@ class Connection extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'disconnect']);

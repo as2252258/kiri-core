@@ -136,10 +136,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @throws Exception
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	#[Aspect(InjectProperty::class)]
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		if (!Context::hasContext(Relation::class)) {
 			$relation = Snowflake::createObject(Relation::class);

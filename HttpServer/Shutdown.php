@@ -4,6 +4,8 @@
 namespace HttpServer;
 
 
+use Annotation\Aspect;
+use Database\InjectProperty;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
@@ -30,7 +32,7 @@ class Shutdown extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		$this->taskDirectory = storage(null, 'pid/task');
 		$this->workerDirectory = storage(null, 'pid/worker');

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Annotation\Aspect;
+use Database\InjectProperty;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Exception\ExitException;
@@ -36,7 +38,7 @@ class OnRequest extends Callback
 	/**
 	 * @throws Exception
 	 */
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		$this->event = Snowflake::app()->getEvent();
 		$this->logger = Snowflake::app()->getLogger();

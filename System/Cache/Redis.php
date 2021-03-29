@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Snowflake\Cache;
 
+use Annotation\Aspect;
+use Database\InjectProperty;
 use Exception;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
@@ -36,7 +38,7 @@ class Redis extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function init()
+	#[Aspect(InjectProperty::class)] public function init()
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'destroy']);
