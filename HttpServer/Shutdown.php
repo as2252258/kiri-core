@@ -6,6 +6,8 @@ namespace HttpServer;
 
 use Exception;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Config;
+use Snowflake\Exception\ConfigException;
 
 
 /**
@@ -85,14 +87,15 @@ class Shutdown extends Component
 	/**
 	 * @param $content
 	 * @return bool
+	 * @throws ConfigException
 	 */
 	public function pidIsExists($content): bool
 	{
 		if (intval($content) < 1) {
 			return false;
 		}
-		$shell = 'ps -eo pid,state | grep %d | grep -v grep';
-		exec(sprintf($shell, intval($content)), $output, $code);
+		$shell = 'ps -eo pid,state | grep %d | grep %s | grep -v grep';
+		exec(sprintf($shell, intval($content), Config::get('id')), $output, $code);
 		var_dump(sprintf($shell, intval($content)));
 		if (empty($output)) {
 			return false;
