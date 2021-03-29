@@ -36,17 +36,24 @@ class BaseObject implements Configure
 		if (!empty($config) && is_array($config)) {
 			Snowflake::configure($this, $config);
 		}
-//		$app = Snowflake::app();
-//		if ($app instanceof Application && $app->has('attributes')) {
-//			annotation()->injectProperty($this);
-//		}
 		$this->init();
 	}
 
 
+	/**
+	 * @throws Exception
+	 */
 	public function init()
 	{
-
+		$app = Snowflake::app();
+		if (!($app instanceof Application)) {
+			return;
+		}
+		if (!$app->has('attributes')) {
+			return;
+		}
+		$attributes = $app->getAttributes();
+		$attributes->injectProperty($this);
 	}
 
 
