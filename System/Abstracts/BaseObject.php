@@ -157,6 +157,7 @@ class BaseObject implements Configure
 		if (!Snowflake::app()->has('aop')) {
 			return call_user_func([$this, $name], $arguments);
 		}
+		var_dump(get_called_class() . '::' . $name);
 		return \aop([$this, $name], $arguments);
 	}
 
