@@ -20,18 +20,18 @@ class OnManagerStart extends Callback
 {
 
 
-    /**
-     * @param Server $server
-     * @throws Exception
-     */
-    public function onHandler(Server $server)
-    {
-        Snowflake::setWorkerId($server->manager_pid);
+	/**
+	 * @param Server $server
+	 * @throws Exception
+	 */
+	public function onHandler(Server $server)
+	{
+		Snowflake::setWorkerId($server->manager_pid);
 
-        fire(Event::SERVER_MANAGER_START, [$server]);
+		fire(Event::SERVER_MANAGER_START, [$server]);
 
-	    name($server->manager_pid);
-    }
+		name($server->manager_pid, 'manager');
+	}
 
 
 }

@@ -35,7 +35,7 @@ class OnWorkerStart extends Callback
 		putenv('state=start');
 		putenv('worker=' . $worker_id);
 
-		name($server->worker_pid);
+		name($server->worker_pid, Snowflake::isTask() ? 'task' : 'worker');
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
@@ -54,9 +54,9 @@ class OnWorkerStart extends Callback
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
-        Snowflake::setTaskId($server->worker_pid);
+		Snowflake::setTaskId($server->worker_pid);
 
-        fire(Event::SERVER_TASK_START);
+		fire(Event::SERVER_TASK_START);
 	}
 
 

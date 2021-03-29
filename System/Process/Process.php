@@ -47,7 +47,7 @@ abstract class Process extends \Swoole\Process implements SProcess
 
 		fire(Event::SERVER_WORKER_START);
 		if (Snowflake::getPlatform()->isLinux()) {
-			$this->name($this->getPrefix());
+			name($process->pid, $this->getPrefix());
 		}
 		$this->onHandler($process);
 	}
@@ -58,7 +58,7 @@ abstract class Process extends \Swoole\Process implements SProcess
 	 */
 	#[Pure] private function getPrefix(): string
 	{
-		return Snowflake::app()->id . ' ' . get_called_class();
+		return get_called_class();
 	}
 
 

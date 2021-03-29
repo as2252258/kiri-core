@@ -24,9 +24,8 @@ class OnStart extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
-//		Snowflake::setProcessId($server->master_pid);
 		if (Snowflake::getPlatform()->isLinux()) {
-			name($server->master_pid);
+			name($server->master_pid, 'master');
 		}
 		fire(Event::SERVER_EVENT_START, [$server]);
 	}
