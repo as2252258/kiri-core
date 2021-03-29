@@ -76,7 +76,7 @@ class Channel extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function pop(int|float $timeout, Closure $closure, string $name = '', int $length = 100): mixed
+	public function pop(int|float $timeout, string $name, Closure $closure, int $length = 100): mixed
 	{
 		if (($channel = $this->channelInit($length, $name)) == false) {
 			return $this->addError('Channel is full.');
