@@ -142,38 +142,6 @@ class BaseObject implements Configure
 
 
 	/**
-	 * @param string $name
-	 * @param array $arguments
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function __call(string $name, array $arguments): mixed
-	{
-		var_dump(get_called_class() . '::' . $name);
-		if (!Snowflake::app()->has('aop')) {
-			return call_user_func([$this, $name], $arguments);
-		}
-		return \aop([$this, $name], $arguments);
-	}
-
-
-	/**
-	 * @param string $name
-	 * @param array $arguments
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function __callStatic(string $name, array $arguments): mixed
-	{
-		var_dump(get_called_class() . '::' . $name);
-		if (!Snowflake::app()->has('aop')) {
-			return call_user_func([get_called_class(), $name], $arguments);
-		}
-		return \aop([get_called_class(), $name], $arguments);
-	}
-
-
-	/**
 	 * @param mixed $message
 	 * @param string $method
 	 * @param string $file
@@ -190,6 +158,7 @@ class BaseObject implements Configure
 		$socket = Snowflake::app()->getLogger();
 		$socket->output($message);
 	}
+
 
 	/**
 	 * @param mixed $message
