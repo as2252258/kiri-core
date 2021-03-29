@@ -92,7 +92,7 @@ class Shutdown extends Component
 			return false;
 		}
 		$shell = 'ps -eo pid,cmd,state | grep %d | grep -v grep';
-		exec(sprintf($shell, $content), $output, $code);
+		exec(sprintf($shell, intval($content)), $output, $code);
 		var_dump($content, $output, $code);
 		if (empty($output)) {
 			return false;
@@ -103,8 +103,9 @@ class Shutdown extends Component
 
 	/**
 	 * @param string $path
+	 * @return bool
 	 */
-	public function directoryCheck(string $path)
+	public function directoryCheck(string $path): bool
 	{
 		$dir = new \DirectoryIterator($path);
 		if ($dir->getSize() < 1) {
