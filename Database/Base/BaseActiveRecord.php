@@ -138,6 +138,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	#[Aspect(InjectProperty::class)] public function init()
 	{
@@ -147,6 +148,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
+		$this->createAnnotation();
 	}
 
 
