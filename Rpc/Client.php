@@ -5,9 +5,12 @@ namespace Rpc;
 
 
 use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Channel;
 use Snowflake\Core\Json;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Client as CClient;
 
@@ -42,10 +45,11 @@ class Client extends Component
 		if (!($this->client instanceof CClient)) {
 			$this->client = $this->getClient();
 		}
-		if (!$this->client->isConnected() || !$this->connect()) {
+		if (!$this->client->isConnected() && !$this->connect()) {
 			return false;
 		}
 		$isSend = $this->client->send(Json::encode(['cmd' => $cmd, 'body' => $param]));
+		$this->recover();
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
@@ -53,6 +57,22 @@ class Client extends Component
 			return $this->addError('Service return data format error(500)');
 		}
 		return $unpack;
+	}
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+	public function recover(): static
+	{
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		$channel->push(CClient::class, $this->client);
+		$this->client = null;
+		return $this;
 	}
 
 
