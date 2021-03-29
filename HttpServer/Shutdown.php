@@ -47,7 +47,7 @@ class Shutdown extends Component
 
 		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
 		if (file_exists($master_pid)) {
-			$this->close(file_get_contents($master_pid));
+			$this->close($master_pid);
 		}
 		$this->closeOther();
 	}
@@ -93,7 +93,6 @@ class Shutdown extends Component
 		}
 		$shell = 'ps -eo pid,cmd,state | grep %d | grep -v grep';
 		exec(sprintf($shell, intval($content)), $output, $code);
-		var_dump($content, $output, sprintf($shell, intval($content)));
 		if (empty($output)) {
 			return false;
 		}
