@@ -93,7 +93,7 @@ class Shutdown extends Component
 		}
 		$shell = 'ps -eo pid,cmd,state | grep %d | grep -v grep';
 		exec(sprintf($shell, intval($content)), $output, $code);
-		var_dump($content, $output, $code);
+		var_dump($content, $output, sprintf($shell, intval($content)));
 		if (empty($output)) {
 			return false;
 		}
