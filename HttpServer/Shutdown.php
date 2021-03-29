@@ -47,7 +47,7 @@ class Shutdown extends Component
 
 		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
 		if (file_exists($master_pid)) {
-			$this->close($master_pid);
+			$this->close(file_get_contents($master_pid));
 		}
 		$this->closeOther();
 	}
@@ -70,7 +70,7 @@ class Shutdown extends Component
 	 * @throws Exception
 	 * check server is running.
 	 */
-	public function isRunning()
+	public function isRunning(): bool
 	{
 		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
 
@@ -78,7 +78,7 @@ class Shutdown extends Component
 			return false;
 		}
 
-		return $this->pidIsExists($master_pid);
+		return $this->pidIsExists(file_get_contents($master_pid));
 	}
 
 
@@ -112,7 +112,6 @@ class Shutdown extends Component
 			return true;
 		}
 		foreach ($dir as $value) {
-			/** @var \DirectoryIterator $value */
 			if ($value->isDot()) continue;
 
 			if (!$value->valid()) continue;
