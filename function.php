@@ -65,7 +65,7 @@ if (!function_exists('annotation')) {
 	 */
 	function annotation(): Annotation
 	{
-		return Snowflake::app()->getAttributes();
+		return Snowflake::getAnnotation();
 	}
 
 
@@ -81,7 +81,7 @@ if (!function_exists('recursive_directory')) {
 	 */
 	function recursive_callback(DirectoryIterator $file)
 	{
-		$attributes = Snowflake::app()->getAttributes();
+		$attributes = Snowflake::getAnnotation();
 
 		$annotations = $attributes->getFilename($file->getRealPath());
 		if (empty($annotations)) {

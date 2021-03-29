@@ -52,6 +52,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 * @param $query
 	 * @param array $array
 	 * @param null $model
+	 * @throws Exception
 	 */
 	public function __construct($query, array $array = [], $model = null)
 	{

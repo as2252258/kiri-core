@@ -45,15 +45,6 @@ class BaseObject implements Configure
 	 */
 	public function init()
 	{
-		$app = Snowflake::app();
-		if (!($app instanceof Application)) {
-			return;
-		}
-		if (!$app->has('attributes')) {
-			return;
-		}
-		$attributes = $app->getAttributes();
-		$attributes->injectProperty($this);
 	}
 
 

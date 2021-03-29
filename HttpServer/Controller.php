@@ -39,11 +39,23 @@ class Controller extends HttpService
 	/**
 	 * Controller constructor.
 	 * @param array $config
+	 * @throws Exception
 	 */
 	public function __construct($config = [])
 	{
 		parent::__construct($config);
 	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function init()
+	{
+		$annotation = Snowflake::getAnnotation();
+		$annotation->injectProperty($this);
+	}
+
 
 	/**
 	 * @param null|HttpParams $input
