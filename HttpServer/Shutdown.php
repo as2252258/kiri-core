@@ -90,7 +90,6 @@ class Shutdown extends Component
 	/**
 	 * @param $content
 	 * @return bool
-	 * @throws ConfigException
 	 */
 	public function pidIsExists($content): bool
 	{
@@ -101,10 +100,7 @@ class Shutdown extends Component
 		$output = array_filter($output, function ($value) {
 			return intval($value);
 		});
-		if (in_array(intval($content), $output)) {
-			return false;
-		}
-		return true;
+		return in_array(intval($content), $output);
 	}
 
 
