@@ -87,7 +87,7 @@ class Redis extends Component
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function lock($key, $timeout = 5)
+	public function lock($key, $timeout = 5): bool
 	{
 		$script = <<<SCRIPT
 local _nx = redis.call('setnx',KEYS[1], ARGV[1])

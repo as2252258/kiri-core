@@ -53,7 +53,7 @@ class Redis extends Pool
 	 * @param mixed $config
 	 * @return SRedis
 	 * @throws RedisConnectException
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
     public function createClient(string $name, mixed $config): SRedis
     {
