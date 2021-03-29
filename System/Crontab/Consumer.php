@@ -5,7 +5,11 @@ namespace Snowflake\Crontab;
 
 
 use Exception;
+use ReflectionException;
 use Snowflake\Event;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -28,7 +32,7 @@ class Consumer extends Process
 	public function onHandler(\Swoole\Process $process): void
 	{
 		if (Snowflake::getPlatform()->isLinux()) {
-			$process->name('Crontab consumer');
+			name($this->pid, 'Crontab consumer');
 		}
 
 		$this->channel = new Coroutine\Channel(2000);
@@ -66,10 +70,11 @@ class Consumer extends Process
 
 	/**
 	 * @param \Swoole\Process $process
-	 * @throws \ReflectionException
-	 * @throws \Snowflake\Exception\ComponentException
-	 * @throws \Snowflake\Exception\ConfigException
-	 * @throws \Snowflake\Exception\NotFindClassException
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function tick(\Swoole\Process $process)
 	{

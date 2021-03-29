@@ -44,7 +44,7 @@ class Kafka extends \Snowflake\Process\Process
 	private function waite(array $kafkaServer)
 	{
 		try {
-			name('Kafka Consumer ' . $kafkaServer['topic']);
+			name($this->pid, 'Kafka Consumer ' . $kafkaServer['topic']);
 
 			[$config, $topic, $conf] = $this->kafkaConfig($kafkaServer);
 			if (empty($config) && empty($topic) && empty($conf)) {

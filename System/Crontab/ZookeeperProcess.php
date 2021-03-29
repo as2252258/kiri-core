@@ -49,7 +49,7 @@ class ZookeeperProcess extends Process
 		$crontab->clearAll();
 
 		if (Snowflake::getPlatform()->isLinux()) {
-			$process->name('Crontab zookeeper.');
+			name($this->pid, 'Crontab zookeeper.');
 		}
 		Timer::tick(1000, function () {
 			$startTime = time();

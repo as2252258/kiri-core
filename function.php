@@ -586,14 +586,16 @@ if (!function_exists('name')) {
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	function name(int $pid)
+	function name(int $pid, string $prefix = null)
 	{
 		if (Snowflake::getPlatform()->isMac()) {
 			return;
 		}
 
 		$name = Config::get('id', false, 'system') . '[' . $pid . ']';
-
+		if (!empty($prefix)) {
+			$name .= $prefix;
+		}
 		swoole_set_process_name($name);
 	}
 
