@@ -35,7 +35,8 @@ class OnWorkerStart extends Callback
 		putenv('state=start');
 		putenv('worker=' . $worker_id);
 
-		$this->set_process_name($server, $worker_id);
+		name($server->worker_pid);
+
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
 		} else {
@@ -74,21 +75,6 @@ class OnWorkerStart extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception);
 			write($exception->getMessage(), 'worker');
-		}
-	}
-
-
-	/**
-	 * @param $socket
-	 * @param $worker_id
-	 * @throws Exception
-	 */
-	private function set_process_name($socket, $worker_id): void
-	{
-		if ($worker_id >= $socket->setting['worker_num']) {
-			name('Task: No.' . $worker_id);
-		} else {
-			name('Worker: No.' . $worker_id);
 		}
 	}
 

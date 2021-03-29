@@ -20,7 +20,6 @@ class OnShutdown extends Callback
 
 	/**
 	 * @param Server $server
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function onHandler(Server $server)

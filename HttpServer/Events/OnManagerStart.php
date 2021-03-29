@@ -30,7 +30,7 @@ class OnManagerStart extends Callback
 
         fire(Event::SERVER_MANAGER_START, [$server]);
 
-        name('Server Manager.');
+	    name($server->manager_pid);
     }
 
 
