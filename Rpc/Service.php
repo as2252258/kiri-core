@@ -4,17 +4,24 @@ namespace Rpc;
 
 
 use Exception;
+use HttpServer\Events\OnClose;
+use HttpServer\Events\OnConnect;
+use HttpServer\Events\OnPacket;
+use HttpServer\Events\OnReceive;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
+use HttpServer\Server;
 use HttpServer\Service\Http;
 use HttpServer\Service\Packet;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 
@@ -44,6 +51,8 @@ class Service extends Component
 		}
 		$this->debug(Snowflake::listen($service));
 
+		$this->addCallback($server, $mode);
+
 		$rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
 		$rpcServer->set($service['setting'] ?? [
 				'open_tcp_keepalive'      => true,
@@ -64,6 +73,33 @@ class Service extends Component
 	#[Pure] private function already($service): string
 	{
 		return sprintf('Port %s::%d is already.', $service['host'], $service['port']);
+	}
+
+
+	/**
+	 * @param $server
+	 * @param $mode
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+	private function addCallback($server, $mode)
+	{
+		$app = Snowflake::app()->getServer();
+
+		$tcp = [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6];
+
+		if (in_array($mode, $tcp) && !$app->isListen(Server::TCP)) {
+			$server->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
+			$server->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
+			$server->on('receive', [$class = new OnReceive(), 'onHandler']);
+		}
+
+		if (in_array($mode, $tcp) || !$app->isListen(Server::PACKAGE)) {
+			$server->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
+			$server->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
+			$server->on('packet', [$class = new OnPacket(), 'onHandler']);
+		}
 	}
 
 
