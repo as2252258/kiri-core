@@ -47,6 +47,7 @@ class ServerInotify extends Process
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 
 			foreach ($this->dirs as $dir) {
+				if (!is_dir($dir)) continue;
 				$this->watch($dir);
 			}
 			Event::add($this->inotify, [$this, 'check']);
@@ -68,6 +69,9 @@ class ServerInotify extends Process
 			if (is_bool($path = realpath($value))) {
 				continue;
 			}
+
+			if (!is_dir($path)) continue;
+
 			$this->loadByDir($path, $isReload);
 		}
 	}
