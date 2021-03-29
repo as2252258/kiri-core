@@ -136,6 +136,21 @@ class Server extends HttpService
 
 		Coroutine::set(['enable_deadlock_check' => false]);
 
+		return $this->execute($baseServer);
+	}
+
+
+	/**
+	 * @param $baseServer
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function execute($baseServer): mixed
+	{
+		$app = Snowflake::app();
+		$app->set('base-server', $baseServer);
 		return $baseServer->start();
 	}
 
