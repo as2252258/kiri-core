@@ -583,6 +583,7 @@ if (!function_exists('name')) {
 
 	/**
 	 * @param int $pid
+	 * @param string|null $prefix
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
@@ -594,7 +595,7 @@ if (!function_exists('name')) {
 
 		$name = Config::get('id', false, 'system') . '[' . $pid . ']';
 		if (!empty($prefix)) {
-			$name .= $prefix;
+			$name .= '.' . $prefix;
 		}
 		swoole_set_process_name($name);
 	}

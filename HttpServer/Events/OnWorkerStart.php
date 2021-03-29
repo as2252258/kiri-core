@@ -35,7 +35,7 @@ class OnWorkerStart extends Callback
 		putenv('state=start');
 		putenv('worker=' . $worker_id);
 
-		name($server->worker_pid, Snowflake::isTask() ? 'task' : 'worker');
+		name($server->worker_pid, $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker');
 
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $worker_id);
