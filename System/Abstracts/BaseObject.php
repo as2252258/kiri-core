@@ -13,6 +13,7 @@ use Exception;
 
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
+use Snowflake\Aop;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
@@ -142,6 +143,36 @@ class BaseObject implements Configure
 
 		$socket = Snowflake::app()->getLogger();
 		$socket->output($message);
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function __call(string $name, array $arguments): mixed
+	{
+		if (!Snowflake::app()->has('aop')) {
+			return call_user_func([$this, $name], $arguments);
+		}
+		return \aop([$this, $name], $arguments);
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public static function __callStatic(string $name, array $arguments): mixed
+	{
+		if (!Snowflake::app()->has('aop')) {
+			return call_user_func([get_called_class(), $name], $arguments);
+		}
+		return \aop([get_called_class(), $name], $arguments);
 	}
 
 

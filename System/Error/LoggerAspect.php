@@ -4,6 +4,7 @@
 namespace Snowflake\Error;
 
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\IAspect;
 
 
@@ -22,26 +23,24 @@ class LoggerAspect implements IAspect
      * LoggerAspect constructor.
      * @param array $handler
      */
-    public function __construct(public array $handler)
+    #[Pure] public function __construct(public array $handler)
     {
         $this->className = get_class($this->handler[0]);
         $this->methodName = $this->handler[1];
     }
 
 
-    /**
-     * @return mixed|void
-     */
-    public function invoke()
+	/**
+	 * @return mixed
+	 */
+    public function invoke(): mixed
     {
         $startTime = microtime(true);
 
         $data = call_user_func($this->handler, func_get_args());
 
         $this->print_runtime($startTime);
-        if ($data === null) {
-            return;
-        }
+
         return $data;
     }
 

@@ -10,9 +10,11 @@ declare(strict_types=1);
 namespace Database\Base;
 
 
+use Annotation\Aspect;
 use Annotation\Event;
 use Annotation\Inject;
 use ArrayAccess;
+use Database\InjectProperty;
 use Database\SqlBuilder;
 use Database\Traits\HasBase;
 use HttpServer\Http\Context;
@@ -136,6 +138,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @throws Exception
 	 */
+	#[Aspect(InjectProperty::class)]
 	public function init()
 	{
 		if (!Context::hasContext(Relation::class)) {
@@ -144,14 +147,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
-		$this->createAnnotation();
 	}
 
 
 	/**
 	 * @throws Exception
 	 */
-	private function createAnnotation()
+	public function createAnnotation()
 	{
 		$annotation = Snowflake::app()->getAttributes();
 		$methods = $annotation->getMethods(get_called_class());
@@ -160,6 +162,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 				$attribute->execute([$this, $method]);
 			}
 		}
+		$annotation->injectProperty($this);
 	}
 
 
