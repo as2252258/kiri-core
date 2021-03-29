@@ -18,90 +18,93 @@ use Swoole\Coroutine;
 class Consumer extends Process
 {
 
-    public Coroutine\Channel $channel;
+	public Coroutine\Channel $channel;
 
 
-    /**
-     * @param \Swoole\Process $process
-     */
-    public function onHandler(\Swoole\Process $process): void
-    {
-        $process->name('Crontab consumer');
+	/**
+	 * @param \Swoole\Process $process
+	 * @throws Exception
+	 */
+	public function onHandler(\Swoole\Process $process): void
+	{
+		if (Snowflake::getPlatform()->isLinux()) {
+			$process->name('Crontab consumer');
+		}
 
-        $this->channel = new Coroutine\Channel(2000);
-        go(function () {
-            $this->popChannel();
-        });
-        $this->tick($process);
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    public function popChannel()
-    {
-        /** @var Crontab $crontab */
-        $crontab = $this->channel->pop(-1);
-        go(function () use ($crontab) {
-            try {
-                $crontab->increment()->execute();
-                if ($crontab->getExecuteNumber() < $crontab->getMaxExecuteNumber()) {
-                    Consumer::addTask($crontab);
-                } else if ($crontab->isLoop()) {
-                    Consumer::addTask($crontab);
-                }
-            } catch (\Throwable $throwable) {
-                $this->application->addError($throwable->getMessage());
-            } finally {
-                fire(Event::SYSTEM_RESOURCE_RELEASES);
-            }
-        });
-        $this->popChannel();
-    }
+		$this->channel = new Coroutine\Channel(2000);
+		go(function () {
+			$this->popChannel();
+		});
+		$this->tick($process);
+	}
 
 
-    /**
-     * @param \Swoole\Process $process
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\ComponentException
-     * @throws \Snowflake\Exception\ConfigException
-     * @throws \Snowflake\Exception\NotFindClassException
-     */
-    public function tick(\Swoole\Process $process)
-    {
-        $value = $process->read(40);
+	/**
+	 * @throws Exception
+	 */
+	public function popChannel()
+	{
+		/** @var Crontab $crontab */
+		$crontab = $this->channel->pop(-1);
+		go(function () use ($crontab) {
+			try {
+				$crontab->increment()->execute();
+				if ($crontab->getExecuteNumber() < $crontab->getMaxExecuteNumber()) {
+					Consumer::addTask($crontab);
+				} else if ($crontab->isLoop()) {
+					Consumer::addTask($crontab);
+				}
+			} catch (\Throwable $throwable) {
+				$this->application->addError($throwable->getMessage());
+			} finally {
+				fire(Event::SYSTEM_RESOURCE_RELEASES);
+			}
+		});
+		$this->popChannel();
+	}
 
-        $redis = Snowflake::app()->getRedis();
 
-        $crontab = swoole_unserialize($redis->get($value));
-        $redis->del($value);
-        if (is_object($crontab)) {
-            $this->channel->push($crontab);
-        }
+	/**
+	 * @param \Swoole\Process $process
+	 * @throws \ReflectionException
+	 * @throws \Snowflake\Exception\ComponentException
+	 * @throws \Snowflake\Exception\ConfigException
+	 * @throws \Snowflake\Exception\NotFindClassException
+	 */
+	public function tick(\Swoole\Process $process)
+	{
+		$value = $process->read(40);
 
-        $redis->release();
+		$redis = Snowflake::app()->getRedis();
 
-        $this->tick($process);
-    }
+		$crontab = swoole_unserialize($redis->get($value));
+		$redis->del($value);
+		if (is_object($crontab)) {
+			$this->channel->push($crontab);
+		}
+
+		$redis->release();
+
+		$this->tick($process);
+	}
 
 
-    /**
-     * @param Crontab $crontab
-     * @throws Exception
-     */
-    private static function addTask(Crontab $crontab)
-    {
-        $redis = Snowflake::app()->getRedis();
+	/**
+	 * @param Crontab $crontab
+	 * @throws Exception
+	 */
+	private static function addTask(Crontab $crontab)
+	{
+		$redis = Snowflake::app()->getRedis();
 
-        $name = md5($crontab->getName());
+		$name = md5($crontab->getName());
 
-        $redis->set('crontab:' . $name, swoole_serialize($crontab));
+		$redis->set('crontab:' . $name, swoole_serialize($crontab));
 
-        $tickTime = time() + $crontab->getTickTime();
+		$tickTime = time() + $crontab->getTickTime();
 
-        $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $crontab->getName());
-    }
+		$redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $crontab->getName());
+	}
 
 
 }
