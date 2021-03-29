@@ -272,7 +272,7 @@ class ServerInotify extends Process
 	{
 		//目录不存在
 		if (!is_dir($dir)) {
-			throw new Exception("[$dir] is not a directory.");
+			return $this->application->addError("[$dir] is not a directory.");
 		}
 		//避免重复监听
 		if (isset($this->watchFiles[$dir])) {
