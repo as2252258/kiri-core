@@ -34,6 +34,8 @@ class Aop extends Component
             $this->_aop[$aspect] = [];
         }
 
+        var_dump(get_class($class) . '::' . $method);
+
         $this->_aop[get_class($class) . '::' . $method][] = $aspect;
     }
 
