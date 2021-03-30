@@ -36,9 +36,7 @@ class Service extends Component
 	 * @param $id
 	 * @param bool $try
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function get($id, $try = true): mixed
 	{
@@ -79,9 +77,7 @@ class Service extends Component
 	 * @param $definition
 	 *
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function set($id, $definition): mixed
 	{
