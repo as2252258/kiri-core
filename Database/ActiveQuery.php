@@ -309,10 +309,11 @@ class ActiveQuery extends Component implements ISqlBuilder
     }
 
 
-    /**
-     * @return bool
-     * @throws Exception
-     */
+	/**
+	 * @param bool $getSql
+	 * @return string|bool
+	 * @throws Exception
+	 */
     public function delete($getSql = false): string|bool
     {
         $sql = $this->builder->delete();
