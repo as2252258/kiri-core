@@ -296,6 +296,22 @@ class Response extends HttpService
 
 
 	/**
+	 * @param $clientId
+	 * @param int $statusCode
+	 * @param string $message
+	 * @return mixed
+	 */
+	public function closeClient($clientId, $statusCode = 200, $message = ''): mixed
+	{
+		$socket = Snowflake::getWebSocket();
+		if (!$socket->exist($clientId)) {
+			return true;
+		}
+		return $socket->close($clientId, true);
+	}
+
+
+	/**
 	 * @param string $path
 	 * @param int $offset
 	 * @param int $limit
