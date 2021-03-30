@@ -121,18 +121,20 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public static function findOrCreate(array $condition, array $attributes = []): bool|static
 	{
+		$logger = Snowflake::app()->getLogger();
+
 		/** @var static $select */
 		$select = static::find()->where($condition)->first();
 		if (!empty($select)) {
 			return $select;
 		}
 		if (empty($attributes)) {
-			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
+			return $logger->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
 		$select = self::getModelClass();
 		$select->attributes = $attributes;
 		if (!$select->save()) {
-			return \logger()->addError($select->getLastError(), 'mysql');
+			return $logger->addError($select->getLastError(), 'mysql');
 		}
 		return $select;
 	}
@@ -146,8 +148,9 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public static function createOrUpdate(array $condition, array $attributes = []): bool|static
 	{
+		$logger = Snowflake::app()->getLogger();
 		if (empty($attributes)) {
-			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
+			return $logger->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
 		/** @var static $select */
 		$select = static::find()->where($condition)->first();
@@ -156,7 +159,7 @@ class ActiveRecord extends BaseActiveRecord
 		}
 		$select->attributes = $attributes;
 		if (!$select->save()) {
-			return \logger()->addError($select->getLastError(), 'mysql');
+			return $logger->addError($select->getLastError(), 'mysql');
 		}
 		return $select;
 	}
