@@ -70,7 +70,7 @@ class Event extends BaseObject
      * @param bool $isAppend
      * @throws Exception
      */
-    public function on($name, $callback, $parameter = [], $isAppend = true)
+    public function on($name, $callback, $parameter = [], $isAppend = false)
     {
         if (!isset($this->_events[$name])) {
             $this->_events[$name] = [];
