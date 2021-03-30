@@ -25,6 +25,9 @@ class OnWorkerExit extends Callback
 	{
 		putenv('state=exit');
 
+		$channel = Snowflake::app()->getChannel();
+		$channel->cleanAll();
+
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_WORKER_EXIT);
 		$event->offName(Event::SERVER_WORKER_EXIT);

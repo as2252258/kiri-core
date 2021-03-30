@@ -69,6 +69,19 @@ class Channel extends Component
 
 
 	/**
+	 *
+	 * 清空缓存
+	 */
+	public function cleanAll()
+	{
+		/** @var CChannel $channel */
+		foreach ($this->_channels as $channel) {
+			$channel->close();
+		}
+		$this->_channels = [];
+	}
+
+	/**
 	 * @param $timeout
 	 * @param Closure $closure
 	 * @param string $name
