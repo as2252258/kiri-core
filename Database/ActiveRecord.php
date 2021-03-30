@@ -129,20 +129,51 @@ class ActiveRecord extends BaseActiveRecord
 		if (empty($attributes)) {
 			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
-
-		$className = get_called_class();
-
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-		$select = $channel->pop($className, function () use ($className) {
-			return new $className();
-		});
-
+		$select = self::getModelClass();
 		$select->attributes = $attributes;
 		if (!$select->save()) {
 			return \logger()->addError($select->getLastError(), 'mysql');
 		}
 		return $select;
+	}
+
+
+	/**
+	 * @param array $condition
+	 * @param array $attributes
+	 * @return bool|static
+	 * @throws Exception
+	 */
+	public static function updateOrCreate(array $condition, array $attributes = []): bool|static
+	{
+		if (empty($attributes)) {
+			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
+		}
+		/** @var static $select */
+		$select = static::find()->where($condition)->first();
+		if (empty($select)) {
+			$select = self::getModelClass();
+		}
+		$select->attributes = $attributes;
+		if (!$select->save()) {
+			return \logger()->addError($select->getLastError(), 'mysql');
+		}
+		return $select;
+	}
+
+
+	/**
+	 * @return static
+	 * @throws Exception
+	 */
+	private static function getModelClass(): static
+	{
+		$className = get_called_class();
+		/** @var Channel $channel */
+		$channel = Snowflake::app()->get('channel');
+		return $channel->pop($className, function () use ($className) {
+			return new $className();
+		});
 	}
 
 
