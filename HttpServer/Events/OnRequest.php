@@ -96,7 +96,7 @@ class OnRequest extends Callback
 	 */
 	protected function sendErrorMessage($sRequest, $sResponse, $exception): bool|string
 	{
-		$this->error($exception->getMessage());
+		$this->addError($exception->getMessage(),'throwable');
 		if ($sResponse instanceof Response) {
 			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
