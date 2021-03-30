@@ -36,7 +36,7 @@ if (!function_exists('make')) {
 	function make($name, $default = null): mixed
 	{
 		if (class_exists($name)) {
-			return Snowflake::createObject($default);
+			return Snowflake::createObject($name);
 		}
 		if (Snowflake::has($name)) {
 			return Snowflake::app()->get($name);
