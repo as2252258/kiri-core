@@ -196,6 +196,8 @@ abstract class BaseApplication extends Service
 	 * @param $key
 	 * @param $value
 	 * @throws InitException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	private function addEvent($event, $key, $value): void
 	{
@@ -203,16 +205,30 @@ abstract class BaseApplication extends Service
 			$event->on($key, $value, [], true);
 			return;
 		}
-		if (isset($value[0]) && is_object($value[0])) {
+		if (is_object($value)) {
 			$event->on($key, $value, [], true);
 			return;
 		}
-		foreach ($value as $item) {
-			if (!is_callable($item, true)) {
-				throw new InitException("Class does not hav callback.");
+		if (is_array($value)) {
+			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
+				$event->on($key, $value, [], true);
+				return;
 			}
-			$event->on($key, $item, [], true);
+
+			if (is_string($value[0])) {
+				$value[0] = Snowflake::createObject($value[0]);
+				$event->on($key, $value, [], true);
+				return;
+			}
+
+			foreach ($value as $item) {
+				if (!is_callable($item, true)) {
+					throw new InitException("Class does not hav callback.");
+				}
+				$event->on($key, $item, [], true);
+			}
 		}
+
 	}
 
 
