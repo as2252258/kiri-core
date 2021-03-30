@@ -186,19 +186,32 @@ abstract class BaseApplication extends Service
 			if (is_string($value)) {
 				$value = Snowflake::createObject($value);
 			}
-			if (is_array($value) && isset($value[0]) && !($value[0] instanceof \Closure)) {
-				if (!is_callable($value, true)) {
-					throw new InitException("Class does not hav callback.");
-				}
-				$event->on($key, $value, [], true);
-			} else {
-				foreach ($value as $item) {
-					if (!is_callable($item, true)) {
-						throw new InitException("Class does not hav callback.");
-					}
-					$event->on($key, $item, [], true);
-				}
+			$this->addEvent($event, $key, $value);
+		}
+	}
+
+
+	/**
+	 * @param $event
+	 * @param $key
+	 * @param $value
+	 * @throws InitException
+	 */
+	private function addEvent($event, $key, $value): void
+	{
+		if ($value instanceof \Closure) {
+			$event->on($key, $value, [], true);
+			return;
+		}
+		if (isset($value[0]) && is_object($value[0])) {
+			$event->on($key, $value, [], true);
+			return;
+		}
+		foreach ($value as $item) {
+			if (!is_callable($item, true)) {
+				throw new InitException("Class does not hav callback.");
 			}
+			$event->on($key, $item, [], true);
 		}
 	}
 
