@@ -61,7 +61,7 @@ class Server extends HttpService
 		'WEBSOCKET' => [SWOOLE_SOCK_TCP, Websocket::class],
 	];
 
-	private Packet|Websocket|Receive|null|Http $baseServer = null;
+	private Packet|Websocket|Receive|null|Http $swoole = null;
 
 	public int $daemon = 0;
 
@@ -108,7 +108,7 @@ class Server extends HttpService
 		$servers = $this->sortServers($configs);
 		foreach ($servers as $server) {
 			$this->create($server);
-			if (!$this->baseServer) {
+			if (!$this->swoole) {
 				throw new Exception('Base service create fail.');
 			}
 		}
@@ -164,12 +164,12 @@ class Server extends HttpService
 	public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
 	{
 		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
-		if ($this->baseServer) {
-			$this->baseServer->shutdown();
+		if ($this->swoole) {
+			$this->swoole->shutdown();
 		} else {
 			$this->shutdown();
 		}
-		return $this->baseServer;
+		return $this->swoole;
 	}
 
 
@@ -229,7 +229,7 @@ class Server extends HttpService
 	 */
 	public function onProcessListener(): void
 	{
-		if (!($this->baseServer instanceof \Swoole\Server)) {
+		if (!($this->swoole instanceof \Swoole\Server)) {
 			return;
 		}
 
@@ -261,7 +261,7 @@ class Server extends HttpService
 			if (isset($this->params[$name]) && !empty($this->params[$name])) {
 				$system->write(swoole_serialize($this->params[$name]));
 			}
-			$this->baseServer->addProcess($system);
+			$this->swoole->addProcess($system);
 			$application->set($process, $system);
 		}
 	}
@@ -286,7 +286,7 @@ class Server extends HttpService
 	 */
 	public function getServer(): Packet|Websocket|Receive|Http|null
 	{
-		return $this->baseServer;
+		return $this->swoole;
 	}
 
 
@@ -337,7 +337,7 @@ class Server extends HttpService
 		if (Snowflake::port_already($config['port'])) {
 			return $this->error_stop($config['host'], $config['port']);
 		}
-		if (!($this->baseServer instanceof \Swoole\Server)) {
+		if (!($this->swoole instanceof \Swoole\Server)) {
 			return $this->parseServer($config, $settings);
 		}
 		return $this->addListener($config);
@@ -353,7 +353,7 @@ class Server extends HttpService
 	 */
 	private function addListener($config): Packet|Websocket|Receive|Http|null
 	{
-		$newListener = $this->baseServer->addlistener($config['host'], $config['port'], $config['mode']);
+		$newListener = $this->swoole->addlistener($config['host'], $config['port'], $config['mode']);
 		if (!$newListener) {
 			exit($this->addError(sprintf('Listen %s::%d fail.', $config['host'], $config['port'])));
 		}
@@ -361,9 +361,9 @@ class Server extends HttpService
 		if (isset($config['settings']) && is_array($config['settings'])) {
 			$newListener->set($config['settings']);
 		}
-		$this->onListenerBind($config, $this->baseServer);
+		$this->onListenerBind($config, $this->swoole);
 
-		return $this->baseServer;
+		return $this->swoole;
 	}
 
 
@@ -380,9 +380,9 @@ class Server extends HttpService
 		if ($rpcService === true) {
 			/** @var Service $service */
 			$service = Snowflake::app()->get('rpc-service');
-			$service->instance($this->baseServer);
+			$service->instance($this->swoole);
 		}
-		return $this->baseServer;
+		return $this->swoole;
 	}
 
 
@@ -395,26 +395,35 @@ class Server extends HttpService
 	private function parseServer($config, $settings): Packet|Websocket|Receive|Http|null
 	{
 		$class = $this->dispatch($config['type']);
-		if (isset($config['settings']) && !empty($config['settings'])) {
+		if (is_array($config['settings'] ?? null)) {
 			$settings = array_merge($settings, $config['settings']);
 		}
-		$this->baseServer = new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
+		$this->swoole = $this->createServer($class, $config);
 		$settings['daemonize'] = $this->daemon;
 		if (!isset($settings['pid_file'])) {
 			$settings['pid_file'] = PID_PATH;
 		}
 		$this->debug(Snowflake::listen($config));
-
-		$this->onLoadWebsocketHandler();
-		if ($this->baseServer instanceof Http) {
+		$this->swoole->set($settings);
+		$this->onProcessListener();
+		if ($config['type'] == self::WEBSOCKET) {
+			$this->onLoadWebsocketHandler();
+			$this->onLoadHttpHandler();
+		} else if ($config['type'] == self::HTTP) {
 			$this->onLoadHttpHandler();
 		}
+		return $this->swoole;
+	}
 
-		$this->baseServer->set($settings);
 
-		$this->onProcessListener();
-
-		return $this->baseServer;
+	/**
+	 * @param $class
+	 * @param $config
+	 * @return mixed
+	 */
+	private function createServer($class, $config): mixed
+	{
+		return new $class($config['host'], $config['port'], SWOOLE_PROCESS, $config['mode']);
 	}
 
 
@@ -442,7 +451,7 @@ class Server extends HttpService
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
 		if (in_array($config['type'], $this->listenTypes)) {
-			return $this->baseServer;
+			return $this->swoole;
 		}
 		if ($config['type'] == self::HTTP) {
 			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
@@ -451,7 +460,7 @@ class Server extends HttpService
 		}
 		$this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
 		$this->listenTypes[] = $config['type'];
-		return $this->baseServer;
+		return $this->swoole;
 	}
 
 
