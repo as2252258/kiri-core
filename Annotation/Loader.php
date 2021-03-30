@@ -198,9 +198,7 @@ class Loader extends BaseObject
 
 				$this->_classes[$replace->getName()] = $_array;
 			} catch (Throwable $throwable) {
-				$this->error($throwable->getMessage());
-				$this->error($throwable->getFile());
-				$this->error($throwable->getLine());
+				$this->addError($throwable, 'throwable');
 			}
 		}
 	}

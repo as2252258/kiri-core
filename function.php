@@ -15,6 +15,7 @@ use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
+use Snowflake\Application;
 use Snowflake\Error\Logger;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -318,6 +319,19 @@ if (!function_exists('aop')) {
 	}
 }
 
+
+if (!function_exists('app')) {
+
+
+	/**
+	 * @return Application|null
+	 */
+	#[Pure] function app(): ?Application
+	{
+		return Snowflake::app();
+	}
+
+}
 
 if (!function_exists('instance_load')) {
 

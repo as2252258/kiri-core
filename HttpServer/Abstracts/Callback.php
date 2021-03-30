@@ -42,7 +42,7 @@ abstract class Callback extends HttpService
 
 			$this->eventNotify($message);
 		} catch (\Throwable $exception) {
-			$this->addError($exception);
+			$this->addError($exception,'throwable');
 		}
 	}
 

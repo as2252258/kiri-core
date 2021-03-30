@@ -232,7 +232,7 @@ class Event extends BaseObject
             }
             return true;
         } catch (\Throwable $throwable) {
-            return $this->addError($throwable);
+            return $this->addError($throwable,'throwable');
         }
     }
 

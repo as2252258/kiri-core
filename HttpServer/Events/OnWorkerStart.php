@@ -73,7 +73,7 @@ class OnWorkerStart extends Callback
 		try {
 			fire(Event::SERVER_WORKER_START, [$worker_id]);
 		} catch (\Throwable $exception) {
-			$this->addError($exception);
+			$this->addError($exception,'throwable');
 			write($exception->getMessage(), 'worker');
 		}
 	}

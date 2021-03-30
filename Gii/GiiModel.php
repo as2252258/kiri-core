@@ -68,7 +68,7 @@ namespace ' . $namespace . ';
 					$html .= $imports . PHP_EOL;
 				}
 			} catch (\Throwable $e) {
-				logger()->error($e->getMessage());
+				logger()->addError($e,'throwable');
 			}
 		}
 

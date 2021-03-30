@@ -59,7 +59,7 @@ class Consumer extends Process
 					Consumer::addTask($crontab);
 				}
 			} catch (\Throwable $throwable) {
-				$this->application->addError($throwable->getMessage());
+				logger()->addError($throwable->getMessage(),'throwable');
 			} finally {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			}

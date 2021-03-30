@@ -35,7 +35,7 @@ class OnClose extends Callback
 		try {
 			$this->execute($server, $fd);
 		} catch (\Throwable $exception) {
-			$this->addError($exception);
+			$this->addError($exception,'throwable');
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);
 			logger()->insert();

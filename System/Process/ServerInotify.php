@@ -232,7 +232,7 @@ class ServerInotify extends Process
 	}
 
 	/**
-	 * 清理所有inotify监听
+	 * @throws Exception
 	 */
 	public function clearWatch()
 	{
@@ -240,6 +240,7 @@ class ServerInotify extends Process
 			try {
 				inotify_rm_watch($this->inotify, $wd);
 			} catch (\Throwable $exception) {
+				logger()->addError($exception, 'throwable');
 			}
 		}
 		$this->watchFiles = [];

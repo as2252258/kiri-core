@@ -42,7 +42,7 @@ namespace App\Http\Interceptor;
 
 				$html .= $this->getImports($file, $class);
 			} catch (\Throwable $exception) {
-				return logger()->addError($exception);
+				return logger()->addError($exception, 'throwable');
 			}
 		} else {
 			$html .= '

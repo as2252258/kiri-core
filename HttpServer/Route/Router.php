@@ -515,7 +515,7 @@ class Router extends HttpService implements RouterInterface
 			}
 			return $node->afterDispatch($response);
 		} catch (\Throwable $exception) {
-			$this->addError($exception);
+			$this->addError($exception,'throwable');
 
 			$Code = $exception->getCode() == 0 ? 500 : $exception->getCode();
 
@@ -659,7 +659,7 @@ class Router extends HttpService implements RouterInterface
 			$router = $this;
 			include_once "{$files}";
 		} catch (\Throwable $exception) {
-			$this->error($exception);
+			$this->addError($exception,'throwable');
 		} finally {
 			if (isset($exception)) {
 				unset($exception);

@@ -520,7 +520,7 @@ class Server extends HttpService
 				$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
 				$annotation->instanceDirectoryFiles(RPC_CLIENT_PATH);
 			} catch (\Throwable $exception) {
-				$this->addError($exception);
+				$this->addError($exception,'throwable');
 			}
 		});
 	}

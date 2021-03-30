@@ -97,7 +97,7 @@ class OnHandshake extends Callback
 			$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_HANDSHAKE;
 			$event->trigger($eventName, [$request, $response]);
 		} catch (\Throwable $exception) {
-			$this->addError($exception);
+			$this->addError($exception,'throwable');
 			$this->disconnect($response, 500);
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_CLEAN);

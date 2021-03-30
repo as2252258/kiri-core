@@ -198,7 +198,7 @@ class Pagination extends Component
 			try {
 				call_user_func($callback, $data, $param);
 			} catch (\Throwable $exception) {
-				$this->addError($exception);
+				$this->addError($exception, 'throwable');
 			} finally {
 				$event = Snowflake::app()->getEvent();
 				$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);

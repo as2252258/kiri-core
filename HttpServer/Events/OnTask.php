@@ -118,7 +118,7 @@ class OnTask extends Callback
 		} catch (\Throwable $exception) {
 			$finish['status'] = 'error';
 			$finish['info'] = $this->format($exception);
-			$this->error($exception, 'Task');
+			$this->addError($exception, 'Task');
 
 			return $finish;
 		} finally {

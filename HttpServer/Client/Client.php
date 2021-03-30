@@ -66,6 +66,7 @@ class Client extends ClientAbstracts
 			}
 			return $this->fail($client->getStatusCode(), $message, $body, $client->getHeaders());
 		} catch (\Throwable $exception) {
+			$this->addError($exception,'rpc');
 			return $this->fail(500, $exception->getMessage(), [
 				'file' => $exception->getFile(),
 				'line' => $exception->getLine()

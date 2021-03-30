@@ -287,7 +287,7 @@ class Node extends HttpService
 			return [$reflect->newInstance(), $action];
 		} catch (Throwable $exception) {
 			$this->_error = $exception->getMessage();
-			$this->error($exception, 'router');
+			$this->addError($exception, 'router');
 			return null;
 		}
 	}
@@ -592,7 +592,7 @@ class Node extends HttpService
 			}
 			return $this->runWith(...func_get_args());
 		} catch (Throwable $throwable) {
-			$this->error($throwable->getMessage());
+			$this->addError($throwable->getMessage(),'throwable');
 			return Json::to(401, $throwable->getMessage());
 		}
 	}

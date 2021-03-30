@@ -58,7 +58,7 @@ class Kafka extends \Snowflake\Process\Process
 				$this->resolve($topic, $conf['interval'] ?? 1000);
 			} while (true);
 		} catch (Throwable $exception) {
-			$this->application->error($exception);
+			logger()->addError($exception,'throwable');
 		}
 	}
 
@@ -85,7 +85,7 @@ class Kafka extends \Snowflake\Process\Process
 				$this->application->error($message->errstr());
 			}
 		} catch (Throwable $exception) {
-			$this->application->error($exception);
+			logger()->addError($exception,'throwable');
 		}
 	}
 
@@ -111,7 +111,7 @@ class Kafka extends \Snowflake\Process\Process
 				}
 				$class->onHandler(Snowflake::createObject(Struct::class, [$topic, $message]));
 			} catch (Throwable $exception) {
-				$this->application->error($exception);
+				logger()->addError($exception,'throwable');
 			}
 		});
 	}
@@ -148,7 +148,7 @@ class Kafka extends \Snowflake\Process\Process
 
 			return [$conf, $topicConf, $kafka];
 		} catch (Throwable $exception) {
-			$this->application->error($exception);
+			logger()->addError($exception,'throwable');
 
 			return [null, null, null];
 		}

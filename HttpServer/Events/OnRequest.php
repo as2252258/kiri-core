@@ -65,6 +65,7 @@ class OnRequest extends Callback
 
 			return $result;
 		} catch (ExitException | Error | \Throwable $exception) {
+			$this->addError($exception, 'throwable');
 			return $this->sendErrorMessage($request, $response, $exception);
 		} finally {
 			$this->event->trigger(Event::SYSTEM_RESOURCE_RELEASES);

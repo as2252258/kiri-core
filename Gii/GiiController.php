@@ -55,7 +55,7 @@ namespace {$namespace};
 
 				$import = $this->getImports($path['path'] . '/' . $managerName . 'Controller.php', $class);
 			} catch (\Throwable $Exception) {
-				exit(logger()->addError($Exception));
+				exit(logger()->addError($Exception, 'throwable'));
 			}
 		} else {
 			$import = "use Snowflake;
