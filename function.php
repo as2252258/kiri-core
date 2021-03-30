@@ -33,16 +33,22 @@ if (!function_exists('make')) {
 	 * @return mixed
 	 * @throws
 	 */
-	function make($name, $default): mixed
+	function make($name, $default = null): mixed
 	{
-		if (Snowflake::has($name)) {
-			$class = Snowflake::app()->$name;
-		} else if (Snowflake::has($default)) {
-			$class = Snowflake::app()->$default;
-		} else {
-			$class = Snowflake::createObject($default);
-			Snowflake::setAlias($name, $default);
+		if (class_exists($name)) {
+			return Snowflake::createObject($default);
 		}
+		if (Snowflake::has($name)) {
+			return Snowflake::app()->get($name);
+		}
+		if (empty($default)) {
+			throw new Exception("Unknown component ID: $name");
+		}
+		if (Snowflake::has($default)) {
+			return Snowflake::app()->get($default);
+		}
+		$class = Snowflake::createObject($default);
+		class_alias($name, $default, true);
 		return $class;
 	}
 

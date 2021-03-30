@@ -450,11 +450,8 @@ class Server extends HttpService
 		if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
 			throw new Exception('Unknown server type(' . $config['type'] . ').');
 		}
-		if (in_array($config['type'], $this->listenTypes)) {
-			return $this->swoole;
-		}
-		if ($config['type'] == self::HTTP) {
-			$this->onBind($newListener, 'request', [Snowflake::createObject(OnRequest::class), 'onHandler']);
+		if ($config['type'] == self::HTTP && !$this->swoole->getCallback('request')) {
+			$this->onBindCallback('request', [make(OnRequest::class), 'onHandler']);
 		} else {
 			$this->noHttp($newListener, $config);
 		}
@@ -467,40 +464,34 @@ class Server extends HttpService
 	/**
 	 * @param $newListener
 	 * @param $config
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function noHttp($newListener, $config)
 	{
-		$this->onBind($newListener, 'connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
-		$this->onBind($newListener, 'close', [Snowflake::createObject(OnClose::class), 'onHandler']);
+		$this->onBindCallback('connect', [make(OnConnect::class), 'onHandler']);
+		$this->onBindCallback('close', [make(OnClose::class), 'onHandler']);
 		if ($config['type'] == self::TCP) {
-			$this->onBind($newListener, 'receive', [$class = new OnReceive(), 'onHandler']);
+			$this->onBindCallback('receive', [make(OnReceive::class), 'onHandler']);
 		} else {
-			$this->onBind($newListener, 'packet', [$class = new OnPacket(), 'onHandler']);
+			$this->onBindCallback('packet', [make(OnPacket::class), 'onHandler']);
 		}
-		$class->host = $config['host'];
-		$class->port = $config['port'];
 	}
 
 
 	/**
-	 * @param $server
 	 * @param $name
 	 * @param $callback
 	 * @throws Exception
 	 */
-	private function onBind($server, $name, $callback)
+	public function onBindCallback($name, $callback)
 	{
-		if (in_array($name, $this->listening)) {
-			return;
-		}
-		array_push($this->listening, $name);
 		if ($name === 'request') {
 			$this->onLoadHttpHandler();
 		}
-		$server->on($name, $callback);
+		if ($this->swoole->getCallback($name) !== null) {
+			return;
+		}
+		$this->swoole->on($name, $callback);
 	}
 
 
@@ -520,7 +511,7 @@ class Server extends HttpService
 				$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
 				$annotation->instanceDirectoryFiles(RPC_CLIENT_PATH);
 			} catch (\Throwable $exception) {
-				$this->addError($exception,'throwable');
+				$this->addError($exception, 'throwable');
 			}
 		});
 	}

@@ -51,7 +51,7 @@ class Service extends Component
 		}
 		$this->debug(Snowflake::listen($service));
 
-		$this->addCallback($server, $mode);
+		$this->addCallback($mode);
 
 		$rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
 		$rpcServer->set($service['setting'] ?? [
@@ -76,28 +76,21 @@ class Service extends Component
 
 
 	/**
-	 * @param $server
 	 * @param $mode
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	private function addCallback($server, $mode)
+	private function addCallback($mode)
 	{
-		$app = Snowflake::app()->getServer();
-
 		$tcp = [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6];
 
-		if (in_array($mode, $tcp) && !$app->isListen(Server::TCP)) {
-			$server->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
-			$server->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-			$server->on('receive', [$class = new OnReceive(), 'onHandler']);
-		}
+		$server = Snowflake::app()->getServer();
+		$server->onBindCallback('connect', [make(OnConnect::class), 'onHandler']);
+		$server->onBindCallback('close', [make(OnClose::class), 'onHandler']);
 
-		if (in_array($mode, $tcp) || !$app->isListen(Server::PACKAGE)) {
-			$server->on('connect', [Snowflake::createObject(OnConnect::class), 'onHandler']);
-			$server->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
-			$server->on('packet', [$class = new OnPacket(), 'onHandler']);
+		if (in_array($mode, $tcp)) {
+			$server->onBindCallback('receive', [make(OnReceive::class), 'onHandler']);
+		} else {
+			$server->onBindCallback('packet', [make(OnReceive::class), 'onHandler']);
 		}
 	}
 
