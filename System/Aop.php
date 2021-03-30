@@ -20,24 +20,25 @@ class Aop extends Component
 {
 
 
-    private array $_aop = [];
+	private array $_aop = [];
 
 
 	/**
 	 * @param array $handler
 	 * @param string $aspect
 	 */
-    public function aop_add(array $handler, string $aspect)
-    {
-        [$class, $method] = $handler;
-        if (!isset($this->_aop[$aspect])) {
-            $this->_aop[$aspect] = [];
-        }
-
-        var_dump(get_class($class) . '::' . $method);
-
-        $this->_aop[get_class($class) . '::' . $method][] = $aspect;
-    }
+	public function aop_add(array $handler, string $aspect)
+	{
+		[$class, $method] = $handler;
+		if (!isset($this->_aop[$aspect])) {
+			$this->_aop[$aspect] = [];
+		}
+		$alias = get_class($class) . '::' . $method;
+		if (in_array($aspect, $this->_aop[$alias])) {
+        	return;
+		}
+		$this->_aop[$alias][] = $aspect;
+	}
 
 
 	/**
@@ -46,27 +47,27 @@ class Aop extends Component
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-    final public function dispatch(): mixed
-    {
-        $get_args = func_get_args();
-        if (($close = array_shift($get_args)) instanceof \Closure) {
-            return call_user_func($close, ...$get_args);
-        }
+	final public function dispatch(): mixed
+	{
+		$get_args = func_get_args();
+		if (($close = array_shift($get_args)) instanceof \Closure) {
+			return call_user_func($close, ...$get_args);
+		}
 
-        $aopName = get_class($close[0]) . '::' . $close[1];
-        if (!isset($this->_aop[$aopName])) {
-            return call_user_func($close, ...$get_args);
-        }
+		$aopName = get_class($close[0]) . '::' . $close[1];
+		if (!isset($this->_aop[$aopName])) {
+			return call_user_func($close, ...$get_args);
+		}
 
-        var_dump($this->_aop[$aopName]);
-        $reflect = Snowflake::getDi()->getReflect($this->_aop[$aopName]);
-        if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
-            throw new Exception(ASPECT_ERROR . IAspect::class);
-        }
-        $method = $reflect->getMethod('invoke');
+		var_dump($this->_aop[$aopName]);
+		$reflect = Snowflake::getDi()->getReflect($this->_aop[$aopName]);
+		if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
+			throw new Exception(ASPECT_ERROR . IAspect::class);
+		}
+		$method = $reflect->getMethod('invoke');
 
-        return $method->invokeArgs($reflect->newInstance($close), $get_args);
-    }
+		return $method->invokeArgs($reflect->newInstance($close), $get_args);
+	}
 
 
 }
