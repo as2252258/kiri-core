@@ -11,6 +11,7 @@ use HttpServer\IInterface\AuthIdentity;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
@@ -521,17 +522,46 @@ class Request extends HttpService
 		$sRequest->fd = is_array($fd) ? 0 : $fd;
 		$sRequest->clientInfo = self::getClientInfo($fd, $reID);
 		$sRequest->startTime = microtime(true);
+		$sRequest->headers = new HttpHeaders([]);
 
 		$port = $sRequest->clientInfo['server_port'];
 
-		$sRequest->params = new HttpParams(['body' => $data], [], []);
-
-		$sRequest->headers = new HttpHeaders([]);
-		$sRequest->headers->replace('request_method', 'listen');
-		$sRequest->headers->replace('request_uri', 'add-port-listen/port_' . $port);
+		$rpc = Config::get('rpc.port', false, []);
+		if ($rpc !== $port) {
+			$sRequest->headers->replace('request_uri', 'add-port-listen/port_' . $port);
+			$sRequest->headers->replace('request_method', 'listen');
+		} else {
+			static::rpc_service($sRequest, $data, $rpc);
+		}
+		$sRequest->params = new HttpParams($data, [], []);
 		$sRequest->parseUri();
-
 		return Context::setContext('request', $sRequest);
+	}
+
+
+	/**
+	 * @param $sRequest
+	 * @param $data
+	 * @param $rpc
+	 * @throws Exception
+	 */
+	private static function rpc_service($sRequest, $data, $rpc)
+	{
+		if (is_string($data) && is_null($data = Json::decode($data))) {
+			throw new Exception('Protocol format error.');
+		}
+
+		if (!isset($data['cmd'])) {
+			throw new Exception('Unknown system cmd.');
+		}
+
+		if (str_starts_with($data['cmd'], '/')) {
+			$data['cmd'] = ltrim($data['cmd'], '/');
+		}
+
+		$sRequest->params = new HttpParams(['body' => $data], [], []);
+		$sRequest->headers->replace('request_uri', 'rpc/p' . $rpc . '/' . $data['cmd']);
+		$sRequest->headers->replace('request_method', Request::HTTP_CMD);
 	}
 
 

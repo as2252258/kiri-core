@@ -62,7 +62,6 @@ class Service extends Component
 				'open_http_protocol'      => false,
 				'open_websocket_protocol' => false,
 			]);
-		$this->listenPort($service, $mode);
 	}
 
 
@@ -100,62 +99,6 @@ class Service extends Component
 			$server->on('close', [Snowflake::createObject(OnClose::class), 'onHandler']);
 			$server->on('packet', [$class = new OnPacket(), 'onHandler']);
 		}
-	}
-
-
-	/**
-	 * @param $service
-	 * @param $mode
-	 * @throws Exception
-	 */
-	private function listenPort($service, $mode)
-	{
-		router()->addPortListen($service['port'], function () use ($service, $mode) {
-			try {
-				/** @var Request $request */
-				$request = Context::getContext('request');
-				if (($node = router()->find_path(Service::replace($request, $service))) === null) {
-					throw new Exception('Cmd not find.');
-				}
-				$response = $node->dispatch();
-				if (is_string($response)) {
-					return $response;
-				}
-				return Json::encode($response);
-			} catch (\Throwable $exception) {
-				$this->addError($exception);
-				return Json::encode(['state' => 'fail', 'message' => $exception->getMessage()]);
-			}
-		});
-	}
-
-
-	/**
-	 * @param Request $request
-	 * @param array $service
-	 * @return Request
-	 * @throws Exception
-	 */
-	public static function replace(Request $request, array $service): Request
-	{
-		$body = $request->params->getBodyAndClear();
-		if (is_string($body) && is_null($body = Json::decode($body))) {
-			throw new Exception('Protocol format error.');
-		}
-
-		if (!isset($body['cmd'])) {
-			throw new Exception('Unknown system cmd.');
-		}
-		$request->params->setPosts($body);
-
-		$body['cmd'] = ltrim($body['cmd'], '/');
-
-		$header = $request->headers;
-		$header->replace('request_uri', 'rpc/p' . $service['port'] . '/' . $body['cmd']);
-		$header->replace('request_method', Request::HTTP_CMD);
-		$request->parseUri();
-
-		return $request;
 	}
 
 
