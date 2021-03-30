@@ -514,6 +514,9 @@ class Server extends HttpService
 		$event->on(Event::SERVER_WORKER_START, function () {
 			router()->loadRouterSetting();
 
+
+			var_dump(2222);
+
 			$annotation = Snowflake::app()->getAttributes();
 			$annotation->instanceDirectoryFiles(CONTROLLER_PATH);
 			$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
