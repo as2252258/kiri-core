@@ -513,9 +513,6 @@ class Server extends HttpService
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
 			try {
-
-				var_dump(2222);
-
 				router()->loadRouterSetting();
 
 				$annotation = Snowflake::app()->getAttributes();
