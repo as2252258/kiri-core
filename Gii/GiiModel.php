@@ -102,7 +102,9 @@ use Database\ActiveRecord;
  * @sql
  */
 #[Target] class ' . $managerName . ' extends ActiveRecord
-{';
+{
+
+';
 
 		if (!empty($class)) {
 			$html .= $this->getClassProperty($class);
