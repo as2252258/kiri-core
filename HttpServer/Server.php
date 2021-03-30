@@ -512,15 +512,19 @@ class Server extends HttpService
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
-			router()->loadRouterSetting();
+			try {
 
+				var_dump(2222);
 
-			var_dump(2222);
+				router()->loadRouterSetting();
 
-			$annotation = Snowflake::app()->getAttributes();
-			$annotation->instanceDirectoryFiles(CONTROLLER_PATH);
-			$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
-			$annotation->instanceDirectoryFiles(RPC_CLIENT_PATH);
+				$annotation = Snowflake::app()->getAttributes();
+				$annotation->instanceDirectoryFiles(CONTROLLER_PATH);
+				$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
+				$annotation->instanceDirectoryFiles(RPC_CLIENT_PATH);
+			} catch (\Throwable $exception) {
+				$this->addError($exception);
+			}
 		});
 	}
 
