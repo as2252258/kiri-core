@@ -12,6 +12,11 @@ use JetBrains\PhpStorm\Pure;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
+
+/**
+ * Class RpcProducer
+ * @package Annotation\Route
+ */
 #[\Attribute(\Attribute::TARGET_METHOD)] class RpcProducer extends Attribute
 {
 
@@ -40,6 +45,7 @@ use Snowflake\Snowflake;
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
+		var_dump($this->uri);
 		$router->addRoute($this->uri, $handler, Request::HTTP_CMD);
 
 		return $router;
