@@ -56,6 +56,20 @@ class Snowflake
 		static::$service = $service;
 	}
 
+
+	/**
+	 * @param $alias
+	 * @param array $array
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public static function set($alias, $array = []): mixed
+	{
+		return static::app()->set($alias, $array);
+	}
+
 	/**
 	 * @return Application|null
 	 */
