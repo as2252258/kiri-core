@@ -36,9 +36,7 @@ class OnReceive extends Callback
 	public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
 	{
 		try {
-			var_dump($data);
 			$request = Request::createListenRequest($fd, $server, $data, $reID);
-			var_dump($request);
 			$router = Snowflake::app()->getRouter();
 			if (($node = $router->find_path($request)) === null) {
 				return $server->send($fd, Json::encode(['state' => 404]));
