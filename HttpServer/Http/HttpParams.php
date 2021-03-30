@@ -42,7 +42,7 @@ class HttpParams
 	 * @param $files
 	 * @param array $socket
 	 */
-	public function __construct($body, $get, $files, $socket = [])
+	public function __construct(mixed $body, ?array $get, ?array $files, $socket = [])
 	{
 		$this->gets = $get ?? [];
 		$this->files = $files ?? [];
