@@ -284,6 +284,18 @@ class Response extends HttpService
 
 
 	/**
+	 * @param int $statusCode
+	 * @param string $message
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function close($statusCode = 200, $message = ''): mixed
+	{
+		return $this->send($message, $statusCode);
+	}
+
+
+	/**
 	 * @param string $path
 	 * @param int $offset
 	 * @param int $limit
@@ -296,7 +308,6 @@ class Response extends HttpService
 
 		$stat = fstat($open);
 
-		$this->headers(null);
 		while ($file = fread($open, $limit)) {
 			$this->response->write($file);
 			fseek($open, $offset);

@@ -9,6 +9,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
+use HttpServer\Http\Response;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Http\Request as SRequest;
@@ -133,7 +134,7 @@ class OnHandshake extends Callback
 		if (($node = $router->find_path($sRequest)) === null) {
 			return $this->disconnect($response, 502);
 		}
-		return $node->dispatch($request, $response);
+		return $node->dispatch($sRequest, Response::create($response));
 	}
 
 
