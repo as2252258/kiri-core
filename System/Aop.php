@@ -56,6 +56,7 @@ class Aop extends Component
             return call_user_func($close, ...$get_args);
         }
 
+        var_dump($this->_aop[$aopName]);
         $reflect = Snowflake::getDi()->getReflect($this->_aop[$aopName]);
         if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
             throw new Exception(ASPECT_ERROR . IAspect::class);
