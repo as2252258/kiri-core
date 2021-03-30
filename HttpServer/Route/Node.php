@@ -592,7 +592,7 @@ class Node extends HttpService
 			}
 			return $this->runWith(...func_get_args());
 		} catch (Throwable $throwable) {
-			$this->addError($throwable->getMessage(),'throwable');
+			$this->addError($throwable,'throwable');
 			return Json::to(401, $throwable->getMessage());
 		}
 	}
