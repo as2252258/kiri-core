@@ -6,9 +6,13 @@ namespace HttpServer\Client;
 
 use Exception;
 use HttpServer\Http\Context;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\Json;
+use Snowflake\Exception\ComponentException;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 use Swoole\Http2\Request;
 use Swoole\Coroutine\Http2\Client as H2Client;
 
@@ -20,6 +24,16 @@ use Swoole\Coroutine\Http2\Client as H2Client;
 class Http2 extends Component
 {
 
+
+	/**
+	 * @param array $headers
+	 */
+	public function setHeader(array $headers)
+	{
+		Context::setContext('http2Headers', $headers);
+	}
+
+
 	/**
 	 * @param $domain
 	 * @param $path
@@ -30,9 +44,9 @@ class Http2 extends Component
 	 */
 	public function get($domain, $path, $params = [], $timeout = -1): Result
 	{
-		$client = $this->getClient($domain, $path, $timeout);
-		$client->send($this->getRequest($domain, $path, 'GET', $params));
-		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
+		$request = $this->dispatch($domain, $path, 'GET', $params, $timeout);
+
+		return new Result(['code' => 0, 'data' => $request]);
 	}
 
 
@@ -46,9 +60,25 @@ class Http2 extends Component
 	 */
 	public function post($domain, $path, $params = [], $timeout = -1): Result
 	{
-		$client = $this->getClient($domain, $path, $timeout);
-		$client->send($this->getRequest($domain, $path, 'POST', $params));
-		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
+		$request = $this->dispatch($domain, $path, 'POST', $params, $timeout);
+
+		return new Result(['code' => 0, 'data' => $request]);
+	}
+
+
+	/**
+	 * @param $domain
+	 * @param $path
+	 * @param array $params
+	 * @param int $timeout
+	 * @return Result
+	 * @throws Exception
+	 */
+	public function upload($domain, $path, $params = [], $timeout = -1): Result
+	{
+		$request = $this->dispatch($domain, $path, 'POST', $params, $timeout, true);
+
+		return new Result(['code' => 0, 'data' => $request]);
 	}
 
 
@@ -62,9 +92,38 @@ class Http2 extends Component
 	 */
 	public function delete($domain, $path, $params = [], $timeout = -1): Result
 	{
-		$client = $this->getClient($domain, $path, $timeout);
-		$client->send($this->getRequest($domain, $path, 'DELETE', $params));
-		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
+		$request = $this->dispatch($domain, $path, 'DELETE', $params, $timeout);
+
+		return new Result(['code' => 0, 'data' => $request]);
+	}
+
+
+	/**
+	 * @param $domain
+	 * @param $path
+	 * @param $method
+	 * @param array $params
+	 * @param int $timeout
+	 * @param bool $isUpload
+	 * @return mixed
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function dispatch($domain, $path, $method, $params = [], $timeout = -1, $isUpload = false): mixed
+	{
+		$client = $this->getClient($domain, $timeout);
+
+		$request = $this->getRequest($domain, $path, $method, $params, $isUpload);
+
+		$client->send($request);
+		defer(function () use ($domain, $path, $client, $request, $method) {
+			$pool = Snowflake::app()->getChannel();
+			$pool->push($request, 'request.' . $method . $path);
+			$pool->push($client, 'http2.' . $domain);
+		});
+		return Help::toArray($client->recv());
 	}
 
 
@@ -78,9 +137,9 @@ class Http2 extends Component
 	 */
 	public function put($domain, $path, $params = [], $timeout = -1): Result
 	{
-		$client = $this->getClient($domain, $path, $timeout);
-		$client->send($this->getRequest($domain, $path, 'PUT', $params));
-		return new Result(['code' => 0, 'data' => Help::toArray($client->recv())]);
+		$request = $this->dispatch($domain, $path, 'PUT', $params, $timeout);
+
+		return new Result(['code' => 0, 'data' => $request]);
 	}
 
 
@@ -89,55 +148,62 @@ class Http2 extends Component
 	 * @param $path
 	 * @param $method
 	 * @param $params
+	 * @param bool $isUpload
 	 * @return Request
-	 * @throws Exception
+	 * @throws ReflectionException
+	 * @throws ComponentException
+	 * @throws NotFindClassException
 	 */
-	public function getRequest($domain, $path, $method, $params): Request
+	public function getRequest($domain, $path, $method, $params, $isUpload = false): Request
 	{
-		if (Context::hasContext($domain . $path)) {
-			$req = Context::getContext($domain . $path);
+		$channel = Snowflake::app()->getChannel();
+		$request = $channel->pop('request.' . $method . $path, function () use ($path, $method) {
+			$request = new Request();
+			$request->method = $method;
+			$request->path = $path;
+			return $request;
+		});
+		if ($method === 'GET') {
+			$request->path .= '?' . http_build_query($params);
 		} else {
-			$req = new Request();
-			$req->method = $method;
-			$req->path = $path;
-			$req->headers = [
-				'host'            => $domain,
-				'user-agent'      => 'Chrome/49.0.2587.3',
-				'accept'          => 'text/html,application/json',
-				'accept-encoding' => 'gzip'
-			];
-			if (!is_string($params)) {
-				$params = Json::encode($params);
-			}
-			Context::setContext($domain . $path, $req);
+			$request->data = !is_string($params) && !$isUpload ? Json::encode($params) : $params;
 		}
-		$req->data = $params;
-		return $req;
+		$request->headers = [
+			'host'            => $domain,
+			'user-agent'      => 'Chrome/49.0.2587.3',
+			'accept'          => 'text/html,application/json',
+			'accept-encoding' => 'gzip'
+		];
+		$headers = Context::getContext('http2Headers');
+		if (!empty($headers) && is_array($headers)) {
+			$request->headers = array_merge($request->headers, $headers);
+		}
+		return $request;
 	}
 
 
 	/**
 	 * @param $domain
-	 * @param $path
 	 * @param int $timeout
 	 * @return H2Client
 	 * @throws Exception
 	 */
-	private function getClient($domain, $path, $timeout = -1): H2Client
+	private function getClient($domain, $timeout = -1): H2Client
 	{
-		if (Context::hasContext($domain)) {
-			return Context::getContext($domain);
+		$pool = Snowflake::app()->getChannel();
+		/** @var H2Client $client */
+		$client = $pool->pop('http2.' . $domain, function () use ($domain, $timeout) {
+			$client = new H2Client($domain, 443, true);
+			$client->set([
+				'timeout'       => $timeout,
+				'ssl_host_name' => $domain
+			]);
+			return $client;
+		});
+		if (!$client->connected && !$client->connect()) {
+			throw new Exception('Http connected fail.');
 		}
-		$client = new H2Client($domain, 443, true);
-		$client->set([
-			'timeout'       => $timeout,
-			'ssl_host_name' => $domain
-		]);
-		if (!$client->connect()) {
-			throw new Exception('Connected fail.');
-		}
-
-		return Context::setContext($domain, $client);
+		return $client;
 	}
 
 
