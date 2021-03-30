@@ -144,7 +144,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool|static
 	 * @throws Exception
 	 */
-	public static function createAndUpdate(array $condition, array $attributes = []): bool|static
+	public static function createOrUpdate(array $condition, array $attributes = []): bool|static
 	{
 		if (empty($attributes)) {
 			return \logger()->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
