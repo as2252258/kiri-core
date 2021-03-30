@@ -160,7 +160,13 @@ abstract class GiiBase
 	protected function getClassProperty(ReflectionClass $class): string
 	{
 		$html = '';
+
+		$rc = $class->getParentClass()->getConstants();
+
 		foreach ($class->getConstants() as $key => $val) {
+			if (isset($rc[$key])) {
+				continue;
+			}
 			if (is_numeric($val)) {
 				$html .= '
     const ' . $key . ' = ' . $val . ';' . "\n";
