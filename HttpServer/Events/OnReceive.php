@@ -37,6 +37,7 @@ class OnReceive extends Callback
 	{
 		try {
 			$request = Request::createListenRequest($fd, $server, $data, $reID);
+			var_dump($request);
 
 			$router = Snowflake::app()->getRouter();
 			if (($node = $router->find_path($request)) === null) {
