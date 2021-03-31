@@ -10,6 +10,7 @@ use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\Json;
+use Snowflake\Core\Xml;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -137,7 +138,14 @@ class Http2 extends Component
 		if ($response->statusCode > 200) {
 			throw new Exception($client->errMsg, $response->statusCode);
 		}
-		return Help::toArray($response->data);
+		$header = $response->headers['content-type'];
+		if (str_starts_with($header, 'application/json;')) {
+			return Json::decode($response->data);
+		} else if (str_starts_with($header, 'application/xml;')) {
+			return Xml::toArray($response->data);
+		} else {
+			return $response->data;
+		}
 	}
 
 
