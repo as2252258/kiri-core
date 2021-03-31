@@ -108,9 +108,6 @@ class Http2 extends Component
 	 * @param int $timeout
 	 * @param bool $isUpload
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function dispatch($domain, $path, $method, $params = [], $timeout = -1, $isUpload = false): mixed
@@ -204,9 +201,6 @@ class Http2 extends Component
 	 * @param bool $isSsl
 	 * @param int $timeout
 	 * @return H2Client
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function getClient($domain, $isSsl = false, $timeout = -1): H2Client

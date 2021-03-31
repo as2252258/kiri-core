@@ -319,9 +319,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Connection
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function getMysqlFromPool(): Connection
 	{
@@ -331,9 +329,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return SRedis
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	public function getRedisFromPool(): SRedis
 	{
@@ -453,9 +449,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return \Rpc\Producer
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function getRpc(): \Rpc\Producer
 	{
@@ -465,9 +459,7 @@ abstract class BaseApplication extends Service
 
 	/**
 	 * @return Channel
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function getChannel(): Channel
 	{

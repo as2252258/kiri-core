@@ -61,9 +61,7 @@ class Snowflake
 	 * @param $alias
 	 * @param array $array
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public static function set($alias, $array = []): mixed
 	{

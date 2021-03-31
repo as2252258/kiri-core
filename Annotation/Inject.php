@@ -4,10 +4,8 @@
 namespace Annotation;
 
 
-use ReflectionException;
+use Exception;
 use ReflectionProperty;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -31,9 +29,7 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function execute(array $handler): mixed
 	{
@@ -58,9 +54,7 @@ use Snowflake\Snowflake;
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function parseInjectValue(): mixed
 	{

@@ -6,10 +6,7 @@ namespace Rpc;
 
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
-use ReflectionException;
 use Snowflake\Abstracts\Component;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 
@@ -118,9 +115,6 @@ class Producer extends Component
 	 * @param string $name
 	 * @param string|null $host
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function getClient(string $name, string $host = null): Client
@@ -149,9 +143,7 @@ class Producer extends Component
 	 * @param string $name
 	 * @param string|null $host
 	 * @return Client
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function consumer(string $name, string $host = null): Client
 	{

@@ -107,9 +107,7 @@ class Connection extends Component
 
 
 	/**
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function fill()
 	{
@@ -165,9 +163,7 @@ class Connection extends Component
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function getCacheDriver(): mixed
 	{
@@ -203,9 +199,7 @@ class Connection extends Component
 
 	/**
 	 * @return \Snowflake\Pool\Connection
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function connections(): \Snowflake\Pool\Connection
 	{
@@ -293,9 +287,7 @@ class Connection extends Component
 
 
 	/**
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function recovery()
 	{

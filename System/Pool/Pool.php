@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Snowflake\Pool;
 
 
-use ReflectionException;
+use Exception;
 use Snowflake\Abstracts\BaseObject;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -23,9 +21,7 @@ class Pool extends BaseObject
 
 	/**
 	 * @return Redis
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function getRedis(): Redis
 	{
@@ -34,9 +30,7 @@ class Pool extends BaseObject
 
 	/**
 	 * @return Connection
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function getDb(): Connection
 	{

@@ -5,12 +5,9 @@ namespace Rpc;
 
 
 use Exception;
-use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Channel;
 use Snowflake\Core\Json;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Client as CClient;
 
@@ -64,9 +61,6 @@ class Client extends Component
 
 	/**
 	 * @return Client
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function clientRecover(): static
@@ -117,9 +111,6 @@ class Client extends Component
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function getClient(): CClient

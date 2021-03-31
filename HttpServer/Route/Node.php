@@ -315,9 +315,6 @@ class Node extends HttpService
 	 * @param string $className
 	 * @param string $action
 	 * @return Node
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function annotationInject(string $className, string $action): Node
