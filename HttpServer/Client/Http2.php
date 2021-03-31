@@ -15,6 +15,7 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http2\Request;
 use Swoole\Coroutine\Http2\Client as H2Client;
+use Swoole\Http2\Response;
 
 
 /**
@@ -130,7 +131,13 @@ class Http2 extends Component
 			$pool->push($request, 'request.' . $method . $path);
 			$pool->push($client, 'http2.' . $domain);
 		});
-		return Help::toArray($client->recv());
+
+		/** @var Response $response */
+		$response = $client->recv();
+		if ($response->statusCode > 200) {
+			throw new Exception($client->errMsg, $response->statusCode);
+		}
+		return Help::toArray($response->data);
 	}
 
 
