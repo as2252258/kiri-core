@@ -38,13 +38,12 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
-			if ($frame->opcode !== 0x08) {
+			if ($frame->opcode === 0x08) {
 				return;
 			}
 			$clientInfo = $server->getClientInfo($frame->fd);
 			$event = Snowflake::app()->getEvent();
 
-			var_dump($clientInfo);
 			if (!$event->exists(($name = $this->getName($clientInfo)))) {
 				return;
 			}
