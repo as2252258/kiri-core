@@ -230,7 +230,7 @@ class Http2 extends Component
 			} else {
 				$port = 80;
 			}
-			$client = new H2Client($domain, $port, $isSsl);
+			$client = new H2Client($domain, (int)$port, $isSsl);
 			$client->set([
 				'timeout'       => $timeout,
 				'ssl_host_name' => $domain
