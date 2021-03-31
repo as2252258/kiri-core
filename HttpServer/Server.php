@@ -143,9 +143,7 @@ class Server extends HttpService
 	/**
 	 * @param $baseServer
 	 * @return mixed
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function execute($baseServer): mixed
 	{
