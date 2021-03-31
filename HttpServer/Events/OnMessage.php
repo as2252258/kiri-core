@@ -64,7 +64,6 @@ class OnMessage extends Callback
 	 */
 	private function getName($clientInfo): string
 	{
-		var_dump($clientInfo['server_port']);
 		return 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
 	}
 
