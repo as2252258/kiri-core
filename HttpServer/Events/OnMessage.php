@@ -45,7 +45,7 @@ class OnMessage extends Callback
 			$event = Snowflake::app()->getEvent();
 
 			var_dump($clientInfo);
-			if (!$event->exists($name = $this->getName($clientInfo))) {
+			if (!$event->exists(($name = $this->getName($clientInfo)))) {
 				return;
 			}
 			$event->trigger($name, [$frame, $server]);
