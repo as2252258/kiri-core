@@ -38,14 +38,15 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
-			if ($frame->opcode == 0x08) {
+			if ($frame->opcode !== 0x08) {
 				return;
 			}
+			$clientInfo = $server->getClientInfo($frame->fd);
 			$event = Snowflake::app()->getEvent();
-			$content = $this->resolve($event, $frame, $server);
-			if (!empty($content)) {
-				$server->send($frame->fd, $content);
+			if (!$event->exists($name = $this->getName($clientInfo))) {
+				return;
 			}
+			$event->trigger($name, [$frame, $server]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
@@ -55,48 +56,14 @@ class OnMessage extends Callback
 		}
 	}
 
-	/**
-	 * @param $event
-	 * @param Frame $frame
-	 * @param $server
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function resolve($event, Frame $frame,Server $server): mixed
-	{
-		$clientInfo = $server->getClientInfo($frame->fd);
-
-		$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
-		if ($event->exists($eventName)) {
-			$event->trigger($eventName, [$server, $frame]);
-		} else {
-			$frame->data = json_decode($frame->data, true);
-		}
-		if (!empty($route = $frame->data['route'] ?? null)) {
-			return $this->loadNode($frame, $route, $server);
-		}
-		return null;
-	}
-
 
 	/**
-	 * @param $frame
-	 * @param $route
-	 * @param $server
-	 * @return mixed
-	 * @throws ComponentException
-	 * @throws ReflectionException
-	 * @throws ConfigException
-	 * @throws NotFindClassException
-	 * @throws Exception
+	 * @param $clientInfo
+	 * @return string
 	 */
-	private function loadNode($frame, $route, $server): mixed
+	private function getName($clientInfo): string
 	{
-		$query = Request::socketQuery($frame, Socket::MESSAGE, $route);
-		if (($node = router()->find_path($query)) !== null) {
-			return $node->dispatch($frame, $server);
-		}
-		return null;
+		return 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
 	}
 
 }
