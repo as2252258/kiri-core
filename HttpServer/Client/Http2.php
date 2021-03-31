@@ -113,8 +113,15 @@ class Http2 extends Component
 	 */
 	private function dispatch($domain, $path, $method, $params = [], $timeout = -1, $isUpload = false): mixed
 	{
-		$client = $this->getClient($domain, $timeout);
+		$ssl = false;
+		if (str_starts_with($domain, 'https://')) {
+			$domain = str_replace('https://', '', $domain);
+			$ssl = true;
+		} else if (str_starts_with($domain, 'http://')) {
+			$domain = str_replace('http://', '', $domain);
+		}
 
+		$client = $this->getClient($domain, $ssl, $timeout);
 		$request = $this->getRequest($domain, $path, $method, $params, $isUpload);
 
 		$client->send($request);
@@ -153,6 +160,7 @@ class Http2 extends Component
 	 * @throws ReflectionException
 	 * @throws ComponentException
 	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function getRequest($domain, $path, $method, $params, $isUpload = false): Request
 	{
@@ -187,28 +195,27 @@ class Http2 extends Component
 
 	/**
 	 * @param $domain
+	 * @param bool $isSsl
 	 * @param int $timeout
 	 * @return H2Client
-	 * @throws Exception
+	 * @throws ComponentException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	private function getClient($domain, $timeout = -1): H2Client
+	private function getClient($domain, $isSsl = false, $timeout = -1): H2Client
 	{
 		$pool = Snowflake::app()->getChannel();
 		/** @var H2Client $client */
-		$client = $pool->pop('http2.' . $domain, function () use ($domain, $timeout) {
+		$client = $pool->pop('http2.' . $domain, function () use ($domain, $isSsl, $timeout) {
 			$domain = rtrim($domain, '/');
-
-			$replace = str_replace('https://', '', $domain);
-			$replace = str_replace('http://', '', $replace);
-
-			if (str_starts_with($domain, 'https')) {
-				$client = new H2Client($replace, 443, true);
-			} else if (str_contains($replace, ':')) {
-				[$host, $port] = explode(':', $replace);
-				$client = new H2Client($host, $port, false);
+			if (str_contains($domain, ':')) {
+				[$domain, $port] = explode(':', $domain);
+			} else if ($isSsl === true) {
+				$port = 443;
 			} else {
-				$client = new H2Client($replace, 80, false);
+				$port = 80;
 			}
+			$client = new H2Client($domain, $port, $isSsl);
 			$client->set([
 				'timeout'       => $timeout,
 				'ssl_host_name' => $domain
