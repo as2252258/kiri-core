@@ -136,7 +136,7 @@ class Http2 extends Component
 		/** @var Response $response */
 		$response = $client->recv();
 		if ($response === false || $response->statusCode > 200) {
-			throw new Exception($client->errMsg, $response->statusCode ?? 500);
+			throw new Exception($client->errMsg, $client->errCode);
 		}
 		$header = $response->headers['content-type'];
 		if (str_starts_with($header, 'application/json;')) {
