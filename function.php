@@ -82,14 +82,14 @@ if (!function_exists('annotation')) {
 }
 
 
-
 if (!function_exists('swoole')) {
 
 
 	/**
+	 * @return Server|null
 	 * @throws Exception
 	 */
-	function swoole(): Swoole\Server|Server
+	function swoole(): ?Server
 	{
 		return Snowflake::getWebSocket();
 	}
