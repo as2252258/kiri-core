@@ -194,15 +194,7 @@ class Http2 extends Component
 		} else {
 			$request->data = !is_string($params) && !$isUpload ? Json::encode($params) : $params;
 		}
-		$request->headers = [
-			'user-agent'      => 'Chrome/49.0.2587.3',
-			'accept'          => 'text/html,application/json',
-			'accept-encoding' => 'gzip'
-		];
-		$headers = Context::getContext('http2Headers');
-		if (!empty($headers) && is_array($headers)) {
-			$request->headers = array_merge($request->headers, $headers);
-		}
+		$request->headers = Context::getContext('http2Headers');
 		return $request;
 	}
 
