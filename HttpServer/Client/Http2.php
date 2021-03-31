@@ -156,6 +156,9 @@ class Http2 extends Component
 	 */
 	public function getRequest($domain, $path, $method, $params, $isUpload = false): Request
 	{
+		if (!str_starts_with($path, '/')) {
+			$path = '/' . $path;
+		}
 		$channel = Snowflake::app()->getChannel();
 		$request = $channel->pop('request.' . $method . $path, function () use ($path, $method) {
 			$request = new Request();
@@ -193,7 +196,19 @@ class Http2 extends Component
 		$pool = Snowflake::app()->getChannel();
 		/** @var H2Client $client */
 		$client = $pool->pop('http2.' . $domain, function () use ($domain, $timeout) {
-			$client = new H2Client($domain, 443, true);
+			$domain = rtrim($domain, '/');
+
+			$replace = str_replace('https://', '', $domain);
+			$replace = str_replace('http://', '', $replace);
+
+			if (str_starts_with($domain, 'https')) {
+				$client = new H2Client($replace, 443, true);
+			} else if (str_contains($replace, ':')) {
+				[$host, $port] = explode(':', $replace);
+				$client = new H2Client($host, $port, false);
+			} else {
+				$client = new H2Client($replace, 80, false);
+			}
 			$client->set([
 				'timeout'       => $timeout,
 				'ssl_host_name' => $domain
