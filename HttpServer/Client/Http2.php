@@ -238,7 +238,7 @@ class Http2 extends Component
 			return $client;
 		});
 		if (!$client->connected && !$client->connect()) {
-			throw new Exception('Http connected fail.');
+			throw new Exception($client->errMsg, $client->errCode);
 		}
 		return $client;
 	}
