@@ -229,7 +229,10 @@ class Http2 extends Component
 			]);
 			return $client;
 		});
-		if (!$client->connected && !$client->connect()) {
+		if ($client->connected && $client->ping()) {
+			return $client;
+		}
+		if (!$client->connect()) {
 			throw new Exception($client->errMsg, $client->errCode);
 		}
 		return $client;
