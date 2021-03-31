@@ -135,8 +135,7 @@ class Http2 extends Component
 
 		/** @var Response $response */
 		$response = $client->recv();
-		var_dump($response);
-		if ($response->statusCode > 200) {
+		if ($response === false || $response->statusCode > 200) {
 			throw new Exception($client->errMsg, $response->statusCode);
 		}
 		$header = $response->headers['content-type'];
