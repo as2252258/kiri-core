@@ -139,13 +139,19 @@ class Service extends Component
 	 */
 	public function remove($id): bool
 	{
-		unset($this->_components[$id]);
+		$component = $this->_components[$id];
+		$className = get_class($component);
+
+		unset($component, $this->_components[$id]);
 		unset($this->_definition[$id]);
 		if (isset($this->_alias[$id])) {
 			unset($this->_components[$this->_alias[$id]]);
 			unset($this->_definition[$this->_alias[$id]]);
 			unset($this->_alias[$id]);
 		}
+
+		Snowflake::getDi()->unset($className);
+
 		return $this->has($id);
 	}
 }
