@@ -23,6 +23,7 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use HttpServer\Http\Context;
 use Snowflake\Core\ArrayAccess;
+use Swoole\WebSocket\Server;
 
 if (!function_exists('make')) {
 
@@ -75,6 +76,22 @@ if (!function_exists('annotation')) {
 	function annotation(): Annotation
 	{
 		return Snowflake::getAnnotation();
+	}
+
+
+}
+
+
+
+if (!function_exists('swoole')) {
+
+
+	/**
+	 * @throws Exception
+	 */
+	function swoole(): Swoole\Server|Server
+	{
+		return Snowflake::getWebSocket();
 	}
 
 
