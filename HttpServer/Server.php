@@ -368,11 +368,9 @@ class Server extends HttpService
 
 
 	/**
-	 * @return Http|Packet|Receive|Websocket|null
-	 * @throws ComponentException
+	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws ConfigException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function startRpcService(): Packet|Websocket|Receive|Http|null
 	{
@@ -382,6 +380,7 @@ class Server extends HttpService
 			$service = Snowflake::app()->get('rpc-service');
 			$service->instance($this->swoole);
 		}
+		$this->onLoadHttpHandler();
 		return $this->swoole;
 	}
 
@@ -403,15 +402,11 @@ class Server extends HttpService
 		if (!isset($settings['pid_file'])) {
 			$settings['pid_file'] = PID_PATH;
 		}
+
 		$this->debug(Snowflake::listen($config));
 		$this->swoole->set($settings);
 		$this->onProcessListener();
-		if ($config['type'] == self::WEBSOCKET) {
-			$this->onLoadWebsocketHandler();
-			$this->onLoadHttpHandler();
-		} else if ($config['type'] == self::HTTP) {
-			$this->onLoadHttpHandler();
-		}
+
 		return $this->swoole;
 	}
 
@@ -485,9 +480,6 @@ class Server extends HttpService
 	 */
 	public function onBindCallback($name, $callback)
 	{
-		if ($name === 'request') {
-			$this->onLoadHttpHandler();
-		}
 		if ($this->swoole->getCallback($name) !== null) {
 			return;
 		}
@@ -507,25 +499,10 @@ class Server extends HttpService
 				router()->loadRouterSetting();
 
 				$annotation = Snowflake::app()->getAttributes();
-				$annotation->instanceDirectoryFiles(CONTROLLER_PATH);
-				$annotation->instanceDirectoryFiles(RPC_SERVICE_PATH);
-				$annotation->instanceDirectoryFiles(RPC_CLIENT_PATH);
+				$annotation->instanceDirectoryFiles(APP_PATH);
 			} catch (\Throwable $exception) {
 				$this->addError($exception, 'throwable');
 			}
-		});
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function onLoadWebsocketHandler()
-	{
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_START, function () {
-			$annotation = Snowflake::app()->getAttributes();
-			$annotation->instanceDirectoryFiles(SOCKET_PATH);
 		});
 	}
 
