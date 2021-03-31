@@ -195,7 +195,6 @@ class Http2 extends Component
 			$request->data = !is_string($params) && !$isUpload ? Json::encode($params) : $params;
 		}
 		$request->headers = [
-			'host'            => $domain,
 			'user-agent'      => 'Chrome/49.0.2587.3',
 			'accept'          => 'text/html,application/json',
 			'accept-encoding' => 'gzip'
@@ -216,6 +215,7 @@ class Http2 extends Component
 	 * @throws ComponentException
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function getClient($domain, $isSsl = false, $timeout = -1): H2Client
 	{
