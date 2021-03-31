@@ -4,17 +4,11 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
-use Annotation\Route\Socket;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Http\Request;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
 use Exception;
-use Swoole\WebSocket\Server as WebsocketServer;
 
 /**
  * Class OnClose
