@@ -7,9 +7,11 @@ namespace HttpServer\Events;
 use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\Callback;
+use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
+use Snowflake\Core\ArrayAccess;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Http\Request as SRequest;
@@ -98,7 +100,7 @@ class OnHandshake extends Callback
 			$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_HANDSHAKE;
 			$event->trigger($eventName, [$request, $response]);
 		} catch (\Throwable $exception) {
-			$this->addError($exception,'throwable');
+			$this->addError($exception, 'throwable');
 			$this->disconnect($response, 500);
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_CLEAN);
@@ -124,6 +126,9 @@ class OnHandshake extends Callback
 		/** @var Request $sRequest */
 		$sRequest = Request::create($request);
 		$sRequest->uri = '/' . Socket::HANDSHAKE . '::event';
+
+		$sRequest->headers = new HttpHeaders(ArrayAccess::merge($request->server, $request->header));
+
 		$sRequest->headers->replace('request_method', 'sw::socket');
 		$sRequest->headers->replace('request_uri', $sRequest->uri);
 
