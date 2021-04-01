@@ -15,12 +15,21 @@ use Snowflake\Snowflake;
 abstract class Consumer implements IProducer
 {
 
-	
+
 	protected ?Client $client = null;
 
 
 	#[Inject('rpc')]
 	public ?Producer $rpc = null;
+
+
+	/**
+	 * @return Client|null
+	 */
+	public function initClient(): ?Client
+	{
+		return $this->client;
+	}
 
 
 	/**
