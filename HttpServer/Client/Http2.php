@@ -6,13 +6,9 @@ namespace HttpServer\Client;
 
 use Exception;
 use HttpServer\Http\Context;
-use ReflectionException;
 use Snowflake\Abstracts\Component;
-use Snowflake\Core\Help;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http2\Request;
 use Swoole\Coroutine\Http2\Client as H2Client;
@@ -169,9 +165,6 @@ class Http2 extends Component
 	 * @param $params
 	 * @param bool $isUpload
 	 * @return Request
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
 	public function getRequest($domain, $path, $method, $params, $isUpload = false): Request

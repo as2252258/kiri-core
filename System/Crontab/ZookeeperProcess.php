@@ -5,13 +5,8 @@ namespace Snowflake\Crontab;
 
 
 use Exception;
-use ReflectionException;
-use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
@@ -38,9 +33,6 @@ class ZookeeperProcess extends Process
 
 	/**
 	 * @param \Swoole\Process $process
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
 	public function onHandler(\Swoole\Process $process): void

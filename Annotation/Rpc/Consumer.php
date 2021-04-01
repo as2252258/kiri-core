@@ -5,9 +5,7 @@ namespace Annotation\Rpc;
 
 
 use Annotation\Attribute;
-use ReflectionException;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
+use Exception;
 use Snowflake\Snowflake;
 
 
@@ -32,9 +30,7 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function execute(array $handler): mixed
 	{

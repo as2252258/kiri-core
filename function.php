@@ -332,9 +332,7 @@ if (!function_exists('aop')) {
 	 * @param mixed $handler
 	 * @param array $params
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	function aop(mixed $handler, array $params = []): mixed
 	{

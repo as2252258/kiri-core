@@ -5,6 +5,7 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
+use Exception;
 use HttpServer\HttpFilter;
 use ReflectionException;
 use Snowflake\Exception\ComponentException;
@@ -30,9 +31,7 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return array
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function execute(array $handler): array
 	{

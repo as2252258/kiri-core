@@ -6,10 +6,6 @@ namespace Annotation\Rpc;
 
 use Annotation\Attribute;
 use Exception;
-use ReflectionException;
-use Rpc\IProducer;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 
@@ -44,9 +40,6 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
 	public function execute(array $handler): mixed

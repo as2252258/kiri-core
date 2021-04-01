@@ -4,9 +4,7 @@
 namespace Annotation;
 
 
-use ReflectionException;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
+use Exception;
 use Snowflake\Snowflake;
 use Snowflake\Event;
 
@@ -32,10 +30,7 @@ use Snowflake\Event;
 	/**
 	 * @param array $handler
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws ComponentException
-	 * @throws NotFindClassException
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function execute(array $handler): mixed
 	{

@@ -14,7 +14,6 @@ use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Di\Container;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Process;
 use Swoole\Coroutine;
