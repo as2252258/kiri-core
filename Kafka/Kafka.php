@@ -58,7 +58,7 @@ class Kafka extends \Snowflake\Process\Process
 				$this->resolve($topic, $conf['interval'] ?? 1000);
 			} while (true);
 		} catch (Throwable $exception) {
-			logger()->addError($exception,'throwable');
+			logger()->addError($exception, 'throwable');
 		}
 	}
 
@@ -85,7 +85,7 @@ class Kafka extends \Snowflake\Process\Process
 				$this->application->error($message->errstr());
 			}
 		} catch (Throwable $exception) {
-			logger()->addError($exception,'throwable');
+			logger()->addError($exception, 'throwable');
 		}
 	}
 
@@ -111,7 +111,7 @@ class Kafka extends \Snowflake\Process\Process
 				}
 				$class->onHandler(Snowflake::createObject(Struct::class, [$topic, $message]));
 			} catch (Throwable $exception) {
-				logger()->addError($exception,'throwable');
+				logger()->addError($exception, 'throwable');
 			}
 		});
 	}
@@ -131,6 +131,9 @@ class Kafka extends \Snowflake\Process\Process
 			$conf->set('metadata.broker.list', $kafka['brokers']);
 			$conf->set('socket.timeout.ms', '30000');
 
+			$this->application->debug('kafka listen groupId ' . $kafka['groupId']);
+			$this->application->debug('kafka listen brokers ' . $kafka['brokers']);
+
 			if (function_exists('pcntl_sigprocmask')) {
 				pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
 				$conf->set('internal.termination.signal', (string)SIGIO);
@@ -148,7 +151,7 @@ class Kafka extends \Snowflake\Process\Process
 
 			return [$conf, $topicConf, $kafka];
 		} catch (Throwable $exception) {
-			logger()->addError($exception,'throwable');
+			logger()->addError($exception, 'throwable');
 
 			return [null, null, null];
 		}
