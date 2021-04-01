@@ -35,6 +35,17 @@ class Http2 extends Component
 
 
 	/**
+	 * @param int $timeout
+	 * @return Http2
+	 */
+	public function setTimeout(int $timeout): static
+	{
+		Context::setContext('http2timeout', $timeout);
+		return $this;
+	}
+
+
+	/**
 	 * @param array $headers
 	 * @return Http2
 	 */
@@ -153,7 +164,11 @@ class Http2 extends Component
 	private function recv($client): mixed
 	{
 		/** @var Response $response */
-		$response = $client->recv();
+		if (!Context::hasContext('http2timeout')) {
+			$response = $client->recv();
+		} else {
+			$response = $client->recv((int)Context::getContext('http2timeout'));
+		}
 		if ($response === false || $response->statusCode > 200) {
 			throw new Exception($client->errMsg, $client->errCode);
 		}

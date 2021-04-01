@@ -44,7 +44,7 @@ class OnReceive extends Callback
 			$dispatch = $node->dispatch();
 			if (!is_string($dispatch)) $dispatch = Json::encode($dispatch);
 			if (empty($dispatch)) {
-				return true;
+				$dispatch = Json::encode(['state' => 0, 'message' => 'ok']);
 			}
 			return $server->send($fd, $dispatch);
 		} catch (\Throwable $exception) {
