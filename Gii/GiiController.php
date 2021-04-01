@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gii;
 
 use Exception;
+use ReflectionException;
 use Snowflake\Snowflake;
 
 /**
@@ -18,6 +19,12 @@ class GiiController extends GiiBase
 
 	public array $fields = [];
 
+
+	/**
+	 * GiiController constructor.
+	 * @param $className
+	 * @param $fields
+	 */
 	public function __construct($className, $fields)
 	{
 		$this->className = $className;
@@ -27,7 +34,8 @@ class GiiController extends GiiBase
 
 	/**
 	 * @return string|bool
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function generate(): string|bool
 	{
@@ -375,16 +383,11 @@ use {$model_namespace}\\{$managerName};
 				$_field['type'] = $_key;
 
 				if ($type == 'date' || $type == 'datetime' || $type == 'time') {
-					switch ($type) {
-						case 'date':
-							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d\'))';
-							break;
-						case 'time':
-							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'H:i:s\'))';
-							break;
-						default:
-							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d H:i:s\'))';
-					}
+					$_tps = match ($type) {
+						'date' => '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d\'))',
+						'time' => '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'H:i:s\'))',
+						default => '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d H:i:s\'))',
+					};
 					$html .= '
             \'' . str_pad($val['Field'] . '\'', $length, ' ', STR_PAD_RIGHT) . ' => ' . str_pad($_tps . ',', 60, ' ', STR_PAD_RIGHT) . $comment;
 				} else {
