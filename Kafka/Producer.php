@@ -40,6 +40,7 @@ class Producer extends Component
 	/**
 	 * Producer constructor.
 	 * @param array $config
+	 * @throws Exception
 	 */
 	public function __construct($config = [])
 	{

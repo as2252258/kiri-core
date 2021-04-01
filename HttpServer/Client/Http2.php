@@ -24,11 +24,24 @@ class Http2 extends Component
 
 
 	/**
-	 * @param array $headers
+	 * @param bool $isRecv
+	 * @return Http2
 	 */
-	public function setHeader(array $headers)
+	public function setIsRecv(bool $isRecv): static
+	{
+		Context::setContext('http2isRecv', $isRecv);
+		return $this;
+	}
+
+
+	/**
+	 * @param array $headers
+	 * @return Http2
+	 */
+	public function setHeader(array $headers): static
 	{
 		Context::setContext('http2Headers', $headers);
+		return $this;
 	}
 
 
@@ -125,7 +138,20 @@ class Http2 extends Component
 			$pool->push($request, 'request.' . $method . $path);
 			$pool->push($client, 'http2.' . $domain);
 		});
+		if (Context::getContext('http2isRecv') === false) {
+			return null;
+		}
+		return $this->recv($client);
+	}
 
+
+	/**
+	 * @param $client
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function recv($client): mixed
+	{
 		/** @var Response $response */
 		$response = $client->recv();
 		if ($response === false || $response->statusCode > 200) {
