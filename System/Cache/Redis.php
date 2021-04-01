@@ -48,10 +48,8 @@ class Redis extends Component
 
 
 	/**
-	 * @throws ComponentException
 	 * @throws ConfigException
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function createPool()
 	{
@@ -86,10 +84,10 @@ class Redis extends Component
 	/**
 	 * @param $key
 	 * @param int $timeout
-	 * @return bool
+	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function lock($key, $timeout = 5): bool
+	public function lock($key, $timeout = 5): bool|int
 	{
 		$script = <<<SCRIPT
 local _nx = redis.call('setnx',KEYS[1], ARGV[1])
@@ -116,10 +114,8 @@ SCRIPT;
 
 
 	/**
-	 * @throws ComponentException
 	 * @throws ConfigException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function release()
 	{
@@ -130,7 +126,6 @@ SCRIPT;
 	/**
 	 * 销毁连接池
 	 * @throws ConfigException
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function destroy()
