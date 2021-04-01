@@ -4,6 +4,7 @@
 namespace Rpc;
 
 
+use Annotation\Inject;
 use Exception;
 use Snowflake\Snowflake;
 
@@ -13,6 +14,13 @@ use Snowflake\Snowflake;
  */
 abstract class Consumer implements IProducer
 {
+
+	
+	protected ?Client $client = null;
+
+
+	#[Inject('rpc')]
+	public ?Producer $rpc = null;
 
 
 	/**
