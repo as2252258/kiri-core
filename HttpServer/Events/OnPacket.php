@@ -47,7 +47,9 @@ class OnPacket extends Callback
 
 			$dispatch = $node->dispatch();
 			if (!is_string($dispatch)) $dispatch = Json::encode($dispatch);
-
+			if (empty($dispatch)) {
+				return true;
+			}
 			return $server->sendto($host, $port, $dispatch);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'packet');
