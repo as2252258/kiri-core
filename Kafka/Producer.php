@@ -105,7 +105,6 @@ class Producer extends Component
 		} else if (!isset($consumers['groupId'])) {
 			$consumers['groupId'] = $topic . ':' . Snowflake::localhost();
 		}
-		var_dump($consumers['groupId'], $consumers['brokers'], $topic);
 		$this->setGroupId($consumers['groupId'])->setTopic($topic)
 			->setBrokers($consumers['brokers'])
 			->delivery(swoole_serialize($params));
