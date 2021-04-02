@@ -542,8 +542,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function find_path(Request $request): ?Node
 	{
-		$useTree = Config::get('router', false, ROUTER_TREE);
-		if ($useTree === ROUTER_TREE) {
+		if ($this->useTree === ROUTER_TREE) {
 			return $this->Branch_search($request);
 		}
 
