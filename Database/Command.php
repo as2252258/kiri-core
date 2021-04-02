@@ -142,7 +142,6 @@ class Command extends Component
 	 * @param $time
 	 * @param $result
 	 * @return mixed
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	private function setExecuteLog($time, $result): mixed
