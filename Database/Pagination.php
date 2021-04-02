@@ -43,6 +43,7 @@ class Pagination extends Component
 	 * PaginationIteration constructor.
 	 * @param ActiveQuery $activeQuery
 	 * @param array $config
+	 * @throws Exception
 	 */
 	public function __construct(ActiveQuery $activeQuery, array $config = [])
 	{
