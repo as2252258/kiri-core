@@ -43,7 +43,7 @@ class Router extends HttpService implements RouterInterface
 
 	public ?Closure $middleware = null;
 
-	public bool $useTree = false;
+	public int $useTree = ROUTER_TREE;
 
 
 	/**
@@ -64,12 +64,13 @@ class Router extends HttpService implements RouterInterface
 		$this->dir = Config::get('http.namespace', false, $this->dir);
 	}
 
+
 	/**
 	 * @param bool $useTree
 	 */
 	public function setUseTree(bool $useTree): void
 	{
-		$this->useTree = $useTree;
+		$this->useTree = $useTree ? ROUTER_TREE : ROUTER_HASH;
 	}
 
 
@@ -101,7 +102,6 @@ class Router extends HttpService implements RouterInterface
 	 * @param $handler
 	 * @param string $method
 	 * @return ?Node
-	 * @throws ConfigException
 	 */
 	public function addRoute($path, $handler, $method = 'any'): ?Node
 	{
@@ -110,8 +110,7 @@ class Router extends HttpService implements RouterInterface
 			$this->nodes[$method] = [];
 		}
 
-		$useTree = Config::get('router', false, ROUTER_TREE);
-		if ($useTree == ROUTER_TREE) {
+		if ($this->useTree == ROUTER_TREE) {
 			return $this->tree($path, $handler, $method);
 		} else {
 			return $this->hash($path, $handler, $method);
@@ -515,7 +514,7 @@ class Router extends HttpService implements RouterInterface
 			}
 			return $node->afterDispatch($response);
 		} catch (\Throwable $exception) {
-			$this->addError($exception,'throwable');
+			$this->addError($exception, 'throwable');
 
 			$Code = $exception->getCode() == 0 ? 500 : $exception->getCode();
 
@@ -658,7 +657,7 @@ class Router extends HttpService implements RouterInterface
 			$router = $this;
 			include_once "{$files}";
 		} catch (\Throwable $exception) {
-			$this->addError($exception,'throwable');
+			$this->addError($exception, 'throwable');
 		} finally {
 			if (isset($exception)) {
 				unset($exception);
