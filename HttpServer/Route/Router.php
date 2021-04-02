@@ -438,9 +438,9 @@ class Router extends HttpService implements RouterInterface
 		foreach ($this->nodes as $node) {
 			/** @var Node[] $node */
 			foreach ($node as $_node) {
-				if ($_node->path == '/') {
-					continue;
-				}
+//				if ($_node->path == '/') {
+//					continue;
+//				}
 				$path = strtoupper($_node->method) . ' : ' . $_node->path;
 				if (!empty($_node->childes)) {
 					$path = $this->readByChild($_node->childes, $path);
