@@ -378,7 +378,6 @@ class Server extends HttpService
 			$service = Snowflake::app()->get('rpc-service');
 			$service->instance($this->swoole);
 		}
-		$this->onLoadHttpHandler();
 		return $this->swoole;
 	}
 
@@ -482,23 +481,6 @@ class Server extends HttpService
 			return;
 		}
 		$this->swoole->on($name, $callback);
-	}
-
-
-	/**
-	 * Load router handler
-	 * @throws Exception
-	 */
-	public function onLoadHttpHandler()
-	{
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_START, function () {
-			$system = Snowflake::app();
-
-			$system->getRouter()->loadRouterSetting();
-
-			$system->getAnnotation()->instanceDirectoryFiles(APP_PATH);
-		});
 	}
 
 
