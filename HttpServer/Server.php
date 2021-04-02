@@ -493,14 +493,11 @@ class Server extends HttpService
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->on(Event::SERVER_WORKER_START, function () {
-			try {
-				router()->loadRouterSetting();
+			$system = Snowflake::app();
 
-				$annotation = Snowflake::app()->getAttributes();
-				$annotation->instanceDirectoryFiles(APP_PATH);
-			} catch (\Throwable $exception) {
-				$this->addError($exception, 'throwable');
-			}
+			$system->getRouter()->loadRouterSetting();
+
+			$system->getAnnotation()->instanceDirectoryFiles(APP_PATH);
 		});
 	}
 

@@ -206,32 +206,37 @@ class Loader extends BaseObject
 
 	/**
 	 * @param string $path
+	 * @throws Exception
 	 */
 	public function loadByDirectory(string $path)
 	{
-		foreach ($this->_fileMap as $fileName => $className) {
-			if (!str_starts_with($fileName, $path)) {
-				continue;
-			}
-			if (!isset($this->_classes[$className])) {
-				continue;
-			}
-
-			$annotations = $this->_classes[$className];
-			if (isset($annotations['target']) && !empty($annotations['target'])) {
-				foreach ($annotations['target'] as $value) {
-					$value->execute([$annotations['handler']]);
+		try {
+			foreach ($this->_fileMap as $fileName => $className) {
+				if (!str_starts_with($fileName, $path)) {
+					continue;
 				}
-			}
+				if (!isset($this->_classes[$className])) {
+					continue;
+				}
 
-			foreach ($annotations['methods'] as $name => $attribute) {
-				foreach ($attribute as $value) {
-					if (!($value instanceof \Annotation\Attribute)) {
-						continue;
+				$annotations = $this->_classes[$className];
+				if (isset($annotations['target']) && !empty($annotations['target'])) {
+					foreach ($annotations['target'] as $value) {
+						$value->execute([$annotations['handler']]);
 					}
-					$value->execute([$annotations['handler'], $name]);
+				}
+
+				foreach ($annotations['methods'] as $name => $attribute) {
+					foreach ($attribute as $value) {
+						if (!($value instanceof \Annotation\Attribute)) {
+							continue;
+						}
+						$value->execute([$annotations['handler'], $name]);
+					}
 				}
 			}
+		} catch (Throwable $exception) {
+			$this->addError($exception, 'throwable');
 		}
 	}
 

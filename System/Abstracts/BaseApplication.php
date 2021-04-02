@@ -34,7 +34,6 @@ use Snowflake\Channel;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\InitException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Jwt\Jwt;
@@ -438,6 +437,16 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return SAnnotation
+	 * @throws Exception
+	 */
+	public function getAnnotation(): SAnnotation
+	{
+		return $this->get('annotation');
+	}
+
+
+	/**
 	 * @return Async
 	 * @throws Exception
 	 */
@@ -482,7 +491,7 @@ abstract class BaseApplication extends Service
 			'request'           => ['class' => Request::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
-			'attributes'        => ['class' => SAnnotation::class],
+			'annotation'        => ['class' => SAnnotation::class],
 			'router'            => ['class' => Router::class],
 			'redis'             => ['class' => Redis::class],
 			'aop'               => ['class' => Aop::class],

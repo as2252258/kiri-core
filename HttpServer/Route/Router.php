@@ -527,7 +527,6 @@ class Router extends HttpService implements RouterInterface
 	/**
 	 * @param $exception
 	 * @return mixed
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	private function exception($exception): mixed

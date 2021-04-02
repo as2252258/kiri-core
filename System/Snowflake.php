@@ -120,7 +120,7 @@ class Snowflake
 	 */
 	public static function getAnnotation(): Annotation
 	{
-		return static::app()->getAttributes();
+		return static::app()->getAnnotation();
 	}
 
 

@@ -41,7 +41,7 @@ use Rpc\Producer as RPCProducer;
  * @property Connection $connections
  * @property Logger $logger
  * @property Jwt $jwt
- * @property SAnnotation $attributes
+ * @property SAnnotation $annotation
  * @property Http2 $http2
  * @property BaseGoto $goto
  * @property Producer $kafka
