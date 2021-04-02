@@ -484,9 +484,9 @@ class Router extends HttpService implements RouterInterface
 		$newPath = [];
 		/** @var Node $item */
 		foreach ($child as $item) {
-			if ($item->path == '/') {
-				continue;
-			}
+//			if ($item->path == '/') {
+//				continue;
+//			}
 			if (!empty($item->childes)) {
 				$newPath[] = $this->readByChild($item->childes, $paths . '/' . $item->path);
 			} else {
