@@ -430,16 +430,6 @@ abstract class BaseApplication extends Service
 	 * @return SAnnotation
 	 * @throws Exception
 	 */
-	public function getAttributes(): SAnnotation
-	{
-		return $this->get('attributes');
-	}
-
-
-	/**
-	 * @return SAnnotation
-	 * @throws Exception
-	 */
 	public function getAnnotation(): SAnnotation
 	{
 		return $this->get('annotation');
