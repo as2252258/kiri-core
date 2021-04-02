@@ -26,6 +26,7 @@ class SqlBuilder extends Component
 	/**
 	 * @param $query
 	 * @return $this
+	 * @throws Exception
 	 */
 	public static function builder(ISqlBuilder|null $query): static
 	{
