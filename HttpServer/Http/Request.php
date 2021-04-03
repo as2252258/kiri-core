@@ -560,7 +560,7 @@ class Request extends HttpService
             throw new Exception('Protocol format error.');
         }
 
-        if (!isset($data['cmd'])) {
+        if (!isset($data['cmd']) || empty(!isset($data['cmd']))) {
             throw new Exception('Unknown system cmd.');
         }
 
