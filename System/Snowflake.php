@@ -172,7 +172,7 @@ class Snowflake
 	public static function getStoragePath(): string
 	{
 		$default = APP_PATH . 'storage' . DIRECTORY_SEPARATOR;
-		$path = Config::get('storage', false, $default);
+		$path = Config::get('storage', $default);
 		if (!is_dir($path)) {
 			mkdir($path, 0777, true);
 		}

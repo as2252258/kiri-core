@@ -40,8 +40,8 @@ abstract class Pool extends Component
 	 */
 	private function getClearTime(): array
 	{
-		$firstClear = Config::get('pool.clear.start', false, 600);
-		$lastClear = Config::get('pool.clear.end', false, 300);
+		$firstClear = Config::get('pool.clear.start', 600);
+		$lastClear = Config::get('pool.clear.end', 300);
 		return [$firstClear, $lastClear];
 	}
 

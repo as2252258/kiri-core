@@ -53,7 +53,7 @@ class Config extends Component
 	 * @return mixed
 	 * @throws
 	 */
-	public static function get($key, $try = FALSE, $default = null): mixed
+	public static function get($key, $default = null, $try = FALSE): mixed
 	{
 		$instance = Snowflake::app()->getConfig()->getData();
 		if (!str_contains($key, '.')) {

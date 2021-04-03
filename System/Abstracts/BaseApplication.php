@@ -156,7 +156,7 @@ abstract class BaseApplication extends Service
 		foreach ($config as $key => $value) {
 			Config::set($key, $value);
 		}
-		if ($storage = Config::get('storage', false, 'storage')) {
+		if ($storage = Config::get('storage', 'storage')) {
 			if (!str_contains($storage, APP_PATH)) {
 				$storage = APP_PATH . $storage . '/';
 			}

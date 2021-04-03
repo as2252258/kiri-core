@@ -616,7 +616,7 @@ if (!function_exists('name')) {
             return;
         }
 
-        $name = Config::get('id', false, 'system') . '[' . $pid . ']';
+        $name = Config::get('id', 'system') . '[' . $pid . ']';
         if (!empty($prefix)) {
             $name .= '.' . $prefix;
         }

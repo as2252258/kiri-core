@@ -71,7 +71,7 @@ class DatabasesProviders extends Providers
 	 */
 	public function createPool()
 	{
-		$databases = Config::get('databases', false, []);
+		$databases = Config::get('databases', []);
 		if (empty($databases)) {
 			return;
 		}
@@ -101,7 +101,7 @@ class DatabasesProviders extends Providers
 	 */
 	public function getConfig($name): mixed
 	{
-		return Config::get('databases.' . $name, true);
+		return Config::get('databases.' . $name,null, true);
 	}
 
 

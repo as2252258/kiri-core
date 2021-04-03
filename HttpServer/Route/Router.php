@@ -61,7 +61,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function init()
 	{
-		$this->dir = Config::get('http.namespace', false, $this->dir);
+		$this->dir = Config::get('http.namespace', $this->dir);
 	}
 
 

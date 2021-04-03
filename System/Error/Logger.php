@@ -112,7 +112,7 @@ class Logger extends Component
 	 */
 	public function print_r($message, $method = '')
 	{
-		$debug = Config::get('debug', false, ['enable' => false]);
+		$debug = Config::get('debug', ['enable' => false]);
 		if ((bool)$debug['enable'] === true) {
 			if (!is_callable($debug['callback'] ?? null, true)) {
 				return;

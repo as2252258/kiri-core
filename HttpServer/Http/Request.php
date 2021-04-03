@@ -535,7 +535,7 @@ class Request extends HttpService
 
         $port = $sRequest->clientInfo['server_port'];
 
-        $rpc = Config::get('rpc.port', false, []);
+        $rpc = Config::get('rpc.port', []);
         if ($rpc !== $port) {
             $sRequest->headers->replace('request_uri', 'add-port-listen/port_' . $port);
             $sRequest->headers->replace('request_method', 'listen');
