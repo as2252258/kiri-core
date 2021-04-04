@@ -391,7 +391,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function getAttributes(): array
 	{
-		return $this->_attributes;
+	    $data = $this->_attributes;
+        foreach ($this->getAnnotation() as $key => $item) {
+            if (!isset($data[$key])) continue;
+
+            $data[$key] = $this->runAnnotation($key, $data[$key] ?? null);
+        }
+        return $data;
 	}
 
 	/**
