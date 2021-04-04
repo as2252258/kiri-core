@@ -123,7 +123,7 @@ class Producer extends Component
     {
         $pool = Snowflake::app()->getChannel();
         return $pool->pop($topic . '::' . ProducerTopic::class, function () use ($producer, $topic) {
-            return $producer->newTopic($topic, $this->topic_conf);
+            return $producer->newTopic($topic, $this->topicConf);
         });
     }
 
