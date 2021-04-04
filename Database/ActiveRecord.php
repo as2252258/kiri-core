@@ -322,6 +322,8 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function recover()
 	{
+	    $this->clean();
+
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
 		return $channel->push($this, get_called_class());
