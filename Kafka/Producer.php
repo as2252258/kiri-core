@@ -28,164 +28,206 @@ use Snowflake\Snowflake;
 class Producer extends Component
 {
 
-	private string $_topic = '';
+    private string $_topic = '';
 
 
-	private Conf $conf;
-	private TopicConf $topicConf;
+    private Conf $conf;
+    private TopicConf $topicConf;
 
-	private ?\RdKafka\Producer $producer = null;
+    private ?\RdKafka\Producer $producer = null;
 
+    private bool $isAck = true;
 
-	/**
-	 * Producer constructor.
-	 * @param array $config
-	 * @throws Exception
-	 */
-	public function __construct($config = [])
-	{
-		parent::__construct($config);
-		if (!class_exists(Conf::class)) {
-			return;
-		}
-		$this->conf = new Conf();
-		$this->topicConf = new TopicConf();
-	}
-
-
-	/**
-	 * @param $servers
-	 * @return Producer
-	 */
-	public function setBrokers(string $servers): static
-	{
-		$this->conf->set('metadata.broker.list', $servers);
-		return $this;
-	}
+    /**
+     * Producer constructor.
+     * @param array $config
+     * @throws Exception
+     */
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+        if (!class_exists(Conf::class)) {
+            return;
+        }
+        $this->conf = new Conf();
+        $this->topicConf = new TopicConf();
+        $this->conf->setErrorCb(function ($kafka, $err, $reason) {
+            $this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
+        });
+    }
 
 
-	/**
-	 * @param string $groupId
-	 * @return Producer
-	 */
-	public function setGroupId(string $groupId): static
-	{
-		$this->conf->set('group.id', $groupId);
-		return $this;
-	}
+    /**
+     * @param $servers
+     * @return Producer
+     */
+    public function setBrokers(string $servers): static
+    {
+        $this->conf->set('metadata.broker.list', $servers);
+        return $this;
+    }
 
 
-	/**
-	 * @param $servers
-	 * @return Producer
-	 */
-	public function setTopic(string $servers): static
-	{
-		$this->_topic = $servers;
-		return $this;
-	}
+    /**
+     * @param string $groupId
+     * @return Producer
+     */
+    public function setGroupId(string $groupId): static
+    {
+        $this->conf->set('group.id', $groupId);
+        return $this;
+    }
 
 
-	/**
-	 * @param string $topic
-	 * @param array $params
-	 * @param string|null $groupId
-	 * @throws Exception
-	 */
-	public function dispatch(string $topic, array $params = [], string $groupId = null)
-	{
-		$consumers = Config::get('kafka.consumers.' . $topic);
-		if (empty($consumers) || !is_array($consumers)) {
-			return;
-		}
-		if (!isset($consumers['brokers'])) {
-			throw new Exception('You need set brokers config.');
-		}
-		if (!empty($groupId)) {
-			$consumers['groupId'] = $groupId;
-		} else if (!isset($consumers['groupId'])) {
-			$consumers['groupId'] = $topic . ':' . Snowflake::localhost();
-		}
-		$this->setGroupId($consumers['groupId'])->setTopic($topic)
-			->setBrokers($consumers['brokers'])
-			->delivery(swoole_serialize($params));
-	}
+    /**
+     * @param $servers
+     * @return Producer
+     */
+    public function setTopic(string $servers): static
+    {
+        $this->_topic = $servers;
+        return $this;
+    }
 
 
-	/**
-	 * @param $message
-	 * @param null $key
-	 * @param bool $isAck
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	public function delivery($message, $key = null, $isAck = false)
-	{
-		if (!$this->conf || !$this->topicConf) {
-			throw new Exception('Error. Please set kafka conf.');
-		}
-		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
-			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
-		});
+    /**
+     * @param string $topic
+     * @param array $params
+     * @param string|null $groupId
+     * @throws Exception
+     */
+    public function dispatch(string $topic, array $params = [], string $groupId = null)
+    {
+        $this->beforePushMessage($topic, $groupId);
+        $this->sendMessage($topic, [$params]);
+    }
 
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'flush']);
-
-		if ($this->producer === null) {
-			$this->producer = Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
-		}
-
-		$this->setTopicAcks($isAck);
-		$this->push($message, $key);
-		if ($isAck === true) {
-			$this->flush();
-		}
-	}
+    /**
+     * @return \RdKafka\Producer
+     * @throws Exception
+     */
+    private function getProducer(): \RdKafka\Producer
+    {
+        $pool = Snowflake::app()->getChannel();
+        return $pool->pop(\RdKafka\Producer::class, function () {
+            return Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
+        });
+    }
 
 
-	/** @var ProducerTopic[] $topics */
-	private array $topics = [];
+    /**
+     * @return \RdKafka\Producer
+     * @throws Exception
+     */
+    private function getProducerTopic(\RdKafka\Producer $producer, $topic): ProducerTopic
+    {
+        $pool = Snowflake::app()->getChannel();
+        return $pool->pop($topic . '::' . ProducerTopic::class, function () use ($producer, $topic) {
+            return $producer->newTopic($topic, $this->topic_conf);
+        });
+    }
 
 
-	/**
-	 * @param $message
-	 * @param $key
-	 */
-	private function push($message, $key)
-	{
-		if (!isset($this->topics[$this->_topic])) {
-			$this->topics[$this->_topic] = $this->producer->newTopic($this->_topic, $this->topicConf);
-		}
-		$this->topics[$this->_topic]->produce(RD_KAFKA_PARTITION_UA, 0, $message, $key);
-		$this->producer->poll(0);
-	}
+    /**
+     * @param string $toPic
+     * @param string|null $key
+     * @param array $data
+     * @param string|null $groupId
+     */
+    public function batch(string $toPic, ?string $key, array $data, ?string $groupId = null)
+    {
+        $this->beforePushMessage($toPic, $groupId);
+
+        $this->sendMessage($toPic, $data, $key);
+    }
 
 
-	/**
-	 * @param $isAck
-	 */
-	private function setTopicAcks(bool $isAck)
-	{
-		if ($isAck) {
-			if ($this->producer->getOutQLen() > 0) {
-				$this->flush();
-			}
-			$this->topicConf->set('request.required.acks', '1');
-		} else {
-			$this->topicConf->set('request.required.acks', '0');
-		}
-	}
+    /**
+     * @param $topic
+     * @param $groupId
+     * @param $brokers
+     * @return ProducerTopic
+     * @throws \Snowflake\Exception\ConfigException
+     */
+    private function beforePushMessage($topic, $groupId): void
+    {
+        $consumers = Config::get('kafka.producers.' . $topic);
+        if (empty($consumers) || !is_array($consumers)) {
+            throw new Exception('You need set kafka.producers config');
+        }
+        if (!isset($consumers['brokers'])) {
+            throw new Exception('You need set brokers config.');
+        }
+        if (!empty($groupId)) {
+            $consumers['groupId'] = $groupId;
+        } else if (!isset($consumers['groupId'])) {
+            $consumers['groupId'] = $topic . ':' . Snowflake::localhost();
+        }
+        $this->setGroupId($consumers['groupId']);
+        $this->setBrokers($consumers['brokers']);
+        $this->setTopic($topic);
+    }
 
 
-	public function flush()
-	{
-		while ($this->producer->getOutQLen() > 0) {
-			$result = $this->producer->flush(100);
-			if (RD_KAFKA_RESP_ERR_NO_ERROR === $result) {
-				break;
-			}
-		}
-	}
+    /**
+     * @param TopicConf $topicConf
+     * @param string $topic
+     * @param array $message
+     * @param string $key
+     * @throws Exception
+     */
+    private function sendMessage(string $topic, array $message, string $key = '')
+    {
+        $producer = $this->getProducer();
+        $producerTopic = $this->getProducerTopic($producer, $topic);
+
+        if ($this->isAck) {
+            $this->flush($producer);
+        }
+
+        foreach ($message as $value) {
+            $producerTopic->produce(RD_KAFKA_PARTITION_UA, 0, $value, $key);
+            $producer->poll(0);
+        }
+        $this->flush($producer);
+        $this->recover($topic, $producer, $producerTopic);
+    }
+
+
+    /**
+     * @param bool $ack
+     */
+    public function setAsk(bool $ack){
+        $this->isAck = $ack;
+        $this->topicConf->set('request.required.acks', $this->isAck ? '1' : '0');
+    }
+
+
+
+    /**
+     * @param \RdKafka\Producer $producer
+     * @param ProducerTopic $producerTopic
+     * @throws Exception
+     */
+    private function recover(string $topic, \RdKafka\Producer $producer, ProducerTopic $producerTopic)
+    {
+        $channel = Snowflake::app()->getChannel();
+        $channel->push($producerTopic, $topic . '::' . ProducerTopic::class);
+        $channel->push($producer, \RdKafka\Producer::class);
+    }
+
+
+    /**
+     * @param \RdKafka\Producer $producer
+     */
+    public function flush(\RdKafka\Producer $producer)
+    {
+        while ($producer->getOutQLen() > 0) {
+            $result = $producer->flush(100);
+            if (RD_KAFKA_RESP_ERR_NO_ERROR === $result) {
+                break;
+            }
+        }
+    }
 
 }

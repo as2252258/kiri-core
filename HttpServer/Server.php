@@ -14,13 +14,9 @@ use HttpServer\Service\Receive;
 use HttpServer\Service\Packet;
 use HttpServer\Service\Websocket;
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Rpc\Service;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\LoggerProcess;
-use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Biomonitoring;
@@ -53,7 +49,6 @@ class Server extends HttpService
     const PACKAGE = 'PACKAGE';
     const WEBSOCKET = 'WEBSOCKET';
 
-    private array $listening = [];
     private array $server = [
         'HTTP'      => [SWOOLE_TCP, Http::class],
         'TCP'       => [SWOOLE_TCP, Receive::class],
@@ -225,10 +220,10 @@ class Server extends HttpService
      * @throws ConfigException
      * @throws Exception
      */
-    public function onProcessListener(): void
+    public function onProcessListener(): mixed
     {
         if (!($this->swoole instanceof \Swoole\Server)) {
-            return;
+            return $this->swoole;
         }
 
         $processes = Config::get('processes');
@@ -237,6 +232,7 @@ class Server extends HttpService
         } else {
             $this->deliveryProcess($this->process);
         }
+        return $this->swoole;
     }
 
 
@@ -359,9 +355,29 @@ class Server extends HttpService
         if (isset($config['settings']) && is_array($config['settings'])) {
             $newListener->set($config['settings']);
         }
-        $this->onListenerBind($config, $this->swoole);
+        $this->onListenerBind($config);
 
         return $this->swoole;
+    }
+
+
+    /**
+     * @param $mode
+     * @return bool
+     */
+    public static function isTcp($mode)
+    {
+        return in_array($mode, [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6]);
+    }
+
+
+    /**
+     * @param $mode
+     * @return bool
+     */
+    public static function isUdp($mode)
+    {
+        return in_array($mode, [SWOOLE_SOCK_UDP, SWOOLE_UDP, SWOOLE_UDP6, SWOOLE_SOCK_UDP6]);
     }
 
 
@@ -372,12 +388,11 @@ class Server extends HttpService
      */
     private function startRpcService(): Packet|Websocket|Receive|Http|null
     {
-        $rpcService = Config::get('rpc.enable', []);
-        if ($rpcService === true) {
-            /** @var Service $service */
-            $service = Snowflake::app()->get('rpc-service');
-            $service->instance($this->swoole);
+        $rpcService = Config::get('rpc', []);
+        if (empty($rpcService)) {
+            return $this->swoole;
         }
+        $this->addListener($rpcService);
         return $this->swoole;
     }
 
@@ -394,17 +409,13 @@ class Server extends HttpService
         if (is_array($config['settings'] ?? null)) {
             $settings = array_merge($settings, $config['settings']);
         }
-        $this->swoole = $this->createServer($class, $config);
-        $settings['daemonize'] = $this->daemon;
-        if (!isset($settings['pid_file'])) {
-            $settings['pid_file'] = PID_PATH;
-        }
-
         $this->debug(Snowflake::listen($config));
-        $this->swoole->set($settings);
-        $this->onProcessListener();
-
-        return $this->swoole;
+        $this->swoole = $this->createServer($class, $config);
+        $this->swoole->set(array_merge($settings, [
+            'daemonize' => $this->daemon,
+            'pid_file'  => $settings['pid_file'] ?? PID_PATH
+        ]));
+        return $this->onProcessListener();
     }
 
 
@@ -420,16 +431,6 @@ class Server extends HttpService
 
 
     /**
-     * @param $listen
-     * @return bool
-     */
-    #[Pure] public function isListen($listen): bool
-    {
-        return in_array($listen, $this->listenTypes);
-    }
-
-
-    /**
      * @param $config
      * @param $newListener
      * @return Packet|Websocket|Receive|Http|null
@@ -437,16 +438,10 @@ class Server extends HttpService
      * @throws ReflectionException
      * @throws Exception
      */
-    private function onListenerBind($config, $newListener): Packet|Websocket|Receive|Http|null
+    private function onListenerBind($config): Packet|Websocket|Receive|Http|null
     {
-        if (!in_array($config['type'], [self::HTTP, self::TCP, self::PACKAGE])) {
-            throw new Exception('Unknown server type(' . $config['type'] . ').');
-        }
-        if ($config['type'] == self::HTTP && !$this->swoole->getCallback('request')) {
-            $this->onBindCallback('request', [make(OnRequest::class), 'onHandler']);
-        } else {
-            $this->noHttp($newListener, $config);
-        }
+        $this->bindServerEvent($config['type']);
+
         $this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
         $this->listenTypes[] = $config['type'];
         return $this->swoole;
@@ -458,14 +453,20 @@ class Server extends HttpService
      * @param $config
      * @throws Exception
      */
-    private function noHttp($newListener, $config)
+    private function bindServerEvent($type = self::TCP)
     {
-        $this->onBindCallback('connect', [make(OnConnect::class), 'onHandler']);
-        $this->onBindCallback('close', [make(OnClose::class), 'onHandler']);
-        if ($config['type'] == self::TCP) {
-            $this->onBindCallback('receive', [make(OnReceive::class), 'onHandler']);
+        if (in_array($type, [self::PACKAGE, self::TCP])) {
+            $this->onBindCallback('connect', [make(OnConnect::class), 'onHandler']);
+            $this->onBindCallback('close', [make(OnClose::class), 'onHandler']);
+            if ($type == self::PACKAGE) {
+                $this->onBindCallback('packet', [make(OnPacket::class), 'onHandler']);
+            } else if ($type == self::TCP) {
+                $this->onBindCallback('receive', [make(OnReceive::class), 'onHandler']);
+            }
+        } else if ($type === self::HTTP) {
+            $this->onBindCallback('request', [make(OnRequest::class), 'onHandler']);
         } else {
-            $this->onBindCallback('packet', [make(OnPacket::class), 'onHandler']);
+            throw new Exception('Unknown server type(' . $type . ').');
         }
     }
 

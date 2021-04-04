@@ -36,7 +36,7 @@ class KafkaProviders extends Providers
 			return;
 		}
 
-		$kafkaServers = Config::get('kafka.servers', []);
+		$kafkaServers = Config::get('kafka.consumers', []);
 		if (empty($kafkaServers)) {
 			return;
 		}

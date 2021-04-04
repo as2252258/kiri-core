@@ -588,6 +588,26 @@ if (!function_exists('listen')) {
 }
 
 
+if (!function_exists('event')) {
+
+
+    /**
+     * @param $name
+     * @param $callback
+     * @param $params
+     * @param $isAppend
+     * @throws Exception
+     * @throws Exception
+     */
+    function event($name, $callback, $params = [], $isAppend = true)
+    {
+        $event = Snowflake::app()->getEvent();
+        $event->on($name, $callback, $params, $isAppend);
+    }
+
+}
+
+
 if (!function_exists('alias')) {
 
     /**
