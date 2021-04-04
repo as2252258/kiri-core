@@ -186,7 +186,7 @@ class Producer extends Component
         }
 
         foreach ($message as $value) {
-            $producerTopic->produce(RD_KAFKA_PARTITION_UA, 0, $value, $key);
+            $producerTopic->produce(RD_KAFKA_PARTITION_UA, 0, swoole_serialize($value), $key);
             $producer->poll(0);
         }
         $this->flush($producer);
