@@ -116,7 +116,7 @@ use {$model_namespace}\\{$managerName};
 			if (str_contains($html, ' function ' . $val . '(')) {
 				continue;
 			}
-			$html .= $this->{'controllerMethod' . str_replace('action', '', $val)}($this->fields, $managerName, $managerName) . "\n";
+			$html .= $this->{'controllerMethod' . str_replace('action', '', $val)}($this->fields, $managerName, $managerName, $path) . "\n";
 		}
 
 		$html .= '
@@ -166,17 +166,20 @@ use {$model_namespace}\\{$managerName};
 	 * @param $fields
 	 * @param $className
 	 * @param null $object
+	 * @param $path
 	 * @return string
 	 * 新增
 	 */
-	public function controllerMethodAdd($fields, $className, $object = NULL): string
+	public function controllerMethodAdd($fields, $className, $object, $path): string
 	{
+		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
+		$_path = lcfirst(rtrim($_path, '/'));
 		return '
     /**
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . lcfirst($className) . '/add", method: "POST")]
+	#[Route(uri: "' . $_path . '/add", method: "POST")]
 	#[Middleware(middleware: [])]
 	public function actionAdd(): string
 	{
@@ -215,17 +218,21 @@ use {$model_namespace}\\{$managerName};
 	 * @param $fields
 	 * @param $className
 	 * @param null $object
+	 * @param array $path
 	 * @return string
 	 * 构建更新
 	 */
-	public function controllerMethodUpdate($fields, $className, $object = NULL): string
+	public function controllerMethodUpdate($fields, $className, $object = NULL, $path = []): string
 	{
+		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
+		$_path = lcfirst(rtrim($_path, '/'));
+
 		return '
     /**
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . lcfirst($className) . '/update", method: "POST")]
+	#[Route(uri: "' . $_path . '/update", method: "POST")]
 	#[Middleware(middleware: [])]
 	public function actionUpdate(): string
 	{
@@ -246,17 +253,21 @@ use {$model_namespace}\\{$managerName};
 	 * @param $fields
 	 * @param $className
 	 * @param null $object
+	 * @param array $path
 	 * @return string
 	 * 构建更新
 	 */
-	public function controllerMethodBatchDelete($fields, $className, $object = NULL): string
+	public function controllerMethodBatchDelete($fields, $className, $object = NULL, $path = []): string
 	{
+		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
+		$_path = lcfirst(rtrim($_path, '/'));
+
 		return '
     /**
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . lcfirst($className) . '/batch-delete", method: "POST")]
+	#[Route(uri: "' . $_path . '/batch-delete", method: "POST")]
 	#[Middleware(middleware: [])]
 	public function actionBatchDelete(): string
 	{
@@ -277,17 +288,21 @@ use {$model_namespace}\\{$managerName};
 	 * @param $fields
 	 * @param $className
 	 * @param $managerName
+	 * @param array $path
 	 * @return string
 	 * 构建详情
 	 */
-	public function controllerMethodDetail($fields, $className, $managerName): string
+	public function controllerMethodDetail($fields, $className, $managerName, $path = []): string
 	{
+		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
+		$_path = lcfirst(rtrim($_path, '/'));
+
 		return '
     /**
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . lcfirst($className) . '/detail", method: "POST")]
+	#[Route(uri: "' . $_path . '/detail", method: "POST")]
 	#[Middleware(middleware: [])]
     public function actionDetail(): string
     {
@@ -303,17 +318,21 @@ use {$model_namespace}\\{$managerName};
 	 * @param $fields
 	 * @param $className
 	 * @param $managerName
+	 * @param $path
 	 * @return string
 	 * 构建删除操作
 	 */
-	public function controllerMethodDelete($fields, $className, $managerName): string
+	public function controllerMethodDelete($fields, $className, $managerName, $path): string
 	{
+		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
+		$_path = lcfirst(rtrim($_path, '/'));
+
 		return '
     /**
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . lcfirst($className) . '/delete", method: "POST")]
+	#[Route(uri: "' . $_path . '/delete", method: "POST")]
 	#[Middleware(middleware: [])]
     public function actionDelete(): string
     {
@@ -334,18 +353,21 @@ use {$model_namespace}\\{$managerName};
 	 * @param $fields
 	 * @param $className
 	 * @param $managerName
-	 * @param null $object
+	 * @param array $path
 	 * @return string
 	 * 构建查询列表
 	 */
-	public function controllerMethodList($fields, $className, $managerName, $object = NULL): string
+	public function controllerMethodList($fields, $className, $managerName, $path = []): string
 	{
+		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
+		$_path = lcfirst(rtrim($_path, '/'));
+
 		return '
     /**
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . lcfirst($className) . '/list", method: "POST")]
+	#[Route(uri: "' . $_path . '/list", method: "POST")]
 	#[Middleware(middleware: [])]
     public function actionList(): string
     {        
