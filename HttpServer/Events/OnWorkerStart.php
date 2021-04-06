@@ -39,13 +39,10 @@ class OnWorkerStart extends Callback
 
         name($server->worker_pid, $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker');
 
-        $loader = Snowflake::app()->get(ServerInotify::class)->getLoader();
-        var_dump($loader);
-
         if ($worker_id >= $server->setting['worker_num']) {
-            $this->onTask($server, $worker_id, $loader);
+            $this->onTask($server, $worker_id);
         } else {
-            $this->onWorker($server, $worker_id, $loader);
+            $this->onWorker($server, $worker_id);
         }
     }
 
@@ -55,13 +52,11 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @throws Exception
      */
-    public function onTask(Server $server, int $worker_id, Loader $loader)
+    public function onTask(Server $server, int $worker_id)
     {
         putenv('environmental=' . Snowflake::TASK);
 
         Snowflake::setTaskId($server->worker_pid);
-
-        $loader->loadByDirectory(MODEL_PATH);
 
         fire(Event::SERVER_TASK_START);
     }
@@ -72,12 +67,10 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @throws Exception
      */
-    public function onWorker(Server $server, int $worker_id, Loader $loader)
+    public function onWorker(Server $server, int $worker_id)
     {
         Snowflake::setWorkerId($server->worker_pid);
         putenv('environmental=' . Snowflake::WORKER);
-
-        $loader->loadByDirectory(APP_PATH);
 
         try {
             fire(Event::SERVER_WORKER_START, [$worker_id]);
