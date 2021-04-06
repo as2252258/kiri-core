@@ -74,6 +74,7 @@ use Snowflake\Core\JSON;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Controller;
+use use JetBrains\PhpStorm\ArrayShape;
 use {$model_namespace}\\{$managerName};
 ";
 		}
@@ -198,6 +199,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return array
 	 * @throws Exception
 	 */
+	#[ArrayShape([])]
 	private function loadParam(): array
 	{
 		return [' . $this->getData($fields) . '
