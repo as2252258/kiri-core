@@ -423,6 +423,27 @@ class HttpParams
 		return $value;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string|null $default
+	 *
+	 * @return string|null
+	 * @throws RequestException
+	 */
+	public function date(string $name, string $default = NULL): string|null
+	{
+		$value = $this->required($name, false);
+		if ($value === null) {
+			return $default;
+		}
+		$match = '/^\d{4}.*?([1-12]).*([1-31])$/';
+		$match = preg_match($match, $value, $result);
+		if (!$match || $result[0] != $value) {
+			throw new RequestException('The request param :attribute format error', 4001);
+		}
+		return $value;
+	}
+
 
 	/**
 	 * @param string $name
