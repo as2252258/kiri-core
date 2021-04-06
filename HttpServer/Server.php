@@ -220,7 +220,7 @@ class Server extends HttpService
      * @throws ConfigException
      * @throws Exception
      */
-    public function onProcessListener(): mixed
+    public function onProcessListener(): \Swoole\Server|null|Packet|Receive|Http|Websocket
     {
         if (!($this->swoole instanceof \Swoole\Server)) {
             return $this->swoole;
@@ -284,12 +284,13 @@ class Server extends HttpService
     }
 
 
-    /**
-     * @param $config
-     * @return mixed
-     * @throws Exception
-     */
-    private function create($config): mixed
+	/**
+	 * @param $config
+	 * @return \Swoole\Server|Packet|Receive|Http|Websocket|null
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+    private function create($config): \Swoole\Server|null|Packet|Receive|Http|Websocket
     {
         $settings = Config::get('settings', []);
         if (!isset($this->server[$config['type']])) {
@@ -322,8 +323,6 @@ class Server extends HttpService
      * @param $config
      * @param $settings
      * @return \Swoole\Server|Packet|Receive|Http|Websocket|null
-     * @throws NotFindClassException
-     * @throws ReflectionException
      * @throws Exception
      */
     private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
@@ -341,8 +340,6 @@ class Server extends HttpService
     /**
      * @param $config
      * @return Http|Packet|Receive|Websocket|null
-     * @throws NotFindClassException
-     * @throws ReflectionException
      * @throws Exception
      */
     private function addListener($config): Packet|Websocket|Receive|Http|null
@@ -432,10 +429,7 @@ class Server extends HttpService
 
     /**
      * @param $config
-     * @param $newListener
      * @return Packet|Websocket|Receive|Http|null
-     * @throws NotFindClassException
-     * @throws ReflectionException
      * @throws Exception
      */
     private function onListenerBind($config): Packet|Websocket|Receive|Http|null
@@ -448,11 +442,10 @@ class Server extends HttpService
     }
 
 
-    /**
-     * @param $newListener
-     * @param $config
-     * @throws Exception
-     */
+	/**
+	 * @param string $type
+	 * @throws Exception
+	 */
     private function bindServerEvent($type = self::TCP)
     {
         if (in_array($type, [self::PACKAGE, self::TCP])) {

@@ -35,7 +35,7 @@ class HttpFilter extends BaseObject
 	/**
 	 * @param string $className
 	 * @param string $method
-	 * @return bool
+	 * @return bool|Validator
 	 * @throws Exception
 	 */
 	public function check(string $className, string $method): bool|Validator
