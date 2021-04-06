@@ -334,9 +334,7 @@ use {$model_namespace}\\{$managerName};
 	 * @throws Exception
 	 */
     public function actionList(): string
-    {
-        $pWhere = array();' . $this->getWhere($fields) . '
-        
+    {        
         //分页处理
 	    $count   = $this->input->get(\'count\', -1);
 	    $order   = $this->input->get(\'order\', \'id\');
@@ -347,7 +345,7 @@ use {$model_namespace}\\{$managerName};
 	    }
 	    
 	    //列表输出
-	    $model = ' . $managerName . '::find()->where($pWhere)->orderBy($order);
+	    $model = ' . $managerName . '::find()->where($this->input->gets())->orderBy($order);
 	    
         if((int) $count === 1){
 		    $count = $model->count();
