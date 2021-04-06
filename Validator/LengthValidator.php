@@ -60,7 +60,7 @@ class LengthValidator extends BaseValidator
 				return $this->addError('The param :attribute length overflow');
 			}
 		} else {
-			if (is_numeric($value) && strlen(floatval($value)) > $this->value) {
+			if (is_numeric($value) && strlen((string)$value) > $this->value) {
 				return $this->addError('The param :attribute length overflow');
 			}
 			if (strlen($value) > $this->value) {
@@ -83,7 +83,7 @@ class LengthValidator extends BaseValidator
 				return $this->addError('The param :attribute length error');
 			}
 		} else {
-			if (is_numeric($value) && strlen(floatval($value)) < $this->value) {
+			if (is_numeric($value) && strlen((string)$value) < $this->value) {
 				return $this->addError('The param :attribute length overflow');
 			}
 			if (strlen($value) < $this->value) {
@@ -106,7 +106,7 @@ class LengthValidator extends BaseValidator
 				return $this->addError('The param :attribute length error');
 			}
 		} else {
-			if (is_numeric($value) && mb_strlen(floatval($value)) !== $this->value) {
+			if (is_numeric($value) && strlen((string)$value) !== $this->value) {
 				return $this->addError('The param :attribute length overflow');
 			}
 			if (mb_strlen($value) !== $this->value) {

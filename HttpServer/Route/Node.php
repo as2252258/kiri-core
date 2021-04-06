@@ -409,26 +409,6 @@ class Node extends HttpService
         return $this->childes[$field];
     }
 
-    /**
-     * @param $rule
-     * @return $this
-     */
-    public function filter($rule): static
-    {
-        if (empty($rule)) {
-            return $this;
-        }
-        if (!isset($rule[0])) {
-            $rule = [$rule];
-        }
-        foreach ($rule as $value) {
-            if (empty($value)) {
-                continue;
-            }
-            $this->rules[] = $value;
-        }
-        return $this;
-    }
 
     /**
      * @param string $search
@@ -477,76 +457,22 @@ class Node extends HttpService
 
 
     /**
-     * @param int $limit
-     * @param int $duration
-     * @param bool $isBindConsumer
-     * @return $this
-     * @throws Exception
-     */
-    public function limits(int $limit, int $duration = 60, bool $isBindConsumer = false): static
-    {
-        $limits = Snowflake::app()->getLimits();
-        $limits->addLimits($this->path, $limit, $duration, $isBindConsumer);
-        return $this;
-    }
-
-
-    /**
      * @param array|Closure|string $class
      * @return Node
      * @throws ReflectionException
      * @throws NotFindClassException
      * @throws Exception
      */
-    public function addMiddleware(Closure|string|array $class): static
+    public function addMiddleware(Closure|array $class): static
     {
         if (empty($class)) return $this;
-        if (is_string($class)) {
-            $class = $this->resolve_aop($class);
-            if ($class === null) {
-                return $this;
-            }
-        }
-        if (is_array($class)) {
-            if (isset($class[0]) && is_object($class[0])) {
-                $class = [$class];
-            }
-        } else {
-            $class = [$class];
-        }
         foreach ($class as $closure) {
-            if (is_string($closure)) {
-                $closure = [Snowflake::createObject($closure), 'onHandler'];
-            }
             if (in_array($closure, $this->middleware)) {
                 continue;
             }
             $this->middleware[] = $closure;
         }
         return $this;
-    }
-
-
-    /**
-     * @param string $class
-     * @return array|null
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     */
-    private function resolve_aop(string $class): array|null
-    {
-        $class = Snowflake::createObject($class);
-        if ($class instanceof \HttpServer\IInterface\Middleware) {
-            return [$class, 'onHandler'];
-        } else if ($class instanceof Interceptor) {
-            return [$class, 'Interceptor'];
-        } else if ($class instanceof After) {
-            return [$class, 'onHandler'];
-        } else if ($class instanceof Limits) {
-            return [$class, 'next'];
-        } else {
-            return null;
-        }
     }
 
 
