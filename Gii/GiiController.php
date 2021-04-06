@@ -69,6 +69,8 @@ namespace {$namespace};
 			$import = "use Snowflake;
 use Exception;
 use Annotation\Target;
+use Annotation\Route\Middleware;
+use Annotation\Route\Route;
 use Snowflake\Core\Str;
 use Snowflake\Core\JSON;
 use HttpServer\Http\Request;
@@ -174,6 +176,8 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
+	#[Route(uri: "' . lcfirst($className) . '/add", method: "POST")]
+	#[Middleware(middleware: [])]
 	public function actionAdd(): string
 	{
 		$model = new ' . $className . '();
@@ -221,6 +225,8 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
+	#[Route(uri: "' . lcfirst($className) . '/update", method: "POST")]
+	#[Middleware(middleware: [])]
 	public function actionUpdate(): string
 	{
 		$model = ' . $className . '::findOne($this->input->post(\'id\', 0));
@@ -250,6 +256,8 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
+	#[Route(uri: "' . lcfirst($className) . '/batch-delete", method: "POST")]
+	#[Middleware(middleware: [])]
 	public function actionBatchDelete(): string
 	{
 		$_key = $this->input->array(\'ids\');		
@@ -279,6 +287,8 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
+	#[Route(uri: "' . lcfirst($className) . '/detail", method: "POST")]
+	#[Middleware(middleware: [])]
     public function actionDetail(): string
     {
         $model = ' . $managerName . '::findOne($this->input->get(\'id\'));
@@ -303,6 +313,8 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
+	#[Route(uri: "' . lcfirst($className) . '/delete", method: "POST")]
+	#[Middleware(middleware: [])]
     public function actionDelete(): string
     {
 		$_key = $this->input->int(\'id\', true);
@@ -333,6 +345,8 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
+	#[Route(uri: "' . lcfirst($className) . '/list", method: "POST")]
+	#[Middleware(middleware: [])]
     public function actionList(): string
     {        
         //分页处理
