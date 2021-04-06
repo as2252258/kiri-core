@@ -241,13 +241,9 @@ abstract class GiiBase
 					foreach ($attribute->getArguments() as $_key => $argument) {
 						$argument = $this->resolveArray($argument);
 						if (is_numeric($_key)) {
-							$_array[] = '\'' . $argument . '\'';
+							$_array[] = $argument;
 						} else {
-							if (is_numeric($_key)) {
-								$_array[] = $argument;
-							} else {
-								$_array[] = $_key . ': ' . $argument . '';
-							}
+							$_array[] = $_key . ': ' . $argument . '';
 						}
 					}
 					$over .= "	#[" . end($explode) . "(" . implode(',', $_array) . ")]
