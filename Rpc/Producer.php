@@ -174,6 +174,7 @@ class Producer extends Component
 	}
 
 
+
 	/**
 	 * @param $name
 	 * @param $config
