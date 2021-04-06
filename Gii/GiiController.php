@@ -173,7 +173,7 @@ use {$model_namespace}\\{$managerName};
 	public function controllerMethodAdd($fields, $className, $object, $path): string
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
-		$_path = lcfirst(rtrim($_path, '/')) . '/' . $className;
+		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 		return '
     /**
 	 * @return string
@@ -225,7 +225,7 @@ use {$model_namespace}\\{$managerName};
 	public function controllerMethodUpdate($fields, $className, $object = NULL, $path = []): string
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
-		$_path = lcfirst(rtrim($_path, '/')) . '/' . $className;
+		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
 		return '
     /**
@@ -260,7 +260,7 @@ use {$model_namespace}\\{$managerName};
 	public function controllerMethodBatchDelete($fields, $className, $object = NULL, $path = []): string
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
-		$_path = lcfirst(rtrim($_path, '/')) . '/' . $className;
+		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
 		return '
     /**
@@ -295,7 +295,7 @@ use {$model_namespace}\\{$managerName};
 	public function controllerMethodDetail($fields, $className, $managerName, $path = []): string
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
-		$_path = lcfirst(rtrim($_path, '/')) . '/' . $className;
+		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
 		return '
     /**
@@ -325,7 +325,7 @@ use {$model_namespace}\\{$managerName};
 	public function controllerMethodDelete($fields, $className, $managerName, $path): string
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
-		$_path = lcfirst(rtrim($_path, '/')) . '/' . $className;
+		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
 		return '
     /**
@@ -360,7 +360,7 @@ use {$model_namespace}\\{$managerName};
 	public function controllerMethodList($fields, $className, $managerName, $path = []): string
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
-		$_path = lcfirst(rtrim($_path, '/')) . '/' . $className;
+		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
 		return '
     /**
