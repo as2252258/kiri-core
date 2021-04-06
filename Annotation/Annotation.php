@@ -18,66 +18,76 @@ class Annotation extends Component
 {
 
 
-	private Loader $_loader;
+    private Loader $_loader;
 
 
-	public function init(): void
-	{
-		$this->_loader = new Loader();
-	}
+    public function init(): void
+    {
+        $this->_loader = new Loader();
+    }
 
 
-	/**
-	 * @param string $className
-	 * @param string $method
-	 * @return array 根据类名获取注解
-	 * 根据类名获取注解
-	 */
-	public function getMethods(string $className, string $method = ''): mixed
-	{
-		return $this->_loader->getMethod($className, $method);
-	}
+    /**
+     * @return Loader
+     */
+    public function getLoader(): Loader
+    {
+        return $this->_loader;
+    }
 
 
-	/**
-	 * @param object $class
-	 */
-	public function injectProperty(object $class)
-	{
-		$this->_loader->injectProperty(get_class($class), $class);
-	}
+    /**
+     * @param string $className
+     * @param string $method
+     * @return array 根据类名获取注解
+     * 根据类名获取注解
+     */
+    public function getMethods(string $className, string $method = ''): mixed
+    {
+        return $this->_loader->getMethod($className, $method);
+    }
 
 
-	/**
-	 * @param string $path
-	 * @param string $namespace
-	 * @param string $alias
-	 * @return void
-	 * @throws Exception
-	 */
-	public function read(string $path, string $namespace, string $alias = 'root'): void
-	{
-
-		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
-	}
+    /**
+     * @param object $class
+     */
+    public function injectProperty(object $class)
+    {
+        $this->_loader->injectProperty(get_class($class), $class);
+    }
 
 
-	/**
-	 * @param string $dir
-	 */
-	public function instanceDirectoryFiles(string $dir)
-	{
-		$this->_loader->loadByDirectory($dir);
-	}
+    /**
+     * @param string $path
+     * @param string $namespace
+     * @param string $alias
+     * @return void
+     * @throws Exception
+     */
+    public function read(string $path, string $namespace, string $alias = 'root'): void
+    {
+
+        $this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
+    }
 
 
-	/**
-	 * @param string $filename
-	 * @return mixed
-	 */
-	public function getFilename(string $filename): mixed
-	{
-		return $this->_loader->getClassByFilepath($filename);
-	}
+    /**
+     * @param string $dir
+     * @throws Exception
+     */
+    public function instanceDirectoryFiles(string $dir)
+    {
+        $this->_loader->loadByDirectory($dir);
+    }
+
+
+    /**
+     * @param string $filename
+     * @return mixed
+     */
+    public function getFilename(string $filename): mixed
+    {
+        return $this->_loader->getClassByFilepath($filename);
+    }
 
 }

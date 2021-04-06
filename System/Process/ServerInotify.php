@@ -34,6 +34,26 @@ class ServerInotify extends Process
 
     private int $int = -1;
 
+
+    /**
+     * @throws Exception
+     */
+    private function loadAnnotation()
+    {
+        $annotation = Snowflake::app()->getAnnotation();
+        $annotation->read(directory('app'), 'App');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getLoader()
+    {
+        return $this->getLoader();
+    }
+
+
     /**
      * @param \Swoole\Process $process
      * @throws Exception
@@ -42,6 +62,9 @@ class ServerInotify extends Process
     {
         set_error_handler([$this, 'onErrorHandler']);
         $this->dirs = Config::get('inotify', [APP_PATH]);
+
+        $this->loadAnnotation();
+
         if (extension_loaded('inotify')) {
             $this->inotify = inotify_init();
             $this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
@@ -194,14 +217,17 @@ class ServerInotify extends Process
     {
         $this->isReloading = true;
         $this->trigger_reload();
-        $this->clearWatch();
-        foreach ($this->dirs as $root) {
-            $this->watch($root);
-        }
-        $this->int = -1;
-        $this->isReloading = FALSE;
-        $this->isReloadingOut = FALSE;
-        $this->md5Map = [];
+
+        $this->exit(0);
+
+//        $this->clearWatch();
+//        foreach ($this->dirs as $root) {
+//            $this->watch($root);
+//        }
+//        $this->int = -1;
+//        $this->isReloading = FALSE;
+//        $this->isReloadingOut = FALSE;
+//        $this->md5Map = [];
     }
 
     /**
@@ -211,14 +237,18 @@ class ServerInotify extends Process
     {
         $this->isReloading = true;
         $this->trigger_reload();
-        $this->int = -1;
 
-        $this->loadDirs();
-
-        $this->isReloading = FALSE;
-        $this->isReloadingOut = FALSE;
-
-        $this->tick();
+        $this->exit(0);
+//
+//
+//        $this->int = -1;
+//
+//        $this->loadDirs();
+//
+//        $this->isReloading = FALSE;
+//        $this->isReloadingOut = FALSE;
+//
+//        $this->tick();
     }
 
 
