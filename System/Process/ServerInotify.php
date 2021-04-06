@@ -67,6 +67,15 @@ class ServerInotify extends Process
         set_error_handler([$this, 'onErrorHandler']);
         $this->dirs = Config::get('inotify', [APP_PATH]);
 
+        Coroutine\go(function () use ($process) {
+            $workerId = $process->read(3);
+
+            $annotation = Snowflake::app()->getAnnotation();
+
+            $server = Snowflake::app()->getSwoole();
+            $server->sendMessage($annotation->getLoader(),(int) $workerId);
+        });
+
         $this->loadAnnotation();
 
         if (extension_loaded('inotify')) {
