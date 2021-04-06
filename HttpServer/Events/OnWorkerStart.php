@@ -39,6 +39,10 @@ class OnWorkerStart extends Callback
 
         name($server->worker_pid, $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker');
 
+        /** @var ServerInotify $inotify */
+        $inotify = Snowflake::app()->get(ServerInotify::class);
+        $inotify->getLoader($worker_id);
+
         if ($worker_id >= $server->setting['worker_num']) {
             $this->onTask($server, $worker_id);
         } else {

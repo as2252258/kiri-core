@@ -46,12 +46,15 @@ class ServerInotify extends Process
 
 
     /**
-     * @return mixed
+     * @param $workerId
+     * @throws Exception
      */
-    public function getLoader()
+    public function getLoader($workerId)
     {
         $annotation = Snowflake::app()->getAnnotation();
-        return $annotation->getLoader();
+
+        $server = Snowflake::app()->getSwoole();
+        $server->sendMessage($annotation->getLoader(), $workerId);
     }
 
 
@@ -74,16 +77,6 @@ class ServerInotify extends Process
                 if (!is_dir($dir)) continue;
                 $this->watch($dir);
             }
-
-            $worker = Snowflake::app()->getSwoole();
-
-            $workerNum = $worker->setting['worker_num'];
-            $task_worker_num = $worker->setting['task_worker_num'] ?? 0;
-
-            for ($i = 0; $i < $workerNum + $task_worker_num; $i++) {
-                $worker->sendMessage(['reload', $this->getLoader()], $i);
-            }
-
             Event::add($this->inotify, [$this, 'check']);
             Event::wait();
         } else {
