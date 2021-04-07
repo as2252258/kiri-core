@@ -49,9 +49,8 @@ class OnReceive extends Callback
 	{
 		try {
 			\Swoole\Coroutine\defer(function (){
-				$event = Snowflake::app()->getEvent();
-				$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
-				\logger()->insert();
+				fire(Event::SYSTEM_RESOURCE_RELEASES);
+				\logger_insert();
 			});
 			$request = $this->_request($fd, $data, $reID);
 			if (($node = $this->router->find_path($request)) === null) {
@@ -68,20 +67,6 @@ class OnReceive extends Callback
 			$error = ['state' => 500, 'message' => $exception->getMessage()];
 			return $server->send($fd, Json::encode($error));
 		}
-	}
-
-
-	/**
-	 * @param $fd
-	 * @param $data
-	 * @param $reID
-	 * @return Request
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 */
-	private function _request($fd, $data, $reID): Request
-	{
-		return Request::createListenRequest($fd, $data, $reID);
 	}
 
 

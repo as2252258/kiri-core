@@ -6,14 +6,17 @@ namespace HttpServer\Abstracts;
 
 use Database\Connection;
 use Exception;
+use HttpServer\Http\Request;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
+use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Error\LoggerProcess;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Process;
 use Swoole\Server;
@@ -63,6 +66,19 @@ abstract class Callback extends HttpService
         return $mail;
     }
 
+
+	/**
+	 * @param $fd
+	 * @param $data
+	 * @param $reID
+	 * @return Request
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	protected function _request($fd, $data, $reID): Request
+	{
+		return Request::createListenRequest($fd, $data, $reID);
+	}
 
     /**
      * @param $message

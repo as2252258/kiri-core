@@ -4,13 +4,12 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Exception;
 use HttpServer\Abstracts\Callback;
-use HttpServer\Http\Request;
 use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
-use Exception;
 
 /**
  * Class OnPacket
@@ -35,10 +34,13 @@ class OnPacket extends Callback
 	 */
 	public function onHandler(Server $server, string $data, array $clientInfo): mixed
 	{
+		[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
 		try {
-			$request = Request::createListenRequest($clientInfo, $server, $data);
-
-			[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
+			\Swoole\Coroutine\defer(function () {
+				fire(Event::SYSTEM_RESOURCE_RELEASES);
+				\logger_insert();
+			});
+			$request = $this->_request($clientInfo, $server, $data);
 
 			$router = Snowflake::app()->getRouter();
 			if (($node = $router->find_path($request)) === null) {
@@ -56,10 +58,7 @@ class OnPacket extends Callback
 
 			$response = Json::encode(['state' => 500, 'message' => $exception->getMessage()]);
 
-			return $server->sendto($clientInfo['address'], $clientInfo['port'], $response);
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
+			return $server->sendto($host, $port, $response);
 		}
 	}
 
