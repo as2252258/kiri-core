@@ -44,6 +44,7 @@ class OnWorkerStart extends Callback
         /** @var Loader $runtime */
         $runtime = unserialize(file_get_contents(storage('runtime.php')));
         $annotation->setLoader($runtime);
+
         if ($worker_id >= $server->setting['worker_num']) {
             $annotation->instanceDirectoryFiles(MODEL_PATH);
 

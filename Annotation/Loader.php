@@ -273,7 +273,7 @@ class Loader extends BaseObject
         $out_path = '';
         foreach ($directory as $key => $value) {
             $out_path .= DIRECTORY_SEPARATOR . $value;
-            var_dump($out_path, $output);
+            var_dump($out_path . '::' . $output);
             if ($out_path === $output) {
                 break;
             }
