@@ -266,7 +266,9 @@ class Loader extends BaseObject
         $tree = null;
         $directory = $this->splitDirectory($filePath);
 
-        $output = DIRECTORY_SEPARATOR . rtrim($output, '/');
+        if (!empty($output)) {
+            $output = DIRECTORY_SEPARATOR . rtrim($output, '/');
+        }
 
         $out_path = '';
         foreach ($directory as $key => $value) {
