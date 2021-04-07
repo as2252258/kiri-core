@@ -35,6 +35,25 @@ class HttpHeaders
 		$this->headers = $headers;
 	}
 
+
+	/**
+	 * @param string $uri
+	 */
+	public function setRequestUri(string $uri)
+	{
+		$this->headers['request_uri'] = $uri;
+	}
+
+
+	/**
+	 * @param string $method
+	 */
+	public function setRequestMethod(string $method)
+	{
+		$this->headers['request_method'] = $method;
+	}
+
+
 	/**
 	 * @param $name
 	 * @param $value

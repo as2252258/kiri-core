@@ -6,6 +6,8 @@ namespace HttpServer\Events;
 
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Request;
+use HttpServer\Route\Router;
+use Snowflake\Application;
 use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -25,6 +27,15 @@ class OnReceive extends Callback
 	public string $host = '';
 
 
+	private Router $router;
+
+
+	public function init()
+	{
+		$this->router = Snowflake::app()->getRouter();
+	}
+
+
 	/**
 	 * @param Server $server
 	 * @param int $fd
@@ -36,9 +47,8 @@ class OnReceive extends Callback
 	public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
 	{
 		try {
-			$request = Request::createListenRequest($fd, $server, $data, $reID);
-			$router = Snowflake::app()->getRouter();
-			if (($node = $router->find_path($request)) === null) {
+			$request = Request::createListenRequest($fd, $data, $reID);
+			if (($node = $this->router->find_path($request)) === null) {
 				return $server->send($fd, Json::encode(['state' => 404]));
 			}
 			$dispatch = $node->dispatch();
