@@ -356,13 +356,9 @@ class Loader extends BaseObject
             if ($annotations === null) {
                 continue;
             }
-
-            if (isset($annotations['target']) && !empty($annotations['target'])) {
-                foreach ($annotations['target'] as $value) {
-                    $value->execute([$annotations['handler']]);
-                }
+            foreach ($annotations['target'] ?? [] as $value) {
+                $value->execute([$annotations['handler']]);
             }
-
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
                     if (!($value instanceof \Annotation\Attribute)) {
