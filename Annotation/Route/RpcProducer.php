@@ -22,6 +22,9 @@ use Snowflake\Snowflake;
 
 	private string $uri = '';
 
+	const PROTOCOL_JSON = 'json';
+	const PROTOCOL_SERIALIZE = 'serialize';
+
 
 	/**
 	 * Route constructor.
