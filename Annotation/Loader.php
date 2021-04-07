@@ -238,7 +238,6 @@ class Loader extends BaseObject
     }
 
 
-
     /**
      * @param string $filePath
      * @param string $className
@@ -353,11 +352,11 @@ class Loader extends BaseObject
             return;
         }
         foreach ($classes as $className) {
-            if (!isset($this->_classes[$className])) {
+            $annotations = $this->_classes[$className] ?? null;
+            if ($annotations === null) {
                 continue;
             }
 
-            $annotations = $this->_classes[$className];
             if (isset($annotations['target']) && !empty($annotations['target'])) {
                 foreach ($annotations['target'] as $value) {
                     $value->execute([$annotations['handler']]);
