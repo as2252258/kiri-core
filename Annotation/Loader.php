@@ -274,15 +274,18 @@ class Loader extends BaseObject
         $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
         array_pop($DIRECTORY);
 
-        $tree = $this->files;
+        $tree = null;
         foreach ($DIRECTORY as $value) {
             if (empty($value)) {
                 continue;
             }
-            $tree = $tree->getChild($value);
-
-            $tree->addFile($className);
+            if ($tree === null) {
+                $tree = $this->files->getChild($value);
+            } else {
+                $tree = $tree->getChild($value);
+            }
         }
+        $tree->addFile($className);
     }
 
 
