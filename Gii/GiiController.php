@@ -284,10 +284,10 @@ use {$model_namespace}\\{$managerName};
 		}
 		
 		$model = ' . $className . '::find()->in(\'id\', $_key);
-        if(!$model->delete()){
+		if (!$model->delete()) {
 			return JSON::to(500, DB_ERROR_BUSY);
         }
-        return JSON::to(0, $model);
+        return JSON::to(0, $_key);
 	}';
 	}
 
@@ -316,7 +316,7 @@ use {$model_namespace}\\{$managerName};
     public function actionDetail(): string
     {
         $model = ' . $managerName . '::findOne($this->input->get(\'id\'));
-        if(empty($model)){
+        if (empty($model)) {
             return JSON::to(404, SELECT_IS_NULL);
         }
         return JSON::to(0, $model->toArray());
@@ -353,7 +353,7 @@ use {$model_namespace}\\{$managerName};
 		if (empty($model)) {
 			return JSON::to(500, SELECT_IS_NULL);
 		}
-        if(!$model->delete()){
+        if (!$model->delete()) {
 			return JSON::to(500, $model->getLastError());
         }
         return JSON::to(0, $model);
@@ -388,19 +388,18 @@ use {$model_namespace}\\{$managerName};
         //分页处理
 	    $count   = $this->input->get(\'count\', -1);
 	    $order   = $this->input->get(\'order\', \'id\');
-	    if(!empty($order)) {
+	    if (!empty($order)) {
 	        $order .= !$this->input->get(\'isDesc\', 0) ? \' asc\' : \' desc\';
-	    }else{
+	    } else {
 	        $order = \'id desc\';
 	    }
 	    
 	    //列表输出
 	    $model = ' . $managerName . '::find()->where($this->input->gets())->orderBy($order);
-	    
-        if((int) $count === 1){
+        if ((int) $count === 1) {
 		    $count = $model->count();
 	    }
-	    if($count != -100){
+	    if ($count != -100) {
 		    $model->limit($this->input->offset() ,$this->input->size());
 	    }
 	    
