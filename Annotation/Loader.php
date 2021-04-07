@@ -305,13 +305,10 @@ class Loader extends BaseObject
                 $tree = $tree->getChild($value);
             }
         }
-
-        var_dump($tree);
         if ($tree instanceof FileTree) {
             $this->eachNode($tree->getChildes());
             $this->execute($tree->getFiles());
         }
-
         return $this;
     }
 
@@ -352,6 +349,7 @@ class Loader extends BaseObject
         if (empty($classes)) {
             return;
         }
+        var_dump($classes);
         foreach ($classes as $className) {
             if (!isset($this->_classes[$className])) {
                 continue;
