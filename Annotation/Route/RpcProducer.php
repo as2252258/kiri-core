@@ -9,7 +9,6 @@ use Exception;
 use HttpServer\Http\Request;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 
@@ -32,7 +31,7 @@ use Snowflake\Snowflake;
 	 * @param string $protocol
 	 * @param int $port
 	 */
-	#[Pure] public function __construct(public string $cmd, public string $protocol, public int $port)
+	#[Pure] public function __construct(public string $cmd, public string $protocol = self::PROTOCOL_SERIALIZE, public int $port = 443)
 	{
 		$this->uri = 'rpc/p' . $this->port . '/' . ltrim($this->cmd, '/');
 	}
@@ -41,7 +40,6 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return Router
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	public function execute(array $handler): Router
@@ -49,7 +47,8 @@ use Snowflake\Snowflake;
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
-		$router->addRoute($this->uri, $handler, Request::HTTP_CMD);
+		$router->addRoute($this->uri, $handler, Request::HTTP_CMD)
+			->setDataType($this->protocol);
 
 		return $router;
 	}
