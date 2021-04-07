@@ -349,7 +349,6 @@ class Loader extends BaseObject
         if (empty($classes)) {
             return;
         }
-        var_dump($classes);
         foreach ($classes as $className) {
             if (!isset($this->_classes[$className])) {
                 continue;
