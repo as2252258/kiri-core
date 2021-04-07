@@ -279,13 +279,11 @@ class Loader extends BaseObject
             if (empty($value)) {
                 continue;
             }
-            if ($tree === null) {
-                $tree = $this->files->getChild($value);
-            } else {
-                $tree = $tree->getChild($value);
-            }
+            $tree = $this->getTree($tree, $value);
         }
-        $tree->addFile($className);
+        if ($tree instanceof FileTree) {
+            $tree->addFile($className);
+        }
     }
 
 
@@ -302,17 +300,29 @@ class Loader extends BaseObject
             if (empty($value)) {
                 continue;
             }
-            if ($tree === null) {
-                $tree = $this->files->getChild($value);
-            } else {
-                $tree = $tree->getChild($value);
-            }
+            $tree = $this->getTree($tree, $value);
         }
         if ($tree instanceof FileTree) {
             $this->eachNode($tree->getChildes());
             $this->execute($tree->getFiles());
         }
         return $this;
+    }
+
+
+    /**
+     * @param $tree
+     * @param $value
+     * @return FileTree
+     */
+    private function getTree($tree, $value): FileTree
+    {
+        if ($tree === null) {
+            $tree = $this->files->getChild($value);
+        } else {
+            $tree = $tree->getChild($value);
+        }
+        return $tree;
     }
 
 
