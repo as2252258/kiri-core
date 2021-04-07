@@ -26,9 +26,10 @@ use Snowflake\Snowflake;
 	/**
 	 * Route constructor.
 	 * @param string $cmd
+	 * @param string $protocol
 	 * @param int $port
 	 */
-	#[Pure] public function __construct(public string $cmd, public int $port)
+	#[Pure] public function __construct(public string $cmd, public string $protocol, public int $port)
 	{
 		$this->uri = 'rpc/p' . $this->port . '/' . ltrim($this->cmd, '/');
 	}
