@@ -28,16 +28,8 @@ class OnPipeMessage extends Callback
      */
     public function onHandler(Server $server, int $src_worker_id, $message)
     {
-        if ($message instanceof Loader) {
-            if ($src_worker_id > $server->setting['worker_num']) {
-                $message->loadByDirectory(MODEL_PATH);
-            } else {
-                $message->loadByDirectory(APP_PATH);
-            }
-        } else {
-            $events = Snowflake::app()->getEvent();
-            $events->trigger(Event::PIPE_MESSAGE, [$server, $src_worker_id, $message]);
-        }
+        $events = Snowflake::app()->getEvent();
+        $events->trigger(Event::PIPE_MESSAGE, [$server, $src_worker_id, $message]);
     }
 
 }
