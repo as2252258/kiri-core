@@ -36,29 +36,6 @@ class ServerInotify extends Process
 
 
     /**
-     * @throws Exception
-     */
-    private function loadAnnotation()
-    {
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->read(directory('app'), 'App');
-    }
-
-
-    /**
-     * @param $workerId
-     * @throws Exception
-     */
-    public function getLoader($workerId)
-    {
-        $annotation = Snowflake::app()->getAnnotation();
-
-        $server = Snowflake::app()->getSwoole();
-        $server->sendMessage($annotation->getLoader(), $workerId);
-    }
-
-
-    /**
      * @param \Swoole\Process $process
      * @throws Exception
      */
@@ -66,17 +43,6 @@ class ServerInotify extends Process
     {
         set_error_handler([$this, 'onErrorHandler']);
         $this->dirs = Config::get('inotify', [APP_PATH]);
-
-        Coroutine\go(function () use ($process) {
-            $workerId = $process->read(3);
-
-            $annotation = Snowflake::app()->getAnnotation();
-
-            $server = Snowflake::app()->getSwoole();
-            $server->sendMessage($annotation->getLoader(),(int) $workerId);
-        });
-
-        $this->loadAnnotation();
 
         if (extension_loaded('inotify')) {
             $this->inotify = inotify_init();
@@ -231,16 +197,14 @@ class ServerInotify extends Process
         $this->isReloading = true;
         $this->trigger_reload();
 
-        $this->exit(0);
-
-//        $this->clearWatch();
-//        foreach ($this->dirs as $root) {
-//            $this->watch($root);
-//        }
-//        $this->int = -1;
-//        $this->isReloading = FALSE;
-//        $this->isReloadingOut = FALSE;
-//        $this->md5Map = [];
+        $this->clearWatch();
+        foreach ($this->dirs as $root) {
+            $this->watch($root);
+        }
+        $this->int = -1;
+        $this->isReloading = FALSE;
+        $this->isReloadingOut = FALSE;
+        $this->md5Map = [];
     }
 
     /**
@@ -251,17 +215,14 @@ class ServerInotify extends Process
         $this->isReloading = true;
         $this->trigger_reload();
 
-        $this->exit(0);
-//
-//
-//        $this->int = -1;
-//
-//        $this->loadDirs();
-//
-//        $this->isReloading = FALSE;
-//        $this->isReloadingOut = FALSE;
-//
-//        $this->tick();
+        $this->int = -1;
+
+        $this->loadDirs();
+
+        $this->isReloading = FALSE;
+        $this->isReloadingOut = FALSE;
+
+        $this->tick();
     }
 
 
