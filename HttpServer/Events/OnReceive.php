@@ -4,15 +4,16 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Request;
 use HttpServer\Route\Router;
-use Snowflake\Application;
+use ReflectionException;
 use Snowflake\Core\Json;
 use Snowflake\Event;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
-use Exception;
 
 /**
  * Class OnReceive
@@ -47,7 +48,12 @@ class OnReceive extends Callback
 	public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
 	{
 		try {
-			$request = Request::createListenRequest($fd, $data, $reID);
+			\Swoole\Coroutine\defer(function (){
+				$event = Snowflake::app()->getEvent();
+				$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
+				\logger()->insert();
+			});
+			$request = $this->_request($fd, $data, $reID);
 			if (($node = $this->router->find_path($request)) === null) {
 				return $server->send($fd, Json::encode(['state' => 404]));
 			}
@@ -59,13 +65,23 @@ class OnReceive extends Callback
 			return $server->send($fd, $dispatch);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'receive');
-
-			return $server->send($fd, Json::encode(['state' => 500, 'message' => $exception->getMessage()]));
-		} finally {
-			$event = Snowflake::app()->getEvent();
-			$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
+			$error = ['state' => 500, 'message' => $exception->getMessage()];
+			return $server->send($fd, Json::encode($error));
 		}
+	}
+
+
+	/**
+	 * @param $fd
+	 * @param $data
+	 * @param $reID
+	 * @return Request
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	private function _request($fd, $data, $reID): Request
+	{
+		return Request::createListenRequest($fd, $data, $reID);
 	}
 
 
