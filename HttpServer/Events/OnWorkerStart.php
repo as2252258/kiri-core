@@ -39,14 +39,18 @@ class OnWorkerStart extends Callback
 
         name($server->worker_pid, $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker');
 
+        $annotation = Snowflake::app()->getAnnotation();
+
         /** @var Loader $runtime */
         $runtime = unserialize(file_get_contents(storage('runtime.php')));
+        $annotation->setLoader($runtime);
+
         if ($worker_id >= $server->setting['worker_num']) {
-            $runtime->loadByDirectory(MODEL_PATH);
+            $annotation->instanceDirectoryFiles(MODEL_PATH);
 
             $this->onTask($server, $worker_id);
         } else {
-            $runtime->loadByDirectory(APP_PATH);
+            $annotation->instanceDirectoryFiles(APP_PATH);
 
             $this->onWorker($server, $worker_id);
         }
