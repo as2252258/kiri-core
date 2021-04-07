@@ -53,7 +53,7 @@ class OnMessage extends Callback
 			$server->send($frame->fd, $exception->getMessage());
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
+			logger_insert();
 		}
 	}
 

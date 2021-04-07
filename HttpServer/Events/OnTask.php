@@ -123,7 +123,7 @@ class OnTask extends Callback
 			return $finish;
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
+			logger_insert();
 		}
 	}
 

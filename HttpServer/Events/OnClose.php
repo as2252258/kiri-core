@@ -38,7 +38,7 @@ class OnClose extends Callback
 			$this->addError($exception, 'throwable');
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger()->insert();
+			logger_insert();
 		}
 	}
 

@@ -104,7 +104,7 @@ class OnHandshake extends Callback
 			$this->disconnect($response, 500);
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_CLEAN);
-			logger()->insert();
+			logger_insert();
 		}
 	}
 

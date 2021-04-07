@@ -34,7 +34,7 @@ class OnWorkerStop extends Callback
 
 		Timer::clearAll();
 
-		\logger()->insert();
+		logger_insert();
 	}
 
 }

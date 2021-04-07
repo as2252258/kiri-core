@@ -37,9 +37,8 @@ class OnConnect extends Callback
         } catch (\Throwable $throwable) {
             $this->addError($throwable, 'connect');
         }
-
         fire(Event::SYSTEM_RESOURCE_RELEASES);
-        logger()->insert();
+	    logger_insert();
     }
 
 

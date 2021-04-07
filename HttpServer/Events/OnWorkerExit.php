@@ -32,7 +32,7 @@ class OnWorkerExit extends Callback
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_WORKER_EXIT);
 
-		\logger()->insert();
+		logger_insert();
 	}
 
 }
