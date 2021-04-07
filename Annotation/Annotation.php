@@ -37,6 +37,16 @@ class Annotation extends Component
 
 
     /**
+     * @param Loader $loader
+     * @return Loader
+     */
+    public function setLoader(Loader $loader): Loader
+    {
+        return $this->_loader = $loader;
+    }
+
+
+    /**
      * @param string $className
      * @param string $method
      * @return array 根据类名获取注解
