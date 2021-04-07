@@ -95,10 +95,10 @@ class Annotation extends Component
      * @param string $dir
      * @throws Exception
      */
-    public function runtime(string $dir, ?string $outPath = null)
-    {
-        $this->_loader->directoryRuntime($dir, $outPath);
-    }
+//    public function runtime(string $dir, ?string $outPath = null)
+//    {
+//        $this->_loader->directoryRuntime($dir, $outPath);
+//    }
 
 
     /**

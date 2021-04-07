@@ -32,6 +32,14 @@ class Loader extends BaseObject
 
     private array $_directoryMap = [];
 
+    private FileTree $files;
+
+
+    public function init()
+    {
+        $this->files = new FileTree();
+    }
+
 
     /**
      * @param $path
@@ -126,8 +134,6 @@ class Loader extends BaseObject
      */
     public function _scanDir(DirectoryIterator $paths, $namespace)
     {
-        /** @var DirectoryIterator $path */
-        $DIRECTORY = $this->createDirectoryMap($paths);
         foreach ($paths as $path) {
             if ($path->isDot()) continue;
 
@@ -208,30 +214,33 @@ class Loader extends BaseObject
     public function loadByDirectory(string $path, ?string $outPath = null)
     {
         try {
-            foreach ($this->_fileMap as $fileName => $className) {
-                if (!str_starts_with($fileName, $path)) {
-                    continue;
-                }
-                if (!isset($this->_classes[$className])) {
-                    continue;
-                }
 
-                $annotations = $this->_classes[$className];
-                if (isset($annotations['target']) && !empty($annotations['target'])) {
-                    foreach ($annotations['target'] as $value) {
-                        $value->execute([$annotations['handler']]);
-                    }
-                }
+            return $this->each($path);
 
-                foreach ($annotations['methods'] as $name => $attribute) {
-                    foreach ($attribute as $value) {
-                        if (!($value instanceof \Annotation\Attribute)) {
-                            continue;
-                        }
-                        $value->execute([$annotations['handler'], $name]);
-                    }
-                }
-            }
+//            foreach ($this->_fileMap as $fileName => $className) {
+//                if (!str_starts_with($fileName, $path)) {
+//                    continue;
+//                }
+//                if (!isset($this->_classes[$className])) {
+//                    continue;
+//                }
+//
+//                $annotations = $this->_classes[$className];
+//                if (isset($annotations['target']) && !empty($annotations['target'])) {
+//                    foreach ($annotations['target'] as $value) {
+//                        $value->execute([$annotations['handler']]);
+//                    }
+//                }
+//
+//                foreach ($annotations['methods'] as $name => $attribute) {
+//                    foreach ($attribute as $value) {
+//                        if (!($value instanceof \Annotation\Attribute)) {
+//                            continue;
+//                        }
+//                        $value->execute([$annotations['handler'], $name]);
+//                    }
+//                }
+//            }
         } catch (Throwable $exception) {
             $this->addError($exception, 'throwable');
         }
@@ -257,38 +266,6 @@ class Loader extends BaseObject
 
 
     /**
-     * @param DirectoryIterator $directoryIterator
-     * @return string
-     */
-    public function createDirectoryMap(DirectoryIterator $directoryIterator): string
-    {
-        $DIRECTORY = explode(DIRECTORY_SEPARATOR, $directoryIterator->getRealPath());
-        array_pop($DIRECTORY);
-
-        $path = DIRECTORY_SEPARATOR;
-        foreach ($DIRECTORY as $value) {
-            $path = $this->makeMoneyDirectoryArray($path, $value);
-        }
-        return $DIRECTORY;
-    }
-
-
-    /**
-     * @param $path
-     * @param $value
-     * @return string
-     */
-    private function makeMoneyDirectoryArray($path, $value)
-    {
-        $path .= $value . DIRECTORY_SEPARATOR;
-        if (!isset($this->_directoryMap[$path])) {
-            $this->_directoryMap[$path] = [];
-        }
-        return $path;
-    }
-
-
-    /**
      * @param string $filePath
      * @param string $className
      */
@@ -297,38 +274,52 @@ class Loader extends BaseObject
         $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
         array_pop($DIRECTORY);
 
-        $path = DIRECTORY_SEPARATOR;
+        $tree = $this->files;
         foreach ($DIRECTORY as $value) {
-            $path = $this->makeMoneyDirectoryArray($path, $value);
+            $tree = $tree->getChild($value);
 
-            $this->_directoryMap[$path][] = $className;
+            $tree->addFile($className);
         }
     }
 
 
     /**
-     * @param string $Directory
-     * @return array
+     * @param string $filePath
+     * @return $this
      */
-    public function getDirectoryFiles(string $Directory): array
+    private function each(string $filePath): static
     {
-        if (!isset($this->_directoryMap[$Directory])) {
-            return [];
+        $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
+
+        $tree = null;
+        foreach ($DIRECTORY as $value) {
+            if ($tree === null) {
+                $tree = $this->files->getChild($value);
+            } else {
+                $tree = $tree->getChild($value);
+            }
         }
-        return $this->_directoryMap[$Directory];
+        if ($tree instanceof FileTree) {
+            $this->eachNode($tree->getChildes());
+            $this->execute($tree->getFiles());
+        }
+
+        return $this;
     }
 
 
     /**
-     * @param string $Directory
-     * @param string|null $output
+     * @param FileTree[] $nodes
      */
-    public function directoryRuntime(string $Directory, ?string $output)
+    private function eachNode(array $nodes)
     {
-        if (!empty($output) && isset($this->_directoryMap[$output])) {
-            unset($this->_directoryMap[$output]);
+        foreach ($nodes as $node) {
+            $childes = $node->getChildes();
+            if (!empty($childes)) {
+                $this->eachNode($childes);
+            }
+            $this->execute($node->getFiles());
         }
-        $this->execute($Directory);
     }
 
 
@@ -346,16 +337,14 @@ class Loader extends BaseObject
 
 
     /**
-     * @param $directory
+     * @param array $classes
      */
-    private function execute(string $directory)
+    private function execute(array $classes)
     {
-        if (!isset($this->_directoryMap[$directory])) {
+        if (empty($classes)) {
             return;
         }
-
-        $directories = $this->_directoryMap[$directory];
-        foreach ($directories as $className) {
+        foreach ($classes as $className) {
             if (!isset($this->_classes[$className])) {
                 continue;
             }
