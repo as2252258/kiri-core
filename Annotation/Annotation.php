@@ -4,11 +4,9 @@
 namespace Annotation;
 
 
-use Database\InjectProperty;
 use DirectoryIterator;
 use Exception;
 use Snowflake\Abstracts\Component;
-use Snowflake\Exception\ComponentException;
 
 /**
  * Class Annotation

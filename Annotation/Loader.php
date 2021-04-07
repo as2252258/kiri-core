@@ -30,8 +30,6 @@ class Loader extends BaseObject
     private array $_fileMap = [];
 
 
-    private array $_directoryMap = [];
-
     private FileTree $files;
 
 
@@ -135,74 +133,75 @@ class Loader extends BaseObject
     public function _scanDir(DirectoryIterator $paths, $namespace)
     {
         foreach ($paths as $path) {
-            if ($path->isDot()) continue;
-
-            if (str_starts_with($path->getFilename(), '.')) {
+            if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
                 continue;
             }
             if ($path->isDir()) {
-                $this->_scanDir(new DirectoryIterator($path->getRealPath()), $namespace);
-                continue;
+                $iterator = new DirectoryIterator($path->getRealPath());
+                $this->_scanDir($iterator, $namespace);
+            } else {
+                $this->readFile($path, $namespace);
             }
+        }
+    }
 
+
+    /**
+     * @param DirectoryIterator $path
+     * @param $namespace
+     * @throws Exception
+     */
+    private function readFile(DirectoryIterator $path, $namespace)
+    {
+        try {
             if ($path->getExtension() !== 'php') {
-                continue;
+                return;
             }
-            try {
 
-                $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
-                if (empty($replace) || !$replace->isInstantiable()) {
+            $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
+            if (!$replace->getAttributes(Target::class)) {
+                return;
+            }
+            $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
+
+            $_array = ['handler' => $replace->newInstanceWithoutConstructor(), 'target' => [], 'methods' => [], 'property' => []];
+            foreach ($replace->getAttributes() as $attribute) {
+                if ($attribute->getName() == Attribute::class) {
                     continue;
                 }
+                $_array['target'][] = $attribute->newInstance();
+            }
 
-                if (!$replace->getAttributes(Target::class)) {
-                    continue;
-                }
-                $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
-
-                $_array = ['handler' => $replace->newInstanceWithoutConstructor(), 'target' => [], 'methods' => [], 'property' => []];
-                foreach ($replace->getAttributes() as $attribute) {
-                    if ($attribute->getName() == Attribute::class) {
+            $methods = $replace->getMethods(ReflectionMethod::IS_PUBLIC);
+            foreach ($methods as $method) {
+                $_method = [];
+                foreach ($method->getAttributes() as $attribute) {
+                    if (!class_exists($attribute->getName())) {
                         continue;
                     }
-                    $_array['target'][] = $attribute->newInstance();
+                    $_method[] = $attribute->newInstance();
                 }
-
-                $methods = $replace->getMethods(ReflectionMethod::IS_PUBLIC);
-                foreach ($methods as $method) {
-                    $_method = [];
-                    foreach ($method->getAttributes() as $attribute) {
-                        if (!class_exists($attribute->getName())) {
-                            continue;
-                        }
-                        $_method[] = $attribute->newInstance();
-                    }
-                    $_array['methods'][$method->getName()] = $_method;
-                }
-
-                $methods = $replace->getProperties();
-                foreach ($methods as $method) {
-                    $_property = [];
-                    if ($method->isStatic()) continue;
-                    foreach ($method->getAttributes() as $attribute) {
-                        if (!class_exists($attribute->getName())) {
-                            continue;
-                        }
-//						$property = $attribute->newInstance();
-//						if ($property instanceof Inject) {
-//							$property->execute([$_array['handler'], $method]);
-//						}
-                        $_property[] = $attribute->newInstance();
-                    }
-                    $_array['property'][$method->getName()] = $_property;
-                }
-
-                $this->_fileMap[$replace->getFileName()] = $replace->getName();
-
-                $this->_classes[$replace->getName()] = $_array;
-            } catch (Throwable $throwable) {
-                $this->addError($throwable, 'throwable');
+                $_array['methods'][$method->getName()] = $_method;
             }
+
+            $methods = $replace->getProperties();
+            foreach ($methods as $method) {
+                $_property = [];
+                if ($method->isStatic()) continue;
+                foreach ($method->getAttributes() as $attribute) {
+                    if (!class_exists($attribute->getName())) {
+                        continue;
+                    }
+                    $_property[] = $attribute->newInstance();
+                }
+                $_array['property'][$method->getName()] = $_property;
+            }
+
+            $this->_fileMap[$replace->getFileName()] = $replace->getName();
+
+            $this->_classes[$replace->getName()] = $_array;
+        } catch (Throwable $throwable) {
+            $this->addError($throwable, 'throwable');
         }
     }
 
@@ -214,7 +213,7 @@ class Loader extends BaseObject
     public function loadByDirectory(string $path, ?string $outPath = null)
     {
         try {
-            $this->each($path);
+            $this->each($path, $outPath);
         } catch (Throwable $exception) {
             $this->addError($exception, 'throwable');
         }
@@ -245,14 +244,11 @@ class Loader extends BaseObject
      */
     public function appendFileToDirectory(string $filePath, string $className)
     {
-        $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
+        $directory = $this->splitDirectory($filePath);
         array_pop($DIRECTORY);
 
         $tree = null;
-        foreach ($DIRECTORY as $value) {
-            if (empty($value)) {
-                continue;
-            }
+        foreach ($directory as $value) {
             $tree = $this->getTree($tree, $value);
         }
         if ($tree instanceof FileTree) {
@@ -265,13 +261,17 @@ class Loader extends BaseObject
      * @param string $filePath
      * @return $this
      */
-    private function each(string $filePath): static
+    private function each(string $filePath, string $output): static
     {
-        $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
-
         $tree = null;
-        foreach ($DIRECTORY as $value) {
-            if (empty($value)) {
+        $directory = $this->splitDirectory($filePath);
+
+        $output = DIRECTORY_SEPARATOR . rtrim($output, '/');
+
+        $out_path = '';
+        foreach ($directory as $key => $value) {
+            $out_path .= DIRECTORY_SEPARATOR . $value;
+            if ($out_path === $output) {
                 continue;
             }
             $tree = $this->getTree($tree, $value);
@@ -281,6 +281,19 @@ class Loader extends BaseObject
             $this->execute($tree->getFiles());
         }
         return $this;
+    }
+
+
+    /**
+     * @param string $filePath
+     * @return false|string[]
+     */
+    private function splitDirectory(string $filePath)
+    {
+        $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
+        return array_filter($DIRECTORY, function ($value) {
+            return !empty($value);
+        });
     }
 
 
