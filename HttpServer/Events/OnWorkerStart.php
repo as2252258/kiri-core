@@ -52,7 +52,7 @@ class OnWorkerStart extends Callback
         } else {
             $start = microtime(true);
 
-            $annotation->instanceDirectoryFiles($workerDir = APP_PATH . 'app/Http');
+            $annotation->instanceDirectoryFiles($workerDir = realpath(APP_PATH . 'app/Http'));
             $this->error('use time ' . (microtime(true) - $start));
             Coroutine\go(function () use ($annotation, $workerDir) {
                 $annotation->instanceDirectoryFiles(APP_PATH, $workerDir);
