@@ -278,6 +278,7 @@ class Loader extends BaseObject
             }
             $tree = $this->getTree($tree, $value);
         }
+        var_dump($tree);
         if ($tree instanceof FileTree) {
             $this->eachNode($tree->getChildes());
             $this->execute($tree->getFiles());
