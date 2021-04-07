@@ -276,6 +276,7 @@ class Loader extends BaseObject
 
         $tree = $this->files;
         foreach ($DIRECTORY as $value) {
+            var_dump($value);
             $tree = $tree->getChild($value);
 
             $tree->addFile($className);
