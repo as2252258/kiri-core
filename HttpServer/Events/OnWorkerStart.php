@@ -39,13 +39,15 @@ class OnWorkerStart extends Callback
 
         name($server->worker_pid, $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker');
 
-        /** @var ServerInotify $inotify */
-        $inotify = Snowflake::app()->get(ServerInotify::class);
-        $inotify->write(sprintf('%03d', $worker_id));
-
+        /** @var Loader $runtime */
+        $runtime = unserialize(file_get_contents(storage('runtime.php')));
         if ($worker_id >= $server->setting['worker_num']) {
+            $runtime->loadByDirectory(MODEL_PATH);
+
             $this->onTask($server, $worker_id);
         } else {
+            $runtime->loadByDirectory(APP_PATH);
+
             $this->onWorker($server, $worker_id);
         }
     }
