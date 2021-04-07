@@ -6,8 +6,10 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
+use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Timer;
 
 /**
  * Class OnWorkerStop
@@ -26,9 +28,13 @@ class OnWorkerStop extends Callback
 	{
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_WORKER_STOP);
-		$event->offName(Event::SERVER_WORKER_STOP);
 
-		$this->clear($server, $worker_id, self::EVENT_STOP);
+		$this->clearMysqlClient();
+		$this->clearRedisClient();
+
+		Timer::clearAll();
+
+		\logger()->insert();
 	}
 
 }

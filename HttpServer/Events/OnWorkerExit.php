@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Timer;
 
 /**
  * Class OnWorkerExit
@@ -30,9 +31,6 @@ class OnWorkerExit extends Callback
 
 		$event = Snowflake::app()->getEvent();
 		$event->trigger(Event::SERVER_WORKER_EXIT);
-		$event->offName(Event::SERVER_WORKER_EXIT);
-
-		$this->clear($server, $worker_id, self::EVENT_EXIT);
 
 		\logger()->insert();
 	}

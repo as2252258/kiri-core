@@ -27,25 +27,6 @@ abstract class Callback extends HttpService
 {
 
 
-    /**
-     * @param $server
-     * @param $worker_id
-     * @param $message
-     * @throws Exception
-     */
-    protected function clear(Server $server, $worker_id, $message)
-    {
-        try {
-            /** @var Process $logger */
-            $logger = Snowflake::app()->get(LoggerProcess::class);
-            $logger->write(Json::encode([$this->_MESSAGE[$message] . $worker_id, 'log/app']));
-
-            $this->eventNotify($message);
-        } catch (\Throwable $exception) {
-            $this->addError($exception, 'throwable');
-        }
-    }
-
 
     const EVENT_ERROR = 'WORKER:ERROR';
     const EVENT_STOP = 'WORKER:STOP';
@@ -58,24 +39,6 @@ abstract class Callback extends HttpService
         self::EVENT_EXIT  => 'The server exit. at No.',
     ];
 
-    /**
-     * @param $message
-     * @throws Exception
-     */
-    private function eventNotify($message)
-    {
-        switch ($message) {
-            case self::EVENT_ERROR:
-                fire(Event::SERVER_WORKER_ERROR);
-                break;
-            case self::EVENT_EXIT:
-                fire(Event::SERVER_WORKER_EXIT);
-                break;
-            case self::EVENT_STOP:
-                fire(Event::SERVER_WORKER_STOP);
-                break;
-        }
-    }
 
 
     /**
@@ -132,7 +95,6 @@ abstract class Callback extends HttpService
 
     /**
      * @throws ConfigException
-     * @throws ComponentException
      * @throws Exception
      */
     protected function clearMysqlClient()
@@ -155,7 +117,6 @@ abstract class Callback extends HttpService
 
     /**
      * @throws ConfigException
-     * @throws ComponentException
      * @throws Exception
      */
     protected function clearRedisClient()
