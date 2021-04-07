@@ -81,6 +81,7 @@ class Annotation extends Component
 
     /**
      * @param string $dir
+     * @param string|null $outPath
      * @throws Exception
      */
     public function instanceDirectoryFiles(string $dir, ?string $outPath = null)
