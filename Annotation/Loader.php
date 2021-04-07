@@ -143,7 +143,6 @@ class Loader extends BaseObject
                 continue;
             }
             try {
-                $this->appendFileToDirectory($path->getRealPath());
 
                 $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
                 if (empty($replace) || !$replace->isInstantiable()) {
@@ -153,6 +152,7 @@ class Loader extends BaseObject
                 if (!$replace->getAttributes(Target::class)) {
                     continue;
                 }
+                $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
                 $_array = ['handler' => $replace->newInstanceWithoutConstructor(), 'target' => [], 'methods' => [], 'property' => []];
                 foreach ($replace->getAttributes() as $attribute) {
@@ -293,8 +293,9 @@ class Loader extends BaseObject
 
     /**
      * @param string $filePath
+     * @param string $className
      */
-    public function appendFileToDirectory(string $filePath)
+    public function appendFileToDirectory(string $filePath, string $className)
     {
         $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
         array_pop($DIRECTORY);
@@ -303,7 +304,7 @@ class Loader extends BaseObject
         foreach ($DIRECTORY as $value) {
             $path = $this->makeMoneyDirectoryArray($path, $value);
 
-            $this->_directoryMap[$path][] = $filePath;
+            $this->_directoryMap[$path][] = $className;
         }
     }
 
