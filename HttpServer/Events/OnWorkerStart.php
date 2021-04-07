@@ -46,11 +46,17 @@ class OnWorkerStart extends Callback
         $annotation->setLoader($runtime);
 
         if ($worker_id >= $server->setting['worker_num']) {
-            $annotation->instanceDirectoryFiles(MODEL_PATH);
+            $annotation->runtime(MODEL_PATH);
 
             $this->onTask($server, $worker_id);
         } else {
-            $annotation->instanceDirectoryFiles(APP_PATH);
+
+            $start = microtime(true);
+
+            $annotation->runtime(CONTROLLER_PATH);
+            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+
+            $this->error('use time ' . (microtime(true) - $start));
 
             $this->onWorker($server, $worker_id);
         }

@@ -85,9 +85,19 @@ class Annotation extends Component
      * @param string $dir
      * @throws Exception
      */
-    public function instanceDirectoryFiles(string $dir)
+    public function instanceDirectoryFiles(string $dir, ?string $outPath = null)
     {
-        $this->_loader->loadByDirectory($dir);
+        $this->_loader->loadByDirectory($dir, $outPath);
+    }
+
+
+    /**
+     * @param string $dir
+     * @throws Exception
+     */
+    public function runtime(string $dir, ?string $outPath = null)
+    {
+        $this->_loader->directoryRuntime($dir, $outPath);
     }
 
 
