@@ -261,7 +261,7 @@ class Loader extends BaseObject
      * @param string $filePath
      * @return $this
      */
-    private function each(string $filePath, string $output): static
+    private function each(string $filePath, ?string $output): static
     {
         $tree = null;
         $directory = $this->splitDirectory($filePath);
