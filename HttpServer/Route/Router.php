@@ -650,7 +650,7 @@ class Router extends HttpService implements RouterInterface
     /**
      * @throws
      */
-    public function loadRouterSetting()
+    public function _loader()
     {
         $this->loadRouteDir(APP_PATH . 'routes');
     }
