@@ -209,9 +209,6 @@ class Loader extends BaseObject
     {
         try {
             foreach ($this->_fileMap as $fileName => $className) {
-                if (str_starts_with($fileName, $outPath)) {
-                    continue;
-                }
                 if (!str_starts_with($fileName, $path)) {
                     continue;
                 }
