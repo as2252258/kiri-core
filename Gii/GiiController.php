@@ -174,6 +174,9 @@ use {$model_namespace}\\{$managerName};
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
 		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
+
+		$_path = ltrim($_path,'/');
+
 		return '
     /**
 	 * @return string
@@ -227,6 +230,8 @@ use {$model_namespace}\\{$managerName};
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
 		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
+		$_path = ltrim($_path,'/');
+
 		return '
     /**
 	 * @return string
@@ -261,6 +266,8 @@ use {$model_namespace}\\{$managerName};
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
 		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
+
+		$_path = ltrim($_path,'/');
 
 		return '
     /**
@@ -297,6 +304,8 @@ use {$model_namespace}\\{$managerName};
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
 		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
 
+		$_path = ltrim($_path,'/');
+
 		return '
     /**
 	 * @return string
@@ -326,6 +335,8 @@ use {$model_namespace}\\{$managerName};
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
 		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
+
+		$_path = ltrim($_path,'/');
 
 		return '
     /**
@@ -361,6 +372,9 @@ use {$model_namespace}\\{$managerName};
 	{
 		$_path = str_replace(CONTROLLER_PATH, '', $path['path']);
 		$_path = lcfirst(rtrim($_path, '/')) . '/' . lcfirst($className);
+
+
+		$_path = ltrim($_path,'/');
 
 		return '
     /**
