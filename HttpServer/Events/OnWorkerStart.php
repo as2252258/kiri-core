@@ -47,17 +47,22 @@ class OnWorkerStart extends Callback
         $runtime = file_get_contents(storage('runtime.php'));
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($runtime));
-        if ($isWorker === true) {
-            $annotation->runtime(CONTROLLER_PATH);
-            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+        return (new Pipeline())
+            ->if($isWorker, function ($annotation, $server) {
+                $annotation->runtime(CONTROLLER_PATH);
+                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
 
-            name($this->server->worker_pid, 'Worker.' . $this->server->worker_id);
-        } else {
-            $annotation->runtime(MODEL_PATH);
+                name($server->worker_pid, 'Worker.' . $server->worker_id);
+            })
+            ->else(function ($annotation, $server) {
+                $annotation->runtime(MODEL_PATH);
 
-            name($this->server->worker_pid, 'Task.' . $this->server->worker_id);
-        }
-        return $annotation;
+                name($server->worker_pid, 'Task.' . $server->worker_id);
+            })
+            ->catch(function (\Throwable $throwable) {
+                $this->addError($throwable->getMessage());
+            })
+            ->exec($annotation, $this->server);
     }
 
 

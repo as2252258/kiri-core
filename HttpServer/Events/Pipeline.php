@@ -1,0 +1,73 @@
+<?php
+
+
+namespace HttpServer\Events;
+
+
+class Pipeline
+{
+
+    private \Closure $if;
+    private \Closure $else;
+    private \Closure $catch;
+
+    private bool $condition;
+
+    private \Throwable $throwable;
+
+
+    /**
+     * @param bool $condition
+     * @param \Closure $handler
+     * @return $this
+     */
+    public function if(bool $condition, \Closure $handler): static
+    {
+        $this->condition = $condition;
+        $this->if = $handler;
+        return $this;
+    }
+
+
+    /**
+     * @param \Closure $handler
+     * @return $this
+     */
+    public function else(\Closure $handler): static
+    {
+        $this->else = $handler;
+        return $this;
+    }
+
+
+    /**
+     * @param \Closure $handler
+     * @return $this
+     */
+    public function catch(\Closure $handler): static
+    {
+        $this->catch = $handler;
+        return $this;
+    }
+
+
+    /**
+     * @param $argv
+     * @return mixed
+     */
+    public function exec(...$argv)
+    {
+        try {
+            if ($this->condition === false) {
+                call_user_func($this->else, ...$argv);
+            } else {
+                call_user_func($this->if, ...$argv);
+            }
+            return $argv;
+        } catch (\Throwable $exception) {
+            call_user_func($this->catch, $exception, ...$argv);
+            return $argv;
+        }
+    }
+
+}
