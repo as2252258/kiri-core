@@ -48,12 +48,9 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        $isWorker = $this->isWorker($worker_id);
-        if ($this->injectLoader($isWorker)) {
-            $this->onWorker($server, $worker_id);
-        } else {
-            $this->onTask($server);
-        }
+        $isWorker = $this->injectLoader($this->isWorker($worker_id));
+
+        $this->{$isWorker ? 'onWorker' : 'onTask'}($server);
     }
 
 
