@@ -80,6 +80,22 @@ if (!function_exists('annotation')) {
 }
 
 
+if (!function_exists('scan_directory')) {
+
+
+	/**
+	 * @param $dir
+	 * @param $namespace
+	 * @throws Exception
+	 */
+	function scan_directory($dir, $namespace)
+	{
+		\annotation()->read($dir, $namespace);
+	}
+
+}
+
+
 if (!function_exists('swoole')) {
 
 
@@ -312,8 +328,7 @@ if (!function_exists('redis')) {
 
 
 	/**
-	 * @param string $messages
-	 * @param string $category
+	 * @return \Snowflake\Cache\Redis|Redis
 	 * @throws Exception
 	 */
 	function redis(): \Snowflake\Cache\Redis|Redis

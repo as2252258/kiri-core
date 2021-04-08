@@ -10,13 +10,12 @@ declare(strict_types=1);
 namespace Snowflake;
 
 
-use Annotation\Aspect;
 use Closure;
 use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
-use Database\InjectProperty;
 use Exception;
+use HttpServer\Command;
 use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
@@ -26,6 +25,7 @@ use Snowflake\Crontab\CrontabProviders;
 use Snowflake\Exception\NotFindClassException;
 use stdClass;
 use Swoole\Timer;
+use Wchat\WchatProviders;
 
 /**
  * Class Init
@@ -33,6 +33,7 @@ use Swoole\Timer;
  * @package Snowflake
  *
  * @property-read Config $config
+ * @property-read WchatProviders $wchat
  */
 class Application extends BaseApplication
 {
@@ -141,6 +142,9 @@ class Application extends BaseApplication
 			$manager->register(Runtime::class);
 			$manager->setParameters($argv);
 			$class = $manager->search();
+			if (!($class instanceof Command)) {
+				scan_directory(APP_PATH, 'APP');
+			}
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
 			response()->send(implode("\n", [
