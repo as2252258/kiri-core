@@ -52,10 +52,10 @@ class OnWorkerStart extends Callback
         } else {
             $start = microtime(true);
 
-            $annotation->runtime($workerDir = directory('app/Http'));
+            $annotation->runtime(CONTROLLER_PATH);
             $this->error('use time ' . (microtime(true) - $start));
-            Coroutine\go(function () use ($annotation, $workerDir) {
-                $annotation->runtime(directory('app'), $workerDir);
+            Coroutine\go(function () use ($annotation) {
+                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
             });
 
             $this->onWorker($server, $worker_id);
