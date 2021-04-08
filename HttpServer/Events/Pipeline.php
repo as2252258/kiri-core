@@ -7,11 +7,11 @@ namespace HttpServer\Events;
 class Pipeline
 {
 
-    private \Closure $_if;
-    private \Closure $_else;
-    private \Closure $_catch;
-    private \Closure $_after;
-    private \Closure $_before;
+    private ?\Closure $_if = null;
+    private ?\Closure $_else = null;
+    private ?\Closure $_catch = null;
+    private ?\Closure $_after = null;
+    private ?\Closure $_before = null;
 
     private bool $condition;
 
@@ -78,7 +78,9 @@ class Pipeline
     public function exec(...$argv)
     {
         try {
-            call_user_func($this->_before, ...$argv);
+            if ($this->_before instanceof \Closure) {
+                call_user_func($this->_before, ...$argv);
+            }
             if ($this->condition !== true) {
                 call_user_func($this->_else, ...$argv);
             } else {
@@ -89,7 +91,9 @@ class Pipeline
             call_user_func($this->_catch, $exception);
             return $argv;
         } finally {
-            call_user_func($this->_after, ...$argv);
+            if ($this->_after instanceof \Closure) {
+                call_user_func($this->_after, ...$argv);
+            }
         }
     }
 
