@@ -61,6 +61,7 @@ class Pipeline
             } else {
                 call_user_func($this->_if, ...$argv);
             }
+            var_dump(__METHOD__);
             return $argv;
         } catch (\Throwable $exception) {
             call_user_func($this->_catch, $exception);
