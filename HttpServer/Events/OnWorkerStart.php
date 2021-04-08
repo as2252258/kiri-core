@@ -34,7 +34,6 @@ class OnWorkerStart extends Callback
     public function actionBefore($server, $worker_id)
     {
         putenv('state=start');
-        putenv('worker=' . $worker_id);
 
         $alias = $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker';
 
@@ -71,6 +70,7 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
+        putenv('worker=' . $worker_id);
         $isWorker = $worker_id < $server->setting['worker_num'];
 
         $this->injectLoader($isWorker);
