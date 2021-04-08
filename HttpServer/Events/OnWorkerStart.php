@@ -4,19 +4,12 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 use Annotation\Annotation;
-use Annotation\Loader;
-use Annotation\Target;
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Abstracts\Config;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Process\ServerInotify;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Server;
-use Swoole\Timer;
 
 /**
  * Class OnWorkerStart
@@ -39,16 +32,19 @@ class OnWorkerStart extends Callback
 
 
     /**
-     * @return Annotation
      * @throws Exception
      */
-    public function injectLoader($isWorker = false): Annotation
+    public function injectLoader($isWorker = false)
     {
         $runtime = file_get_contents(storage('runtime.php'));
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($runtime));
-        return (new Pipeline())
-            ->if($isWorker, function ($annotation, $server) {
+
+        putenv('state=start');
+        putenv('worker=' . $this->server->worker_id);
+
+        $pipeLine = new Pipeline();
+        $pipeLine->if($isWorker, function ($annotation, $server) {
                 $annotation->runtime(CONTROLLER_PATH);
                 $annotation->runtime(APP_PATH, CONTROLLER_PATH);
 
@@ -78,10 +74,6 @@ class OnWorkerStart extends Callback
         $this->server = $server;
 
         $this->injectLoader($this->isWorker($worker_id));
-
-        putenv('state=start');
-        putenv('worker=' . $server->worker_id);
-
 
         if ($worker_id < $server->setting['worker_num']) {
             $this->onWorker($server, $worker_id);
