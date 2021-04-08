@@ -13,8 +13,6 @@ class Pipeline
 
     private bool $condition;
 
-    private \Throwable $throwable;
-
 
     /**
      * @param bool $condition
@@ -58,7 +56,7 @@ class Pipeline
     public function exec(...$argv)
     {
         try {
-            if ($this->condition === false) {
+            if ($this->condition !== true) {
                 call_user_func($this->else, ...$argv);
             } else {
                 call_user_func($this->if, ...$argv);
