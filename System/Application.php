@@ -135,8 +135,6 @@ class Application extends BaseApplication
 	public function start(Input $argv): void
 	{
 		try {
-			fire(Event::SERVER_BEFORE_START);
-
 			/** @var Console $manager */
 			$manager = Snowflake::app()->get('console');
 			$manager->register(Runtime::class);

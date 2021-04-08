@@ -7,6 +7,7 @@ namespace Console;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Input;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 
 /**
@@ -56,7 +57,9 @@ abstract class AbstractConsole extends Component
 	 */
 	public function execCommand(Command $command): mixed
 	{
-		return $command->onHandler($this->parameters);
+        fire(Event::SERVER_BEFORE_START);
+
+        return $command->onHandler($this->parameters);
 	}
 
 	/**
