@@ -53,27 +53,32 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        $annotation = $this->injectLoader();
-        $line = new Pipeline();
-        $line->if($this->isWorker($worker_id), function ($annotation, $server, $worker_id) {
-            $annotation->runtime(CONTROLLER_PATH);
-            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
-            $this->onWorker($server, $server->worker_id);
-            name($server->worker_pid, 'Worker.' . $worker_id);
-        })
-            ->else(function ($annotation, $server, $worker_id) {
+        (new Pipeline())
+            ->if($this->isWorker($worker_id), function ($handler, $server, $worker_id) {
+                $annotation = Snowflake::app()->getAnnotation();
+
+                $annotation->runtime(CONTROLLER_PATH);
+                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+                $handler->onWorker($server, $server->worker_id);
+                name($server->worker_pid, 'Worker.' . $worker_id);
+            })
+            ->else(function ($handler, $server, $worker_id) {
+                $annotation = Snowflake::app()->getAnnotation();
                 $annotation->runtime(MODEL_PATH);
-                $this->onTask($server, $server->worker_id);
+
+                $handler->onTask($server, $server->worker_id);
                 name($server->worker_pid, 'Task.' . $worker_id);
             })
             ->catch(function (\Throwable $throwable) {
-                $this->addError($throwable->getMessage());
+                logger()->addError($throwable->getMessage());
             })
             ->before(function ($annotation, $server, $worker_id) {
                 putenv('state=start');
                 putenv('worker=' . $worker_id);
+
+                $this->injectLoader();
             })
-            ->exec($annotation, $server, $worker_id);
+            ->exec($this, $server, $worker_id);
     }
 
 
