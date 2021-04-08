@@ -10,6 +10,8 @@ class Pipeline
     private \Closure $_if;
     private \Closure $_else;
     private \Closure $_catch;
+    private \Closure $_after;
+    private \Closure $_before;
 
     private bool $condition;
 
@@ -48,6 +50,26 @@ class Pipeline
         return $this;
     }
 
+    /**
+     * @param \Closure $handler
+     * @return $this
+     */
+    public function after(\Closure $handler): static
+    {
+        $this->_after = $handler;
+        return $this;
+    }
+
+    /**
+     * @param \Closure $handler
+     * @return $this
+     */
+    public function before(\Closure $handler): static
+    {
+        $this->_before = $handler;
+        return $this;
+    }
+
 
     /**
      * @param $argv
@@ -56,16 +78,18 @@ class Pipeline
     public function exec(...$argv)
     {
         try {
+            call_user_func($this->_before, ...$argv);
             if ($this->condition !== true) {
                 call_user_func($this->_else, ...$argv);
             } else {
                 call_user_func($this->_if, ...$argv);
             }
-            var_dump(__METHOD__);
             return $argv;
         } catch (\Throwable $exception) {
             call_user_func($this->_catch, $exception);
             return $argv;
+        } finally {
+            call_user_func($this->_after, ...$argv);
         }
     }
 

@@ -40,25 +40,7 @@ class OnWorkerStart extends Callback
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($runtime));
 
-        putenv('state=start');
-        putenv('worker=' . $this->server->worker_id);
-
-        $pipeLine = new Pipeline();
-        $pipeLine->if($isWorker, function ($annotation, $server) {
-                $annotation->runtime(CONTROLLER_PATH);
-                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
-
-                name($server->worker_pid, 'Worker.' . $server->worker_id);
-            })
-            ->else(function ($annotation, $server) {
-                $annotation->runtime(MODEL_PATH);
-
-                name($server->worker_pid, 'Task.' . $server->worker_id);
-            })
-            ->catch(function (\Throwable $throwable) {
-                $this->addError($throwable->getMessage());
-            })
-            ->exec($annotation, $this->server);
+        return $annotation;
     }
 
 
@@ -71,15 +53,27 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        $this->server = $server;
-
-        $this->injectLoader($this->isWorker($worker_id));
-
-        if ($worker_id < $server->setting['worker_num']) {
-            $this->onWorker($server, $worker_id);
-        } else {
-            $this->onTask($server, $worker_id);
-        }
+        $annotation = $this->injectLoader();
+        (new Pipeline())
+            ->if($this->isWorker($worker_id), function ($annotation, $server, $worker_id) {
+                $annotation->runtime(CONTROLLER_PATH);
+                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+                $this->onWorker($server, $server->worker_id);
+                name($server->worker_pid, 'Worker.' . $worker_id);
+            })
+            ->else(function ($annotation, $server, $worker_id) {
+                $annotation->runtime(MODEL_PATH);
+                $this->onTask($server, $server->worker_id);
+                name($server->worker_pid, 'Task.' . $worker_id);
+            })
+            ->catch(function (\Throwable $throwable) {
+                $this->addError($throwable->getMessage());
+            })
+            ->before(function ($annotation, $server, $worker_id) {
+                putenv('state=start');
+                putenv('worker=' . $worker_id);
+            })
+            ->exec($annotation, $server, $worker_id);
     }
 
 
