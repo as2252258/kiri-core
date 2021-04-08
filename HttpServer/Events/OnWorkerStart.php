@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HttpServer\Events;
 
+use Annotation\Annotation;
 use Annotation\Loader;
 use Annotation\Target;
 use Exception;
@@ -26,6 +27,42 @@ class OnWorkerStart extends Callback
 
 
     /**
+     * @param $server
+     * @param $worker_id
+     * @throws ConfigException
+     */
+    public function actionBefore($server, $worker_id)
+    {
+        putenv('state=start');
+        putenv('worker=' . $worker_id);
+
+        $alias = $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker';
+
+        name($server->worker_pid, $alias . '.' . $worker_id);
+    }
+
+
+    /**
+     * @return Annotation
+     * @throws Exception
+     */
+    public function injectLoader($isWorker = false): Annotation
+    {
+        $runtime = file_get_contents(storage('runtime.php'));
+        $annotation = Snowflake::app()->getAnnotation();
+        $annotation->setLoader(unserialize($runtime));
+
+        if ($isWorker === true) {
+            $annotation->runtime(CONTROLLER_PATH);
+            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+        } else {
+            $annotation->runtime(MODEL_PATH);
+        }
+        return $annotation;
+    }
+
+
+    /**
      * @param Server $server
      * @param int $worker_id
      *
@@ -34,29 +71,16 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        putenv('state=start');
-        putenv('worker=' . $worker_id);
+        $isWorker = $worker_id < $server->setting['worker_num'];
 
-        name($server->worker_pid, $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker');
+        $this->injectLoader($isWorker);
 
-        $annotation = Snowflake::app()->getAnnotation();
+        $this->actionBefore($server, $worker_id);
 
-        /** @var Loader $runtime */
-        $runtime = unserialize(file_get_contents(storage('runtime.php')));
-        $annotation->setLoader($runtime);
-
-        if ($worker_id >= $server->setting['worker_num']) {
-            $annotation->runtime(MODEL_PATH);
-
-            $this->onTask($server, $worker_id);
-        } else {
-            $start = microtime(true);
-            $annotation->runtime(CONTROLLER_PATH);
-            $this->error('use time ' . (microtime(true) - $start));
-            Coroutine\go(function () use ($annotation) {
-                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
-            });
+        if ($worker_id < $server->setting['worker_num']) {
             $this->onWorker($server, $worker_id);
+        } else {
+            $this->onTask($server, $worker_id);
         }
     }
 
