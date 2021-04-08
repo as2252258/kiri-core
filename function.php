@@ -91,6 +91,7 @@ if (!function_exists('scan_directory')) {
 	function scan_directory($dir, $namespace)
 	{
 		\annotation()->read($dir, $namespace);
+		\annotation()->instanceDirectoryFiles($dir);
 	}
 
 }
@@ -514,6 +515,7 @@ if (!function_exists('request')) {
 
 	/**
 	 * @return Request
+	 * @throws Exception
 	 */
 	function request(): Request
 	{
@@ -529,6 +531,7 @@ if (!function_exists('Input')) {
 
 	/**
 	 * @return HttpParams
+	 * @throws Exception
 	 */
 	function Input(): HttpParams
 	{
@@ -578,20 +581,6 @@ if (!function_exists('storage')) {
 		}
 		return $fileName;
 	}
-
-
-	/**
-	 * @param $basePath
-	 * @param $path
-	 * @return false|string
-	 * @throws Exception
-	 */
-	function initDir($path): bool|string
-	{
-		return mkdir($path, 0777, true);
-	}
-
-
 }
 
 
