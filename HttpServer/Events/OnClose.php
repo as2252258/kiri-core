@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
+use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Server;
-use Exception;
 
 /**
  * Class OnClose
@@ -33,7 +33,7 @@ class OnClose extends Callback
 			if (!$event->exists(($name = $this->getName($clientInfo)))) {
 				return;
 			}
-			$event->trigger($name, [$fd, $server]);
+			$event->trigger($name, [$server, $fd]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		} finally {
