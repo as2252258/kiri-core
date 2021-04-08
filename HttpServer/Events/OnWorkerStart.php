@@ -25,6 +25,8 @@ use Swoole\Timer;
 class OnWorkerStart extends Callback
 {
 
+    private Server $server;
+
 
     /**
      * @param $server
@@ -33,11 +35,6 @@ class OnWorkerStart extends Callback
      */
     public function actionBefore($server, $worker_id)
     {
-        putenv('state=start');
-
-        $alias = $worker_id >= $server->setting['worker_num'] ? 'task' : 'worker';
-
-        name($server->worker_pid, $alias . '.' . $worker_id);
     }
 
 
@@ -50,12 +47,15 @@ class OnWorkerStart extends Callback
         $runtime = file_get_contents(storage('runtime.php'));
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($runtime));
-
         if ($isWorker === true) {
             $annotation->runtime(CONTROLLER_PATH);
             $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+
+            name($this->server->worker_pid, 'Worker.' . $this->server->worker_id);
         } else {
             $annotation->runtime(MODEL_PATH);
+
+            name($this->server->worker_pid, 'Task.' . $this->server->worker_id);
         }
         return $annotation;
     }
@@ -70,18 +70,30 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        putenv('worker=' . $worker_id);
-        $isWorker = $worker_id < $server->setting['worker_num'];
+        $this->server = $server;
 
-        $this->injectLoader($isWorker);
+        $this->injectLoader($this->isWorker($worker_id));
 
-        $this->actionBefore($server, $worker_id);
+        putenv('state=start');
+        putenv('worker=' . $server->worker_id);
+
 
         if ($worker_id < $server->setting['worker_num']) {
             $this->onWorker($server, $worker_id);
         } else {
             $this->onTask($server, $worker_id);
         }
+    }
+
+
+    /**
+     * @param Server $server
+     * @param int $worker_id
+     * @return bool
+     */
+    private function isWorker(int $worker_id): bool
+    {
+        return $worker_id < $this->server->setting['worker_num'];
     }
 
 
