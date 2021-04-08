@@ -90,5 +90,4 @@ class OnWorkerStart extends Callback
         }
     }
 
-
 }
