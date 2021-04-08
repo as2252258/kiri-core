@@ -26,7 +26,7 @@ class OnWorkerStart extends Callback
         $runtime = file_get_contents(storage('runtime.php'));
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($runtime));
-        if ($isWorker) {
+        if ($isWorker === true) {
             $annotation->runtime(CONTROLLER_PATH);
             $annotation->runtime(APP_PATH, CONTROLLER_PATH);
         } else {
@@ -48,7 +48,7 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        $isWorker = $this->injectLoader($this->isWorker($worker_id));
+        $isWorker = $this->injectLoader($this->isWorker($server, $worker_id));
 
         $this->{$isWorker ? 'onWorker' : 'onTask'}($server);
     }
@@ -59,9 +59,9 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @return bool
      */
-    private function isWorker(int $worker_id): bool
+    private function isWorker($server, int $worker_id): bool
     {
-        return $worker_id < $this->server->setting['worker_num'];
+        return $worker_id < $server->setting['worker_num'];
     }
 
 
