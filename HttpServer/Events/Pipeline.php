@@ -7,9 +7,9 @@ namespace HttpServer\Events;
 class Pipeline
 {
 
-    private \Closure $if;
-    private \Closure $else;
-    private \Closure $catch;
+    private \Closure $_if;
+    private \Closure $_else;
+    private \Closure $_catch;
 
     private bool $condition;
 
@@ -22,7 +22,7 @@ class Pipeline
     public function if(bool $condition, \Closure $handler): static
     {
         $this->condition = $condition;
-        $this->if = $handler;
+        $this->_if = $handler;
         return $this;
     }
 
@@ -33,7 +33,7 @@ class Pipeline
      */
     public function else(\Closure $handler): static
     {
-        $this->else = $handler;
+        $this->_else = $handler;
         return $this;
     }
 
@@ -44,7 +44,7 @@ class Pipeline
      */
     public function catch(\Closure $handler): static
     {
-        $this->catch = $handler;
+        $this->_catch = $handler;
         return $this;
     }
 
@@ -57,13 +57,13 @@ class Pipeline
     {
         try {
             if ($this->condition !== true) {
-                call_user_func($this->else, ...$argv);
+                call_user_func($this->_else, ...$argv);
             } else {
-                call_user_func($this->if, ...$argv);
+                call_user_func($this->_if, ...$argv);
             }
             return $argv;
         } catch (\Throwable $exception) {
-            call_user_func($this->catch, $exception, ...$argv);
+            call_user_func($this->_catch, $exception);
             return $argv;
         }
     }
