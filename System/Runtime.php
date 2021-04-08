@@ -27,7 +27,7 @@ class Runtime extends Command
         // TODO: Implement onHandler() method.
 
         $annotation = Snowflake::app()->getAnnotation();
-        $annotation->read(APP_PATH, 'App');
+        $annotation->read(directory('app'), 'App');
 
         $runtime = storage('runtime.php');
 

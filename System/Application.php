@@ -143,7 +143,7 @@ class Application extends BaseApplication
 			$manager->setParameters($argv);
 			$class = $manager->search();
 			if (!($class instanceof Command)) {
-				scan_directory(APP_PATH, 'APP');
+				scan_directory(directory('app'), 'App');
 			}
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {

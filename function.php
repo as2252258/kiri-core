@@ -90,8 +90,9 @@ if (!function_exists('scan_directory')) {
 	 */
 	function scan_directory($dir, $namespace)
 	{
-		\annotation()->read($dir, $namespace);
-		\annotation()->instanceDirectoryFiles($dir);
+        $annotation = Snowflake::app()->getAnnotation();
+        $annotation->read($dir, $namespace);
+        $annotation->runtime($dir, $namespace);
 	}
 
 }
