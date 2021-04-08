@@ -18,19 +18,6 @@ use Swoole\Server;
 class OnWorkerStart extends Callback
 {
 
-    private Server $server;
-
-
-    /**
-     * @param $server
-     * @param $worker_id
-     * @throws ConfigException
-     */
-    public function actionBefore($server, $worker_id)
-    {
-    }
-
-
     /**
      * @throws Exception
      */
@@ -39,8 +26,13 @@ class OnWorkerStart extends Callback
         $runtime = file_get_contents(storage('runtime.php'));
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($runtime));
-
-        return $annotation;
+        if ($isWorker) {
+            $annotation->runtime(CONTROLLER_PATH);
+            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+        } else {
+            $annotation->runtime(MODEL_PATH);
+        }
+        return $isWorker;
     }
 
 
@@ -53,30 +45,15 @@ class OnWorkerStart extends Callback
      */
     public function onHandler(Server $server, int $worker_id): void
     {
-        (new Pipeline())
-            ->if($this->isWorker($worker_id), function ($handler, $server, $worker_id) {
-                $annotation = Snowflake::app()->getAnnotation();
-                $annotation->runtime(CONTROLLER_PATH);
-                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+        putenv('state=start');
+        putenv('worker=' . $worker_id);
 
-                $handler->onWorker($server, $server->worker_id);
-            })
-            ->else(function ($handler, $server, $worker_id) {
-                $annotation = Snowflake::app()->getAnnotation();
-                $annotation->runtime(MODEL_PATH);
-
-                $handler->onTask($server, $server->worker_id);
-            })
-            ->catch(function (\Throwable $throwable) {
-                logger()->addError($throwable->getMessage());
-            })
-            ->before(function ($annotation, $server, $worker_id) {
-                putenv('state=start');
-                putenv('worker=' . $worker_id);
-
-                $this->injectLoader();
-            })
-            ->exec($this, $server, $worker_id);
+        $isWorker = $this->isWorker($worker_id);
+        if ($this->injectLoader($isWorker)) {
+            $this->onWorker($server, $worker_id);
+        } else {
+            $this->onTask($server);
+        }
     }
 
 
@@ -96,7 +73,7 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @throws Exception
      */
-    public function onTask(Server $server, int $worker_id)
+    public function onTask(Server $server)
     {
         putenv('environmental=' . Snowflake::TASK);
 
@@ -111,13 +88,13 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @throws Exception
      */
-    public function onWorker(Server $server, int $worker_id)
+    public function onWorker(Server $server)
     {
         Snowflake::setWorkerId($server->worker_pid);
         putenv('environmental=' . Snowflake::WORKER);
 
         try {
-            fire(Event::SERVER_WORKER_START, [$worker_id]);
+            fire(Event::SERVER_WORKER_START, [getenv('worker')]);
         } catch (\Throwable $exception) {
             $this->addError($exception, 'throwable');
             write($exception->getMessage(), 'worker');
