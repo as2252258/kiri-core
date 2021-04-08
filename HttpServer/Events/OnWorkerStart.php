@@ -19,24 +19,6 @@ class OnWorkerStart extends Callback
 {
 
     /**
-     * @throws Exception
-     */
-    public function injectLoader($isWorker = false)
-    {
-        $runtime = file_get_contents(storage('runtime.php'));
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->setLoader(unserialize($runtime));
-        if ($isWorker === true) {
-            $annotation->runtime(CONTROLLER_PATH);
-            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
-        } else {
-            $annotation->runtime(MODEL_PATH);
-        }
-        return $isWorker;
-    }
-
-
-    /**
      * @param Server $server
      * @param int $worker_id
      *
@@ -48,9 +30,14 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        $isWorker = $this->injectLoader($this->isWorker($server, $worker_id));
+        $annotation = Snowflake::app()->getAnnotation();
+        $annotation->setLoader(unserialize(file_get_contents(storage('runtime.php'))));
 
-        $this->{$isWorker ? 'onWorker' : 'onTask'}($server);
+        if ($worker_id < $server->setting['worker_num']) {
+            $this->onWorker($server, $annotation);
+        } else {
+            $this->onTask($server, $annotation);
+        }
     }
 
 
@@ -70,8 +57,10 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @throws Exception
      */
-    public function onTask(Server $server)
+    public function onTask(Server $server, Annotation $annotation)
     {
+        $annotation->runtime(MODEL_PATH);
+
         putenv('environmental=' . Snowflake::TASK);
 
         Snowflake::setTaskId($server->worker_pid);
@@ -85,12 +74,15 @@ class OnWorkerStart extends Callback
      * @param int $worker_id
      * @throws Exception
      */
-    public function onWorker(Server $server)
+    public function onWorker(Server $server, Annotation $annotation)
     {
-        Snowflake::setWorkerId($server->worker_pid);
-        putenv('environmental=' . Snowflake::WORKER);
-
         try {
+            $annotation->runtime(CONTROLLER_PATH);
+            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+
+            Snowflake::setWorkerId($server->worker_pid);
+            putenv('environmental=' . Snowflake::WORKER);
+
             fire(Event::SERVER_WORKER_START, [getenv('worker')]);
         } catch (\Throwable $exception) {
             $this->addError($exception, 'throwable');
