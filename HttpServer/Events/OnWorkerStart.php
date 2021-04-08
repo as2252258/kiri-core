@@ -54,13 +54,13 @@ class OnWorkerStart extends Callback
     public function onHandler(Server $server, int $worker_id): void
     {
         $annotation = $this->injectLoader();
-        (new Pipeline())
-            ->if($this->isWorker($worker_id), function ($annotation, $server, $worker_id) {
-                $annotation->runtime(CONTROLLER_PATH);
-                $annotation->runtime(APP_PATH, CONTROLLER_PATH);
-                $this->onWorker($server, $server->worker_id);
-                name($server->worker_pid, 'Worker.' . $worker_id);
-            })
+        $line = new Pipeline();
+        $line->if($this->isWorker($worker_id), function ($annotation, $server, $worker_id) {
+            $annotation->runtime(CONTROLLER_PATH);
+            $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+            $this->onWorker($server, $server->worker_id);
+            name($server->worker_pid, 'Worker.' . $worker_id);
+        })
             ->else(function ($annotation, $server, $worker_id) {
                 $annotation->runtime(MODEL_PATH);
                 $this->onTask($server, $server->worker_id);
