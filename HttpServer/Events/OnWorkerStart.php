@@ -63,11 +63,12 @@ class OnWorkerStart extends Callback
 
         putenv('environmental=' . Snowflake::TASK);
 
+        name($server->worker_pid, 'Task#' . $server->worker_id);
+
         Snowflake::setTaskId($server->worker_pid);
 
         fire(Event::SERVER_TASK_START);
     }
-
 
 
     /**
@@ -83,6 +84,8 @@ class OnWorkerStart extends Callback
             $this->debug('load controller time .' . (microtime(true) - $time));
 
             $annotation->runtime(APP_PATH, CONTROLLER_PATH);
+
+            name($server->worker_pid, 'Worker#' . $server->worker_id);
 
             Snowflake::setWorkerId($server->worker_pid);
             putenv('environmental=' . Snowflake::WORKER);
