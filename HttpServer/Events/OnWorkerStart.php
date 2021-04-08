@@ -77,7 +77,10 @@ class OnWorkerStart extends Callback
     public function onWorker(Server $server, Annotation $annotation)
     {
         try {
+            $time = microtime(true);
             $annotation->runtime(CONTROLLER_PATH);
+            $this->debug('load controller time .' . (microtime(true) - $time));
+
             $annotation->runtime(APP_PATH, CONTROLLER_PATH);
 
             Snowflake::setWorkerId($server->worker_pid);
