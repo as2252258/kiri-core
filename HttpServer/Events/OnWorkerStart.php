@@ -9,6 +9,7 @@ use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine\System;
 use Swoole\Server;
 
 /**
@@ -30,8 +31,12 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
+        $open = fopen(storage('runtime.php'),'r');
+	    $content = System::fread($open);
+        fclose($open);
+
         $annotation = Snowflake::app()->getAnnotation();
-        $annotation->setLoader(unserialize(file_get_contents(storage('runtime.php'))));
+        $annotation->setLoader(unserialize($content));
 
         if ($worker_id < $server->setting['worker_num']) {
             $this->onWorker($server, $annotation);
@@ -41,22 +46,23 @@ class OnWorkerStart extends Callback
     }
 
 
-    /**
-     * @param Server $server
-     * @param int $worker_id
-     * @return bool
-     */
-    private function isWorker($server, int $worker_id): bool
+	/**
+	 * @param Server $server
+	 * @param int $worker_id
+	 * @return bool
+	 */
+    private function isWorker(Server $server, int $worker_id): bool
     {
         return $worker_id < $server->setting['worker_num'];
     }
 
 
-    /**
-     * @param Server $server
-     * @param int $worker_id
-     * @throws Exception
-     */
+	/**
+	 * @param Server $server
+	 * @param Annotation $annotation
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
     public function onTask(Server $server, Annotation $annotation)
     {
         $annotation->runtime(MODEL_PATH);
@@ -71,11 +77,11 @@ class OnWorkerStart extends Callback
     }
 
 
-    /**
-     * @param Server $server
-     * @param int $worker_id
-     * @throws Exception
-     */
+	/**
+	 * @param Server $server
+	 * @param Annotation $annotation
+	 * @throws Exception
+	 */
     public function onWorker(Server $server, Annotation $annotation)
     {
         try {
