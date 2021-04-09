@@ -9,7 +9,7 @@ use Snowflake\Abstracts\Input;
 
 
 /**
- * Class Runtimer
+ * Class Runtime
  * @package Snowflake
  */
 class Runtime extends Command
@@ -17,6 +17,8 @@ class Runtime extends Command
 
 
     public string $command = 'runtime:builder';
+
+    public string $description = 'create app file cache';
 
 
 	/**
