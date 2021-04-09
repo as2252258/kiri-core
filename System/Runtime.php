@@ -19,9 +19,10 @@ class Runtime extends Command
     public string $command = 'runtime:builder';
 
 
-    /**
-     * @param Input $dtl
-     */
+	/**
+	 * @param Input $dtl
+	 * @throws \Exception
+	 */
     public function onHandler(Input $dtl)
     {
         // TODO: Implement onHandler() method.
