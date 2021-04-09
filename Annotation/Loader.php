@@ -242,7 +242,7 @@ class Loader extends BaseObject
 	 */
 	public function appendFileToDirectory(string $filePath, string $className)
 	{
-		$filePath = str_replace(APP_PATH, '', $filePath);
+		$filePath = str_replace(directory('app'), '', $filePath);
 
 		$directory = $this->splitDirectory($filePath);
 		array_pop($directory);
@@ -265,14 +265,14 @@ class Loader extends BaseObject
 	private function each(string $filePath, ?string $output): static
 	{
 		$tree = null;
-		$filePath = str_replace(APP_PATH, '', $filePath);
+		$filePath = str_replace(directory('app'), '', $filePath);
 
 		$directory = $this->splitDirectory($filePath);
 
 		if (!empty($output)) {
 			$output = DIRECTORY_SEPARATOR . trim($output, '/');
 		}
-		$output = str_replace(APP_PATH, '', $output);
+		$output = str_replace(directory('app'), '', $output);
 
 		$out_path = '';
 		foreach ($directory as $key => $value) {
