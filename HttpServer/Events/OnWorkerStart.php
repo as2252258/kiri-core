@@ -31,9 +31,7 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        $open = fopen(storage('runtime.php'),'r');
-	    $content = System::fread($open);
-        fclose($open);
+	    $content = System::readFile(storage('runtime.php'));
 
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize($content));
