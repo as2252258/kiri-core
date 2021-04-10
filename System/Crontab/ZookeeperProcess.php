@@ -48,9 +48,12 @@ class ZookeeperProcess extends Process
 
 			$redis = Snowflake::app()->getRedis();
 
+			$redis->multi();
 			$range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
 			$redis->zRemRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
-			$redis->release();
+            $redis->exec();
+
+            $redis->release();
 
 			/** @var Consumer $consumer */
 			$consumer = Snowflake::app()->get(Consumer::class);
