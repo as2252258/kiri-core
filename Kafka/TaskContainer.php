@@ -33,6 +33,16 @@ class TaskContainer extends BaseObject
 
     /**
      * @param $topic
+     * @return mixed|null
+     */
+    public function getConsumer(string $topic)
+    {
+        return $this->_topics[$topic] ?? null;
+    }
+
+
+    /**
+     * @param $topic
      * @param \Kafka\Struct $struct
      */
     public function process($topic, Struct $struct)

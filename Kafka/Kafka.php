@@ -104,7 +104,14 @@ class Kafka extends \Snowflake\Process\Process
 
                 $setting = $server->setting['worker_num'];
 
-                $message = swoole_serialize(['action' => 'kafka', 'body' => [$topic, $message]]);
+                /** @var TaskContainer $container */
+                $container = Snowflake::app()->get('kafka-container');
+                $handler = $container->getConsumer($topic);
+
+                if (empty($handler)) {
+                    return;
+                }
+                $message = swoole_serialize(['action' => 'kafka', 'handler' => $handler, 'body' => [$topic, $message]]);
 
                 $server->sendMessage($message, random_int(0, $setting - 1));
             } catch (Throwable $exception) {
