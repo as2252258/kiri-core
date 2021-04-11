@@ -200,6 +200,7 @@ class Crontab extends BaseObject
     public function execute(): void
     {
         $params = call_user_func($this->handler, $this->params, $this->name);
+        \redis()->hDel('crontab:wait:execute', $this->getName());
         if ($params !== null) {
             $name = date('Y_m_d_H_i_s.' . $this->name . '.log');
             write(storage($name, '/log/crontab'), serialize($params));
