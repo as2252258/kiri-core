@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use Snowflake\Abstracts\BaseObject;
 use Snowflake\Event;
+use Snowflake\Snowflake;
 use Swoole\Timer;
 
 /**
@@ -17,6 +18,7 @@ use Swoole\Timer;
 class Crontab extends BaseObject
 {
 
+    const WAIT_END = 'crontab:wait:execute';
 
     private array|Closure $handler;
 
@@ -195,15 +197,55 @@ class Crontab extends BaseObject
 
 
     /**
+     * @throws \Exception
+     */
+    private function recover()
+    {
+        $redis = Snowflake::app()->getRedis();
+
+        $redis->set('crontab:' . md5($this->getName()), swoole_serialize($this));
+
+        $tickTime = time() + $this->getTickTime();
+
+        $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $this->getName());
+    }
+
+
+    /**
      * @throws Exception
      */
     public function execute(): void
     {
-        $params = call_user_func($this->handler, $this->params, $this->name);
-        \redis()->hDel('crontab:wait:execute', $this->getName());
-        if ($params !== null) {
+        try {
+            $redis = Snowflake::app()->getRedis();
+
+            $name_md5 = md5($this->getName());
+
+            $redis->hSet(self::WAIT_END, $name_md5, serialize($this));
+            $params = call_user_func($this->handler, $this->params, $this->name);
+            $redis->hDel(self::WAIT_END, $name_md5);
+            if ($params === null) {
+                return;
+            }
             $name = date('Y_m_d_H_i_s.' . $this->name . '.log');
             write(storage($name, '/log/crontab'), serialize($params));
+        } catch (\Throwable $throwable) {
+            logger()->addError($throwable, 'throwable');
+        } finally {
+            $this->after();
+        }
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function after(): void
+    {
+        if ($this->getExecuteNumber() < $this->getMaxExecuteNumber()) {
+            $this->recover();
+        } else if ($this->isLoop()) {
+            $this->recover();
         }
     }
 

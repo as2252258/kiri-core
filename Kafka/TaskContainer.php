@@ -48,7 +48,6 @@ class TaskContainer extends BaseObject
     public function process($topic, Struct $struct)
     {
         $handler = $this->_topics[$topic] ?? null;
-        var_dump($this->_topics, $topic, $struct);
         if (empty($handler)) {
             return;
         }

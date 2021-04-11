@@ -12,10 +12,10 @@ use Swoole\Coroutine\Channel;
 use Swoole\Timer;
 
 /**
- * Class ZookeeperProcess
+ * Class Zookeeper
  * @package Snowflake\Process
  */
-class ZookeeperProcess extends Process
+class Zookeeper extends Process
 {
 
 
@@ -39,31 +39,52 @@ class ZookeeperProcess extends Process
     {
         $crontab = Snowflake::app()->get('crontab');
         $crontab->clearAll();
-
         if (Snowflake::getPlatform()->isLinux()) {
             name($this->pid, 'Crontab zookeeper.');
         }
         Timer::tick(1000, function () {
-            $startTime = time();
-
-            $redis = Snowflake::app()->getRedis();
-
-            $redis->multi();
-            $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
-            $redis->zRemRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
-            $redis->exec();
-
-            $redis->release();
-
-            /** @var Consumer $consumer */
-            $consumer = Snowflake::app()->get(Consumer::class);
-
+            [$range, $redis] = $this->loadCrotabTask();
+            $server = Snowflake::app()->getSwoole();
+            $setting = $server->setting['worker_num'];
             foreach ($range as $value) {
-                $consumer->write('crontab:' . md5($value));
+                $this->dispatch($server, $redis, $setting, $value);
             }
+            $redis->release();
         });
     }
 
+
+    /**
+     * @param $server
+     * @param $redis
+     * @throws \Exception
+     */
+    private function dispatch($server, $redis, $setting, $value)
+    {
+        $server->sendMessage(swoole_serialize([
+            'action' => 'crontab', 'handler' => swoole_unserialize($redis->get('crontab:' . md5($value)))
+        ]), random_int(0, $setting - 1));
+        $redis->del('crontab:' . md5($value));
+    }
+
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    private function loadCrotabTask()
+    {
+        $redis = Snowflake::app()->getRedis();
+
+        $startTime = time();
+
+        $redis->multi();
+        $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
+        $redis->zRemRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
+        $redis->exec();
+
+        return [$range, $redis];
+    }
 
 
     /**

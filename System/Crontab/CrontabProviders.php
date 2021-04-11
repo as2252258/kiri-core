@@ -37,8 +37,7 @@ class CrontabProviders extends Providers
         if (Config::get('crontab.enable') !== true) {
             return;
         }
-        $server->addProcess('CrontabZookeeper', ZookeeperProcess::class);
-        $server->addProcess('Consumer', Consumer::class);
+        $server->addProcess('CrontabZookeeper', Zookeeper::class);
     }
 
 }

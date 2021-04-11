@@ -4,15 +4,11 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
-use Annotation\Loader;
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Kafka\ConsumerInterface;
 use Kafka\Struct;
-use Kafka\TaskContainer;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
-use Snowflake\Snowflake;
 use Swoole\Server;
 
 /**
@@ -35,6 +31,7 @@ class OnPipeMessage extends Callback
             $swoole_unserialize = swoole_unserialize($message);
             match ($swoole_unserialize['action'] ?? null) {
                 'kafka' => $this->onKafkaWorker($swoole_unserialize),
+                'crontab' => $this->onCrontabWorker($swoole_unserialize),
                 default => $this->onMessageWorker($server, $src_worker_id, $message)
             };
         } catch (\Throwable $exception) {
@@ -42,6 +39,19 @@ class OnPipeMessage extends Callback
         } finally {
             fire(Event::SYSTEM_RESOURCE_RELEASES);
         }
+    }
+
+
+    /**
+     * @param array $message
+     * @return string
+     */
+    private function onCrontabWorker(array $message)
+    {
+        /** @var \Snowflake\Crontab\Crontab $crontab */
+        $crontab = $message['handler'] ?? null;
+        $crontab->increment()->execute();
+        return 'success';
     }
 
 
