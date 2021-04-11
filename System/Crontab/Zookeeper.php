@@ -62,9 +62,9 @@ class Zookeeper extends Process
     private function dispatch($server, $redis, $setting, $value)
     {
         $server->sendMessage(swoole_serialize([
-            'action' => 'crontab', 'handler' => swoole_unserialize($redis->get('crontab:' . md5($value)))
+            'action' => 'crontab', 'handler' => swoole_unserialize($redis->get('crontab:' . $value))
         ]), random_int(0, $setting - 1));
-        $redis->del('crontab:' . md5($value));
+        $redis->del('crontab:' . $value);
     }
 
 

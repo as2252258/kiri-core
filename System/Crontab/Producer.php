@@ -33,7 +33,7 @@ class Producer extends Component
 
         $tickTime = time() + $crontab->getTickTime();
 
-        $redis->zAdd(self::CRONTAB_KEY, $tickTime, $crontab->getName());
+        $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
     }
 
 
@@ -59,7 +59,7 @@ class Producer extends Component
         $data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
         $redis->del(self::CRONTAB_KEY);
         foreach ($data as $datum) {
-            $redis->del('crontab:' . md5($datum));
+            $redis->del('crontab:' . $datum);
         }
         $redis->release();
     }

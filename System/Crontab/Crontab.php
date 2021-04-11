@@ -203,11 +203,11 @@ class Crontab extends BaseObject
     {
         $redis = Snowflake::app()->getRedis();
 
-        $redis->set('crontab:' . md5($this->getName()), swoole_serialize($this));
+        $redis->set('crontab:' . ($name = md5($this->getName())), swoole_serialize($this));
 
         $tickTime = time() + $this->getTickTime();
 
-        $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $this->getName());
+        $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
     }
 
 
