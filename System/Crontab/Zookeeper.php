@@ -44,6 +44,9 @@ class Zookeeper extends Process
         }
         Timer::tick(1000, function () {
             [$range, $redis] = $this->loadCrotabTask();
+
+            var_dump($range);
+
             $server = Snowflake::app()->getSwoole();
             $setting = $server->setting['worker_num'];
             foreach ($range as $value) {
