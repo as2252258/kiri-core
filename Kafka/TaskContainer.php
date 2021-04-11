@@ -18,21 +18,6 @@ class TaskContainer extends BaseObject
     private array $_topics = [];
 
 
-    private static ?TaskContainer $container = null;
-
-
-    /**
-     * @return \Kafka\TaskContainer
-     */
-    public static function getInstance(): TaskContainer
-    {
-        if (!(static::$container instanceof TaskContainer)) {
-            static::$container = new TaskContainer();
-        }
-        return static::$container;
-    }
-
-
     /**
      * @param $topic
      * @param $handler

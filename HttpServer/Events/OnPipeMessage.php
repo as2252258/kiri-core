@@ -68,7 +68,8 @@ class OnPipeMessage extends Callback
     {
         [$topic, $message] = $message['body'];
 
-        $container = TaskContainer::getInstance();
+        /** @var TaskContainer $container */
+        $container = Snowflake::app()->get('kafka-container');
         $container->process($topic, new Struct($topic, $message));
         return 'success';
     }
