@@ -32,6 +32,7 @@ use Snowflake\Snowflake;
      */
     public function execute(array $handler): mixed
     {
+        var_dump($handler);
         if (!($handler[0] instanceof ConsumerInterface)) {
             return false;
         }

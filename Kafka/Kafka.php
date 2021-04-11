@@ -106,7 +106,7 @@ class Kafka extends \Snowflake\Process\Process
 
                 $message = swoole_serialize(['action' => 'kafka', 'body' => [$topic, $message]]);
 
-                $server->sendMessage($message, random_int(0, $setting));
+                $server->sendMessage($message, random_int(0, $setting - 1));
             } catch (Throwable $exception) {
                 logger()->addError($exception, 'throwable');
             }
