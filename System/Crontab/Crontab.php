@@ -221,6 +221,8 @@ class Crontab extends BaseObject
 
             $name_md5 = md5($this->getName());
 
+            var_dump($name_md5);
+
             $redis->hSet(self::WAIT_END, $name_md5, serialize($this));
             $params = call_user_func($this->handler, $this->params, $this->name);
             $redis->hDel(self::WAIT_END, $name_md5);
