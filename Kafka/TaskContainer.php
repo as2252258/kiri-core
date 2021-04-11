@@ -18,7 +18,7 @@ class TaskContainer extends BaseObject
     private array $_topics = [];
 
 
-    private static TaskContainer $container;
+    private static ?TaskContainer $container = null;
 
 
     /**
