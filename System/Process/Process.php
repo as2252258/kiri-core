@@ -36,12 +36,6 @@ abstract class Process extends \Swoole\Process implements SProcess
         parent::__construct([$this, '_load'], false, 1, $enable_coroutine);
         $this->application = $application;
         Snowflake::setProcessId($this->pid);
-
-        $content = System::readFile(storage('runtime.php'));
-
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->setLoader(unserialize($content));
-        $annotation->runtime(APP_PATH . 'app/Kafka');
     }
 
     /**
