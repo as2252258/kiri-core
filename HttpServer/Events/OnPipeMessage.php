@@ -66,9 +66,10 @@ class OnPipeMessage extends Callback
      */
     private function onKafkaWorker(array $message)
     {
-        [$topic, $message] = $message['body'];
-
-        call_user_func($message['handler'], new Struct($topic, $message));
+        var_dump($message);
+//        [$topic, $message] = $message['body'];
+//
+//        call_user_func($message['handler'], new Struct($topic, $message));
 
         return 'success';
 
