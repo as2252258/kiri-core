@@ -37,10 +37,10 @@ abstract class Process extends \Swoole\Process implements SProcess
 		$this->application = $application;
 		Snowflake::setProcessId($this->pid);
 
-        $content = System::readFile(storage('runtime.php'));
+//        $content = System::readFile(storage('runtime.php'));
 
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->setLoader(unserialize($content));
+//        $annotation = Snowflake::app()->getAnnotation();
+//        $annotation->setLoader(unserialize($content));
 	}
 
 	/**
