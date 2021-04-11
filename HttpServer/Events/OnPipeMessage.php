@@ -66,16 +66,10 @@ class OnPipeMessage extends Callback
      */
     private function onKafkaWorker(array $message)
     {
-        var_dump($message);
-//        [$topic, $message] = $message['body'];
-//
-//        call_user_func($message['handler'], new Struct($topic, $message));
+        [$topic, $rdMessage] = $message['body'];
 
-        return 'success';
+        call_user_func($message['handler'], new Struct($topic, $rdMessage[1]));
 
-        /** @var TaskContainer $container */
-        $container = Snowflake::app()->get('kafka-container');
-        $container->process($topic, new Struct($topic, $message));
         return 'success';
     }
 
