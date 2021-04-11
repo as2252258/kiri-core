@@ -24,6 +24,7 @@ defined('DB_ERROR_BUSY') or define('DB_ERROR_BUSY', 'The database is busy. Pleas
 defined('SELECT_IS_NULL') or define('SELECT_IS_NULL', 'Query data does not exist, please check the relevant conditions.');
 defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be empty, please add.');
 defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/Controllers/');
+defined('KAFKA_PATH') or define('KAFKA_PATH', APP_PATH . 'app/Kafka/');
 defined('RPC_SERVICE_PATH') or define('RPC_SERVICE_PATH', APP_PATH . 'app/Http/Rpc/');
 defined('RPC_CLIENT_PATH') or define('RPC_CLIENT_PATH', APP_PATH . 'app/Client/Rpc/');
 defined('MODEL_PATH') or define('MODEL_PATH', APP_PATH . 'app/Models/');

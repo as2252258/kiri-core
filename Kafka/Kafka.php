@@ -13,6 +13,7 @@ use RdKafka\TopicConf;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Channel;
+use Swoole\Coroutine\System;
 use Swoole\Process;
 use Throwable;
 
@@ -34,6 +35,12 @@ class Kafka extends \Snowflake\Process\Process
      */
     public function onHandler(Process $process): void
     {
+        $content = System::readFile(storage('runtime.php'));
+
+        $annotation = Snowflake::app()->getAnnotation();
+        $annotation->setLoader(unserialize($content));
+        $annotation->runtime(KAFKA_PATH);
+
         $this->waite(swoole_unserialize($process->read()));
     }
 
