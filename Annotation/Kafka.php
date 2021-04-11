@@ -16,7 +16,7 @@ namespace Annotation;
      * Kafka constructor.
      * @param string $topic
      */
-    public function __construct(public string $topic, public string $groupId)
+    public function __construct(public string $topic, public string $groupId, public ?string $brokers = null)
     {
 
     }
