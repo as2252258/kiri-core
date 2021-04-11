@@ -51,9 +51,6 @@ class Server extends HttpService
     public int $daemon = 0;
 
 
-    private array $listenTypes = [];
-
-
     private array $process = [
         'biomonitoring'  => Biomonitoring::class,
         'logger_process' => LoggerProcess::class
@@ -427,7 +424,7 @@ class Server extends HttpService
         $this->bindServerEvent($config['type']);
 
         $this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
-        $this->listenTypes[] = $config['type'];
+
         return $this->swoole;
     }
 
