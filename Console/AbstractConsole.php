@@ -51,10 +51,11 @@ abstract class AbstractConsole extends Component
         return $this;
     }
 
-    /**
-     * @param Command $command
-     * @return mixed
-     */
+	/**
+	 * @param Command $command
+	 * @return mixed
+	 * @throws Exception
+	 */
     public function execCommand(Command $command): mixed
     {
         fire(Event::BEFORE_COMMAND_EXECUTE);
