@@ -6,6 +6,7 @@ namespace Snowflake\Crontab;
 
 use Closure;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
 use Snowflake\Event;
 use Snowflake\Snowflake;
@@ -64,9 +65,9 @@ class Crontab extends BaseObject
     /**
      * @return string
      */
-    public function getName(): string
+    #[Pure] public function getName(): string
     {
-        return $this->name;
+        return md5($this->name);
     }
 
     /**
@@ -203,7 +204,7 @@ class Crontab extends BaseObject
     {
         $redis = Snowflake::app()->getRedis();
 
-        $redis->set('crontab:' . ($name = md5($this->getName())), swoole_serialize($this));
+        $redis->set('crontab:' . ($name = $this->getName()), swoole_serialize($this));
 
         $tickTime = time() + $this->getTickTime();
 
@@ -219,7 +220,7 @@ class Crontab extends BaseObject
         try {
             $redis = Snowflake::app()->getRedis();
 
-            $name_md5 = md5($this->getName());
+            $name_md5 = $this->getName();
 
             $redis->hSet(self::WAIT_END, $name_md5, serialize($this));
             $params = call_user_func($this->handler, $this->params, $this->name);

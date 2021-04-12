@@ -7,6 +7,7 @@ namespace HttpServer\Events;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use Kafka\Struct;
+use Snowflake\Crontab\Crontab;
 use Snowflake\Event;
 use Snowflake\Exception\ComponentException;
 use Swoole\Server;
@@ -22,16 +23,15 @@ class OnPipeMessage extends Callback
      * @param Server $server
      * @param int $src_worker_id
      * @param $message
-     * @throws ComponentException
      * @throws Exception
      */
     public function onHandler(Server $server, int $src_worker_id, $message)
     {
         try {
-            $swoole_unserialize = swoole_unserialize($message);
-            match ($swoole_unserialize['action'] ?? null) {
-                'kafka' => $this->onKafkaWorker($swoole_unserialize),
-                'crontab' => $this->onCrontabWorker($swoole_unserialize),
+            $swollen_universalize = swoole_unserialize($message);
+            match ($swollen_universalize['action'] ?? null) {
+                'kafka' => $this->onKafkaWorker($swollen_universalize),
+                'crontab' => $this->onCrontabWorker($swollen_universalize),
                 default => $this->onMessageWorker($server, $src_worker_id, $message)
             };
         } catch (\Throwable $exception) {
@@ -42,26 +42,28 @@ class OnPipeMessage extends Callback
     }
 
 
-    /**
-     * @param array $message
-     * @return string
-     */
-    private function onCrontabWorker(array $message)
+	/**
+	 * @param array $message
+	 * @return string
+	 * @throws Exception
+	 */
+    private function onCrontabWorker(array $message): string
     {
-        /** @var \Snowflake\Crontab\Crontab $crontab */
+        /** @var Crontab $crontab */
         $crontab = $message['handler'] ?? null;
         $crontab->increment()->execute();
         return 'success';
     }
 
 
-    /**
-     * @param $server
-     * @param $src_worker_id
-     * @param $message
-     * @throws \Exception
-     */
-    private function onMessageWorker($server, $src_worker_id, $message)
+	/**
+	 * @param $server
+	 * @param $src_worker_id
+	 * @param $message
+	 * @return string
+	 * @throws Exception
+	 */
+    private function onMessageWorker($server, $src_worker_id, $message): string
     {
         fire(Event::PIPE_MESSAGE, [$server, $src_worker_id, $message]);
 
@@ -69,12 +71,11 @@ class OnPipeMessage extends Callback
     }
 
 
-    /**
-     * @param array $message
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
-     */
-    private function onKafkaWorker(array $message)
+	/**
+	 * @param array $message
+	 * @return string
+	 */
+    private function onKafkaWorker(array $message): string
     {
         [$topic, $rdMessage] = $message['body'];
 

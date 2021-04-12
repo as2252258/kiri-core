@@ -10,6 +10,7 @@ use Snowflake\Snowflake;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
+use Snowflake\Cache\Redis;
 
 /**
  * Class Zookeeper
@@ -43,7 +44,7 @@ class Zookeeper extends Process
             name($this->pid, 'Crontab zookeeper.');
         }
         Timer::tick(1000, function () {
-            [$range, $redis] = $this->loadCrotabTask();
+            [$range, $redis] = $this->loadCarobTask();
 
             $server = Snowflake::app()->getSwoole();
             $setting = $server->setting['worker_num'];
@@ -55,12 +56,14 @@ class Zookeeper extends Process
     }
 
 
-    /**
-     * @param $server
-     * @param $redis
-     * @throws \Exception
-     */
-    private function dispatch($server, $redis, $setting, $value)
+	/**
+	 * @param $server
+	 * @param Redis|\Redis $redis
+	 * @param int $setting
+	 * @param $value
+	 * @throws Exception
+	 */
+    private function dispatch($server, Redis|\Redis $redis, int $setting, $value)
     {
         $server->sendMessage(swoole_serialize([
             'action' => 'crontab', 'handler' => swoole_unserialize($redis->get('crontab:' . $value))
@@ -71,9 +74,9 @@ class Zookeeper extends Process
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    private function loadCrotabTask()
+    private function loadCarobTask(): array
     {
         $redis = Snowflake::app()->getRedis();
 

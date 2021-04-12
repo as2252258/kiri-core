@@ -27,7 +27,7 @@ class Producer extends Component
     {
         $redis = Snowflake::app()->getRedis();
 
-        $name = md5($crontab->getName());
+        $name = $crontab->getName();
 
         $redis->set('crontab:' . $name, swoole_serialize($crontab));
 
