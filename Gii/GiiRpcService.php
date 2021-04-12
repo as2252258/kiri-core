@@ -56,13 +56,11 @@ class ' . $managerName . 'Producer extends Controller
 
 
 	/**
-	 * @param Users $users
-	 * @param string $event
 	 * @param array $params
 	 * @throws Exception
 	 */
 	#[RpcProducer(cmd: \'default\', port: ' . $port . ')]
-	public function actionIndex()
+	public function actionIndex(array $params)
 	{
 		
 	}

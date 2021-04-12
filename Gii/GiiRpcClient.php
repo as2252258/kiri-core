@@ -73,13 +73,12 @@ class ' . $managerName . 'Consumer extends \Rpc\Consumer
 
 
 	/**
-	 * @param Users $users
 	 * @param string $event
 	 * @param array $params
 	 * @throws Exception
 	 */
 	#[Consumer(\'default\')]
-	public function push(Users $users, string $event, array $params)
+	public function push(string $event, array $params)
 	{
 		
 	}
