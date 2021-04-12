@@ -80,7 +80,7 @@ class ' . $managerName . ' implements Task
 
 		$file = APP_PATH . 'app/Async/' . $managerName . '.php';
 		if (file_exists($file)) {
-			unlink($file);
+			throw new Exception('File exists.');
 		}
 
 		Snowflake::writeFile($file, $html);

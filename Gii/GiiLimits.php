@@ -65,7 +65,7 @@ class ' . $managerName . 'Limits implements Limits
 
 		$file = APP_PATH . 'app/Http/Limits/' . $managerName . 'Limits.php';
 		if (file_exists($file)) {
-			unlink($file);
+			throw new Exception('File exists.');
 		}
 
 		Snowflake::writeFile($file, $html);

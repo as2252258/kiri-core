@@ -88,7 +88,7 @@ class ' . $managerName . 'Interceptor implements Interceptor
 
 
 		if (file_exists($file)) {
-			unlink($file);
+			throw new Exception('File exists.');
 		}
 
 		Snowflake::writeFile($file, $html);

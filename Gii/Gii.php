@@ -95,6 +95,14 @@ class Gii
 				$task = new GiiMiddleware();
 				$task->setInput($this->input);
 				return $task->generate();
+			case 'rpc-client':
+				$task = new GiiRpcClient();
+				$task->setInput($this->input);
+				return $task->generate();
+			case 'rpc-service':
+				$task = new GiiRpcService();
+				$task->setInput($this->input);
+				return $task->generate();
 			default:
 				return $this->getModel($make, $input);
 		}
