@@ -10,32 +10,29 @@ declare(strict_types=1);
 namespace Database\Base;
 
 
-use Annotation\Aspect;
 use Annotation\Event;
 use Annotation\Inject;
 use ArrayAccess;
-use Database\InjectProperty;
-use Database\SqlBuilder;
-use Database\Traits\HasBase;
-use HttpServer\Http\Context;
-use ReflectionException;
-use Snowflake\Abstracts\Component;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Connection;
 use Database\HasMany;
 use Database\HasOne;
+use Database\IOrm;
 use Database\Mysql\Columns;
 use Database\Relation;
+use Database\SqlBuilder;
+use Database\Traits\HasBase;
 use Exception;
+use HttpServer\Http\Context;
+use ReflectionException;
+use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Channel;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
-use validator\Validator;
-use Database\IOrm;
-use Snowflake\Snowflake;
 use Snowflake\Event as SEvent;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
+use validator\Validator;
 
 /**
  * Class BOrm
@@ -391,13 +388,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function getAttributes(): array
 	{
-	    $data = $this->_attributes;
-        foreach ($this->getAnnotation() as $key => $item) {
-            if (!isset($data[$key])) continue;
+		$data = $this->_attributes;
+		foreach ($this->getAnnotation() as $key => $item) {
+			if (!isset($data[$key])) continue;
 
-            $data[$key] = $this->runAnnotation($key, $data[$key] ?? null);
-        }
-        return $data;
+			$data[$key] = $this->runAnnotation($key, $data[$key] ?? null);
+		}
+		return $data;
 	}
 
 	/**
@@ -768,14 +765,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$tablePrefix = static::getDb()->tablePrefix;
 
 		$table = static::tableName();
+		if (empty($table)) {
+			throw new Exception('You need add static method `tableName` and return table name.');
+		}
 
 		if (str_starts_with($table, $tablePrefix)) {
 			return $table;
-		}
-
-		if (empty($table)) {
-			$class = preg_replace('/model\\\\/', '', get_called_class());
-			$table = lcfirst($class);
+		} else if (!str_starts_with($table, '{{%')) {
+			return $table;
 		}
 
 		$table = trim($table, '{{%}}');

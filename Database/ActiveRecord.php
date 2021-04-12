@@ -114,7 +114,6 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param array $condition
 	 * @param array $attributes
 	 * @return bool|ActiveRecord
-	 * @throws ComponentException
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 * @throws Exception
