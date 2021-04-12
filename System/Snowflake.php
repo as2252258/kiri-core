@@ -360,7 +360,7 @@ class Snowflake
 	public static function push(int $fd, $data): mixed
 	{
 		$server = static::getWebSocket();
-		if (empty($server)) {
+		if (empty($server) || !$server->isEstablished($fd)) {
 			return false;
 		}
 		if (!is_string($data)) {
