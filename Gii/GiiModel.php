@@ -218,7 +218,9 @@ use Database\ActiveRecord;
 		$prefixed = $this->db->tablePrefix;
 		if (!empty($prefixed)) {
 			$field = str_replace($prefixed, '', $field);
-			$field = '{{%' . $field . '}}';
+			if (str_starts_with($field, $prefixed)) {
+				$field = '{{%' . $field . '}}';
+			}
 		}
 
 		return '
