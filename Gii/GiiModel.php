@@ -69,10 +69,10 @@ namespace ' . $namespace . ';
 				}
 
 				if (!str_contains($imports, 'Annotation\Model\Set')) {
-					$html .= 'use Annotation\Model\Set' . PHP_EOL;
+					$html .= 'use Annotation\Model\Set;' . PHP_EOL;
 				}
 				if (!str_contains($imports, 'Annotation\Model\Get')) {
-					$html .= 'use Annotation\Model\Get' . PHP_EOL;
+					$html .= 'use Annotation\Model\Get;' . PHP_EOL;
 				}
 			} catch (\Throwable $e) {
 				logger()->addError($e, 'throwable');
