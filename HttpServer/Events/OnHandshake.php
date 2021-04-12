@@ -101,7 +101,7 @@ class OnHandshake extends Callback
 			$event->trigger($eventName, [$request, $response]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
-			$this->disconnect($response, 500);
+			$this->disconnect($response, 401);
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_CLEAN);
 			logger_insert();
