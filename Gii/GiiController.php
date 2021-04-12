@@ -393,9 +393,15 @@ use {$model_namespace}\\{$managerName};
 	    } else {
 	        $order = \'id desc\';
 	    }
-	    
+	    	    
 	    //列表输出
 	    $model = ' . $managerName . '::find()->where($this->input->gets())->orderBy($order);
+
+	   	$keyword = $this->input->get(\'keyword\', null); 
+	    if (!empty($keyword)) {
+	        $model->like(\'keyword\', $keyword);
+	    }
+  
         if ((int) $count === 1) {
 		    $count = $model->count();
 	    }
