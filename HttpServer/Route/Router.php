@@ -80,7 +80,7 @@ class Router extends HttpService implements RouterInterface
      * @param Closure|array|string $closure
      * @param null $method
      * @return Node|bool|null
-     * @throws Exception
+     * @throws
      */
     public function addPortListen($port, Closure|array|string $closure, $method = null): Node|null|bool
     {
