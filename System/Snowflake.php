@@ -6,6 +6,8 @@ namespace Snowflake;
 
 
 use Annotation\Annotation;
+use Database\ActiveRecord;
+use Database\Collection;
 use Exception;
 use HttpServer\IInterface\Task;
 
@@ -481,6 +483,26 @@ class Snowflake
 	const PROCESS = 'process';
 	const TASK = 'task';
 	const WORKER = 'worker';
+
+
+	/**
+	 * @param string $event
+	 * @param null $data
+	 * @return false|string
+	 */
+	public static function param(string $event, $data = NULL): bool|string
+	{
+		if (is_object($data)) {
+			if ($data instanceof ActiveRecord || $data instanceof Collection) {
+				$data = $data->getAttributes();
+			} else {
+				$data = get_object_vars($data);
+			}
+		}
+		if (!is_array($data)) $data = ['data' => $data];
+		return json_encode(array_merge(['callback' => $event], $data));
+	}
+
 
 
 	/**
