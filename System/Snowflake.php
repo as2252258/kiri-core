@@ -457,7 +457,7 @@ class Snowflake
 
 	/**
 	 * @return Environmental
-	 * @throws Exception
+	 * @throws
 	 */
 	public static function getPlatform(): Environmental
 	{
