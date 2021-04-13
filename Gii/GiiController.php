@@ -507,7 +507,6 @@ use {$model_namespace}\\{$managerName};
 		$html = '';
 
 		$length = $this->getMaxLength($fields);
-
 		foreach ($fields as $key => $val) {
 			preg_match('/\d+/', $val['Type'], $number);
 
