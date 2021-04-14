@@ -20,8 +20,6 @@ abstract class Crontab extends BaseObject
 
 	const WAIT_END = 'crontab:wait:execute';
 
-	private array|Closure $handler;
-
 
 	private string $name = '';
 
@@ -42,7 +40,6 @@ abstract class Crontab extends BaseObject
 
 
 	private int $execute_number = 0;
-	private array|Closure|null $_max_execute_handler = null;
 
 
 	private bool $_stop = false;
@@ -66,13 +63,6 @@ abstract class Crontab extends BaseObject
 		return $this;
 	}
 
-	/**
-	 * @return array|Closure
-	 */
-	public function getHandler(): array|Closure
-	{
-		return $this->handler;
-	}
 
 	/**
 	 * @return string
@@ -122,17 +112,6 @@ abstract class Crontab extends BaseObject
 		return $this->execute_number;
 	}
 
-
-	/**
-	 * @param array|Closure $handler
-	 */
-	public function setHandler(array|Closure $handler): void
-	{
-		if ($handler instanceof Closure) {
-			Closure::bind($handler, $this, $this);
-		}
-		$this->handler = $handler;
-	}
 
 	/**
 	 * @param string $name
@@ -227,14 +206,6 @@ abstract class Crontab extends BaseObject
 	}
 
 
-	/**
-	 * @param Closure|array $closure
-	 */
-	public function setMaxExecute(Closure|array $closure)
-	{
-		$this->_max_execute_handler = $closure;
-	}
-
 
 	abstract public function process(): mixed;
 
@@ -276,7 +247,7 @@ abstract class Crontab extends BaseObject
 	 */
 	private function isExit(): bool
 	{
-		if ($this->_stop === true) {
+		if ($this->isStop()) {
 			return true;
 		}
 		if (!$this->isLoop) {
