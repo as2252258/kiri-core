@@ -267,15 +267,15 @@ class Loader extends BaseObject
 		$tree = null;
 		$directory = $this->splitDirectory($filePath);
 
+		$_tmp = '';
 		if (!empty($outPath)) {
 			$outPath = rtrim($outPath, '/');
+			$this->addError($_tmp . '-->' . $outPath);
 		}
 
-		$_tmp = '';
 		foreach ($directory as $key => $value) {
 			$_tmp .= DIRECTORY_SEPARATOR . $value;
 			if (!empty($outPath) && str_contains($_tmp, $outPath)) {
-				$this->addError($_tmp . '-->' . $value);
 				break;
 			}
 			$tree = $this->getTree($tree, $value);
