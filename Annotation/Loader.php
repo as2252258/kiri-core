@@ -277,10 +277,9 @@ class Loader extends BaseObject
 		$out_path = '';
 		foreach ($directory as $key => $value) {
 			$out_path .= DIRECTORY_SEPARATOR . $value;
-			if ($out_path === $output) {
-				break;
+			if ($out_path !== $output) {
+				$tree = $this->getTree($tree, $value);
 			}
-			$tree = $this->getTree($tree, $value);
 		}
 		if ($tree instanceof FileTree) {
 			$this->eachNode($tree->getChildes());
