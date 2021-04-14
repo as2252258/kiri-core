@@ -254,6 +254,11 @@ class Loader extends BaseObject
 		foreach ($directory as $value) {
 			$tree = $this->getTree($tree, $value);
 		}
+
+		if ($filePath == '/Websocket/Connect.php') {
+			var_dump($tree);
+		}
+
 		if ($tree instanceof FileTree) {
 			$tree->addFile($className);
 		}
