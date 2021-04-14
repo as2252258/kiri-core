@@ -326,6 +326,7 @@ class Loader extends BaseObject
 		foreach ($nodes as $node) {
 			$childes = $node->getChildes();
 			if (!empty($childes)) {
+				var_dump($childes);
 				$this->eachNode($childes);
 			}
 			$this->execute($node->getFiles());
