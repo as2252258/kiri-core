@@ -274,7 +274,7 @@ class Loader extends BaseObject
 		$_tmp = '';
 		foreach ($directory as $key => $value) {
 			$_tmp .= DIRECTORY_SEPARATOR . $value;
-			if (str_contains($_tmp, $outPath)) {
+			if (!empty($outPath) && str_contains($_tmp, $outPath)) {
 				$this->addError($_tmp . '-->' . $value);
 				break;
 			}
