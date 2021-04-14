@@ -268,10 +268,6 @@ class Loader extends BaseObject
 		foreach ($directory as $key => $value) {
 			$tree = $this->getTree($tree, $value);
 		}
-
-		if (env('worker') < 1) {
-			var_dump($filePath, $tree);
-		}
 		if ($tree instanceof FileTree) {
 			$this->eachNode($tree->getChildes());
 			$this->execute($tree->getFiles());
@@ -345,7 +341,6 @@ class Loader extends BaseObject
 		if (empty($classes)) {
 			return;
 		}
-		var_dump($classes);
 		foreach ($classes as $className) {
 			$annotations = $this->_classes[$className] ?? null;
 			if ($annotations === null) {
