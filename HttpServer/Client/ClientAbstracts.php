@@ -5,12 +5,9 @@ namespace HttpServer\Client;
 
 
 use Closure;
-use Exception;
-
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
-use Snowflake\Core\Json;
 use Swoole\Coroutine\System;
 
 
@@ -534,18 +531,10 @@ abstract class ClientAbstracts extends Component implements IClient
 	 */
 	protected function mergeParams($newData): string
 	{
-		if (empty($this->getData())) {
+		if (!is_string($newData)) {
 			return $this->toRequest($newData);
-		} else if (empty($newData)) {
-			return $this->toRequest($this->getData());
 		}
-
-		$newData = Help::toArray($newData);
-		$array = Help::toArray($this->getData());
-
-		$params = array_merge($array, $newData);
-
-		return $this->toRequest($params);
+		return $newData;
 	}
 
 
