@@ -4,9 +4,9 @@
 namespace Snowflake\Crontab;
 
 
+use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
-use Exception;
 
 
 /**
@@ -16,55 +16,58 @@ use Exception;
 class Producer extends Component
 {
 
-    const CRONTAB_KEY = 'system:crontab';
+	const CRONTAB_KEY = '_application:system:crontab';
 
 
 	/**
 	 * @param Crontab $crontab
 	 * @throws Exception
 	 */
-    public function dispatch(Crontab $crontab)
-    {
-        $redis = Snowflake::app()->getRedis();
+	public function dispatch(Crontab $crontab)
+	{
+		$redis = Snowflake::app()->getRedis();
 
-        $name = $crontab->getName();
-        var_dump($name);
+		$name = $crontab->getName();
 
-        $redis->set('crontab:' . $name, swoole_serialize($crontab));
+		if ($redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
+			throw new Exception('Cache key ' . self::CRONTAB_KEY . ' types error.');
+		}
 
-        $tickTime = time() + $crontab->getTickTime();
+		$tickTime = time() + $crontab->getTickTime();
 
-        $result = $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
-        var_dump($result, $crontab);
-    }
-
-
-    /**
-     * @param string $name
-     * @throws Exception
-     */
-    public function clear(string $name)
-    {
-        $redis = Snowflake::app()->getRedis();
-
-        $redis->zRem(self::CRONTAB_KEY, $name);
-        $redis->del('crontab:' . md5($name));
-    }
+		$result = $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
+		if ($result) {
+			$redis->set('crontab:' . $name, swoole_serialize($crontab));
+		}
+	}
 
 
-    /**
-     * @throws Exception
-     */
-    public function clearAll()
-    {
-        $redis = Snowflake::app()->getRedis();
-        $data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
-        $redis->del(self::CRONTAB_KEY);
-        foreach ($data as $datum) {
-            $redis->del('crontab:' . $datum);
-        }
-        $redis->release();
-    }
+	/**
+	 * @param string $name
+	 * @throws Exception
+	 */
+	public function clear(string $name)
+	{
+		$redis = Snowflake::app()->getRedis();
+
+		$redis->zRem(self::CRONTAB_KEY, $name);
+		$redis->del('crontab:' . md5($name));
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function clearAll()
+	{
+		$redis = Snowflake::app()->getRedis();
+		$data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
+		$redis->del(self::CRONTAB_KEY);
+		foreach ($data as $datum) {
+			$redis->del('crontab:' . $datum);
+		}
+		$redis->release();
+	}
 
 
 }
