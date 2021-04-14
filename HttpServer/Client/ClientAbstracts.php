@@ -530,9 +530,9 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param $newData
-	 * @return mixed
+	 * @return string
 	 */
-	protected function mergeParams($newData): mixed
+	protected function mergeParams($newData): string
 	{
 		if (empty($this->getData())) {
 			return $this->toRequest($newData);
