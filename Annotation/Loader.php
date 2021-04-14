@@ -275,6 +275,7 @@ class Loader extends BaseObject
 		foreach ($directory as $key => $value) {
 			$_tmp .= DIRECTORY_SEPARATOR . $value;
 			if (!empty($outPath) && str_contains($_tmp, $outPath)) {
+				var_dump($_tmp, $outPath);
 				break;
 			}
 			$tree = $this->getTree($tree, $value);
@@ -325,6 +326,7 @@ class Loader extends BaseObject
 		foreach ($nodes as $node) {
 			$this->execute($node->getFiles());
 			if (!empty($outPaht) && str_contains($node->getDirPath(), $outPath)) {
+				var_dump($node->getDirPath(), $outPath);
 				continue;
 			}
 			$childes = $node->getChildes();
