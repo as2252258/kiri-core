@@ -15,7 +15,7 @@ use Swoole\Timer;
  * Class Async
  * @package Snowflake
  */
-class Crontab extends BaseObject
+abstract class Crontab extends BaseObject
 {
 
 	const WAIT_END = 'crontab:wait:execute';
@@ -236,6 +236,12 @@ class Crontab extends BaseObject
 	}
 
 
+	abstract public function process(): void;
+
+	abstract public function max_execute(): void;
+	abstract public function isStop(): bool;
+
+
 	/**
 	 * @throws Exception
 	 */
@@ -250,7 +256,7 @@ class Crontab extends BaseObject
 
 			array_push($this->params, $this->name);
 
-			$params = call_user_func($this->handler, ...$this->params);
+			$params = call_user_func([$this, 'process'], ...$this->params);
 			$redis->hDel(self::WAIT_END, $name_md5);
 			if ($params === null) {
 				return;
@@ -266,24 +272,44 @@ class Crontab extends BaseObject
 
 
 	/**
+	 * @return bool
+	 */
+	private function isExit(): bool
+	{
+		if ($this->_stop === true) {
+			return true;
+		}
+		if (!$this->isLoop) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	private function isMaxExecute(): bool
+	{
+		if ($this->max_execute_number !== -1) {
+			return $this->execute_number >= $this->max_execute_number;
+		}
+		return false;
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	private function after(): void
 	{
-		if ($this->_stop === true) {
+		if ($this->isExit()) {
 			return;
 		}
-		if ($this->isLoop()) {
-			$this->recover();
-			return;
-		}
-		if ($this->max_execute_number == -1) {
-			return;
-		}
-		if ($this->getExecuteNumber() < $this->getMaxExecuteNumber()) {
-			$this->recover();
+		if ($this->isMaxExecute()) {
+			call_user_func([$this, 'max_execute'], ...$this->params);
 		} else {
-			call_user_func($this->_max_execute_handler, ...$this->params);
+			$this->recover();
 		}
 	}
 
