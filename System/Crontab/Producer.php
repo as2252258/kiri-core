@@ -33,6 +33,8 @@ class Producer extends Component
 
         $tickTime = time() + $crontab->getTickTime();
 
+        var_dump($tickTime);
+
         $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
     }
 
