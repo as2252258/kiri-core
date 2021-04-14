@@ -57,12 +57,16 @@ class OnHandshake extends Callback
 
 
 	/**
-	 * @param $response
+	 * @param SResponse $response
 	 * @param int $code
 	 * @return false
 	 */
-	private function disconnect($response, $code = 500): bool
+	private function disconnect(SResponse $response, $code = 500): bool
 	{
+		$server = Snowflake::getWebSocket();
+		if (!$server->exist($response->fd)) {
+			return false;
+		}
 		$response->status($code);
 		$response->end();
 		return false;
