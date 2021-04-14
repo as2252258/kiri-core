@@ -24,10 +24,7 @@ class CrontabProviders extends Providers
 
 	/**
 	 * @param Application $application
-	 * @throws ReflectionException
-	 * @throws ComponentException
 	 * @throws ConfigException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
     public function onImport(Application $application)

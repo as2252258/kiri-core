@@ -42,6 +42,7 @@ class Crontab extends BaseObject
 
 
 	private int $execute_number = 0;
+	private array|Closure|null $_max_execute_handler = null;
 
 
 	/**
@@ -197,7 +198,7 @@ class Crontab extends BaseObject
 
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function recover()
 	{
@@ -208,6 +209,15 @@ class Crontab extends BaseObject
 		$tickTime = time() + $this->getTickTime();
 
 		$redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
+	}
+
+
+	/**
+	 * @param Closure|array $closure
+	 */
+	public function setMaxExecute(Closure|array $closure)
+	{
+		$this->_max_execute_handler = $closure;
 	}
 
 
@@ -241,14 +251,21 @@ class Crontab extends BaseObject
 
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function after(): void
 	{
+		if ($this->isLoop()) {
+			$this->recover();
+			return;
+		}
+		if ($this->max_execute_number == -1) {
+			return;
+		}
 		if ($this->getExecuteNumber() < $this->getMaxExecuteNumber()) {
 			$this->recover();
-		} else if ($this->isLoop()) {
-			$this->recover();
+		} else {
+			call_user_func($this->_max_execute_handler, ...$this->params);
 		}
 	}
 
