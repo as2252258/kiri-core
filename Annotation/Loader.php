@@ -260,6 +260,7 @@ class Loader extends BaseObject
 	 * @param string $filePath
 	 * @param string|null $outPath
 	 * @return $this
+	 * @throws Exception
 	 */
 	private function each(string $filePath, ?string $outPath): static
 	{
@@ -274,6 +275,7 @@ class Loader extends BaseObject
 		foreach ($directory as $key => $value) {
 			$_tmp .= DIRECTORY_SEPARATOR . $value;
 			if (str_contains($_tmp, $outPath)) {
+				$this->addError($_tmp . '-->' . $value);
 				break;
 			}
 			$tree = $this->getTree($tree, $value);
