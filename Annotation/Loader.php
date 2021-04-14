@@ -251,7 +251,7 @@ class Loader extends BaseObject
 		}
 
 		if ($tree instanceof FileTree) {
-			$tree->addFile($className);
+			$tree->addFile($className, $filePath);
 		}
 	}
 
@@ -270,19 +270,17 @@ class Loader extends BaseObject
 		$_tmp = '';
 		if (!empty($outPath)) {
 			$outPath = rtrim($outPath, '/');
-			$this->addError($_tmp . '-->' . $outPath);
 		}
 
 		foreach ($directory as $key => $value) {
 			$_tmp .= DIRECTORY_SEPARATOR . $value;
-			$this->addError($_tmp);
 			if (!empty($outPath) && str_contains($_tmp, $outPath)) {
 				break;
 			}
 			$tree = $this->getTree($tree, $value);
 		}
 		if ($tree instanceof FileTree) {
-			$this->eachNode($tree->getChildes());
+			$this->eachNode($tree->getChildes(), $outPath);
 			$this->execute($tree->getFiles());
 		}
 		return $this;
@@ -320,16 +318,19 @@ class Loader extends BaseObject
 
 	/**
 	 * @param FileTree[] $nodes
+	 * @param string|null $outPath
 	 */
-	private function eachNode(array $nodes)
+	private function eachNode(array $nodes, ?string $outPath = '')
 	{
 		foreach ($nodes as $node) {
+			$this->execute($node->getFiles());
+			if (!empty($outPaht) && str_contains($node->getDirPath(), $outPath)) {
+				continue;
+			}
 			$childes = $node->getChildes();
 			if (!empty($childes)) {
-				var_dump($childes);
-				$this->eachNode($childes);
+				$this->eachNode($childes, $outPath);
 			}
-			$this->execute($node->getFiles());
 		}
 	}
 

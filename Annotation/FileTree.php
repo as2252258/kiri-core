@@ -7,60 +7,74 @@ namespace Annotation;
 class FileTree
 {
 
-    private array $files = [];
+	private array $files = [];
 
 
-    private array $childes = [];
+	private array $childes = [];
 
 
-    /**
-     * @param $path
-     * @return $this|null
-     */
-    public function getChild($path): ?static
-    {
-        if (!isset($this->childes[$path])) {
-            $this->addChild($path, new FileTree());
-        }
-        return $this->childes[$path];
-    }
+	private string $_filePath = '';
 
 
-    /**
-     * @param string $path
-     * @param FileTree $fileTree
-     */
-    public function addChild(string $path, FileTree $fileTree)
-    {
-        $this->childes[$path] = $fileTree;
-    }
+	/**
+	 * @param $path
+	 * @return $this|null
+	 */
+	public function getChild($path): ?static
+	{
+		if (!isset($this->childes[$path])) {
+			$this->addChild($path, new FileTree());
+		}
+		return $this->childes[$path];
+	}
 
 
-    /**
-     * @param string $className
-     */
-    public function addFile(string $className)
-    {
-        $this->files[] = $className;
-    }
+	/**
+	 * @param string $path
+	 * @param FileTree $fileTree
+	 */
+	public function addChild(string $path, FileTree $fileTree)
+	{
+		$this->childes[$path] = $fileTree;
+	}
 
 
-    /**
-     * @return array
-     */
-    public function getFiles(): array
-    {
-        return $this->files;
-    }
+	/**
+	 * @param string $className
+	 * @param string $path
+	 */
+	public function addFile(string $className, string $path)
+	{
+		$this->files[] = $className;
+		$this->_filePath = $path;
+	}
 
 
-    /**
-     * @return array
-     */
-    public function getChildes(): array
-    {
-        return $this->childes;
-    }
+	/**
+	 * @return array
+	 */
+	public function getFiles(): array
+	{
+		return $this->files;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getDirPath(): string
+	{
+		return $this->_filePath;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getChildes(): array
+	{
+		return $this->childes;
+	}
 
 
 }
