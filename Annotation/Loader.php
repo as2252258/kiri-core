@@ -265,12 +265,16 @@ class Loader extends BaseObject
 	private function each(string $filePath): static
 	{
 		$tree = null;
-		$filePath = str_replace(APP_PATH, '', $filePath);
+		$filePath = str_replace(directory('app'), '', $filePath);
 
 		$directory = $this->splitDirectory($filePath);
 
 		foreach ($directory as $key => $value) {
 			$tree = $this->getTree($tree, $value);
+		}
+
+		if (env('worker') < 1) {
+			var_dump($filePath, $tree);
 		}
 		if ($tree instanceof FileTree) {
 			$this->eachNode($tree->getChildes());
