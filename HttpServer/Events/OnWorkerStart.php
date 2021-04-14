@@ -88,7 +88,7 @@ class OnWorkerStart extends Callback
 			$annotation->runtime(CONTROLLER_PATH);
 			$this->debug('load controller time .' . (microtime(true) - $time));
 
-			$annotation->runtime(APP_PATH . 'app', CONTROLLER_PATH);
+			$annotation->runtime(directory('app'), CONTROLLER_PATH);
 
 			name($server->worker_pid, 'Worker#' . $server->worker_id);
 
