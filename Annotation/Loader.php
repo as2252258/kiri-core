@@ -244,6 +244,9 @@ class Loader extends BaseObject
 	{
 		$filePath = str_replace(directory('app'), '', $filePath);
 
+
+		var_dump($filePath);
+
 		$directory = $this->splitDirectory($filePath);
 		array_pop($directory);
 
