@@ -5,6 +5,7 @@ namespace Snowflake;
 
 
 use Console\Command;
+use Exception;
 use Snowflake\Abstracts\Input;
 
 
@@ -23,14 +24,12 @@ class Runtime extends Command
 
 	/**
 	 * @param Input $dtl
-	 * @throws \Exception
+	 * @throws Exception
 	 */
     public function onHandler(Input $dtl)
     {
         // TODO: Implement onHandler() method.
-
         $annotation = Snowflake::app()->getAnnotation();
-        $annotation->read(directory('app'), 'App');
 
         $runtime = storage('runtime.php');
 
