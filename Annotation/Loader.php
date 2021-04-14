@@ -355,9 +355,6 @@ class Loader extends BaseObject
 			}
 			foreach ($annotations['methods'] as $name => $attribute) {
 				foreach ($attribute as $value) {
-					if (!($value instanceof \Annotation\Attribute)) {
-						continue;
-					}
 					$value->execute([$annotations['handler'], $name]);
 				}
 			}
