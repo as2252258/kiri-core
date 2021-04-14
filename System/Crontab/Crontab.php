@@ -236,9 +236,9 @@ abstract class Crontab extends BaseObject
 	}
 
 
-	abstract public function process(): void;
+	abstract public function process(): mixed;
 
-	abstract public function max_execute(): void;
+	abstract public function max_execute(): mixed;
 	abstract public function isStop(): bool;
 
 

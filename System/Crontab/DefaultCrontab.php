@@ -24,14 +24,14 @@ class DefaultCrontab extends Crontab
 	/**
 	 *
 	 */
-	public function process(): void
+	public function process(): mixed
 	{
 		// TODO: Implement process() method.
 	}
 
 
 
-	public function max_execute(): void
+	public function max_execute(): mixed
 	{
 		// TODO: Implement max_execute() method.
 	}
