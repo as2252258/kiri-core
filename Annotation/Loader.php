@@ -263,25 +263,14 @@ class Loader extends BaseObject
 	 * @return $this
 	 * @throws Exception
 	 */
-	private function each(string $filePath, ?string $output): static
+	private function each(string $filePath): static
 	{
 		$tree = null;
 		$filePath = str_replace(directory('app'), '', $filePath);
 
 		$directory = $this->splitDirectory($filePath);
 
-		if (!empty($output)) {
-			$output = DIRECTORY_SEPARATOR . trim($output, '/');
-		}
-		$output = str_replace(directory('app'), '', $output);
-
-		$out_path = '';
 		foreach ($directory as $key => $value) {
-			$out_path .= DIRECTORY_SEPARATOR . $value;
-			$this->error($filePath . '->' . $out_path);
-			if (str_contains($filePath, $output)) {
-				continue;
-			}
 			$tree = $this->getTree($tree, $value);
 		}
 		if ($tree instanceof FileTree) {
