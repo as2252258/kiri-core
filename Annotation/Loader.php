@@ -211,7 +211,7 @@ class Loader extends BaseObject
 	public function loadByDirectory(string $path, ?string $outPath = null)
 	{
 		try {
-			$this->each($path);
+			$this->each($path, $outPath);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
@@ -258,14 +258,24 @@ class Loader extends BaseObject
 
 	/**
 	 * @param string $filePath
+	 * @param string|null $outPath
 	 * @return $this
 	 */
-	private function each(string $filePath): static
+	private function each(string $filePath, ?string $outPath): static
 	{
 		$tree = null;
 		$directory = $this->splitDirectory($filePath);
 
+		if (!empty($outPath)) {
+			$outPath = rtrim($outPath, '/');
+		}
+
+		$_tmp = '';
 		foreach ($directory as $key => $value) {
+			$_tmp .= DIRECTORY_SEPARATOR . $value;
+			if (str_contains($_tmp, $outPath)) {
+				break;
+			}
 			$tree = $this->getTree($tree, $value);
 		}
 		if ($tree instanceof FileTree) {
