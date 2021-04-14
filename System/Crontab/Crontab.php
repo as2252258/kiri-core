@@ -4,10 +4,10 @@
 namespace Snowflake\Crontab;
 
 
-use Closure;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\BaseObject;
+use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Timer;
 
@@ -194,10 +194,10 @@ abstract class Crontab extends BaseObject
 	}
 
 
-
 	abstract public function process(): mixed;
 
 	abstract public function max_execute(): mixed;
+
 	abstract public function isStop(): bool;
 
 
@@ -220,8 +220,11 @@ abstract class Crontab extends BaseObject
 			if ($params === null) {
 				return;
 			}
-			$name = date('Y_m_d_H_i_s.' . $this->name . '.log');
-			write(storage($name, '/log/crontab'), serialize($params));
+			$name = date('Y-m-d.log');
+			write(storage($name, '/log/crontab'), Json::encode([
+				'name'     => $this->name,
+				'response' => serialize($params)
+			]));
 		} catch (\Throwable $throwable) {
 			logger()->addError($throwable, 'throwable');
 		} finally {
