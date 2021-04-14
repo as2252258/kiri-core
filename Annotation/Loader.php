@@ -265,7 +265,7 @@ class Loader extends BaseObject
 	private function each(string $filePath): static
 	{
 		$tree = null;
-		$filePath = str_replace(directory('app'), '', $filePath);
+		$filePath = str_replace(APP_PATH, '', $filePath);
 
 		$directory = $this->splitDirectory($filePath);
 
