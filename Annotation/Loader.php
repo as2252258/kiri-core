@@ -259,9 +259,7 @@ class Loader extends BaseObject
 
 	/**
 	 * @param string $filePath
-	 * @param string|null $output
 	 * @return $this
-	 * @throws Exception
 	 */
 	private function each(string $filePath): static
 	{
@@ -348,6 +346,7 @@ class Loader extends BaseObject
 		}
 		foreach ($classes as $className) {
 			$annotations = $this->_classes[$className] ?? null;
+			var_dump($annotations);
 			if ($annotations === null) {
 				continue;
 			}
