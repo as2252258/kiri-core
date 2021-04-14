@@ -24,7 +24,7 @@ abstract class Crontab extends BaseObject
 	private string $name = '';
 
 
-	private mixed $params = null;
+	private mixed $params = [];
 
 
 	private int $tickTime = 1;
@@ -40,18 +40,6 @@ abstract class Crontab extends BaseObject
 
 
 	private int $execute_number = 0;
-
-
-	private bool $_stop = false;
-
-
-	/**
-	 *
-	 */
-	public function stop()
-	{
-		$this->_stop = true;
-	}
 
 
 	/**
