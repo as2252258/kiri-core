@@ -45,6 +45,18 @@ class Crontab extends BaseObject
 	private array|Closure|null $_max_execute_handler = null;
 
 
+	private bool $_stop = false;
+
+
+	/**
+	 *
+	 */
+	public function stop()
+	{
+		$this->_stop = true;
+	}
+
+
 	/**
 	 * @return $this
 	 */
@@ -116,6 +128,9 @@ class Crontab extends BaseObject
 	 */
 	public function setHandler(array|Closure $handler): void
 	{
+		if ($handler instanceof Closure) {
+			Closure::bind($handler, $this, $this);
+		}
 		$this->handler = $handler;
 	}
 
@@ -255,6 +270,9 @@ class Crontab extends BaseObject
 	 */
 	private function after(): void
 	{
+		if ($this->_stop === true) {
+			return;
+		}
 		if ($this->isLoop()) {
 			$this->recover();
 			return;
