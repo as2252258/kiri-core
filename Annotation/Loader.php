@@ -320,13 +320,14 @@ class Loader extends BaseObject
 	/**
 	 * @param FileTree[] $nodes
 	 * @param string|null $outPath
+	 * @throws Exception
 	 */
 	private function eachNode(array $nodes, ?string $outPath = '')
 	{
 		foreach ($nodes as $node) {
 			$this->execute($node->getFiles());
+			$this->addError($node->getDirPath() . '-->' . $outPath);
 			if (!empty($outPaht) && str_contains($node->getDirPath(), $outPath)) {
-				var_dump($node->getDirPath(), $outPath);
 				continue;
 			}
 			$childes = $node->getChildes();
