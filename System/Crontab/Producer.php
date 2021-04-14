@@ -29,7 +29,9 @@ class Producer extends Component
 
 		$name = $crontab->getName();
 
-		if ($redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
+		if (
+			$redis->exists(self::CRONTAB_KEY) &&
+			$redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
 			throw new Exception('Cache key ' . self::CRONTAB_KEY . ' types error.');
 		}
 
