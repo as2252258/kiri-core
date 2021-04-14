@@ -64,6 +64,7 @@ class FileTree
 	 */
 	public function getDirPath(): string
 	{
+		var_dump($this->_filePath);
 		return $this->_filePath;
 	}
 
