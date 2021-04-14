@@ -211,7 +211,7 @@ class Loader extends BaseObject
 	public function loadByDirectory(string $path, ?string $outPath = null)
 	{
 		try {
-			$this->each($path, $outPath);
+			$this->each($path);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
@@ -244,19 +244,12 @@ class Loader extends BaseObject
 	{
 		$filePath = str_replace(directory('app'), '', $filePath);
 
-
-		var_dump($filePath);
-
 		$directory = $this->splitDirectory($filePath);
 		array_pop($directory);
 
 		$tree = null;
 		foreach ($directory as $value) {
 			$tree = $this->getTree($tree, $value);
-		}
-
-		if ($filePath == '/Websocket/Connect.php') {
-			var_dump($tree);
 		}
 
 		if ($tree instanceof FileTree) {
@@ -352,6 +345,7 @@ class Loader extends BaseObject
 		if (empty($classes)) {
 			return;
 		}
+		var_dump($classes);
 		foreach ($classes as $className) {
 			$annotations = $this->_classes[$className] ?? null;
 			if ($annotations === null) {
