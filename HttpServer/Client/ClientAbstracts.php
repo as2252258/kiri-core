@@ -7,6 +7,7 @@ namespace HttpServer\Client;
 use Closure;
 use Exception;
 
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Snowflake\Core\Json;
@@ -58,7 +59,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return static
 	 */
-	public static function NewRequest(): static
+	#[Pure] public static function NewRequest(): static
 	{
 		return new static();
 	}

@@ -50,14 +50,13 @@ class Curl extends ClientAbstracts
 		if ($isHttps !== false) {
 			$this->curlHandlerSslSet($resource);
 		}
-		if (empty($params)) {
+		if (empty($params) && empty($this->getData())) {
 			return $resource;
 		}
 
 		if ($method === self::GET && !empty($this->getData())) {
 			curl_setopt($resource, CURLOPT_POSTFIELDS, $this->getData());
-		}
-		if ($method === self::POST) {
+		} else if ($method === self::POST) {
 			curl_setopt($resource, CURLOPT_POSTFIELDS, $this->mergeParams($params));
 		}
 		if ($method === self::UPLOAD) {
