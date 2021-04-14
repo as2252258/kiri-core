@@ -261,6 +261,7 @@ class Loader extends BaseObject
 	 * @param string $filePath
 	 * @param string|null $output
 	 * @return $this
+	 * @throws Exception
 	 */
 	private function each(string $filePath, ?string $output): static
 	{
