@@ -39,7 +39,7 @@ class Zookeeper extends Process
             }
             $redis->release();
 
-            Coroutine::sleep(0.05);
+            Coroutine::sleep(0.1);
         }
     }
 
