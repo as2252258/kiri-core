@@ -30,7 +30,7 @@ class Zookeeper extends Process
             name($this->pid, 'Crontab zookeeper.');
         }
         $server = Snowflake::app()->getSwoole();
-        $setting = $server->setting['worker_num'];
+        $setting = $server->setting['worker_num'] + $server->setting['task_worker_num'];
         while (true) {
             [$range, $redis] = $this->loadCarobTask();
             foreach ($range as $value) {
