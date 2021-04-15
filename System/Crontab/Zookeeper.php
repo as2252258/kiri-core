@@ -64,8 +64,7 @@ class Zookeeper extends Process
     {
         try {
             $params['action'] = 'crontab';
-            if (($handler = $redis->get('crontab:' . $value)) === false) {
-                var_dump($handler);
+            if (empty($handler = $redis->get('crontab:' . $value))) {
                 return;
             }
             $params['handler'] = swoole_unserialize($handler);
