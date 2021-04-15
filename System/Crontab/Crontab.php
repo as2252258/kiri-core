@@ -208,6 +208,39 @@ abstract class Crontab extends BaseObject
 	 */
 	public function execute(): void
 	{
+		\Swoole\Coroutine\go(function ($application) {
+			$application->isRecover($application);
+		}, $this);
+		$this->run();
+	}
+
+
+	/**
+	 * @param $application
+	 * @throws Exception
+	 */
+	public function isRecover($application)
+	{
+		try {
+			if ($application->isExit()) {
+				return;
+			}
+			if ($application->isMaxExecute()) {
+				call_user_func([$application, 'max_execute'], ...$application->params);
+			} else {
+				$application->recover();
+			}
+		} catch (\Throwable $throwable) {
+			logger()->addError($throwable, 'throwable');
+		}
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	private function run()
+	{
 		try {
 			$redis = Snowflake::app()->getRedis();
 
@@ -227,8 +260,6 @@ abstract class Crontab extends BaseObject
 			]));
 		} catch (\Throwable $throwable) {
 			logger()->addError($throwable, 'throwable');
-		} finally {
-			$this->after();
 		}
 	}
 
@@ -257,22 +288,6 @@ abstract class Crontab extends BaseObject
 			return $this->execute_number >= $this->max_execute_number;
 		}
 		return false;
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	private function after(): void
-	{
-		if ($this->isExit()) {
-			return;
-		}
-		if ($this->isMaxExecute()) {
-			call_user_func([$this, 'max_execute'], ...$this->params);
-		} else {
-			$this->recover();
-		}
 	}
 
 
