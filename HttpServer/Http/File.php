@@ -68,6 +68,7 @@ class File
 	public function getContent(): string
 	{
 		$open = fopen('php://temp', 'r');
+		var_dump($open);
 
 		$limit = 1024000;
 
