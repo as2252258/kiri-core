@@ -71,7 +71,7 @@ class Zookeeper extends Process
 			$redis->del('crontab:' . $value);
 			$result = $server->sendMessage($params, $workerId = random_int(0, $setting - 1));
 
-			logger()->addError('send crontab to ' . $workerId . ' ' . intval($result));
+			var_dump('send crontab to ' . $workerId . ' ' . intval($result));
 		} catch (\Throwable $exception) {
 			logger()->addError($exception);
 		}
