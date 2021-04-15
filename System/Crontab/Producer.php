@@ -67,6 +67,7 @@ class Producer extends Component
 		$redis = Snowflake::app()->getRedis();
 		$data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
 		foreach ($data as $datum) {
+			$redis->setex('stop:crontab:' . $datum, 120, 1);
 			$redis->del('crontab:' . $datum);
 		}
 		$redis->release();
