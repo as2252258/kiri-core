@@ -76,7 +76,9 @@ class Zookeeper extends Process
     {
         $redis = Snowflake::app()->getRedis();
         if (!$redis->exists(Producer::CRONTAB_KEY)) {
-            logger()->addError('queue cache not found.');
+            var_dump('queue cache not found.');
+        } else {
+            var_dump('queue cache found.');
         }
         $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)time());
 
