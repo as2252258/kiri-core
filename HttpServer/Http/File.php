@@ -75,12 +75,11 @@ class File
 		$stat = fstat($open);
 
 		$sleep = $offset = 0;
-
 		$content = '';
 		while ($file = fread($open, $limit)) {
-			fseek($open, $offset);
-
+			var_dump($file);
 			$content .= $file;
+			fseek($open, $offset);
 			if ($sleep > 0) {
 				sleep($sleep);
 			}
@@ -89,7 +88,6 @@ class File
 			}
 			$offset += $limit;
 		}
-
 		return $content;
 	}
 
