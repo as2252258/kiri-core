@@ -213,8 +213,6 @@ abstract class Crontab extends BaseObject
 
 			$redis->hSet(self::WAIT_END, $name_md5, serialize($this));
 
-			array_push($this->params, $this->name);
-
 			$params = call_user_func([$this, 'process'], ...$this->params);
 			$redis->hDel(self::WAIT_END, $name_md5);
 			if ($params === null) {
