@@ -47,6 +47,7 @@ class OnPipeMessage extends Callback
 	 */
 	private function onCrontabWorker(array $message): string
 	{
+		var_dump($message);
 		/** @var Crontab $crontab */
 		$crontab = $message['handler'] ?? null;
 		if (!isset($message['handler'])) {
