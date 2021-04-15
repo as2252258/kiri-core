@@ -91,7 +91,6 @@ class Zookeeper extends Process
         $startTime = time();
 
         $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
-
         $redis->zRem(Producer::CRONTAB_KEY, ...$range);
 
         return [$range, $redis];
