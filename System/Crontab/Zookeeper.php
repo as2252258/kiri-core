@@ -8,6 +8,7 @@ use Exception;
 use Snowflake\Cache\Redis;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Throwable;
 
 /**
@@ -37,6 +38,8 @@ class Zookeeper extends Process
                 $this->dispatch($server, $redis, $setting, $value);
             }
             $redis->release();
+
+            Coroutine::sleep(0.05);
         }
     }
 
