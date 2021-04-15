@@ -47,10 +47,10 @@ class Shutdown extends Component
 	public function shutdown(): void
 	{
 		clearstatcache(storage());
-		exec('ls -alh /.dockerenv', $output, $cod);
-		if ($cod === 0 && !empty($output)) {
-			return;
-		}
+//		exec('ls -alh /.dockerenv', $output, $cod);
+//		if ($cod === 0 && !empty($output)) {
+//			return;
+//		}
 
 		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
 		if (file_exists($master_pid)) {
