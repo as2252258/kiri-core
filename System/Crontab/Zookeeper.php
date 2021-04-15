@@ -8,9 +8,7 @@ use Exception;
 use Snowflake\Cache\Redis;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\WaitGroup;
-use Swoole\Timer;
+use Throwable;
 
 /**
  * Class Zookeeper
@@ -18,14 +16,6 @@ use Swoole\Timer;
  */
 class Zookeeper extends Process
 {
-
-    /** @var Crontab[] $names */
-    public array $names = [];
-
-
-    public array $scores = [];
-    public array $timers = [];
-
 
     /**
      * @param \Swoole\Process $process
@@ -71,7 +61,7 @@ class Zookeeper extends Process
             $result = $server->sendMessage($params, $workerId = random_int(0, $setting - 1));
 
             var_dump('send crontab to ' . $workerId . ' ' . intval($result));
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             logger()->addError($exception);
         }
 
