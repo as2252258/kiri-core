@@ -37,6 +37,8 @@ class Channel extends Component
 		if ($channel->isFull()) {
 			return $this->addError('Channel is full.');
 		}
+
+		return true;
 		return $channel->push($value);
 	}
 
@@ -98,9 +100,9 @@ class Channel extends Component
 			return $channel->pop();
 		}
 		$data = null;
-		if ($timeout !== null) {
-			$data = $channel->pop($timeout);
-		}
+//		if ($timeout !== null) {
+//			$data = $channel->pop($timeout);
+//		}
 		if (empty($data)) {
 			$data = call_user_func($closure);
 		}
