@@ -72,12 +72,14 @@ class File
 
 		$limit = 1024000;
 
+		var_dump(fread($open, $limit));
+
 		$stat = fstat($open);
+		var_dump($stat);
 
 		$sleep = $offset = 0;
 		$content = '';
 		while ($file = fread($open, $limit)) {
-			var_dump($file);
 			$content .= $file;
 			fseek($open, $offset);
 			if ($sleep > 0) {
