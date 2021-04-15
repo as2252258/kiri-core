@@ -60,8 +60,8 @@ class Producer extends Component
 
         $redis->setex('stop:crontab:' . md5($name), 120, 1);
 
-        $redis->zRem(self::CRONTAB_KEY, $name);
-        $redis->del('crontab:' . md5($name));
+//        $redis->zRem(self::CRONTAB_KEY, $name);
+//        $redis->del('crontab:' . md5($name));
     }
 
 
