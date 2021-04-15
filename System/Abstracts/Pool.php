@@ -5,14 +5,9 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
-
 use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
-use Phalcon\Mvc\Model\Query\Lang;
-use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
@@ -52,17 +47,15 @@ abstract class Pool extends Component
 	public function Heartbeat_detection()
 	{
 		if (env('state') == 'exit') {
-			$this->flush(0);
-			return;
-		}
-		if ($this->lastTime == 0) {
-			return;
-		}
-		[$firstClear, $lastClear] = $this->getClearTime();
-		if ($this->lastTime + $firstClear < time()) {
-			$this->flush(0);
-		} else if ($this->lastTime + $lastClear < time()) {
-			$this->flush(2);
+			Timer::clear($this->creates);
+			$this->creates = -1;
+		} else if ($this->lastTime != 0) {
+			[$firstClear, $lastClear] = $this->getClearTime();
+			if ($this->lastTime + $firstClear < time()) {
+				$this->flush(0);
+			} else if ($this->lastTime + $lastClear < time()) {
+				$this->flush(2);
+			}
 		}
 	}
 
