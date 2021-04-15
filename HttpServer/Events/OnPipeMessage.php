@@ -27,17 +27,12 @@ class OnPipeMessage extends Callback
 	public function onHandler(Server $server, int $src_worker_id, $swollen_universalize)
 	{
 		go(function () use ($server, $src_worker_id, $swollen_universalize) {
-			try {
-				match ($swollen_universalize['action'] ?? null) {
-					'kafka' => $this->onKafkaWorker($swollen_universalize),
-					'crontab' => $this->onCrontabWorker($swollen_universalize),
-					default => $this->onMessageWorker($server, $src_worker_id, $swollen_universalize)
-				};
-			} catch (\Throwable $exception) {
-				$this->addError($exception);
-			} finally {
-				fire(Event::SYSTEM_RESOURCE_RELEASES);
-			}
+			match ($swollen_universalize['action'] ?? null) {
+				'kafka' => $this->onKafkaWorker($swollen_universalize),
+				'crontab' => $this->onCrontabWorker($swollen_universalize),
+				default => $this->onMessageWorker($server, $src_worker_id, $swollen_universalize)
+			};
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
 		});
 	}
 

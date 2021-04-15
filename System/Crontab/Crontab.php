@@ -204,28 +204,23 @@ abstract class Crontab extends BaseObject
 	 */
 	public function execute(): void
 	{
-		try {
-			$redis = Snowflake::app()->getRedis();
+		$redis = Snowflake::app()->getRedis();
 
-			$name_md5 = $this->getName();
+		$name_md5 = $this->getName();
 
-			$redis->hSet(self::WAIT_END, $name_md5, serialize($this));
+		$redis->hSet(self::WAIT_END, $name_md5, serialize($this));
 
-			$params = call_user_func([$this, 'process'], ...$this->params);
-			$redis->hDel(self::WAIT_END, $name_md5);
-			if ($params === null) {
-				return;
-			}
-			$name = date('Y-m-d.log');
-			write(storage($name, '/log/crontab'), Json::encode([
-				'name'     => $this->name,
-				'response' => serialize($params)
-			]));
-		} catch (\Throwable $throwable) {
-			logger()->addError($throwable, 'throwable');
-		} finally {
-			$this->after();
+		$params = call_user_func([$this, 'process'], ...$this->params);
+		$redis->hDel(self::WAIT_END, $name_md5);
+		if ($params === null) {
+			return;
 		}
+		$name = date('Y-m-d.log');
+		write(storage($name, '/log/crontab'), Json::encode([
+			'name'     => $this->name,
+			'response' => serialize($params)
+		]));
+		$this->after();
 	}
 
 
