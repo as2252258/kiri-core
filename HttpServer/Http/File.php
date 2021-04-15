@@ -13,10 +13,10 @@ class File
 {
 
 	public string $name = '';
-	public string $tmp_name = '';
-	public string $error = '';
-	public string $type = '';
-	public string $size = '';
+	public mixed $tmp_name = '';
+	public mixed $error = '';
+	public mixed $type = '';
+	public mixed $size = '';
 
 	private string $newName = '';
 	private array $errorInfo = [
