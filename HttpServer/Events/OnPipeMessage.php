@@ -47,13 +47,12 @@ class OnPipeMessage extends Callback
 	 */
 	private function onCrontabWorker(array $message): string
 	{
-		var_dump($message);
-		/** @var Crontab $crontab */
-		$crontab = $message['handler'] ?? null;
 		if (!isset($message['handler'])) {
 			throw new Exception('unknown handler');
 		}
-		$crontab = swoole_unserialize($crontab['handler']);
+
+		/** @var Crontab $crontab */
+		$crontab = swoole_unserialize($message['handler']);
 		$crontab->increment()->execute();
 		return 'success';
 	}
