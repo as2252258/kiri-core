@@ -13,8 +13,7 @@ use Snowflake\Snowflake;
 trait Server
 {
 
-	/** @var Application */
-	public $application;
+	public ?Application $application = null;
 
 
 	/**
@@ -26,7 +25,6 @@ trait Server
 	 */
 	public function __construct($host, $port = null, $mode = null, $sock_type = null)
 	{
-		$this->application = Snowflake::app();
 		parent::__construct($host, $port, $mode, $sock_type);
 	}
 

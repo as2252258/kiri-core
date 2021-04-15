@@ -86,11 +86,11 @@ class Kafka extends \Snowflake\Process\Process
             if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
                 $this->handlerExecute($message->topic_name, $message);
             } else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
-                $this->application->warning('No more messages; will wait for more');
+                logger()->warning('No more messages; will wait for more');
             } else if ($message->err == RD_KAFKA_RESP_ERR__TIMED_OUT) {
-                $this->application->error('Kafka Timed out');
+	            logger()->error('Kafka Timed out');
             } else {
-                $this->application->error($message->errstr());
+	            logger()->error($message->errstr());
             }
         } catch (Throwable $exception) {
             logger()->addError($exception, 'throwable');
@@ -142,8 +142,8 @@ class Kafka extends \Snowflake\Process\Process
             $conf->set('metadata.broker.list', $kafka['brokers']);
             $conf->set('socket.timeout.ms', '30000');
 
-            $this->application->debug('kafka listen groupId ' . $kafka['groupId']);
-            $this->application->debug('kafka listen brokers ' . $kafka['brokers']);
+	        logger()->debug('kafka listen groupId ' . $kafka['groupId']);
+	        logger()->debug('kafka listen brokers ' . $kafka['brokers']);
 
             if (function_exists('pcntl_sigprocmask')) {
                 pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
