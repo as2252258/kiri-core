@@ -37,7 +37,6 @@ class Zookeeper extends Process
                 $this->dispatch($server, $redis, $setting, $value);
             }
             $redis->release();
-            sleep(1);
         }
     }
 
@@ -76,11 +75,7 @@ class Zookeeper extends Process
     private function loadCarobTask(): array
     {
         $redis = Snowflake::app()->getRedis();
-        if (!$redis->exists(Producer::CRONTAB_KEY)) {
-            var_dump('queue cache not found.');
-        } else {
-            var_dump('queue cache found.');
-        }
+
         $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)time());
 
         $redis->zRem(Producer::CRONTAB_KEY, ...$range);
