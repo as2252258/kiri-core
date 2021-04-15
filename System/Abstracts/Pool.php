@@ -188,6 +188,7 @@ abstract class Pool extends Component
 	}
 
 
+
 	/**
 	 * @param string $name
 	 * @param $client
