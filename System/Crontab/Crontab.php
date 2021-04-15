@@ -183,6 +183,10 @@ abstract class Crontab extends BaseObject
 	private function recover()
 	{
 		$redis = Snowflake::app()->getRedis();
+		if (!$redis->exists('stop:crontab:' . $this->getName())) {
+			$redis->del('stop:crontab:' . $this->getName());
+			return;
+		}
 
 		$redis->set('crontab:' . ($name = $this->getName()), swoole_serialize($this));
 
