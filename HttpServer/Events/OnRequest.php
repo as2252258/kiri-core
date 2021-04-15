@@ -54,8 +54,6 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-			var_dump($request);
-
 			/** @var HRequest $request */
 			[$request, $response] = OnRequest::createContext($request, $response);
 
