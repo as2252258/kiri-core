@@ -18,277 +18,278 @@ use Swoole\Timer;
 abstract class Crontab extends BaseObject
 {
 
-	const WAIT_END = 'crontab:wait:execute';
+    const WAIT_END = 'crontab:wait:execute';
 
 
-	private string $name = '';
+    private string $name = '';
 
 
-	private mixed $params = [];
+    private mixed $params = [];
 
 
-	private int $tickTime = 1;
+    private int $tickTime = 1;
 
 
-	private bool $isLoop = false;
+    private bool $isLoop = false;
 
 
-	private int $timerId = -1;
+    private int $timerId = -1;
 
 
-	private int $max_execute_number = -1;
+    private int $max_execute_number = -1;
 
 
-	private int $execute_number = 0;
+    private int $execute_number = 0;
 
 
-	/**
-	 * @return $this
-	 */
-	public function increment(): static
-	{
-		$this->execute_number += 1;
-		return $this;
-	}
+    /**
+     * @return $this
+     */
+    public function increment(): static
+    {
+        $this->execute_number += 1;
+        return $this;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	#[Pure] public function getName(): string
-	{
-		return md5($this->name);
-	}
+    /**
+     * @return string
+     */
+    #[Pure] public function getName(): string
+    {
+        return md5($this->name);
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getParams(): mixed
-	{
-		return $this->params;
-	}
+    /**
+     * @return mixed
+     */
+    public function getParams(): mixed
+    {
+        return $this->params;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getTickTime(): int
-	{
-		return $this->tickTime;
-	}
+    /**
+     * @return int
+     */
+    public function getTickTime(): int
+    {
+        return $this->tickTime;
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function isLoop(): bool
-	{
-		return $this->isLoop;
-	}
+    /**
+     * @return bool
+     */
+    public function isLoop(): bool
+    {
+        return $this->isLoop;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getMaxExecuteNumber(): int
-	{
-		return $this->max_execute_number;
-	}
+    /**
+     * @return int
+     */
+    public function getMaxExecuteNumber(): int
+    {
+        return $this->max_execute_number;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getExecuteNumber(): int
-	{
-		return $this->execute_number;
-	}
-
-
-	/**
-	 * @param string $name
-	 */
-	public function setName(string $name): void
-	{
-		$this->name = $name;
-	}
+    /**
+     * @return int
+     */
+    public function getExecuteNumber(): int
+    {
+        return $this->execute_number;
+    }
 
 
-	public function setParams(): void
-	{
-		$this->params = func_get_args();
-	}
-
-	/**
-	 * @param int $tickTime
-	 */
-	public function setTickTime(int $tickTime): void
-	{
-		$this->tickTime = $tickTime;
-	}
-
-	/**
-	 * @param bool $isLoop
-	 */
-	public function setIsLoop(bool $isLoop): void
-	{
-		$this->isLoop = $isLoop;
-	}
-
-	/**
-	 * @param int $max_execute_number
-	 */
-	public function setMaxExecuteNumber(int $max_execute_number): void
-	{
-		$this->max_execute_number = $max_execute_number;
-	}
-
-	/**
-	 * @param int $execute_number
-	 */
-	public function setExecuteNumber(int $execute_number): void
-	{
-		$this->execute_number = $execute_number;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getTimerId(): int
-	{
-		return $this->timerId;
-	}
-
-	/**
-	 * @param int $timerId
-	 */
-	public function setTimerId(int $timerId): void
-	{
-		$this->timerId = $timerId;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
 
 
-	/**
-	 *
-	 * @throws Exception
-	 */
-	public function clearTimer()
-	{
-		$this->warning('crontab timer clear.');
-		if (Timer::exists($this->timerId)) {
-			Timer::clear($this->timerId);
-		}
-	}
+    public function setParams(): void
+    {
+        $this->params = func_get_args();
+    }
+
+    /**
+     * @param int $tickTime
+     */
+    public function setTickTime(int $tickTime): void
+    {
+        $this->tickTime = $tickTime;
+    }
+
+    /**
+     * @param bool $isLoop
+     */
+    public function setIsLoop(bool $isLoop): void
+    {
+        $this->isLoop = $isLoop;
+    }
+
+    /**
+     * @param int $max_execute_number
+     */
+    public function setMaxExecuteNumber(int $max_execute_number): void
+    {
+        $this->max_execute_number = $max_execute_number;
+    }
+
+    /**
+     * @param int $execute_number
+     */
+    public function setExecuteNumber(int $execute_number): void
+    {
+        $this->execute_number = $execute_number;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimerId(): int
+    {
+        return $this->timerId;
+    }
+
+    /**
+     * @param int $timerId
+     */
+    public function setTimerId(int $timerId): void
+    {
+        $this->timerId = $timerId;
+    }
 
 
-	/**
-	 * @throws Exception
-	 */
-	private function recover()
-	{
-		$redis = Snowflake::app()->getRedis();
-		if (!$redis->exists('stop:crontab:' . $this->getName())) {
-			$redis->del('stop:crontab:' . $this->getName());
-			return;
-		}
-
-		$redis->set('crontab:' . ($name = $this->getName()), swoole_serialize($this));
-
-		$tickTime = time() + $this->getTickTime();
-
-		$redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
-	}
+    /**
+     *
+     * @throws Exception
+     */
+    public function clearTimer()
+    {
+        $this->warning('crontab timer clear.');
+        if (Timer::exists($this->timerId)) {
+            Timer::clear($this->timerId);
+        }
+    }
 
 
-	abstract public function process(): mixed;
-
-	abstract public function max_execute(): mixed;
-
-	abstract public function isStop(): bool;
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function execute(): void
-	{
-		\Swoole\Coroutine\go(function ($application) {
-			$application->isRecover($application);
-		}, $this);
-		$this->run();
-	}
+    /**
+     * @throws Exception
+     */
+    private function recover()
+    {
+        $redis = Snowflake::app()->getRedis();
+        if (!$redis->exists('stop:crontab:' . $this->getName())) {
+            $redis->del('crontab:' . $this->getName());
+            $redis->del('stop:crontab:' . $this->getName());
+        } else {
+            $redis->set('crontab:' . ($name = $this->getName()), swoole_serialize($this));
+            $tickTime = time() + $this->getTickTime();
+            $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
+        }
+    }
 
 
-	/**
-	 * @param $application
-	 * @throws Exception
-	 */
-	public function isRecover($application)
-	{
-		try {
-			if ($application->isExit()) {
-				return;
-			}
-			if ($application->isMaxExecute()) {
-				call_user_func([$application, 'max_execute'], ...$application->params);
-			} else {
-				$application->recover();
-			}
-		} catch (\Throwable $throwable) {
-			logger()->addError($throwable, 'throwable');
-		}
-	}
+    abstract public function process(): mixed;
+
+    abstract public function max_execute(): mixed;
+
+    abstract public function isStop(): bool;
 
 
-	/**
-	 * @throws Exception
-	 */
-	private function run()
-	{
-		try {
-			$redis = Snowflake::app()->getRedis();
-
-			$name_md5 = $this->getName();
-
-			$redis->hSet(self::WAIT_END, $name_md5, serialize($this));
-
-			$params = call_user_func([$this, 'process'], ...$this->params);
-			$redis->hDel(self::WAIT_END, $name_md5);
-			if ($params === null) {
-				return;
-			}
-			$name = date('Y-m-d.log');
-			write(storage($name, '/log/crontab'), Json::encode([
-				'name'     => $this->name,
-				'response' => serialize($params)
-			]));
-		} catch (\Throwable $throwable) {
-			logger()->addError($throwable, 'throwable');
-		}
-	}
+    /**
+     * @throws Exception
+     */
+    public function execute(): void
+    {
+        \Swoole\Coroutine\go(function ($application) {
+            $application->isRecover($application);
+        }, $this);
+        $this->run();
+    }
 
 
-	/**
-	 * @return bool
-	 */
-	private function isExit(): bool
-	{
-		if ($this->isStop()) {
-			return true;
-		}
-		if (!$this->isLoop) {
-			return true;
-		}
-		return false;
-	}
+    /**
+     * @param $application
+     * @return bool|int
+     * @throws \Exception
+     */
+    public function isRecover($application): bool|int
+    {
+        try {
+            $redis = Snowflake::app()->getRedis();
+            if ($application->isExit()) {
+                return $redis->del('crontab:' . $this->getName());
+            }
+            if ($application->isMaxExecute()) {
+                call_user_func([$application, 'max_execute'], ...$application->params);
+                return $redis->del('crontab:' . $this->getName());
+            } else {
+                return $application->recover();
+            }
+        } catch (\Throwable $throwable) {
+            return logger()->addError($throwable, 'throwable');
+        }
+    }
 
 
-	/**
-	 * @return bool
-	 */
-	private function isMaxExecute(): bool
-	{
-		if ($this->max_execute_number !== -1) {
-			return $this->execute_number >= $this->max_execute_number;
-		}
-		return false;
-	}
+    /**
+     * @throws Exception
+     */
+    private function run()
+    {
+        try {
+            $redis = Snowflake::app()->getRedis();
+
+            $name_md5 = $this->getName();
+
+            $redis->hSet(self::WAIT_END, $name_md5, serialize($this));
+
+            $params = call_user_func([$this, 'process'], ...$this->params);
+            $redis->hDel(self::WAIT_END, $name_md5);
+            if ($params === null) {
+                return;
+            }
+            $name = date('Y-m-d.log');
+            write(storage($name, '/log/crontab'), Json::encode([
+                'name'     => $this->name,
+                'response' => serialize($params)
+            ]));
+        } catch (\Throwable $throwable) {
+            logger()->addError($throwable, 'throwable');
+        }
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isExit(): bool
+    {
+        if ($this->isStop()) {
+            return true;
+        }
+        if (!$this->isLoop) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isMaxExecute(): bool
+    {
+        if ($this->max_execute_number !== -1) {
+            return $this->execute_number >= $this->max_execute_number;
+        }
+        return false;
+    }
 
 
 }

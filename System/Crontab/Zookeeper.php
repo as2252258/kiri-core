@@ -67,8 +67,8 @@ class Zookeeper extends Process
 	{
 		try {
 			$params['action'] = 'crontab';
-			$params['handler'] = $redis->get('crontab:' . $value);
-			$redis->del('crontab:' . $value);
+			$params['handler'] = swoole_unserialize($redis->get('crontab:' . $value));
+
 			$result = $server->sendMessage($params, $workerId = random_int(0, $setting - 1));
 
 			var_dump('send crontab to ' . $workerId . ' ' . intval($result));
