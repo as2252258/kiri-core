@@ -42,6 +42,10 @@ class Producer extends Component
         $tickTime = time() + $crontab->getTickTime();
 
         $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
+
+        var_dump($redis->zCard(self::CRONTAB_KEY), $tickTime);
+
+
         $redis->set('crontab:' . $name, swoole_serialize($crontab));
     }
 
