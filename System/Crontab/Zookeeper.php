@@ -19,11 +19,6 @@ use Swoole\Timer;
 class Zookeeper extends Process
 {
 
-
-    private Channel $channel;
-    private WaitGroup $waitGroup;
-
-
     /** @var Crontab[] $names */
     public array $names = [];
 
@@ -38,6 +33,7 @@ class Zookeeper extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
+        /** @var \Snowflake\Crontab\Producer $crontab */
         $crontab = Snowflake::app()->get('crontab');
         $crontab->clearAll();
         if (Snowflake::getPlatform()->isLinux()) {
@@ -94,24 +90,5 @@ class Zookeeper extends Process
 
         return [$range, $redis];
     }
-
-
-    /**
-     * @param string $name
-     */
-    public function clear(string $name)
-    {
-        if (!isset($this->names[$name])) {
-            return;
-        }
-        $timers = $this->timers[$name];
-
-        $search = array_search($name, $this->scores[$timers]);
-        if ($search !== false) {
-            unset($this->scores[$timers][$search]);
-        }
-        unset($this->timers[$name], $this->names[$name]);
-    }
-
 
 }
