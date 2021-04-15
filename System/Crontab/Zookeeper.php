@@ -39,11 +39,10 @@ class Zookeeper extends Process
         if (Snowflake::getPlatform()->isLinux()) {
             name($this->pid, 'Crontab zookeeper.');
         }
+        $server = Snowflake::app()->getSwoole();
+        $setting = $server->setting['worker_num'];
         while (true) {
             [$range, $redis] = $this->loadCarobTask();
-
-            $server = Snowflake::app()->getSwoole();
-            $setting = $server->setting['worker_num'];
             foreach ($range as $value) {
                 $this->dispatch($server, $redis, $setting, $value);
             }
