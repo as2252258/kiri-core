@@ -28,9 +28,7 @@ class Producer extends Component
         $redis = Snowflake::app()->getRedis();
 
         $name = $crontab->getName();
-        if (
-            $redis->exists(self::CRONTAB_KEY) &&
-            $redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
+        if ($redis->exists(self::CRONTAB_KEY) && $redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
             throw new Exception('Cache key ' . self::CRONTAB_KEY . ' types error.');
         }
 
@@ -39,13 +37,7 @@ class Producer extends Component
             $redis->del('crontab:' . $name);
         }
 
-        $tickTime = time() + $crontab->getTickTime();
-
-        $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
-
-        var_dump($redis->zCard(self::CRONTAB_KEY), $tickTime);
-
-
+        $redis->zAdd(self::CRONTAB_KEY, time() + $crontab->getTickTime(), $name);
         $redis->set('crontab:' . $name, swoole_serialize($crontab));
     }
 
@@ -57,11 +49,7 @@ class Producer extends Component
     public function clear(string $name)
     {
         $redis = Snowflake::app()->getRedis();
-
         $redis->setex('stop:crontab:' . md5($name), 120, 1);
-
-//        $redis->zRem(self::CRONTAB_KEY, $name);
-//        $redis->del('crontab:' . md5($name));
     }
 
 
