@@ -28,7 +28,6 @@ class Producer extends Component
 		$redis = Snowflake::app()->getRedis();
 
 		$name = $crontab->getName();
-
 		if (
 			$redis->exists(self::CRONTAB_KEY) &&
 			$redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
@@ -36,6 +35,8 @@ class Producer extends Component
 		}
 
 		$tickTime = time() + $crontab->getTickTime();
+
+		$redis->del('stop:crontab:' . $name, 120);
 
 		$result = $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
 		if ($result) {
