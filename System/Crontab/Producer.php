@@ -34,14 +34,15 @@ class Producer extends Component
             throw new Exception('Cache key ' . self::CRONTAB_KEY . ' types error.');
         }
 
-        $tickTime = time() + $crontab->getTickTime();
         $redis->del('stop:crontab:' . $name, 120);
-
-        $result = $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
-        var_dump($result, $redis->zCard(self::CRONTAB_KEY));
-        if ($result) {
-            $redis->set('crontab:' . $name, swoole_serialize($crontab));
+        if ($redis->exists('crontab:' . $name)) {
+            $redis->del('crontab:' . $name);
         }
+
+        $tickTime = time() + $crontab->getTickTime();
+
+        $redis->zAdd(self::CRONTAB_KEY, $tickTime, $name);
+        $redis->set('crontab:' . $name, swoole_serialize($crontab));
     }
 
 
