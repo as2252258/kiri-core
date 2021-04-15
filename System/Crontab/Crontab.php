@@ -109,12 +109,10 @@ abstract class Crontab extends BaseObject
 		$this->name = $name;
 	}
 
-	/**
-	 * @param mixed $params
-	 */
-	public function setParams(...$params): void
+
+	public function setParams(): void
 	{
-		$this->params = $params;
+		$this->params = func_get_args();
 	}
 
 	/**
