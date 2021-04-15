@@ -67,15 +67,12 @@ class File
 	 */
 	public function getContent(): string
 	{
-		$open = fopen('php://temp', 'r');
+		$open = fopen('php://input', 'r');
 		var_dump($open);
 
 		$limit = 1024000;
 
-		var_dump(fread($open, $limit));
-
 		$stat = fstat($open);
-		var_dump($stat);
 
 		$sleep = $offset = 0;
 		$content = '';
