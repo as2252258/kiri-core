@@ -61,6 +61,38 @@ class File
 		return $this->newName;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getContent(): string
+	{
+		$open = fopen('php://temp', 'r');
+
+		$limit = 1024000;
+
+		$stat = fstat($open);
+
+		$sleep = $offset = 0;
+
+		$content = '';
+		while ($file = fread($open, $limit)) {
+			fseek($open, $offset);
+
+			$content .= $file;
+			if ($sleep > 0) {
+				sleep($sleep);
+			}
+			if ($offset >= $stat['size']) {
+				break;
+			}
+			$offset += $limit;
+		}
+
+		return $content;
+	}
+
+
 	/**
 	 * @return string
 	 */
