@@ -767,7 +767,7 @@ trait QueryTrait
 			return $this;
 		}
 
-		$this->where[] = $column . ' BETWEEN' . $start . ' AND ' . $end;
+		$this->where[] = $column . ' BETWEEN ' . $start . ' AND ' . $end;
 
 		return $this;
 	}
