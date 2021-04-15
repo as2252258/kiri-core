@@ -67,27 +67,29 @@ class File
 	 */
 	public function getContent(): string
 	{
-		$open = fopen($this->getTmpPath(), 'r');
-		var_dump($open, file_get_contents('php://temp'));
+//		$open = fopen($this->getTmpPath(), 'r');
+		var_dump(file_get_contents('php://temp'));
 
-		$limit = 1024000;
+		return '';
 
-		$stat = fstat($open);
-
-		$sleep = $offset = 0;
-		$content = '';
-		while ($file = fread($open, $limit)) {
-			$content .= $file;
-			fseek($open, $offset);
-			if ($sleep > 0) {
-				sleep($sleep);
-			}
-			if ($offset >= $stat['size']) {
-				break;
-			}
-			$offset += $limit;
-		}
-		return $content;
+//		$limit = 1024000;
+//
+//		$stat = fstat($open);
+//
+//		$sleep = $offset = 0;
+//		$content = '';
+//		while ($file = fread($open, $limit)) {
+//			$content .= $file;
+//			fseek($open, $offset);
+//			if ($sleep > 0) {
+//				sleep($sleep);
+//			}
+//			if ($offset >= $stat['size']) {
+//				break;
+//			}
+//			$offset += $limit;
+//		}
+//		return $content;
 	}
 
 
