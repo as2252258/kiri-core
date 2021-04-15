@@ -20,99 +20,99 @@ class Zookeeper extends Process
 {
 
 
-	private Channel $channel;
-	private WaitGroup $waitGroup;
+    private Channel $channel;
+    private WaitGroup $waitGroup;
 
 
-	/** @var Crontab[] $names */
-	public array $names = [];
+    /** @var Crontab[] $names */
+    public array $names = [];
 
 
-	public array $scores = [];
-	public array $timers = [];
+    public array $scores = [];
+    public array $timers = [];
 
 
-	/**
-	 * @param \Swoole\Process $process
-	 * @throws Exception
-	 */
-	public function onHandler(\Swoole\Process $process): void
-	{
-		$crontab = Snowflake::app()->get('crontab');
-		$crontab->clearAll();
-		if (Snowflake::getPlatform()->isLinux()) {
-			name($this->pid, 'Crontab zookeeper.');
-		}
-		Timer::tick(1000, function () {
-			[$range, $redis] = $this->loadCarobTask();
+    /**
+     * @param \Swoole\Process $process
+     * @throws Exception
+     */
+    public function onHandler(\Swoole\Process $process): void
+    {
+        $crontab = Snowflake::app()->get('crontab');
+        $crontab->clearAll();
+        if (Snowflake::getPlatform()->isLinux()) {
+            name($this->pid, 'Crontab zookeeper.');
+        }
+        Timer::tick(1000, function () {
+            [$range, $redis] = $this->loadCarobTask();
 
-			$server = Snowflake::app()->getSwoole();
-			$setting = $server->setting['worker_num'];
-			foreach ($range as $value) {
-				$this->dispatch($server, $redis, $setting, $value);
-			}
-			$redis->release();
-		});
-	}
-
-
-	/**
-	 * @param $server
-	 * @param Redis|\Redis $redis
-	 * @param int $setting
-	 * @param $value
-	 * @throws Exception
-	 */
-	private function dispatch($server, Redis|\Redis $redis, int $setting, $value)
-	{
-		try {
-			$params['action'] = 'crontab';
-			$params['handler'] = swoole_unserialize($redis->get('crontab:' . $value));
-
-			$result = $server->sendMessage($params, $workerId = random_int(0, $setting - 1));
-
-			var_dump('send crontab to ' . $workerId . ' ' . intval($result));
-		} catch (\Throwable $exception) {
-			logger()->addError($exception);
-		}
-
-	}
+            $server = Snowflake::app()->getSwoole();
+            $setting = $server->setting['worker_num'];
+            foreach ($range as $value) {
+                $this->dispatch($server, $redis, $setting, $value);
+            }
+            $redis->release();
+        });
+    }
 
 
-	/**
-	 * @return array
-	 * @throws Exception
-	 */
-	private function loadCarobTask(): array
-	{
-		$redis = Snowflake::app()->getRedis();
+    /**
+     * @param $server
+     * @param Redis|\Redis $redis
+     * @param int $setting
+     * @param $value
+     * @throws Exception
+     */
+    private function dispatch($server, Redis|\Redis $redis, int $setting, $value)
+    {
+        try {
+            $params['action'] = 'crontab';
+            $params['handler'] = swoole_unserialize($redis->get('crontab:' . $value));
 
-		$startTime = time();
+            $result = $server->sendMessage($params, $workerId = random_int(0, $setting - 1));
 
-		$range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
-		var_dump($range);
-		$redis->zRemRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
+            var_dump('send crontab to ' . $workerId . ' ' . intval($result));
+        } catch (\Throwable $exception) {
+            logger()->addError($exception);
+        }
 
-		return [$range, $redis];
-	}
+    }
 
 
-	/**
-	 * @param string $name
-	 */
-	public function clear(string $name)
-	{
-		if (!isset($this->names[$name])) {
-			return;
-		}
-		$timers = $this->timers[$name];
+    /**
+     * @return array
+     * @throws Exception
+     */
+    private function loadCarobTask(): array
+    {
+        $redis = Snowflake::app()->getRedis();
 
-		$search = array_search($name, $this->scores[$timers]);
-		if ($search !== false) {
-			unset($this->scores[$timers][$search]);
-		}
-		unset($this->timers[$name], $this->names[$name]);
-	}
+        $startTime = time();
+
+        $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
+        var_dump($startTime, $range);
+        $redis->zRemRangeByScore(Producer::CRONTAB_KEY, '0', (string)$startTime);
+
+        return [$range, $redis];
+    }
+
+
+    /**
+     * @param string $name
+     */
+    public function clear(string $name)
+    {
+        if (!isset($this->names[$name])) {
+            return;
+        }
+        $timers = $this->timers[$name];
+
+        $search = array_search($name, $this->scores[$timers]);
+        if ($search !== false) {
+            unset($this->scores[$timers][$search]);
+        }
+        unset($this->timers[$name], $this->names[$name]);
+    }
 
 
 }
