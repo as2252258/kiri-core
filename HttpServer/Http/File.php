@@ -67,7 +67,7 @@ class File
 	 */
 	public function getContent(): string
 	{
-		$open = fopen('php://input', 'r');
+		$open = fopen($this->getTmpPath(), 'r');
 		var_dump($open);
 
 		$limit = 1024000;
