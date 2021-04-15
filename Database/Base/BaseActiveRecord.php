@@ -57,11 +57,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	const ANNOTATION_GET = 'get';
 	const ANNOTATION_SET = 'set';
 
-
-	#[Inject('event')]
-	protected ?SEvent $event;
-
-
 	/** @var array */
 	protected array $_attributes = [];
 
