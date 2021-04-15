@@ -68,7 +68,7 @@ class File
 	public function getContent(): string
 	{
 //		$open = fopen($this->getTmpPath(), 'r');
-		var_dump(file_get_contents('php://temp'));
+		var_dump(file_get_contents($this->getTmpPath()));
 
 		return '';
 
