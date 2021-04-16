@@ -24,6 +24,7 @@ use Snowflake\Snowflake;
 	 */
 	public function __construct(public string $service, public array $args = [], public bool $async_reload = true)
 	{
+		var_dump($this->service);
 	}
 
 
