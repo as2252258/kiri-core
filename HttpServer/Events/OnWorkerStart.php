@@ -36,11 +36,12 @@ class OnWorkerStart extends Callback
 
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->setLoader(unserialize($content));
+		$annotation->runtime(directory('app'));
 
 		if ($worker_id < $server->setting['worker_num']) {
-			$this->onWorker($server, $annotation);
+			$this->onWorker($server);
 		} else {
-			$this->onTask($server, $annotation);
+			$this->onTask($server);
 		}
 	}
 
@@ -58,14 +59,11 @@ class OnWorkerStart extends Callback
 
 	/**
 	 * @param Server $server
-	 * @param Annotation $annotation
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function onTask(Server $server, Annotation $annotation)
+	public function onTask(Server $server)
 	{
-		$annotation->runtime(directory('app'));
-
 		putenv('environmental=' . Snowflake::TASK);
 
 		name($server->worker_pid, 'Task#' . $server->worker_id);
@@ -78,15 +76,11 @@ class OnWorkerStart extends Callback
 
 	/**
 	 * @param Server $server
-	 * @param Annotation $annotation
 	 * @throws Exception
 	 */
-	public function onWorker(Server $server, Annotation $annotation)
+	public function onWorker(Server $server)
 	{
 		try {
-			$time = microtime(true);
-			$annotation->runtime(directory('app'));
-
 			name($server->worker_pid, 'Worker#' . $server->worker_id);
 
 			Snowflake::setWorkerId($server->worker_pid);
