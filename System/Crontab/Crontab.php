@@ -180,7 +180,7 @@ abstract class Crontab extends BaseObject
     /**
      * @throws Exception
      */
-    private function recover()
+    private function recover(): bool
     {
         $redis = Snowflake::app()->getRedis();
         if ($redis->exists('stop:crontab:' . $this->getName())) {
@@ -191,6 +191,7 @@ abstract class Crontab extends BaseObject
             $tickTime = time() + $this->getTickTime();
             $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
         }
+        return true;
     }
 
 
@@ -213,23 +214,22 @@ abstract class Crontab extends BaseObject
     }
 
 
-    /**
-     * @param $application
-     * @return bool|int
-     * @throws \Exception
-     */
-    public function isRecover($application): bool|int
+	/**
+	 * @return bool|int
+	 * @throws Exception
+	 */
+    public function isRecover(): bool|int
     {
         try {
             $redis = Snowflake::app()->getRedis();
-            if ($application->isExit()) {
+            if ($this->isExit()) {
                 return $redis->del('crontab:' . $this->getName());
             }
-            if ($application->isMaxExecute()) {
-                call_user_func([$application, 'max_execute'], ...$application->params);
+            if ($this->isMaxExecute()) {
+                call_user_func([$this, 'max_execute'], ...$this->getParams());
                 return $redis->del('crontab:' . $this->getName());
             } else {
-                return $application->recover();
+                return $this->recover();
             }
         } catch (\Throwable $throwable) {
             return logger()->addError($throwable, 'throwable');
