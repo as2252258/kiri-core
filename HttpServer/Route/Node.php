@@ -541,12 +541,15 @@ class Node extends HttpService
 			}
 
 			if (!$validator->validation()) {
-				return Json::to(401, $validator->getError());
+				return Json::to(5005, $validator->getError());
 			}
 			return $this->runWith(...func_get_args());
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
-			return Json::to(401, $throwable->getMessage());
+
+			$code = $throwable->getCode() == 0 ? 500 : $throwable->getCode();
+
+			return Json::to($code, $throwable->getMessage());
 		}
 	}
 
