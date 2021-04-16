@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace Database\Mysql;
 
 
+use Database\Connection;
 use Database\SqlBuilder;
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
-use Database\Connection;
-use Exception;
 use Snowflake\Core\Json;
 
 /**
@@ -155,7 +155,11 @@ class Columns extends Component
 		if ($this->isInt($format)) {
 			return (int)$val;
 		} else if ($this->isJson($format)) {
-			return Json::encode($val);
+			$data = Json::encode($val);
+			if (is_bool($data)) {
+				return Json::encode([]);
+			}
+			return $data;
 		} else if ($this->isFloat($format)) {
 			return (float)$val;
 		} else {
@@ -224,7 +228,7 @@ class Columns extends Component
 
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 * @return bool
 	 * @throws Exception
 	 */
