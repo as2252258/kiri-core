@@ -207,9 +207,9 @@ abstract class Crontab extends BaseObject
      */
     public function execute(): void
     {
-        \Swoole\Coroutine\go(function ($application) {
-            $application->isRecover($application);
-        }, $this);
+        defer(function () {
+            $this->isRecover();
+        });
         $this->run();
     }
 

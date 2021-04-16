@@ -24,7 +24,7 @@ class Zookeeper extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        /** @var \Snowflake\Crontab\Producer $crontab */
+        /** @var Producer $crontab */
         $crontab = Snowflake::app()->get('crontab');
         $crontab->clearAll();
         if (Snowflake::getPlatform()->isLinux()) {
