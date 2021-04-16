@@ -53,7 +53,7 @@ class Producer extends Component
 	    $redis->del('crontab:' . md5($name));
 	    $redis->zRem(static::CRONTAB_KEY, md5($name));
 
-	    $redis->setex('stop:crontab:' . md5($name), 10, 1);
+	    $redis->setex('stop:crontab:' . md5($name), 3, 1);
     }
 
 
@@ -65,7 +65,7 @@ class Producer extends Component
         $redis = Snowflake::app()->getRedis();
         $data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
         foreach ($data as $datum) {
-            $redis->setex('stop:crontab:' . $datum, 10, 1);
+            $redis->setex('stop:crontab:' . $datum, 3, 1);
             $redis->del('crontab:' . $datum);
         }
         $redis->release();
