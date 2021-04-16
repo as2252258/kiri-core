@@ -115,10 +115,12 @@ class Producer extends Component
     }
 
 
-    /**
-     * @return \RdKafka\Producer
-     * @throws Exception
-     */
+	/**
+	 * @param \RdKafka\Producer $producer
+	 * @param $topic
+	 * @return ProducerTopic
+	 * @throws Exception
+	 */
     private function getProducerTopic(\RdKafka\Producer $producer, $topic): ProducerTopic
     {
         $pool = Snowflake::app()->getChannel();
