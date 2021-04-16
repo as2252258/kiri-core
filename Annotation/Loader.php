@@ -166,6 +166,9 @@ class Loader extends BaseObject
 				if ($attribute->getName() == Attribute::class) {
 					continue;
 				}
+				if ($attribute->getName() == Target::class) {
+					continue;
+				}
 				$_array['target'][] = $attribute->newInstance();
 			}
 
