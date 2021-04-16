@@ -32,7 +32,9 @@ class Producer extends Component
             throw new Exception('Cache key ' . self::CRONTAB_KEY . ' types error.');
         }
 
-        $redis->del('crontab:' . $name);
+	    $redis->del('stop:crontab:' . $name);
+
+	    $redis->del('crontab:' . $name);
         $redis->zRem(static::CRONTAB_KEY, $name);
 
         $redis->zAdd(self::CRONTAB_KEY, time() + $crontab->getTickTime(), $name);
