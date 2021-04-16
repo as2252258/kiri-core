@@ -39,6 +39,7 @@ use Snowflake\Snowflake;
 			$class = array_merge($class, $this->args);
 		}
 
+		var_dump($this->service, $class);
 		Snowflake::set($this->service, $class);
 		if ($this->async_reload === true) {
 			$event = Snowflake::app()->getEvent();
