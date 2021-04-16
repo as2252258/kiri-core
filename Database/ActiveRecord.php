@@ -10,14 +10,13 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Exception;
 use Database\Base\BaseActiveRecord;
+use Database\Traits\HasBase;
+use Exception;
 use ReflectionException;
 use Snowflake\Channel;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Database\Traits\HasBase;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
 defined('FIND_OR_CREATE_MESSAGE') or define('FIND_OR_CREATE_MESSAGE', 'Create a new model, but the data cannot be empty.');
@@ -220,7 +219,7 @@ class ActiveRecord extends BaseActiveRecord
 	public static function inserts(array $data): bool
 	{
 		/** @var static $class */
-		$class = Snowflake::createObject(static::className());
+		$class = Snowflake::createObject(['class' => static::class]);
 		if (empty($data)) {
 			return $class->addError('Insert data empty.', 'mysql');
 		}
@@ -321,7 +320,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function recover()
 	{
-	    $this->clean();
+		$this->clean();
 
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
