@@ -47,7 +47,11 @@ class Producer extends Component
     public function clear(string $name)
     {
         $redis = Snowflake::app()->getRedis();
-        $redis->setex('stop:crontab:' . md5($name), 120, 1);
+
+	    $redis->del('crontab:' . $name);
+	    $redis->zRem(static::CRONTAB_KEY, $name);
+
+	    $redis->setex('stop:crontab:' . md5($name), 10, 1);
     }
 
 
