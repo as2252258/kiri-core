@@ -64,7 +64,7 @@ class OnWorkerStart extends Callback
 	 */
 	public function onTask(Server $server, Annotation $annotation)
 	{
-		$annotation->runtime(MODEL_PATH);
+		$annotation->runtime(directory('app'));
 
 		putenv('environmental=' . Snowflake::TASK);
 
@@ -85,10 +85,7 @@ class OnWorkerStart extends Callback
 	{
 		try {
 			$time = microtime(true);
-			$annotation->runtime(CONTROLLER_PATH);
-			$this->debug('load controller time .' . (microtime(true) - $time));
-
-			$annotation->runtime(directory('app'), CONTROLLER_PATH);
+			$annotation->runtime(directory('app'));
 
 			name($server->worker_pid, 'Worker#' . $server->worker_id);
 
