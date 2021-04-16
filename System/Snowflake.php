@@ -10,7 +10,6 @@ use Database\ActiveRecord;
 use Database\Collection;
 use Exception;
 use HttpServer\IInterface\Task;
-
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
@@ -224,16 +223,32 @@ class Snowflake
 
 
 	/**
+	 * @return bool
+	 */
+	public static function isDcoker(): bool
+	{
+		exec('ls -alh /.dockerenv', $output, $cod);
+		if ($cod === 0 && !empty($output)) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
 	 * @param $workerId
 	 * @return mixed
 	 * @throws Exception
 	 */
 	public static function setWorkerId($workerId): mixed
 	{
-		if (empty($workerId)) {
+		if (empty($workerId) || static::isDcoker()) {
 			return $workerId;
 		}
-		return self::writeFile(storage($workerId . '.sock', 'pid/worker'), $workerId);
+
+		$tmpFile = storage($workerId . '.sock', 'pid/worker');
+
+		return self::writeFile($tmpFile, $workerId);
 	}
 
 
@@ -502,7 +517,6 @@ class Snowflake
 		if (!is_array($data)) $data = ['data' => $data];
 		return json_encode(array_merge(['callback' => $event], $data));
 	}
-
 
 
 	/**
