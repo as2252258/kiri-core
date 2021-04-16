@@ -14,6 +14,7 @@ use Snowflake\Abstracts\Component;
 use Exception;
 use PDO;
 use PDOStatement;
+use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 
 /**
@@ -150,7 +151,7 @@ class Command extends Component
 		$export['param'] = $this->params;
 		$export['time'] = microtime(true) - $time;
 
-		logger()->debug(print_r($export, true), 'mysql');
+		logger()->debug(Json::encode($export), 'mysql');
 
 		return $result;
 	}

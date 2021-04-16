@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Database\Mysql;
 
 
+use Exception;
 use Snowflake\Abstracts\Component;
 use Database\Connection;
 
@@ -22,6 +23,7 @@ class Schema extends Component
 
 	/**
 	 * @return Columns|null
+	 * @throws Exception
 	 */
 	public function getColumns(): ?Columns
 	{
