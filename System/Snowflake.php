@@ -207,7 +207,13 @@ class Snowflake
 	 */
 	public static function setManagerId($workerId): mixed
 	{
-		return self::writeFile(storage($workerId . '.sock', 'pid/manager'), $workerId);
+		if (empty($workerId) || static::isDcoker()) {
+			return $workerId;
+		}
+
+		$tmpFile = storage($workerId . '.sock', 'pid/manager');
+
+		return self::writeFile($tmpFile, $workerId);
 	}
 
 
@@ -218,7 +224,13 @@ class Snowflake
 	 */
 	public static function setProcessId($workerId): mixed
 	{
-		return self::writeFile(storage($workerId . '.sock', 'pid/process'), $workerId);
+		if (empty($workerId) || static::isDcoker()) {
+			return $workerId;
+		}
+
+		$tmpFile = storage($workerId . '.sock', 'pid/process');
+
+		return self::writeFile($tmpFile, $workerId);
 	}
 
 
@@ -259,10 +271,13 @@ class Snowflake
 	 */
 	public static function setTaskId($workerId): mixed
 	{
-		if (empty($workerId)) {
+		if (empty($workerId) || static::isDcoker()) {
 			return $workerId;
 		}
-		return self::writeFile(storage($workerId . '.sock', 'pid/task'), $workerId);
+
+		$tmpFile = storage($workerId . '.sock', 'pid/task');
+
+		return self::writeFile($tmpFile, $workerId);
 	}
 
 	/**
