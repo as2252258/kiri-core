@@ -48,8 +48,8 @@ class Producer extends Component
     {
         $redis = Snowflake::app()->getRedis();
 
-	    $redis->del('crontab:' . $name);
-	    $redis->zRem(static::CRONTAB_KEY, $name);
+	    $redis->del('crontab:' . md5($name));
+	    $redis->zRem(static::CRONTAB_KEY, md5($name));
 
 	    $redis->setex('stop:crontab:' . md5($name), 10, 1);
     }
