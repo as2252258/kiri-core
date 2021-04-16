@@ -11,7 +11,6 @@ namespace Database\Base;
 
 
 use Annotation\Event;
-use Annotation\Inject;
 use ArrayAccess;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
@@ -653,6 +652,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			$oldValue = $this->_oldAttributes[$key] ?? null;
 			if ($val !== $oldValue) {
 				$_tmp[$key] = $this->toFormat($columns, $format, $key, $val);
+				if (is_bool($_tmp[$key])) {
+					unset($_tmp[$key]);
+				}
 			} else {
 				$condition[$key] = $val;
 			}

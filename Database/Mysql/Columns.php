@@ -155,11 +155,7 @@ class Columns extends Component
 		if ($this->isInt($format)) {
 			return (int)$val;
 		} else if ($this->isJson($format)) {
-			$data = Json::encode($val);
-			if (is_bool($data)) {
-				return Json::encode([]);
-			}
-			return $data;
+			return Json::encode($val);
 		} else if ($this->isFloat($format)) {
 			return (float)$val;
 		} else {
