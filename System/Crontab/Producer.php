@@ -32,9 +32,9 @@ class Producer extends Component
             throw new Exception('Cache key ' . self::CRONTAB_KEY . ' types error.');
         }
 
-	    $redis->del('stop:crontab:' . $name);
+        $redis->del('stop:crontab:' . $name);
 
-	    $redis->del('crontab:' . $name);
+        $redis->del('crontab:' . $name);
         $redis->zRem(static::CRONTAB_KEY, $name);
 
         $redis->zAdd(self::CRONTAB_KEY, time() + $crontab->getTickTime(), $name);
@@ -50,10 +50,30 @@ class Producer extends Component
     {
         $redis = Snowflake::app()->getRedis();
 
-	    $redis->del('crontab:' . md5($name));
-	    $redis->zRem(static::CRONTAB_KEY, md5($name));
+        $redis->del('crontab:' . md5($name));
+        $redis->zRem(static::CRONTAB_KEY, md5($name));
 
-	    $redis->setex('stop:crontab:' . md5($name), 3, 1);
+        $redis->setex('stop:crontab:' . md5($name), 120, 1);
+    }
+
+
+    /**
+     * @param string $name
+     * @throws Exception
+     */
+    public function exists(string $name)
+    {
+        $redis = Snowflake::app()->getRedis();
+        if ($redis->exists('crontab:' . md5($name))) {
+            return true;
+        }
+        if ($redis->zRank(static::CRONTAB_KEY, md5($name))) {
+            return true;
+        }
+        if ($redis->hExists(Crontab::WAIT_END, md5($name))) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -65,7 +85,7 @@ class Producer extends Component
         $redis = Snowflake::app()->getRedis();
         $data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
         foreach ($data as $datum) {
-            $redis->setex('stop:crontab:' . $datum, 3, 1);
+            $redis->setex('stop:crontab:' . $datum, 120, 1);
             $redis->del('crontab:' . $datum);
         }
         $redis->release();
