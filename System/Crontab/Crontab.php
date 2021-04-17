@@ -214,14 +214,18 @@ abstract class Crontab extends BaseObject
     }
 
 
-	/**
-	 * @return bool|int
-	 * @throws Exception
-	 */
+    /**
+     * @return bool|int
+     * @throws Exception
+     */
     public function isRecover(): bool|int
     {
         try {
             $redis = Snowflake::app()->getRedis();
+            if ($redis->exists('stop:crontab:' . $this->getName())) {
+                $redis->del('stop:crontab:' . $this->getName());
+                return true;
+            }
             if ($this->isExit()) {
                 return $redis->del('crontab:' . $this->getName());
             }
