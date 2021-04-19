@@ -149,7 +149,7 @@ class Loader extends BaseObject
 				$array = explode('/', $path->getRealPath());
 				array_pop($array);
 
-				$directory = '/' . implode('/', $array);
+				$directory = implode('/', $array);
 
 				var_dump(__LINE__ . '->' . $directory);
 
