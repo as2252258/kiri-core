@@ -414,6 +414,7 @@ class Router extends HttpService implements RouterInterface
             return $this->nodes[$method]['/'] ?? null;
         }
         $first = array_shift($explode);
+        var_dump($this->nodes[$method]);
         if (!($parent = $this->nodes[$method][$first] ?? null)) {
             return null;
         }
@@ -631,7 +632,6 @@ class Router extends HttpService implements RouterInterface
      */
     private function Branch_search(Request $request): ?Node
     {
-    	var_dump($request->getExplode());
         $node = $this->tree_search($request->getExplode(), $request->getMethod());
         if ($node instanceof Node) {
             return $node;
