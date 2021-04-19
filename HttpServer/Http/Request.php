@@ -102,7 +102,7 @@ class Request extends HttpService
 	/**
 	 * @return int
 	 */
-	public function getClientId()
+	public function getClientId(): int
 	{
 		return $this->fd;
 	}

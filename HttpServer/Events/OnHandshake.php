@@ -122,9 +122,7 @@ class OnHandshake extends Callback
 	private function execute(SRequest $request, SResponse $response): mixed
 	{
 		$this->resolveParse($request, $response);
-		if (isset($request->get['debug']) && $request->get['debug'] == 'test') {
-			return $this->connect($response, 101);
-		}
+
 		$router = Snowflake::app()->getRouter();
 
 		/** @var Request $sRequest */
