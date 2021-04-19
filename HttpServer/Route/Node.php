@@ -124,8 +124,8 @@ class Node extends HttpService
 	 */
 	public function createDispatch(): Closure
 	{
-		return function () {
-			return Dispatch::create($this->handler, ...func_get_args())->dispatch();
+		return function (...$params) {
+			return Dispatch::create($this->handler, ...$params)->dispatch();
 		};
 	}
 
@@ -513,9 +513,8 @@ class Node extends HttpService
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function dispatch(): mixed
+	public function dispatch(...$params): mixed
 	{
-		$params = func_get_args();
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
@@ -527,10 +526,9 @@ class Node extends HttpService
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function httpFilter(): mixed
+	private function httpFilter(...$param): mixed
 	{
 		try {
-			$param = func_get_args();
 			if ($this->handler instanceof Closure) {
 				return $this->runWith(...$param);
 			}

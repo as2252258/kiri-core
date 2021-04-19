@@ -32,7 +32,7 @@ class Dispatch
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public static function create($handler, $request): static
+	public static function create($handler,...$request): static
 	{
 		$class = new static();
 		$class->handler = $handler;
