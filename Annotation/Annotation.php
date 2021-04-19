@@ -84,7 +84,7 @@ class Annotation extends Component
 	 * @param string|array $outPath
 	 * @throws Exception
 	 */
-	public function runtime(string $dir, string|array $outPath = [])
+	public function runtime(string $dir, string|array $outPath = '')
 	{
 //		if (!empty($outPath) && !is_array($outPath)) {
 //			$outPath = [$outPath];
