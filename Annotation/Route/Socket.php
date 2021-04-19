@@ -5,6 +5,7 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
+use Exception;
 use HttpServer\Route\Router;
 use ReflectionException;
 use Snowflake\Exception\ComponentException;
@@ -41,7 +42,7 @@ use Snowflake\Snowflake;
 	/**
 	 * @param array $handler
 	 * @return Router
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function execute(array $handler): Router
 	{
@@ -50,7 +51,6 @@ use Snowflake\Snowflake;
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		var_dump($method);
 		$router->addRoute($method, $handler, 'sw::socket');
 
 		return $router;
