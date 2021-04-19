@@ -276,19 +276,22 @@ class Loader extends BaseObject
 	{
 		$array = explode('/', $filePath);
 		array_pop($array);
-		$this->_directory['/' . implode('/', $array)][] = $className;
 
-		$directory = $this->splitDirectory($filePath);
-		array_pop($directory);
+		$array = '/' . trim(implode('/', $array), '/');
 
-		$tree = null;
-		foreach ($directory as $value) {
-			$tree = $this->getTree($tree, $value);
-		}
+		$this->_directory[$array][] = $className;
 
-		if ($tree instanceof FileTree) {
-			$tree->addFile($className, $filePath);
-		}
+//		$directory = $this->splitDirectory($filePath);
+//		array_pop($directory);
+//
+//		$tree = null;
+//		foreach ($directory as $value) {
+//			$tree = $this->getTree($tree, $value);
+//		}
+//
+//		if ($tree instanceof FileTree) {
+//			$tree->addFile($className, $filePath);
+//		}
 	}
 
 
