@@ -234,11 +234,6 @@ class Loader extends BaseObject
 			if (!isset($this->_directory[$path])) {
 				return;
 			}
-			if (empty($outPath)) {
-				$outPath = [];
-			} else if (is_string($outPath)) {
-				$outPath = [$outPath];
-			}
 			foreach ($this->_directory as $key => $_path) {
 				$key = '/' . trim($key, '/');
 				if (!str_starts_with($key, $path)) {
