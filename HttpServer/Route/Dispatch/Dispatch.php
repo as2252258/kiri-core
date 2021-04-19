@@ -52,6 +52,7 @@ class Dispatch
 	 */
 	public function dispatch(): mixed
 	{
+		return call_user_func($this->handler, ...$this->request);
 		return \aop($this->handler, ...$this->request);
 	}
 
