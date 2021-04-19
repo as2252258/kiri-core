@@ -27,6 +27,9 @@ class Loader extends BaseObject
 	private array $_fileMap = [];
 
 
+	private array $_directory = [];
+
+
 	private FileTree $files;
 
 
@@ -136,8 +139,17 @@ class Loader extends BaseObject
 			if ($path->isDir()) {
 				$iterator = new DirectoryIterator($path->getRealPath());
 				$this->_scanDir($iterator, $namespace);
+
+				$this->_directory[rtrim($path->getRealPath(), '/')] = [];
 			} else {
 				$this->readFile($path, $namespace);
+
+				$array = explode('/', $path->getRealPath());
+				array_pop($array);
+
+				$directory = '/' . implode('/', $array);
+
+				$this->_directory[$directory][] = $directory;
 			}
 		}
 	}
@@ -214,7 +226,15 @@ class Loader extends BaseObject
 	public function loadByDirectory(string $path, ?string $outPath = null)
 	{
 		try {
-			$this->each($path, $outPath);
+			$path = '/' . trim($path, '/');
+			if (!isset($this->_directory[$path])) {
+				return;
+			}
+			$this->execute($this->_directory[$path]);
+//
+//			foreach ($this->_directory[$path] as $file) {
+//			}
+//			$this->each($path, $outPath);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
