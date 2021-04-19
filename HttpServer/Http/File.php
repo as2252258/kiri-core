@@ -64,10 +64,15 @@ class File
 
 	/**
 	 * @return string
+	 * @throws Exception
 	 */
 	public function getContent(): string
 	{
 //		$open = fopen($this->getTmpPath(), 'r');
+
+		@move_uploaded_file($this->tmp_name, storage($this->name));
+
+
 		var_dump(file_get_contents($this->getTmpPath()));
 
 		return '';

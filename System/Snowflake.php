@@ -28,6 +28,7 @@ defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/Con
 defined('CRONTAB_PATH') or define('CRONTAB_PATH', APP_PATH . 'app/Crontab/');
 defined('CLIENT_PATH') or define('CLIENT_PATH', APP_PATH . 'app/Client/');
 defined('TASK_PATH') or define('TASK_PATH', APP_PATH . 'app/Async/');
+defined('LISTENER_PATH') or define('LISTENER_PATH', APP_PATH . 'app/Listener/');
 defined('KAFKA_PATH') or define('KAFKA_PATH', APP_PATH . 'app/Kafka/');
 defined('RPC_SERVICE_PATH') or define('RPC_SERVICE_PATH', APP_PATH . 'app/Http/Rpc/');
 defined('RPC_CLIENT_PATH') or define('RPC_CLIENT_PATH', APP_PATH . 'app/Client/Rpc/');

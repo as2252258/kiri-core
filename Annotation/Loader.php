@@ -224,10 +224,10 @@ class Loader extends BaseObject
 
 	/**
 	 * @param string $path
-	 * @param string|null $outPath
+	 * @param string|array $outPath
 	 * @throws Exception
 	 */
-	public function loadByDirectory(string $path, ?string $outPath = null)
+	public function loadByDirectory(string $path, string|array $outPath = [])
 	{
 		try {
 			$path = '/' . trim($path, '/');
@@ -238,6 +238,7 @@ class Loader extends BaseObject
 				if (!str_contains($key, $path)) {
 					continue;
 				}
+				if (in_array($key, $outPath)) continue;
 				$this->execute($_path);
 			}
 		} catch (Throwable $exception) {
