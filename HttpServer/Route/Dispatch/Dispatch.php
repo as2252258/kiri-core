@@ -32,7 +32,7 @@ class Dispatch
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public static function create($handler,...$request): static
+	public static function create($handler, $request): static
 	{
 		$class = new static();
 		$class->handler = $handler;
@@ -52,7 +52,7 @@ class Dispatch
 	 */
 	public function dispatch(): mixed
 	{
-		return call_user_func($this->handler, ...$this->request);
+//		return call_user_func($this->handler, $this->request);
 		return \aop($this->handler, ...$this->request);
 	}
 
