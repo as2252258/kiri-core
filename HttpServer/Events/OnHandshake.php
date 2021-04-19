@@ -141,7 +141,7 @@ class OnHandshake extends Callback
 		$sRequest->parseUri();
 
 		if (($node = $router->find_path($sRequest)) === null) {
-			return $this->disconnect($response, 502);
+			return $this->disconnect($response, 404);
 		}
 		return $node->dispatch($sRequest, Response::create($response));
 	}
