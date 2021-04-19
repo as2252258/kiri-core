@@ -246,6 +246,7 @@ class Loader extends BaseObject
 				if (!str_contains($key, $path)) {
 					continue;
 				}
+				var_dump($_path);
 				$this->execute($_path);
 			}
 		} catch (Throwable $exception) {
