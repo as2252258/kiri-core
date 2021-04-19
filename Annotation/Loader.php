@@ -238,7 +238,7 @@ class Loader extends BaseObject
 				if (!str_contains($key, $path)) {
 					continue;
 				}
-				if (!empty($outPath) && in_array($key, $outPath)) continue;
+//				if (!empty($outPath) && in_array($key, $outPath)) continue;
 				$this->execute($_path);
 			}
 		} catch (Throwable $exception) {
