@@ -86,9 +86,7 @@ class Annotation extends Component
 	 */
 	public function runtime(string $dir, string|array $outPath = null)
 	{
-		if ($outPath === null) {
-			$outPath = [];
-		} else if (!empty($outPath) && !is_array($outPath)) {
+		if (!empty($outPath) && !is_array($outPath)) {
 			$outPath = [$outPath];
 		}
 		$this->_loader->loadByDirectory($dir, $outPath);
