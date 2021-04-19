@@ -33,6 +33,8 @@ class Runtime extends Command
 
         $runtime = storage('runtime.php');
 
+        var_dump($annotation->getLoader());
+
         Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
     }
 
