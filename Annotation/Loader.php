@@ -274,12 +274,9 @@ class Loader extends BaseObject
 	 */
 	public function appendFileToDirectory(string $filePath, string $className)
 	{
-//		$array = explode('/', $filePath);
-//		array_pop($array);
-//
-//		$directory = '/' . implode('/', $array);
-//
-//		$this->_directory[$directory][] = $className;
+		$array = explode('/', $filePath);
+		array_pop($array);
+		$this->_directory['/' . implode('/', $array)][] = $className;
 
 		$directory = $this->splitDirectory($filePath);
 		array_pop($directory);
