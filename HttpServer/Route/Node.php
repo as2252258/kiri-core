@@ -529,21 +529,22 @@ class Node extends HttpService
 	private function httpFilter(): mixed
 	{
 		try {
+			$requestParam = func_get_args();
 			if ($this->handler instanceof Closure) {
-				return $this->runWith(...func_get_args());
+				return $this->runWith(...$requestParam);
 			}
 
 			/** @var HttpFilter $filter */
-			$filter = Snowflake::app()->get('filter');
-			$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
-			if (!($validator instanceof Validator)) {
-				return $this->runWith(...func_get_args());
-			}
-
-			if (!$validator->validation()) {
-				return Json::to(5005, $validator->getError());
-			}
-			return $this->runWith(...func_get_args());
+//			$filter = Snowflake::app()->get('filter');
+//			$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
+//			if (!($validator instanceof Validator)) {
+//				return $this->runWith(...$requestParam);
+//			}
+//
+//			if (!$validator->validation()) {
+//				return Json::to(5005, $validator->getError());
+//			}
+			return $this->runWith(...$requestParam);
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
 
