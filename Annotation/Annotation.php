@@ -88,7 +88,7 @@ class Annotation extends Component
 	{
 		if ($outPath === null) {
 			$outPath = [];
-		} else if (!is_array($outPath)) {
+		} else if (!empty($outPath) && !is_array($outPath)) {
 			$outPath = [$outPath];
 		}
 		$this->_loader->loadByDirectory($dir, $outPath);
