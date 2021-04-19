@@ -56,6 +56,9 @@ class Aop extends Component
 
 		$aopName = get_class($close[0]) . '::' . $close[1];
 		if (!isset($this->_aop[$aopName])) {
+			if (!method_exists($close[0], $close[1])) {
+				return response()->close(404);
+			}
 			return call_user_func($close, ...$get_args);
 		}
 
