@@ -142,14 +142,14 @@ class Loader extends BaseObject
 
 				$this->_directory[rtrim($path->getRealPath(), '/')] = [];
 			} else {
-				$this->readFile($path, $namespace);
-
 				$array = explode('/', $path->getRealPath());
 				array_pop($array);
 
 				$directory = implode('/', $array);
 
 				$this->_directory[$directory][] = $path->getRealPath();
+
+				$this->readFile($path, $namespace);
 			}
 		}
 	}
@@ -227,12 +227,10 @@ class Loader extends BaseObject
 	{
 		try {
 			$path = '/' . trim($path, '/');
-			var_dump($path, $this->_directory);
 			if (!isset($this->_directory[$path])) {
 				return;
 			}
 			foreach ($this->_directory[$path] as $key => $_path) {
-				var_dump($key . '=>' . $path);
 				if (!str_contains($key, $path)) {
 					continue;
 				}
