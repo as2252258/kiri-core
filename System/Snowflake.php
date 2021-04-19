@@ -27,7 +27,7 @@ defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be 
 defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/Controllers/');
 defined('CRONTAB_PATH') or define('CRONTAB_PATH', APP_PATH . 'app/Crontab/');
 defined('CLIENT_PATH') or define('CLIENT_PATH', APP_PATH . 'app/Client/');
-defined('TASK_PATH') or define('TASK_PATH', APP_PATH . 'app/Client/');
+defined('TASK_PATH') or define('TASK_PATH', APP_PATH . 'app/Async/');
 defined('KAFKA_PATH') or define('KAFKA_PATH', APP_PATH . 'app/Kafka/');
 defined('RPC_SERVICE_PATH') or define('RPC_SERVICE_PATH', APP_PATH . 'app/Http/Rpc/');
 defined('RPC_CLIENT_PATH') or define('RPC_CLIENT_PATH', APP_PATH . 'app/Client/Rpc/');
