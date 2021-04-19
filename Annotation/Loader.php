@@ -140,8 +140,6 @@ class Loader extends BaseObject
 				$iterator = new DirectoryIterator($path->getRealPath());
 				$this->_scanDir($iterator, $namespace);
 
-				var_dump(__LINE__ . '->' . rtrim($path->getRealPath(), '/'));
-
 				$this->_directory[rtrim($path->getRealPath(), '/')] = [];
 			} else {
 				$this->readFile($path, $namespace);
@@ -150,8 +148,6 @@ class Loader extends BaseObject
 				array_pop($array);
 
 				$directory = implode('/', $array);
-
-				var_dump(__LINE__ . '->' . $directory);
 
 				$this->_directory[$directory][] = $directory;
 			}
@@ -234,11 +230,12 @@ class Loader extends BaseObject
 			if (!isset($this->_directory[$path])) {
 				return;
 			}
-			$this->execute($this->_directory[$path]);
-//
-//			foreach ($this->_directory[$path] as $file) {
-//			}
-//			$this->each($path, $outPath);
+			foreach ($this->_directory[$path] as $key => $path) {
+				if (!str_starts_with($key, $path)) {
+					continue;
+				}
+				$this->execute($this->_directory[$path]);
+			}
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
