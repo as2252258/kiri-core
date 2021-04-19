@@ -20,6 +20,7 @@ use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Throwable;
+use validator\Validator;
 use function Input;
 
 /**
@@ -514,10 +515,11 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
+		$params = func_get_args();
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
-		return $this->httpFilter(...func_get_args());
+		return $this->httpFilter(...$params);
 	}
 
 
@@ -528,22 +530,20 @@ class Node extends HttpService
 	private function httpFilter(): mixed
 	{
 		try {
-			$requestParam = func_get_args();
+			$param = func_get_args();
 			if ($this->handler instanceof Closure) {
-				return $this->runWith(...$requestParam);
+				return $this->runWith(...$param);
 			}
-
 			/** @var HttpFilter $filter */
-//			$filter = Snowflake::app()->get('filter');
-//			$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
-//			if (!($validator instanceof Validator)) {
-//				return $this->runWith(...$requestParam);
-//			}
-//
-//			if (!$validator->validation()) {
-//				return Json::to(5005, $validator->getError());
-//			}
-			return $this->runWith(...$requestParam);
+			$filter = Snowflake::app()->get('filter');
+			$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
+			if (!($validator instanceof Validator)) {
+				return $this->runWith(...$param);
+			}
+			if (!$validator->validation()) {
+				return Json::to(5005, $validator->getError());
+			}
+			return $this->runWith(...$param);
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
 
