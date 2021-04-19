@@ -96,13 +96,13 @@ class OnHandshake extends Callback
 	{
 		try {
 			$this->execute($request, $response);
-
-			$clientInfo = Snowflake::getWebSocket()->getClientInfo($request->fd);
-
-			$event = Snowflake::app()->getEvent();
-
-			$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_HANDSHAKE;
-			$event->trigger($eventName, [$request, $response]);
+//
+//			$clientInfo = Snowflake::getWebSocket()->getClientInfo($request->fd);
+//
+//			$event = Snowflake::app()->getEvent();
+//
+//			$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_HANDSHAKE;
+//			$event->trigger($eventName, [$request, $response]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
 			$this->disconnect($response, 401);
@@ -139,11 +139,9 @@ class OnHandshake extends Callback
 		$sRequest->parseUri();
 
 		if (($node = $router->find_path($sRequest)) === null) {
-			return $this->disconnect($response, 404);
+			return $node->dispatch($sRequest, Response::create($response));
 		}
-		Response::create($response);
-
-		return $node->dispatch($sRequest, \response());
+		return $this->disconnect($response, 404);
 	}
 
 

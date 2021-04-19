@@ -560,7 +560,6 @@ class Node extends HttpService
 	 */
 	private function runWith(): mixed
 	{
-		var_dump(func_get_args());
 		return ($this->callback)(...func_get_args());
 
 		return call_user_func($this->callback, ...func_get_args());
