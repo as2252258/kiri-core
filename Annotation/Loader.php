@@ -235,7 +235,7 @@ class Loader extends BaseObject
 				return;
 			}
 			foreach ($this->_directory as $key => $_path) {
-				if (!str_contains($key, $path)) {
+				if (!str_starts_with($key, $path)) {
 					continue;
 				}
 //				if (!empty($outPath) && in_array($key, $outPath)) continue;
