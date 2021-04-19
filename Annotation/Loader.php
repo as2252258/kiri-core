@@ -273,7 +273,7 @@ class Loader extends BaseObject
 		$array = explode('/', $filePath);
 		array_pop($array);
 
-		$directory = implode('/', $array);
+		$directory = '/' . implode('/', $array);
 
 		$this->_directory[$directory][] = $className;
 
