@@ -565,7 +565,6 @@ class Router extends HttpService implements RouterInterface
      * @param Request $request
      * @return Node|null 树干搜索
      * 树干搜索
-     * @throws ConfigException
      */
     public function find_path(Request $request): ?Node
     {
@@ -632,6 +631,7 @@ class Router extends HttpService implements RouterInterface
      */
     private function Branch_search(Request $request): ?Node
     {
+    	var_dump($request->getExplode());
         $node = $this->tree_search($request->getExplode(), $request->getMethod());
         if ($node instanceof Node) {
             return $node;
