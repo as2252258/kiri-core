@@ -273,13 +273,13 @@ class Response extends HttpService
 	 * @param null $response
 	 * @return mixed
 	 */
-	public static function create($response = null): mixed
+	public static function create($response = null): static
 	{
-		$ciResponse = Context::setContext('response', new Response());
+		$ciResponse = new Response();
 		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;
-		return $ciResponse;
+		return Context::setContext('response', $ciResponse);
 	}
 
 
