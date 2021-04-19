@@ -52,7 +52,7 @@ class Dispatch
 	 */
 	public function dispatch(): mixed
 	{
-		return \aop($this->handler, $this->request);
+		return \aop($this->handler, ...func_get_args());
 	}
 
 
