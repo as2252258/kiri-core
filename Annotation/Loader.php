@@ -149,7 +149,7 @@ class Loader extends BaseObject
 
 				$directory = implode('/', $array);
 
-				$this->_directory[$directory][] = $directory;
+				$this->_directory[$directory][] = $path->getRealPath();
 			}
 		}
 	}
