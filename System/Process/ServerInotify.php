@@ -226,6 +226,9 @@ class ServerInotify extends Process
 	 */
 	public function trigger_reload()
 	{
+		logger()->debug('server reload.');
+
+
 		exec(PHP_BINARY . ' snowflake runtime:builder');
 
 		Snowflake::reload();
