@@ -33,6 +33,15 @@ class Loader extends BaseObject
 	private FileTree $files;
 
 
+	/**
+	 * @return array
+	 */
+	public function getDirectory(): array
+	{
+		return $this->_directory;
+	}
+
+
 	public function init()
 	{
 		$this->files = new FileTree();
