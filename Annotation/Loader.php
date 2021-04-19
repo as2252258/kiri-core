@@ -230,20 +230,25 @@ class Loader extends BaseObject
 	public function loadByDirectory(string $path, string|array $outPath = '')
 	{
 		try {
-//			$path = '/' . trim($path, '/');
-//			if (!isset($this->_directory[$path])) {
-//				return;
-//			}
-//			foreach ($this->_directory as $key => $_path) {
-//				$key = '/' . trim($path, '/');
-//				if (!str_starts_with($key, $path)) {
-//					continue;
-//				}
-////				if (!empty($outPath) && in_array($key, $outPath)) continue;
-//				$this->execute($_path);
-//			}
+			$path = '/' . trim($path, '/');
+			if (!isset($this->_directory[$path])) {
+				return;
+			}
+			if (empty($outPath)) {
+				$outPath = [];
+			} else if (is_string($outPath)) {
+				$outPath = [$outPath];
+			}
+			foreach ($this->_directory as $key => $_path) {
+				$key = '/' . trim($key, '/');
+				if (!str_starts_with($key, $path)) {
+					continue;
+				}
+				if (in_array($key, $outPath)) continue;
+				$this->execute($_path);
+			}
 
-			$this->each($path, $outPath);
+//			$this->each($path, $outPath);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
