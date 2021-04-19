@@ -414,7 +414,6 @@ class Router extends HttpService implements RouterInterface
             return $this->nodes[$method]['/'] ?? null;
         }
         $first = array_shift($explode);
-        var_dump($this->nodes[$method]);
         if (!($parent = $this->nodes[$method][$first] ?? null)) {
             return null;
         }
