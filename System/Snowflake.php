@@ -243,8 +243,8 @@ class Snowflake
 	 */
 	public static function isDcoker(): bool
 	{
-		exec('ls -alh /.dockerenv', $output, $cod);
-		if ($cod === 0 && !empty($output)) {
+		exec('[ -f /.dockerenv ] && echo yes || echo no', $output, $cod);
+		if ($cod === 0 && $output === 'yes') {
 			return true;
 		}
 		return false;
