@@ -33,7 +33,7 @@ class Runtime extends Command
 
         $runtime = storage('runtime.php');
 
-        var_dump($annotation->getLoader());
+        var_dump($annotation->getLoader()->getDirectory());
 
         Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
     }
