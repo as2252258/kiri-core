@@ -96,16 +96,10 @@ class OnHandshake extends Callback
 	{
 		try {
 			$this->execute($request, $response);
-//
-//			$clientInfo = Snowflake::getWebSocket()->getClientInfo($request->fd);
-//
-//			$event = Snowflake::app()->getEvent();
-//
-//			$eventName = 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_HANDSHAKE;
-//			$event->trigger($eventName, [$request, $response]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
-			$this->disconnect($response, 401);
+			$response->status(500);
+			$response->end($exception->getMessage());
 		} finally {
 			fire(Event::SYSTEM_RESOURCE_CLEAN);
 			logger_insert();
