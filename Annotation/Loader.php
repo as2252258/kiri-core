@@ -140,6 +140,8 @@ class Loader extends BaseObject
 				$iterator = new DirectoryIterator($path->getRealPath());
 				$this->_scanDir($iterator, $namespace);
 
+				var_dump(__LINE__ . '->' . rtrim($path->getRealPath(), '/'));
+
 				$this->_directory[rtrim($path->getRealPath(), '/')] = [];
 			} else {
 				$this->readFile($path, $namespace);
@@ -148,6 +150,8 @@ class Loader extends BaseObject
 				array_pop($array);
 
 				$directory = '/' . implode('/', $array);
+
+				var_dump(__LINE__ . '->' . $directory);
 
 				$this->_directory[$directory][] = $directory;
 			}
