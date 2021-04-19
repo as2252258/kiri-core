@@ -192,9 +192,8 @@ class ServerInotify extends Process
 		$this->trigger_reload();
 
 		$this->clearWatch();
-		foreach ($this->dirs as $root) {
-			$this->watch($root);
-		}
+		$this->watch(APP_PATH);
+
 		$this->int = -1;
 		$this->isReloading = FALSE;
 		$this->isReloadingOut = FALSE;
