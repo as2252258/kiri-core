@@ -397,6 +397,7 @@ class Loader extends BaseObject
 			return;
 		}
 		foreach ($classes as $className) {
+			var_dump($className);
 			$annotations = $this->_classes[$className] ?? null;
 			if ($annotations === null) {
 				continue;
