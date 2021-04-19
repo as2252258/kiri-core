@@ -50,7 +50,6 @@ use Snowflake\Snowflake;
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		var_dump($method);
 		$router->addRoute($method, $handler, 'sw::socket');
 
 		return $router;
