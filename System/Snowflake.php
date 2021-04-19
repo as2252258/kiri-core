@@ -24,7 +24,7 @@ use Swoole\WebSocket\Server;
 defined('DB_ERROR_BUSY') or define('DB_ERROR_BUSY', 'The database is busy. Please try again later.');
 defined('SELECT_IS_NULL') or define('SELECT_IS_NULL', 'Query data does not exist, please check the relevant conditions.');
 defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be empty, please add.');
-defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/Controllers/');
+defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Http/');
 defined('CRONTAB_PATH') or define('CRONTAB_PATH', APP_PATH . 'app/Crontab/');
 defined('CLIENT_PATH') or define('CLIENT_PATH', APP_PATH . 'app/Client/');
 defined('TASK_PATH') or define('TASK_PATH', APP_PATH . 'app/Async/');
