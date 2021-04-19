@@ -54,10 +54,6 @@ class Aop extends Component
 			return call_user_func($close, ...$get_args);
 		}
 
-		if (empty($close)) {
-			return response()->close(404);
-		}
-
 		$aopName = get_class($close[0]) . '::' . $close[1];
 		if (!isset($this->_aop[$aopName])) {
 			return call_user_func($close, ...$get_args);
