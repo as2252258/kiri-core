@@ -151,16 +151,8 @@ class Loader extends BaseObject
 				if (!isset($this->_directory[$directory])) {
 					$this->_directory[$directory] = [];
 				}
-
 				$this->_scanDir($iterator, $namespace);
 			} else {
-				$array = explode('/', $path->getRealPath());
-				array_pop($array);
-
-				$directory = implode('/', $array);
-
-				$this->_directory[$directory][] = $path->getRealPath();
-
 				$this->readFile($path, $namespace);
 			}
 		}
@@ -246,7 +238,6 @@ class Loader extends BaseObject
 				if (!str_contains($key, $path)) {
 					continue;
 				}
-				var_dump($_path);
 				$this->execute($_path);
 			}
 		} catch (Throwable $exception) {
@@ -279,17 +270,24 @@ class Loader extends BaseObject
 	 */
 	public function appendFileToDirectory(string $filePath, string $className)
 	{
-		$directory = $this->splitDirectory($filePath);
-		array_pop($directory);
+		$array = explode('/', $filePath);
+		array_pop($array);
 
-		$tree = null;
-		foreach ($directory as $value) {
-			$tree = $this->getTree($tree, $value);
-		}
+		$directory = implode('/', $array);
 
-		if ($tree instanceof FileTree) {
-			$tree->addFile($className, $filePath);
-		}
+		$this->_directory[$directory][] = $className;
+
+//		$directory = $this->splitDirectory($filePath);
+//		array_pop($directory);
+//
+//		$tree = null;
+//		foreach ($directory as $value) {
+//			$tree = $this->getTree($tree, $value);
+//		}
+//
+//		if ($tree instanceof FileTree) {
+//			$tree->addFile($className, $filePath);
+//		}
 	}
 
 
