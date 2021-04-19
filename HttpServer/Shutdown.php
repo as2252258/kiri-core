@@ -48,6 +48,7 @@ class Shutdown extends Component
 	{
 		clearstatcache(storage());
 		$output = shell_exec('[ -f /.dockerenv ] && echo yes || echo no');
+		var_dump($output);
 		if ($output === 'yes') {
 			return;
 		}
