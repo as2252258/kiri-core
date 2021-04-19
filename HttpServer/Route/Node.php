@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace HttpServer\Route;
 
 
+use Annotation\Route\After;
+use Annotation\Route\Interceptor;
+use Annotation\Route\Limits;
 use Annotation\Route\Middleware;
 use Annotation\Route\RpcProducer;
 use Closure;
@@ -124,8 +127,8 @@ class Node extends HttpService
      */
     public function createDispatch(): Closure
     {
-        return function (...$params) {
-            return Dispatch::create($this->handler, ...$params)->dispatch();
+        return function () {
+            return Dispatch::create($this->handler, func_get_args())->dispatch();
         };
     }
 
@@ -354,16 +357,16 @@ class Node extends HttpService
             return $this;
         }
         foreach ($annotation as $name => $attribute) {
-            if ($attribute instanceof \Annotation\Route\Interceptor) {
+            if ($attribute instanceof Interceptor) {
                 $this->addInterceptor($attribute->interceptor);
             }
-            if ($attribute instanceof \Annotation\Route\After) {
+            if ($attribute instanceof After) {
                 $this->addAfter($attribute->after);
             }
             if ($attribute instanceof Middleware) {
                 $this->addMiddleware($attribute->middleware);
             }
-            if ($attribute instanceof \Annotation\Route\Limits) {
+            if ($attribute instanceof Limits) {
                 $this->addLimits($attribute->limits);
             }
         }
@@ -513,12 +516,12 @@ class Node extends HttpService
      * @return mixed
      * @throws Exception
      */
-    public function dispatch(...$params): mixed
+    public function dispatch(): mixed
     {
         if (empty($this->callback)) {
             return Json::to(404, $this->errorMsg());
         }
-        return $this->httpFilter(...$params);
+        return $this->httpFilter(func_get_args());
     }
 
 
@@ -526,22 +529,22 @@ class Node extends HttpService
      * @return mixed
      * @throws Exception
      */
-    private function httpFilter(...$param): mixed
+    private function httpFilter(): mixed
     {
         try {
             if ($this->handler instanceof Closure) {
-                return $this->runWith($this->handler, ...$param);
+                return call_user_func($this->handler, ...func_get_args());
             }
             /** @var HttpFilter $filter */
             $filter = Snowflake::app()->get('filter');
             $validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
             if (!($validator instanceof Validator)) {
-                return $this->runWith($this->callback, ...$param);
+                return call_user_func($this->callback, ...func_get_args());
             }
             if (!$validator->validation()) {
                 return Json::to(5005, $validator->getError());
             }
-            return $this->runWith($this->callback, ...$param);
+            return call_user_func($this->callback, ...func_get_args());
         } catch (Throwable $throwable) {
             $this->addError($throwable, 'throwable');
 
