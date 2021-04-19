@@ -36,12 +36,12 @@ class OnWorkerStart extends Callback
 
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->setLoader(unserialize($content));
-        if ($worker_id < $server->setting['worker_num']) {
-            $this->onWorker($server, $annotation);
+		if ($worker_id < $server->setting['worker_num']) {
+			$this->onWorker($server, $annotation);
 		} else {
 			$this->onTask($server, $annotation);
 		}
-    }
+	}
 
 
 	/**
@@ -65,9 +65,9 @@ class OnWorkerStart extends Callback
 	{
 		putenv('environmental=' . Snowflake::TASK);
 
-        $annotation->runtime(MODEL_PATH);
-        $annotation->runtime(CRONTAB_PATH);
-        $annotation->runtime(CLIENT_PATH);
+		$annotation->runtime(MODEL_PATH);
+		$annotation->runtime(CRONTAB_PATH);
+		$annotation->runtime(CLIENT_PATH);
 
 		name($server->worker_pid, 'Task#' . $server->worker_id);
 
@@ -87,12 +87,14 @@ class OnWorkerStart extends Callback
 		try {
 			name($server->worker_pid, 'Worker#' . $server->worker_id);
 
-            $annotation->runtime(CONTROLLER_PATH);
-            $annotation->runtime(SOCKET_PATH);
-            $annotation->runtime(MODEL_PATH);
-            $annotation->runtime(CRONTAB_PATH);
-            $annotation->runtime(CLIENT_PATH);
-            $annotation->runtime(TASK_PATH);
+			$time = microtime(true);
+			$annotation->runtime(CONTROLLER_PATH);
+			$this->debug('use time.' . microtime(true) - $time);
+			$annotation->runtime(SOCKET_PATH);
+			$annotation->runtime(MODEL_PATH);
+			$annotation->runtime(CRONTAB_PATH);
+			$annotation->runtime(CLIENT_PATH);
+			$annotation->runtime(TASK_PATH);
 
 			Snowflake::setWorkerId($server->worker_pid);
 			putenv('environmental=' . Snowflake::WORKER);
