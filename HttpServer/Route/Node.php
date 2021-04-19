@@ -529,7 +529,6 @@ class Node extends HttpService
 	{
 		try {
 			$requestParam = func_get_args();
-			var_dump($requestParam);
 			if ($this->handler instanceof Closure) {
 				return $this->runWith(...$requestParam);
 			}
@@ -561,6 +560,7 @@ class Node extends HttpService
 	 */
 	private function runWith(): mixed
 	{
+		var_dump(func_get_args());
 		return ($this->callback)(...func_get_args());
 
 		return call_user_func($this->callback, ...func_get_args());
