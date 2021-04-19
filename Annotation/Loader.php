@@ -227,21 +227,23 @@ class Loader extends BaseObject
 	 * @param string|array $outPath
 	 * @throws Exception
 	 */
-	public function loadByDirectory(string $path, string|array $outPath = [])
+	public function loadByDirectory(string $path, string|array $outPath = '')
 	{
 		try {
-			$path = '/' . trim($path, '/');
-			if (!isset($this->_directory[$path])) {
-				return;
-			}
-			foreach ($this->_directory as $key => $_path) {
-				$key = '/' . trim($path, '/');
-				if (!str_starts_with($key, $path)) {
-					continue;
-				}
-//				if (!empty($outPath) && in_array($key, $outPath)) continue;
-				$this->execute($_path);
-			}
+//			$path = '/' . trim($path, '/');
+//			if (!isset($this->_directory[$path])) {
+//				return;
+//			}
+//			foreach ($this->_directory as $key => $_path) {
+//				$key = '/' . trim($path, '/');
+//				if (!str_starts_with($key, $path)) {
+//					continue;
+//				}
+////				if (!empty($outPath) && in_array($key, $outPath)) continue;
+//				$this->execute($_path);
+//			}
+
+			$this->each($path, $outPath);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
@@ -272,24 +274,24 @@ class Loader extends BaseObject
 	 */
 	public function appendFileToDirectory(string $filePath, string $className)
 	{
-		$array = explode('/', $filePath);
-		array_pop($array);
-
-		$directory = '/' . implode('/', $array);
-
-		$this->_directory[$directory][] = $className;
-
-//		$directory = $this->splitDirectory($filePath);
-//		array_pop($directory);
+//		$array = explode('/', $filePath);
+//		array_pop($array);
 //
-//		$tree = null;
-//		foreach ($directory as $value) {
-//			$tree = $this->getTree($tree, $value);
-//		}
+//		$directory = '/' . implode('/', $array);
 //
-//		if ($tree instanceof FileTree) {
-//			$tree->addFile($className, $filePath);
-//		}
+//		$this->_directory[$directory][] = $className;
+
+		$directory = $this->splitDirectory($filePath);
+		array_pop($directory);
+
+		$tree = null;
+		foreach ($directory as $value) {
+			$tree = $this->getTree($tree, $value);
+		}
+
+		if ($tree instanceof FileTree) {
+			$tree->addFile($className, $filePath);
+		}
 	}
 
 
