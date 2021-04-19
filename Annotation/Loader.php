@@ -230,11 +230,11 @@ class Loader extends BaseObject
 			if (!isset($this->_directory[$path])) {
 				return;
 			}
-			foreach ($this->_directory[$path] as $key => $path) {
-				if (!str_starts_with($key, $path)) {
+			foreach ($this->_directory[$path] as $key => $_path) {
+				if (!str_starts_with($key, $_path)) {
 					continue;
 				}
-				$this->execute($this->_directory[$path]);
+				$this->execute($this->_directory[$_path]);
 			}
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
