@@ -233,7 +233,6 @@ class Loader extends BaseObject
 			$path = '/' . trim($path, '/');
 			foreach ($this->_directory as $key => $_path) {
 				$key = '/' . trim($key, '/');
-				var_dump($key . '->' . $path);
 				if (!str_starts_with($key, $path)) {
 					continue;
 				}
@@ -395,7 +394,6 @@ class Loader extends BaseObject
 			return;
 		}
 		foreach ($classes as $className) {
-			var_dump($className);
 			$annotations = $this->_classes[$className] ?? null;
 			if ($annotations === null) {
 				continue;

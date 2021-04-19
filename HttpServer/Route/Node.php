@@ -561,7 +561,6 @@ class Node extends HttpService
 	private function runWith(): mixed
 	{
 		$requestParams = func_get_args();
-		var_dump(...$requestParams);
 		if (count($requestParams) > 0) {
 			return call_user_func($this->callback, ...$requestParams);
 		} else {
