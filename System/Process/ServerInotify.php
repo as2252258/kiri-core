@@ -43,8 +43,6 @@ class ServerInotify extends Process
     {
         set_error_handler([$this, 'onErrorHandler']);
         $this->dirs = Config::get('inotify', [APP_PATH]);
-
-        var_dump(extension_loaded('inotify'));
         if (extension_loaded('inotify')) {
             $this->inotify = inotify_init();
             $this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;

@@ -47,8 +47,9 @@ class Shutdown extends Component
 	public function shutdown(): void
 	{
 		clearstatcache(storage());
-		exec('ls -alh /.dockerenv', $output, $cod);
-		if ($cod === 0 && !empty($output)) {
+		$output = shell_exec('ls -alh /.dockerenv');
+		var_dump($output);
+		if (!empty($output)) {
 			return;
 		}
 
