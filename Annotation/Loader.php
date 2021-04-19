@@ -56,8 +56,6 @@ class Loader extends BaseObject
 	public function loader($path, $namespace)
 	{
 		$this->_scanDir(new DirectoryIterator($path), $namespace);
-
-		var_dump($this->_directory);
 	}
 
 
@@ -149,9 +147,12 @@ class Loader extends BaseObject
 			}
 			if ($path->isDir()) {
 				$iterator = new DirectoryIterator($path->getRealPath());
-				$this->_scanDir($iterator, $namespace);
+				$directory = rtrim($path->getRealPath(), '/');
+				if (!isset($this->_directory[$directory])) {
+					$this->_directory[$directory] = [];
+				}
 
-				$this->_directory[rtrim($path->getRealPath(), '/')] = [];
+				$this->_scanDir($iterator, $namespace);
 			} else {
 				$array = explode('/', $path->getRealPath());
 				array_pop($array);
