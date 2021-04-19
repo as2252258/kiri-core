@@ -47,6 +47,8 @@ class Loader extends BaseObject
 	public function loader($path, $namespace)
 	{
 		$this->_scanDir(new DirectoryIterator($path), $namespace);
+
+		var_dump($this->_directory);
 	}
 
 
