@@ -115,7 +115,9 @@ class Node extends HttpService
 			$this->annotationInject(get_class($controller), $action);
 		}
 		if (!empty($this->handler)) {
-			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
+			$this->callback = Reduce::reduce(function () {
+				return call_user_func($this->handler, ...func_get_args());
+			}, $this->annotation());
 		}
 		return $this;
 	}
@@ -199,6 +201,7 @@ class Node extends HttpService
 	/**
 	 * @param null $response
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public function afterDispatch($response = null): mixed
 	{
@@ -483,11 +486,8 @@ class Node extends HttpService
 
 
 	/**
-	 * @param array|Closure|string $class
-	 * @return Node
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 * @throws Exception
+	 * @param Closure|array $class
+	 * @return $this
 	 */
 	public function addMiddleware(Closure|array $class): static
 	{
@@ -534,6 +534,8 @@ class Node extends HttpService
 			if ($this->handler instanceof Closure) {
 				return call_user_func($this->handler, ...func_get_args());
 			}
+			return $this->runWith($this->callback, ...func_get_args());
+
 			return $this->runFilter(...func_get_args());
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
