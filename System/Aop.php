@@ -47,19 +47,18 @@ class Aop extends Component
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	final public function dispatch(): mixed
+	final public function dispatch($handler, ...$params): mixed
 	{
-		$get_args = func_get_args();
-		if (($close = array_shift($get_args)) instanceof \Closure) {
-			return call_user_func($close, ...$get_args);
+		if ($handler instanceof \Closure) {
+			return call_user_func($handler, ...$params);
 		}
 
-		$aopName = get_class($close[0]) . '::' . $close[1];
+		$aopName = get_class($handler) . '::' . $handler;
 		if (!isset($this->_aop[$aopName])) {
-			if (!method_exists($close[0], $close[1])) {
+			if (!method_exists($handler[0], $handler[1])) {
 				return response()->close(404);
 			}
-			return call_user_func($close, ...$get_args);
+			return call_user_func($handler, ...$params);
 		}
 
 		$reflect = Snowflake::getDi()->getReflect(current($this->_aop[$aopName]));
@@ -68,7 +67,7 @@ class Aop extends Component
 		}
 		$method = $reflect->getMethod('invoke');
 
-		return $method->invokeArgs($reflect->newInstance($close), $get_args);
+		return $method->invokeArgs($reflect->newInstance($handler), $params);
 	}
 
 
