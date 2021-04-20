@@ -17,9 +17,7 @@ use HttpServer\Controller;
 use HttpServer\Http\Request;
 use HttpServer\HttpFilter;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
 use Snowflake\Core\Json;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Throwable;
 use validator\Validator;
@@ -534,8 +532,11 @@ class Node extends HttpService
 			if ($this->handler instanceof Closure) {
 				return call_user_func($this->handler, func_get_args());
 			}
-			return $this->runWith($this->callback, func_get_args());
-
+			if (func_num_args() >= 1) {
+				return $this->runWith($this->callback, func_get_args());
+			} else {
+				return $this->runWith($this->callback, \request());
+			}
 			return $this->runFilter(...func_get_args());
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
