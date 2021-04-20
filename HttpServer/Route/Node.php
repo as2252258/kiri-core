@@ -522,7 +522,7 @@ class Node extends HttpService
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
-		return $this->httpFilter(...func_get_args());
+		return $this->httpFilter();
 	}
 
 
@@ -533,8 +533,7 @@ class Node extends HttpService
 	private function httpFilter(): mixed
 	{
 		try {
-			$dispatchParams = func_get_args();
-			if (empty($dispatchParams)) $dispatchParams = [\request(), \response()];
+			$dispatchParams = [\request()];
 			if ($this->handler instanceof Closure) {
 				return call_user_func($this->handler, ...$dispatchParams);
 			}
