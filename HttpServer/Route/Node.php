@@ -554,28 +554,14 @@ class Node extends HttpService
 
 
 	/**
-	 * @return Validator
+	 * @return Validator|bool
 	 * @throws Exception
 	 */
-	private function getValidator(): Validator
+	private function getValidator(): Validator|bool
 	{
 		/** @var HttpFilter $filter */
 		$filter = Snowflake::app()->get('filter');
 		return $filter->check(get_class($this->handler[0]), $this->handler[1]);
-	}
-
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function runWith(): mixed
-	{
-		if (func_num_args() > 0) {
-			return call_user_func($this->callback, ...func_get_args());
-		} else {
-			return call_user_func($this->callback, \request());
-		}
 	}
 
 
