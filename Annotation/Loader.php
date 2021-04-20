@@ -272,23 +272,23 @@ class Loader extends BaseObject
 	public function appendFileToDirectory(string $filePath, string $className)
 	{
 		$array = explode('/', $filePath);
-		array_pop($array);
+		unset($array[count($array) - 1]);
 
 		$array = '/' . trim(implode('/', $array), '/');
 
 		$this->_directory[$array][] = $className;
 
-		$directory = $this->splitDirectory($filePath);
-		array_pop($directory);
-
-		$tree = null;
-		foreach ($directory as $value) {
-			$tree = $this->getTree($tree, $value);
-		}
-
-		if ($tree instanceof FileTree) {
-			$tree->addFile($className, $filePath);
-		}
+//		$directory = $this->splitDirectory($filePath);
+//		array_pop($directory);
+//
+//		$tree = null;
+//		foreach ($directory as $value) {
+//			$tree = $this->getTree($tree, $value);
+//		}
+//
+//		if ($tree instanceof FileTree) {
+//			$tree->addFile($className, $filePath);
+//		}
 	}
 
 
