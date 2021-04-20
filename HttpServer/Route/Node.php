@@ -549,7 +549,7 @@ class Node extends HttpService
      * @return Validator|bool
      * @throws Exception
      */
-    private function runValidator($dispatchParams): Validator|bool
+    private function runValidator($dispatchParams): string
     {
         /** @var HttpFilter $filter */
         $filter = Snowflake::app()->get('filter');
