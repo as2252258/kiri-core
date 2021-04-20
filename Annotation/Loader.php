@@ -230,17 +230,17 @@ class Loader extends BaseObject
 	public function loadByDirectory(string $path, string|array $outPath = '')
 	{
 		try {
-			$path = '/' . trim($path, '/');
-			foreach ($this->_directory as $key => $_path) {
-				$key = '/' . trim($key, '/');
-				if (!str_starts_with($key, $path)) {
-					continue;
-				}
-				if (in_array($key, $outPath)) continue;
-				$this->execute($_path);
-			}
+//			$path = '/' . trim($path, '/');
+//			foreach ($this->_directory as $key => $_path) {
+//				$key = '/' . trim($key, '/');
+//				if (!str_starts_with($key, $path)) {
+//					continue;
+//				}
+//				if (in_array($key, $outPath)) continue;
+//				$this->execute($_path);
+//			}
 
-//			$this->each($path, $outPath);
+			$this->each($path, $outPath);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
@@ -278,17 +278,17 @@ class Loader extends BaseObject
 
 		$this->_directory[$array][] = $className;
 
-//		$directory = $this->splitDirectory($filePath);
-//		array_pop($directory);
-//
-//		$tree = null;
-//		foreach ($directory as $value) {
-//			$tree = $this->getTree($tree, $value);
-//		}
-//
-//		if ($tree instanceof FileTree) {
-//			$tree->addFile($className, $filePath);
-//		}
+		$directory = $this->splitDirectory($filePath);
+		array_pop($directory);
+
+		$tree = null;
+		foreach ($directory as $value) {
+			$tree = $this->getTree($tree, $value);
+		}
+
+		if ($tree instanceof FileTree) {
+			$tree->addFile($className, $filePath);
+		}
 	}
 
 
