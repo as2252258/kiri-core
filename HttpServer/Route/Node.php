@@ -529,15 +529,15 @@ class Node extends HttpService
 	private function httpFilter(): mixed
 	{
 		try {
+			$dispatchParams = func_num_args();
+			if (empty($dispatchParams)) {
+				$dispatchParams = \request();
+			}
 			if ($this->handler instanceof Closure) {
-				return call_user_func($this->handler, func_get_args());
+				return call_user_func($this->handler, $dispatchParams);
 			}
-			if (func_num_args() >= 1) {
-				return $this->runWith($this->callback, func_get_args());
-			} else {
-				return $this->runWith($this->callback, \request());
-			}
-			return $this->runFilter(...func_get_args());
+			return $this->runWith($this->callback, $dispatchParams);
+			return $this->runFilter(...$dispatchParams);
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
 
