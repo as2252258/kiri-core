@@ -36,11 +36,6 @@ class Dispatch
 	{
 		$class = new static();
 		$class->handler = $handler;
-        $dispatchParam = Context::getContext('dispatch-param');
-        if (empty($dispatchParam)) {
-            $dispatchParam = [\request()];
-        }
-        $class->request = $dispatchParam;
 		if ($handler instanceof Closure) {
 			$class->bind();
 		}
@@ -57,7 +52,12 @@ class Dispatch
 	public function dispatch(): mixed
 	{
 //		return call_user_func($this->handler, $this->request);
-		return \aop($this->handler, ...$this->request);
+
+        $dispatchParam = Context::getContext('dispatch-param');
+        if (empty($dispatchParam)) {
+            $dispatchParam = [\request()];
+        }
+		return \aop($this->handler, $dispatchParam);
 	}
 
 
