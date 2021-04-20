@@ -236,11 +236,11 @@ class Loader extends BaseObject
 				if (!str_starts_with($key, $path)) {
 					continue;
 				}
-				if (in_array($key, $outPath)) continue;
+				if (in_array($key, $outPath)) {
+					continue;
+				}
 				$this->execute($_path);
 			}
-
-//			$this->each($path, $outPath);
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
