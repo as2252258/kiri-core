@@ -127,9 +127,7 @@ class Node extends HttpService
 	public function createDispatch(): Closure
 	{
 		return function () {
-			return Dispatch::create($this->handler,\request())->dispatch();
-
-			return call_user_func($this->handler, ...$dispatchParam);
+			return Dispatch::create($this->handler)->dispatch();
 		};
 	}
 
