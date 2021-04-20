@@ -518,7 +518,7 @@ class Node extends HttpService
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
-		return $this->httpFilter(func_get_args());
+		return $this->httpFilter(...func_get_args());
 	}
 
 
