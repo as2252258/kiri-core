@@ -534,9 +534,9 @@ class Node extends HttpService
 				$dispatchParams = [\request()];
 			}
 			if ($this->handler instanceof Closure) {
-				return call_user_func($this->handler, ...$dispatchParams);
+				return call_user_func($this->handler, $dispatchParams);
 			}
-			return $this->runWith($this->callback, ...$dispatchParams);
+			return $this->runWith($this->callback, $dispatchParams);
 			return $this->runFilter(...$dispatchParams);
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
@@ -558,12 +558,12 @@ class Node extends HttpService
 		$filter = Snowflake::app()->get('filter');
 		$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
 		if (!($validator instanceof Validator)) {
-			return $this->runWith($this->callback, ...func_get_args());
+			return $this->runWith($this->callback, func_get_args());
 		}
 		if (!$validator->validation()) {
 			return Json::to(5005, $validator->getError());
 		}
-		return $this->runWith($this->callback, ...func_get_args());
+		return $this->runWith($this->callback, func_get_args());
 	}
 
 
@@ -574,7 +574,6 @@ class Node extends HttpService
 	private function runWith(): mixed
 	{
 		if (func_num_args() > 0) {
-			var_dump(...func_get_args());
 			return call_user_func($this->callback, ...func_get_args());
 		} else {
 			return call_user_func($this->callback, \request());
