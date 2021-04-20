@@ -32,7 +32,7 @@ class Zookeeper extends Process
 			name($this->pid, 'Crontab zookeeper.');
 		}
 
-		$ticker = Config::get('crontab.ticker', 100) / 1000;
+		$ticker = Config::get('crontab.ticker', 50) / 1000;
 
 		$server = Snowflake::app()->getSwoole();
 		$setting = $server->setting['worker_num'] + $server->setting['task_worker_num'];
