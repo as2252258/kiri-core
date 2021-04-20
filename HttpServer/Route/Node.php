@@ -533,7 +533,6 @@ class Node extends HttpService
 			if (empty($dispatchParams)) {
 				$dispatchParams = [\request()];
 			}
-			var_dump($dispatchParams);
 			if ($this->handler instanceof Closure) {
 				return call_user_func($this->handler, ...$dispatchParams);
 			}
@@ -575,6 +574,7 @@ class Node extends HttpService
 	private function runWith(): mixed
 	{
 		if (func_num_args() > 0) {
+			var_dump(...func_get_args());
 			return call_user_func($this->callback, ...func_get_args());
 		} else {
 			return call_user_func($this->callback, \request());
