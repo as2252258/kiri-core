@@ -121,10 +121,10 @@ class OnHandshake extends Callback
 
 		$router = Snowflake::app()->getRouter();
 
-		$sRequest = $this->sRequest($request);
+		[$sRequest, $sResponse] = $this->sRequest($request, $response);
 
 		if (($node = $router->find_path($sRequest)) !== null) {
-			return $node->dispatch($sRequest, Response::create($response));
+			return $node->dispatch($sRequest, $sResponse);
 		}
 		return $this->disconnect($response, 404);
 	}
@@ -132,11 +132,12 @@ class OnHandshake extends Callback
 
 	/**
 	 * @param $request
-	 * @return Request
-	 * @throws ReflectionException
+	 * @param SResponse $response
+	 * @return array
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	private function sRequest($request): Request
+	private function sRequest($request, SResponse $response): array
 	{
 		/** @var Request $sRequest */
 		$sRequest = Request::create($request);
@@ -150,7 +151,8 @@ class OnHandshake extends Callback
 		$sRequest->params = new HttpParams([], $request->get, []);
 
 		$sRequest->parseUri();
-		return $sRequest;
+
+		return [$sRequest, Response::create($response)];
 	}
 
 

@@ -279,7 +279,8 @@ class Response extends HttpService
 		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;
-		return Context::setContext('response', $ciResponse);
+		Context::setContext('response', $ciResponse);
+		return $ciResponse;
 	}
 
 
