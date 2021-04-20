@@ -36,7 +36,11 @@ class Dispatch
 	{
 		$class = new static();
 		$class->handler = $handler;
-		$class->request = $request;
+        $dispatchParam = Context::getContext('dispatch-param');
+        if (empty($dispatchParam)) {
+            $dispatchParam = [\request()];
+        }
+        $class->request = $dispatchParam;
 		if ($handler instanceof Closure) {
 			$class->bind();
 		}
