@@ -11,8 +11,10 @@ use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
+use ReflectionException;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Event;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Request as SRequest;
 use Swoole\Http\Response as SResponse;
@@ -119,6 +121,23 @@ class OnHandshake extends Callback
 
 		$router = Snowflake::app()->getRouter();
 
+		$sRequest = $this->sRequest($request);
+
+		if (($node = $router->find_path($sRequest)) !== null) {
+			return $node->dispatch($sRequest, Response::create($response));
+		}
+		return $this->disconnect($response, 404);
+	}
+
+
+	/**
+	 * @param $request
+	 * @return Request
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	private function sRequest($request): Request
+	{
 		/** @var Request $sRequest */
 		$sRequest = Request::create($request);
 		$sRequest->uri = '/' . Socket::HANDSHAKE . '::event';
@@ -131,12 +150,7 @@ class OnHandshake extends Callback
 		$sRequest->params = new HttpParams([], $request->get, []);
 
 		$sRequest->parseUri();
-
-		if (($node = $router->find_path($sRequest)) === null) {
-			var_dump($node);
-			return $node->dispatch($sRequest, Response::create($response));
-		}
-		return $this->disconnect($response, 404);
+		return $sRequest;
 	}
 
 
