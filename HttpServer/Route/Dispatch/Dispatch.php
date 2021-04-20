@@ -51,8 +51,6 @@ class Dispatch
 	 */
 	public function dispatch(): mixed
 	{
-//		return call_user_func($this->handler, $this->request);
-
         $dispatchParam = Context::getContext('dispatch-param');
         if (empty($dispatchParam)) {
             $dispatchParam = [\request()];
