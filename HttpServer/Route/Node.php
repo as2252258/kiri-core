@@ -14,6 +14,7 @@ use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Controller;
+use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\HttpFilter;
 use JetBrains\PhpStorm\Pure;
@@ -125,7 +126,11 @@ class Node extends HttpService
 	public function createDispatch(): Closure
 	{
 		return function () {
-			return call_user_func($this->handler, ...func_get_args());
+			$dispatchParam = Context::getContext('dispatch-param');
+			if (empty($dispatchParam)) {
+				$dispatchParam = [\request()];
+			}
+			return call_user_func($this->handler, ...$dispatchParam);
 		};
 	}
 
@@ -513,6 +518,7 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
+		Context::setContext('dispatch-param', func_get_args());
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
