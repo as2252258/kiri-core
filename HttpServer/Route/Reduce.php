@@ -52,13 +52,24 @@ class Reduce
 	private static function core(): Closure
 	{
 		return function ($stack, $pipe) {
-			return function ($passable) use ($stack, $pipe) {
-				if ($pipe instanceof Middleware) {
-					return $pipe->onHandler($passable, $stack);
-				} else {
-					return call_user_func($pipe, $passable, $stack);
-				}
-			};
+			return static::passable($stack, $pipe);
+		};
+	}
+
+
+	/**
+	 * @param $stack
+	 * @param $pipe
+	 * @return Closure
+	 */
+	public static function passable($stack, $pipe): Closure
+	{
+		return function ($passable) use ($stack, $pipe) {
+			if (!($pipe instanceof Middleware)) {
+				return call_user_func($pipe, $passable, $stack);
+			} else {
+				return $pipe->onHandler($passable, $stack);
+			}
 		};
 	}
 

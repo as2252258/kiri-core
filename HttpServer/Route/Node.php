@@ -532,6 +532,9 @@ class Node extends HttpService
 			if ($this->handler instanceof Closure) {
 				return call_user_func($this->handler, ...$dispatchParams);
 			}
+
+			var_dump($dispatchParams);
+
 			$validator = $this->getValidator();
 			if (!($validator instanceof Validator)) {
 				return call_user_func($this->callback, ...$dispatchParams);
