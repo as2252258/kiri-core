@@ -366,7 +366,7 @@ if (!function_exists('aop')) {
 	 */
 	function aop(mixed $handler, array $params = []): mixed
 	{
-		return Snowflake::app()->get('aop')->dispatch($handler, ...$params);
+		return Snowflake::app()->get('aop')->dispatch($handler, $params);
 	}
 }
 
