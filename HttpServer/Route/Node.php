@@ -528,13 +528,10 @@ class Node extends HttpService
 	{
 		try {
 			$dispatchParams = func_get_args();
-			if (empty($dispatchParams)) {
-				$dispatchParams = [\request()];
-			}
+			if (empty($dispatchParams)) $dispatchParams = [\request(), \response()];
 			if ($this->handler instanceof Closure) {
 				return call_user_func($this->handler, ...$dispatchParams);
 			}
-
 			$validator = $this->getValidator();
 			if (!($validator instanceof Validator)) {
 				return call_user_func($this->callback, ...$dispatchParams);
