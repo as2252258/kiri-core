@@ -116,7 +116,7 @@ class Node extends HttpService
 		}
 		if (!empty($this->handler)) {
 			$this->callback = Reduce::reduce(function () {
-				return call_user_func($this->handler, ...func_get_args());
+				return call_user_func($this->handler, func_get_args());
 			}, $this->annotation());
 		}
 		return $this;
@@ -129,7 +129,7 @@ class Node extends HttpService
 	public function createDispatch(): Closure
 	{
 		return function () {
-			return call_user_func($this->handler, ...func_get_args());
+			return call_user_func($this->handler, func_get_args());
 		};
 	}
 
@@ -532,9 +532,9 @@ class Node extends HttpService
 	{
 		try {
 			if ($this->handler instanceof Closure) {
-				return call_user_func($this->handler, ...func_get_args());
+				return call_user_func($this->handler, func_get_args());
 			}
-			return $this->runWith($this->callback, ...func_get_args());
+			return $this->runWith($this->callback, func_get_args());
 
 			return $this->runFilter(...func_get_args());
 		} catch (Throwable $throwable) {
