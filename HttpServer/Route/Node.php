@@ -515,11 +515,19 @@ class Node extends HttpService
      */
     public function dispatch(): mixed
     {
-        Context::setContext('dispatch-param', func_get_args());
-        if (empty($this->callback)) {
-            return Json::to(404, $this->errorMsg());
+        try {
+            Context::setContext('dispatch-param', func_get_args());
+            if (empty($this->callback)) {
+                return Json::to(404, $this->errorMsg());
+            }
+            return $this->httpFilter();
+        } catch (Throwable $throwable) {
+            $this->addError($throwable, 'throwable');
+
+            $code = $throwable->getCode() == 0 ? 500 : $throwable->getCode();
+
+            return Json::to($code, $throwable->getMessage());
         }
-        return $this->httpFilter();
     }
 
 
@@ -529,18 +537,10 @@ class Node extends HttpService
      */
     private function httpFilter(): mixed
     {
-        try {
-            if ($this->handler instanceof Closure) {
-                return call_user_func($this->handler, \request());
-            } else {
-                return $this->runValidator([\request()]);
-            }
-        } catch (Throwable $throwable) {
-            $this->addError($throwable, 'throwable');
-
-            $code = $throwable->getCode() == 0 ? 500 : $throwable->getCode();
-
-            return Json::to($code, $throwable->getMessage());
+        if ($this->handler instanceof Closure) {
+            return call_user_func($this->handler, \request());
+        } else {
+            return $this->runValidator([\request()]);
         }
     }
 
