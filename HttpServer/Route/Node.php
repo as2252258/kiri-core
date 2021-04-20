@@ -549,18 +549,18 @@ class Node extends HttpService
      * @return Validator|bool
      * @throws Exception
      */
-    private function runValidator($dispatchParams): string
+    private function runValidator($dispatchParams): mixed
     {
         /** @var HttpFilter $filter */
         $filter = Snowflake::app()->get('filter');
         $validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
         if (!($validator instanceof Validator)) {
             return call_user_func($this->callback, ...$dispatchParams);
-        }
-        if ($validator->validation()) {
+        } else if ($validator->validation()) {
             return call_user_func($this->callback, ...$dispatchParams);
+        } else {
+            return Json::to(5005, $validator->getError());
         }
-        return Json::to(5005, $validator->getError());
     }
 
 
