@@ -113,9 +113,7 @@ class Node extends HttpService
 			$this->annotationInject(get_class($controller), $action);
 		}
 		if (!empty($this->handler)) {
-			$this->callback = Reduce::reduce(function () {
-				return call_user_func($this->handler, func_get_args());
-			}, $this->annotation());
+			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
 		}
 		return $this;
 	}
@@ -127,7 +125,7 @@ class Node extends HttpService
 	public function createDispatch(): Closure
 	{
 		return function () {
-			return call_user_func($this->handler, func_get_args());
+			return call_user_func($this->handler, ...func_get_args());
 		};
 	}
 
@@ -534,10 +532,17 @@ class Node extends HttpService
 				$dispatchParams = [\request()];
 			}
 			if ($this->handler instanceof Closure) {
-				return call_user_func($this->handler, $dispatchParams);
+				return call_user_func($this->handler, ...$dispatchParams);
 			}
-			return $this->runWith($this->callback, $dispatchParams);
-			return $this->runFilter(...$dispatchParams);
+
+			$validator = $this->getValidator();
+			if (!($validator instanceof Validator)) {
+				return call_user_func($this->callback, ...$dispatchParams);
+			}
+			if ($validator->validation()) {
+				return call_user_func($this->callback, ...$dispatchParams);
+			}
+			return Json::to(5005, $validator->getError());
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
 
@@ -549,21 +554,14 @@ class Node extends HttpService
 
 
 	/**
-	 * @return mixed
-	 * @throws \Exception
+	 * @return Validator
+	 * @throws Exception
 	 */
-	private function runFilter(): mixed
+	private function getValidator(): Validator
 	{
 		/** @var HttpFilter $filter */
 		$filter = Snowflake::app()->get('filter');
-		$validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
-		if (!($validator instanceof Validator)) {
-			return $this->runWith($this->callback, func_get_args());
-		}
-		if (!$validator->validation()) {
-			return Json::to(5005, $validator->getError());
-		}
-		return $this->runWith($this->callback, func_get_args());
+		return $filter->check(get_class($this->handler[0]), $this->handler[1]);
 	}
 
 
