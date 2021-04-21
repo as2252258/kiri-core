@@ -6,7 +6,6 @@ namespace HttpServer\Route;
 
 use Closure;
 use HttpServer\IInterface\After;
-use HttpServer\IInterface\Middleware;
 use Snowflake\Core\Json;
 
 class Reduce
@@ -65,7 +64,7 @@ class Reduce
 	public static function passable($stack, $pipe): Closure
 	{
 		return function ($passable) use ($stack, $pipe) {
-			if (!($pipe instanceof Middleware)) {
+			if ($pipe instanceof Closure) {
 				return call_user_func($pipe, $passable, $stack);
 			} else {
 				return $pipe->onHandler($passable, $stack);
