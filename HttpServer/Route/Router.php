@@ -338,17 +338,35 @@ class Router extends HttpService implements RouterInterface
 
 		$array = [];
 		foreach ($middleware as $value) {
-			if (is_string($value)) {
-				$value = Snowflake::createObject($value);
-				if (!($value instanceof Middleware)) {
-					continue;
+			if (is_array($value)) {
+				foreach ($value as $item) {
+					$array[] = $this->getMiddlewareInstance($item);
 				}
-				$array[] = [$value, 'onHandler'];
 			} else {
-				$array[] = $value;
+				$array[] = $this->getMiddlewareInstance($value);
 			}
 		}
 		return $array;
+	}
+
+
+	/**
+	 * @param $value
+	 * @return Closure|array|null
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function getMiddlewareInstance($value): null|Closure|array
+	{
+		if (is_string($value)) {
+			$value = Snowflake::createObject($value);
+			if (!($value instanceof Middleware)) {
+				return null;
+			}
+			return [$value, 'onHandler'];
+		} else {
+			return $value;
+		}
 	}
 
 
