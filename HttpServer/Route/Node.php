@@ -17,7 +17,6 @@ use HttpServer\Controller;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\HttpFilter;
-use HttpServer\Route\Dispatch\Dispatch;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
@@ -127,7 +126,11 @@ class Node extends HttpService
     public function createDispatch(): Closure
     {
         return function () {
-            return Dispatch::create($this->handler)->dispatch();
+	        $dispatchParam = Context::getContext('dispatch-param');
+	        if (empty($dispatchParam)) {
+		        $dispatchParam = [\request()];
+	        }
+	        return \aop($this->handler, $dispatchParam);
         };
     }
 
