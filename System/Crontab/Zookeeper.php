@@ -116,7 +116,7 @@ class Zookeeper extends Process
 
         $redis->zRem(Producer::CRONTAB_KEY, ...$range);
 
-        return [$range, $redis];
+        return $range;
     }
 
 }
