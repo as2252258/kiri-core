@@ -7,11 +7,8 @@ namespace Snowflake\Process;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Application;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine\System;
 
 /**
  * Class Process
@@ -45,6 +42,14 @@ abstract class Process extends \Swoole\Process implements SProcess
         fire(Event::SERVER_WORKER_START);
         if (Snowflake::getPlatform()->isLinux()) {
             name($process->pid, $this->getPrefix());
+        }
+        if (method_exists($this, 'before')) {
+            $this->before($process);
+        }
+        if (!Snowflake::getPlatform()->isMac()) {
+            if (method_exists($this, 'getProcessName')) {
+                swoole_set_process_name($this->getProcessName());
+            }
         }
         $this->onHandler($process);
     }

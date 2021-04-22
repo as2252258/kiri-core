@@ -8,9 +8,14 @@ interface SProcess
 {
 
 
-	/**
-	 * @param \Swoole\Process $process
-	 */
-	public function onHandler(\Swoole\Process $process): void;
+//    public function getProcessName(): string;
+//
+//
+//    public function before(\Swoole\Process $process): void;
+
+    /**
+     * @param \Swoole\Process $process
+     */
+    public function onHandler(\Swoole\Process $process): void;
 
 }

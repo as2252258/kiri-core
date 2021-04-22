@@ -5,6 +5,7 @@ namespace Snowflake\Crontab;
 
 
 use Exception;
+use HttpServer\Server;
 use Snowflake\Abstracts\Config;
 use Snowflake\Cache\Redis;
 use Snowflake\Process\Process;
@@ -19,72 +20,103 @@ use Throwable;
 class Zookeeper extends Process
 {
 
-	/**
-	 * @param \Swoole\Process $process
-	 * @throws Exception
-	 */
-	public function onHandler(\Swoole\Process $process): void
-	{
-		/** @var Producer $crontab */
-		$crontab = Snowflake::app()->get('crontab');
-		$crontab->clearAll();
-		if (Snowflake::getPlatform()->isLinux()) {
-			name($this->pid, 'Crontab zookeeper.');
-		}
 
-		$ticker = Config::get('crontab.ticker', 50) / 1000;
-
-		$server = Snowflake::app()->getSwoole();
-		$setting = $server->setting['worker_num'] + $server->setting['task_worker_num'];
-		while (true) {
-			[$range, $redis] = $this->loadCarobTask();
-			foreach ($range as $value) {
-				$this->dispatch($server, $redis, $setting, $value);
-			}
-			$redis->release();
-
-			Coroutine::sleep($ticker);
-		}
-	}
+    private int $workerNum = 0;
 
 
-	/**
-	 * @param $server
-	 * @param Redis|\Redis $redis
-	 * @param int $setting
-	 * @param $value
-	 * @throws Exception
-	 */
-	private function dispatch($server, Redis|\Redis $redis, int $setting, $value)
-	{
-		try {
-			$params['action'] = 'crontab';
-			if (empty($handler = $redis->get('crontab:' . $value))) {
-				return;
-			}
-			$params['handler'] = swoole_unserialize($handler);
-
-			$server->sendMessage($params, random_int(0, $setting - 1));
-		} catch (Throwable $exception) {
-			logger()->addError($exception);
-		}
-
-	}
+    private mixed $server;
 
 
-	/**
-	 * @return array
-	 * @throws Exception
-	 */
-	private function loadCarobTask(): array
-	{
-		$redis = Snowflake::app()->getRedis();
+    /**
+     * @param \Swoole\Process $process
+     */
+    public function getProcessName(): string
+    {
+        $name = Config::get('id', 'system') . '[' . $this->pid . ']';
+        if (!empty($prefix)) {
+            $name .= '.Crontab zookeeper';
+        }
+        return $name;
+    }
 
-		$range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)time());
 
-		$redis->zRem(Producer::CRONTAB_KEY, ...$range);
+    /**
+     * @param \Swoole\Process $process
+     * @throws \Snowflake\Exception\ConfigException
+     */
+    public function before(\Swoole\Process $process): void
+    {
+        /** @var Producer $crontab */
+        $crontab = Snowflake::app()->get('crontab');
+        $crontab->clearAll();
 
-		return [$range, $redis];
-	}
+        $this->server = $server = Snowflake::app()->getSwoole();
+        $this->workerNum = $server->setting['worker_num'] + $server->setting['task_worker_num'];
+    }
+
+
+    /**
+     * @param \Swoole\Process $process
+     * @throws Exception
+     */
+    public function onHandler(\Swoole\Process $process): void
+    {
+        $ticker = Config::get('crontab.ticker', 50) / 1000;
+        $redis = Snowflake::app()->getRedis();
+        while (true) {
+            $range = $this->loadCarobTask($redis);
+            foreach ($range as $value) {
+                $this->dispatch($redis, $value);
+            }
+            Coroutine::sleep($ticker);
+        }
+    }
+
+
+    /**
+     * @param $server
+     * @param Redis|\Redis $redis
+     * @param int $setting
+     * @param $value
+     * @throws Exception
+     */
+    private function dispatch(Redis|\Redis $redis, $value)
+    {
+        try {
+            $params['action'] = 'crontab';
+            if (empty($handler = $redis->get('crontab:' . $value))) {
+                return;
+            }
+            $params['handler'] = swoole_unserialize($handler);
+
+            $this->server->sendMessage($params, $this->getWorker());
+        } catch (Throwable $exception) {
+            logger()->addError($exception);
+        }
+    }
+
+
+    /**
+     * @return int
+     * @throws \Exception
+     */
+    private function getWorker(): int
+    {
+        return random_int(0, $this->workerNum - 1);
+    }
+
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    private function loadCarobTask(Redis|\Redis $redis): array
+    {
+        $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)time());
+
+        $redis->zRem(Producer::CRONTAB_KEY, ...$range);
+
+        return [$range, $redis];
+    }
 
 }
