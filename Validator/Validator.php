@@ -197,7 +197,7 @@ class Validator extends BaseValidator
 			}
 			break;
 		}
-		unset($this->validators);
+		$this->validators = null;
 		$this->validators = [];
 		return !isset($isTrue);
 	}
