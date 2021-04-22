@@ -310,23 +310,8 @@ class ActiveRecord extends BaseActiveRecord
 			$data[$key] = $this->runAnnotation($key, $data[$key] ?? null);
 		}
 		$data = array_merge($data, $this->runRelate());
-		$this->recover();
 		return $data;
 	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function recover()
-	{
-		$this->clean();
-
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-		$channel->push($this, get_called_class());
-	}
-
 
 	/**
 	 * @return array

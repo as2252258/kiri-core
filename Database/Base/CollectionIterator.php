@@ -62,12 +62,7 @@ class CollectionIterator extends \ArrayIterator
 		if (is_object($model)) {
 			$model = get_class($model);
 		}
-
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-		$model = $channel->pop($model, function () use ($model) {
-			return new $model();
-		});
+		$model = new $model();
 		return $model->setAttributes($current);
 	}
 

@@ -120,12 +120,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 		if (is_object($model)) {
 			return $model;
 		}
-
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-		return $channel->pop($model, function () use ($model) {
-			return new $model();
-		});
+        return new $model();
 	}
 
 
