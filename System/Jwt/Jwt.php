@@ -418,13 +418,13 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
     {
         $model = $this->getUserModel();
         if (empty($model)) {
-            throw new AuthException('授权信息已过期！');
+            return (int)$this->addError('授权信息已过期！');
         }
         if (!isset($model['user'])) {
-            throw new AuthException('授权信息错误！');
+            return (int)$this->addError('授权信息错误！');
         }
         if (!$this->check($this->data, (int)$model['user'])) {
-            throw new AuthException('授权信息不合法！');
+            return (int)$this->addError('授权信息不合法！');
         }
 
         $this->expireRefresh();
@@ -478,13 +478,12 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
     /**
      * @return bool|array
-     * @throws AuthException
      * @throws Exception
      */
     private function getUserModel(): bool|array
     {
         if (!isset($this->data['token'])) {
-            throw new AuthException('暂无访问权限！');
+            return $this->addError('暂无访问权限！');
         }
         $key = $this->authKey($this->getSource(), $this->data['token']);
         return $this->getRedis()->hGetAll($key);
