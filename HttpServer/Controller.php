@@ -72,10 +72,7 @@ class Controller extends HttpService
 	 */
 	public function getRequest(): ?Request
 	{
-		if (!$this->request) {
-			$this->request = Snowflake::app()->request;
-		}
-		return $this->request;
+		return \request();
 	}
 
 
