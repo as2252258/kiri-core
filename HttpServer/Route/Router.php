@@ -6,6 +6,7 @@ namespace HttpServer\Route;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
+use HttpServer\Controller;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\Middleware;
 use HttpServer\IInterface\RouterInterface;
@@ -106,6 +107,10 @@ class Router extends HttpService implements RouterInterface
 		$method = strtolower($method);
 		if (!isset($this->nodes[$method])) {
 			$this->nodes[$method] = [];
+		}
+
+		if ($handler instanceof Closure) {
+			$handler = Closure::bind($handler, new Controller());
 		}
 
 		if ($this->useTree == ROUTER_TREE) {
