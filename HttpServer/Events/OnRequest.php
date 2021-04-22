@@ -55,7 +55,7 @@ class OnRequest extends Callback
 	{
 		try {
 
-			var_dump(Coroutine::printBackTrace());
+//			var_dump(Coroutine::printBackTrace());
 
 			/** @var HRequest $request */
 			[$request, $response] = OnRequest::createContext($request, $response);
