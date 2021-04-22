@@ -45,7 +45,6 @@ class Handler extends HttpService
 	 * @param $route
 	 * @param $handler
 	 * @return Handler|Node|null
-	 * @throws ConfigException
 	 */
 	public function handler($route, $handler): Handler|Node|null
 	{

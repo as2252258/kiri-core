@@ -41,12 +41,14 @@ class Aop extends Component
     }
 
 
-    /**
-     * @return mixed
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     * @throws Exception
-     */
+	/**
+	 * @param $handler
+	 * @param $params
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
     final public function dispatch($handler, $params): mixed
     {
         if ($handler instanceof \Closure) {
@@ -60,15 +62,16 @@ class Aop extends Component
     }
 
 
-    /**
-     * @param $handler
-     * @param $params
-     * @param $aopName
-     * @return mixed
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
-     */
-    private function invoke($handler, $params, $aopName)
+	/**
+	 * @param $handler
+	 * @param $params
+	 * @param $aopName
+	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 * @throws Exception
+	 */
+    private function invoke($handler, $params, $aopName): mixed
     {
         $reflect = Snowflake::getDi()->getReflect(current($this->_aop[$aopName]));
         if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
@@ -80,13 +83,13 @@ class Aop extends Component
     }
 
 
-    /**
-     * @param $handler
-     * @param $params
-     * @return false|mixed
-     * @throws \Exception
-     */
-    private function notFound($handler, $params)
+	/**
+	 * @param $handler
+	 * @param $params
+	 * @return mixed
+	 * @throws Exception
+	 */
+    private function notFound($handler, $params): mixed
     {
         if (!method_exists($handler[0], $handler[1])) {
             return response()->close(404);

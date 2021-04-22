@@ -545,10 +545,11 @@ class Node extends HttpService
     }
 
 
-    /**
-     * @return Validator|bool
-     * @throws Exception
-     */
+	/**
+	 * @param $dispatchParams
+	 * @return mixed
+	 * @throws Exception
+	 */
     private function runValidator($dispatchParams): mixed
     {
         /** @var HttpFilter $filter */
