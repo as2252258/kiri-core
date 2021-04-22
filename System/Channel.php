@@ -8,7 +8,6 @@ use Closure;
 use Exception;
 use Snowflake\Abstracts\Component;
 use SplQueue;
-use Swoole\Coroutine\Channel as CChannel;
 
 
 /**
@@ -25,22 +24,18 @@ class Channel extends Component
 	/**
 	 * @param mixed $value
 	 * @param string $name
-	 * @return mixed
 	 * @throws Exception
 	 */
-	public function push(mixed $value, string $name = ''): mixed
+	public function push(mixed $value, string $name = ''): void
 	{
 		$channel = $this->channelInit($name);
-		if ($channel->isFull()) {
-			return $this->addError('Channel is full.');
-		}
-		return $channel->push($value);
+		$channel->enqueue($value);
 	}
 
 
 	/**
 	 * @param string $name
-	 * @return bool|CChannel
+	 * @return bool|SplQueue
 	 */
 	private function channelInit(string $name = ''): bool|SplQueue
 	{
@@ -82,7 +77,7 @@ class Channel extends Component
 			return $channel->pop();
 		}
 		if ($timeout !== null) {
-			$data = $channel->pop($timeout);
+			$data = $channel->dequeue();
 		}
 		if (empty($data)) {
 			$data = call_user_func($closure);

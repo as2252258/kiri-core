@@ -324,7 +324,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
-		return $channel->push($this, get_called_class());
+		$channel->push($this, get_called_class());
 	}
 
 
