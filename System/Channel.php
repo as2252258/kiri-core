@@ -33,6 +33,8 @@ class Channel extends Component
 	 */
 	public function push(mixed $value, string $name = '', $length = 999): mixed
 	{
+		return true;
+
 		$channel = $this->channelInit($length, $name);
 		if ($channel->isFull()) {
 			return $this->addError('Channel is full.');
@@ -76,6 +78,8 @@ class Channel extends Component
 	 */
 	public function cleanAll()
 	{
+		return;
+
 		/** @var CChannel $channel */
 		foreach ($this->_channels as $channel) {
 			$channel->close();
