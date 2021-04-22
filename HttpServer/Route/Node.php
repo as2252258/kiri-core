@@ -126,11 +126,11 @@ class Node extends HttpService
     public function createDispatch(): Closure
     {
         return function () {
-	        $dispatchParam = Context::getContext('dispatch-param');
-	        if (empty($dispatchParam)) {
-		        $dispatchParam = [\request()];
-	        }
-	        return \aop($this->handler, $dispatchParam);
+            $dispatchParam = Context::getContext('dispatch-param');
+            if (empty($dispatchParam)) {
+                $dispatchParam = [\request()];
+            }
+            return \aop($this->handler, $dispatchParam);
         };
     }
 
@@ -276,30 +276,9 @@ class Node extends HttpService
                 return false;
             }
         }
-        return $this->checkRule();
-    }
-
-    /**
-     * @return bool
-     * @throws Exception
-     */
-    private function checkRule(): bool
-    {
-        if (empty($this->rules)) {
-            return true;
-        }
-        foreach ($this->rules as $rule) {
-            if (!isset($rule['class'])) {
-                $rule['class'] = Filter::class;
-            }
-            /** @var Filter $object */
-            $object = Snowflake::createObject($rule);
-            if (!$object->handler()) {
-                return false;
-            }
-        }
         return true;
     }
+
 
     /**
      * @param string $controller
@@ -518,19 +497,11 @@ class Node extends HttpService
      */
     public function dispatch(): mixed
     {
-        try {
-            Context::setContext('dispatch-param', func_get_args());
-            if (empty($this->callback)) {
-                return Json::to(404, $this->errorMsg());
-            }
-            return $this->httpFilter();
-        } catch (Throwable $throwable) {
-            $this->addError($throwable, 'throwable');
-
-            $code = $throwable->getCode() == 0 ? 500 : $throwable->getCode();
-
-            return Json::to($code, $throwable->getMessage());
+        Context::setContext('dispatch-param', func_get_args());
+        if (empty($this->callback)) {
+            return Json::to(404, $this->errorMsg());
         }
+        return $this->httpFilter();
     }
 
 
@@ -548,11 +519,11 @@ class Node extends HttpService
     }
 
 
-	/**
-	 * @param $dispatchParams
-	 * @return mixed
-	 * @throws Exception
-	 */
+    /**
+     * @param $dispatchParams
+     * @return mixed
+     * @throws Exception
+     */
     private function runValidator($dispatchParams): mixed
     {
         /** @var HttpFilter $filter */

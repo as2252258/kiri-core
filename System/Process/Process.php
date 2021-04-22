@@ -20,7 +20,7 @@ use Swoole\Coroutine\System;
 abstract class Process extends \Swoole\Process implements SProcess
 {
 
-    
+
     /**
      * Process constructor.
      * @param $application

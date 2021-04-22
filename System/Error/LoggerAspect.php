@@ -25,8 +25,6 @@ class LoggerAspect implements IAspect
      */
     #[Pure] public function __construct(public array $handler)
     {
-        $this->className = get_class($this->handler[0]);
-        $this->methodName = $this->handler[1];
     }
 
 
@@ -47,8 +45,11 @@ class LoggerAspect implements IAspect
 
     private function print_runtime($startTime)
     {
+        $className = get_class($this->handler[0]);
+        $methodName = $this->handler[1];
+
         $runTime = round(microtime(true) - $startTime, 6);
-        echo sprintf('run %s::%s use time %6f', $this->className, $this->methodName, $runTime);
+        echo sprintf('run %s::%s use time %6f', $className, $methodName, $runTime);
         echo PHP_EOL;
     }
 

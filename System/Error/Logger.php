@@ -29,7 +29,6 @@ class Logger extends Component
 
 	private array $logs = [];
 
-	public int $worker_id;
 
 	/**
 	 * @param $message

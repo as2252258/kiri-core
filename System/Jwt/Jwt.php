@@ -3,19 +3,14 @@ declare(strict_types=1);
 
 namespace Snowflake\Jwt;
 
-use Annotation\Aspect;
-use Database\InjectProperty;
 use Exception;
 use HttpServer\Http\HttpHeaders;
-use ReflectionException;
 use Snowflake\Cache\Redis;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Str;
 use Snowflake\Exception\AuthException;
 use Snowflake\Abstracts\Component;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 

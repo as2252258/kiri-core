@@ -17,7 +17,7 @@ class Validator extends BaseValidator
 {
 
 	/** @var BaseValidator[] */
-	private array $validators = [];
+	private ?array $validators = [];
 
 	/** @var ?Validator */
 	private static ?Validator $instance = null;
@@ -197,6 +197,7 @@ class Validator extends BaseValidator
 			}
 			break;
 		}
+		unset($this->validators);
 		$this->validators = [];
 		return !isset($isTrue);
 	}

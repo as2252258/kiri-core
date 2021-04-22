@@ -27,689 +27,670 @@ defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
  */
 class Router extends HttpService implements RouterInterface
 {
-	/** @var Node[] $nodes */
-	public array $nodes = [];
-	public array $groupTacks = [];
-	public ?string $dir = 'App\\Http\\Controllers';
+    /** @var Node[] $nodes */
+    public array $nodes = [];
+    public array $groupTacks = [];
+    public ?string $dir = 'App\\Http\\Controllers';
 
-	public array $hashMap = [];
+    public array $hashMap = [];
 
-	const NOT_FOUND = 'Page not found or method not allowed.';
+    const NOT_FOUND = 'Page not found or method not allowed.';
 
-	/** @var string[] */
-	public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
-
-
-	public ?Closure $middleware = null;
-
-	public int $useTree = ROUTER_TREE;
+    /** @var string[] */
+    public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
 
 
-	/**
-	 * @param Closure $middleware
-	 */
-	public function setMiddleware(\Closure $middleware): void
-	{
-		$this->middleware = $middleware;
-	}
+    public ?Closure $middleware = null;
+
+    public int $useTree = ROUTER_TREE;
 
 
-	/**
-	 * @throws ConfigException
-	 * 初始化函数路径
-	 */
-	public function init()
-	{
-		$this->dir = Config::get('http.namespace', $this->dir);
-	}
+    /**
+     * @param Closure $middleware
+     */
+    public function setMiddleware(\Closure $middleware): void
+    {
+        $this->middleware = $middleware;
+    }
 
 
-	/**
-	 * @param bool $useTree
-	 */
-	public function setUseTree(bool $useTree): void
-	{
-		$this->useTree = $useTree ? ROUTER_TREE : ROUTER_HASH;
-	}
+    /**
+     * @throws ConfigException
+     * 初始化函数路径
+     */
+    public function init()
+    {
+        $this->dir = Config::get('http.namespace', $this->dir);
+    }
 
 
-	/**
-	 * @param $port
-	 * @param Closure|array|string $closure
-	 * @param null $method
-	 * @return Node|bool|null
-	 * @throws
-	 */
-	public function addPortListen($port, Closure|array|string $closure, $method = null): Node|null|bool
-	{
-		if (!is_string($closure)) {
-			return $this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
-		}
-		if (empty($method)) {
-			return $this->addError($closure . '::' . $method);
-		}
-		$_closure = Snowflake::createObject($closure);
-		if (!method_exists($_closure, $method)) {
-			return $this->addError($closure . '::' . $method);
-		}
-		return $this->addRoute('add-port-listen/port_' . $port, [$_closure, $method], 'listen');
-	}
+    /**
+     * @param bool $useTree
+     */
+    public function setUseTree(bool $useTree): void
+    {
+        $this->useTree = $useTree ? ROUTER_TREE : ROUTER_HASH;
+    }
 
 
-	/**
-	 * @param $path
-	 * @param $handler
-	 * @param string $method
-	 * @return ?Node
-	 */
-	public function addRoute($path, $handler, $method = 'any'): ?Node
-	{
-		$method = strtolower($method);
-		if (!isset($this->nodes[$method])) {
-			$this->nodes[$method] = [];
-		}
-
-		if ($handler instanceof Closure) {
-			$handler = Closure::bind($handler, new Controller());
-		}
-
-		if ($this->useTree == ROUTER_TREE) {
-			return $this->tree($path, $handler, $method);
-		} else {
-			return $this->hash($path, $handler, $method);
-		}
-	}
+    /**
+     * @param $port
+     * @param Closure|array|string $closure
+     * @param null $method
+     * @return Node|bool|null
+     * @throws
+     */
+    public function addPortListen($port, Closure|array|string $closure, $method = null): Node|null|bool
+    {
+        if (!is_string($closure)) {
+            return $this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
+        }
+        if (empty($method)) {
+            return $this->addError($closure . '::' . $method);
+        }
+        $_closure = Snowflake::createObject($closure);
+        if (!method_exists($_closure, $method)) {
+            return $this->addError($closure . '::' . $method);
+        }
+        return $this->addRoute('add-port-listen/port_' . $port, [$_closure, $method], 'listen');
+    }
 
 
-	/**
-	 * @param $path
-	 * @param $handler
-	 * @param string $method
-	 * @return ?Node
-	 */
-	private function hash($path, $handler, $method = 'any'): ?Node
-	{
-		$path = $this->resolve($path);
+    /**
+     * @param $path
+     * @param $handler
+     * @param string $method
+     * @return ?Node
+     */
+    public function addRoute($path, $handler, $method = 'any'): ?Node
+    {
+        $method = strtolower($method);
+        if (!isset($this->nodes[$method])) {
+            $this->nodes[$method] = [];
+        }
 
-		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
+        if ($handler instanceof Closure) {
+            $handler = Closure::bind($handler, new Controller());
+        }
 
-		return $this->nodes[$method][$path]->bindHandler($handler);
-	}
-
-
-	/**
-	 * @param $path
-	 * @return string
-	 */
-	#[Pure] private function resolve($path): string
-	{
-		$paths = array_column($this->groupTacks, 'prefix');
-		if (empty($paths)) {
-			return '/' . ltrim($path, '/');
-		}
-		$paths = '/' . implode('/', $paths);
-		if ($path != '/') {
-			return $paths . '/' . ltrim($path, '/');
-		}
-		return $paths . '/';
-	}
+        if ($this->useTree == ROUTER_TREE) {
+            return $this->tree($path, $handler, $method);
+        } else {
+            return $this->hash($path, $handler, $method);
+        }
+    }
 
 
-	/**
-	 * @param $path
-	 * @param $handler
-	 * @param string $method
-	 * @return Node
-	 */
-	private function tree($path, $handler, $method = 'any'): Node
-	{
-		list($first, $explode) = $this->split($path);
+    /**
+     * @param $path
+     * @param $handler
+     * @param string $method
+     * @return ?Node
+     */
+    private function hash($path, $handler, $method = 'any'): ?Node
+    {
+        $path = $this->resolve($path);
 
-		$parent = $this->nodes[$method][$first] ?? null;
-		if (empty($parent)) {
-			$this->nodes[$method][$first] = $parent = $this->NodeInstance('/', 0, $method);
-		}
+        $this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
 
-		if ($first !== '/') {
-			$parent = $this->bindNode($parent, $explode, $method);
-		}
-		$parent->path = $path;
-		return $parent->bindHandler($handler);
-	}
+        return $this->nodes[$method][$path]->bindHandler($handler);
+    }
 
 
-	/**
-	 * @param Node $parent
-	 * @param array $explode
-	 * @param $method
-	 * @return Node
-	 */
-	private function bindNode(Node $parent, array $explode, $method): Node
-	{
-		$a = 0;
-		if (empty($explode)) {
-			return $parent->addChild($this->NodeInstance('/', $a, $method), '/');
-		}
-		foreach ($explode as $value) {
-			if (empty($value)) {
-				continue;
-			}
-			++$a;
-
-			$search = $parent->findNode($value);
-			if ($search === null) {
-				$parent = $parent->addChild($this->NodeInstance($value, $a, $method), $value);
-			} else {
-				$parent = $search;
-			}
-		}
-		return $parent;
-	}
-
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|null
-	 * @throws
-	 */
-	public function socket($route, $handler): ?Node
-	{
-		return $this->addRoute($route, $handler, 'socket');
-	}
+    /**
+     * @param $path
+     * @return string
+     */
+    #[Pure] private function resolve($path): string
+    {
+        $paths = array_column($this->groupTacks, 'prefix');
+        if (empty($paths)) {
+            return '/' . ltrim($path, '/');
+        }
+        $paths = '/' . implode('/', $paths);
+        if ($path != '/') {
+            return $paths . '/' . ltrim($path, '/');
+        }
+        return $paths . '/';
+    }
 
 
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|null
-	 * @throws
-	 */
-	public function post($route, $handler): ?Node
-	{
-		return $this->addRoute($route, $handler, 'post');
-	}
+    /**
+     * @param $path
+     * @param $handler
+     * @param string $method
+     * @return Node
+     */
+    private function tree($path, $handler, $method = 'any'): Node
+    {
+        list($first, $explode) = $this->split($path);
 
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|null
-	 * @throws
-	 */
-	public function get($route, $handler): ?Node
-	{
-		return $this->addRoute($route, $handler, 'get');
-	}
+        $parent = $this->nodes[$method][$first] ?? null;
+        if (empty($parent)) {
+            $this->nodes[$method][$first] = $parent = $this->NodeInstance('/', 0, $method);
+        }
 
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|null
-	 * @throws
-	 */
-	public function options($route, $handler): ?Node
-	{
-		return $this->addRoute($route, $handler, 'options');
-	}
+        if ($first !== '/') {
+            $parent = $this->bindNode($parent, $explode, $method);
+        }
+        $parent->path = $path;
+        return $parent->bindHandler($handler);
+    }
 
 
-	/**
-	 * @param $port
-	 * @param Closure $closure
-	 * @throws
-	 */
-	public function listen(int $port, Closure $closure)
-	{
-		$stdClass = Snowflake::createObject(Handler::class);
-		$this->group(['prefix' => $port], $closure, $stdClass);
-	}
+    /**
+     * @param Node $parent
+     * @param array $explode
+     * @param $method
+     * @return Node
+     */
+    private function bindNode(Node $parent, array $explode, $method): Node
+    {
+        $a = 0;
+        if (empty($explode)) {
+            return $parent->addChild($this->NodeInstance('/', $a, $method), '/');
+        }
+        foreach ($explode as $value) {
+            if (empty($value)) {
+                continue;
+            }
+            ++$a;
 
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Any
-	 * @throws
-	 */
-	public function any($route, $handler): Any
-	{
-		$nodes = [];
-		foreach (['get', 'post', 'options', 'put', 'delete'] as $method) {
-			$nodes[] = $this->addRoute($route, $handler, $method);
-		}
-		return new Any($nodes);
-	}
+            $search = $parent->findNode($value);
+            if ($search === null) {
+                $parent = $parent->addChild($this->NodeInstance($value, $a, $method), $value);
+            } else {
+                $parent = $search;
+            }
+        }
+        return $parent;
+    }
 
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|null
-	 * @throws
-	 */
-	public function delete($route, $handler): ?Node
-	{
-		return $this->addRoute($route, $handler, 'delete');
-	}
-
-	/**
-	 * @param $route
-	 * @param $handler
-	 * @return Node|null
-	 * @throws
-	 */
-	public function put($route, $handler): ?Node
-	{
-		return $this->addRoute($route, $handler, 'put');
-	}
-
-	/**
-	 * @param $value
-	 * @param $index
-	 * @param $method
-	 * @return Node
-	 * @throws
-	 */
-	public function NodeInstance($value, $index = 0, $method = 'get'): Node
-	{
-		$node = new Node();
-		$node->childes = [];
-		$node->path = $value;
-		$node->index = $index;
-		$node->method = $method;
-		$node->namespace = $this->loadNamespace($method);
-
-		$name = array_column($this->groupTacks, 'middleware');
-		if ($this->middleware instanceof \Closure) {
-			$node->addMiddleware([$this->middleware]);
-		}
-
-		if (is_array($name)) {
-			$node->addMiddleware($this->resolve_middleware($name));
-		}
-
-		return $node;
-	}
+    /**
+     * @param $route
+     * @param $handler
+     * @return Node|null
+     * @throws
+     */
+    public function socket($route, $handler): ?Node
+    {
+        return $this->addRoute($route, $handler, 'socket');
+    }
 
 
-	/**
-	 * @param string|array $middleware
-	 * @return array
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	private function resolve_middleware(string|array $middleware): array
-	{
-		if (is_string($middleware)) {
-			$middleware = [$middleware];
-		}
+    /**
+     * @param $route
+     * @param $handler
+     * @return Node|null
+     * @throws
+     */
+    public function post($route, $handler): ?Node
+    {
+        return $this->addRoute($route, $handler, 'post');
+    }
 
-		$array = [];
-		foreach ($middleware as $value) {
-			if (is_array($value)) {
-				foreach ($value as $item) {
-					$array[] = $this->getMiddlewareInstance($item);
-				}
-			} else {
-				$array[] = $this->getMiddlewareInstance($value);
-			}
-		}
-		return $array;
-	}
+    /**
+     * @param $route
+     * @param $handler
+     * @return Node|null
+     * @throws
+     */
+    public function get($route, $handler): ?Node
+    {
+        return $this->addRoute($route, $handler, 'get');
+    }
 
-
-	/**
-	 * @param $value
-	 * @return Closure|array|null
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	private function getMiddlewareInstance($value): null|Closure|array
-	{
-		if (is_string($value)) {
-			$value = Snowflake::createObject($value);
-			if (!($value instanceof Middleware)) {
-				return null;
-			}
-			return [$value, 'onHandler'];
-		} else {
-			return $value;
-		}
-	}
+    /**
+     * @param $route
+     * @param $handler
+     * @return Node|null
+     * @throws
+     */
+    public function options($route, $handler): ?Node
+    {
+        return $this->addRoute($route, $handler, 'options');
+    }
 
 
-	/**
-	 * @param $method
-	 * @return array
-	 */
-	private function loadNamespace($method): array
-	{
-		$name = array_column($this->groupTacks, 'namespace');
-		if ($method == 'package' || $method == 'receive') {
-			$dir = 'App\\Listener';
-		} else {
-			$dir = $this->dir;
-		}
-		array_unshift($name, $dir);
-		return array_filter($name);
-	}
+    /**
+     * @param $route
+     * @param $handler
+     * @return Any
+     * @throws
+     */
+    public function any($route, $handler): Any
+    {
+        $nodes = [];
+        foreach (['get', 'post', 'options', 'put', 'delete'] as $method) {
+            $nodes[] = $this->addRoute($route, $handler, $method);
+        }
+        return new Any($nodes);
+    }
 
-	/**
-	 * @param array $config
-	 * @param callable $callback
-	 * 路由分组
-	 * @param null $stdClass
-	 */
-	public function group(array $config, callable $callback, $stdClass = null)
-	{
-		$this->groupTacks[] = $config;
-		if ($stdClass) {
-			$callback($stdClass);
-		} else {
-			$callback($this);
-		}
-		array_pop($this->groupTacks);
-	}
+    /**
+     * @param $route
+     * @param $handler
+     * @return Node|null
+     * @throws
+     */
+    public function delete($route, $handler): ?Node
+    {
+        return $this->addRoute($route, $handler, 'delete');
+    }
 
-	/**
-	 * @return string
-	 */
-	public function addPrefix(): string
-	{
-		$prefix = array_column($this->groupTacks, 'prefix');
+    /**
+     * @param $route
+     * @param $handler
+     * @return Node|null
+     * @throws
+     */
+    public function put($route, $handler): ?Node
+    {
+        return $this->addRoute($route, $handler, 'put');
+    }
 
-		$prefix = array_filter($prefix);
+    /**
+     * @param $value
+     * @param $index
+     * @param $method
+     * @return Node
+     * @throws
+     */
+    public function NodeInstance($value, $index = 0, $method = 'get'): Node
+    {
+        $node = new Node();
+        $node->childes = [];
+        $node->path = $value;
+        $node->index = $index;
+        $node->method = $method;
+        $node->namespace = $this->loadNamespace($method);
 
-		if (empty($prefix)) {
-			return '';
-		}
+        $name = array_column($this->groupTacks, 'middleware');
+        if ($this->middleware instanceof \Closure) {
+            $node->addMiddleware([$this->middleware]);
+        }
 
-		return '/' . implode('/', $prefix);
-	}
+        if (is_array($name)) {
+            $node->addMiddleware($this->resolve_middleware($name));
+        }
 
-	/**
-	 * @param array|null $explode
-	 * @param $method
-	 * @return Node|null
-	 * 查找指定路由
-	 */
-	public function tree_search(?array $explode, $method): ?Node
-	{
-		if (empty($explode)) {
-			return $this->nodes[$method]['/'] ?? null;
-		}
-		$first = array_shift($explode);
-		if (!($parent = $this->nodes[$method][$first] ?? null)) {
-			return null;
-		}
-		if (empty($explode)) {
-			return $parent->findNode('/');
-		}
-		while ($value = array_shift($explode)) {
-			$node = $parent->findNode($value);
-			if (!$node) {
-				break;
-			}
-			$parent = $node;
-		}
-		return $parent;
-	}
+        return $node;
+    }
 
-	/**
-	 * @param $path
-	 * @return array
-	 * '*'
-	 */
-	public function split($path): array
-	{
-		$prefix = $this->addPrefix();
-		$path = ltrim($path, '/');
-		if (!empty($prefix)) {
-			$path = $prefix . '/' . $path;
-		}
 
-		$explode = array_filter(explode('/', $path));
-		if (empty($explode)) {
-			return ['/', []];
-		}
+    /**
+     * @param string|array $middleware
+     * @return array
+     * @throws NotFindClassException
+     * @throws ReflectionException
+     */
+    private function resolve_middleware(string|array $middleware): array
+    {
+        if (is_string($middleware)) {
+            $middleware = [$middleware];
+        }
 
-		$first = array_shift($explode);
-		if (empty($explode)) {
-			$explode = [];
-		}
-		return [$first, $explode];
-	}
+        $array = [];
+        foreach ($middleware as $value) {
+            if (is_array($value)) {
+                foreach ($value as $item) {
+                    $array[] = $this->getMiddlewareInstance($item);
+                }
+            } else {
+                $array[] = $this->getMiddlewareInstance($value);
+            }
+        }
+        return $array;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function each(): array
-	{
-		$paths = [];
-		foreach ($this->nodes as $node) {
-			/** @var Node[] $node */
-			foreach ($node as $_node) {
+
+    /**
+     * @param $value
+     * @return Closure|array|null
+     * @throws NotFindClassException
+     * @throws ReflectionException
+     */
+    private function getMiddlewareInstance($value): null|Closure|array
+    {
+        if (is_string($value)) {
+            $value = Snowflake::createObject($value);
+            if (!($value instanceof Middleware)) {
+                return null;
+            }
+            return [$value, 'onHandler'];
+        } else {
+            return $value;
+        }
+    }
+
+
+    /**
+     * @param $method
+     * @return array
+     */
+    private function loadNamespace($method): array
+    {
+        $name = array_column($this->groupTacks, 'namespace');
+        if ($method == 'package' || $method == 'receive') {
+            $dir = 'App\\Listener';
+        } else {
+            $dir = $this->dir;
+        }
+        array_unshift($name, $dir);
+        return array_filter($name);
+    }
+
+    /**
+     * @param array $config
+     * @param callable $callback
+     * 路由分组
+     * @param null $stdClass
+     */
+    public function group(array $config, callable $callback, $stdClass = null)
+    {
+        $this->groupTacks[] = $config;
+        if ($stdClass) {
+            $callback($stdClass);
+        } else {
+            $callback($this);
+        }
+        array_pop($this->groupTacks);
+    }
+
+    /**
+     * @return string
+     */
+    public function addPrefix(): string
+    {
+        $prefix = array_column($this->groupTacks, 'prefix');
+
+        $prefix = array_filter($prefix);
+
+        if (empty($prefix)) {
+            return '';
+        }
+
+        return '/' . implode('/', $prefix);
+    }
+
+    /**
+     * @param array|null $explode
+     * @param $method
+     * @return Node|null
+     * 查找指定路由
+     */
+    public function tree_search(?array $explode, $method): ?Node
+    {
+        if (empty($explode)) {
+            return $this->nodes[$method]['/'] ?? null;
+        }
+        $first = array_shift($explode);
+        if (!($parent = $this->nodes[$method][$first] ?? null)) {
+            return null;
+        }
+        if (empty($explode)) {
+            return $parent->findNode('/');
+        }
+        while ($value = array_shift($explode)) {
+            $node = $parent->findNode($value);
+            if (!$node) {
+                break;
+            }
+            $parent = $node;
+        }
+        return $parent;
+    }
+
+    /**
+     * @param $path
+     * @return array
+     * '*'
+     */
+    public function split($path): array
+    {
+        $prefix = $this->addPrefix();
+        $path = ltrim($path, '/');
+        if (!empty($prefix)) {
+            $path = $prefix . '/' . $path;
+        }
+
+        $explode = array_filter(explode('/', $path));
+        if (empty($explode)) {
+            return ['/', []];
+        }
+
+        $first = array_shift($explode);
+        if (empty($explode)) {
+            $explode = [];
+        }
+        return [$first, $explode];
+    }
+
+    /**
+     * @return array
+     */
+    public function each(): array
+    {
+        $paths = [];
+        foreach ($this->nodes as $node) {
+            /** @var Node[] $node */
+            foreach ($node as $_node) {
 //				if ($_node->path == '/') {
 //					continue;
 //				}
-				$path = strtoupper($_node->method) . ' : ' . $_node->path;
-				if (!empty($_node->childes)) {
-					$path = $this->readByChild($_node->childes, $path);
-				}
-				$paths[] = $path;
-			}
-		}
-		return $this->readByArray($paths);
-	}
+                $path = strtoupper($_node->method) . ' : ' . $_node->path;
+                if (!empty($_node->childes)) {
+                    $path = $this->readByChild($_node->childes, $path);
+                }
+                $paths[] = $path;
+            }
+        }
+        return $this->readByArray($paths);
+    }
 
-	/**
-	 * @param $array
-	 * @param array $returns
-	 * @return array
-	 */
-	private function readByArray($array, $returns = []): array
-	{
-		foreach ($array as $value) {
-			if (empty($value)) {
-				continue;
-			}
-			if (is_array($value)) {
-				$returns = $this->readByArray($value, $returns);
-			} else {
-				[$method, $route] = explode(' : ', $value);
+    /**
+     * @param $array
+     * @param array $returns
+     * @return array
+     */
+    private function readByArray($array, $returns = []): array
+    {
+        foreach ($array as $value) {
+            if (empty($value)) {
+                continue;
+            }
+            if (is_array($value)) {
+                $returns = $this->readByArray($value, $returns);
+            } else {
+                [$method, $route] = explode(' : ', $value);
 
-				$returns[] = ['method' => $method, 'route' => $route];
-			}
-		}
-		return $returns;
-	}
+                $returns[] = ['method' => $method, 'route' => $route];
+            }
+        }
+        return $returns;
+    }
 
 
-	/**
-	 * @param $child
-	 * @param string $paths
-	 * @return array
-	 */
-	private function readByChild($child, $paths = ''): array
-	{
-		$newPath = [];
-		/** @var Node $item */
-		foreach ($child as $item) {
+    /**
+     * @param $child
+     * @param string $paths
+     * @return array
+     */
+    private function readByChild($child, $paths = ''): array
+    {
+        $newPath = [];
+        /** @var Node $item */
+        foreach ($child as $item) {
 //			if ($item->path == '/') {
 //				continue;
 //			}
-			if (!empty($item->childes)) {
-				$newPath[] = $this->readByChild($item->childes, $paths . '/' . $item->path);
-			} else {
-				[$first, $route] = explode(' : ', $paths);
+            if (!empty($item->childes)) {
+                $newPath[] = $this->readByChild($item->childes, $paths . '/' . $item->path);
+            } else {
+                [$first, $route] = explode(' : ', $paths);
 
-				$newPath[] = strtoupper($item->method) . ' : ' . $route . '/' . $item->path;
-			}
-		}
-		return $newPath;
-	}
-
-
-	/**
-	 * @return mixed
-	 * @throws
-	 */
-	public function dispatch(): mixed
-	{
-		try {
-			if (!($node = $this->find_path(\request()))) {
-				return send(self::NOT_FOUND);
-			}
-			send($response = $node->dispatch(), 200);
-			if (!$node->hasAfter()) {
-				return null;
-			}
-			return $node->afterDispatch($response);
-		} catch (\Throwable $exception) {
-			$this->addError($exception, 'throwable');
-
-			$Code = $exception->getCode() == 0 ? 500 : $exception->getCode();
-
-			return send(Json::to($Code, $exception->getMessage()), 200);
-		}
-	}
+                $newPath[] = strtoupper($item->method) . ' : ' . $route . '/' . $item->path;
+            }
+        }
+        return $newPath;
+    }
 
 
-	/**
-	 * @param $exception
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function exception($exception): mixed
-	{
-		return Snowflake::app()->getLogger()->exception($exception);
-	}
+    /**
+     * @return mixed
+     * @throws
+     */
+    public function dispatch(): mixed
+    {
+        if (!($node = $this->find_path(\request()))) {
+            return send(self::NOT_FOUND);
+        }
+        send($response = $node->dispatch(), 200);
+        if (!$node->hasAfter()) {
+            return null;
+        }
+        return $node->afterDispatch($response);
+    }
 
 
-	/**
-	 * @param Request $request
-	 * @return Node|null 树干搜索
-	 * 树干搜索
-	 */
-	public function find_path(Request $request): ?Node
-	{
-		if ($this->useTree === ROUTER_TREE) {
-			return $this->Branch_search($request);
-		}
-
-		$method = $request->getMethod();
-		$uri = $request->headers->get('request_uri', '/');
-
-		if (!isset($this->nodes[$method])) {
-			return null;
-		}
-		$methods = $this->nodes[$method];
-		if (isset($methods[$uri])) {
-			return $methods[$uri];
-		}
-		if (!$request->isOption || !isset($methods['/'])) {
-			return null;
-		}
-		return $methods['/'];
-	}
+    /**
+     * @param $exception
+     * @return mixed
+     * @throws Exception
+     */
+    private function exception($exception): mixed
+    {
+        return Snowflake::app()->getLogger()->exception($exception);
+    }
 
 
-	/**
-	 * @param $uri
-	 * @param $method
-	 * @return Node|null
-	 */
-	public function search($uri, $method): Node|null
-	{
-		if (!isset($this->nodes[$method])) {
-			return null;
-		}
-		$methods = $this->nodes[$method];
-		if (isset($methods[$uri])) {
-			return $methods[$uri];
-		}
-		return $methods['/'] ?? null;
-	}
+    /**
+     * @param Request $request
+     * @return Node|null 树干搜索
+     * 树干搜索
+     */
+    public function find_path(Request $request): ?Node
+    {
+        if ($this->useTree === ROUTER_TREE) {
+            return $this->Branch_search($request);
+        }
+
+        $method = $request->getMethod();
+        $uri = $request->headers->get('request_uri', '/');
+
+        if (!isset($this->nodes[$method])) {
+            return null;
+        }
+        $methods = $this->nodes[$method];
+        if (isset($methods[$uri])) {
+            return $methods[$uri];
+        }
+        if (!$request->isOption || !isset($methods['/'])) {
+            return null;
+        }
+        return $methods['/'];
+    }
 
 
-	/**
-	 * @param $request
-	 * @return Node|null
-	 */
-	private function search_options($request): ?Node
-	{
-		$method = $request->getMethod();
-		if (!isset($this->nodes[$method])) {
-			return null;
-		}
-		if (!isset($this->nodes[$method]['*'])) {
-			return null;
-		}
-		return $this->nodes[$method]['*'];
-	}
+    /**
+     * @param $uri
+     * @param $method
+     * @return Node|null
+     */
+    public function search($uri, $method): Node|null
+    {
+        if (!isset($this->nodes[$method])) {
+            return null;
+        }
+        $methods = $this->nodes[$method];
+        if (isset($methods[$uri])) {
+            return $methods[$uri];
+        }
+        return $methods['/'] ?? null;
+    }
 
 
-	/**
-	 * @param Request $request
-	 * @return Node|null
-	 * 树杈搜索
-	 */
-	private function Branch_search(Request $request): ?Node
-	{
-		$node = $this->tree_search($request->getExplode(), $request->getMethod());
-		if ($node instanceof Node) {
-			return $node;
-		}
-		if (!$request->isOption) {
-			return null;
-		}
-		$node = $this->tree_search(['*'], $request->getMethod());
-		if (!($node instanceof Node)) {
-			return null;
-		}
-		return $node;
-	}
+    /**
+     * @param $request
+     * @return Node|null
+     */
+    private function search_options($request): ?Node
+    {
+        $method = $request->getMethod();
+        if (!isset($this->nodes[$method])) {
+            return null;
+        }
+        if (!isset($this->nodes[$method]['*'])) {
+            return null;
+        }
+        return $this->nodes[$method]['*'];
+    }
 
 
-	/**
-	 * @throws
-	 */
-	public function _loader()
-	{
-		$this->loadRouteDir(APP_PATH . 'routes');
-	}
-
-	/**
-	 * @param $path
-	 * @throws Exception
-	 * 加载目录下的路由文件
-	 */
-	private function loadRouteDir($path)
-	{
-		$files = glob($path . '/*');
-		for ($i = 0; $i < count($files); $i++) {
-			if (is_dir($files[$i])) {
-				$this->loadRouteDir($files[$i]);
-			} else {
-				$this->loadRouterFile($files[$i]);
-			}
-		}
-	}
+    /**
+     * @param Request $request
+     * @return Node|null
+     * 树杈搜索
+     */
+    private function Branch_search(Request $request): ?Node
+    {
+        $node = $this->tree_search($request->getExplode(), $request->getMethod());
+        if ($node instanceof Node) {
+            return $node;
+        }
+        if (!$request->isOption) {
+            return null;
+        }
+        $node = $this->tree_search(['*'], $request->getMethod());
+        if (!($node instanceof Node)) {
+            return null;
+        }
+        return $node;
+    }
 
 
-	/**
-	 * @param $files
-	 * @throws Exception
-	 */
-	private function loadRouterFile($files)
-	{
-		try {
-			$router = $this;
-			include_once "{$files}";
-		} catch (\Throwable $exception) {
-			$this->addError($exception, 'throwable');
-		} finally {
-			if (isset($exception)) {
-				unset($exception);
-			}
-		}
-	}
+    /**
+     * @throws
+     */
+    public function _loader()
+    {
+        $this->loadRouteDir(APP_PATH . 'routes');
+    }
+
+    /**
+     * @param $path
+     * @throws Exception
+     * 加载目录下的路由文件
+     */
+    private function loadRouteDir($path)
+    {
+        $files = glob($path . '/*');
+        for ($i = 0; $i < count($files); $i++) {
+            if (is_dir($files[$i])) {
+                $this->loadRouteDir($files[$i]);
+            } else {
+                $this->loadRouterFile($files[$i]);
+            }
+        }
+    }
+
+
+    /**
+     * @param $files
+     * @throws Exception
+     */
+    private function loadRouterFile($files)
+    {
+        try {
+            $router = $this;
+            include_once "{$files}";
+        } catch (\Throwable $exception) {
+            $this->addError($exception, 'throwable');
+        } finally {
+            if (isset($exception)) {
+                unset($exception);
+            }
+        }
+    }
 
 }

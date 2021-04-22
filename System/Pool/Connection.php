@@ -23,10 +23,6 @@ class Connection extends Pool
 
 	public int $timeout = 1900;
 
-	/** @var PDO[] */
-	protected array $connections = [];
-
-
 	/**
 	 * @param $timeout
 	 */
