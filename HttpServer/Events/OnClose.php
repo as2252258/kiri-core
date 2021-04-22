@@ -19,37 +19,38 @@ class OnClose extends Callback
 {
 
 
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 * @throws Exception
-	 */
-	public function onHandler(Server $server, int $fd)
-	{
-		try {
+    /**
+     * @param Server $server
+     * @param int $fd
+     * @throws Exception
+     */
+    public function onHandler(Server $server, int $fd)
+    {
+        try {
+            defer(function () {
+                fire(Event::SYSTEM_RESOURCE_RELEASES);
+                logger_insert();
+            });
 			$clientInfo = $server->getClientInfo($fd);
 			$event = Snowflake::app()->getEvent();
 
 			if (!$event->exists(($name = $this->getName($clientInfo)))) {
-				return;
-			}
+                return;
+            }
 			$event->trigger($name, [$server, $fd]);
 		} catch (\Throwable $exception) {
-			$this->addError($exception, 'throwable');
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger_insert();
-		}
-	}
+            $this->addError($exception, 'throwable');
+        }
+    }
 
 
-	/**
-	 * @param $server_port
-	 * @return string
-	 */
-	private function getName($server_port): string
-	{
-		return 'listen ' . $server_port['server_port'] . ' ' . Event::SERVER_CLIENT_CLOSE;
-	}
+    /**
+     * @param $server_port
+     * @return string
+     */
+    private function getName($server_port): string
+    {
+        return 'listen ' . $server_port['server_port'] . ' ' . Event::SERVER_CLIENT_CLOSE;
+    }
 
 }

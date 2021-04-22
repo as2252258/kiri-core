@@ -26,14 +26,15 @@ class OnPipeMessage extends Callback
      */
     public function onHandler(Server $server, int $src_worker_id, $swollen_universalize)
     {
-        go(function () use ($server, $src_worker_id, $swollen_universalize) {
-            match ($swollen_universalize['action'] ?? null) {
-                'kafka' => $this->onKafkaWorker($swollen_universalize),
-                'crontab' => $this->onCrontabWorker($swollen_universalize),
-                default => $this->onMessageWorker($server, $src_worker_id, $swollen_universalize)
-            };
+        defer(function () {
             fire(Event::SYSTEM_RESOURCE_RELEASES);
+            logger_insert();
         });
+        match ($swollen_universalize['action'] ?? null) {
+            'kafka' => $this->onKafkaWorker($swollen_universalize),
+            'crontab' => $this->onCrontabWorker($swollen_universalize),
+            default => $this->onMessageWorker($server, $src_worker_id, $swollen_universalize)
+        };
     }
 
 

@@ -36,7 +36,7 @@ class OnPacket extends Callback
 	{
 		[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
 		try {
-			\Swoole\Coroutine\defer(function () {
+			defer(function () {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 				\logger_insert();
 			});

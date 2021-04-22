@@ -26,6 +26,11 @@ class OnConnect extends Callback
      */
     public function onHandler(Server $server, int $fd, int $reactorId)
     {
+        defer(function () {
+            fire(Event::SYSTEM_RESOURCE_RELEASES);
+            logger_insert();
+        });
+
         $event = Snowflake::app()->getEvent();
 
         $clientInfo = $server->getClientInfo($fd);
@@ -37,8 +42,6 @@ class OnConnect extends Callback
         } catch (\Throwable $throwable) {
             $this->addError($throwable, 'connect');
         }
-        fire(Event::SYSTEM_RESOURCE_RELEASES);
-	    logger_insert();
     }
 
 

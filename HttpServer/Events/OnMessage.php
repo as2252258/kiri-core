@@ -38,7 +38,11 @@ class OnMessage extends Callback
 	public function onHandler(Server $server, Frame $frame)
 	{
 		try {
-			if ($frame->opcode === 0x08) {
+            defer(function () {
+                fire(Event::SYSTEM_RESOURCE_CLEAN);
+                logger_insert();
+            });
+            if ($frame->opcode === 0x08) {
 				return;
 			}
 			$clientInfo = $server->getClientInfo($frame->fd);
@@ -51,9 +55,6 @@ class OnMessage extends Callback
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'websocket');
 			$server->send($frame->fd, $exception->getMessage());
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger_insert();
 		}
 	}
 

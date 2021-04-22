@@ -102,7 +102,11 @@ class OnTask extends Callback
 	private function runTaskHandler($data): ?array
 	{
 		try {
-			$serialize = $this->before($data);
+            defer(function () {
+                fire(Event::SYSTEM_RESOURCE_CLEAN);
+                logger_insert();
+            });
+            $serialize = $this->before($data);
 			if ($serialize === null) {
 				throw new Exception('unpack error.');
 			}
@@ -121,9 +125,6 @@ class OnTask extends Callback
 			$this->addError($exception, 'Task');
 
 			return $finish;
-		} finally {
-			fire(Event::SYSTEM_RESOURCE_RELEASES);
-			logger_insert();
 		}
 	}
 

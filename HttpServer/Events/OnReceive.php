@@ -48,7 +48,7 @@ class OnReceive extends Callback
 	public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
 	{
 		try {
-			\Swoole\Coroutine\defer(function (){
+			defer(function (){
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 				\logger_insert();
 			});
