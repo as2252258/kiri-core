@@ -57,11 +57,12 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param string $name
-     * @throws Exception
-     */
-    public function exists(string $name)
+	/**
+	 * @param string $name
+	 * @return bool
+	 * @throws Exception
+	 */
+    public function exists(string $name): bool
     {
         $redis = Snowflake::app()->getRedis();
         if ($redis->exists('crontab:' . md5($name))) {
