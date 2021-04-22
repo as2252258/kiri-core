@@ -49,9 +49,6 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-			if (function_exists('trackerAnalyzeLeak')) {
-				trackerAnalyzeLeak();
-			}
 			/** @var HRequest $request */
 			[$request, $response] = OnRequest::createContext($request, $response);
 
@@ -76,8 +73,6 @@ class OnRequest extends Callback
 	 * @param $request
 	 * @param $response
 	 * @return array
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public static function createContext($request, $response): array
 	{

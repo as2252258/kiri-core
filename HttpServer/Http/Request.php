@@ -463,13 +463,11 @@ class Request extends HttpService
 	/**
 	 * @param $request
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public static function create($request): Request
 	{
 		/** @var Request $sRequest */
-		$sRequest = Context::setContext('request', Snowflake::createObject(Request::class));
+		$sRequest = Context::setContext('request', new Request());
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
 
@@ -490,13 +488,10 @@ class Request extends HttpService
 	 * @param $route
 	 * @param string $event
 	 * @return Request
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public static function socketQuery($frame, $event = Socket::MESSAGE, $route = 'event'): Request
 	{
-		/** @var Request $sRequest */
-		$sRequest = Snowflake::createObject(Request::class);
+		$sRequest = new Request();
 		$sRequest->fd = $frame->fd;
 		$sRequest->startTime = microtime(true);
 
@@ -515,14 +510,11 @@ class Request extends HttpService
 	 * @param $data
 	 * @param int $reID
 	 * @return Request
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public static function createListenRequest($fd, $data, $reID = 0): Request
 	{
-		/** @var Request $sRequest */
-		$sRequest = Snowflake::createObject(Request::class);
+		$sRequest = new Request();
 
 		$sRequest->fd = is_array($fd) ? 0 : $fd;
 		$sRequest->clientInfo = self::getClientInfo($fd, $reID);
