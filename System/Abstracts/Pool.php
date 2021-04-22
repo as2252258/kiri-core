@@ -169,6 +169,18 @@ abstract class Pool extends Component
 	}
 
 
+	/**
+	 * @param $cds
+	 * @param $coroutineName
+	 * @param false $isBefore
+	 * @throws Exception
+	 */
+	public function releaseClients($cds, $coroutineName)
+	{
+		$this->warning('release client[address: ' . $cds . ', ' . env('worker', 0) . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ']');
+	}
+
+
 	abstract public function createClient(string $name, mixed $config): mixed;
 
 

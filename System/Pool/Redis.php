@@ -48,13 +48,13 @@ class Redis extends Pool
     }
 
 
-	/**
-	 * @param string $name
-	 * @param mixed $config
-	 * @return SRedis
-	 * @throws RedisConnectException
-	 * @throws Exception
-	 */
+    /**
+     * @param string $name
+     * @param mixed $config
+     * @return SRedis
+     * @throws RedisConnectException
+     * @throws Exception
+     */
     public function createClient(string $name, mixed $config): SRedis
     {
         $this->printClients($config['host'], $name, true);
@@ -89,6 +89,9 @@ class Redis extends Pool
         if (!Context::hasContext($coroutineName)) {
             return;
         }
+
+        $this->releaseClients($config['host'], $coroutineName);
+
         $this->push($coroutineName, Context::getContext($coroutineName));
         $this->remove($coroutineName);
         $this->lastTime = time();
@@ -104,10 +107,13 @@ class Redis extends Pool
         $name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
         $coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
         if (Context::hasContext($coroutineName)) {
-	        $this->desc($coroutineName);
+            $this->desc($coroutineName);
 
-	        $this->remove($coroutineName);
+            $this->remove($coroutineName);
         }
+
+        $this->releaseClients($config['host'], $coroutineName);
+
         $this->clean($coroutineName);
     }
 
@@ -119,12 +125,12 @@ class Redis extends Pool
         Context::remove($coroutineName);
     }
 
-	/**
-	 * @param string $name
-	 * @param mixed $client
-	 * @return bool
-	 * @throws Exception
-	 */
+    /**
+     * @param string $name
+     * @param mixed $client
+     * @return bool
+     * @throws Exception
+     */
     public function checkCanUse(string $name, mixed $client): bool
     {
         try {
@@ -136,7 +142,7 @@ class Redis extends Pool
                 $result = true;
             }
         } catch (\Throwable $exception) {
-	        $this->addError($exception, 'redis');
+            $this->addError($exception, 'redis');
             $result = false;
         } finally {
             if (!$result) {

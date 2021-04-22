@@ -195,7 +195,9 @@ class Connection extends Pool
 			return;
 		}
 
-		/** @var PDO $client */
+        $this->releaseClients('rds', $coroutineName);
+
+        /** @var PDO $client */
 		$client = Context::getContext($coroutineName);
 		if ($client->inTransaction()) {
 			$client->commit();
@@ -222,7 +224,9 @@ class Connection extends Pool
 	 */
 	public function connection_clear()
 	{
-		$this->flush(0);
+        $this->releaseClients('rds', 'rds');
+
+        $this->flush(0);
 	}
 
 
