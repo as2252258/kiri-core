@@ -7,6 +7,7 @@ namespace Snowflake;
 use Closure;
 use Exception;
 use Snowflake\Abstracts\Component;
+use SplQueue;
 use Swoole\Coroutine\Channel as CChannel;
 
 
@@ -18,57 +19,35 @@ class Channel extends Component
 {
 
 
-	private ?CChannel $_channel = null;
-
-
 	private array $_channels = [];
 
 
 	/**
 	 * @param mixed $value
 	 * @param string $name
-	 * @param int $length
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function push(mixed $value, string $name = '', $length = 999): mixed
+	public function push(mixed $value, string $name = ''): mixed
 	{
-		return true;
-
-		$channel = $this->channelInit($length, $name);
+		$channel = $this->channelInit($name);
 		if ($channel->isFull()) {
 			return $this->addError('Channel is full.');
 		}
-
-		return true;
 		return $channel->push($value);
 	}
 
 
 	/**
-	 * @param int $length
 	 * @param string $name
 	 * @return bool|CChannel
 	 */
-	private function channelInit(int $length, string $name = ''): bool|CChannel
+	private function channelInit(string $name = ''): bool|SplQueue
 	{
-		if ($length < 1) {
-			return false;
+		if (!isset($this->_channels[$name]) || !($this->_channels[$name] instanceof SplQueue)) {
+			$this->_channels[$name] = new SplQueue();
 		}
-		if (empty($name)) {
-			if (!($this->_channel instanceof CChannel)
-				|| $this->_channel->close()) {
-				$this->_channel = new CChannel($length);
-			}
-			return $this->_channel;
-		} else {
-			if (!isset($this->_channels[$name]) || !($this->_channels[$name] instanceof CChannel)) {
-				$this->_channels[$name] = new CChannel($length);
-			} else if ($this->_channels[$name]->close()) {
-				$this->_channels[$name] = new CChannel($length);
-			}
-			return $this->_channels[$name];
-		}
+		return $this->_channels[$name];
 	}
 
 
@@ -78,11 +57,11 @@ class Channel extends Component
 	 */
 	public function cleanAll()
 	{
-		return;
-
-		/** @var CChannel $channel */
+		/** @var SplQueue $channel */
 		foreach ($this->_channels as $channel) {
-			$channel->close();
+			while ($channel->count() > 0) {
+				$channel->dequeue();
+			}
 		}
 		$this->_channels = [];
 	}
@@ -91,24 +70,20 @@ class Channel extends Component
 	 * @param $timeout
 	 * @param Closure $closure
 	 * @param string $name
-	 * @param int $length
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function pop(string $name, Closure $closure, int|float $timeout = null, int $length = 999): mixed
+	public function pop(string $name, Closure $closure, int|float $timeout = null): mixed
 	{
-		return call_user_func($closure);
-
-		if (($channel = $this->channelInit($length, $name)) == false) {
+		if (($channel = $this->channelInit($name)) == false) {
 			return $this->addError('Channel is full.');
 		}
 		if (!$channel->isEmpty()) {
 			return $channel->pop();
 		}
-		$data = null;
-//		if ($timeout !== null) {
-//			$data = $channel->pop($timeout);
-//		}
+		if ($timeout !== null) {
+			$data = $channel->pop($timeout);
+		}
 		if (empty($data)) {
 			$data = call_user_func($closure);
 		}
