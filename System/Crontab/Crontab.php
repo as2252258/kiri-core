@@ -268,8 +268,8 @@ abstract class Crontab extends BaseObject
 			if ($params === null) {
 				return;
 			}
-			$name = date('Y-m-d.log');
-			write(storage($name, '/log/crontab'), Json::encode([
+			$name = date('Y-m-d') . '.log';
+			write(storage($name, 'log/crontab'), Json::encode([
 				'name'     => $this->name,
 				'response' => serialize($params)
 			]));
