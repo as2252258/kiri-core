@@ -4,21 +4,16 @@ declare(strict_types=1);
 namespace HttpServer\Events;
 
 
-use Annotation\Aspect;
-use Database\InjectProperty;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use ReflectionException;
-use Snowflake\Core\Json;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -54,9 +49,9 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-
-//			var_dump(Coroutine::printBackTrace());
-
+			if (function_exists('trackerAnalyzeLeak')) {
+				trackerAnalyzeLeak();
+			}
 			/** @var HRequest $request */
 			[$request, $response] = OnRequest::createContext($request, $response);
 
@@ -99,7 +94,7 @@ class OnRequest extends Callback
 	 */
 	protected function sendErrorMessage($sRequest, $sResponse, $exception): bool|string
 	{
-		$this->addError($exception,'throwable');
+		$this->addError($exception, 'throwable');
 		if ($sResponse instanceof Response) {
 			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
