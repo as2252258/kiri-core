@@ -7,7 +7,6 @@ namespace Snowflake\Pool;
 
 use HttpServer\Http\Context;
 use Redis as SRedis;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\RedisConnectException;
 use Exception;
 use Snowflake\Abstracts\Pool;
@@ -57,7 +56,6 @@ class Redis extends Pool
      */
     public function createClient(string $name, mixed $config): SRedis
     {
-        $this->printClients($config['host'], $name, true);
         $redis = new SRedis();
         if (!$redis->pconnect($config['host'], (int)$config['port'], $config['timeout'])) {
             throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -90,8 +88,6 @@ class Redis extends Pool
             return;
         }
 
-        $this->releaseClients($config['host'], $coroutineName);
-
         $this->push($coroutineName, Context::getContext($coroutineName));
         $this->remove($coroutineName);
         $this->lastTime = time();
@@ -111,10 +107,7 @@ class Redis extends Pool
 
             $this->remove($coroutineName);
         }
-
-        $this->releaseClients($config['host'], $coroutineName);
-
-        $this->clean($coroutineName);
+        $this->flush(0);
     }
 
     /**

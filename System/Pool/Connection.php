@@ -154,8 +154,6 @@ class Connection extends Pool
 	 */
 	public function createClient(string $name, mixed $config): PDO
 	{
-		$this->printClients($config['cds'], $name, true);
-		// TODO: Implement createClient() method.
 		$link = new PDO($config['cds'], $config['username'], $config['password'], [
 			PDO::ATTR_EMULATE_PREPARES => false,
 			PDO::ATTR_CASE             => PDO::CASE_NATURAL,
@@ -195,8 +193,6 @@ class Connection extends Pool
 			return;
 		}
 
-        $this->releaseClients('rds', $coroutineName);
-
         /** @var PDO $client */
 		$client = Context::getContext($coroutineName);
 		if ($client->inTransaction()) {
@@ -224,8 +220,6 @@ class Connection extends Pool
 	 */
 	public function connection_clear()
 	{
-        $this->releaseClients('rds', 'rds');
-
         $this->flush(0);
 	}
 
