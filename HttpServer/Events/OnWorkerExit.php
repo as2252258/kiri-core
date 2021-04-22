@@ -17,22 +17,21 @@ use Swoole\Timer;
 class OnWorkerExit extends Callback
 {
 
-	/**
-	 * @param $server
-	 * @param $worker_id
-	 * @throws Exception
-	 */
-	public function onHandler($server, $worker_id)
-	{
-		putenv('state=exit');
-
-		$channel = Snowflake::app()->getChannel();
+    /**
+     * @param $server
+     * @param $worker_id
+     * @throws Exception
+     */
+    public function onHandler($server, $worker_id)
+    {
+        putenv('state=exit');
+        $event = Snowflake::app()->getEvent();
+        $channel = Snowflake::app()->getChannel();
 		$channel->cleanAll();
 
-		$event = Snowflake::app()->getEvent();
-		$event->trigger(Event::SERVER_WORKER_EXIT);
+        $event->trigger(Event::SERVER_WORKER_EXIT);
 
-		logger_insert();
+        logger()->insert();
 	}
 
 }

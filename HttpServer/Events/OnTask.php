@@ -104,7 +104,6 @@ class OnTask extends Callback
 		try {
             defer(function () {
                 fire(Event::SYSTEM_RESOURCE_CLEAN);
-                logger_insert();
             });
             $serialize = $this->before($data);
 			if ($serialize === null) {

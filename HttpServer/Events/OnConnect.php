@@ -28,7 +28,6 @@ class OnConnect extends Callback
     {
         defer(function () {
             fire(Event::SYSTEM_RESOURCE_RELEASES);
-            logger_insert();
         });
 
         $event = Snowflake::app()->getEvent();

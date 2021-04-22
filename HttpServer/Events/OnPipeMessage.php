@@ -28,7 +28,6 @@ class OnPipeMessage extends Callback
     {
         defer(function () {
             fire(Event::SYSTEM_RESOURCE_RELEASES);
-            logger_insert();
         });
         match ($swollen_universalize['action'] ?? null) {
             'kafka' => $this->onKafkaWorker($swollen_universalize),

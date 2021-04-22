@@ -99,7 +99,6 @@ class OnHandshake extends Callback
         try {
             defer(function () {
                 fire(Event::SYSTEM_RESOURCE_CLEAN);
-                logger_insert();
             });
             $this->execute($request, $response);
         } catch (\Throwable $exception) {

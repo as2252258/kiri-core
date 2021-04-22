@@ -426,18 +426,6 @@ if (!function_exists('logger')) {
 	}
 }
 
-if (!function_exists('logger_insert')) {
-
-
-	/**
-	 * @throws Exception
-	 */
-	function logger_insert(): void
-	{
-		Snowflake::app()->getLogger()->insert();
-	}
-}
-
 if (!function_exists('get_file_extension')) {
 
 	function get_file_extension($filename)

@@ -32,9 +32,9 @@ class OnWorkerStop extends Callback
 		$this->clearMysqlClient();
 		$this->clearRedisClient();
 
-		Timer::clearAll();
+		fire(Event::SYSTEM_RESOURCE_CLEAN);
 
-		logger_insert();
+		Timer::clearAll();
 	}
 
 }

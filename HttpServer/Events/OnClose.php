@@ -29,7 +29,6 @@ class OnClose extends Callback
         try {
             defer(function () {
                 fire(Event::SYSTEM_RESOURCE_RELEASES);
-                logger_insert();
             });
 			$clientInfo = $server->getClientInfo($fd);
 			$event = Snowflake::app()->getEvent();

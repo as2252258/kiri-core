@@ -50,7 +50,6 @@ class OnReceive extends Callback
 		try {
 			defer(function (){
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
-				\logger_insert();
 			});
 			$request = $this->_request($fd, $data, $reID);
 			if (($node = $this->router->find_path($request)) === null) {

@@ -36,8 +36,6 @@ class OnWorkerError extends Callback
         );
 
         write($message, 'worker-exit');
-
-        logger_insert();
     }
 
 }

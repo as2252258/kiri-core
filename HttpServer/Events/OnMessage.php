@@ -40,7 +40,6 @@ class OnMessage extends Callback
 		try {
             defer(function () {
                 fire(Event::SYSTEM_RESOURCE_CLEAN);
-                logger_insert();
             });
             if ($frame->opcode === 0x08) {
 				return;

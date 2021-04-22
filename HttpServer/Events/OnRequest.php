@@ -34,7 +34,6 @@ class OnRequest extends Callback
     public function init()
     {
         $this->event = Snowflake::app()->getEvent();
-        $this->logger = Snowflake::app()->getLogger();
     }
 
 
@@ -48,8 +47,7 @@ class OnRequest extends Callback
     {
         try {
             defer(function () {
-                $this->event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
-                $this->logger->insert();
+                fire(Event::SYSTEM_RESOURCE_RELEASES);
             });
             /** @var HRequest $request */
             [$request, $response] = OnRequest::createContext($request, $response);

@@ -29,7 +29,6 @@ class OnFinish extends Callback
         try {
             defer(function () {
                 fire(Event::SYSTEM_RESOURCE_RELEASES);
-                logger_insert();
             });
             fire(Event::TASK_FINISH, [$task_id, $data]);
         } catch (\Throwable $exception) {

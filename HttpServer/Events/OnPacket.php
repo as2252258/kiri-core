@@ -38,7 +38,6 @@ class OnPacket extends Callback
 		try {
 			defer(function () {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
-				\logger_insert();
 			});
 			$request = $this->_request($clientInfo, $server, $data);
 
