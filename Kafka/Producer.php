@@ -11,6 +11,7 @@ use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -144,13 +145,12 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param $topic
-     * @param $groupId
-     * @param $brokers
-     * @return ProducerTopic
-     * @throws \Snowflake\Exception\ConfigException
-     */
+	/**
+	 * @param $topic
+	 * @param $groupId
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
     private function beforePushMessage($topic, $groupId): void
     {
         $consumers = Config::get('kafka.producers.' . $topic);
@@ -171,13 +171,12 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param TopicConf $topicConf
-     * @param string $topic
-     * @param array $message
-     * @param string $key
-     * @throws Exception
-     */
+	/**
+	 * @param string $topic
+	 * @param array $message
+	 * @param string $key
+	 * @throws Exception
+	 */
     private function sendMessage(string $topic, array $message, string $key = '')
     {
         $producer = $this->getProducer();
@@ -205,12 +204,12 @@ class Producer extends Component
     }
 
 
-
-    /**
-     * @param \RdKafka\Producer $producer
-     * @param ProducerTopic $producerTopic
-     * @throws Exception
-     */
+	/**
+	 * @param string $topic
+	 * @param \RdKafka\Producer $producer
+	 * @param ProducerTopic $producerTopic
+	 * @throws Exception
+	 */
     private function recover(string $topic, \RdKafka\Producer $producer, ProducerTopic $producerTopic)
     {
         $channel = Snowflake::app()->getChannel();
