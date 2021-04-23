@@ -223,6 +223,9 @@ class Response extends HttpService
 	 */
 	private function sendData($sendData, $status): void
 	{
+		if (!$this->response->isWritable()) {
+			return;
+		}
 		$this->setHeaders($status);
 		if (empty($sendData)) {
 			$this->response->end('');
