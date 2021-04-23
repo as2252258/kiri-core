@@ -225,13 +225,11 @@ class Response extends HttpService
 	{
 		$sendData = $this->setHeaders($status, $sendData);
 		if (mb_strlen($sendData) >= 134217728) {
-			var_dump($sendData);
 			$this->response->end('');
 		} else {
 			$this->response->end($sendData);
 		}
 		$this->response = null;
-		unset($this->response);
 		return $sendData;
 	}
 
