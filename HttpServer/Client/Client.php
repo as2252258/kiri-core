@@ -48,10 +48,10 @@ class Client extends ClientAbstracts
 	{
 		try {
 			$client = $this->generate_client($data, ...$url);
+			$this->setData('');
 			if ($client->statusCode < 0) {
 				throw new Exception($client->errMsg);
 			}
-			$this->setData('');
 			$body = $this->resolve($client->getHeaders(), $client->body);
 			if (in_array($client->getStatusCode(), [200, 201])) {
 				return $this->structure($body, $data, $client->getHeaders());

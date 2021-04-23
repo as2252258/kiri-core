@@ -62,6 +62,12 @@ abstract class ClientAbstracts extends Component implements IClient
 	}
 
 
+	protected function cleanData(): void
+	{
+		$this->_data = '';
+	}
+
+
 	/**
 	 * @param $path
 	 * @param array $params
