@@ -161,13 +161,14 @@ class Response extends HttpService
 			$this->response = $response;
 		}
 		if ($this->response instanceof SResponse) {
-			return $this->sendData($sendData, $statusCode);
+			$this->sendData($sendData, $statusCode);
 		} else {
 			if (!empty(request()->fd)) {
 				return '';
 			}
-			return $this->printResult($sendData);
+			$this->printResult($sendData);
 		}
+		return $sendData;
 	}
 
 	/**
@@ -218,13 +219,12 @@ class Response extends HttpService
 	/**
 	 * @param $sendData
 	 * @param $status
-	 * @return string
 	 * @throws Exception
 	 */
-	private function sendData($sendData, $status): string
+	private function sendData($sendData, $status): void
 	{
-		$sendData = $this->setHeaders($status, $sendData);
-		if (mb_strlen($sendData) >= 134217728) {
+		$this->setHeaders($status);
+		if (empty($sendData)) {
 			$this->response->end('');
 		} else {
 			$message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
@@ -232,28 +232,24 @@ class Response extends HttpService
 			$this->response->end($sendData);
 		}
 		$this->response = null;
-		return $sendData;
 	}
 
 
 	/**
 	 * @param $status
-	 * @param $sendData
-	 * @return string
 	 */
-	private function setHeaders($status, $sendData): string
+	private function setHeaders($status): void
 	{
 		$this->response->status($status);
 		$this->response->header('Content-Type', $this->getContentType());
 		$this->response->header('Run-Time', $this->getRuntime());
 
 		if (empty($this->headers) || !is_array($this->headers)) {
-			return $sendData == null ? '' : $sendData;
+			return;
 		}
 		foreach ($this->headers as $key => $header) {
 			$this->response->header($key, $header, true);
 		}
-		return $sendData == null ? '' : $sendData;
 	}
 
 
