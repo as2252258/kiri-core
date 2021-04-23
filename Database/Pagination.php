@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Snowflake\Abstracts\Component;
 use Closure;
 use Exception;
+use Snowflake\Abstracts\Component;
 use Snowflake\Event;
-use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
 /**
@@ -134,9 +133,7 @@ class Pagination extends Component
 	 */
 	public function plunk($param = [])
 	{
-		$this->_group = new Coroutine\WaitGroup();
-		Coroutine::create([$this, 'loop'], $param);
-		$this->_group->wait();
+		$this->loop($param);
 	}
 
 
@@ -144,6 +141,7 @@ class Pagination extends Component
 	 * 轮训
 	 * @param $param
 	 * @return array
+	 * @throws Exception
 	 */
 	public function loop($param): array
 	{
@@ -152,7 +150,7 @@ class Pagination extends Component
 		}
 		[$length, $data] = $this->get();
 
-		$this->runner($data, $param);
+		$this->executed($this->_callback, $data, $param);
 
 		unset($data);
 		if ($length < $this->_limit) {
@@ -172,40 +170,20 @@ class Pagination extends Component
 
 
 	/**
-	 * @param $data
-	 * @param $param
-	 */
-	private function runner($data, $param)
-	{
-		if (Snowflake::inCoroutine()) {
-			$this->executed($this->_callback, $data, $param);
-		} else {
-			call_user_func($this->_callback, $data, $param);
-		}
-	}
-
-
-	/**
 	 * @param $callback
 	 * @param $data
 	 * @param $param
-	 * 解释器
-	 * @return mixed
+	 * @throws Exception
 	 */
-	private function executed($callback, $data, $param): mixed
+	private function executed($callback, $data, $param): void
 	{
-		$this->_group->add(1);
-		return Coroutine::create(function ($callback, $data, $param): void {
-			try {
-				call_user_func($callback, $data, $param);
-			} catch (\Throwable $exception) {
-				$this->addError($exception, 'throwable');
-			} finally {
-				$event = Snowflake::app()->getEvent();
-				$event->trigger(Event::SYSTEM_RESOURCE_RELEASES);
-				$this->_group->done();
-			}
-		}, $callback, $data, $param);
+		try {
+			call_user_func($callback, $data, $param);
+		} catch (\Throwable $exception) {
+			$this->addError($exception, 'throwable');
+		} finally {
+			fire(Event::SYSTEM_RESOURCE_RELEASES);
+		}
 	}
 
 
