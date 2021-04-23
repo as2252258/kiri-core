@@ -224,10 +224,8 @@ class Response extends HttpService
 	private function sendData($sendData, $status): string
 	{
 		$sendData = $this->setHeaders($status, $sendData);
-
-		$this->success(request()->getUri());
-
 		if (mb_strlen($sendData) >= 134217728) {
+			var_dump($sendData);
 			$this->response->end('');
 		} else {
 			$this->response->end($sendData);
