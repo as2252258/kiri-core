@@ -187,7 +187,6 @@ abstract class Pool extends Component
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
-		var_dump($this->canCreate($name));
 		if (!$this->canCreate($name)) {
 			return;
 		}
