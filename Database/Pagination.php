@@ -151,7 +151,7 @@ class Pagination extends Component
 		}
 		[$length, $data] = $this->get();
 
-		$this->executed($this->_callback, $data, $param);
+		$this->executed($data, $param);
 
 		unset($data);
 		if ($length < $this->_limit) {
@@ -171,15 +171,14 @@ class Pagination extends Component
 
 
 	/**
-	 * @param $callback
 	 * @param $data
 	 * @param $param
 	 * @throws Exception
 	 */
-	private function executed($callback, $data, $param): void
+	private function executed($data, $param): void
 	{
 		try {
-			call_user_func($callback, $data, $param);
+			call_user_func($this->_callback, $data, $param);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		} finally {
