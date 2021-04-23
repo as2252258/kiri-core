@@ -8,7 +8,6 @@ use Exception;
 use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Exception\ConfigException;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
 
@@ -149,10 +148,7 @@ abstract class Pool extends Component
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
-		if (!Context::hasContext('create::client::ing::' . $name)) {
-			$this->push($name, $this->createClient($name, $callback));
-			Context::remove('create::client::ing::' . $name);
-		}
+		$this->push($name, $this->createClient($name, $callback));
 	}
 
 
@@ -173,7 +169,6 @@ abstract class Pool extends Component
 			return $cds . '_slave';
 		}
 	}
-
 
 
 	/**
