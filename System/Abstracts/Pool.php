@@ -250,6 +250,7 @@ abstract class Pool extends Component
 		if (!isset($this->hasCreate[$name])) {
 			$this->hasCreate[$name] = 0;
 		}
+		var_dump($this->hasCreate[$name] . '->' . $this->max);
 		return $this->hasCreate[$name] >= $this->max;
 	}
 
