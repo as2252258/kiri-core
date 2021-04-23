@@ -227,7 +227,8 @@ class Response extends HttpService
 		if (mb_strlen($sendData) >= 134217728) {
 			$this->response->end('');
 		} else {
-			Snowflake::writeFile(storage('request.log'), $sendData . PHP_EOL. PHP_EOL, FILE_APPEND);
+			$message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
+			Snowflake::writeFile(storage('response.log'), $message, FILE_APPEND);
 			$this->response->end($sendData);
 		}
 		$this->response = null;
