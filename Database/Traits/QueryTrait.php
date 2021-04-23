@@ -511,16 +511,6 @@ trait QueryTrait
 		return $this;
 	}
 
-	/**
-	 * @param $limit
-	 * @return $this
-	 */
-	public function plunk($limit): static
-	{
-		$this->offset = 0;
-		$this->limit = $limit;
-		return $this;
-	}
 
 	/**
 	 * @param $columns
