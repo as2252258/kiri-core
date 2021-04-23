@@ -12,8 +12,6 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 use HttpServer\Client\Http2;
-use HttpServer\Http\Request;
-use HttpServer\Http\Response;
 use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
@@ -339,25 +337,6 @@ abstract class BaseApplication extends Service
 
 
     /**
-     * @return Response
-     * @throws Exception
-     */
-    public function getResponse(): Response
-    {
-        return $this->get('response');
-    }
-
-    /**
-     * @return Request
-     * @throws Exception
-     */
-    public function getRequest(): Request
-    {
-        return $this->get('request');
-    }
-
-
-    /**
      * @param $name
      * @return Table
      * @throws Exception
@@ -479,8 +458,6 @@ abstract class BaseApplication extends Service
             'connections'       => ['class' => Connection::class],
             'redis_connections' => ['class' => SRedis::class],
             'pool'              => ['class' => SPool::class],
-            'response'          => ['class' => Response::class],
-            'request'           => ['class' => Request::class],
             'config'            => ['class' => Config::class],
             'logger'            => ['class' => Logger::class],
             'annotation'        => ['class' => SAnnotation::class],

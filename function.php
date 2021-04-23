@@ -509,7 +509,7 @@ if (!function_exists('request')) {
 	function request(): Request
 	{
 		if (!Context::hasContext('request')) {
-			return make('request', Request::class);
+            return new Request();
 		}
 		return Context::getContext('request');
 	}
@@ -659,7 +659,7 @@ if (!function_exists('response')) {
 	function response(): Response|stdClass
 	{
 		if (!Context::hasContext('response')) {
-			return make('response', Response::class);
+			return new Response();
 		}
 		return Context::getContext('response');
 	}
