@@ -28,6 +28,36 @@ abstract class Pool extends Component
 	public int $lastTime = 0;
 
 
+	protected array $hasCreate = [];
+
+
+	/**
+	 * @param string $name
+	 */
+	public function increment(string $name)
+	{
+		if (!isset($this->hasCreate[$name])) {
+			$this->hasCreate[$name] = 0;
+		}
+		$this->hasCreate[$name] += 1;
+	}
+
+
+	/**
+	 * @param string $name
+	 */
+	public function decrement(string $name)
+	{
+		if (!isset($this->hasCreate[$name])) {
+			return;
+		}
+		if ($this->hasCreate[$name] <= 0) {
+			return;
+		}
+		$this->hasCreate[$name] -= 1;
+	}
+
+
 	/**
 	 * @return array
 	 * @throws ConfigException
@@ -78,6 +108,18 @@ abstract class Pool extends Component
 
 
 	/**
+	 * @param $name
+	 */
+	protected function clearCreateLog($name)
+	{
+		if (!isset($this->hasCreate[$name])) {
+			return;
+		}
+		$this->hasCreate[$name] = 0;
+	}
+
+
+	/**
 	 * @param $channel
 	 * @param $name
 	 * @param $retain_number
@@ -90,7 +132,7 @@ abstract class Pool extends Component
 			if ($connection) {
 				unset($connection);
 			}
-			$this->desc($name);
+			$this->decrement($name);
 		}
 	}
 
@@ -145,6 +187,9 @@ abstract class Pool extends Component
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
+		if (!$this->canCreate($name)) {
+			return;
+		}
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
@@ -182,15 +227,6 @@ abstract class Pool extends Component
 		return true;
 	}
 
-	/**
-	 * @param $name
-	 * @throws Exception
-	 */
-	public function desc(string $name)
-	{
-		throw new Exception('Undefined system processing function.');
-	}
-
 
 	/**
 	 * @param array $config
@@ -201,6 +237,19 @@ abstract class Pool extends Component
 	public function get(mixed $config, bool $isMaster): mixed
 	{
 		throw new Exception('Undefined system processing function.');
+	}
+
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	public function canCreate(string $name): bool
+	{
+		if (!isset($this->hasCreate[$name])) {
+			$this->hasCreate[$name] = 0;
+		}
+		return $this->hasCreate[$name] >= $this->max;
 	}
 
 

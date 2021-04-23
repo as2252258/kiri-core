@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Snowflake\Pool;
 
+use Exception;
 use HttpServer\Http\Context;
 use PDO;
-use Exception;
-use Swoole\Coroutine;
 use Snowflake\Abstracts\Pool;
+use Swoole\Coroutine;
 use Swoole\Error;
 use Throwable;
 
@@ -18,8 +18,6 @@ use Throwable;
 class Connection extends Pool
 {
 
-
-	public array $hasCreate = [];
 
 	public int $timeout = 1900;
 
@@ -133,9 +131,6 @@ class Connection extends Pool
 	public function get(mixed $config, $isMaster = false): mixed
 	{
 		$coroutineName = $this->name('mysql', $config['cds'], $isMaster);
-		if (!isset($this->hasCreate[$coroutineName])) {
-			$this->hasCreate[$coroutineName] = 0;
-		}
 		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
 			return $pdo;
 		}
@@ -167,6 +162,9 @@ class Connection extends Pool
 		if (!empty($charset)) {
 			$link->query('SET NAMES ' . $charset);
 		}
+
+		$this->increment($name);
+
 		return $link;
 	}
 
@@ -178,7 +176,6 @@ class Connection extends Pool
 	 */
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{
-//        $this->warning(($isBefore ? 'before ' : '') . 'create client[address: ' . $cds . ', ' . env('workerId') . ', coroutine: ' . Coroutine::getCid() . ', has num: ' . $this->size($coroutineName) . ', has create: ' . $this->hasCreate[$coroutineName] . ']');
 	}
 
 
@@ -193,7 +190,7 @@ class Connection extends Pool
 			return;
 		}
 
-        /** @var PDO $client */
+		/** @var PDO $client */
 		$client = Context::getContext($coroutineName);
 		if ($client->inTransaction()) {
 			$client->commit();
@@ -220,7 +217,7 @@ class Connection extends Pool
 	 */
 	public function connection_clear()
 	{
-        $this->flush(0);
+		$this->flush(0);
 	}
 
 
@@ -243,19 +240,19 @@ class Connection extends Pool
 	{
 		try {
 			if (empty($client) || !($client instanceof PDO)) {
-				return $result = false;
+				$result = false;
+			} else if (!$client->getAttribute(PDO::ATTR_SERVER_INFO)) {
+				$result = false;
+			} else {
+				$result = true;
 			}
-			if (!$client->getAttribute(PDO::ATTR_SERVER_INFO)) {
-				return $result = false;
-			}
-			return $result = true;
 		} catch (Error | Throwable $exception) {
-			$this->addError($exception, 'mysql');
-			return $result = false;
+			$result = $this->addError($exception, 'mysql');
 		} finally {
 			if (!$result) {
-				$this->desc($name);
+				$this->decrement($name);
 			}
+			return $result;
 		}
 	}
 
@@ -274,25 +271,4 @@ class Connection extends Pool
 		$this->clean($coroutineName);
 	}
 
-	/**
-	 * @param $coroutineName
-	 */
-	public function incr($coroutineName)
-	{
-		if (!isset($this->hasCreate[$coroutineName])) {
-			$this->hasCreate[$coroutineName] = 0;
-		}
-		$this->hasCreate[$coroutineName] += 1;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	public function desc(string $name)
-	{
-		if (!isset($this->hasCreate[$name])) {
-			$this->hasCreate[$name] = 0;
-		}
-		$this->hasCreate[$name] -= 1;
-	}
 }
