@@ -65,6 +65,7 @@ class OnPipeMessage extends Callback
                     $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
                 }
             }
+            fire(Event::SYSTEM_RESOURCE_RELEASES);
         });
         $handler->increment()->execute();
         return 'success';
