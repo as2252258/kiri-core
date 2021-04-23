@@ -35,8 +35,6 @@ class Pagination extends Component
 	/** @var Closure */
 	private Closure $_callback;
 
-	/** @var Coroutine\WaitGroup */
-	private Coroutine\WaitGroup $_group;
 
 	/**
 	 * PaginationIteration constructor.

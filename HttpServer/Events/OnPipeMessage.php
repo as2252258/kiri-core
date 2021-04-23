@@ -28,9 +28,6 @@ class OnPipeMessage extends Callback
      */
     public function onHandler(Server $server, int $src_worker_id, $swollen_universalize)
     {
-        defer(function () {
-            fire(Event::SYSTEM_RESOURCE_RELEASES);
-        });
         match ($swollen_universalize['action'] ?? null) {
             'kafka' => $this->onKafkaWorker($swollen_universalize),
             'crontab' => $this->onCrontabWorker($swollen_universalize),
@@ -66,7 +63,6 @@ class OnPipeMessage extends Callback
                     $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
                 }
             }
-            fire(Event::SYSTEM_RESOURCE_RELEASES);
         });
         $handler->increment()->execute();
         return 'success';
