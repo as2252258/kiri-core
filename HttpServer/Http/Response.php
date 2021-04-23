@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace HttpServer\Http;
 
+use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
-use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Help;
 use Snowflake\Snowflake;
@@ -227,7 +227,11 @@ class Response extends HttpService
 
 		$this->success(request()->getUri());
 
-		$this->response->end($sendData);
+		if (mb_strlen($sendData) >= 134217728) {
+			$this->response->end('');
+		} else {
+			$this->response->end($sendData);
+		}
 		$this->response = null;
 		unset($this->response);
 		return $sendData;
