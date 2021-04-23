@@ -42,7 +42,7 @@ class Zookeeper extends Process
 
     /**
      * @param \Swoole\Process $process
-     * @throws \Snowflake\Exception\ConfigException
+     * @throws Exception
      */
     public function before(\Swoole\Process $process): void
     {
@@ -61,25 +61,22 @@ class Zookeeper extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        $ticker = Config::get('crontab.ticker', 50) / 1000;
         $redis = Snowflake::app()->getRedis();
         while (true) {
             $range = $this->loadCarobTask($redis);
             foreach ($range as $value) {
                 $this->dispatch($redis, $value);
             }
-            Coroutine::sleep($ticker);
+            Coroutine::sleep(200);
         }
     }
 
 
-    /**
-     * @param $server
-     * @param Redis|\Redis $redis
-     * @param int $setting
-     * @param $value
-     * @throws Exception
-     */
+	/**
+	 * @param Redis|\Redis $redis
+	 * @param $value
+	 * @throws Exception
+	 */
     private function dispatch(Redis|\Redis $redis, $value)
     {
         try {
