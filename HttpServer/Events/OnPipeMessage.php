@@ -8,7 +8,9 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Kafka\Struct;
 use Snowflake\Crontab\Crontab;
+use Snowflake\Crontab\Producer;
 use Snowflake\Event;
+use Snowflake\Snowflake;
 use Swoole\Server;
 
 /**
@@ -48,6 +50,22 @@ class OnPipeMessage extends Callback
             throw new Exception('unknown handler');
         }
         /** @var Crontab $handler */
+        defer(function () use ($handler) {
+            $return = $handler->isRecover();
+            if ($return === 999) {
+                $name = $handler->getName();
+
+                $redis = Snowflake::app()->getRedis();
+                if ($redis->exists('stop:crontab:' . $name)) {
+                    $redis->del('crontab:' . $name);
+                    $redis->del('stop:crontab:' . $name);
+                } else {
+                    $redis->set('crontab:' . $name, swoole_serialize($handler));
+                    $tickTime = time() + $handler->getTickTime();
+                    $redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
+                }
+            }
+        });
         $handler->increment()->execute();
         return 'success';
     }
