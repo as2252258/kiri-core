@@ -110,7 +110,7 @@ abstract class Pool extends Component
 	/**
 	 * @param $name
 	 */
-	protected function clearCreateLog($name)
+	protected function clearCreateLog($name): void
 	{
 		if (!isset($this->hasCreate[$name])) {
 			return;
@@ -125,14 +125,18 @@ abstract class Pool extends Component
 	 * @param $retain_number
 	 * @throws Exception
 	 */
-	protected function pop($channel, $name, $retain_number)
+	protected function pop($channel, $name, $retain_number): void
 	{
-		while ($channel->length() > $retain_number) {
-			$connection = $channel->pop();
-			if ($connection) {
-				unset($connection);
+		if ($channel->errCode == 0) {
+			while ($channel->length() > $retain_number) {
+				$connection = $channel->pop();
+				if ($connection) {
+					unset($connection);
+				}
+				$this->decrement($name);
 			}
-			$this->decrement($name);
+		} else {
+			$this->clearCreateLog($name);
 		}
 	}
 
@@ -187,9 +191,9 @@ abstract class Pool extends Component
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
-//		if (!$this->canCreate($name)) {
-//			return;
-//		}
+		if (!$this->canCreate($name)) {
+			return;
+		}
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
@@ -260,6 +264,9 @@ abstract class Pool extends Component
 	public function hasItem(string $name): bool
 	{
 		if (isset($this->_items[$name])) {
+			if ($this->_items[$name]->errCode == -2) {
+				$this->_items[$name] = new Channel($this->max);
+			}
 			return !$this->_items[$name]->isEmpty();
 		}
 		return false;
@@ -275,7 +282,7 @@ abstract class Pool extends Component
 		if (!Context::inCoroutine()) {
 			return 0;
 		}
-		if (!isset($this->_items[$name])) {
+		if (!isset($this->_items[$name]) || $this->_items[$name]->errCode == -2) {
 			return 0;
 		}
 		return $this->_items[$name]->length();
@@ -292,6 +299,9 @@ abstract class Pool extends Component
 			return;
 		}
 		if (!isset($this->_items[$name])) {
+			$this->_items[$name] = new Channel($this->max);
+		}
+		if ($this->_items[$name]->errCode == -2) {
 			$this->_items[$name] = new Channel($this->max);
 		}
 		if (!$this->_items[$name]->isFull()) {
