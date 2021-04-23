@@ -111,7 +111,6 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 
 	/**
 	 * @return mixed
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function getModel(): ActiveRecord
