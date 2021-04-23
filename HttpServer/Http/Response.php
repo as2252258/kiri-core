@@ -219,10 +219,13 @@ class Response extends HttpService
 	 * @param $sendData
 	 * @param $status
 	 * @return string
+	 * @throws Exception
 	 */
 	private function sendData($sendData, $status): string
 	{
 		$sendData = $this->setHeaders($status, $sendData);
+
+		$this->success(request()->getUri());
 
 		$this->response->end($sendData);
 		$this->response = null;
