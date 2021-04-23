@@ -46,10 +46,11 @@ class OnPipeMessage extends Callback
      */
     private function onCrontabWorker(array $message): string
     {
-        if (empty($handler = $message['handler'] ?? null)) {
+        if (empty($message['handler'] ?? null)) {
             throw new Exception('unknown handler');
         }
         /** @var Crontab $handler */
+        $handler = swoole_unserialize($message['handler']);
         defer(function () use ($handler) {
             $return = $handler->isRecover();
             if ($return === 999) {

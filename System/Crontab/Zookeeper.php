@@ -85,7 +85,7 @@ class Zookeeper extends Process
             if (empty($handler = $redis->get('crontab:' . $value))) {
                 return;
             }
-            $params['handler'] = swoole_unserialize($handler);
+            $params['handler'] = $handler;
 
             $this->server->sendMessage($params, $this->getWorker());
         } catch (Throwable $exception) {
