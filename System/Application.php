@@ -145,6 +145,7 @@ class Application extends BaseApplication
 			}
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
+		    var_export($exception);
 			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
