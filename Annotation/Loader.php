@@ -173,7 +173,8 @@ class Loader extends BaseObject
 
             $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
 
-            var_dump($replace->getName() . '::' . $replace->getAttributes(Target::class));
+            var_dump($replace->getName());
+            var_dump($replace->getAttributes(Target::class));
 
             if (empty($replace) || !$replace->getAttributes(Target::class)) {
                 return;
