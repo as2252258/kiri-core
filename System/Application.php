@@ -27,6 +27,7 @@ use Snowflake\Exception\NotFindClassException;
 use stdClass;
 use Swoole\Timer;
 use Wchat\WchatProviders;
+use function Co\run;
 
 /**
  * Class Init
@@ -39,132 +40,129 @@ use Wchat\WchatProviders;
 class Application extends BaseApplication
 {
 
-	/**
-	 * @var string
-	 */
-	public string $id = 'uniqueId';
+    /**
+     * @var string
+     */
+    public string $id = 'uniqueId';
 
 
-	public string $state = '';
+    public string $state = '';
 
 
-	/**
-	 * @throws NotFindClassException
-	 */
-	public function init()
-	{
-		$this->import(ConsoleProviders::class);
-		$this->import(DatabasesProviders::class);
-		$this->import(ServerProviders::class);
+    /**
+     * @throws NotFindClassException
+     */
+    public function init()
+    {
+        $this->import(ConsoleProviders::class);
+        $this->import(DatabasesProviders::class);
+        $this->import(ServerProviders::class);
 
-		$this->import(CrontabProviders::class);
-	}
-
-
-	/**
-	 * @param Closure|array $closure
-	 * @return $this
-	 * @throws Exception
-	 */
-	public function middleware(Closure|array $closure): static
-	{
-		$this->getRouter()->setMiddleware($closure);
-		return $this;
-	}
+        $this->import(CrontabProviders::class);
+    }
 
 
-	/**
-	 * @param bool $useTree
-	 * @return $this
-	 * @throws Exception
-	 */
-	public function setUseTree(bool $useTree): static
-	{
-		$this->getRouter()->setUseTree($useTree);
-		return $this;
-	}
+    /**
+     * @param Closure|array $closure
+     * @return $this
+     * @throws Exception
+     */
+    public function middleware(Closure|array $closure): static
+    {
+        $this->getRouter()->setMiddleware($closure);
+        return $this;
+    }
 
 
-	/**
-	 * @param string $service
-	 * @return $this
-	 * @throws
-	 */
-	public function import(string $service): static
-	{
-		if (!class_exists($service)) {
-			throw new NotFindClassException($service);
-		}
-		$class = Snowflake::createObject($service);
-		if (method_exists($class, 'onImport')) {
-			$class->onImport($this);
-		}
-		return $this;
-	}
+    /**
+     * @param bool $useTree
+     * @return $this
+     * @throws Exception
+     */
+    public function setUseTree(bool $useTree): static
+    {
+        $this->getRouter()->setUseTree($useTree);
+        return $this;
+    }
 
 
-	/**
-	 * @param $kernel
-	 * @return $this
-	 */
-	public function commands(Kernel $kernel): static
-	{
-		foreach ($kernel->getCommands() as $command) {
-			$this->register($command);
-		}
-		return $this;
-	}
+    /**
+     * @param string $service
+     * @return $this
+     * @throws
+     */
+    public function import(string $service): static
+    {
+        if (!class_exists($service)) {
+            throw new NotFindClassException($service);
+        }
+        $class = Snowflake::createObject($service);
+        if (method_exists($class, 'onImport')) {
+            $class->onImport($this);
+        }
+        return $this;
+    }
 
 
-	/**
-	 * @param string $command
-	 * @throws
-	 */
-	public function register(string $command)
-	{
-		/** @var Console $abstracts */
-		$abstracts = $this->get('console');
-		$abstracts->register($command);
-	}
+    /**
+     * @param $kernel
+     * @return $this
+     */
+    public function commands(Kernel $kernel): static
+    {
+        foreach ($kernel->getCommands() as $command) {
+            $this->register($command);
+        }
+        return $this;
+    }
 
 
-	/**
-	 * @param Input $argv
-	 * @return void
-	 * @throws Exception
-	 */
-	public function start(Input $argv): void
-	{
-		try {
-			/** @var Console $manager */
-			$manager = Snowflake::app()->get('console');
-			$manager->register(Runtime::class);
-			$manager->setParameters($argv);
-			$class = $manager->search();
-			if (!($class instanceof Command)) {
-				scan_directory(directory('app'), 'App');
-			}
-			response()->send($manager->execCommand($class));
-		} catch (\Throwable $exception) {
-		    var_export(current($exception->getTrace()));
-			response()->send(implode("\n", [
-				'Msg: ' . $exception->getMessage(),
-				'Line: ' . $exception->getLine(),
-				'File: ' . $exception->getFile()
-			]));
-		} finally {
-			Timer::clearAll();
-		}
-	}
+    /**
+     * @param string $command
+     * @throws
+     */
+    public function register(string $command)
+    {
+        /** @var Console $abstracts */
+        $abstracts = $this->get('console');
+        $abstracts->register($command);
+    }
 
-	/**
-	 * @param $className
-	 * @param null $abstracts
-	 * @return stdClass
-	 * @throws Exception
-	 */
-	public function make($className, $abstracts = null): stdClass
-	{
-		return make($className, $abstracts);
-	}
+
+    /**
+     * @param Input $argv
+     * @return void
+     * @throws Exception
+     */
+    public function start(Input $argv): void
+    {
+        run(function () use ($argv) {
+            try {
+                /** @var Console $manager */
+                $manager = Snowflake::app()->get('console');
+                $manager->register(Runtime::class);
+                $manager->setParameters($argv);
+                $class = $manager->search();
+                if (!($class instanceof Command)) {
+                    scan_directory(directory('app'), 'App');
+                }
+                response()->send($manager->execCommand($class));
+            } catch (\Throwable $exception) {
+                response()->send(logger()->exception($exception));
+            } finally {
+                Timer::clearAll();
+            }
+        });
+    }
+
+    /**
+     * @param $className
+     * @param null $abstracts
+     * @return stdClass
+     * @throws Exception
+     */
+    public function make($className, $abstracts = null): stdClass
+    {
+        return make($className, $abstracts);
+    }
 }
