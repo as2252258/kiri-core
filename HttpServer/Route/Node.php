@@ -130,6 +130,8 @@ class Node extends HttpService
             if (empty($dispatchParam)) {
                 $dispatchParam = [\request()];
             }
+            return call_user_func($this->handler, ...$dispatchParam);
+
             return \aop($this->handler, $dispatchParam);
         };
     }
@@ -526,6 +528,8 @@ class Node extends HttpService
      */
     private function runValidator($dispatchParams): mixed
     {
+        return call_user_func($this->callback, ...$dispatchParams);
+
         /** @var HttpFilter $filter */
         $filter = Snowflake::app()->get('filter');
         $validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
