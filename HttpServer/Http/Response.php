@@ -182,12 +182,11 @@ class Response extends HttpService
             return '';
         }
         if (isset($this->_format_maps[$this->format])) {
-            $config['class'] = $this->_format_maps[$this->format];
+            $className = $this->_format_maps[$this->format];
         } else {
-            $config['class'] = HtmlFormatter::class;
+            $className = HtmlFormatter::class;
         }
-        $formatter = Snowflake::createObject($config);
-        return $formatter->send($context)->getData();
+        return (new $className())->send($context)->getData();
     }
 
     /**
