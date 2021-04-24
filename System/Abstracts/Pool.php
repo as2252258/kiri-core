@@ -169,9 +169,9 @@ abstract class Pool extends Component
 	 */
 	protected function getFromChannel($name, mixed $callback): mixed
 	{
-		if (!Context::inCoroutine()) {
-			return $this->createClient($name, $callback);
-		}
+//		if (!Context::inCoroutine()) {
+//			return $this->createClient($name, $callback);
+//		}
 		if (!$this->hasItem($name)) {
 			$this->createByCallback($name, $callback);
 		}
