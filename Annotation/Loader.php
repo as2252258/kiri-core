@@ -173,9 +173,6 @@ class Loader extends BaseObject
             if ($path->getExtension() !== 'php') {
                 return;
             }
-            if (str_starts_with($path->getRealPath(), __DIR__)) {
-                return;
-            }
             $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
             if (empty($replace) || count($replace->getAttributes(Target::class)) < 1) {
                 return;
