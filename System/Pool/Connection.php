@@ -241,9 +241,7 @@ class Connection extends Pool
 		try {
 			if (empty($client) || !($client instanceof PDO)) {
 				$result = false;
-			} else if (!$client->getAttribute(PDO::ATTR_SERVER_INFO)) {
-				$result = false;
-			} else {
+			}  else {
 				$result = true;
 			}
 		} catch (Error | Throwable $exception) {
