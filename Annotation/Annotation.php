@@ -81,6 +81,16 @@ class Annotation extends Component
     }
 
 
+    /**
+     * @param string $class
+     * @return array
+     */
+    public function getRelateMethods(string $class): array
+    {
+        return $this->_model_relate[$class] ?? [];
+    }
+
+
 
     /**
      * @param string $class

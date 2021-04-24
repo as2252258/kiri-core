@@ -732,10 +732,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public function getRelate($name): mixed
     {
-        if (!isset($this->_relate[$name])) {
-            return NULL;
+        if (empty($this->_relate[$name])) {
+            $this->_relate = Snowflake::getAnnotation()->getRelateMethods(get_called_class());
         }
-        return $this->_relate[$name];
+        return $this->_relate[$name] ?? null;
     }
 
 
