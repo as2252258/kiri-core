@@ -251,6 +251,7 @@ class Response extends HttpService
         foreach ($this->headers as $key => $header) {
             $response->header($key, $header, true);
         }
+        $this->headers = [];
     }
 
 
