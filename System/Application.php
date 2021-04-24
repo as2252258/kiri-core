@@ -21,6 +21,7 @@ use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Abstracts\Kernel;
+use Snowflake\Core\Json;
 use Snowflake\Crontab\CrontabProviders;
 use Snowflake\Exception\NotFindClassException;
 use stdClass;
@@ -145,7 +146,7 @@ class Application extends BaseApplication
 			}
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
-		    var_export($exception);
+		    var_export(Json::encode($exception));
 			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
