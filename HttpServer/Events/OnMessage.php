@@ -30,41 +30,44 @@ use Swoole\WebSocket\Server;
 class OnMessage extends Callback
 {
 
-	/**
-	 * @param Server $server
-	 * @param Frame $frame
-	 * @throws
-	 */
-	public function onHandler(Server $server, Frame $frame)
-	{
-		try {
+    /**
+     * @param Server $server
+     * @param Frame $frame
+     * @throws
+     */
+    public function onHandler(Server $server, Frame $frame)
+    {
+        try {
             defer(function () {
                 fire(Event::SYSTEM_RESOURCE_CLEAN);
             });
             if ($frame->opcode === 0x08) {
-				return;
-			}
-			$clientInfo = $server->getClientInfo($frame->fd);
-			$event = Snowflake::app()->getEvent();
+                return;
+            }
+            $clientInfo = $server->getClientInfo($frame->fd);
+            $event = Snowflake::app()->getEvent();
 
-			if (!$event->exists(($name = $this->getName($clientInfo)))) {
-				return;
-			}
-			$event->trigger($name, [$frame, $server]);
-		} catch (\Throwable $exception) {
-			$this->addError($exception, 'websocket');
-			$server->send($frame->fd, $exception->getMessage());
-		}
-	}
+            if (!$event->exists(($name = $this->getName($clientInfo)))) {
+                return;
+            }
+            $event->trigger($name, [$frame, $server]);
+        } catch (\Throwable $exception) {
+            $this->addError($exception, 'websocket');
+            if (!swoole()->exist($frame->fd)) {
+                return;
+            }
+            $server->send($frame->fd, $exception->getMessage());
+        }
+    }
 
 
-	/**
-	 * @param $clientInfo
-	 * @return string
-	 */
-	private function getName($clientInfo): string
-	{
-		return 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
-	}
+    /**
+     * @param $clientInfo
+     * @return string
+     */
+    private function getName($clientInfo): string
+    {
+        return 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
+    }
 
 }
