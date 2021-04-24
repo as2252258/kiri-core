@@ -423,7 +423,7 @@ class Loader extends BaseObject
      * @param $value
      * @param $name
      */
-    private function _execute($class, $annotation, $handler, $value, $name)
+    private function _execute($class,Annotation $annotation, $handler, $value, $name)
     {
         if ($value instanceof Relation) {
             $annotation->addRelate($handler, $value->name, $name);
