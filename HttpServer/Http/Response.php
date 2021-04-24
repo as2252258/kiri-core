@@ -200,9 +200,7 @@ class Response extends HttpService
         $result = Help::toString($result);
         $string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
 
-        defer(function () {
-            fire('CONSOLE_END');
-        });
+        fire('CONSOLE_END');
         if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
             return (string)$result;
         }
@@ -215,7 +213,7 @@ class Response extends HttpService
         $string .= 'Command End!' . PHP_EOL . PHP_EOL;
         print_r($string);
 
-        return $result;
+        return (string)$result;
     }
 
     /**
