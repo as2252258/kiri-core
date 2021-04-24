@@ -178,7 +178,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array = ['handler' => $replace, 'target' => [], 'methods' => [], 'property' => []];
+            $_array = ['handler' => $replace->getName(), 'target' => [], 'methods' => [], 'property' => []];
             foreach ($replace->getAttributes() as $attribute) {
                 if ($attribute->getName() == Attribute::class) {
                     continue;
@@ -399,12 +399,14 @@ class Loader extends BaseObject
             if ($annotations === null) {
                 continue;
             }
+
+            $class = Snowflake::createObject($className['handler']);
             foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute([$annotations['handler']]);
+                $value->execute([$class]);
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
-                    $value->execute([$annotations['handler'], $name]);
+                    $value->execute([$class, $name]);
                 }
             }
         }
