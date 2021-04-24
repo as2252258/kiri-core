@@ -409,15 +409,17 @@ class Loader extends BaseObject
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
-                    if ($value instanceof Relation) {
-                        $annotation->addRelate($annotations['handler'], $value->name, $name);
-                    } else if ($value instanceof Get) {
-                        $annotation->addGets($annotations['handler'], $value->name, $name);
-                    } else if ($value instanceof Set) {
-                        $annotation->addSets($annotations['handler'], $value->name, $name);
-                    } else {
-                        $value->execute([$class, $name]);
-                    }
+                    $value->execute([$class, $name]);
+//
+//                    if ($value instanceof Relation) {
+//                        $annotation->addRelate($annotations['handler'], $value->name, $name);
+//                    } else if ($value instanceof Get) {
+//                        $annotation->addGets($annotations['handler'], $value->name, $name);
+//                    } else if ($value instanceof Set) {
+//                        $annotation->addSets($annotations['handler'], $value->name, $name);
+//                    } else {
+//                        $value->execute([$class, $name]);
+//                    }
                 }
             }
         }
