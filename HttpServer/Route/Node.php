@@ -42,7 +42,7 @@ class Node extends HttpService
 
     private string $_error = '';
 
-    public array $rules = [];
+    private array $rules = [];
 
 
     private string $_dataType = '';
@@ -69,7 +69,7 @@ class Node extends HttpService
      */
     public function setDataType(string $dataType)
     {
-        $this->_dataType;
+        $this->_dataType = $dataType;
     }
 
 
@@ -338,9 +338,9 @@ class Node extends HttpService
     {
         $annotation = annotation()->getMethods($className, $action);
         if (empty($annotation)) {
-            return $this;
+            return $this->injectRules($className, $action);
         }
-        foreach ($annotation as $name => $attribute) {
+        foreach ($annotation as $attribute) {
             if ($attribute instanceof Interceptor) {
                 $this->addInterceptor($attribute->interceptor);
             }
@@ -354,6 +354,22 @@ class Node extends HttpService
                 $this->addLimits($attribute->limits);
             }
         }
+        return $this->injectRules($className, $action);
+    }
+
+
+    /**
+     * @param string $controller
+     * @param string $action
+     * @return $this
+     * @throws \Exception
+     */
+    private function injectRules(string $controller, string $action): static
+    {
+        /** @var HttpFilter $filter */
+        $filter = Snowflake::app()->get('filter');
+        $this->rules = $filter->getRules($controller, $action);
+
         return $this;
     }
 
@@ -528,11 +544,9 @@ class Node extends HttpService
      */
     private function runValidator($dispatchParams): mixed
     {
-        return call_user_func($this->callback, ...$dispatchParams);
-
         /** @var HttpFilter $filter */
         $filter = Snowflake::app()->get('filter');
-        $validator = $filter->check(get_class($this->handler[0]), $this->handler[1]);
+        $validator = $filter->check($this->rules);
         if (!($validator instanceof Validator)) {
             return call_user_func($this->callback, ...$dispatchParams);
         } else if ($validator->validation()) {
