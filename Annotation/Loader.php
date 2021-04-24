@@ -405,19 +405,19 @@ class Loader extends BaseObject
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$annotations['handler']]);
             }
+
+            $_className = get_class($annotations['handler']);
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
-                    $value->execute([$annotations['handler'], $name]);
-//
-//                    if ($value instanceof Relation) {
-//                        $annotation->addRelate($annotations['handler'], $value->name, $name);
-//                    } else if ($value instanceof Get) {
-//                        $annotation->addGets($annotations['handler'], $value->name, $name);
-//                    } else if ($value instanceof Set) {
-//                        $annotation->addSets($annotations['handler'], $value->name, $name);
-//                    } else {
-//                        $value->execute([$class, $name]);
-//                    }
+                    if ($value instanceof Relation) {
+                        $annotation->addRelate($_className, $value->name, $name);
+                    } else if ($value instanceof Get) {
+                        $annotation->addGets($_className, $value->name, $name);
+                    } else if ($value instanceof Set) {
+                        $annotation->addSets($_className, $value->name, $name);
+                    } else {
+                        $value->execute([$annotations['handler'], $name]);
+                    }
                 }
             }
         }
