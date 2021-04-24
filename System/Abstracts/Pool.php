@@ -191,13 +191,16 @@ abstract class Pool extends Component
 	 */
 	private function createByCallback($name, mixed $callback)
 	{
-//		if (!$this->canCreate($name)) {
-//			return;
-//		}
+		if (!$this->canCreate($name)) {
+			return;
+		}
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
-		$this->push($name, $this->createClient($name, $callback));
+        if (!Context::hasContext('create::client::ing::' . $name)) {
+            $this->push($name, $this->createClient($name, $callback));
+            Context::remove('create::client::ing::' . $name);
+        }
 	}
 
 
