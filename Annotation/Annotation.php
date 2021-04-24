@@ -68,7 +68,6 @@ class Annotation extends Component
         if (isset($this->_model_relate[$class . '::' . $setName])) {
             return $this->_model_relate[$class . '::' . $setName];
         }
-        var_dump($class . '::' . $setName);
         return null;
     }
 
