@@ -146,7 +146,7 @@ class Application extends BaseApplication
 			}
 			response()->send($manager->execCommand($class));
 		} catch (\Throwable $exception) {
-		    var_export(Json::encode($exception));
+		    var_export(current($exception->getTrace()));
 			response()->send(implode("\n", [
 				'Msg: ' . $exception->getMessage(),
 				'Line: ' . $exception->getLine(),
