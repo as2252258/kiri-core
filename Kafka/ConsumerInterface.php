@@ -19,7 +19,4 @@ interface ConsumerInterface
     public function onHandler(Struct $struct): void;
 
 
-    public function setParams(...$params): void;
-
-
 }
