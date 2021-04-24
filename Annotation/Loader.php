@@ -425,13 +425,12 @@ class Loader extends BaseObject
      */
     private function _execute($class, $annotation, $handler, $value, $name)
     {
-        var_dump($handler);
         if ($value instanceof Relation) {
-            $annotation->addGets($handler, $value->name, $name);
-        } else if ($value instanceof Get) {
-            $annotation->addSets($handler, $value->name, $name);
-        } else if ($value instanceof Set) {
             $annotation->addRelate($handler, $value->name, $name);
+        } else if ($value instanceof Get) {
+            $annotation->addGets($handler, $value->name, $name);
+        } else if ($value instanceof Set) {
+            $annotation->addSets($handler, $value->name, $name);
         } else {
             $value->execute([$class, $name]);
         }
