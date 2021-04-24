@@ -223,36 +223,39 @@ class Response extends HttpService
      */
     private function sendData($response, $sendData, $status): void
     {
-        if (!swoole()->exist($response->fd) || !$response->isWritable()) {
+        if (!swoole()->exist($response->fd)) {
             return;
         }
-        $this->setHeaders($response, $status);
-        if (empty($sendData)) {
-            $response->end('');
-        } else {
-            $message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
-            Snowflake::writeFile(storage('response.log'), $message, FILE_APPEND);
-            $response->end($sendData);
-        }
+        $response->end($this->setHeaders($response, $status)
+            ->setResponseContent($sendData));
+    }
+
+
+    private function setResponseContent($sendData): string
+    {
+        $message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
+        Snowflake::writeFile(storage('response.log'), $message, FILE_APPEND);
+        return $sendData;
     }
 
 
     /**
      * @param $status
      */
-    private function setHeaders($response, $status): void
+    private function setHeaders($response, $status): static
     {
         $response->status($status);
         $response->header('Content-Type', $this->getContentType());
         $response->header('Run-Time', $this->getRuntime());
 
         if (empty($this->headers) || !is_array($this->headers)) {
-            return;
+            return $this;
         }
         foreach ($this->headers as $key => $header) {
             $response->header($key, $header, true);
         }
         $this->headers = [];
+        return $this;
     }
 
 
