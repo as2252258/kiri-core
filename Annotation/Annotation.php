@@ -62,11 +62,11 @@ class Annotation extends Component
      */
     public function getGetMethodName(string $class, string $setName): ?string
     {
-        if (isset($this->_model_relate[$class . '::' . $setName])) {
-            return $this->_model_relate[$class . '::' . $setName];
-        }
         if (isset($this->_model_gets[$class . '::' . $setName])) {
             return $this->_model_gets[$class . '::' . $setName];
+        }
+        if (isset($this->_model_relate[$class . '::' . $setName])) {
+            return $this->_model_relate[$class . '::' . $setName];
         }
         return null;
     }
