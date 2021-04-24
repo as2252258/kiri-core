@@ -173,7 +173,7 @@ abstract class Pool extends Component
 			return $this->createClient($name, $callback);
 		}
 		if (!$this->hasItem($name)) {
-			return $this->createByCallback($name, $callback);
+		    $this->createByCallback($name, $callback);
 		}
 		$connection = $this->_items[$name]->pop(-1);
 		if (!$this->checkCanUse($name, $connection)) {
@@ -198,7 +198,6 @@ abstract class Pool extends Component
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
 
-		return $this->createClient($name, $callback);
         if (!Context::hasContext('create::client::ing::' . $name)) {
             $this->push($name, $this->createClient($name, $callback));
             Context::remove('create::client::ing::' . $name);
