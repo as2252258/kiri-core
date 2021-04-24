@@ -32,6 +32,7 @@ class Annotation extends Component
     public function addSets(string $class, string $setName, string $method)
     {
         $this->_model_sets[$class . '::' . $setName] = $method;
+        var_dump($this->_model_sets);
     }
 
     /**
@@ -42,6 +43,7 @@ class Annotation extends Component
     public function addGets(string $class, string $setName, string $method)
     {
         $this->_model_gets[$class . '::' . $setName] = $method;
+        var_dump($this->_model_gets);
     }
 
     /**
@@ -52,6 +54,7 @@ class Annotation extends Component
     public function addRelate(string $class, string $setName, string $method)
     {
         $this->_model_relate[$class . '::' . $setName] = $method;
+        var_dump($this->_model_relate);
     }
 
 
