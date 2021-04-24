@@ -54,7 +54,6 @@ class Annotation extends Component
     public function addRelate(string $class, string $setName, string $method)
     {
         $this->_model_relate[$class . '::' . $setName] = $method;
-        var_dump($this->_model_relate);
     }
 
 
