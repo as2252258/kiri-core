@@ -175,7 +175,6 @@ class Loader extends BaseObject
             }
 
             $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
-
             if (empty($replace) || count($replace->getAttributes(Target::class)) < 1) {
                 return;
             }
