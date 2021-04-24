@@ -169,11 +169,11 @@ abstract class Pool extends Component
 	 */
 	protected function getFromChannel($name, mixed $callback): mixed
 	{
-//		if (!Context::inCoroutine()) {
-//			return $this->createClient($name, $callback);
-//		}
+		if (!Context::inCoroutine()) {
+			return $this->createClient($name, $callback);
+		}
 		if (!$this->hasItem($name)) {
-			$this->createByCallback($name, $callback);
+			return $this->createByCallback($name, $callback);
 		}
 		$connection = $this->_items[$name]->pop(-1);
 		if (!$this->checkCanUse($name, $connection)) {
@@ -197,6 +197,8 @@ abstract class Pool extends Component
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
+
+		return $this->createClient($name, $callback);
         if (!Context::hasContext('create::client::ing::' . $name)) {
             $this->push($name, $this->createClient($name, $callback));
             Context::remove('create::client::ing::' . $name);
