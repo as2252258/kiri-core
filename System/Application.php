@@ -136,23 +136,21 @@ class Application extends BaseApplication
      */
     public function start(Input $argv): void
     {
-        run(function () use ($argv) {
-            try {
-                /** @var Console $manager */
-                $manager = Snowflake::app()->get('console');
-                $manager->register(Runtime::class);
-                $manager->setParameters($argv);
-                $class = $manager->search();
-                if (!($class instanceof Command)) {
-                    scan_directory(directory('app'), 'App');
-                }
-                response()->send($manager->execCommand($class));
-            } catch (\Throwable $exception) {
-                response()->send(logger()->exception($exception));
-            } finally {
-                Timer::clearAll();
+        try {
+            /** @var Console $manager */
+            $manager = Snowflake::app()->get('console');
+            $manager->register(Runtime::class);
+            $manager->setParameters($argv);
+            $class = $manager->search();
+            if (!($class instanceof Command)) {
+                scan_directory(directory('app'), 'App');
             }
-        });
+            response()->send($manager->execCommand($class));
+        } catch (\Throwable $exception) {
+            response()->send(logger()->exception($exception));
+        } finally {
+            Timer::clearAll();
+        }
     }
 
     /**
