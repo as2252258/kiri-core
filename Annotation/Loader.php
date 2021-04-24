@@ -400,7 +400,7 @@ class Loader extends BaseObject
                 continue;
             }
 
-            $class = Snowflake::createObject($className['handler']);
+            $class = Snowflake::createObject($annotations['handler']);
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$class]);
             }
