@@ -149,9 +149,11 @@ class Command extends Component
 	{
 		$export['sql'] = $this->sql;
 		$export['param'] = $this->params;
-		$export['time'] = microtime(true) - $time;
+		$export['startTime'] = $time;
+		$export['endTime'] = microtime(true);
+		$export['time'] = $export['endTime'] - $time;
 
-		logger()->debug(Json::encode($export), 'mysql');
+		write(Json::encode($export), 'mysql');
 
 		return $result;
 	}
