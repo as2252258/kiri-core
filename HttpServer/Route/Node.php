@@ -544,12 +544,13 @@ class Node extends HttpService
      */
     private function runValidator($dispatchParams): mixed
     {
+        if (empty($this->rules) || !is_array($this->rules)) {
+            return call_user_func($this->callback, ...$dispatchParams);
+        }
         /** @var HttpFilter $filter */
         $filter = Snowflake::app()->get('filter');
         $validator = $filter->check($this->rules);
-        if (!($validator instanceof Validator)) {
-            return call_user_func($this->callback, ...$dispatchParams);
-        } else if ($validator->validation()) {
+        if (!($validator instanceof Validator) || $validator->validation()) {
             return call_user_func($this->callback, ...$dispatchParams);
         } else {
             return Json::to(5005, $validator->getError());
