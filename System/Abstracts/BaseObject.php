@@ -12,7 +12,9 @@ namespace Snowflake\Abstracts;
 use Exception;
 
 use JetBrains\PhpStorm\Pure;
+use Phalcon\Assets\Asset\Js;
 use Snowflake\Application;
+use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -113,7 +115,7 @@ class BaseObject implements Configure
             $format .= 'File: ' . $message->getFile() . PHP_EOL;
             $format .= 'Line: ' . $message->getLine();
 
-            $this->error(var_export(array_slice($message->getTrace(), 0, 2)));
+            $this->error(var_export(Json::encode($message->getTrace())));
             $this->error($format);
         } else {
             if (!is_string($message)) {
