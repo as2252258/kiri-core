@@ -844,7 +844,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
     public function __get($name): mixed
     {
         $value = $this->_attributes[$name] ?? null;
-        var_dump($value);
 
         $loader = Snowflake::app()->getAnnotation();
         if (!empty($method = $loader->getGetMethodName(get_called_class(), $name))) {
