@@ -407,24 +407,37 @@ class Loader extends BaseObject
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$class]);
             }
-
-            $isGet = $annotations instanceof Get;
-            $isSet = $annotations instanceof Set;
-            $isRelate = $annotations instanceof Relation;
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
-                    if ($isGet) {
-                        $annotation->addGets($annotations['handler'], $value->name, $name);
-                    } else if ($isSet) {
-                        $annotation->addSets($annotations['handler'], $value->name, $name);
-                    } else if ($isRelate) {
-                        $annotation->addRelate($annotations['handler'], $value->name, $name);
-                    } else {
-                        $value->execute([$class, $name]);
-                    }
+                    $this->_execute($class, $annotation, $annotations, $value, $name);
                 }
             }
         }
     }
+
+
+    /**
+     * @param $class
+     * @param $annotation
+     * @param $annotations
+     * @param $value
+     * @param $name
+     */
+    private function _execute($class, $annotation, $annotations, $value, $name)
+    {
+        if ($annotations instanceof Get) {
+            var_dump($value->name, $name);
+            $annotation->addGets($annotations['handler'], $value->name, $name);
+        } else if ($annotations instanceof Get) {
+            var_dump($value->name, $name);
+            $annotation->addSets($annotations['handler'], $value->name, $name);
+        } else if ($annotations instanceof Get) {
+            var_dump($value->name, $name);
+            $annotation->addRelate($annotations['handler'], $value->name, $name);
+        } else {
+            $value->execute([$class, $name]);
+        }
+    }
+
 
 }

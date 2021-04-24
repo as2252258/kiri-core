@@ -141,7 +141,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
         } else {
             $this->_relation = Context::getContext(Relation::class);
         }
-        $this->createAnnotation();
+//        $this->createAnnotation();
     }
 
 
