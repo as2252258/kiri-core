@@ -27,14 +27,14 @@ class ArrayAccess
 	public static function toArray($data): array
 	{
 		if (!is_object($data) && !is_array($data)) {
-			return $data;
+			return [];
 		}
 		if (is_object($data)) {
 			$data = self::objToArray($data);
 		}
 		$tmp = [];
 		if (!is_array($data)) {
-			return $data;
+			return $tmp;
 		}
 		foreach ($data as $key => $val) {
 			if (is_array($val) || is_object($val)) {
