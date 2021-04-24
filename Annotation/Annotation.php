@@ -31,7 +31,7 @@ class Annotation extends Component
      */
     public function addSets(string $class, string $setName, string $method)
     {
-        $this->_model_sets[$class . '::' . $setName] = $method;
+        $this->_model_sets[$class][$setName] = $method;
     }
 
     /**
@@ -41,7 +41,7 @@ class Annotation extends Component
      */
     public function addGets(string $class, string $setName, string $method)
     {
-        $this->_model_gets[$class . '::' . $setName] = $method;
+        $this->_model_gets[$class][$setName] = $method;
     }
 
 
@@ -52,7 +52,7 @@ class Annotation extends Component
      */
     public function addRelate(string $class, string $setName, string $method)
     {
-        $this->_model_relate[$class . '::' . $setName] = $method;
+        $this->_model_relate[$class][$setName] = $method;
     }
 
 
@@ -63,14 +63,23 @@ class Annotation extends Component
      */
     public function getGetMethodName(string $class, string $setName): ?string
     {
-        if (isset($this->_model_gets[$class . '::' . $setName])) {
-            return $this->_model_gets[$class . '::' . $setName];
+        $gets = $this->_model_gets[$class] ?? $this->_model_relate[$class] ?? null;
+        if ($gets == null) {
+            return null;
         }
-        if (isset($this->_model_relate[$class . '::' . $setName])) {
-            return $this->_model_relate[$class . '::' . $setName];
-        }
-        return null;
+        return $gets[$setName] ?? null;
     }
+
+
+    /**
+     * @param string $class
+     * @return array
+     */
+    public function getModelMethods(string $class): array
+    {
+        return $this->_model_gets[$class] ?? [];
+    }
+
 
 
     /**
@@ -80,8 +89,14 @@ class Annotation extends Component
      */
     public function getSetMethodName(string $class, string $setName): ?string
     {
-        if (isset($this->_model_sets[$class . '::' . $setName])) {
-            return $this->_model_relate[$class . '::' . $setName];
+        if (!isset($this->_model_sets[$class])) {
+            return null;
+        }
+
+        $lists = $this->_model_sets[$class];
+
+        if (isset($lists[$setName])) {
+            return $lists[$setName];
         }
         return null;
     }
