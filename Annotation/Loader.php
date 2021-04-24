@@ -4,6 +4,9 @@
 namespace Annotation;
 
 
+use Annotation\Model\Get;
+use Annotation\Model\Relation;
+use Annotation\Model\Set;
 use Attribute;
 use DirectoryIterator;
 use Exception;
@@ -394,19 +397,31 @@ class Loader extends BaseObject
         if (empty($classes)) {
             return;
         }
+        $annotation = Snowflake::app()->getAnnotation();
         foreach ($classes as $className) {
             $annotations = $this->_classes[$className] ?? null;
             if ($annotations === null) {
                 continue;
             }
-
             $class = Snowflake::createObject($annotations['handler']);
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$class]);
             }
+
+            $isGet = $annotations instanceof Get;
+            $isSet = $annotations instanceof Set;
+            $isRelate = $annotations instanceof Relation;
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
-                    $value->execute([$class, $name]);
+                    if ($isGet) {
+                        $annotation->addGets($annotations['handler'], $value->name, $name);
+                    } else if ($isSet) {
+                        $annotation->addSets($annotations['handler'], $value->name, $name);
+                    } else if ($isRelate) {
+                        $annotation->addRelate($annotations['handler'], $value->name, $name);
+                    } else {
+                        $value->execute([$class, $name]);
+                    }
                 }
             }
         }

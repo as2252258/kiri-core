@@ -134,6 +134,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public function init()
     {
+        $this->event = Snowflake::app()->getEvent();
         if (!Context::hasContext(Relation::class)) {
             $relation = Snowflake::createObject(Relation::class);
             $this->_relation = Context::setContext(Relation::class, $relation);
@@ -149,14 +150,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public function createAnnotation()
     {
-        $annotation = Snowflake::getAnnotation();
-        $annotation->injectProperty($this);
-        $methods = $annotation->getMethods(get_called_class());
-        foreach ($methods as $method => $attributes) {
-            foreach ($attributes as $attribute) {
-                $attribute->execute([$this, $method]);
-            }
-        }
+//        $annotation = Snowflake::getAnnotation();
+//        $annotation->injectProperty($this);
+//        $methods = $annotation->getMethods(get_called_class());
+//        foreach ($methods as $method => $attributes) {
+//            foreach ($attributes as $attribute) {
+//                $attribute->execute([$this, $method]);
+//            }
+//        }
     }
 
 
@@ -833,11 +834,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
             parent::__set($name, $value);
             return;
         }
-        if ($this->hasAnnotation($name, 'set')) {
-            $this->runAnnotation($name, $value, self::ANNOTATION_SET);
-        } else {
-            $this->_attributes[$name] = $value;
+        $method = annotation()->getSetMethodName(get_called_class(), $name);
+        if (!empty($method)) {
+            $value = $this->{$method}($value);
         }
+        $this->_attributes[$name] = $value;
     }
 
 
@@ -849,14 +850,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
     public function __get($name): mixed
     {
         $value = $this->_attributes[$name] ?? null;
-        if ($this->hasAnnotation($name)) {
-            return $this->runAnnotation($name, $value);
+
+        $loader = Snowflake::app()->getAnnotation();
+        if (!empty($method = $loader->getGetMethodName(get_called_class(), $name))) {
+            return $this->{$method}();
         }
         if (array_key_exists($name, $this->_attributes)) {
             return static::getColumns()->_decode($name, $value);
-        }
-        if (in_array($name, $this->_with)) {
-            return $this->with($name);
         }
         if (Snowflake::app()->has($name)) {
             return Snowflake::app()->get($name);
