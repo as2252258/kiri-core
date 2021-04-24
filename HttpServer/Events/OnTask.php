@@ -137,7 +137,6 @@ class OnTask extends Callback
 		if (empty($serialize = swoole_unserialize($data))) {
 			return null;
 		}
-        $serialize = array_shift($serialize);
 		if (!($serialize instanceof ITask)) {
 			return null;
 		}
