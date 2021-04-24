@@ -92,7 +92,9 @@ class OnPipeMessage extends Callback
     {
         [$topic, $rdMessage] = $message['body'];
 
-        call_user_func($message['handler'], new Struct($topic, $rdMessage));
+        $message['handler'][0]->setParams(new Struct($topic, $rdMessage));
+
+        call_user_func($message['handler']);
 
         return 'success';
     }

@@ -118,6 +118,7 @@ class Kafka extends \Snowflake\Process\Process
                 if (empty($handler)) {
                     return;
                 }
+
                 $message = swoole_serialize(['action' => 'kafka', 'handler' => $handler, 'body' => [$topic, $message]]);
 
                 $server->sendMessage($message, random_int(0, $setting - 1));
