@@ -200,18 +200,20 @@ class Response extends HttpService
         $result = Help::toString($result);
         $string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
 
-        if (!str_contains($result, 'Event::rshutdown(): Event::wait()')) {
-            if (empty($result)) {
-                $string .= 'success!' . PHP_EOL . PHP_EOL;
-            } else {
-                $string .= $result . PHP_EOL . PHP_EOL;
-            }
-            $string .= 'Command End!' . PHP_EOL . PHP_EOL;
-            print_r($string);
+        defer(function () {
+            fire('CONSOLE_END');
+        });
+        if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
+            return (string)$result;
         }
 
-        $event = Snowflake::app()->getEvent();
-        $event->trigger('CONSOLE_END');
+        if (empty($result)) {
+            $string .= 'success!' . PHP_EOL . PHP_EOL;
+        } else {
+            $string .= $result . PHP_EOL . PHP_EOL;
+        }
+        $string .= 'Command End!' . PHP_EOL . PHP_EOL;
+        print_r($string);
 
         return $result;
     }
