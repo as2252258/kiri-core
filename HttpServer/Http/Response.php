@@ -179,14 +179,15 @@ class Response extends HttpService
     private function parseData($context): mixed
     {
         if ($context === null) {
-            return '';
+            if (isset($this->_format_maps[$this->format])) {
+                $class['class'] = $this->_format_maps[$this->format];
+            } else {
+                $class['class'] = HtmlFormatter::class;
+            }
+            $format = Snowflake::createObject($class);
+            return $format->send($context)->getData();
         }
-        if (isset($this->_format_maps[$this->format])) {
-            $className = $this->_format_maps[$this->format];
-        } else {
-            $className = HtmlFormatter::class;
-        }
-        return (new $className())->send($context)->getData();
+        return $context;
     }
 
     /**
