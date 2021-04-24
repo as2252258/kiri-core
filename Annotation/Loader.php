@@ -181,7 +181,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array = ['handler' => $replace->getName(), 'target' => [], 'methods' => [], 'property' => []];
+            $_array = ['handler' => $replace->newInstance(), 'target' => [], 'methods' => [], 'property' => []];
             foreach ($replace->getAttributes() as $attribute) {
                 if ($attribute->getName() == Attribute::class) {
                     continue;
@@ -403,13 +403,12 @@ class Loader extends BaseObject
             if ($annotations === null) {
                 continue;
             }
-            $class = Snowflake::createObject($annotations['handler']);
             foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute([$class]);
+                $value->execute([$annotations['handler']]);
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
-                    $value->execute([$class, $name]);
+                    $value->execute([$annotations['handler'], $name]);
 //
 //                    if ($value instanceof Relation) {
 //                        $annotation->addRelate($annotations['handler'], $value->name, $name);
