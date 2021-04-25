@@ -167,7 +167,6 @@ class Container extends BaseObject
 	 */
 	private function newInstance($reflect, $dependencies): mixed
 	{
-		var_dump($reflect->getName() . '::' . Json::encode($dependencies));
 		if (!empty($dependencies)) {
 			return $reflect->newInstanceArgs($dependencies);
 		}
