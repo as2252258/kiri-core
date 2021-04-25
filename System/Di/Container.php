@@ -10,13 +10,12 @@ declare(strict_types=1);
 namespace Snowflake\Di;
 
 use Annotation\Inject;
-use Annotation\Target;
-use Database\Connection;
-use HttpServer\Http\HttpHeaders;
+use Exception;
 use ReflectionClass;
-use Snowflake\Abstracts\BaseObject;
 use ReflectionException;
-use Snowflake\Exception\ComponentException;
+use ReflectionMethod;
+use ReflectionProperty;
+use Snowflake\Abstracts\BaseObject;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -48,6 +47,10 @@ class Container extends BaseObject
 	 */
 	private array $_reflection = [];
 
+
+	private array $_property = [];
+
+
 	/**
 	 * @var array
 	 *
@@ -63,6 +66,7 @@ class Container extends BaseObject
 	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function get($class, $constrict = [], $config = []): mixed
 	{
@@ -94,8 +98,9 @@ class Container extends BaseObject
 	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
-	private function resolveDefinition($definition, $class, $config, $constrict)
+	private function resolveDefinition($definition, $class, $config, $constrict): mixed
 	{
 		if (!isset($definition['class'])) {
 			throw new NotFindClassException($class);
@@ -121,9 +126,7 @@ class Container extends BaseObject
 	 * @param $config
 	 *
 	 * @return object
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	private function resolve($class, $constrict, $config): object
 	{
@@ -158,25 +161,36 @@ class Container extends BaseObject
 	 * @param ReflectionClass $reflect
 	 * @param $object
 	 * @return mixed
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
 	private function propertyInject(ReflectionClass $reflect, $object): mixed
 	{
-		$inject = $reflect->getProperties(
-			\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED |
-			\ReflectionProperty::IS_PUBLIC
-		);
-		foreach ($inject as $reflectionProperty) {
-			$attributes = $reflectionProperty->getAttributes(Inject::class);
-			foreach ($attributes as $attribute) {
-				/** @var Inject $class */
-				$class = $attribute->newInstance();
-				$class->execute([$object, $reflectionProperty->getName()]);
-			}
+		if (!isset($this->_property[$reflect->getName()])) {
+			return $object;
+		}
+		foreach ($this->_property[$reflect->getName()] as $property => $inject) {
+			/** @var Inject $inject */
+			$inject->execute([$object, $property]);
 		}
 		return $object;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @param string|null $property
+	 * @return ReflectionProperty|array|null
+	 */
+	public function getClassProperty(string $class, string $property = null): ReflectionProperty|null|array
+	{
+		if (!isset($this->_property[$class])) {
+			return null;
+		}
+		$properties = $this->_property[$class];
+		if (!empty($property)) {
+			return $properties[$property] ?? null;
+		}
+		return $properties;
 	}
 
 
@@ -185,7 +199,7 @@ class Container extends BaseObject
 	 * @param $config
 	 * @return mixed
 	 */
-	private function onAfterInit($object, $config)
+	private function onAfterInit($object, $config): mixed
 	{
 		Snowflake::configure($object, $config);
 		if (method_exists($object, 'afterInit')) {
@@ -198,8 +212,7 @@ class Container extends BaseObject
 	 * @param $class
 	 * @param array $constrict
 	 * @return array|null
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @throws ReflectionException|NotFindClassException
 	 */
 	private function resolveDependencies($class, $constrict = []): ?array
 	{
@@ -218,17 +231,43 @@ class Container extends BaseObject
 		if (!is_null($construct = $reflection->getConstructor())) {
 			$constrict = $this->resolveMethodParam($construct);
 		}
+
+		$this->scanProperty($reflection);
+
 		return [$reflection, $constrict];
 	}
 
 
 	/**
-	 * @param \ReflectionMethod|null $method
+	 * @param ReflectionClass $reflectionClass
+	 * @return $this
+	 */
+	private function scanProperty(ReflectionClass $reflectionClass): static
+	{
+		$lists = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
+			ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED
+		);
+
+		$className = $reflectionClass->getName();
+		foreach ($lists as $list) {
+			$targets = $list->getAttributes(Inject::class);
+			if (count($targets)) {
+				continue;
+			}
+
+			$this->_property[$className][$list->getName()] = $targets[0]->newInstance();
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param ReflectionMethod|null $method
 	 * @return array
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveMethodParam(?\ReflectionMethod $method): array
+	private function resolveMethodParam(?ReflectionMethod $method): array
 	{
 		$array = [];
 		foreach ($method->getParameters() as $key => $parameter) {

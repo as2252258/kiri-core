@@ -119,7 +119,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 		if (is_object($model)) {
 			return $model;
 		}
-        return new $model();
+        return $model::populate([]);
 	}
 
 
