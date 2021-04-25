@@ -148,6 +148,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 
 		$model = clone $this->getModel();
 		$model = $model->setAttributes($this->_item[$offset]);
+		$model->setIsCreate(false);
 		$model->refresh();
 
 		return $model;

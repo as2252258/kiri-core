@@ -58,6 +58,7 @@ class CollectionIterator extends \ArrayIterator
 	{
 		$model = clone $this->model;
 		$model->setAttributes($current);
+		$model->setIsCreate(false);
 		$model->refresh();
 		return $model;
 	}
