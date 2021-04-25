@@ -16,6 +16,7 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 use Snowflake\Abstracts\BaseObject;
+use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -166,6 +167,7 @@ class Container extends BaseObject
 	 */
 	private function newInstance($reflect, $dependencies): mixed
 	{
+		var_dump($reflect->getName() . '::' . Json::encode($dependencies));
 		if (!empty($dependencies)) {
 			return $reflect->newInstanceArgs($dependencies);
 		}
@@ -217,7 +219,7 @@ class Container extends BaseObject
 	 */
 	private function onAfterInit($object, $config): mixed
 	{
-//		Snowflake::configure($object, $config);
+		Snowflake::configure($object, $config);
 		if (method_exists($object, 'afterInit')) {
 			call_user_func([$object, 'afterInit']);
 		}
