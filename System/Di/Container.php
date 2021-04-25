@@ -109,7 +109,7 @@ class Container extends BaseObject
 		$_className = $definition['class'];
 		unset($definition['class']);
 
-		$config = array_merge($definition, $config);
+//		$config = array_merge($definition, $config);
 		$definition = $this->mergeParam($class, $constrict);
 
 		if ($_className === $class) {
