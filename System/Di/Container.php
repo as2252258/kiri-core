@@ -232,7 +232,7 @@ class Container extends BaseObject
 			$this->_constructs[$class] = $this->resolveMethodParam($construct);
 		}
 
-		return [$reflection, $this->_constructs[$class]];
+		return [$reflection, $this->_constructs[$class] ?? []];
 	}
 
 
