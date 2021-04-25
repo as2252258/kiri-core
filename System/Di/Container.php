@@ -16,7 +16,6 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 use Snowflake\Abstracts\BaseObject;
-use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -87,6 +86,9 @@ class Container extends BaseObject
 		} else {
 			throw new NotFindClassException($class);
 		}
+
+		Snowflake::configure($object, $config);
+
 		return $this->_singletons[$class] = $object;
 	}
 
@@ -109,7 +111,7 @@ class Container extends BaseObject
 		$_className = $definition['class'];
 		unset($definition['class']);
 
-		$config = array_merge($definition, $config);
+//		$config = array_merge($definition, $config);
 		$definition = $this->mergeParam($class, $constrict);
 
 		if ($_className === $class) {
