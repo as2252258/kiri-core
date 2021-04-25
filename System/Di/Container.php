@@ -71,7 +71,7 @@ class Container extends BaseObject
 	public function get($class, $constrict = [], $config = []): mixed
 	{
 		if (isset($this->_singletons[$class])) {
-			return $this->_singletons[$class];
+			return clone $this->_singletons[$class];
 		} else if (!isset($this->_constructs[$class])) {
 			return $this->resolve($class, $constrict, $config);
 		}

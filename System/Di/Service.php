@@ -54,11 +54,11 @@ class Service extends Component
 			if (is_object($config)) {
 				return $this->_components[$id] = $config;
 			}
-			$object = clone Snowflake::createObject($config);
+			$object = Snowflake::createObject($config);
 		} else {
 			$config = $this->_alias[$id];
 
-			$object = clone Snowflake::createObject($config);
+			$object = Snowflake::createObject($config);
 		}
 		return $this->_components[$id] = $object;
 	}
