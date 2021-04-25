@@ -306,7 +306,6 @@ class Snowflake
 	 */
 	public static function configure($object, $config): mixed
 	{
-		var_dump($config);
 		foreach ($config as $key => $value) {
 			if (!property_exists($object, $key)) {
 				continue;
