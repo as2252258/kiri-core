@@ -813,6 +813,36 @@ if (!function_exists('router')) {
 }
 
 
+if (!function_exists('isService')) {
+
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	#[Pure] function isService(string $name): bool
+	{
+		return Snowflake::app()->has($name);
+	}
+
+}
+
+if (!function_exists('getService')) {
+
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 * @throws Exception
+	 */
+	function getService(string $name): mixed
+	{
+		return Snowflake::app()->get($name);
+	}
+
+}
+
+
 if (!function_exists('jTraceEx')) {
 
 	/**
