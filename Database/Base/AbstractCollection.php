@@ -12,16 +12,10 @@ namespace Database\Base;
 
 use ArrayIterator;
 use Database\ActiveQuery;
-
+use Database\ActiveRecord;
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
 use Snowflake\Abstracts\Component;
-use Database\ActiveRecord;
-use Snowflake\Channel;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
 use Traversable;
 
 /**
@@ -52,13 +46,18 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 *
 	 * @param $query
 	 * @param array $array
-	 * @param null $model
+	 * @param null|string|ActiveRecord $model
 	 * @throws Exception
 	 */
 	public function __construct($query, array $array = [], $model = null)
 	{
 		$this->_item = $array;
 		$this->query = $query;
+
+		if (!is_object($model)) {
+			$model = $model::populate([]);
+			$model->setIsCreate(false);
+		}
 		$this->model = $model;
 
 		parent::__construct([]);
@@ -118,7 +117,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 		if (!is_object($this->model)) {
 			$this->model = $this->model::populate([]);
 		}
-        return $this->model;
+		return $this->model;
 	}
 
 
@@ -134,6 +133,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	/**
 	 * @param mixed $offset
 	 * @return ActiveRecord|null
+	 * @throws Exception
 	 */
 	public function offsetGet(mixed $offset): ?ActiveRecord
 	{
@@ -145,8 +145,11 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 			return $this->_item[$offset];
 		}
 
-		/** @var ActiveRecord $model */
-		return $this->model::populate($this->_item[$offset]);
+		$model = clone $this->getModel();
+		$model = $model->setAttributes($this->_item[$offset]);
+		$model->refresh();
+
+		return $model;
 	}
 
 	/**
