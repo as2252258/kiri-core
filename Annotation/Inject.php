@@ -65,9 +65,9 @@ use Snowflake\Snowflake;
 		} else {
 			$injectValue = $this->className;
 		}
-		if (!empty($this->args) && is_object($injectValue)) {
-			Snowflake::configure($injectValue, $this->args);
-		}
+//		if (!empty($this->args) && is_object($injectValue)) {
+//			Snowflake::configure($injectValue, $this->args);
+//		}
 		return $injectValue;
 	}
 
