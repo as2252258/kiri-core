@@ -1013,6 +1013,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$model->setIsCreate(false);
 
 		echo 'end create -> ' . round(microtime(true) - $create, 6);
+		echo PHP_EOL;
 		return $model;
 	}
 
