@@ -143,17 +143,33 @@ class Container extends BaseObject
 			throw new NotFindClassException($reflect->getName());
 		}
 
+		unset($dependencies['class']);
+
 		if (empty($config) || !is_array($config)) {
-			$object = $reflect->newInstanceArgs($dependencies);
+			$object = $this->newInstance($reflect, $dependencies);
 		} else if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
 			$dependencies[count($dependencies) - 1] = $config;
-			$object = $reflect->newInstanceArgs($dependencies);
+			$object = $this->newInstance($reflect, $dependencies);
 		} else {
 			if (!empty($config)) $this->_param[$class] = $config;
 
-			$object = $this->onAfterInit($reflect->newInstanceArgs($dependencies), $config);
+			$object = $this->onAfterInit($this->newInstance($reflect, $dependencies), $config);
 		}
 		return $this->propertyInject($reflect, $object);
+	}
+
+
+	/**
+	 * @param $reflect
+	 * @param $dependencies
+	 * @return mixed
+	 */
+	private function newInstance($reflect, $dependencies)
+	{
+		if (!empty($dependencies)) {
+			return $reflect->newInstanceArgs($dependencies);
+		}
+		return $reflect->newInstance();
 	}
 
 
