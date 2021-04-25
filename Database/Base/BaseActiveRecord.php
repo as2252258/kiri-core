@@ -1006,10 +1006,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
+		/** @var static $model */
 		$model = Snowflake::createObject(static::class);
 		$model->_attributes = $data;
+		$model->_oldAttributes = $data;
 		$model->setIsCreate(false);
-		$model->refresh();
 		return $model;
 	}
 
