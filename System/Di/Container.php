@@ -164,7 +164,7 @@ class Container extends BaseObject
 	 * @param $dependencies
 	 * @return mixed
 	 */
-	private function newInstance($reflect, $dependencies)
+	private function newInstance($reflect, $dependencies): mixed
 	{
 		if (!empty($dependencies)) {
 			return $reflect->newInstanceArgs($dependencies);
