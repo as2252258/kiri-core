@@ -216,7 +216,7 @@ class Container extends BaseObject
 	private function resolveDependencies($class): ?array
 	{
 		if (isset($this->_reflection[$class])) {
-			return [$this->_reflection[$class], $this->_constructs[$class]];
+			return [$this->_reflection[$class], $this->_constructs[$class] ?? []];
 		}
 
 		$reflection = new ReflectionClass($class);
