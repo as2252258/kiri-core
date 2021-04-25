@@ -86,9 +86,6 @@ class Container extends BaseObject
 		} else {
 			throw new NotFindClassException($class);
 		}
-
-		Snowflake::configure($object, $config);
-
 		return $this->_singletons[$class] = $object;
 	}
 
