@@ -131,7 +131,7 @@ class Container extends BaseObject
 	private function resolve($class, $constrict, $config): object
 	{
 		/** @var ReflectionClass $reflect */
-		[$reflect, $dependencies] = $this->resolveDependencies($class, $constrict);
+		[$reflect, $dependencies] = $this->resolveDependencies($class);
 		if (empty($reflect)) {
 			throw new NotFindClassException($class);
 		}
@@ -210,31 +210,29 @@ class Container extends BaseObject
 
 	/**
 	 * @param $class
-	 * @param array $constrict
 	 * @return array|null
 	 * @throws ReflectionException|NotFindClassException
 	 */
-	private function resolveDependencies($class, $constrict = []): ?array
+	private function resolveDependencies($class): ?array
 	{
-		if (!isset($this->_reflection[$class])) {
-			if (!class_exists($class)) {
-				return null;
-			}
-			$reflection = new ReflectionClass($class);
-			if (!$reflection->isInstantiable()) {
-				return null;
-			}
-			$this->_reflection[$class] = $reflection;
-		} else {
-			$reflection = $this->_reflection[$class];
+		if (isset($this->_reflection[$class])) {
+			return [$this->_reflection[$class], $this->_constructs[$class]];
 		}
-		if (!is_null($construct = $reflection->getConstructor())) {
-			$constrict = $this->resolveMethodParam($construct);
+
+		$reflection = new ReflectionClass($class);
+		if (!$reflection->isInstantiable()) {
+			return null;
 		}
 
 		$this->scanProperty($reflection);
 
-		return [$reflection, $constrict];
+		$this->_reflection[$class] = $reflection;
+
+		if (!is_null($construct = $reflection->getConstructor())) {
+			$this->_constructs[$class] = $this->resolveMethodParam($construct);
+		}
+
+		return [$reflection, $this->_constructs[$class]];
 	}
 
 
