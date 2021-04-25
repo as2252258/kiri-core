@@ -71,7 +71,7 @@ class Container extends BaseObject
 	public function get($class, $constrict = [], $config = []): mixed
 	{
 		if (isset($this->_singletons[$class])) {
-			return clone $this->_singletons[$class];
+			return $this->_singletons[$class];
 		} else if (!isset($this->_constructs[$class])) {
 			return $this->resolve($class, $constrict, $config);
 		}
@@ -230,26 +230,17 @@ class Container extends BaseObject
 	 */
 	private function resolveDependencies($class): ?array
 	{
-		if (!isset($this->_constructs[$class])) {
-			$this->_constructs[$class] = ['class' => $class];
+		if (!isset($this->_reflection[$class])) {
+			$this->_reflection[$class] = new ReflectionClass($class);
+			if (!$this->_reflection[$class]->isInstantiable()) {
+				return null;
+			}
+			$this->scanProperty($this->_reflection[$class]);
 		}
-		if (isset($this->_reflection[$class])) {
-			return [$this->_reflection[$class], $this->_constructs[$class] ?? []];
+		if (!is_null($constructs = $this->_reflection[$class]->getConstructor())) {
+			$constructs = $this->resolveMethodParam($constructs);
 		}
-
-		$reflection = new ReflectionClass($class);
-		if (!$reflection->isInstantiable()) {
-			return null;
-		}
-		$this->scanProperty($reflection);
-
-		$this->_reflection[$class] = $reflection;
-		if (!is_null($construct = $reflection->getConstructor())) {
-			$this->_constructs[$class] = array_merge($this->_constructs[$class],
-				$this->resolveMethodParam($construct)
-			);
-		}
-		return [$reflection, $this->_constructs[$class] ?? []];
+		return [$this->_reflection[$class], $constructs];
 	}
 
 
