@@ -51,8 +51,6 @@ class Service extends Component
 			}
 			throw new ComponentException("Unknown component ID: $id");
 		}
-
-		$this->_ids[] = $id;
 		if (isset($this->_definition[$id])) {
 			$config = $this->_definition[$id];
 			if (is_object($config)) {
@@ -88,6 +86,9 @@ class Service extends Component
 		if ($definition === NULL) {
 			return $this->remove($id);
 		}
+
+		$this->_ids[] = $id;
+
 		unset($this->_components[$id]);
 		if (is_object($definition) || is_callable($definition, TRUE)) {
 			return $this->_definition[$id] = $definition;
