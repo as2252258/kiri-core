@@ -217,7 +217,7 @@ class Container extends BaseObject
 	 */
 	private function onAfterInit($object, $config): mixed
 	{
-		Snowflake::configure($object, $config);
+//		Snowflake::configure($object, $config);
 		if (method_exists($object, 'afterInit')) {
 			call_user_func([$object, 'afterInit']);
 		}
