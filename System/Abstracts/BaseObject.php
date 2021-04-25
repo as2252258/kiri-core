@@ -33,8 +33,6 @@ class BaseObject implements Configure
 	public function __construct($config = [])
 	{
 		if (!empty($config) && is_array($config)) {
-			var_dump(static::class . '::' . Json::encode($config));
-
 			Snowflake::configure($this, $config);
 		}
 		$this->init();

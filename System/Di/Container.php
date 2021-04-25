@@ -147,10 +147,6 @@ class Container extends BaseObject
 		}
 
 		unset($dependencies['class']);
-
-		var_dump($reflect->getName() . '::' . Json::encode($config));
-
-
 		if (empty($config) || !is_array($config)) {
 			$object = $this->newInstance($reflect, $dependencies);
 		} else if (!empty($dependencies) && $reflect->implementsInterface('Snowflake\Abstracts\Configure')) {
