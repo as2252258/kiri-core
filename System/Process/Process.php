@@ -60,7 +60,7 @@ abstract class Process extends \Swoole\Process implements SProcess
      */
     #[Pure] private function getPrefix(): string
     {
-        return get_called_class();
+        return static::class;
     }
 
 

@@ -350,7 +350,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public static function find(): ActiveQuery
     {
-        return Snowflake::createObject(ActiveQuery::class, [get_called_class()]);
+        return Snowflake::createObject(ActiveQuery::class, [static::class]);
     }
 
     /**
@@ -725,14 +725,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
     }
 
 
-    /**
-     * @param $name
-     * @return mixed
-     */
+	/**
+	 * @param $name
+	 * @return mixed
+	 * @throws Exception
+	 */
     public function getRelate($name): mixed
     {
         if (empty($this->_relate[$name])) {
-            $this->_relate = Snowflake::getAnnotation()->getRelateMethods(get_called_class());
+            $this->_relate = Snowflake::getAnnotation()->getRelateMethods(static::class);
         }
         return $this->_relate[$name] ?? null;
     }
@@ -827,7 +828,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
             parent::__set($name, $value);
             return;
         }
-        $method = annotation()->getSetMethodName(get_called_class(), $name);
+        $method = annotation()->getSetMethodName(static::class, $name);
         if (!empty($method)) {
             $value = $this->{$method}($value);
         }
@@ -845,7 +846,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
         $value = $this->_attributes[$name] ?? null;
 
         $loader = Snowflake::app()->getAnnotation();
-        if (!empty($method = $loader->getGetMethodName(get_called_class(), $name))) {
+        if (!empty($method = $loader->getGetMethodName(static::class, $name))) {
             return $this->{$method}(...[$value]);
         }
         if (array_key_exists($name, $this->_attributes)) {

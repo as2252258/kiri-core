@@ -46,7 +46,7 @@ abstract class HttpService extends Component
 		if (property_exists($this, $name)) {
 			return $this->$name;
 		}
-		$message = sprintf('method %s::%s not exists.', get_called_class(), $name);
+		$message = sprintf('method %s::%s not exists.', static::class, $name);
 		throw new Exception($message);
 	}
 

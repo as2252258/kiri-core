@@ -128,7 +128,7 @@ abstract class BaseValidator
 		} else if (property_exists($this, $name)) {
 			$this->$name = $value;
 		} else {
-			throw new Exception('unknown property ' . $name . ' in class ' . get_called_class());
+			throw new Exception('unknown property ' . $name . ' in class ' . static::class);
 		}
 	}
 }
