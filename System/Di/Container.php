@@ -251,7 +251,7 @@ class Container extends BaseObject
 		$className = $reflectionClass->getName();
 		foreach ($lists as $list) {
 			$targets = $list->getAttributes(Inject::class);
-			if (count($targets)) {
+			if (count($targets) < 1) {
 				continue;
 			}
 
