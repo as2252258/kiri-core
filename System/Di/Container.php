@@ -146,7 +146,7 @@ class Container extends BaseObject
 
 		unset($dependencies['class']);
 
-		var_dump($reflect->getName() . '::' . Json::encode($dependencies));
+		var_dump($reflect->getName() . '::' . Json::encode($config));
 
 
 		if (empty($config) || !is_array($config)) {
