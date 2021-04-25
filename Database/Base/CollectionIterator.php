@@ -8,10 +8,6 @@ namespace Database\Base;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Exception;
-use ReflectionException;
-use Snowflake\Channel;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
 
 
 /**
@@ -26,6 +22,9 @@ class CollectionIterator extends \ArrayIterator
 
 	/** @var ActiveQuery */
 	private ActiveQuery $query;
+
+
+	private ?ActiveRecord $_clone = null;
 
 
 	public function clean()
@@ -57,7 +56,10 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	protected function newModel($current): ActiveRecord
 	{
-		return $this->model::populate($current);
+		$model = clone $this->model;
+		$model->setAttributes($current);
+		$model->refresh();
+		return $model;
 	}
 
 

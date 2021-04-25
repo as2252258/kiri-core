@@ -307,7 +307,7 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$data = $this->_attributes;
 
-		$lists = Snowflake::getAnnotation()->getModelMethods(static::class);
+		$lists = $this->getAnnotation(self::ANNOTATION_GET);
 		foreach ($lists as $key => $item) {
 			$data[$key] = $this->{$item}($data[$key] ?? null);
 		}
