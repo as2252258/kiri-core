@@ -116,6 +116,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	{
 		if (!is_object($this->model)) {
 			$this->model = $this->model::populate([]);
+			$this->model->setIsCreate(false);
 		}
 		return $this->model;
 	}
