@@ -111,7 +111,7 @@ class Node extends HttpService
             if (!($controller instanceof Controller)) {
                 return $this;
             }
-            $this->annotationInject(get_class($controller), $action);
+            $this->annotationInject($controller::class, $action);
         }
         if (!empty($this->handler)) {
             $this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());

@@ -405,7 +405,7 @@ class Loader extends BaseObject
                 $value->execute([$annotations['handler']]);
             }
 
-            $_className = get_class($annotations['handler']);
+            $_className = $annotations['handler']::class;
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
                     if ($value instanceof Relation) {

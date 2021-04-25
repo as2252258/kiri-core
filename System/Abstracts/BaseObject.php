@@ -81,7 +81,7 @@ class BaseObject implements Configure
             $this->{$method}($value);
         } else {
             $this->error('set ' . $name . ' not exists ' . get_called_class());
-            throw new Exception('The set name ' . $name . ' not find in class ' . get_class($this));
+            throw new Exception('The set name ' . $name . ' not find in class ' . static::class);
         }
     }
 
@@ -97,7 +97,7 @@ class BaseObject implements Configure
         if (method_exists($this, $method)) {
             return $this->$method();
         } else {
-            throw new Exception('The get name ' . $name . ' not find in class ' . get_class($this));
+            throw new Exception('The get name ' . $name . ' not find in class ' . static::class);
         }
     }
 

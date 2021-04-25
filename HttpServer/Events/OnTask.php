@@ -113,7 +113,7 @@ class OnTask extends Callback
 			if (is_object($params)) {
 				$params = get_object_vars($params);
 			}
-			$finish['class'] = get_class($serialize);
+			$finish['class'] = $serialize::class;
 			$finish['params'] = $params;
 			$finish['status'] = 'success';
 			$finish['info'] = $serialize->onHandler();

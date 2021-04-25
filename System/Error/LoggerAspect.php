@@ -45,7 +45,7 @@ class LoggerAspect implements IAspect
 
     private function print_runtime($startTime)
     {
-        $className = get_class($this->handler[0]);
+        $className = $this->handler[0]::class;
         $methodName = $this->handler[1];
 
         $runTime = round(microtime(true) - $startTime, 6);

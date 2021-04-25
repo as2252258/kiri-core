@@ -39,7 +39,7 @@ use Snowflake\Snowflake;
 
 		/** @var HttpFilter $filter */
 		$filter = Snowflake::app()->get('filter');
-		$filter->register(get_class($class), $method, $this->rules);
+		$filter->register($class::class, $method, $this->rules);
 
 		return $handler;
 	}

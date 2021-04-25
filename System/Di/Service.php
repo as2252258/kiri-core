@@ -140,7 +140,7 @@ class Service extends Component
 	public function remove($id): bool
 	{
 		$component = $this->_components[$id];
-		$className = get_class($component);
+		$className = $component::class;
 
 		unset($component, $this->_components[$id]);
 		unset($this->_definition[$id]);

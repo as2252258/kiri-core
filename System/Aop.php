@@ -30,7 +30,7 @@ class Aop extends Component
     public function aop_add(array $handler, string $aspect)
     {
         [$class, $method] = $handler;
-        $alias = get_class($class) . '::' . $method;
+        $alias = $class::class . '::' . $method;
         if (!isset($this->_aop[$alias])) {
             $this->_aop[$alias] = [];
         }
@@ -54,7 +54,7 @@ class Aop extends Component
         if ($handler instanceof \Closure) {
             return call_user_func($handler, ...$params);
         }
-        $aopName = get_class($handler[0]) . '::' . $handler[1];
+        $aopName = $handler[0]::class . '::' . $handler[1];
         if (!isset($this->_aop[$aopName])) {
             return $this->notFound($handler, $params);
         }

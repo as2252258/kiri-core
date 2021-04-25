@@ -154,7 +154,7 @@ class Annotation extends Component
      */
     public function injectProperty(object $class)
     {
-        $this->_loader->injectProperty(get_class($class), $class);
+        $this->_loader->injectProperty($class::class, $class);
     }
 
 

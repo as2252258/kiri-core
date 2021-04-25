@@ -42,7 +42,7 @@ use Snowflake\Snowflake;
 	 */
 	public function execute(array $handler): mixed
 	{
-		$class = ['class' => get_class($handler[0])];
+		$class = ['class' => $handler[0]::class];
 		if (!empty($this->args)) {
 			$class = array_merge($class, $this->args);
 		}

@@ -827,7 +827,7 @@ if (!function_exists('jTraceEx')) {
 		if (!$seen) $seen = array();
 		$trace = $e->getTrace();
 		$prev = $e->getPrevious();
-		$result[] = sprintf('%s%s: %s', $starter, get_class($e), $e->getMessage());
+		$result[] = sprintf('%s%s: %s', $starter, $e::class, $e->getMessage());
 		$file = $e->getFile();
 		$line = $e->getLine();
 		while (true) {

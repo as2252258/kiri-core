@@ -36,7 +36,7 @@ class Producer extends Component
 	 */
 	public function addProducer(string $name, array $handler, array $node)
 	{
-		$this->classAlias[get_class($handler[0])] = $name;
+		$this->classAlias[$handler[0]::class] = $name;
 
 		$this->consumers[$name] = $handler[0];
 
@@ -50,7 +50,7 @@ class Producer extends Component
 	 */
 	public function addConsumer(string $cmd, array $handler)
 	{
-		$class = get_class($handler[0]);
+		$class = $handler[0]::class;
 
 		if (!isset($this->classAlias[$class])) {
 			return;

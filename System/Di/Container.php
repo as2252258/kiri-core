@@ -279,7 +279,7 @@ class Container extends BaseObject
 		if (is_array($class) && isset($class['class'])) {
 			$class = $class['class'];
 		} else if (is_object($class)) {
-			$class = get_class($class);
+			$class = $class::class;
 		}
 		unset(
 			$this->_reflection[$class], $this->_singletons[$class],
