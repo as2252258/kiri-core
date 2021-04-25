@@ -142,7 +142,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	}
 
 
-
 	/**
 	 * @param $name
 	 * @param $method
@@ -1006,11 +1005,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
+		$create = microtime(true);
 		/** @var static $model */
 		$model = Snowflake::createObject(static::class);
 		$model->_attributes = $data;
 		$model->_oldAttributes = $data;
 		$model->setIsCreate(false);
+
+		echo 'end create -> ' . (microtime(true) - $create);
 		return $model;
 	}
 
