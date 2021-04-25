@@ -72,6 +72,17 @@ class Snowflake
 		return static::app()->set($alias, $array);
 	}
 
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public static function getApp(string $name): mixed
+	{
+		return static::app()->get($name);
+	}
+
 	/**
 	 * @return Application|null
 	 */

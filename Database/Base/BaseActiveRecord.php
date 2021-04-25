@@ -824,19 +824,44 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function __get($name): mixed
 	{
+		if (isService($name)) {
+			return Snowflake::getApp($name);
+		}
 		$value = $this->_attributes[$name] ?? null;
+		return $this->_gets($name, $value);
+	}
 
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function _gets(string $name, mixed $value): mixed
+	{
 		$loader = Snowflake::app()->getAnnotation();
-		if (!empty($method = $loader->getGetMethodName(static::class, $name))) {
-			return $this->{$method}(...[$value]);
+		$method = $loader->getGetMethodName(static::class, $name);
+		if (empty($method)) {
+			return $this->_decode($name, $value);
 		}
-		if (array_key_exists($name, $this->_attributes)) {
-			return static::getColumns()->_decode($name, $value);
+		$_value = $this->{$method}(...[$value]);
+		if ($_value instanceof HasBase) {
+			return $_value->get();
 		}
-		if (Snowflake::app()->has($name)) {
-			return Snowflake::app()->get($name);
-		}
-		return parent::__get($name);
+		return $_value;
+	}
+
+
+	/**
+	 * @param $name
+	 * @param $value
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function _decode($name, $value): mixed
+	{
+		return static::getColumns()->_decode($name, $value);
 	}
 
 
@@ -1005,15 +1030,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
-		$create = microtime(true);
 		/** @var static $model */
 		$model = Snowflake::createObject(static::class);
 		$model->_attributes = $data;
 		$model->_oldAttributes = $data;
 		$model->setIsCreate(false);
-
-		echo 'end create -> ' . microtime(true) . '::' . $create;
-		echo PHP_EOL;
 		return $model;
 	}
 

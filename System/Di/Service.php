@@ -10,11 +10,10 @@ declare(strict_types=1);
 namespace Snowflake\Di;
 
 
-use ReflectionException;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Abstracts\Component;
 use Exception;
-use Snowflake\Exception\NotFindClassException;
+use JetBrains\PhpStorm\Pure;
+use Snowflake\Abstracts\Component;
+use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
@@ -28,6 +27,9 @@ class Service extends Component
 
 
 	private array $_definition = [];
+
+
+	private array $_ids = [];
 
 
 	protected array $_alias = [];
@@ -49,6 +51,8 @@ class Service extends Component
 			}
 			throw new ComponentException("Unknown component ID: $id");
 		}
+
+		$this->_ids[] = $id;
 		if (isset($this->_definition[$id])) {
 			$config = $this->_definition[$id];
 			if (is_object($config)) {
@@ -102,9 +106,9 @@ class Service extends Component
 	 * @param $id
 	 * @return bool
 	 */
-	public function has($id): bool
+	#[Pure] public function has($id): bool
 	{
-		return isset($this->_definition[$id]) || isset($this->_components[$id]) || isset($this->_alias[$id]);
+		return in_array($id, $this->_ids);
 	}
 
 	/**
