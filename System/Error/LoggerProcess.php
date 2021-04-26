@@ -6,6 +6,7 @@ namespace Snowflake\Error;
 
 use Exception;
 use HttpServer\Http\Context;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Process\Process;
@@ -27,10 +28,13 @@ class LoggerProcess extends Process
 	}
 
 
-
-	public function getProcessName(): string
+	/**
+	 * @return string
+	 */
+	#[Pure] public function getProcessName(): string
 	{
 		// TODO: Implement getProcessName() method.
+		return get_called_class();
 	}
 
 
