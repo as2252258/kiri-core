@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Server;
 use Snowflake\Abstracts\Config;
 use Snowflake\Cache\Redis;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Process\Process;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -27,9 +28,10 @@ class Zookeeper extends Process
     private mixed $server;
 
 
-    /**
-     * @param \Swoole\Process $process
-     */
+	/**
+	 * @return string
+	 * @throws ConfigException
+	 */
     public function getProcessName(): string
     {
         $name = Config::get('id', 'system') . '[' . $this->pid . ']';
@@ -85,7 +87,7 @@ class Zookeeper extends Process
             if (empty($handler = $redis->get('crontab:' . $value))) {
                 return;
             }
-            $params['handler'] = unserialize($handler);
+            $params['handler'] = $handler;
 
             $this->server->sendMessage($params, $this->getWorker());
         } catch (Throwable $exception) {
@@ -104,10 +106,10 @@ class Zookeeper extends Process
     }
 
 
-    /**
-     * @return array
-     * @throws Exception
-     */
+	/**
+	 * @param Redis|\Redis $redis
+	 * @return array
+	 */
     private function loadCarobTask(Redis|\Redis $redis): array
     {
         $range = $redis->zRangeByScore(Producer::CRONTAB_KEY, '0', (string)time());

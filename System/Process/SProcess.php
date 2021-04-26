@@ -8,10 +8,18 @@ interface SProcess
 {
 
 
-//    public function getProcessName(): string;
-//
-//
-//    public function before(\Swoole\Process $process): void;
+	/**
+	 * @return string
+	 *
+	 * return process name
+	 */
+    public function getProcessName(): string;
+
+
+	/**
+	 * @param \Swoole\Process $process
+	 */
+    public function before(\Swoole\Process $process): void;
 
     /**
      * @param \Swoole\Process $process

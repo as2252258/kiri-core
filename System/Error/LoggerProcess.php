@@ -21,6 +21,19 @@ class LoggerProcess extends Process
 {
 
 
+	public function before(\Swoole\Process $process): void
+	{
+		// TODO: Implement before() method.
+	}
+
+
+
+	public function getProcessName(): string
+	{
+		// TODO: Implement getProcessName() method.
+	}
+
+
 	/**
 	 * @param \Swoole\Process $process
 	 * @throws ComponentException
