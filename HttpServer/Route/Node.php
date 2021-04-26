@@ -129,6 +129,9 @@ class Node extends HttpService
 			if (empty($dispatchParam)) {
 				$dispatchParam = [\request()];
 			}
+			if ($this->handler instanceof Closure) {
+				return call_user_func($this->handler, ...$dispatchParam);
+			}
 			return \aop($this->handler, $dispatchParam);
 		};
 	}
