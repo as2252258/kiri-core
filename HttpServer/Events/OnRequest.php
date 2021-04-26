@@ -54,11 +54,10 @@ class OnRequest extends Callback
 			defer(function () {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			});
-			/** @var HRequest $request */
 			/** @var HResponse $response */
 			[$request, $response] = OnRequest::createContext($request, $response);
 			if ($request->is('favicon.ico')) {
-				return $response->send('', 404);
+				return $response->close(404);
 			}
 			return $this->router->dispatch();
 		} catch (ExitException | Error | \Throwable $exception) {

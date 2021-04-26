@@ -30,18 +30,12 @@ use Snowflake\Snowflake;
 
 	/**
 	 * @param array $handler
-	 * @return array
+	 * @return bool
 	 * @throws Exception
 	 */
-	public function execute(array $handler): array
+	public function execute(array $handler): bool
 	{
-		[$class, $method] = $handler;
-
-		/** @var HttpFilter $filter */
-		$filter = Snowflake::app()->get('filter');
-		$filter->register($class::class, $method, $this->rules);
-
-		return $handler;
+		return true;
 	}
 
 

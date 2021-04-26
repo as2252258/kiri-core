@@ -520,42 +520,6 @@ class Node extends HttpService
 			return Json::to(404, $this->errorMsg());
 		}
 		return call_user_func($this->handler, \request());
-		return $this->httpFilter();
-	}
-
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function httpFilter(): mixed
-	{
-		if ($this->handler instanceof Closure) {
-			return call_user_func($this->handler, \request());
-		} else {
-			return $this->runValidator([\request()]);
-		}
-	}
-
-
-	/**
-	 * @param $dispatchParams
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function runValidator($dispatchParams): mixed
-	{
-		if (empty($this->rules) || !is_array($this->rules)) {
-			return call_user_func($this->callback, ...$dispatchParams);
-		}
-		/** @var HttpFilter $filter */
-		$filter = Snowflake::app()->get('filter');
-		$validator = $filter->check($this->rules);
-		if (!($validator instanceof Validator) || $validator->validation()) {
-			return call_user_func($this->callback, ...$dispatchParams);
-		} else {
-			return Json::to(5005, $validator->getError());
-		}
 	}
 
 
