@@ -112,12 +112,7 @@ class Router extends HttpService implements RouterInterface
         if ($handler instanceof Closure) {
             $handler = Closure::bind($handler, new Controller());
         }
-
-        if ($this->useTree == ROUTER_TREE) {
-            return $this->tree($path, $handler, $method);
-        } else {
-            return $this->hash($path, $handler, $method);
-        }
+        return $this->hash($path, $handler, $method);
     }
 
 
@@ -572,9 +567,9 @@ class Router extends HttpService implements RouterInterface
      */
     public function find_path(Request $request): ?Node
     {
-        if ($this->useTree === ROUTER_TREE) {
-            return $this->Branch_search($request);
-        }
+//        if ($this->useTree === ROUTER_TREE) {
+//            return $this->Branch_search($request);
+//        }
 
         $method = $request->getMethod();
         $uri = $request->headers->get('request_uri', '/');
