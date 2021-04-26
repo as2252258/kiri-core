@@ -540,8 +540,7 @@ class Router extends HttpService implements RouterInterface
         if (!($node = $this->find_path(\request()))) {
             return send(self::NOT_FOUND);
         }
-	    $response = $node->dispatch();
-        send($response, 200);
+        send(($response = $node->dispatch()), 200);
         if (!$node->hasAfter()) {
             return null;
         }
