@@ -21,7 +21,6 @@ use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Throwable;
-use validator\Validator;
 use function Input;
 
 /**
@@ -130,10 +129,29 @@ class Node extends HttpService
 			if (empty($dispatchParam)) {
 				$dispatchParam = [\request()];
 			}
-//            return call_user_func($this->handler, ...$dispatchParam);
-
-			return \aop($this->handler, $dispatchParam);
+			if ($this->beforeAction()) {
+				return \aop($this->handler, $dispatchParam);
+			}
+			return response()->close(400);
 		};
+	}
+
+
+	private bool $_hasBeforeAction = false;
+
+
+	/**
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function beforeAction(): bool
+	{
+		if (!$this->_hasBeforeAction) return true;
+		[$controller, $action] = $this->handler;
+		if (!$controller->beforeAction(\request())) {
+			return false;
+		}
+		return true;
 	}
 
 
@@ -298,6 +316,8 @@ class Node extends HttpService
 			if (!empty($action) && !$reflect->hasMethod($action)) {
 				throw new Exception('method ' . $action . ' not exists at ' . $controller . '.');
 			}
+
+			$this->_hasBeforeAction = $reflect->hasMethod('beforeAction');
 
 			$this->annotationInject($reflect->getName(), $action);
 

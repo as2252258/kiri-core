@@ -4,15 +4,12 @@ declare(strict_types=1);
 namespace HttpServer;
 
 
+use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
-use Exception;
-use ReflectionException;
 use Snowflake\Abstracts\TraitApplication;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -69,10 +66,21 @@ class Controller extends HttpService
 
 	/**
 	 * @return Request|null
+	 * @throws Exception
 	 */
 	public function getRequest(): ?Request
 	{
 		return \request();
+	}
+
+
+	/**
+	 * @param Request $request
+	 * @return bool
+	 */
+	public function beforeAction(Request $request): bool
+	{
+		return true;
 	}
 
 
