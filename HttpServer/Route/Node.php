@@ -129,10 +129,7 @@ class Node extends HttpService
 			if (empty($dispatchParam)) {
 				$dispatchParam = [\request()];
 			}
-			if ($this->beforeAction()) {
-				return \aop($this->handler, $dispatchParam);
-			}
-			return response()->close(400);
+			return \aop($this->handler, $dispatchParam);
 		};
 	}
 

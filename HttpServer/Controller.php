@@ -75,16 +75,6 @@ class Controller extends HttpService
 
 
 	/**
-	 * @param Request $request
-	 * @return bool
-	 */
-	public function beforeAction(Request $request): bool
-	{
-		return true;
-	}
-
-
-	/**
 	 * @param $name
 	 * @return mixed
 	 * @throws Exception
