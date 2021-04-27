@@ -168,14 +168,12 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return static
 	 * @throws Exception
 	 */
-	#[Pure] private static function getModelClass(): static
+	private static function getModelClass(): static
 	{
-		return new static();
-		$className = get_called_class();
 		/** @var Channel $channel */
 		$channel = Snowflake::app()->get('channel');
-		return $channel->pop($className, function () use ($className) {
-			return new $className();
+		return $channel->pop(static::class, function () {
+			return new static();
 		});
 	}
 

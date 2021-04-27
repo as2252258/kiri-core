@@ -362,6 +362,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	/**
 	 * @return array
+	 * @throws Exception
 	 */
 	public function getAttributes(): array
 	{
