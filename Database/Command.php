@@ -194,18 +194,14 @@ class Command extends Component
 	 */
 	private function insert_or_change($isInsert, $hasAutoIncrement): bool|string
 	{
-		if (!($connection = $this->initPDOStatement())) {
-			return false;
-		}
-		if (($result = $this->prepare->execute($this->params)) === false) {
-			return $this->addError($connection->errorInfo()[2], 'mysql');
+		if (!($result = $this->initPDOStatement())) {
+			return $result;
 		}
 		if ($isInsert === false) {
 			return true;
 		}
-		$result = $connection->lastInsertId();
 		if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
-			return $this->addError($connection->errorInfo()[2], 'mysql');
+			return $this->addError('The system is busy, please try again later.', 'mysql');
 		}
 		return $result == 0 ? true : $result;
 	}
@@ -215,7 +211,7 @@ class Command extends Component
 	 * 重新构建
 	 * @throws
 	 */
-	private function initPDOStatement(): PDO|bool|null
+	private function initPDOStatement(): bool|int
 	{
 		if (empty($this->sql)) {
 			return $this->addError('no sql.', 'mysql');
@@ -227,7 +223,12 @@ class Command extends Component
 		if (!($this->prepare instanceof PDOStatement)) {
 			return $this->addError($this->sql . ':' . $this->getError(), 'mysql');
 		}
-		return $connect;
+		$result = $this->prepare->execute($this->params);
+		$this->prepare->closeCursor();
+		if ($result === false) {
+			return $this->addError($connect->errorInfo()[2], 'mysql');
+		}
+		return (int)$connect->lastInsertId();
 	}
 
 	/**
