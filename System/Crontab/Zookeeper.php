@@ -63,14 +63,13 @@ class Zookeeper extends Process
      */
     public function onHandler(\Swoole\Process $process): void
     {
-        $ticker = Config::get('crontab.ticker', 100) / 1000;
         $redis = Snowflake::app()->getRedis();
         while (true) {
             $range = $this->loadCarobTask($redis);
             foreach ($range as $value) {
                 $this->dispatch($redis, $value);
             }
-            Coroutine::sleep($ticker);
+            Coroutine::sleep(100);
         }
     }
 
