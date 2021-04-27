@@ -844,6 +844,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$value = $this->_attributes[$name] ?? null;
 		$method = $this->_get_annotation($name, static::GET);
+
+
+		var_dump($method);
 		if (!empty($method)) {
 			return $this->{$method}($value);
 		}
