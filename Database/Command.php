@@ -155,7 +155,7 @@ class Command extends Component
 		$export['endTime'] = microtime(true);
 		$export['time'] = $export['endTime'] - $time;
 
-		write(Json::encode($export), 'mysql');
+//		write(Json::encode($export), 'mysql');
 
 		return $result;
 	}
