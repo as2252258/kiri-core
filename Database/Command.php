@@ -11,10 +11,13 @@ namespace Database;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use PDO;
 use PDOStatement;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Json;
+use Snowflake\Error\LoggerProcess;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
 /**
@@ -147,7 +150,7 @@ class Command extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function setExecuteLog($time, $result): mixed
+	#[Pure] private function setExecuteLog($time, $result): mixed
 	{
 		$export['sql'] = $this->sql;
 		$export['param'] = $this->params;
@@ -155,7 +158,10 @@ class Command extends Component
 		$export['endTime'] = microtime(true);
 		$export['time'] = $export['endTime'] - $time;
 
-//		write(Json::encode($export), 'mysql');
+
+		/** @var LoggerProcess $logger */
+		$logger = Snowflake::getApp(LoggerProcess::class);
+		$logger->write(Json::encode([$export, 'mysql']));
 
 		return $result;
 	}
