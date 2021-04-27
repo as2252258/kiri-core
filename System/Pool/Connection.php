@@ -179,7 +179,7 @@ class Connection extends Pool
 	 */
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{
-		$this->success('create client connect ' . $cds);
+//		$this->success('create client connect ' . $cds);
 	}
 
 
@@ -195,7 +195,7 @@ class Connection extends Pool
 			return;
 		}
 
-		$this->error('Worker ' . env('worker') . ' recover db client ' . $coroutineName . ' length ' . $this->size($coroutineName));
+//		$this->error('Worker ' . env('worker') . ' recover db client ' . $coroutineName . ' length ' . $this->size($coroutineName));
 
 		/** @var PDO $client */
 		$client = Context::getContext($coroutineName);
