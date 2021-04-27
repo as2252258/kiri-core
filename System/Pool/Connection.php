@@ -164,8 +164,8 @@ class Connection extends Pool
 			$link->query('SET NAMES ' . $charset);
 		}
 
-		$this->printClients($config['cds'], '', '');
-		$this->increment($name);
+//		$this->printClients($config['cds'], '', '');
+//		$this->increment($name);
 
 		return $link;
 	}
