@@ -146,6 +146,7 @@ class Connection extends Pool
 	 * @param string $name
 	 * @param mixed $config
 	 * @return PDO
+	 * @throws Exception
 	 */
 	public function createClient(string $name, mixed $config): PDO
 	{
@@ -194,7 +195,7 @@ class Connection extends Pool
 			return;
 		}
 
-		$this->error('recover db client ' . $coroutineName . ' length ' . $this->size($coroutineName));
+		$this->error('Worker ' . env('worker') . ' recover db client ' . $coroutineName . ' length ' . $this->size($coroutineName));
 
 		/** @var PDO $client */
 		$client = Context::getContext($coroutineName);
