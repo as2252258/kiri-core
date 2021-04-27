@@ -57,7 +57,6 @@ class OnRequest extends Callback
 			/** @var HResponse $response */
 			[$request, $response] = OnRequest::createContext($request, $response);
 
-			return \response()->send('ok', 200);
 			if ($request->is('favicon.ico')) {
 				return $response->close(404);
 			}

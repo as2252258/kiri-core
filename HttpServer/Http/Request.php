@@ -439,7 +439,7 @@ class Request extends HttpService
 	 */
 	public function is($router): bool
 	{
-		return $this->getUri() == trim($router, '/');
+		return $this->getUri() == $router;
 	}
 
 	/**
