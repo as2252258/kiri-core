@@ -168,11 +168,11 @@ abstract class Pool extends Component
 		if (!Context::inCoroutine()) {
 			return $this->createClient($name, $callback);
 		}
-		$time = microtime(true);
-		if (!$this->hasItem($name)) {
+		if ($this->_items[$name]->length() < 1) {
 			return $this->createByCallback($name, $callback);
 		}
-
+		
+		$time = microtime(true);
 		$connection = $this->_items[$name]->pop(0.01);
 		if (microtime(true) - $time >= 0.007) {
 			$this->warning('Worker #' . env('worker') . ' get client use time ' . (microtime(true) - $time));
