@@ -170,7 +170,7 @@ abstract class Pool extends Component
 		}
 		$channel = $this->_items[$name];
 		if ($channel->isEmpty()) {
-			return $this->createByCallback($name, $callback);
+			$this->createByCallback($name, $callback);
 		}
 		$connection = $channel->pop(0.002);
 		if (!$this->checkCanUse($name, $connection)) {
@@ -184,17 +184,13 @@ abstract class Pool extends Component
 	/**
 	 * @param $name
 	 * @param mixed $callback
-	 * @return mixed
 	 * @throws Exception
 	 */
-	private function createByCallback($name, mixed $callback): mixed
+	private function createByCallback($name, mixed $callback): void
 	{
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
-
-		return $this->createClient($name, $callback);
-
 		if (!Context::hasContext('create::client::ing::' . $name)) {
 			$this->push($name, $this->createClient($name, $callback));
 			Context::remove('create::client::ing::' . $name);
