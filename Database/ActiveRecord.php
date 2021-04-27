@@ -313,8 +313,8 @@ class ActiveRecord extends BaseActiveRecord
 		}
 		$data = array_merge($data, $this->runRelate());
 
-//		$class = Snowflake::app()->getChannel();
-//		$class->push($this, static::class);
+		$class = Snowflake::app()->getChannel();
+		$class->push($this, static::class);
 
 		return $data;
 	}
