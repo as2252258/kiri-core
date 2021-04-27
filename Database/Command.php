@@ -122,9 +122,9 @@ class Command extends Component
 	 */
 	private function execute($type, $isInsert = null, $hasAutoIncrement = null): int|bool|array|string|null
 	{
-		$time = microtime(true);
 		try {
-			if ($type === static::EXECUTE) {
+            $time = microtime(true);
+            if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
 				$result = $this->search($type);
