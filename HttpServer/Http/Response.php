@@ -15,8 +15,9 @@ use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Snowflake\Core\Help;
-use Snowflake\Core\Json;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Response as SResponse;
 use Swoole\Http2\Response as S2Response;
@@ -151,18 +152,20 @@ class Response extends HttpService
 	/**
 	 * @param string $context
 	 * @param int $statusCode
-	 * @param null $response
+	 * @param null $appointResponse
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function send($context = '', $statusCode = 200, $response = null): mixed
+	public function send($context = '', $statusCode = 200, $appointResponse = null): mixed
 	{
 		$sendData = $this->parseData($context);
-		if ($response instanceof SResponse) {
-			$this->response = $response;
+
+		$response = Context::getContext('response');
+		if ($appointResponse instanceof SResponse) {
+			$response = $appointResponse;
 		}
-		if ($this->response instanceof SResponse) {
-			$this->sendData($this->response, $sendData, $statusCode);
+		if ($response instanceof SResponse) {
+			$this->sendData($response, $sendData, $statusCode);
 		} else {
 			if (!empty(request()->fd)) {
 				return '';
@@ -247,7 +250,9 @@ class Response extends HttpService
 
 
 	/**
+	 * @param $response
 	 * @param $status
+	 * @return Response
 	 */
 	private function setHeaders($response, $status): static
 	{
@@ -285,15 +290,18 @@ class Response extends HttpService
 
 	/**
 	 * @param null $response
-	 * @return mixed
+	 * @return static
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public static function create($response = null): static
 	{
-		$ciResponse = new Response();
+		Context::setContext('response', $response);
+
+		$ciResponse = Snowflake::createObject(Response::class);
 		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;
-		Context::setContext('response', $ciResponse);
 		return $ciResponse;
 	}
 
