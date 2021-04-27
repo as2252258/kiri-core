@@ -126,7 +126,7 @@ class Command extends Component
 				$result = $this->search($type);
 			}
 			if (microtime(true) - $time >= 0.03) {
-				$this->warning('get client use time ' . (microtime(true) - $time));
+				$this->warning('execute sql `' . $this->sql . '` use time ' . (microtime(true) - $time));
 			}
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
