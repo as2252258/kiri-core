@@ -5,7 +5,6 @@ namespace Snowflake\Error;
 
 
 use Exception;
-use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
@@ -22,6 +21,9 @@ class LoggerProcess extends Process
 {
 
 
+	/**
+	 * @param \Swoole\Process $process
+	 */
 	public function before(\Swoole\Process $process): void
 	{
 		// TODO: Implement before() method.
