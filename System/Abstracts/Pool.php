@@ -191,10 +191,7 @@ abstract class Pool extends Component
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
-		if (!Context::hasContext('create::client::ing::' . $name)) {
-			$this->_items[$name]->push($this->createClient($name, $callback));
-			Context::remove('create::client::ing::' . $name);
-		}
+		$this->_items[$name]->push($this->createClient($name, $callback));
 	}
 
 
@@ -220,10 +217,10 @@ abstract class Pool extends Component
 	/**
 	 * @param string $name
 	 * @param $client
-	 * @return mixed
+	 * @return bool
 	 * 检查连接可靠性
 	 */
-	public function checkCanUse(string $name, mixed $client): mixed
+	public function checkCanUse(string $name, mixed $client): bool
 	{
 		return true;
 	}
