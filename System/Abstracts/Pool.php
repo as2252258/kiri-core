@@ -176,7 +176,7 @@ abstract class Pool extends Component
 //				return $connection;
 //			}
 //		}
-		return $this->createByCallback($name, $callback);
+		return $this->createClient($name, $callback);
 	}
 
 
