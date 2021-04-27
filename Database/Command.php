@@ -10,12 +10,11 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Snowflake\Abstracts\Component;
 use Exception;
 use PDO;
 use PDOStatement;
+use Snowflake\Abstracts\Component;
 use Snowflake\Core\Json;
-use Snowflake\Exception\ComponentException;
 
 /**
  * Class Command
@@ -125,6 +124,9 @@ class Command extends Component
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
 				$result = $this->search($type);
+			}
+			if (microtime(true) - $time >= 0.03) {
+				$this->warning('get client use time ' . (microtime(true) - $time));
 			}
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
