@@ -539,7 +539,7 @@ class Node extends HttpService
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
-		return call_user_func($this->handler, \request());
+		return call_user_func($this->callback, \request());
 	}
 
 
