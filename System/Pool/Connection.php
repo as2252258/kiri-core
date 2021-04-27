@@ -151,18 +151,14 @@ class Connection extends Pool
 	public function createClient(string $name, mixed $config): PDO
 	{
 		$link = new PDO($config['cds'], $config['username'], $config['password'], [
-			PDO::ATTR_EMULATE_PREPARES => false,
-			PDO::ATTR_CASE             => PDO::CASE_NATURAL,
-			PDO::ATTR_TIMEOUT          => $this->timeout,
+			PDO::ATTR_EMULATE_PREPARES   => false,
+			PDO::ATTR_CASE               => PDO::CASE_NATURAL,
+			PDO::ATTR_TIMEOUT            => $this->timeout,
+			PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $config['charset'] ?? 'utf8mb4'
 		]);
 		$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 		$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
-
-//		$charset = $config['charset'] ?? 'utf8mb4';
-//		if (!empty($charset)) {
-//			$link->query('SET NAMES ' . $charset);
-//		}
 
 //		$this->printClients($config['cds'], '', '');
 //		$this->increment($name);
