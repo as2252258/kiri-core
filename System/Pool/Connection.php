@@ -187,19 +187,15 @@ class Connection extends Pool
 	public function release($coroutineName, $isMaster)
 	{
 		$coroutineName = $this->name('mysql', $coroutineName, $isMaster);
-		if (!$this->hasClient($coroutineName)) {
-			return;
-		}
-
-//		$this->error('Worker ' . env('worker') . ' recover db client ' . $coroutineName . ' length ' . $this->size($coroutineName));
 
 		/** @var PDO $client */
-		$client = Context::getContext($coroutineName);
+		if (!($client = Context::getContext($coroutineName)) instanceof PDO) {
+			return;
+		}
 		if ($client->inTransaction()) {
 			$client->commit();
 		}
 		$this->push($coroutineName, $client);
-		$this->remove($coroutineName);
 		$this->lastTime = time();
 	}
 

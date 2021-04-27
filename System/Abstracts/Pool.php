@@ -192,7 +192,7 @@ abstract class Pool extends Component
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
 		if (!Context::hasContext('create::client::ing::' . $name)) {
-			$this->push($name, $this->createClient($name, $callback));
+			$this->_items[$name]->push($this->createClient($name, $callback));
 			Context::remove('create::client::ing::' . $name);
 		}
 	}
@@ -298,6 +298,7 @@ abstract class Pool extends Component
 		if (!$this->_items[$name]->isFull()) {
 			$this->_items[$name]->push($client);
 		}
+		$this->remove($name);
 	}
 
 
