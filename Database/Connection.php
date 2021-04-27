@@ -11,15 +11,13 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Annotation\Aspect;
-use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Snowflake\Abstracts\Component;
 use Database\Mysql\Schema;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use PDO;
+use ReflectionException;
+use Snowflake\Abstracts\Component;
 use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -155,10 +153,10 @@ class Connection extends Component
 	#[Pure] public function isWrite($sql): bool
 	{
 		if (empty($sql)) return false;
-
-		$prefix = strtolower(mb_substr($sql, 0, 6));
-
-		return in_array($prefix, ['insert', 'update', 'delete']);
+		if (str_starts_with(strtolower($sql), 'select')) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
