@@ -305,16 +305,16 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function toArray(): array
 	{
-		return $this->_attributes;
+		$data = $this->_attributes;
 
 		$lists = $this->getAnnotation(self::GET);
 		foreach ($lists as $key => $item) {
-			$data[$key] = call_user_func([$this, $item], $data[$key] ?? null);
+			$data[$key] = call_user_func([$this,$item],$data[$key] ?? null);
 		}
-		return array_merge($data, $this->runRelate());
+		$data = array_merge($data, $this->runRelate());
 
-//		$class = Snowflake::app()->getChannel();
-//		$class->push($this, static::class);
+		$class = Snowflake::app()->getChannel();
+		$class->push($this, static::class);
 
 		return $data;
 	}
