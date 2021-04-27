@@ -13,7 +13,6 @@ namespace Database;
 use Database\Base\BaseActiveRecord;
 use Database\Traits\HasBase;
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Channel;
 use Snowflake\Exception\NotFindClassException;
@@ -305,7 +304,7 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$data = $this->_attributes;
 
-		$lists = $this->getAnnotation(self::GET);
+		$lists = Snowflake::getAnnotation()->getGets(static::class);
 		foreach ($lists as $key => $item) {
 			$data[$key] = $this->{$item}($data[$key] ?? null);
 		}
