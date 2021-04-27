@@ -173,11 +173,7 @@ class Command extends Component
 		if (microtime(true) - $time > 0.02) {
 			$this->error('get connect time:' . $this->sql . ';  ' . (microtime(true) - $time));
 		}
-
-		if (!($connect instanceof PDO)) {
-			return $this->addError('数据库繁忙, 请稍后再试.');
-		}
-		if (!($query = $connect->query($this->sql))) {
+		if (!($query = $connect?->query($this->sql))) {
 			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
 		Coroutine::defer(function () use ($query) {
