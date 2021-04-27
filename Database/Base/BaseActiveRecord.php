@@ -52,8 +52,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	const BEFORE_SAVE = 'before::save';
 
 
-	const ANNOTATION_GET = 'get';
-	const ANNOTATION_SET = 'set';
+	const GET = 'get';
+	const SET = 'set';
+	const RELATE = 'RELATE';
 
 	/** @var array */
 	protected array $_attributes = [];
@@ -139,11 +140,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		} else {
 			$this->_relation = Context::getContext(Relation::class);
 		}
-		$annotation = Snowflake::app()->getAnnotation();
-		$this->_annotations[self::ANNOTATION_GET] = $annotation->getGets(static::class);
-		$this->_annotations[self::ANNOTATION_SET] = $annotation->getSets(static::class);
-		$this->_relate = $annotation->getRelateMethods(static::class);
-
 	}
 
 
@@ -154,10 +150,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function addGets($name, $method): static
 	{
-		if (!isset($this->_annotations[self::ANNOTATION_GET])) {
-			$this->_annotations[self::ANNOTATION_GET] = [];
+		if (!isset($this->_annotations[self::GET])) {
+			$this->_annotations[self::GET] = [];
 		}
-		$this->_annotations[self::ANNOTATION_GET][$name] = [$this, $method];
+		$this->_annotations[self::GET][$name] = [$this, $method];
 		return $this;
 	}
 
@@ -169,10 +165,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function addSets($name, $method): static
 	{
-		if (!isset($this->_annotations[self::ANNOTATION_SET])) {
-			$this->_annotations[self::ANNOTATION_SET] = [];
+		if (!isset($this->_annotations[self::SET])) {
+			$this->_annotations[self::SET] = [];
 		}
-		$this->_annotations[self::ANNOTATION_SET][$name] = [$this, $method];
+		$this->_annotations[self::SET][$name] = [$this, $method];
 		return $this;
 	}
 
@@ -611,7 +607,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return mixed
 	 */
-	protected function runAnnotation(string $name, mixed $value, string $type = self::ANNOTATION_GET): mixed
+	protected function runAnnotation(string $name, mixed $value, string $type = self::GET): mixed
 	{
 		return call_user_func($this->_annotations[$type][$name], $value);
 	}
@@ -713,15 +709,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	/**
 	 * @param $name
-	 * @return mixed
+	 * @return array|string|null
 	 * @throws Exception
 	 */
-	public function getRelate($name): mixed
+	public function getRelate($name): null|array|string
 	{
-		if (empty($this->_relate[$name])) {
-			$this->_relate = Snowflake::getAnnotation()->getRelateMethods(static::class);
-		}
-		return $this->_relate[$name] ?? null;
+		return Snowflake::getAnnotation()->getRelateMethods(static::class, $name);
 	}
 
 
@@ -814,7 +807,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			parent::__set($name, $value);
 			return;
 		}
-		$method = $this->_get_annotation($name, self::ANNOTATION_SET);
+		$method = $this->_get_annotation($name, self::SET);
 		if (!empty($method)) {
 			$value = $this->{$method}($value);
 		}
@@ -828,21 +821,16 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return string|null
 	 * @throws Exception
 	 */
-	protected function _get_annotation(string $name = null, string $method = self::ANNOTATION_GET): ?string
+	protected function _get_annotation(string $name = null, string $method = self::GET): ?string
 	{
 		$annotation = Snowflake::app()->getAnnotation();
-		if (!isset($this->_annotations[self::ANNOTATION_GET])) {
-			$this->_annotations[self::ANNOTATION_GET] = $annotation->getGets(static::class);
+		if ($method == static::SET) {
+			return $annotation->getSetMethodName(static::class, $name);
 		}
-		if (!isset($this->_annotations[self::ANNOTATION_SET])) {
-			$this->_annotations[self::ANNOTATION_SET] = $annotation->getSets(static::class);
+		if ($method == static::GET) {
+			return $annotation->getGetMethodName(static::class, $name);
 		}
-		$matches = match ($method) {
-			self::ANNOTATION_GET => $this->_annotations[self::ANNOTATION_GET],
-			self::ANNOTATION_SET => $this->_annotations[self::ANNOTATION_SET],
-			default => $this->_relate
-		};
-		return $matches[$name] ?? null;
+		return $annotation->getRelateMethods(static::class, $name);
 	}
 
 
@@ -853,33 +841,21 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function __get($name): mixed
 	{
-		if (isService($name)) {
-			return Snowflake::getApp($name);
-		}
 		$value = $this->_attributes[$name] ?? null;
-		return $this->_gets($name, $value);
-	}
-
-
-	/**
-	 * @param string $name
-	 * @param mixed $value
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function _gets(string $name, mixed $value): mixed
-	{
-		if (!empty($method = $this->_get_annotation($name))) {
+		$method = $this->_get_annotation($name, static::GET);
+		if (!empty($method)) {
 			return $this->{$method}(...[$value]);
 		}
-		if (empty($method = $this->_get_annotation())) {
+
+		$relation = $this->_get_annotation($name, static::RELATE);
+		if (empty($relation)) {
 			return $this->_decode($name, $value);
 		}
-		$_value = $this->{$method}(...[$value]);
-		if ($_value instanceof HasBase) {
-			return $_value->get();
+
+		if (($value = $this->{$relation}(...[$value])) instanceof HasBase) {
+			return $value->get();
 		}
-		return $_value;
+		return $value;
 	}
 
 
@@ -913,7 +889,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getAnnotation($type = self::ANNOTATION_GET): array
+	protected function getAnnotation($type = self::GET): array
 	{
 		return $this->_annotations[$type] ?? [];
 	}
@@ -924,7 +900,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return bool
 	 */
-	protected function hasAnnotation($name, $type = self::ANNOTATION_GET): bool
+	protected function hasAnnotation($name, $type = self::GET): bool
 	{
 		if (!isset($this->_annotations[$type])) {
 			return false;
@@ -1060,11 +1036,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
-		$class = Snowflake::app()->getChannel();
-		/** @var static $model */
-		$model = $class->pop(static::class, function () {
-			return new static();
-		});
+//		$class = Snowflake::app()->getChannel();
+//		/** @var static $model */
+//		$model = $class->pop(static::class, function () {
+//			return new static();
+//		});
+		$model = new static();
 		$model->_attributes = $data;
 		$model->_oldAttributes = $data;
 		$model->setIsCreate(false);

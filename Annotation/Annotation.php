@@ -77,36 +77,33 @@ class Annotation extends Component
 
 	/**
 	 * @param string $class
-	 * @param string $setName
-	 * @return mixed|null
+	 * @param string|null $setName
+	 * @return array|string|null
 	 */
-	public function getGetMethodName(string $class, string $setName): ?string
+	public function getGetMethodName(string $class, string $setName = null): array|null|string
 	{
-		$gets = $this->_model_gets[$class] ?? $this->_model_relate[$class] ?? null;
+		$gets = $this->_model_gets[$class] ?? null;
 		if ($gets == null) {
 			return null;
 		}
+		if (empty($setName)) return $gets;
 		return $gets[$setName] ?? null;
 	}
 
 
 	/**
 	 * @param string $class
-	 * @return array
+	 * @param string|null $method
+	 * @return array|string|null
 	 */
-	public function getModelMethods(string $class): array
+	public function getRelateMethods(string $class, string $method = null): array|null|string
 	{
-		return $this->_model_gets[$class] ?? [];
-	}
-
-
-	/**
-	 * @param string $class
-	 * @return array
-	 */
-	public function getRelateMethods(string $class): array
-	{
-		return $this->_model_relate[$class] ?? [];
+		$gets = $this->_model_relate[$class] ?? null;
+		if ($gets == null) {
+			return null;
+		}
+		if (empty($method)) return $gets;
+		return $gets[$method] ?? null;
 	}
 
 
