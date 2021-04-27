@@ -168,15 +168,15 @@ abstract class Pool extends Component
 		if (!Context::inCoroutine()) {
 			return $this->createClient($name, $callback);
 		}
-		if ($this->_items[$name]->isEmpty()) {
-			return $this->createByCallback($name, $callback);
+		if (!$this->_items[$name]->isEmpty()) {
+			$connection = $this->_items[$name]->pop();
+			if (!$this->checkCanUse($name, $connection)) {
+				return $this->createClient($name, $callback);
+			} else {
+				return $connection;
+			}
 		}
-		$connection = $this->_items[$name]->pop();
-		if (!$this->checkCanUse($name, $connection)) {
-			return $this->createClient($name, $callback);
-		} else {
-			return $connection;
-		}
+		return $this->createByCallback($name, $callback);
 	}
 
 
