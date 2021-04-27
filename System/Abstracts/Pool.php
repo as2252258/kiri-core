@@ -298,7 +298,6 @@ abstract class Pool extends Component
 		if (!$this->_items[$name]->isFull()) {
 			$this->_items[$name]->push($client);
 		}
-		$this->remove($name);
 	}
 
 

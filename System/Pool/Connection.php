@@ -159,23 +159,7 @@ class Connection extends Pool
 		$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 		$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
-
-//		$this->printClients($config['cds'], '', '');
-//		$this->increment($name);
-
 		return $link;
-	}
-
-
-	/**
-	 * @param $cds
-	 * @param $coroutineName
-	 * @param false $isBefore
-	 * @throws Exception
-	 */
-	public function printClients($cds, $coroutineName, $isBefore = false)
-	{
-//		$this->success('create client connect ' . $cds);
 	}
 
 
@@ -221,15 +205,6 @@ class Connection extends Pool
 
 
 	/**
-	 * @param $coroutineName
-	 */
-	public function remove($coroutineName)
-	{
-		Context::remove($coroutineName);
-	}
-
-
-	/**
 	 * @param string $name
 	 * @param mixed $client
 	 * @return bool
@@ -262,9 +237,6 @@ class Connection extends Pool
 	public function disconnect($coroutineName, $isMaster = false)
 	{
 		$coroutineName = $this->name($coroutineName, $isMaster);
-		if ($this->hasClient($coroutineName)) {
-			$this->remove($coroutineName);
-		}
 		$this->clean($coroutineName);
 	}
 
