@@ -132,33 +132,10 @@ class Command extends Component
 			if (microtime(true) - $time >= 0.03) {
 				$this->warning('execute sql Worker.' . env('worker') . '.' . Coroutine::getCid() . '`' . $this->sql . '` use time ' . (microtime(true) - $time));
 			}
+			return $result;
 		} catch (\Throwable $exception) {
-			$message = $this->sql . '. error: ' . $exception->getMessage();
-
-			$result = $this->addError($message, 'mysql');
-		} finally {
-			return $this->setExecuteLog($time, $result);
+			return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
 		}
-	}
-
-
-	/**
-	 * @param $time
-	 * @param $result
-	 * @return mixed
-	 * @throws Exception
-	 */
-	#[Pure] private function setExecuteLog($time, $result): mixed
-	{
-		$export['sql'] = $this->sql;
-		$export['param'] = $this->params;
-		$export['startTime'] = $time;
-		$export['endTime'] = microtime(true);
-		$export['time'] = $export['endTime'] - $time;
-
-		logger()->debug(Json::encode($export), 'mysql');
-
-		return $result;
 	}
 
 
