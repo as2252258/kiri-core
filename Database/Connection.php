@@ -93,11 +93,6 @@ class Connection extends Component
 	 */
 	public function getConnect($sql = NULL): PDO
 	{
-		$connections = $this->connections();
-		$connections->initConnections('mysql', $this->cds, true, $this->maxNumber);
-		$connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
-		$connections->setTimeout($this->timeout);
-
 		return $this->getPdo($sql);
 	}
 
@@ -109,7 +104,9 @@ class Connection extends Component
 	{
 		$connections = $this->connections();
 		$connections->initConnections('mysql', $this->cds, true, $this->maxNumber);
-		$connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
+		if (!empty($this->slaveConfig)) {
+			$connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
+		}
 	}
 
 
@@ -120,10 +117,12 @@ class Connection extends Component
 	 */
 	private function getPdo($sql): PDO
 	{
+		$connections = $this->connections();
+		$connections->setTimeout($this->timeout);
 		if ($this->isWrite($sql)) {
-			$connect = $this->masterInstance();
+			$connect = $connections->get(['cds' => $this->cds, 'username' => $this->username, 'password' => $this->password], true);
 		} else {
-			$connect = $this->slaveInstance();
+			$connect = $connections->get(['cds' => $this->slaveConfig['cds'], 'username' => $this->username, 'password' => $this->password], false);
 		}
 		return $connect;
 	}
@@ -186,7 +185,7 @@ class Connection extends Component
 	 */
 	public function slaveInstance(): PDO
 	{
-		if (empty($this->slaveConfig) || $this->slaveConfig['cds'] == $this->cds) {
+		if (empty($this->slaveConfig)) {
 			return $this->masterInstance();
 		}
 		return $this->connections()->get($this->slaveConfig, false);
