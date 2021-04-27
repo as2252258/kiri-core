@@ -33,6 +33,7 @@ class DatabasesProviders extends Providers
 	{
 		$application->set('db', $this);
 
+		Event::on(Event::SERVER_TASK_START, [$this, 'createPool']);
 		Event::on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 	}
 
