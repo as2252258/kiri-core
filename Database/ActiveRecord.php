@@ -309,12 +309,12 @@ class ActiveRecord extends BaseActiveRecord
 
 		$lists = $this->getAnnotation(self::GET);
 		foreach ($lists as $key => $item) {
-			$data[$key] = $this->{$item}($data[$key] ?? null);
+			$data[$key] = call_user_func([$this, $item], $data[$key] ?? null);
 		}
-		$data = array_merge($data, $this->runRelate());
+		return array_merge($data, $this->runRelate());
 
-		$class = Snowflake::app()->getChannel();
-		$class->push($this, static::class);
+//		$class = Snowflake::app()->getChannel();
+//		$class->push($this, static::class);
 
 		return $data;
 	}
