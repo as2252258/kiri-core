@@ -174,7 +174,7 @@ abstract class Pool extends Component
 		}
 		$connection = $this->_items[$name]->pop(0.01);
 		if (microtime(true) - $time >= 0.007) {
-			$this->warning('get client use time ' . (microtime(true) - $time));
+			$this->warning('Worker #' . env('worker') . ' get client use time ' . (microtime(true) - $time));
 		}
 		if (!$this->checkCanUse($name, $connection)) {
 			return $this->createClient($name, $callback);
