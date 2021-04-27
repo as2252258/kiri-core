@@ -168,7 +168,12 @@ class Command extends Component
 	 */
 	private function search($type): mixed
 	{
+		$time = microtime(true);
 		$connect = $this->db->getConnect($this->sql);
+		if (microtime(true) - $time > 0.02) {
+			$this->error('get connect time:' . $this->sql . ';  ' . (microtime(true) - $time));
+		}
+
 		if (!($connect instanceof PDO)) {
 			return $this->addError('数据库繁忙, 请稍后再试.');
 		}
