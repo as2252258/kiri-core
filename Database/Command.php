@@ -132,9 +132,7 @@ class Command extends Component
 			}
 			return $result;
 		} catch (\Throwable $exception) {
-			$message = $this->sql . '. error: ' . $exception->getMessage();
-
-			return $this->addError($message, 'mysql');
+			return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
 		}
 	}
 
