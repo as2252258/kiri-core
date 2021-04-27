@@ -305,7 +305,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public function toArray(): array
 	{
-		$data = $this->_attributes;
+		return $this->_attributes;
 
 		$lists = $this->getAnnotation(self::GET);
 		foreach ($lists as $key => $item) {
