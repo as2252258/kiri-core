@@ -41,9 +41,6 @@ class Node extends HttpService
 
 	private string $_error = '';
 
-	private array $rules = [];
-
-
 	private string $_dataType = '';
 
 	/** @var ?Closure|?array */
@@ -358,7 +355,7 @@ class Node extends HttpService
 	{
 		$annotation = annotation()->getMethods($className, $action);
 		if (empty($annotation)) {
-			return $this->injectRules($className, $action);
+			return $this;
 		}
 		foreach ($annotation as $attribute) {
 			if ($attribute instanceof Interceptor) {
@@ -374,22 +371,6 @@ class Node extends HttpService
 				$this->addLimits($attribute->limits);
 			}
 		}
-		return $this->injectRules($className, $action);
-	}
-
-
-	/**
-	 * @param string $controller
-	 * @param string $action
-	 * @return $this
-	 * @throws \Exception
-	 */
-	private function injectRules(string $controller, string $action): static
-	{
-		/** @var HttpFilter $filter */
-		$filter = Snowflake::app()->get('filter');
-		$this->rules = $filter->getRules($controller, $action);
-
 		return $this;
 	}
 
@@ -460,6 +441,7 @@ class Node extends HttpService
 	/**
 	 * @param string $search
 	 * @return Node|null
+	 * @throws Exception
 	 */
 	public function findNode(string $search): ?Node
 	{
