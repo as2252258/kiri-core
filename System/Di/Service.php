@@ -42,27 +42,21 @@ class Service extends Component
 	 */
 	public function get($id, $try = true): mixed
 	{
-		if (isset($this->_components[$id])) {
-			return $this->_components[$id];
-		}
-		if (!isset($this->_definition[$id]) && !isset($this->_alias[$id])) {
-			if ($try === false) {
-				return null;
+		if (!isset($this->_components[$id])) {
+			if (!isset($this->_definition[$id])) {
+				throw new ComponentException("Unknown component ID: $id");
 			}
-			throw new ComponentException("Unknown component ID: $id");
-		}
-		if (isset($this->_definition[$id])) {
 			$config = $this->_definition[$id];
 			if (is_object($config)) {
-				return $this->_components[$id] = $config;
+				return $config;
 			}
-			$object = Snowflake::createObject($config);
-		} else {
-			$config = $this->_alias[$id];
-
-			$object = Snowflake::createObject($config);
+			$this->_components[$id] = Snowflake::createObject($config);
 		}
-		return $this->_components[$id] = $object;
+		$object = $this->_components[$id];
+		if (method_exists($object, 'afterInit')) {
+			$object->afterInit();
+		}
+		return $object;
 	}
 
 	/**

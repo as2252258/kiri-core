@@ -113,11 +113,7 @@ class Server extends HttpService
 			return 'ok';
 		}
 
-		Runtime::enableCoroutine(true, SWOOLE_HOOK_TCP |
-			SWOOLE_HOOK_UNIX | SWOOLE_HOOK_UDP | SWOOLE_HOOK_UDG |
-			SWOOLE_HOOK_SSL | SWOOLE_HOOK_TLS | SWOOLE_HOOK_SLEEP |
-			SWOOLE_HOOK_STREAM_FUNCTION | SWOOLE_HOOK_PROC
-		);
+		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
 
 		Coroutine::set(['enable_deadlock_check' => false]);
 
