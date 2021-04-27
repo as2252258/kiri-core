@@ -163,6 +163,7 @@ class Connection extends Pool
 			$link->query('SET NAMES ' . $charset);
 		}
 
+		$this->printClients($config['cds'], '', '');
 		$this->increment($name);
 
 		return $link;
@@ -173,9 +174,11 @@ class Connection extends Pool
 	 * @param $cds
 	 * @param $coroutineName
 	 * @param false $isBefore
+	 * @throws Exception
 	 */
 	public function printClients($cds, $coroutineName, $isBefore = false)
 	{
+		$this->success('create client connect ' . $cds);
 	}
 
 
@@ -191,7 +194,7 @@ class Connection extends Pool
 			return;
 		}
 
-		$this->error('recover db client ' . $coroutineName);
+		$this->error('recover db client ' . $coroutineName . ' length ' . $this->size($coroutineName));
 
 		/** @var PDO $client */
 		$client = Context::getContext($coroutineName);
