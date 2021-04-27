@@ -25,7 +25,6 @@ class OnConnect extends Callback
 	 */
 	public function onHandler(Server $server, int $fd, int $reactorId)
 	{
-		var_dump($fd, $reactorId);
 		try {
 			defer(function () {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);

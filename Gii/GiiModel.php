@@ -87,7 +87,7 @@ namespace ' . $namespace . ';
 
 use Exception;
 use Annotation\Target;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use Database\Connection;
 use Annotation\Model\Get;
 use Annotation\Model\Set;

@@ -72,7 +72,7 @@ use Annotation\Target;
 use Annotation\Route\Middleware;
 use Annotation\Route\Route;
 use Snowflake\Core\Str;
-use Snowflake\Core\JSON;
+use Snowflake\Core\Json;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Controller;
