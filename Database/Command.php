@@ -15,6 +15,7 @@ use PDO;
 use PDOStatement;
 use Snowflake\Abstracts\Component;
 use Snowflake\Core\Json;
+use Swoole\Coroutine;
 
 /**
  * Class Command
@@ -174,7 +175,7 @@ class Command extends Component
 		if (!($query = $connect->query($this->sql))) {
 			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
-		defer(function () use ($query) {
+		Coroutine::defer(function () use ($query) {
 			$query->closeCursor();
 		});
 		if ($type === static::FETCH_COLUMN) {
