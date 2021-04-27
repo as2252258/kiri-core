@@ -170,9 +170,11 @@ abstract class Pool extends Component
 		}
 		$channel = $this->_items[$name];
 		if ($channel->isEmpty()) {
+			return $this->createClient($name, $callback);
+
 			$this->createByCallback($name, $callback);
 		}
-		$connection = $channel->pop(0.002);
+		return $channel->pop(0.002);
 		if (!$this->checkCanUse($name, $connection)) {
 			return $this->createClient($name, $callback);
 		} else {
