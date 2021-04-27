@@ -161,7 +161,7 @@ class Command extends Component
 
 		/** @var LoggerProcess $logger */
 		$logger = Snowflake::getApp(LoggerProcess::class);
-		$logger->write(Json::encode([$export, 'mysql']));
+		$logger->write(Json::encode([Json::encode($export), 'mysql']));
 
 		return $result;
 	}
