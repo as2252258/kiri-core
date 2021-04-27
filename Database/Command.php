@@ -129,7 +129,7 @@ class Command extends Component
 				$result = $this->search($type);
 			}
 			if (microtime(true) - $time >= 0.03) {
-				$this->warning('execute sql Worker.' . env('worker') . '`' . $this->sql . '` use time ' . (microtime(true) - $time));
+				$this->warning('execute sql Worker.' . env('worker') . '.' . Coroutine::getCid() . '`' . $this->sql . '` use time ' . (microtime(true) - $time));
 			}
 		} catch (\Throwable $exception) {
 			$message = $this->sql . '. error: ' . $exception->getMessage();
