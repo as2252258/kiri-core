@@ -344,26 +344,6 @@ class Server extends HttpService
 
 
 	/**
-	 * @param $mode
-	 * @return bool
-	 */
-	public static function isTcp($mode)
-	{
-		return in_array($mode, [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6]);
-	}
-
-
-	/**
-	 * @param $mode
-	 * @return bool
-	 */
-	public static function isUdp($mode)
-	{
-		return in_array($mode, [SWOOLE_SOCK_UDP, SWOOLE_UDP, SWOOLE_UDP6, SWOOLE_SOCK_UDP6]);
-	}
-
-
-	/**
 	 * @return Packet|Websocket|Receive|Http|null
 	 * @throws ConfigException
 	 * @throws Exception
