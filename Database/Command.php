@@ -125,9 +125,6 @@ class Command extends Component
 			} else {
 				$result = $this->search($type);
 			}
-			if (microtime(true) - $time >= 0.03) {
-				$this->warning('execute sql `' . $this->sql . '` use time ' . (microtime(true) - $time));
-			}
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
 			}
@@ -172,6 +169,13 @@ class Command extends Component
 		if (!($connect instanceof PDO)) {
 			return $this->addError('数据库繁忙, 请稍后再试.');
 		}
+
+		$time = microtime(true);
+		defer(function () use ($time) {
+			if (microtime(true) - $time >= 0.03) {
+				$this->warning('execute sql `' . $this->sql . '` use time ' . (microtime(true) - $time));
+			}
+		});
 		if (!($query = $connect->query($this->sql))) {
 			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
