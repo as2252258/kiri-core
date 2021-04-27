@@ -45,19 +45,25 @@ class Service extends Component
 		if (isset($this->_components[$id])) {
 			return $this->_components[$id];
 		}
-		if (isset($this->_definition[$id])) {
-			$config = $this->_definition[$id];
-			if (!is_object($config)) {
-				$config = Snowflake::createObject($config);
+		if (!isset($this->_definition[$id]) && !isset($this->_alias[$id])) {
+			if ($try === false) {
+				return null;
 			}
-			return $this->_components[$id] = $config;
-		}
-		if ($try !== false) {
 			throw new ComponentException("Unknown component ID: $id");
 		}
-		return null;
-	}
+		if (isset($this->_definition[$id])) {
+			$config = $this->_definition[$id];
+			if (is_object($config)) {
+				return $this->_components[$id] = $config;
+			}
+			$object = Snowflake::createObject($config);
+		} else {
+			$config = $this->_alias[$id];
 
+			$object = Snowflake::createObject($config);
+		}
+		return $this->_components[$id] = $object;
+	}
 
 	/**
 	 * @param string $className
