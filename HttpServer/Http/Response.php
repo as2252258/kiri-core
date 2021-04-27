@@ -179,16 +179,16 @@ class Response extends HttpService
 	 */
 	private function parseData($context): mixed
 	{
-		if ($context === null) {
-			if (isset($this->_format_maps[$this->format])) {
-				$class['class'] = $this->_format_maps[$this->format];
-			} else {
-				$class['class'] = HtmlFormatter::class;
-			}
-			$format = Snowflake::createObject($class);
-			return $format->send($context)->getData();
+		if (empty($context)) {
+			return $context;
 		}
-		return $context;
+		if (isset($this->_format_maps[$this->format])) {
+			$class['class'] = $this->_format_maps[$this->format];
+		} else {
+			$class['class'] = HtmlFormatter::class;
+		}
+		$format = Snowflake::createObject($class);
+		return $format->send($context)->getData();
 	}
 
 	/**
@@ -228,7 +228,6 @@ class Response extends HttpService
 		if (!swoole()->exist($response->fd)) {
 			return;
 		}
-		var_dump($sendData);
 		if (is_array($sendData)) {
 			$sendData = Json::encode($sendData);
 		}
