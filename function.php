@@ -656,10 +656,7 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response|stdClass
 	{
-		if (!Context::hasContext('response')) {
-			return new Response();
-		}
-		return Context::getContext('response');
+		return Snowflake::getApp('response');
 	}
 
 }
