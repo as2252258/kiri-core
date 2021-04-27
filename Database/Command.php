@@ -28,6 +28,8 @@ class Command extends Component
 	const EXECUTE = 'EXECUTE';
 	const FETCH_COLUMN = 'FETCH_COLUMN';
 
+	const DB_ERROR_MESSAGE = 'The system is busy, please try again later.';
+
 	/** @var Connection */
 	public Connection $db;
 
@@ -128,9 +130,6 @@ class Command extends Component
 			if (microtime(true) - $time >= 0.03) {
 				$this->warning('execute sql `' . $this->sql . '` use time ' . (microtime(true) - $time));
 			}
-			if ($this->prepare) {
-				$this->prepare->closeCursor();
-			}
 		} catch (\Throwable $exception) {
 			$message = $this->sql . '. error: ' . $exception->getMessage();
 
@@ -175,6 +174,9 @@ class Command extends Component
 		if (!($query = $connect->query($this->sql))) {
 			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
+		defer(function () use ($query) {
+			$query->closeCursor();
+		});
 		if ($type === static::FETCH_COLUMN) {
 			return $query->fetchAll(PDO::FETCH_ASSOC);
 		} else if ($type === static::ROW_COUNT) {
@@ -201,7 +203,7 @@ class Command extends Component
 			return true;
 		}
 		if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
-			return $this->addError('The system is busy, please try again later.', 'mysql');
+			return $this->addError(static::DB_ERROR_MESSAGE, 'mysql');
 		}
 		return $result == 0 ? true : $result;
 	}
@@ -219,12 +221,13 @@ class Command extends Component
 		if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
 			return $this->addError('get client error.', 'mysql');
 		}
-		$this->prepare = $connect->prepare($this->sql);
-		if (!($this->prepare instanceof PDOStatement)) {
-			return $this->addError($this->sql . ':' . $this->getError(), 'mysql');
+		if (!(($prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
+			$error = $prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
+
+			return $this->addError($this->sql . ':' . $error, 'mysql');
 		}
-		$result = $this->prepare->execute($this->params);
-		$this->prepare->closeCursor();
+		$result = $prepare->execute($this->params);
+		$prepare->closeCursor();
 		if ($result === false) {
 			return $this->addError($connect->errorInfo()[2], 'mysql');
 		}
@@ -293,14 +296,6 @@ class Command extends Component
 	{
 		$this->sql = $sql;
 		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getError(): string
-	{
-		return $this->prepare->errorInfo()[2] ?? 'Db 驱动错误.';
 	}
 
 }
