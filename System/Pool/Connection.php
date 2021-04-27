@@ -159,10 +159,10 @@ class Connection extends Pool
 		$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 		$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
 
-		$charset = $config['charset'] ?? 'utf8mb4';
-		if (!empty($charset)) {
-			$link->query('SET NAMES ' . $charset);
-		}
+//		$charset = $config['charset'] ?? 'utf8mb4';
+//		if (!empty($charset)) {
+//			$link->query('SET NAMES ' . $charset);
+//		}
 
 //		$this->printClients($config['cds'], '', '');
 //		$this->increment($name);
