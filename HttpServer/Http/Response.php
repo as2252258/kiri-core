@@ -228,6 +228,7 @@ class Response extends HttpService
 		if (!swoole()->exist($response->fd)) {
 			return;
 		}
+		var_dump($sendData);
 		if (is_array($sendData)) {
 			$sendData = Json::encode($sendData);
 		}
