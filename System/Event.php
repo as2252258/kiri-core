@@ -211,7 +211,7 @@ class Event extends BaseObject
 //        foreach ($events as $index => $event) {
 //            $this->execute($event, $parameter);
 //        }
-	    call_user_func_array($events, ...$parameter);
+	    call_user_func_array($events, $parameter);
 	    if ($is_remove) {
             $this->offName($name);
         }
