@@ -15,9 +15,7 @@ use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
 use Snowflake\Core\Help;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Response as SResponse;
 use Swoole\Http2\Response as S2Response;
@@ -227,43 +225,29 @@ class Response extends HttpService
 		if (!Snowflake::getWebSocket()->exist($response->fd)) {
 			return;
 		}
-		$response->end($this->setHeaders($response, $status)
-			->setResponseContent($sendData));
-	}
-
-
-	/**
-	 * @param $sendData
-	 * @return string
-	 * @throws Exception
-	 */
-	private function setResponseContent($sendData): string
-	{
-//		$message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
-//		Snowflake::writeFile(storage('response.log'), $message, FILE_APPEND);
-		return $sendData;
+		$this->setHeaders($response, $status)->end($sendData);
 	}
 
 
 	/**
 	 * @param SResponse $response
 	 * @param $status
-	 * @return Response
+	 * @return SResponse
 	 */
-	private function setHeaders(SResponse $response, $status): static
+	private function setHeaders(SResponse $response, $status): SResponse
 	{
 		$response->status($status);
 		$response->header('Content-Type', $this->getContentType());
 		$response->header('Run-Time', $this->getRuntime());
 
 		if (empty($this->headers) || !is_array($this->headers)) {
-			return $this;
+			return $response;
 		}
 		foreach ($this->headers as $key => $header) {
 			$response->header($key, $header, true);
 		}
 		$this->headers = [];
-		return $this;
+		return $response;
 	}
 
 
