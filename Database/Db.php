@@ -12,6 +12,7 @@ namespace Database;
 use Database\Traits\QueryTrait;
 use Exception;
 use HttpServer\Http\Context;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 
 /**
@@ -49,9 +50,8 @@ class Db
         if (!static::transactionsActive()) {
             return;
         }
-        $event = Snowflake::app()->getEvent();
-        $event->trigger(Connection::TRANSACTION_COMMIT);
-        $event->offName(Connection::TRANSACTION_COMMIT);
+        Event::trigger(Connection::TRANSACTION_COMMIT);
+        Event::offName(Connection::TRANSACTION_COMMIT);
 	    static::$_inTransaction = false;
     }
 
@@ -63,9 +63,8 @@ class Db
         if (!static::transactionsActive()) {
             return;
         }
-        $event = Snowflake::app()->getEvent();
-        $event->trigger(Connection::TRANSACTION_ROLLBACK);
-        $event->offName(Connection::TRANSACTION_ROLLBACK);
+        Event::trigger(Connection::TRANSACTION_ROLLBACK);
+        Event::offName(Connection::TRANSACTION_ROLLBACK);
 	    static::$_inTransaction = false;
     }
 

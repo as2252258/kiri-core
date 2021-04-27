@@ -24,8 +24,7 @@ class OnBeforeReload extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
-		$event = Snowflake::app()->getEvent();
-		$event->trigger(Event::SERVER_BEFORE_RELOAD, [$server]);
+		Event::trigger(Event::SERVER_BEFORE_RELOAD, [$server]);
 
         Snowflake::clearWorkerPid();
         Snowflake::clearTaskPid();

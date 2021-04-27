@@ -28,8 +28,7 @@ class OnWorkerError extends Callback
      */
     public function onHandler(Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
     {
-        $event = Snowflake::app()->getEvent();
-        $event->trigger(Event::SERVER_WORKER_ERROR);
+        Event::trigger(Event::SERVER_WORKER_ERROR);
 
         $message = sprintf('Worker#%d::%d error stop. signal %d, exit_code %d',
             $worker_id, $signal, $worker_pid, $exit_code

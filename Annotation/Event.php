@@ -7,6 +7,7 @@ namespace Annotation;
 use Exception;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
+use Snowflake\Event as SEvent;
 
 
 /**
@@ -29,16 +30,14 @@ use Snowflake\Snowflake;
 
 	/**
 	 * @param array $handler
-	 * @return \Snowflake\Event
-	 * @throws ComponentException
+	 * @return bool
 	 * @throws Exception
 	 */
-	public function execute(array $handler): \Snowflake\Event
+	public function execute(array $handler): bool
 	{
 		// TODO: Implement execute() method.
-		$event = Snowflake::app()->getEvent();
-		$event->on($this->name, $handler, $this->params);
-		return $event;
+		SEvent::on($this->name, $handler, $this->params);
+		return true;
 	}
 
 }

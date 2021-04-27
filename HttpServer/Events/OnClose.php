@@ -31,12 +31,10 @@ class OnClose extends Callback
                 fire(Event::SYSTEM_RESOURCE_RELEASES);
             });
 			$clientInfo = $server->getClientInfo($fd);
-			$event = Snowflake::app()->getEvent();
-
-			if (!$event->exists(($name = $this->getName($clientInfo)))) {
+			if (!Event::exists(($name = $this->getName($clientInfo)))) {
                 return;
             }
-			$event->trigger($name, [$server, $fd]);
+			Event::trigger($name, [$server, $fd]);
 		} catch (\Throwable $exception) {
             $this->addError($exception, 'throwable');
         }

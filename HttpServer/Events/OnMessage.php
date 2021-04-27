@@ -45,12 +45,10 @@ class OnMessage extends Callback
                 return;
             }
             $clientInfo = $server->getClientInfo($frame->fd);
-            $event = Snowflake::app()->getEvent();
-
-            if (!$event->exists(($name = $this->getName($clientInfo)))) {
+            if (!Event::exists(($name = $this->getName($clientInfo)))) {
                 return;
             }
-            $event->trigger($name, [$frame, $server]);
+            Event::trigger($name, [$frame, $server]);
         } catch (\Throwable $exception) {
             $this->addError($exception, 'websocket');
             if (!swoole()->exist($frame->fd)) {

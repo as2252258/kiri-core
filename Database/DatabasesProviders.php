@@ -33,8 +33,7 @@ class DatabasesProviders extends Providers
 	{
 		$application->set('db', $this);
 
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_START, [$this, 'createPool']);
+		Event::on(Event::SERVER_WORKER_START, [$this, 'createPool']);
 	}
 
 

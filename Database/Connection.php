@@ -67,9 +67,8 @@ class Connection extends Component
 	 */
 	public function init()
 	{
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'disconnect']);
-		$event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'clear_connection']);
+		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'disconnect']);
+		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'clear_connection']);
 	}
 
 
@@ -83,9 +82,8 @@ class Connection extends Component
 		}
 		$this->beginTransaction();
 
-		$event = Snowflake::app()->getEvent();
-		$event->on(Connection::TRANSACTION_COMMIT, [$this, 'commit'], false, true);
-		$event->on(Connection::TRANSACTION_ROLLBACK, [$this, 'rollback'], false, true);
+		Event::on(Connection::TRANSACTION_COMMIT, [$this, 'commit'], false, true);
+		Event::on(Connection::TRANSACTION_ROLLBACK, [$this, 'rollback'], false, true);
 	}
 
 	/**

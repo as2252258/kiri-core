@@ -28,8 +28,7 @@ use Snowflake\Snowflake;
 		if ($this->async_reload !== true) {
 			return;
 		}
-		$event = Snowflake::app()->getEvent();
-		$event->on(Event::SERVER_WORKER_EXIT, function () {
+		Event::on(Event::SERVER_WORKER_EXIT, function () {
 			Snowflake::app()->remove($this->service);
 		});
 	}

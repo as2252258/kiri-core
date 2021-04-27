@@ -26,8 +26,7 @@ class OnWorkerStop extends Callback
 	 */
 	public function onHandler($server, $worker_id)
 	{
-		$event = Snowflake::app()->getEvent();
-		$event->trigger(Event::SERVER_WORKER_STOP);
+		Event::trigger(Event::SERVER_WORKER_STOP);
 
 		$this->clearMysqlClient();
 		$this->clearRedisClient();

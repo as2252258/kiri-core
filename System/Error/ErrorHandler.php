@@ -74,8 +74,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		$this->category = 'exception';
 
-		$event = Snowflake::app()->getEvent();
-		$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
+		Event::trigger(Event::SYSTEM_RESOURCE_CLEAN);
 
 		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
@@ -103,8 +102,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		Snowflake::app()->error($data, 'error');
 
-		$event = Snowflake::app()->getEvent();
-		$event->trigger(Event::SYSTEM_RESOURCE_CLEAN);
+		Event::trigger(Event::SYSTEM_RESOURCE_CLEAN);
 
 		throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
 	}

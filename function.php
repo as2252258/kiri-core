@@ -19,6 +19,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Application;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Error\Logger;
+use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
@@ -350,8 +351,7 @@ if (!function_exists('fire')) {
 	 */
 	function fire(string $event, array $params = [])
 	{
-		$logger = Snowflake::app()->getEvent();
-		$logger->trigger($event, $params);
+		Event::trigger($event, $params);
 	}
 }
 
@@ -586,8 +586,7 @@ if (!function_exists('listen')) {
 	 */
 	function listen($name, $callback, $params = [], $isAppend = true)
 	{
-		$event = Snowflake::app()->getEvent();
-		$event->on($name, $callback, $params, $isAppend);
+		Event::on($name, $callback, $params, $isAppend);
 	}
 
 }
@@ -606,8 +605,7 @@ if (!function_exists('event')) {
 	 */
 	function event($name, $callback, $params = [], $isAppend = true)
 	{
-		$event = Snowflake::app()->getEvent();
-		$event->on($name, $callback, $params, $isAppend);
+		Event::on($name, $callback, $params, $isAppend);
 	}
 
 }

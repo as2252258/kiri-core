@@ -180,43 +180,42 @@ abstract class BaseApplication extends Service
         if (!isset($config['events']) || !is_array($config['events'])) {
             return;
         }
-        $event = Snowflake::app()->getEvent();
         foreach ($config['events'] as $key => $value) {
             if (is_string($value)) {
                 $value = Snowflake::createObject($value);
             }
-            $this->addEvent($event, $key, $value);
+            $this->addEvent($key, $value);
         }
     }
 
 
-    /**
-     * @param $event
-     * @param $key
-     * @param $value
-     * @throws InitException
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     */
-    private function addEvent($event, $key, $value): void
+	/**
+	 * @param $key
+	 * @param $value
+	 * @throws InitException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+    private function addEvent($key, $value): void
     {
         if ($value instanceof \Closure) {
-            $event->on($key, $value, [], true);
+            Event::on($key, $value, [], true);
             return;
         }
         if (is_object($value)) {
-            $event->on($key, $value, [], true);
+            Event::on($key, $value, [], true);
             return;
         }
         if (is_array($value)) {
             if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-                $event->on($key, $value, [], true);
+                Event::on($key, $value, [], true);
                 return;
             }
 
             if (is_string($value[0])) {
                 $value[0] = Snowflake::createObject($value[0]);
-                $event->on($key, $value, [], true);
+                Event::on($key, $value, [], true);
                 return;
             }
 
@@ -224,7 +223,7 @@ abstract class BaseApplication extends Service
                 if (!is_callable($item, true)) {
                     throw new InitException("Class does not hav callback.");
                 }
-                $event->on($key, $item, [], true);
+                Event::on($key, $item, [], true);
             }
         }
 
@@ -368,16 +367,6 @@ abstract class BaseApplication extends Service
 
 
     /**
-     * @return Event
-     * @throws Exception
-     */
-    public function getEvent(): Event
-    {
-        return $this->get('event');
-    }
-
-
-    /**
      * @return Jwt
      * @throws Exception
      */
@@ -454,7 +443,6 @@ abstract class BaseApplication extends Service
     {
         $this->setComponents([
             'error'             => ['class' => ErrorHandler::class],
-            'event'             => ['class' => Event::class],
             'connections'       => ['class' => Connection::class],
             'redis_connections' => ['class' => SRedis::class],
             'pool'              => ['class' => SPool::class],

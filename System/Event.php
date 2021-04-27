@@ -71,7 +71,7 @@ class Event extends BaseObject
      * @param bool $isAppend
      * @throws Exception
      */
-    public function on($name, $callback, $parameter = [], $isAppend = false)
+    public static function on($name, $callback, $parameter = [], $isAppend = false)
     {
         if (!isset(static::$_events[$name])) {
             static::$_events[$name] = [];
@@ -84,7 +84,7 @@ class Event extends BaseObject
             }
             $callback[0] = Snowflake::createObject($callback[0]);
         }
-        if ($this->exists($name, $callback)) {
+        if (static::exists($name, $callback)) {
             return;
         }
         if (!empty(static::$_events[$name]) && $isAppend === true) {
@@ -99,7 +99,7 @@ class Event extends BaseObject
      * @param $name
      * @param $callback
      */
-    public function of($name, $callback): void
+    public static function of($name, $callback): void
     {
         if (!isset(static::$_events[$name])) {
             return;
@@ -118,13 +118,13 @@ class Event extends BaseObject
      * @param $name
      * @return bool
      */
-    public function offName($name): bool
+    public static function offName($name): bool
     {
-        if (!$this->exists($name)) {
+        if (!static::exists($name)) {
             return true;
         }
         unset(static::$_events[$name]);
-        return $this->exists($name);
+        return static::exists($name);
     }
 
 
@@ -133,7 +133,7 @@ class Event extends BaseObject
      * @param null $callback
      * @return bool
      */
-    public function exists($name, $callback = null): bool
+    public static function exists($name, $callback = null): bool
     {
         if (!isset(static::$_events[$name])) {
             return false;
@@ -156,9 +156,9 @@ class Event extends BaseObject
      * @param $handler
      * @return mixed
      */
-    public function get($name, $handler): mixed
+    public static function get($name, $handler): mixed
     {
-        if (!$this->exists($name, $handler)) {
+        if (!static::exists($name, $handler)) {
             return null;
         }
 
@@ -175,7 +175,7 @@ class Event extends BaseObject
     }
 
 
-    public function clean()
+    public static function clean()
     {
         static::$_events = [];
     }
@@ -188,9 +188,9 @@ class Event extends BaseObject
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function dispatch($name, $params = [], $scope = null): bool
+    public static function dispatch($name, $params = [], $scope = null): bool
     {
-        return $this->trigger($name, $params, $scope);
+        return static::trigger($name, $params, $scope);
     }
 
 
@@ -202,17 +202,17 @@ class Event extends BaseObject
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function trigger($name, $parameter = null, $handler = null, $is_remove = false): bool
+    public static function trigger($name, $parameter = null, $handler = null, $is_remove = false): bool
     {
-        $events = $this->get($name, $handler);
+        $events = static::get($name, $handler);
         if (empty($events)) {
             return true;
         }
         foreach ($events as $event) {
-            $this->execute($event, $parameter);
+            static::execute($event, $parameter);
         }
 	    if ($is_remove) {
-            $this->offName($name);
+            static::offName($name);
         }
         return true;
     }
@@ -224,16 +224,16 @@ class Event extends BaseObject
      * @return bool
      * @throws Exception
      */
-    private function execute($event, $parameter): bool
+    private static function execute($event, $parameter): bool
     {
         try {
-            $meta = $this->mergeParams($event[1], $parameter);
+            $meta = static::mergeParams($event[1], $parameter);
             if (call_user_func($event[0], ...$meta) === false) {
                 return false;
             }
             return true;
         } catch (\Throwable $throwable) {
-            return $this->addError($throwable,'throwable');
+            return static::addError($throwable,'throwable');
         }
     }
 
@@ -243,7 +243,7 @@ class Event extends BaseObject
      * @param $parameter
      * @return array
      */
-    private function mergeParams($defaultParameter, $parameter = []): array
+    private static function mergeParams($defaultParameter, $parameter = []): array
     {
         if (empty($defaultParameter)) {
             $defaultParameter = $parameter;

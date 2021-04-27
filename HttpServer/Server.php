@@ -17,6 +17,7 @@ use Exception;
 use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\LoggerProcess;
+use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Biomonitoring;
@@ -300,9 +301,8 @@ class Server extends HttpService
         if (!is_array($config['events'])) {
             return;
         }
-        $event = Snowflake::app()->getEvent();
         foreach ($config['events'] as $name => $_event) {
-            $event->on('listen ' . $config['port'] . ' ' . $name, $_event);
+            Event::on('listen ' . $config['port'] . ' ' . $name, $_event);
         }
     }
 

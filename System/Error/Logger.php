@@ -33,9 +33,8 @@ class Logger extends Component
 
     public function init()
     {
-        $event = Snowflake::app()->getEvent();
-        $event->on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'insert']);
-        $event->on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'insert']);
+        Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'insert']);
+        Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'insert']);
     }
 
 

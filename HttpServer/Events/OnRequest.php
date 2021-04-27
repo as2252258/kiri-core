@@ -38,7 +38,6 @@ class OnRequest extends Callback
 	 */
 	public function init()
 	{
-		$this->event = Snowflake::app()->getEvent();
 		$this->router = Snowflake::app()->getRouter();
 	}
 
@@ -92,8 +91,6 @@ class OnRequest extends Callback
 		if ($sResponse instanceof Response) {
 			[$sRequest, $sResponse] = [HRequest::create($sRequest), HResponse::create($sResponse)];
 		}
-
-		$this->event->dispatch(Event::EVENT_AFTER_REQUEST, [$sRequest, $exception]);
 
 		$headers = $sRequest->headers->get('access-control-request-headers');
 		$methods = $sRequest->headers->get('access-control-request-method');

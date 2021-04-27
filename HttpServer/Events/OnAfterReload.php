@@ -21,13 +21,11 @@ class OnAfterReload extends Callback
 
 	/**
 	 * @param Server $server
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function onHandler(Server $server)
 	{
-		$event = Snowflake::app()->getEvent();
-		$event->trigger(Event::SERVER_AFTER_RELOAD, [$server]);
+		Event::trigger(Event::SERVER_AFTER_RELOAD, [$server]);
 	}
 
 }
