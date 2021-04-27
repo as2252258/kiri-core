@@ -309,7 +309,7 @@ class ActiveRecord extends BaseActiveRecord
 
 		$lists = $this->getAnnotation(self::GET);
 		foreach ($lists as $key => $item) {
-			$data[$key] = call_user_func([$this,$item],$data[$key] ?? null);
+			$data[$key] = $this->{$item}($data[$key] ?? null);
 		}
 		$data = array_merge($data, $this->runRelate());
 
