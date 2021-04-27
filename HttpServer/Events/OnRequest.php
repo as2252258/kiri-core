@@ -13,6 +13,7 @@ use HttpServer\Route\Router;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -51,7 +52,7 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-			defer(function () {
+			Coroutine::defer(function () {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			});
 			/** @var HResponse $response */

@@ -19,7 +19,7 @@ class Event extends BaseObject
 
     public bool $isVide = true;
 
-    private array $_events = [];
+    private static array $_events = [];
 
     const EVENT_ERROR = 'WORKER:ERROR';
     const EVENT_STOP = 'WORKER:STOP';
@@ -73,8 +73,8 @@ class Event extends BaseObject
      */
     public function on($name, $callback, $parameter = [], $isAppend = false)
     {
-        if (!isset($this->_events[$name])) {
-            $this->_events[$name] = [];
+        if (!isset(static::$_events[$name])) {
+            static::$_events[$name] = [];
         }
         if ($callback instanceof \Closure) {
             $callback = \Closure::bind($callback, Snowflake::app());
@@ -87,10 +87,10 @@ class Event extends BaseObject
         if ($this->exists($name, $callback)) {
             return;
         }
-        if (!empty($this->_events[$name]) && $isAppend === true) {
-            array_unshift($this->_events[$name], [$callback, $parameter]);
+        if (!empty(static::$_events[$name]) && $isAppend === true) {
+            array_unshift(static::$_events[$name], [$callback, $parameter]);
         } else {
-            $this->_events[$name][] = [$callback, $parameter];
+            static::$_events[$name][] = [$callback, $parameter];
         }
     }
 
@@ -101,15 +101,15 @@ class Event extends BaseObject
      */
     public function of($name, $callback): void
     {
-        if (!isset($this->_events[$name])) {
+        if (!isset(static::$_events[$name])) {
             return;
         }
-        foreach ($this->_events[$name] as $index => $event) {
+        foreach (static::$_events[$name] as $index => $event) {
             [$handler, $parameter] = $event;
             if ($handler !== $callback) {
                 continue;
             }
-            unset($this->_events[$name][$index]);
+            unset(static::$_events[$name][$index]);
         }
     }
 
@@ -123,7 +123,7 @@ class Event extends BaseObject
         if (!$this->exists($name)) {
             return true;
         }
-        unset($this->_events[$name]);
+        unset(static::$_events[$name]);
         return $this->exists($name);
     }
 
@@ -135,13 +135,13 @@ class Event extends BaseObject
      */
     public function exists($name, $callback = null): bool
     {
-        if (!isset($this->_events[$name])) {
+        if (!isset(static::$_events[$name])) {
             return false;
         }
         if ($callback === null) {
             return true;
         }
-        foreach ($this->_events[$name] as $event) {
+        foreach (static::$_events[$name] as $event) {
             [$handler, $parameter] = $event;
             if ($handler === $callback) {
                 return true;
@@ -163,9 +163,9 @@ class Event extends BaseObject
         }
 
         if (empty($handler)) {
-            return $this->_events[$name];
+            return static::$_events[$name];
         }
-        foreach ($this->_events[$name] as $event) {
+        foreach (static::$_events[$name] as $event) {
             [$callback, $parameter] = $event;
             if ($callback === $handler) {
                 return [$event];
@@ -177,7 +177,7 @@ class Event extends BaseObject
 
     public function clean()
     {
-        $this->_events = [];
+        static::$_events = [];
     }
 
 
