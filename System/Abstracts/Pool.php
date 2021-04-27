@@ -170,8 +170,9 @@ abstract class Pool extends Component
 		}
 		$time = microtime(true);
 		if (!$this->hasItem($name)) {
-			$this->createByCallback($name, $callback);
+			return $this->createByCallback($name, $callback);
 		}
+
 		$connection = $this->_items[$name]->pop(0.01);
 		if (microtime(true) - $time >= 0.007) {
 			$this->warning('Worker #' . env('worker') . ' get client use time ' . (microtime(true) - $time));
@@ -187,13 +188,16 @@ abstract class Pool extends Component
 	/**
 	 * @param $name
 	 * @param mixed $callback
+	 * @return mixed
 	 * @throws Exception
 	 */
-	private function createByCallback($name, mixed $callback)
+	private function createByCallback($name, mixed $callback): mixed
 	{
 		if ($this->creates === -1 && !is_callable($callback)) {
 			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
 		}
+
+		return $this->createClient($name, $callback);
 
 		if (!Context::hasContext('create::client::ing::' . $name)) {
 			$this->push($name, $this->createClient($name, $callback));

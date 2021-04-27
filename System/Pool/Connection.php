@@ -182,6 +182,7 @@ class Connection extends Pool
 	/**
 	 * @param $coroutineName
 	 * @param $isMaster
+	 * @throws Exception
 	 */
 	public function release($coroutineName, $isMaster)
 	{
@@ -189,6 +190,8 @@ class Connection extends Pool
 		if (!$this->hasClient($coroutineName)) {
 			return;
 		}
+
+		$this->error('recover db client ' . $coroutineName);
 
 		/** @var PDO $client */
 		$client = Context::getContext($coroutineName);
@@ -241,7 +244,7 @@ class Connection extends Pool
 		try {
 			if (empty($client) || !($client instanceof PDO)) {
 				$result = false;
-			}  else {
+			} else {
 				$result = true;
 			}
 		} catch (Error | Throwable $exception) {
