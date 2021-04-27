@@ -51,9 +51,6 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-			$response->setStatusCode(200);
-			return $response->end('');
-
 			Coroutine::defer(function () {
 				fire(Event::SYSTEM_RESOURCE_RELEASES);
 			});

@@ -152,18 +152,14 @@ class Response extends HttpService
 	/**
 	 * @param string $context
 	 * @param int $statusCode
-	 * @param null $appointResponse
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function send($context = '', $statusCode = 200, $appointResponse = null): mixed
+	public function send($context = '', $statusCode = 200): mixed
 	{
 		$sendData = $this->parseData($context);
 
 		$response = Context::getContext('response');
-		if ($appointResponse instanceof SResponse) {
-			$response = $appointResponse;
-		}
 		if ($response instanceof SResponse) {
 			$this->sendData($response, $sendData, $statusCode);
 		} else {
@@ -228,7 +224,7 @@ class Response extends HttpService
 	 */
 	private function sendData($response, $sendData, $status): void
 	{
-		if (!swoole()->exist($response->fd)) {
+		if (!Snowflake::getWebSocket()->exist($response->fd)) {
 			return;
 		}
 		$response->end($this->setHeaders($response, $status)
@@ -243,8 +239,8 @@ class Response extends HttpService
 	 */
 	private function setResponseContent($sendData): string
 	{
-		$message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
-		Snowflake::writeFile(storage('response.log'), $message, FILE_APPEND);
+//		$message = '[' . date('Y-m-d H:i:s') . ']' . $sendData . PHP_EOL . PHP_EOL;
+//		Snowflake::writeFile(storage('response.log'), $message, FILE_APPEND);
 		return $sendData;
 	}
 
