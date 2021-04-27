@@ -250,11 +250,11 @@ class Response extends HttpService
 
 
 	/**
-	 * @param $response
+	 * @param SResponse $response
 	 * @param $status
 	 * @return Response
 	 */
-	private function setHeaders($response, $status): static
+	private function setHeaders(SResponse $response, $status): static
 	{
 		$response->status($status);
 		$response->header('Content-Type', $this->getContentType());
