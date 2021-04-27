@@ -168,11 +168,14 @@ abstract class Pool extends Component
 		if (!Context::inCoroutine()) {
 			return $this->createClient($name, $callback);
 		}
-		$channel = $this->_items[$name];
-		if ($channel->isEmpty()) {
+		if ($this->_items[$name]->isEmpty()) {
 			$this->createByCallback($name, $callback);
 		}
-		$connection = $channel->pop(0.002);
+		$time = microtime(true);
+		$connection = $this->_items[$name]->pop(0.002);
+		if (($end = microtime(true) - $time) >= 0.01) {
+			$this->error('waite channel connect use time.' . $end);
+		}
 		if (!$this->checkCanUse($name, $connection)) {
 			return $this->createClient($name, $callback);
 		} else {
