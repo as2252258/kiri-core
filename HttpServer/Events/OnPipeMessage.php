@@ -47,7 +47,7 @@ class OnPipeMessage extends Callback
 			throw new Exception('unknown handler');
 		}
 		/** @var Crontab $handler */
-		$handler = swoole_unserialize($message['handler']);
+		$handler = $message['handler'];
 		defer(function () use ($handler) {
 			if ($handler->isRecover() !== 999) {
 				return;
