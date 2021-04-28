@@ -69,7 +69,7 @@ class Zookeeper extends Process
             foreach ($range as $value) {
                 $this->dispatch($redis, $value);
             }
-            Coroutine::sleep(100);
+            Coroutine::sleep(80);
         }
     }
 
