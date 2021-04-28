@@ -451,7 +451,7 @@ abstract class BaseApplication extends Service
 			'logger'            => ['class' => Logger::class],
 			'annotation'        => ['class' => SAnnotation::class],
 			'router'            => ['class' => Router::class],
-			'Event'             => ['class' => Event::class],
+			'event'             => ['class' => Event::class],
 			'redis'             => ['class' => Redis::class],
 			'aop'               => ['class' => Aop::class],
 			'jwt'               => ['class' => Jwt::class],
