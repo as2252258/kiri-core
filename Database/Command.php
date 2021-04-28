@@ -182,6 +182,7 @@ class Command extends Component
 		if ($isInsert === false) {
 			return true;
 		}
+		var_dump($result);
 		if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
 			return $this->addError(static::DB_ERROR_MESSAGE, 'mysql');
 		}
