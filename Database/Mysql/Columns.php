@@ -112,7 +112,7 @@ class Columns extends Component
 	 */
 	public function decode($val, $format = null): mixed
 	{
-		if (empty($format)) {
+		if (empty($format) || $val === null) {
 			return $val;
 		}
 		$format = strtolower($format);
