@@ -451,7 +451,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 			$this->refresh();
 
-			$this->event->dispatch(self::AFTER_SAVE, [$attributes, $param]);
+			SEvent::trigger(self::AFTER_SAVE, [$attributes, $param]);
 		} catch (\Throwable $exception) {
 			$trance->rollback();
 			$lastId = $this->addError($exception, 'mysql');
@@ -518,7 +518,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 		$this->refresh();
 
-		$this->event->dispatch(self::AFTER_SAVE, [$fields, $param]);
+		SEvent::trigger(self::AFTER_SAVE, [$fields, $param]);
 
 		return true;
 	}
@@ -538,7 +538,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return false;
 		}
 
-		if (!$this->event->dispatch(self::BEFORE_SAVE, [$this], $this)) {
+		if (!SEvent::trigger(self::BEFORE_SAVE, [$this], $this)) {
 			return false;
 		}
 
