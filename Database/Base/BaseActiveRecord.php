@@ -794,10 +794,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function __set($name, $value)
 	{
-		if (!$this->has($name)) {
-			parent::__set($name, $value);
-			return;
-		}
 		$method = $this->_get_annotation($name, self::SET);
 		if (!empty($method)) {
 			$value = $this->{$method}($value);
