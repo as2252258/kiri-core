@@ -516,7 +516,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	protected function isHttp($url): bool
+	#[Pure] protected function isHttp($url): bool
 	{
 		return str_starts_with($url, 'http://');
 	}
@@ -525,7 +525,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	protected function isHttps($url): bool
+	#[Pure] protected function isHttps($url): bool
 	{
 		return str_starts_with($url, 'https://');
 	}
@@ -669,7 +669,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @return bool
 	 * check isPost Request
 	 */
-	public function isPost(): bool
+	#[Pure] public function isPost(): bool
 	{
 		return strtolower($this->method) === self::POST;
 	}
@@ -680,7 +680,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 *
 	 * check isGet Request
 	 */
-	public function isGet(): bool
+	#[Pure] public function isGet(): bool
 	{
 		return strtolower($this->method) === self::GET;
 	}
@@ -691,7 +691,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @return array|string
 	 * 将请求参数进行编码
 	 */
-	protected function paramEncode($arr): array|string
+	#[Pure] protected function paramEncode($arr): array|string
 	{
 		if (!is_array($arr)) {
 			return $arr;
@@ -757,7 +757,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $params
 	 * @return string
 	 */
-	protected function joinGetParams($path, $params): string
+	#[Pure] protected function joinGetParams($path, $params): string
 	{
 		if (empty($params)) {
 			return $path;

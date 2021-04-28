@@ -10,8 +10,8 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
 use Snowflake\Snowflake;
-use Swoole\Http2\Request;
 use Swoole\Coroutine\Http2\Client as H2Client;
+use Swoole\Http2\Request;
 use Swoole\Http2\Response;
 
 
@@ -141,7 +141,10 @@ class Http2 extends Component
 		}
 
 		$client = $this->getClient($domain, $ssl, $timeout);
-		$request = $this->getRequest($domain, $path, $method, $params, $isUpload);
+		$request = $this->getRequest($path, $method, $params, $isUpload);
+		$request->headers = array_merge($request->headers, [
+			'Host' => $domain
+		]);
 
 		$client->send($request);
 		defer(function () use ($domain, $path, $client, $request, $method) {
@@ -200,7 +203,6 @@ class Http2 extends Component
 
 
 	/**
-	 * @param $domain
 	 * @param $path
 	 * @param $method
 	 * @param $params
@@ -208,7 +210,7 @@ class Http2 extends Component
 	 * @return Request
 	 * @throws Exception
 	 */
-	public function getRequest($domain, $path, $method, $params, $isUpload = false): Request
+	public function getRequest($path, $method, $params, $isUpload = false): Request
 	{
 		if (!str_starts_with($path, '/')) {
 			$path = '/' . $path;
@@ -245,16 +247,11 @@ class Http2 extends Component
 			$domain = rtrim($domain, '/');
 			if (str_contains($domain, ':')) {
 				[$domain, $port] = explode(':', $domain);
-			} else if ($isSsl === true) {
-				$port = 443;
 			} else {
-				$port = 80;
+				$port = $isSsl === true ? 443 : 80;
 			}
 			$client = new H2Client($domain, (int)$port, $isSsl);
-			$client->set([
-				'timeout'       => $timeout,
-				'ssl_host_name' => $domain
-			]);
+			$client->set(['timeout' => $timeout, 'ssl_host_name' => $domain]);
 			return $client;
 		});
 		if ($client->connected && $client->ping()) {

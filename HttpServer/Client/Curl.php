@@ -5,6 +5,7 @@ namespace HttpServer\Client;
 
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 
 /**
@@ -212,7 +213,7 @@ class Curl extends ClientAbstracts
 	/**
 	 * @return array
 	 */
-	private function parseHeaderMat(): array
+	#[Pure] private function parseHeaderMat(): array
 	{
 		$headers = [];
 		foreach ($this->getHeader() as $key => $val) {
