@@ -177,6 +177,7 @@ class Command extends Component
 	private function insert_or_change($isInsert, $hasAutoIncrement): bool|string|int
 	{
 		if (!($result = $this->initPDOStatement())) {
+			var_dump($result);
 			return $result;
 		}
 		if ($isInsert === false) {
