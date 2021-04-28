@@ -91,9 +91,9 @@ if (!function_exists('scan_directory')) {
 	 */
 	function scan_directory($dir, $namespace)
 	{
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->read($dir, $namespace);
-        $annotation->runtime($dir, $namespace);
+		$annotation = Snowflake::app()->getAnnotation();
+		$annotation->read($dir, $namespace);
+		$annotation->runtime($dir, $namespace);
 	}
 
 }
@@ -509,7 +509,7 @@ if (!function_exists('request')) {
 	function request(): Request
 	{
 		if (!Context::hasContext('request')) {
-            return new Request();
+			return new Request();
 		}
 		return Context::getContext('request');
 	}
@@ -855,30 +855,23 @@ if (!function_exists('jTraceEx')) {
 		$result[] = sprintf('%s%s: %s', $starter, $e::class, $e->getMessage());
 		$file = $e->getFile();
 		$line = $e->getLine();
-		while (true) {
-			$current = "$file:$line";
-			if (is_array($seen) && in_array($current, $seen)) {
-				$result[] = sprintf(' ... %d more', count($trace) + 1);
-				break;
-			}
+
+		foreach ($trace as $value) {
 			$result[] = sprintf(' at %s%s%s(%s%s%s)',
-				count($trace) && array_key_exists('class', $trace[0]) ? str_replace('\\', '.', $trace[0]['class']) : '',
-				count($trace) && array_key_exists('class', $trace[0]) && array_key_exists('function', $trace[0]) ? '.' : '',
-				count($trace) && array_key_exists('function', $trace[0]) ? str_replace('\\', '.', $trace[0]['function']) : '(main)',
+				count($value) && array_key_exists('class', $value) ? str_replace('\\', '.', $value['class']) : '',
+				count($value) && array_key_exists('class', $value) && array_key_exists('function', $value) ? '.' : '',
+				count($value) && array_key_exists('function', $value) ? str_replace('\\', '.', $value['function']) : '(main)',
 				$line === null ? $file : basename($file),
 				$line === null ? '' : ':',
 				$line === null ? '' : $line);
-			if (is_array($seen))
-				$seen[] = "$file:$line";
-			if (!count($trace))
-				break;
-			$file = array_key_exists('file', $trace[0]) ? $trace[0]['file'] : 'Unknown Source';
-			$line = array_key_exists('file', $trace[0]) && array_key_exists('line', $trace[0]) && $trace[0]['line'] ? $trace[0]['line'] : null;
-			array_shift($trace);
+
+			$file = array_key_exists('file', $value) ? $value['file'] : 'Unknown Source';
+			$line = array_key_exists('file', $value) && array_key_exists('line', $value) && $value['line'] ? $value['line'] : null;
 		}
 		$result = join("\n", $result);
-		if ($prev)
+		if ($prev) {
 			$result .= "\n" . jTraceEx($prev, $seen);
+		}
 
 		return $result;
 	}
