@@ -66,6 +66,7 @@ class Zookeeper extends Process
         $redis = Snowflake::app()->getRedis();
         while (true) {
             $range = $this->loadCarobTask($redis);
+            var_dump($range);
             foreach ($range as $value) {
                 $this->dispatch($redis, $value);
             }
