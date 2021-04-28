@@ -174,14 +174,12 @@ class Command extends Component
 	 */
 	private function insert_or_change($isInsert, $hasAutoIncrement): bool|string|int
 	{
-		if (!($result = $this->initPDOStatement())) {
-			var_dump($result);
+		if (($result = $this->initPDOStatement()) === false) {
 			return $result;
 		}
 		if ($isInsert === false) {
 			return true;
 		}
-		var_dump($result);
 		if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
 			return $this->addError(static::DB_ERROR_MESSAGE, 'mysql');
 		}
@@ -207,7 +205,6 @@ class Command extends Component
 			return $this->addError($this->sql . ':' . $error, 'mysql');
 		}
 		$result = $prepare->execute($this->params);
-		var_dump($result, $connect->errorInfo());
 		defer(fn() => $prepare->closeCursor());
 		if ($result === false) {
 			return $this->addError($connect->errorInfo()[2], 'mysql');
