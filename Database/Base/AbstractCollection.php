@@ -16,6 +16,7 @@ use Database\ActiveRecord;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
+use Snowflake\Snowflake;
 use Traversable;
 
 /**
@@ -53,11 +54,6 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	{
 		$this->_item = $array;
 		$this->query = $query;
-
-		if (!is_object($model)) {
-			$model = $model::populate([]);
-			$model->setIsCreate(false);
-		}
 		$this->model = $model;
 
 		parent::__construct([]);
@@ -146,12 +142,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 			return $this->_item[$offset];
 		}
 
-		$model = clone $this->getModel();
-		$model = $model->setAttributes($this->_item[$offset]);
-		$model->setIsCreate(false);
-		$model->refresh();
-
-		return $model;
+		return $this->model::populate($this->_item[$offset]);
 	}
 
 	/**

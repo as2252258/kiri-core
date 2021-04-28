@@ -55,9 +55,6 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 */
 	public function __construct($model, $config = [])
 	{
-		if (!is_object($model)) {
-			$model = Snowflake::createObject($model);
-		}
 		$this->modelClass = $model;
 
 		$this->builder = SqlBuilder::builder($this);
@@ -131,6 +128,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 * @param $sql
 	 * @param array $params
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public function execute($sql, $params = []): Command
 	{
@@ -148,8 +146,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 		if (empty($data)) {
 			return NULL;
 		}
-		$newModel = $this->modelClass;
-		$newModel = $this->populate($newModel, $data);
+		$newModel = $this->modelClass::populate($data);
 		if ($this->asArray) {
 			return $newModel->toArray();
 		}
