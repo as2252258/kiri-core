@@ -17,7 +17,7 @@ use Exception;
 class CollectionIterator extends \ArrayIterator
 {
 
-	private ActiveRecord $model;
+	private ActiveRecord|string $model;
 
 
 	/** @var ActiveQuery */
