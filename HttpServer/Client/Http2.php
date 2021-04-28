@@ -10,6 +10,7 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Channel;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Http2\Client as H2Client;
 use Swoole\Http2\Request;
@@ -36,6 +37,36 @@ class Http2 extends Component
 	public function init()
 	{
 		$this->channel = Snowflake::getApp('channel');
+
+		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'releases']);
+		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'clean']);
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function releases()
+	{
+		foreach ($this->_clients as $name => $client) {
+			/** @var H2Client $client */
+			$client->close();
+			$this->channel->push($client, 'http2.' . $name);
+		}
+		$this->_clients = [];
+	}
+
+
+	/**
+	 * 清空
+	 */
+	public function clean()
+	{
+		foreach ($this->_clients as $client) {
+			/** @var H2Client $client */
+			$client->close();
+		}
+		$this->_clients = [];
 	}
 
 
@@ -194,7 +225,6 @@ class Http2 extends Component
 			return null;
 		}
 		return $this->recv($client);
-
 	}
 
 
@@ -286,20 +316,32 @@ class Http2 extends Component
 		$pool = Snowflake::app()->getChannel();
 		/** @var H2Client $client */
 		$client = $pool->pop('http2.' . $domain, function () use ($domain, $isSsl, $timeout) {
-			$domain = rtrim($domain, '/');
-			if (str_contains($domain, ':')) {
-				[$domain, $port] = explode(':', $domain);
-			} else {
-				$port = $isSsl === true ? 443 : 80;
-			}
-			$client = new H2Client($domain, (int)$port, $isSsl);
-			$client->set(['timeout' => $timeout, 'ssl_host_name' => $domain]);
-			return $client;
+			return $this->newRequest($domain, $isSsl, $timeout);
 		});
 		if ((!$client->connected || !$client->ping()) && !$client->connect()) {
 			throw new Exception($client->errMsg, $client->errCode);
 		}
 		return $this->_clients[$domain] = $client;
+	}
+
+
+	/**
+	 * @param $domain
+	 * @param $isSsl
+	 * @param $timeout
+	 * @return H2Client
+	 */
+	public function newRequest($domain, $isSsl, $timeout): H2Client
+	{
+		$domain = rtrim($domain, '/');
+		if (str_contains($domain, ':')) {
+			[$domain, $port] = explode(':', $domain);
+		} else {
+			$port = $isSsl === true ? 443 : 80;
+		}
+		$client = new H2Client($domain, (int)$port, $isSsl);
+		$client->set(['timeout' => $timeout, 'ssl_host_name' => $domain]);
+		return $client;
 	}
 
 
