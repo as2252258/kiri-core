@@ -188,7 +188,7 @@ class Event extends BaseObject
 	 * @return bool
 	 * @throws Exception
 	 */
-    public static function dispatch($name, $params = [], $scope = null): bool
+    public function dispatch($name, $params = [], $scope = null): bool
     {
         return static::trigger($name, $params, $scope);
     }
