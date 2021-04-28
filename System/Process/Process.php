@@ -18,50 +18,45 @@ abstract class Process extends \Swoole\Process implements SProcess
 {
 
 
-    /**
-     * Process constructor.
-     * @param $application
-     * @param $name
-     * @param bool $enable_coroutine
-     * @throws Exception
-     */
-    public function __construct($application, $name, $enable_coroutine = true)
-    {
-        parent::__construct([$this, '_load'], false, 1, $enable_coroutine);
-        Snowflake::setProcessId($this->pid);
-    }
+	/**
+	 * Process constructor.
+	 * @param $application
+	 * @param $name
+	 * @param bool $enable_coroutine
+	 * @throws Exception
+	 */
+	public function __construct($application, $name, $enable_coroutine = true)
+	{
+		parent::__construct([$this, '_load'], false, 1, $enable_coroutine);
+		Snowflake::setProcessId($this->pid);
+	}
 
-    /**
-     * @param Process $process
-     * @throws Exception
-     */
-    public function _load(Process $process)
-    {
-        putenv('environmental=' . Snowflake::PROCESS);
+	/**
+	 * @param Process $process
+	 * @throws Exception
+	 */
+	public function _load(Process $process)
+	{
+		putenv('environmental=' . Snowflake::PROCESS);
 
-        fire(Event::SERVER_WORKER_START);
-        if (Snowflake::getPlatform()->isLinux()) {
-            name($process->pid, $this->getPrefix());
-        }
-        if (method_exists($this, 'before')) {
-            $this->before($process);
-        }
-        if (!Snowflake::getPlatform()->isMac()) {
-            if (method_exists($this, 'getProcessName')) {
-                swoole_set_process_name($this->getProcessName());
-            }
-        }
-        $this->onHandler($process);
-    }
+		fire(Event::SERVER_WORKER_START);
+		if (Snowflake::getPlatform()->isLinux()) {
+			swoole_set_process_name($this->getProcessName());
+		}
+		if (method_exists($this, 'before')) {
+			$this->before($process);
+		}
+		$this->onHandler($process);
+	}
 
 
-    /**
-     * @return string
-     */
-    #[Pure] private function getPrefix(): string
-    {
-        return static::class;
-    }
+	/**
+	 * @return string
+	 */
+	#[Pure] private function getPrefix(): string
+	{
+		return static::class;
+	}
 
 
 }
