@@ -171,10 +171,10 @@ class Command extends Component
 	/**
 	 * @param $isInsert
 	 * @param $hasAutoIncrement
-	 * @return bool|string
+	 * @return bool|string|int
 	 * @throws Exception
 	 */
-	private function insert_or_change($isInsert, $hasAutoIncrement): bool|string
+	private function insert_or_change($isInsert, $hasAutoIncrement): bool|string|int
 	{
 		if (!($result = $this->initPDOStatement())) {
 			return $result;
