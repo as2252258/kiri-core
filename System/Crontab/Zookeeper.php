@@ -62,7 +62,7 @@ class Zookeeper extends Process
 	 */
 	public function onHandler(\Swoole\Process $process): void
 	{
-		Timer::tick(80, [$this, 'loop']);
+		Timer::tick(100, [$this, 'loop']);
 	}
 
 
@@ -75,7 +75,6 @@ class Zookeeper extends Process
 		$redis = Snowflake::app()->getRedis();
 		defer(fn() => $redis->release());
 		$range = $this->loadCarobTask($redis);
-		var_dump($range);
 		foreach ($range as $value) {
 			$this->dispatch($redis, $value);
 		}
