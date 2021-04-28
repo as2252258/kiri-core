@@ -7,6 +7,7 @@ namespace HttpServer\Client;
 use Exception;
 use HttpServer\Http\Context;
 use Snowflake\Abstracts\Component;
+use Snowflake\Channel;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
 use Snowflake\Snowflake;
@@ -21,6 +22,21 @@ use Swoole\Http2\Response;
  */
 class Http2 extends Component
 {
+
+
+	private array $_clients = [];
+
+
+	private Channel $channel;
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function init()
+	{
+		$this->channel = Snowflake::getApp('channel');
+	}
 
 
 	/**
@@ -132,30 +148,53 @@ class Http2 extends Component
 	 */
 	private function dispatch($domain, $path, $method, $params = [], $timeout = -1, $isUpload = false): mixed
 	{
-		$ssl = false;
-		if (str_starts_with($domain, 'https://')) {
-			$domain = str_replace('https://', '', $domain);
-			$ssl = true;
-		} else if (str_starts_with($domain, 'http://')) {
-			$domain = str_replace('http://', '', $domain);
-		}
+		[$domain, $isSsl] = $this->clear($domain);
 
-		$client = $this->getClient($domain, $ssl, $timeout);
 		$request = $this->getRequest($path, $method, $params, $isUpload);
 		$request->headers = array_merge($request->headers, [
 			'Host' => $domain
 		]);
-
-		$client->send($request);
-		defer(function () use ($domain, $path, $client, $request, $method) {
-			$pool = Snowflake::app()->getChannel();
-			$pool->push($request, 'request.' . $method . $path);
-			$pool->push($client, 'http2.' . $domain);
+		defer(function () use ($domain, $path, $request, $method) {
+			$this->channel->push($request, 'request.' . $method . $path);
 		});
+		return $this->doRequest($request, $domain, $isSsl, $timeout);
+	}
+
+
+	/**
+	 * @param $domain
+	 * @return array
+	 */
+	private function clear($domain): array
+	{
+		if (str_starts_with($domain, 'https://')) {
+			return [str_replace('https://', '', $domain), true];
+		} else {
+			return [str_replace('http://', '', $domain), false];
+		}
+	}
+
+
+	/**
+	 * @param Request $request
+	 * @param $domain
+	 * @param $ssl
+	 * @param $timeout
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function doRequest(Request $request, $domain, $ssl, $timeout): mixed
+	{
+		$client = $this->getClient($domain, $ssl, $timeout);
+		defer(function () use ($client, $domain) {
+			$this->channel->push($client, 'http2.' . $domain);
+		});
+		$client->send($request);
 		if (Context::getContext('http2isRecv') === false) {
 			return null;
 		}
 		return $this->recv($client);
+
 	}
 
 
@@ -241,6 +280,9 @@ class Http2 extends Component
 	 */
 	private function getClient($domain, $isSsl = false, $timeout = -1): H2Client
 	{
+		if (isset($this->_clients[$domain])) {
+			return $this->_clients[$domain];
+		}
 		$pool = Snowflake::app()->getChannel();
 		/** @var H2Client $client */
 		$client = $pool->pop('http2.' . $domain, function () use ($domain, $isSsl, $timeout) {
@@ -254,13 +296,10 @@ class Http2 extends Component
 			$client->set(['timeout' => $timeout, 'ssl_host_name' => $domain]);
 			return $client;
 		});
-		if ($client->connected && $client->ping()) {
-			return $client;
-		}
-		if (!$client->connect()) {
+		if ((!$client->connected || !$client->ping()) && !$client->connect()) {
 			throw new Exception($client->errMsg, $client->errCode);
 		}
-		return $client;
+		return $this->_clients[$domain] = $client;
 	}
 
 
