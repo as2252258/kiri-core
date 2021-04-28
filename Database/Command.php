@@ -164,6 +164,7 @@ class Command extends Component
 		}
 	}
 
+
 	/**
 	 * @param $isInsert
 	 * @param $hasAutoIncrement
