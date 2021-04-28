@@ -16,6 +16,7 @@ use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Help;
+use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Http\Response as SResponse;
 use Swoole\Http2\Response as S2Response;
@@ -224,6 +225,9 @@ class Response extends HttpService
 	{
 		if (!Snowflake::getWebSocket()->exist($response->fd)) {
 			return;
+		}
+		if (is_array($sendData)) {
+			$sendData = Json::encode($sendData);
 		}
 		$this->setHeaders($response, $status)->end($sendData);
 	}
