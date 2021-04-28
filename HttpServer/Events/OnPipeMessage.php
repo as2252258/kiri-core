@@ -48,21 +48,23 @@ class OnPipeMessage extends Callback
 		}
 		/** @var Crontab $handler */
 		$handler = swoole_unserialize($message['handler']);
-		$handler->increment()->execute();
-		if ($handler->isRecover() !== 999) {
-			return 'success';
-		}
-		$redis = Snowflake::app()->getRedis();
+		defer(function () use ($handler) {
+			if ($handler->isRecover() !== 999) {
+				return;
+			}
+			$redis = Snowflake::app()->getRedis();
 
-		$name = $handler->getName();
-		if (!$redis->exists('stop:crontab:' . $name)) {
-			$redis->set('crontab:' . $name, swoole_serialize($handler));
-			$tickTime = time() + $handler->getTickTime();
-			$redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
-		} else {
-			$redis->del('crontab:' . $name);
-			$redis->del('stop:crontab:' . $name);
-		}
+			$name = $handler->getName();
+			if (!$redis->exists('stop:crontab:' . $name)) {
+				$redis->set('crontab:' . $name, swoole_serialize($handler));
+				$tickTime = time() + $handler->getTickTime();
+				$redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
+			} else {
+				$redis->del('crontab:' . $name);
+				$redis->del('stop:crontab:' . $name);
+			}
+		});
+		$handler->increment()->execute();
 		return 'success';
 	}
 
