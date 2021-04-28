@@ -11,11 +11,9 @@ namespace Database;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use PDO;
 use PDOStatement;
 use Snowflake\Abstracts\Component;
-use Snowflake\Core\Json;
 use Swoole\Coroutine;
 
 /**
@@ -123,8 +121,8 @@ class Command extends Component
 	private function execute($type, $isInsert = null, $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		try {
-            $time = microtime(true);
-            if ($type === static::EXECUTE) {
+			$time = microtime(true);
+			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
 				$result = $this->search($type);
@@ -209,7 +207,8 @@ class Command extends Component
 			return $this->addError($this->sql . ':' . $error, 'mysql');
 		}
 		$result = $prepare->execute($this->params);
-		$prepare->closeCursor();
+		var_dump($result, $connect->errorInfo());
+		defer(fn() => $prepare->closeCursor());
 		if ($result === false) {
 			return $this->addError($connect->errorInfo()[2], 'mysql');
 		}
