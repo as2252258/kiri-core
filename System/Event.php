@@ -233,7 +233,7 @@ class Event extends BaseObject
             }
             return true;
         } catch (\Throwable $throwable) {
-            return static::addError($throwable,'throwable');
+            return logger()->addError($throwable,'throwable');
         }
     }
 
