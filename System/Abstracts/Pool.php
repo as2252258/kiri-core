@@ -168,6 +168,9 @@ abstract class Pool extends Component
 		if (!Context::inCoroutine()) {
 			return $this->createClient($name, $callback);
 		}
+		if (!isset($this->_items[$name])) {
+			$this->_items[$name] = new Channel($this->max);
+		}
 		if ($this->_items[$name]->isEmpty()) {
 			$this->createByCallback($name, $callback);
 		}
