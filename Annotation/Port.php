@@ -19,8 +19,9 @@ use Snowflake\Snowflake;
 	/**
 	 * Port constructor.
 	 * @param int $port
+	 * @param int $mode
 	 */
-	public function __construct(public int $port)
+	public function __construct(public int $port, public int $mode = SWOOLE_SOCK_TCP)
 	{
 	}
 
