@@ -19,7 +19,7 @@ use Snowflake\Snowflake;
  * Class Db
  * @package Database
  */
-class Db
+class Db implements ISqlBuilder
 {
     use QueryTrait;
 
@@ -101,7 +101,7 @@ class Db
     public function get(Connection $db = NULL): mixed
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+            $db = Snowflake::app()->get('db');
         }
         return $db->createCommand(SqlBuilder::builder($this)->one())
             ->all();
@@ -124,7 +124,7 @@ class Db
     public function find(Connection $db = NULL): mixed
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
         return $db->createCommand(SqlBuilder::builder($this)->all())
             ->one();
@@ -138,7 +138,7 @@ class Db
     public function count(Connection $db = NULL): bool|int
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
         return $db->createCommand(SqlBuilder::builder($this)->count())
 	        ->exec();
@@ -152,7 +152,7 @@ class Db
     public function exists(Connection $db = NULL): bool|int
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
         return $db->createCommand(SqlBuilder::builder($this)->one())
             ->fetchColumn();
@@ -222,7 +222,7 @@ class Db
     public function delete($db = null): bool|int
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
 
         $query = $db->getBuild()->builder($this);
@@ -239,7 +239,7 @@ class Db
     public static function drop($table, $db = null): bool|int
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
         return $db->createCommand('DROP TABLE ' . $table)->delete();
     }
@@ -254,7 +254,7 @@ class Db
     {
 
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
 
         return $db->createCommand('TRUNCATE ' . $table)->exec();
@@ -270,7 +270,7 @@ class Db
     {
 
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
 
 
@@ -290,7 +290,7 @@ class Db
     public static function desc($table, Connection $db = NULL): bool|int|null
     {
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
 
         if (empty($table)) {
@@ -314,7 +314,7 @@ class Db
         }
 
         if (empty($db)) {
-            $db = Snowflake::app()->database;
+                        $db = Snowflake::app()->get('db');
         }
 
         $table = ['	const TABLE = \'select * from %s  where REFERENCED_TABLE_NAME=%s\';'];
