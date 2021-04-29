@@ -12,7 +12,7 @@ use Snowflake\Snowflake;
  * Class Port
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Port extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS)] class Port extends Attribute
 {
 
 
@@ -34,7 +34,10 @@ use Snowflake\Snowflake;
 	public function execute(array $handler): mixed
 	{
 		$router = Snowflake::app()->getRouter();
-		$router->addPortListen($this->port, $handler);
+		if (!($handler[0] instanceof Porters)) {
+			return true;
+		}
+		$router->addPortListen($this->port, [$handler[0], 'process']);
 		return parent::execute($handler);
 	}
 
