@@ -17,7 +17,6 @@ use Swoole\Coroutine;
 
 /**
  * Class BaseObject
- * @method defer()
  * @package Snowflake\Snowflake\Base
  * @method afterInit
  */
