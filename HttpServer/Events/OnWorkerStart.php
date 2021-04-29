@@ -67,8 +67,6 @@ class OnWorkerStart extends Callback
 
         $annotation->runtime(directory('app'), [
             CONTROLLER_PATH,
-            LISTENER_PATH,
-            SOCKET_PATH,
             TASK_PATH,
         ]);
         name($server->worker_pid, 'Task#' . $server->worker_id);
