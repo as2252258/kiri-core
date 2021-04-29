@@ -185,7 +185,7 @@ class Connection extends Component
 	 */
 	public function slaveInstance(): PDO
 	{
-		if (empty($this->slaveConfig)) {
+		if (Db::transactionsActive() || empty($this->slaveConfig)) {
 			return $this->masterInstance();
 		}
 		return $this->connections()->get($this->slaveConfig, false);
