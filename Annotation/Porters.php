@@ -8,8 +8,10 @@ interface Porters
 {
 
 
-	#[Port(port: 999)]
-	public function process();
+	/**
+	 * @return mixed
+	 */
+	public function process(): mixed;
 
 
 }
