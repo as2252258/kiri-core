@@ -46,6 +46,7 @@ class ServerInotify extends Process
 			$this->inotify = inotify_init();
 			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 		}
+		exec(PHP_BINARY . ' ' . APP_PATH . 'snowflake runtime:builder');
 	}
 
 

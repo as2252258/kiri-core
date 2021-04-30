@@ -40,8 +40,6 @@ class Command extends \Console\Command
 			return 'I don\'t know what I want to do.';
 		}
 
-		exec(PHP_BINARY . ' ' . APP_PATH . 'snowflake runtime:builder');
-
 		/** @var Shutdown $shutdown */
 		$shutdown = Snowflake::app()->get('shutdown');
 		if ($shutdown->isRunning() && $dtl->get('action') == 'start') {
