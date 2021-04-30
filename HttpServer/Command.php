@@ -50,7 +50,16 @@ class Command extends \Console\Command
 		if ($dtl->get('action') == 'stop') {
 			return 'shutdown success.';
 		}
+
+		$this->generate_runtime_builder();
+
 		return $manager->start();
+	}
+
+
+	private function generate_runtime_builder()
+	{
+		exec(PHP_BINARY . ' snowflake runtime:builder');
 	}
 
 }
