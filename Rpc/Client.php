@@ -45,7 +45,8 @@ class Client extends Component
 		if (!$this->client->isConnected() && !$this->connect()) {
 			return false;
 		}
-		$isSend = $this->client->send(Json::encode(['cmd' => $cmd, 'body' => $param]));
+
+		$isSend = $this->client->send(implode("\n", [$cmd, '', serialize($param)]));
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
