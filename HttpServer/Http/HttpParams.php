@@ -13,9 +13,7 @@ use Exception;
 use HttpServer\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Snowflake\Core\Help;
 use Snowflake\Core\Json;
-use Snowflake\Core\Str;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -26,7 +24,7 @@ use Snowflake\Snowflake;
 class HttpParams
 {
 
-	private ?array $body = [];
+	private string|array $body = [];
 
 	/** @var array */
 	private array $gets = [];
@@ -47,11 +45,7 @@ class HttpParams
 		$this->gets = $get ?? [];
 		$this->files = $files ?? [];
 		$this->socket = $socket ?? [];
-		if (!is_array($body)) {
-			$this->body = Help::toArray($body);
-		} else {
-			$this->body = $body ?? [];
-		}
+		$this->body = $body ?? '';
 	}
 
 	/**

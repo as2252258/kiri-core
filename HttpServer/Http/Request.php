@@ -8,12 +8,11 @@ use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\ArrayAccess;
+use Snowflake\Core\Help;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use function router;
 
@@ -452,20 +451,21 @@ class Request extends HttpService
 
 
 	/**
-	 * @param $request
+	 * @param \Swoole\Http\Request $request
 	 * @return mixed
 	 */
-	public static function create($request): Request
+	public static function create(\Swoole\Http\Request $request): Request
 	{
 		/** @var Request $sRequest */
 		$sRequest = Context::setContext('request', new Request());
 		$sRequest->fd = $request->fd;
 		$sRequest->startTime = microtime(true);
 
-		$sRequest->params = new HttpParams($request->rawContent(), $request->get, $request->files);
+		$sRequest->params = new HttpParams(Help::toArray($request->rawContent()), $request->get, $request->files);
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
+
 		$sRequest->headers = new HttpHeaders(ArrayAccess::merge($request->server, $request->header));
 		$sRequest->uri = $sRequest->headers->get('request_uri');
 
@@ -535,20 +535,15 @@ class Request extends HttpService
 			return $this;
 		}
 
-		$data = $this->params->getBody();
-		if (is_string($data) && is_null($data = Json::decode($data))) {
+		[$cmd, $repeat, $body] = explode("\n", $this->params->getBody());
+		if (is_null($body) || is_null($cmd) || !empty($repeat)) {
 			throw new Exception('Protocol format error.');
 		}
 
-		if (!isset($data['cmd']) || empty(!isset($data['cmd']))) {
-			throw new Exception('Unknown system cmd.');
+		if (is_string($body) && is_null($data = Json::decode($body))) {
+			throw new Exception('Protocol format error.');
 		}
-
-		if (str_starts_with($data['cmd'], '/')) {
-			$data['cmd'] = ltrim($data['cmd'], '/');
-		}
-
-		$this->headers->setRequestUri('rpc/p' . $rpc . '/' . $data['cmd']);
+		$this->headers->setRequestUri('rpc/p' . $rpc . '/' . ltrim($cmd, '/'));
 		$this->headers->setRequestMethod(Request::HTTP_CMD);
 
 		return $this;
