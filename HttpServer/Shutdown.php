@@ -106,7 +106,6 @@ class Shutdown extends Component
 	/**
 	 * @param string $path
 	 * @return bool
-	 * @throws ConfigException
 	 */
 	public function directoryCheck(string $path): bool
 	{

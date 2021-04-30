@@ -72,8 +72,7 @@ abstract class Callback extends HttpService
 	 * @param $data
 	 * @param $reID
 	 * @return Request
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	protected function _request($fd, $data, $reID): Request
 	{

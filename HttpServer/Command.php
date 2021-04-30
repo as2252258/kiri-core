@@ -39,9 +39,9 @@ class Command extends \Console\Command
 		if (!in_array($dtl->get('action'), self::ACTIONS)) {
 			return 'I don\'t know what I want to do.';
 		}
-		if (!file_exists(storage('runtime.php'))) {
-			exec(PHP_BINARY . ' snowflake runtime:builder');
-		}
+
+		exec(PHP_BINARY . ' ' . APP_PATH . 'snowflake runtime:builder');
+
 		/** @var Shutdown $shutdown */
 		$shutdown = Snowflake::app()->get('shutdown');
 		if ($shutdown->isRunning() && $dtl->get('action') == 'start') {
