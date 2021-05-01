@@ -29,6 +29,9 @@ class Channel extends Component
     public function push(mixed $value, string $name = ''): void
     {
         $channel = $this->channelInit($name);
+        if ($channel->count() >= 100) {
+            return;
+        }
         $channel->enqueue($value);
     }
 
