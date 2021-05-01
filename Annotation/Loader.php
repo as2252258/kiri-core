@@ -235,13 +235,13 @@ class Loader extends BaseObject
             $path = '/' . trim($path, '/');
             foreach ($this->_directory as $key => $_path) {
                 $key = '/' . trim($key, '/');
-                var_export($key);
                 if (!str_starts_with($key, $path)) {
                     continue;
                 }
                 if (in_array($key, $outPath)) {
                     continue;
                 }
+                var_export($_path);
                 $this->execute($_path);
             }
         } catch (Throwable $exception) {
