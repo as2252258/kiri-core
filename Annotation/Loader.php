@@ -306,7 +306,6 @@ class Loader extends BaseObject
         $annotation = Snowflake::getAnnotation();
         foreach ($classes as $className) {
             $annotations = $this->_classes[$className] ?? null;
-            var_export($annotations);
             if ($annotations === null) {
                 continue;
             }
