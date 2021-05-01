@@ -311,10 +311,10 @@ class Loader extends BaseObject
             if ($annotations === null) {
                 continue;
             }
+            var_export($annotations);
             if (($reflect = $this->getRelect($annotations)) === null) {
                 continue;
             }
-            var_export($reflect);
             $class = $reflect->newInstance();
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$class]);
