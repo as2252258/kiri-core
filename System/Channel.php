@@ -28,6 +28,7 @@ class Channel extends Component
      */
     public function push(mixed $value, string $name = ''): void
     {
+        return;
         $channel = $this->channelInit($name);
         $channel->enqueue($value);
     }
@@ -73,6 +74,7 @@ class Channel extends Component
      */
     public function pop(string $name, Closure $closure, int|float $timeout = null): mixed
     {
+        return call_user_func($closure);
         if (($channel = $this->channelInit($name)) == false) {
             return $this->addError('Channel is full.');
         }
