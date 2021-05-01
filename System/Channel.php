@@ -71,21 +71,15 @@ class Channel extends Component
      * @return mixed
      * @throws Exception
      */
-    public function pop(string $name, Closure $closure, int|float $timeout = null): mixed
+    public function pop(string $name, Closure $closure): mixed
     {
         if (($channel = $this->channelInit($name)) == false) {
             return $this->addError('Channel is full.');
         }
-        if (!$channel->isEmpty()) {
-            return $channel->shift();
+        if ($channel->isEmpty()) {
+            return call_user_func($closure);
         }
-        if ($timeout !== null) {
-            $data = $channel->dequeue();
-        }
-        if (empty($data)) {
-            $data = call_user_func($closure);
-        }
-        return $data;
+        return $channel->dequeue();
     }
 
 

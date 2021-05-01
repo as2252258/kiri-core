@@ -235,10 +235,7 @@ class Loader extends BaseObject
             $path = '/' . trim($path, '/');
             foreach ($this->_directory as $key => $_path) {
                 $key = '/' . trim($key, '/');
-                if (!str_starts_with($key, $path)) {
-                    continue;
-                }
-                if (in_array($key, $outPath)) {
+                if (!str_starts_with($key, $path) || in_array($key, $outPath)) {
                     continue;
                 }
                 $this->execute($_path);
