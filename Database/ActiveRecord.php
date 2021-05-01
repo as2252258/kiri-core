@@ -342,11 +342,9 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasOne(string $modelName, $foreignKey, $localKey): HasOne|ActiveQuery
     {
-        if (!isset($this->attributes[$localKey])) {
+        if (($value = $this->getAttribute($localKey)) === null) {
             throw new Exception("Need join table primary key.");
         }
-
-        $value = $this->getAttribute($localKey);
 
         $relation = $this->getRelation();
 
@@ -363,11 +361,9 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasCount($modelName, $foreignKey, $localKey): mixed
     {
-        if (!isset($this->attributes[$localKey])) {
+        if (($value = $this->getAttribute($localKey)) === null) {
             throw new Exception("Need join table primary key.");
         }
-
-        $value = $this->getAttribute($localKey);
 
         $relation = $this->getRelation();
 
@@ -384,11 +380,9 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasMany($modelName, $foreignKey, $localKey): mixed
     {
-        if (!isset($this->attributes[$localKey])) {
+        if (($value = $this->getAttribute($localKey)) === null) {
             throw new Exception("Need join table primary key.");
         }
-
-        $value = $this->getAttribute($localKey);
 
         $relation = $this->getRelation();
 
@@ -404,11 +398,9 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasIn($modelName, $foreignKey, $localKey): mixed
     {
-        if (!isset($this->attributes[$localKey])) {
+        if (($value = $this->getAttribute($localKey)) === null) {
             throw new Exception("Need join table primary key.");
         }
-
-        $value = $this->getAttribute($localKey);
 
         $relation = $this->getRelation();
 
