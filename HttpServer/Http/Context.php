@@ -24,7 +24,7 @@ class Context extends BaseContext
      */
     public static function setContext($id, $context, $key = null): mixed
     {
-        if (Coroutine::getCid() > 0) {
+        if (!static::inCoroutine()) {
             return static::setStatic($id, $context, $key);
         }
         return self::setCoroutine($id, $context, $key);
@@ -106,7 +106,7 @@ class Context extends BaseContext
      */
     public static function getContext($id, $key = null): mixed
     {
-        if (Coroutine::getCid() > 0) {
+        if (!static::inCoroutine()) {
             return static::loadByStatic($id, $key);
         }
         return static::loadByContext($id, $key);
@@ -170,7 +170,7 @@ class Context extends BaseContext
         if (!static::hasContext($id, $key)) {
             return;
         }
-        if (Coroutine::getCid() > 0) {
+        if (!static::inCoroutine()) {
             if (!empty($key)) {
                 unset(static::$_contents[$id][$key]);
             } else {
@@ -192,7 +192,7 @@ class Context extends BaseContext
      */
     public static function hasContext($id, $key = null): bool
     {
-        if (Coroutine::getCid() > 0) {
+        if (!static::inCoroutine()) {
             return static::searchByStatic($id, $key);
         }
         return static::searchByCoroutine($id, $key);
@@ -238,7 +238,7 @@ class Context extends BaseContext
      */
     public static function inCoroutine(): bool
     {
-        return Coroutine::getCid() > 0;
+        return Coroutine::getCid() === -1;
     }
 
 }
