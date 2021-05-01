@@ -461,14 +461,14 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
      */
     public function expireRefresh($token = null, $source = null)
     {
-        if (!isset($this->data['token'])) {
-            return;
-        }
         if (!empty($token)) {
             $this->data['token'] = $token;
         }
         if (!empty($source)) {
             $this->data['source'] = $source;
+        }
+        if (!isset($this->data['token'])) {
+            return;
         }
         $key = $this->authKey($this->getSource(), $this->data['token']);
         $this->getRedis()->expire($key, $this->timeout);
