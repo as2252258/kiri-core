@@ -179,7 +179,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array = ['handler' => $replace->newInstance(), 'target' => [], 'methods' => [], 'property' => []];
+            $_array = ['handler' => $replace->getName(), 'target' => [], 'methods' => [], 'property' => []];
             foreach ($replace->getAttributes() as $attribute) {
                 if ($attribute->getName() == Attribute::class) {
                     continue;
@@ -395,32 +395,53 @@ class Loader extends BaseObject
         if (empty($classes)) {
             return;
         }
-        $annotation = Snowflake::app()->getAnnotation();
+        $annotation = Snowflake::getAnnotation();
+
+
         foreach ($classes as $className) {
             $annotations = $this->_classes[$className] ?? null;
             if ($annotations === null) {
                 continue;
             }
-            foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute([$annotations['handler']]);
+            if (($reflect = $this->getRelect($annotations)) === null) {
+                continue;
             }
-
-            $_className = $annotations['handler']::class;
+            $reflect = $reflect->newInstance();
+            foreach ($annotations['target'] ?? [] as $value) {
+                $value->execute([$reflect]);
+            }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
                     if ($value instanceof Relation) {
-                        $annotation->addRelate($_className, $value->name, $name);
+                        $annotation->addRelate($reflect->getName(), $value->name, $name);
                     } else if ($value instanceof Get) {
-                        $annotation->addGets($_className, $value->name, $name);
+                        $annotation->addGets($reflect->getName(), $value->name, $name);
                     } else if ($value instanceof Set) {
-                        $annotation->addSets($_className, $value->name, $name);
+                        $annotation->addSets($reflect->getName(), $value->name, $name);
                     } else {
-                        $value->execute([$annotations['handler'], $name]);
+                        $value->execute([$reflect, $name]);
                     }
                 }
             }
             unset($this->_classes[$className]);
         }
     }
+
+
+    /**
+     * @param $annotations
+     * @return \ReflectionClass|null
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+    private function getRelect($annotations)
+    {
+        $reflect = Snowflake::getDi()->getReflect($annotations['handler']);
+        if ($reflect === null) {
+            return null;
+        }
+        return $reflect;
+    }
+
 
 }
