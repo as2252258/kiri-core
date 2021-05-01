@@ -342,7 +342,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasOne(string $modelName, $foreignKey, $localKey): HasOne|ActiveQuery
     {
-        if (!$this->has($localKey)) {
+        if (!isset($this->attributes[$localKey])) {
             throw new Exception("Need join table primary key.");
         }
 
@@ -363,7 +363,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasCount($modelName, $foreignKey, $localKey): mixed
     {
-        if (!$this->has($localKey)) {
+        if (!isset($this->attributes[$localKey])) {
             throw new Exception("Need join table primary key.");
         }
 
@@ -384,7 +384,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function hasMany($modelName, $foreignKey, $localKey): mixed
     {
-        if (!$this->has($localKey)) {
+        if (!isset($this->attributes[$localKey])) {
             throw new Exception("Need join table primary key.");
         }
 
