@@ -235,6 +235,7 @@ class Loader extends BaseObject
             $path = '/' . trim($path, '/');
             foreach ($this->_directory as $key => $_path) {
                 $key = '/' . trim($key, '/');
+                var_export($key);
                 if (!str_starts_with($key, $path)) {
                     continue;
                 }
@@ -304,8 +305,6 @@ class Loader extends BaseObject
             return;
         }
         $annotation = Snowflake::getAnnotation();
-
-
         foreach ($classes as $className) {
             $annotations = $this->_classes[$className] ?? null;
             if ($annotations === null) {
