@@ -121,14 +121,10 @@ class Command extends Component
 	private function execute($type, $isInsert = null, $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		try {
-			$time = microtime(true);
 			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
 				$result = $this->search($type);
-			}
-			if (microtime(true) - $time >= 0.03) {
-				$this->warning('execute sql Worker.' . env('worker') . '.' . Coroutine::getCid() . '`' . $this->sql . '` use time ' . (microtime(true) - $time));
 			}
 			return $result;
 		} catch (\Throwable $exception) {
@@ -144,11 +140,7 @@ class Command extends Component
 	 */
 	private function search($type): mixed
 	{
-		$time = microtime(true);
 		$connect = $this->db->getConnect($this->sql);
-		if (microtime(true) - $time > 0.02) {
-			$this->error('get connect time:' . $this->sql . ';  ' . (microtime(true) - $time));
-		}
 		if (!($query = $connect?->query($this->sql))) {
 			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
