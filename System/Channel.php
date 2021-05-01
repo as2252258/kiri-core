@@ -76,9 +76,7 @@ class Channel extends Component
      */
     public function pop(string $name, Closure $closure): mixed
     {
-        if (($channel = $this->channelInit($name)) == false) {
-            return $this->addError('Channel is full.');
-        }
+        $channel = $this->channelInit($name);
         if ($channel->isEmpty()) {
             return call_user_func($closure);
         }
