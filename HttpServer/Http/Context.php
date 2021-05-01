@@ -238,7 +238,7 @@ class Context extends BaseContext
      */
     public static function inCoroutine(): bool
     {
-        return Coroutine::getCid() === -1;
+        return Coroutine::getCid() !== -1;
     }
 
 }
