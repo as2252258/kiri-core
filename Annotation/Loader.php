@@ -179,7 +179,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array = ['handler' => $replace->getName(), 'target' => [], 'methods' => [], 'property' => []];
+            $_array = ['handler' => $replace->newInstance(), 'target' => [], 'methods' => [], 'property' => []];
             foreach ($replace->getAttributes() as $attribute) {
                 if ($attribute->getName() == Attribute::class) {
                     continue;
@@ -309,43 +309,24 @@ class Loader extends BaseObject
             if ($annotations === null) {
                 continue;
             }
-            if (($reflect = $this->getRelect($annotations)) === null) {
-                continue;
-            }
-            $class = $reflect->newInstance();
+            $class = clone $annotations['handler'];
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$class]);
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
                     if ($value instanceof Relation) {
-                        $annotation->addRelate($reflect->getName(), $value->name, $name);
+                        $annotation->addRelate($class::class, $value->name, $name);
                     } else if ($value instanceof Get) {
-                        $annotation->addGets($reflect->getName(), $value->name, $name);
+                        $annotation->addGets($class::class, $value->name, $name);
                     } else if ($value instanceof Set) {
-                        $annotation->addSets($reflect->getName(), $value->name, $name);
+                        $annotation->addSets($class::class, $value->name, $name);
                     } else {
                         $value->execute([$class, $name]);
                     }
                 }
             }
         }
-    }
-
-
-    /**
-     * @param $annotations
-     * @return \ReflectionClass|null
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
-     */
-    private function getRelect($annotations)
-    {
-        $reflect = Snowflake::getDi()->getReflect($annotations['handler']);
-        if ($reflect === null) {
-            return null;
-        }
-        return $reflect;
     }
 
 
