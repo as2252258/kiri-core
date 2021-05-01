@@ -241,7 +241,6 @@ class Loader extends BaseObject
                 if (in_array($key, $outPath)) {
                     continue;
                 }
-                var_export($_path);
                 $this->execute($_path);
             }
         } catch (Throwable $exception) {
@@ -307,10 +306,10 @@ class Loader extends BaseObject
         $annotation = Snowflake::getAnnotation();
         foreach ($classes as $className) {
             $annotations = $this->_classes[$className] ?? null;
+            var_export($annotations);
             if ($annotations === null) {
                 continue;
             }
-            var_export($annotations);
             if (($reflect = $this->getRelect($annotations)) === null) {
                 continue;
             }
@@ -331,7 +330,6 @@ class Loader extends BaseObject
                     }
                 }
             }
-            unset($this->_classes[$className]);
         }
     }
 
