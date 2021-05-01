@@ -279,98 +279,6 @@ class Loader extends BaseObject
         $array = '/' . trim(implode('/', $array), '/');
 
         $this->_directory[$array][] = $className;
-
-//		$directory = $this->splitDirectory($filePath);
-//		array_pop($directory);
-//
-//		$tree = null;
-//		foreach ($directory as $value) {
-//			$tree = $this->getTree($tree, $value);
-//		}
-//
-//		if ($tree instanceof FileTree) {
-//			$tree->addFile($className, $filePath);
-//		}
-    }
-
-
-    /**
-     * @param string $filePath
-     * @param string|null $outPath
-     * @return $this
-     * @throws Exception
-     */
-    private function each(string $filePath, ?string $outPath): static
-    {
-        $tree = null;
-        $directory = $this->splitDirectory($filePath);
-
-        $_tmp = '';
-        if (!empty($outPath)) {
-            $outPath = rtrim($outPath, '/');
-        }
-
-        foreach ($directory as $key => $value) {
-            $_tmp .= DIRECTORY_SEPARATOR . $value;
-            if (!empty($outPath) && str_contains($_tmp, $outPath)) {
-                break;
-            }
-            $tree = $this->getTree($tree, $value);
-        }
-        if ($tree instanceof FileTree) {
-            $this->eachNode($tree->getChildes(), $outPath);
-            $this->execute($tree->getFiles());
-        }
-        return $this;
-    }
-
-
-    /**
-     * @param string $filePath
-     * @return false|string[]
-     */
-    private function splitDirectory(string $filePath): array|bool
-    {
-        $DIRECTORY = explode(DIRECTORY_SEPARATOR, $filePath);
-        return array_filter($DIRECTORY, function ($value) {
-            return !empty($value);
-        });
-    }
-
-
-    /**
-     * @param $tree
-     * @param $value
-     * @return FileTree
-     */
-    private function getTree($tree, $value): FileTree
-    {
-        if ($tree === null) {
-            $tree = $this->files->getChild($value);
-        } else {
-            $tree = $tree->getChild($value);
-        }
-        return $tree;
-    }
-
-
-    /**
-     * @param FileTree[] $nodes
-     * @param string|null $outPath
-     * @throws Exception
-     */
-    private function eachNode(array $nodes, ?string $outPath = '')
-    {
-        foreach ($nodes as $node) {
-            $this->execute($node->getFiles());
-            if (!empty($outPath) && str_contains($node->getDirPath(), $outPath)) {
-                continue;
-            }
-            $childes = $node->getChildes();
-            if (!empty($childes)) {
-                $this->eachNode($childes, $outPath);
-            }
-        }
     }
 
 
@@ -406,6 +314,7 @@ class Loader extends BaseObject
             if (($reflect = $this->getRelect($annotations)) === null) {
                 continue;
             }
+            var_export($reflect);
             $class = $reflect->newInstance();
             foreach ($annotations['target'] ?? [] as $value) {
                 $value->execute([$class]);
