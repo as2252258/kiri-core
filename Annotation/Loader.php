@@ -179,7 +179,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array = ['handler' => $replace->newInstance(), 'target' => [], 'methods' => [], 'property' => []];
+            $_array = ['handler' => $replace->getName(), 'target' => [], 'methods' => [], 'property' => []];
             foreach ($replace->getAttributes() as $attribute) {
                 if ($attribute->getName() == Attribute::class) {
                     continue;
@@ -401,21 +401,22 @@ class Loader extends BaseObject
             if ($annotations === null) {
                 continue;
             }
+
+            $target = new $annotations['handler']();
             foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute([$annotations['handler']]);
+                $value->execute([$target]);
             }
 
-            $_className = $annotations['handler']::class;
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
                     if ($value instanceof Relation) {
-                        $annotation->addRelate($_className, $value->name, $name);
+                        $annotation->addRelate($target::class, $value->name, $name);
                     } else if ($value instanceof Get) {
-                        $annotation->addGets($_className, $value->name, $name);
+                        $annotation->addGets($target::class, $value->name, $name);
                     } else if ($value instanceof Set) {
-                        $annotation->addSets($_className, $value->name, $name);
+                        $annotation->addSets($target::class, $value->name, $name);
                     } else {
-                        $value->execute([$annotations['handler'], $name]);
+                        $value->execute([$target, $name]);
                     }
                 }
             }

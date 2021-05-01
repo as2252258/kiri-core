@@ -9,6 +9,7 @@ use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Coroutine\System;
 use Swoole\Server;
 
@@ -32,15 +33,27 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        $content = System::readFile(storage('runtime.php'));
-
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->setLoader(unserialize($content));
+        $annotation = $this->settings();
         if ($worker_id < $server->setting['worker_num']) {
             $this->onWorker($server, $annotation);
         } else {
             $this->onTask($server, $annotation);
         }
+    }
+
+
+    /**
+     * @return \Annotation\Annotation
+     * @throws \Exception
+     */
+    private function settings(): Annotation
+    {
+        $content = System::readFile(storage('runtime.php'));
+
+        $annotation = Snowflake::app()->getAnnotation();
+        $annotation->setLoader(unserialize($content));
+
+        return $annotation;
     }
 
 
