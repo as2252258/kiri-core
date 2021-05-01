@@ -419,6 +419,7 @@ class Loader extends BaseObject
                     }
                 }
             }
+            unset($this->_classes[$className]);
         }
     }
 
