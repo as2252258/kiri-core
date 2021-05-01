@@ -406,9 +406,9 @@ class Loader extends BaseObject
             if (($reflect = $this->getRelect($annotations)) === null) {
                 continue;
             }
-            $reflect = $reflect->newInstance();
+            $class = $reflect->newInstance();
             foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute([$reflect]);
+                $value->execute([$class]);
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
@@ -419,7 +419,7 @@ class Loader extends BaseObject
                     } else if ($value instanceof Set) {
                         $annotation->addSets($reflect->getName(), $value->name, $name);
                     } else {
-                        $value->execute([$reflect, $name]);
+                        $value->execute([$class, $name]);
                     }
                 }
             }
