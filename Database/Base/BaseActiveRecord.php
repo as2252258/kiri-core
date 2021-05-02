@@ -968,7 +968,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public function offsetExists(mixed $offset): bool
     {
-        return $this->has($offset);
+        return isset($this->_attributes[$offset]) || isset($this->_oldAttributes[$offset]);
     }
 
     /**
@@ -997,7 +997,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public function offsetUnset(mixed $offset)
     {
-        if (!$this->has($offset)) {
+        if (!isset($this->_attributes[$offset])
+        && !isset($this->_oldAttributes[$offset])) {
             return;
         }
         unset($this->_attributes[$offset]);
