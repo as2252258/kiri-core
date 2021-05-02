@@ -7,6 +7,7 @@ namespace Annotation\Model;
 use Annotation\Annotation;
 use Attribute;
 use Database\ActiveRecord;
+use Snowflake\Snowflake;
 
 
 /**
@@ -17,28 +18,25 @@ use Database\ActiveRecord;
 {
 
 
-	/**
-	 * Get constructor.
-	 * @param string $name
-	 */
-	public function __construct(
-		public string $name
-	)
-	{
-	}
+    /**
+     * Get constructor.
+     * @param string $name
+     */
+    public function __construct(public string $name)
+    {
+    }
 
 
-	/**
-	 * @param array $handler
-	 * @return ActiveRecord
-	 */
-	public function execute(array $handler): ActiveRecord
-	{
-		/** @var ActiveRecord $activeRecord */
-		[$activeRecord, $method] = $handler;
-
-		return $activeRecord->addGets($this->name, $method);
-	}
+    /**
+     * @param array $handler
+     * @return ActiveRecord
+     */
+    public function execute(mixed $class, mixed $method = null): bool
+    {
+        $annotation = Snowflake::getAnnotation();
+        $annotation->addGets($class::class, $this->name, $method);
+        return true;
+    }
 
 
 }

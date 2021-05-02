@@ -38,7 +38,7 @@ use Snowflake\Snowflake;
 	 * @param array $handler
 	 * @return After
 	 */
-	public function execute(array $handler): static
+	public function execute(mixed $class, mixed $method = null): static
 	{
 		return $this;
 	}

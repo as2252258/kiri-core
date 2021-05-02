@@ -33,10 +33,10 @@ use Snowflake\Event as SEvent;
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function execute(array $handler): bool
+    public function execute(mixed $class, mixed $method = null): mixed
 	{
 		// TODO: Implement execute() method.
-		SEvent::on($this->name, $handler, $this->params);
+		SEvent::on($this->name, [$class, $method], $this->params);
 		return true;
 	}
 

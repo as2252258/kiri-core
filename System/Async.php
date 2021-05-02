@@ -26,7 +26,7 @@ class Async extends Component
      */
     public function addAsync(string $name, Task $handler)
     {
-        $this->_absences[$name] = $handler;
+        $this->_absences[$name] = $handler::class;
     }
 
 
@@ -47,7 +47,7 @@ class Async extends Component
         }
 
         /** @var Task $class */
-        $class = $this->_absences[$name];
+        $class = new $this->_absences[$name]();
         $class->setParams($params);
 
         $randWorkerId = random_int(0, $server->setting['task_worker_num'] - 1);

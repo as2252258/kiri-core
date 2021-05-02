@@ -16,39 +16,39 @@ use Snowflake\Snowflake;
 #[\Attribute(\Attribute::TARGET_CLASS)] class RpcClient extends Attribute
 {
 
-	private array $config;
+    private array $config;
 
 
-	/**
-	 * RpcClient constructor.
-	 * @param string $cmd
-	 * @param int $port
-	 * @param int $timeout
-	 * @param int $mode
-	 */
-	public function __construct(
-		public string $cmd,
-		public int $port,
-		public int $timeout,
-		public int $mode
-	)
-	{
-		$this->config = ['port' => $port, 'mode' => $mode, 'timeout' => $timeout];
-	}
+    /**
+     * RpcClient constructor.
+     * @param string $cmd
+     * @param int $port
+     * @param int $timeout
+     * @param int $mode
+     */
+    public function __construct(
+        public string $cmd,
+        public int $port,
+        public int $timeout,
+        public int $mode
+    )
+    {
+        $this->config = ['port' => $port, 'mode' => $mode, 'timeout' => $timeout];
+    }
 
 
-	/**
-	 * @param array $handler
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function execute(array $handler): mixed
-	{
-		$rpc = Snowflake::app()->getRpc();
-		$rpc->addProducer($this->cmd, $handler, $this->config);
+    /**
+     * @param array $handler
+     * @return mixed
+     * @throws Exception
+     */
+    public function execute(mixed $class, mixed $method = ''): mixed
+    {
+        $rpc = Snowflake::app()->getRpc();
+        $rpc->addProducer($this->cmd, [$class, $method], $this->config);
 
-		return parent::execute($handler);
-	}
+        return true;
+    }
 
 
 }

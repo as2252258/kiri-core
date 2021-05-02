@@ -431,19 +431,19 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
         [$sql, $param] = SqlBuilder::builder(static::find())->insert($param);
 
-        $trance = $dbConnection->beginTransaction();
+//        $trance = $dbConnection->beginTransaction();
         try {
             if (!($lastId = (int)$dbConnection->createCommand($sql, $param)->save(true, $this))) {
                 throw new Exception('保存失败.');
             }
-            $trance->commit();
+//            $trance->commit();
             $lastId = $this->setPrimary($lastId, $param);
 
             $this->refresh();
 
             SEvent::trigger(self::AFTER_SAVE, [$attributes, $param]);
         } catch (\Throwable $exception) {
-            $trance->rollback();
+//            $trance->rollback();
             $lastId = $this->addError($exception, 'mysql');
         }
         return $lastId;
@@ -498,13 +498,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
             return $generate;
         }
 
-        $trance = $command->beginTransaction();
+//        $trance = $command->beginTransaction();
         if (!$command->createCommand(...$generate)->save(false, $this)) {
-            $trance->rollback();
+//            $trance->rollback();
             return false;
         }
 
-        $trance->commit();
+//        $trance->commit();
 
         $this->refresh();
 

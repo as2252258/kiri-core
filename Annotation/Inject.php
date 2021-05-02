@@ -16,59 +16,59 @@ use Snowflake\Snowflake;
 {
 
 
-	/**
-	 * Inject constructor.
-	 * @param string $className
-	 * @param array $args
-	 */
-	public function __construct(private string $className, private array $args = [])
-	{
-	}
+    /**
+     * Inject constructor.
+     * @param string $className
+     * @param array $args
+     */
+    public function __construct(private string $className, private array $args = [])
+    {
+    }
 
 
-	/**
-	 * @param array $handler
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function execute(array $handler): mixed
-	{
-		$injectValue = $this->parseInjectValue();
-		if (!($handler[1] instanceof ReflectionProperty)) {
-			$handler[1] = new ReflectionProperty($handler[0], $handler[1]);
-		}
+    /**
+     * @param array $handler
+     * @return mixed
+     * @throws Exception
+     */
+    public function execute(mixed $class, mixed $method = null): mixed
+    {
+        $injectValue = $this->parseInjectValue();
+        if (!($method instanceof ReflectionProperty)) {
+            $method = new ReflectionProperty($class, $method);
+        }
 
-		/** @var ReflectionProperty $handler [1] */
-		if ($handler[1]->isPrivate() || $handler[1]->isProtected()) {
-			$method = 'set' . ucfirst($handler[1]->getName());
-			if (!method_exists($handler[0], $method)) {
-				return false;
-			}
-			$handler[0]->$method($injectValue);
-		} else {
-			$handler[0]->{$handler[1]->getName()} = $injectValue;
-		}
-		return $handler[0];
-	}
+        /** @var ReflectionProperty $class */
+        if ($method->isPrivate() || $method->isProtected()) {
+            $method = 'set' . ucfirst($class->getName());
+            if (!method_exists($class, $method)) {
+                return false;
+            }
+            $class->$method($injectValue);
+        } else {
+            $class->{$method->getName()} = $injectValue;
+        }
+        return true;
+    }
 
 
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function parseInjectValue(): mixed
-	{
-		if (class_exists($this->className)) {
-			$injectValue = Snowflake::createObject($this->className, $this->args);
-		} else if (Snowflake::app()->has($this->className)) {
-			$injectValue = Snowflake::app()->get($this->className);
-		} else {
-			$injectValue = $this->className;
-		}
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    private function parseInjectValue(): mixed
+    {
+        if (class_exists($this->className)) {
+            $injectValue = Snowflake::createObject($this->className, $this->args);
+        } else if (Snowflake::app()->has($this->className)) {
+            $injectValue = Snowflake::app()->get($this->className);
+        } else {
+            $injectValue = $this->className;
+        }
 //		if (!empty($this->args) && is_object($injectValue)) {
 //			Snowflake::configure($injectValue, $this->args);
 //		}
-		return $injectValue;
-	}
+        return $injectValue;
+    }
 
 }

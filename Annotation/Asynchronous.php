@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use Exception;
+use HttpServer\IInterface\Task;
 use Snowflake\Snowflake;
 
 
@@ -32,10 +33,10 @@ use Snowflake\Snowflake;
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function execute(array $handler): bool
+    public function execute(mixed $class, mixed $method = null): mixed
 	{
 		$async = Snowflake::app()->getAsync();
-		$async->addAsync($this->name, current($handler));
+		$async->addAsync($this->name, $class);
 		return true;
 	}
 

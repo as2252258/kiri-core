@@ -38,7 +38,7 @@ use Annotation\Attribute;
 	 * @param array $handler
 	 * @return array
 	 */
-	public function execute(array $handler): array
+    public function execute(mixed $class, mixed $method = null): array
 	{
 		// TODO: Implement execute() method.
 		return [$this->request, $this->response];

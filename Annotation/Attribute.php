@@ -22,14 +22,11 @@ abstract class Attribute implements IAnnotation
 {
 
 
-	/**
-	 * @param array $handler
-	 * @return mixed
-	 */
-	public function execute(array $handler): mixed
-	{
-		return $this;
-	}
 
+    public function execute(mixed $class, mixed $method = ''): mixed
+    {
+        // TODO: Implement execute() method.
+        return true;
+    }
 
 }

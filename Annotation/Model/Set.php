@@ -6,6 +6,7 @@ namespace Annotation\Model;
 
 use Annotation\Attribute;
 use Database\ActiveRecord;
+use Snowflake\Snowflake;
 
 #[\Attribute(\Attribute::TARGET_METHOD)] class Set extends Attribute
 {
@@ -20,17 +21,17 @@ use Database\ActiveRecord;
 	}
 
 
-
-	/**
-	 * @param array $handler
-	 * @return ActiveRecord
-	 */
-	public function execute(array $handler): ActiveRecord
+    /**
+     * @param mixed $class
+     * @param mixed|null $method
+     * @return bool
+     * @throws \Exception
+     */
+    public function execute(mixed $class, mixed $method = null): bool
 	{
-		/** @var ActiveRecord $activeRecord */
-		[$activeRecord, $method] = $handler;
-
-		return $activeRecord->addSets($this->name, $method);
+        $annotation = Snowflake::getAnnotation();
+        $annotation->addSets($class::class, $this->name, $method);
+		return true;
 	}
 
 
