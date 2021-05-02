@@ -42,12 +42,12 @@ use Snowflake\Snowflake;
 	 * @return Router
 	 * @throws Exception
 	 */
-	public function execute(array $handler): Router
+    public function execute(mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
-		$router->addRoute($this->uri, $handler, Request::HTTP_CMD)
+		$router->addRoute($this->uri, [$class, $method], Request::HTTP_CMD)
 			->setDataType($this->protocol);
 
 		return $router;

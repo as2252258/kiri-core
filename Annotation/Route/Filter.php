@@ -33,7 +33,7 @@ use Snowflake\Snowflake;
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function execute(array $handler): bool
+    public function execute(mixed $class, mixed $method = null): bool
 	{
 		return true;
 	}

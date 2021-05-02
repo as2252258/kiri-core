@@ -43,7 +43,7 @@ use HttpServer\IInterface\Middleware as IMiddleware;
 	 * @param array $handler
 	 * @return Middleware
 	 */
-	public function execute(array $handler): static
+    public function execute(mixed $class, mixed $method = null): static
 	{
 		return $this;
 	}

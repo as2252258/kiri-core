@@ -34,12 +34,12 @@ use Snowflake\Snowflake;
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function execute(array $handler): Router
+    public function execute(mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
-		$router->addRoute($this->uri, $handler, $this->method);
+		$router->addRoute($this->uri, [$class, $method], $this->method);
 
 		return $router;
 	}

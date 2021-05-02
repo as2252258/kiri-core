@@ -33,9 +33,6 @@ class Loader extends BaseObject
     private array $_directory = [];
 
 
-    private FileTree $files;
-
-
     /**
      * @return array
      */
@@ -43,13 +40,6 @@ class Loader extends BaseObject
     {
         return $this->_directory;
     }
-
-
-    public function init()
-    {
-        $this->files = new FileTree();
-    }
-
 
     /**
      * @param $path
@@ -102,7 +92,7 @@ class Loader extends BaseObject
         }
         foreach ($properties as $property => $attributes) {
             foreach ($attributes as $attribute) {
-                $attribute->execute([$handler, $property]);
+                $attribute->execute($handler, $property);
             }
         }
         return $this;
@@ -173,47 +163,20 @@ class Loader extends BaseObject
             if ($path->getExtension() !== 'php') {
                 return;
             }
-            $replace = Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
+            $replace = $this->getReflect($path, $namespace);
             if (empty($replace) || count($replace->getAttributes(Target::class)) < 1) {
                 return;
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array = ['handler' => $replace->newInstance(), 'target' => [], 'methods' => [], 'property' => []];
-            foreach ($replace->getAttributes() as $attribute) {
-                if ($attribute->getName() == Attribute::class) {
-                    continue;
-                }
-                if ($attribute->getName() == Target::class) {
-                    continue;
-                }
-                $_array['target'][] = $attribute->newInstance();
-            }
+            $_array['handler'] = $replace->getName();
+            $_array['target'] = [];
+            $_array['methods'] = [];
+            $_array['property'] = [];
 
-            $methods = $replace->getMethods(ReflectionMethod::IS_PUBLIC);
-            foreach ($methods as $method) {
-                $_method = [];
-                foreach ($method->getAttributes() as $attribute) {
-                    if (!class_exists($attribute->getName())) {
-                        continue;
-                    }
-                    $_method[] = $attribute->newInstance();
-                }
-                $_array['methods'][$method->getName()] = $_method;
-            }
-
-            $methods = $replace->getProperties();
-            foreach ($methods as $method) {
-                $_property = [];
-                if ($method->isStatic()) continue;
-                foreach ($method->getAttributes() as $attribute) {
-                    if (!class_exists($attribute->getName())) {
-                        continue;
-                    }
-                    $_property[] = $attribute->newInstance();
-                }
-                $_array['property'][$method->getName()] = $_property;
-            }
+            $_array = $this->_targets($replace, $_array);
+            $_array = $this->_methods($replace, $_array);
+            $_array = $this->_properties($replace, $_array);
 
             $this->_fileMap[$replace->getFileName()] = $replace->getName();
 
@@ -221,6 +184,84 @@ class Loader extends BaseObject
         } catch (Throwable $throwable) {
             $this->addError($throwable, 'throwable');
         }
+    }
+
+
+    /**
+     * @param string $path
+     * @param string $namespace
+     * @return \ReflectionClass|null
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+    private function getReflect(DirectoryIterator $path, string $namespace): ?\ReflectionClass
+    {
+        return Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
+    }
+
+
+    /**
+     * @param \ReflectionClass $replace
+     * @param array $_array
+     * @return array
+     */
+    private function _targets(\ReflectionClass $replace, array $_array): array
+    {
+        foreach ($replace->getAttributes() as $attribute) {
+            if ($attribute->getName() == Attribute::class) {
+                continue;
+            }
+            if ($attribute->getName() == Target::class) {
+                continue;
+            }
+            $_array['target'][] = $attribute->newInstance();
+        }
+        return $_array;
+    }
+
+
+    /**
+     * @param \ReflectionClass $replace
+     * @param array $_array
+     * @return array
+     */
+    private function _methods(\ReflectionClass $replace, array $_array): array
+    {
+        $methods = $replace->getMethods(ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $method) {
+            $_method = [];
+            foreach ($method->getAttributes() as $attribute) {
+                if (!class_exists($attribute->getName())) {
+                    continue;
+                }
+                $_method[] = $attribute->newInstance();
+            }
+            $_array['methods'][$method->getName()] = $_method;
+        }
+        return $_array;
+    }
+
+
+    /**
+     * @param \ReflectionClass $replace
+     * @param array $_array
+     * @return array
+     */
+    private function _properties(\ReflectionClass $replace, array $_array): array
+    {
+        $methods = $replace->getProperties();
+        foreach ($methods as $method) {
+            $_property = [];
+            if ($method->isStatic()) continue;
+            foreach ($method->getAttributes() as $attribute) {
+                if (!class_exists($attribute->getName())) {
+                    continue;
+                }
+                $_property[] = $attribute->newInstance();
+            }
+            $_array['property'][$method->getName()] = $_property;
+        }
+        return $_array;
     }
 
 
@@ -301,14 +342,17 @@ class Loader extends BaseObject
             return;
         }
         $annotation = Snowflake::getAnnotation();
+
         foreach ($classes as $className) {
             $annotations = $this->_classes[$className] ?? null;
             if ($annotations === null) {
                 continue;
             }
-            $class = clone $annotations['handler'];
+
+            $class = $this->newInstance($annotations['handler']);
+            /** @var \Annotation\Attribute $value */
             foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute([$class]);
+                $value->execute($class);
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
@@ -319,12 +363,24 @@ class Loader extends BaseObject
                     } else if ($value instanceof Set) {
                         $annotation->addSets($class::class, $value->name, $name);
                     } else {
-                        $value->execute([$class, $name]);
+                        $value->execute($class, $name);
                     }
                 }
             }
         }
     }
 
+
+    /**
+     * @param $class
+     * @return object
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+    private function newInstance($class)
+    {
+        $reflection = Snowflake::getDi()->getReflect($class);
+        return $reflection->newInstance();
+    }
 
 }

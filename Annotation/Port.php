@@ -31,14 +31,14 @@ use Snowflake\Snowflake;
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function execute(array $handler): mixed
+    public function execute(mixed $class, mixed $method = null): mixed
 	{
 		$router = Snowflake::app()->getRouter();
-		if (!($handler[0] instanceof Porters)) {
+		if (!($class instanceof Porters)) {
 			return true;
 		}
-		$router->addPortListen($this->port, [$handler[0], 'process']);
-		return parent::execute($handler);
+		$router->addPortListen($this->port, [$class, 'process']);
+		return true;
 	}
 
 }

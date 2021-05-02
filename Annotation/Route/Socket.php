@@ -44,14 +44,14 @@ use Snowflake\Snowflake;
 	 * @return Router
 	 * @throws Exception
 	 */
-	public function execute(array $handler): Router
+    public function execute(mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
 
 		$method = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		$router->addRoute($method, $handler, 'sw::socket');
+		$router->addRoute($method, [$class, $method], 'sw::socket');
 
 		return $router;
 	}

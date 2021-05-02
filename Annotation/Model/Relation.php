@@ -7,6 +7,7 @@ namespace Annotation\Model;
 use Annotation\Attribute;
 use Database\ActiveRecord;
 use JetBrains\PhpStorm\Pure;
+use Snowflake\Snowflake;
 
 
 /**
@@ -30,14 +31,11 @@ use JetBrains\PhpStorm\Pure;
 	 * @param array $handler
 	 * @return bool
 	 */
-	public function execute(array $handler): bool
+    public function execute(mixed $class, mixed $method = null): bool
 	{
-		/** @var ActiveRecord $activeRecord */
-		[$activeRecord, $method] = $handler;
-
-		$activeRecord->setRelate($this->name, $method);
-
-		return true;
+        $annotation = Snowflake::getAnnotation();
+        $annotation->addRelate($class::class, $this->name, $method);
+        return true;
 	}
 
 }
