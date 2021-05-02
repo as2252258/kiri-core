@@ -34,7 +34,7 @@ class Command extends Component
     public Connection $db;
 
     /** @var ?string */
-    public ?string $sql = '';
+    private ?string $sql = '';
 
     /** @var array */
     public array $params = [];
@@ -126,6 +126,9 @@ class Command extends Component
             } else {
                 $result = $this->search($type);
             }
+            if ($this->prepare) {
+                $this->prepare->closeCursor();
+            }
             return $result;
         } catch (\Throwable $exception) {
             return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
@@ -141,19 +144,18 @@ class Command extends Component
     private function search($type): mixed
     {
         $connect = $this->db->getConnect($this->sql);
-        if (!($query = $connect?->query($this->sql))) {
+        if (!($this->prepare = $connect?->query($this->sql))) {
             return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
         }
         if ($type === static::FETCH_COLUMN) {
-            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+            $data = $this->prepare->fetchAll(PDO::FETCH_ASSOC);
         } else if ($type === static::ROW_COUNT) {
-            $data = $query->rowCount();
+            $data = $this->prepare->rowCount();
         } else if ($type === static::FETCH_ALL) {
-            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+            $data = $this->prepare->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $data = $query->fetch(PDO::FETCH_ASSOC);
+            $data = $this->prepare->fetch(PDO::FETCH_ASSOC);
         }
-        $query->closeCursor();
         return $data;
     }
 
@@ -191,17 +193,22 @@ class Command extends Component
         if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
             return $this->addError('get client error.', 'mysql');
         }
-        if (!(($prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
-            $error = $prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
+        if (!(($this->prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
+            $error = $this->prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
 
             return $this->addError($this->sql . ':' . $error, 'mysql');
         }
-        $result = $this->checkResponse($prepare, $connect);
-        $prepare->closeCursor();
+        $result = $this->checkResponse($this->prepare, $connect);
         return $result;
     }
 
 
+    /**
+     * @param $prepare
+     * @param $connect
+     * @return bool|int
+     * @throws \Exception
+     */
     private function checkResponse($prepare, $connect)
     {
         $result = $prepare->execute($this->params);
@@ -251,10 +258,10 @@ class Command extends Component
     }
 
     /**
-     * @param array|null $data
+     * @param array $data
      * @return $this
      */
-    public function bindValues(array $data = NULL): static
+    public function bindValues(array $data = []): static
     {
         if (!is_array($this->params)) {
             $this->params = [];
