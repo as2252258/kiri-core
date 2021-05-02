@@ -380,7 +380,7 @@ class Loader extends BaseObject
     private function newInstance($class)
     {
         $reflection = Snowflake::getDi()->getReflect($class);
-        return $reflection->newInstance();
+        return $reflection?->newInstance();
     }
 
 }
