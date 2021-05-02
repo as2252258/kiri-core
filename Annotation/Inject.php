@@ -39,7 +39,7 @@ use Snowflake\Snowflake;
         }
 
         /** @var ReflectionProperty $class */
-        if ($class->isPrivate() || $class->isProtected()) {
+        if ($method->isPrivate() || $method->isProtected()) {
             $method = 'set' . ucfirst($class->getName());
             if (!method_exists($class, $method)) {
                 return false;
