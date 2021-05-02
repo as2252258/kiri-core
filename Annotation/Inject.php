@@ -34,7 +34,7 @@ use Snowflake\Snowflake;
     public function execute(mixed $class, mixed $method = null): mixed
     {
         $injectValue = $this->parseInjectValue();
-        if (!($class instanceof ReflectionProperty)) {
+        if (!($method instanceof ReflectionProperty)) {
             $class = new ReflectionProperty($class, $method);
         }
 
