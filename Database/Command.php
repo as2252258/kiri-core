@@ -126,6 +126,9 @@ class Command extends Component
             } else {
                 $result = $this->search($type);
             }
+            if ($this->prepare) {
+                $this->prepare->closeCursor();
+            }
             return $result;
         } catch (\Throwable $exception) {
             return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
@@ -140,12 +143,8 @@ class Command extends Component
      */
     private function search($type): mixed
     {
-        if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
-            return $this->addError('get client error.', 'mysql');
-        }
-        if (!(($prepare = $connect->query($this->sql)) instanceof PDOStatement)) {
-            $error = $prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
-            return $this->addError($this->sql . ':' . $error, 'mysql');
+        if (($prepare = $this->prepare()) == false) {
+            return false;
         }
         if ($type === static::FETCH_COLUMN) {
             $data = $prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -169,29 +168,72 @@ class Command extends Component
      */
     private function insert_or_change($isInsert, $hasAutoIncrement): bool|string|int
     {
+        if (($result = $this->initPDOStatement()) === false) {
+            return $result;
+        }
+        if ($isInsert === false) {
+            return true;
+        }
+        if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
+            return $this->addError(static::DB_ERROR_MESSAGE, 'mysql');
+        }
+        return $result == 0 ? true : $result;
+    }
+
+
+    /**
+     * 重新构建
+     * @throws
+     */
+    private function initPDOStatement(): bool|int
+    {
+        if (empty($this->sql)) {
+            return $this->addError('no sql.', 'mysql');
+        }
         if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
             return $this->addError('get client error.', 'mysql');
         }
-        if (!(($prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
+        if (!(($this->prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
+            $error = $this->prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
+
+            return $this->addError($this->sql . ':' . $error, 'mysql');
+        }
+        $result = $this->checkResponse($this->prepare, $connect);
+        return $result;
+    }
+
+
+    /**
+     * @return bool|\PDOStatement
+     * @throws \Exception
+     */
+    private function prepare(): bool|PDOStatement
+    {
+        if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
+            return $this->addError('get client error.', 'mysql');
+        }
+        if (!(($prepare = $connect->prepare($this->sql, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL])) instanceof PDOStatement)) {
             $error = $prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
             return $this->addError($this->sql . ':' . $error, 'mysql');
         }
-        if ($prepare->execute() === false) {
-            $response = $this->addError(static::DB_ERROR_MESSAGE, 'mysql');
-        } else {
-            $result = $connect->lastInsertId();
-            if ($isInsert === false) {
-                $response = true;
-            } else if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
-                $response = $this->addError(static::DB_ERROR_MESSAGE, 'mysql');
-            } else {
-                $response = $result == 0 ? true : $result;
-            }
-        }
-        $prepare->closeCursor();
-        return $response;
+        return $prepare;
     }
 
+
+    /**
+     * @param $prepare
+     * @param $connect
+     * @return bool|int
+     * @throws \Exception
+     */
+    private function checkResponse($prepare, $connect)
+    {
+        $result = $prepare->execute($this->params);
+        if ($result === false) {
+            return $this->addError($connect->errorInfo()[2], 'mysql');
+        }
+        return (int)$connect->lastInsertId();
+    }
 
 
     /**
