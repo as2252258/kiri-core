@@ -129,6 +129,9 @@ class Command extends Component
             } else {
                 $result = $this->search($type);
             }
+            if ($this->prepare) {
+                $this->prepare->closeCursor();
+            }
             return $result;
         } catch (\Throwable $exception) {
             return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
