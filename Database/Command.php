@@ -212,7 +212,7 @@ class Command extends Component
         if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
             return $this->addError('get client error.', 'mysql');
         }
-        if (!(($prepare = $connect->prepare($this->sql, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL])) instanceof PDOStatement)) {
+        if (!(($prepare = $connect->query($this->sql)) instanceof PDOStatement)) {
             $error = $prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
             return $this->addError($this->sql . ':' . $error, 'mysql');
         }
