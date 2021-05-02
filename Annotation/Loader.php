@@ -349,6 +349,7 @@ class Loader extends BaseObject
                 continue;
             }
 
+            var_export($annotations['handler']);
             $class = $this->newInstance($annotations['handler']);
             /** @var \Annotation\Attribute $value */
             foreach ($annotations['target'] ?? [] as $value) {
