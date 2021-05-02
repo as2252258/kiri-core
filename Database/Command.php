@@ -121,13 +121,13 @@ class Command extends Component
     private function execute($type, $isInsert = null, $hasAutoIncrement = null): int|bool|array|string|null
     {
         try {
+            if ($this->prepare) {
+                $this->prepare->closeCursor();
+            }
             if ($type === static::EXECUTE) {
                 $result = $this->insert_or_change($isInsert, $hasAutoIncrement);
             } else {
                 $result = $this->search($type);
-            }
-            if ($this->prepare) {
-                $this->prepare->closeCursor();
             }
             return $result;
         } catch (\Throwable $exception) {
