@@ -144,16 +144,17 @@ class Command extends Component
 		if (!($query = $connect?->query($this->sql))) {
 			return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
 		}
-		defer(fn() => $query->closeCursor());
 		if ($type === static::FETCH_COLUMN) {
-			return $query->fetchAll(PDO::FETCH_ASSOC);
+			$data = $query->fetchAll(PDO::FETCH_ASSOC);
 		} else if ($type === static::ROW_COUNT) {
-			return $query->rowCount();
+			$data = $query->rowCount();
 		} else if ($type === static::FETCH_ALL) {
-			return $query->fetchAll(PDO::FETCH_ASSOC);
+			$data = $query->fetchAll(PDO::FETCH_ASSOC);
 		} else {
-			return $query->fetch(PDO::FETCH_ASSOC);
+			$data = $query->fetch(PDO::FETCH_ASSOC);
 		}
+		$query->closeCursor();
+		return $data;
 	}
 
 
