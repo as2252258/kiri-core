@@ -185,7 +185,7 @@ class Container extends BaseObject
 		}
 		foreach ($this->_property[$reflect->getName()] as $property => $inject) {
 			/** @var Inject $inject */
-			$inject->execute([$object, $property]);
+			$inject->execute($object, $property);
 		}
 		return $object;
 	}
