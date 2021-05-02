@@ -34,7 +34,7 @@ class Command extends Component
     public Connection $db;
 
     /** @var ?string */
-    private ?string $sql = '';
+    public ?string $sql = '';
 
     /** @var array */
     public array $params = [];
