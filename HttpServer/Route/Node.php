@@ -107,7 +107,6 @@ class Node extends HttpService
             if (!($controller instanceof Controller)) {
                 return $this;
             }
-            var_dump($controller::class . '::' . $action);
             $this->annotationInject($controller::class, $action);
         }
         if (!empty($this->handler)) {
