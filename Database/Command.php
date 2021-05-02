@@ -168,7 +168,7 @@ class Command extends Component
      */
     private function insert_or_change($isInsert, $hasAutoIncrement): bool|string|int
     {
-        if (($result = $this->initPDOStatement()) === false) {
+        if (($result = $this->getPdoStatement()) === false) {
             return $result;
         }
         if ($isInsert === false) {
@@ -185,7 +185,7 @@ class Command extends Component
      * 重新构建
      * @throws
      */
-    private function initPDOStatement(): bool|int
+    private function getPdoStatement(): bool|int
     {
         if (empty($this->sql)) {
             return $this->addError('no sql.', 'mysql');
@@ -193,13 +193,22 @@ class Command extends Component
         if (!(($connect = $this->db->getConnect($this->sql)) instanceof PDO)) {
             return $this->addError('get client error.', 'mysql');
         }
-        if (!(($this->prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
-            $error = $this->prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE;
-
-            return $this->addError($this->sql . ':' . $error, 'mysql');
+        if (!(($prepare = $connect->prepare($this->sql)) instanceof PDOStatement)) {
+            return $this->addError($this->errorMessage($prepare), 'mysql');
         }
-        $result = $this->checkResponse($this->prepare, $connect);
+        $result = $this->checkResponse($prepare, $connect);
+        $prepare->closeCursor();
         return $result;
+    }
+
+
+    /**
+     * @param $prepare
+     * @return string
+     */
+    private function errorMessage($prepare)
+    {
+        return $this->sql . ':' . ($prepare->errorInfo()[2] ?? static::DB_ERROR_MESSAGE);
     }
 
 
