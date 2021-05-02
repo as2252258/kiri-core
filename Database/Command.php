@@ -147,9 +147,7 @@ class Command extends Component
     private function search($type): mixed
     {
         $connect = $this->db->getConnect($this->sql);
-        if (!($this->prepare = $connect?->query($this->sql, [
-            array( \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY  =>  true )
-        ]))) {
+        if (!($this->prepare = $connect?->query($this->sql))) {
             return $this->addError($connect->errorInfo()[2] ?? '数据库异常, 请稍后再试.');
         }
         if ($type === static::FETCH_COLUMN) {
