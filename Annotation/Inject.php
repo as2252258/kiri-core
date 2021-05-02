@@ -35,7 +35,7 @@ use Snowflake\Snowflake;
     {
         $injectValue = $this->parseInjectValue();
         if (!($method instanceof ReflectionProperty)) {
-            $class = new ReflectionProperty($class, $method);
+            $method = new ReflectionProperty($class, $method);
         }
 
         /** @var ReflectionProperty $class */
