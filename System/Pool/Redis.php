@@ -53,10 +53,10 @@ class Redis extends Pool
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
-		if (($redis = Context::getContext($coroutineName)) instanceof \Redis) {
-			return $redis;
+		if (!Context::hasContext($coroutineName)) {
+            return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
 		}
-		return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
+		return Context::getContext($coroutineName);
 	}
 
 

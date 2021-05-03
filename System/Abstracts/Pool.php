@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Exception\ConfigException;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
 
@@ -149,7 +150,7 @@ abstract class Pool extends Component
 		if (isset($this->_items[$name]) && $this->_items[$name] instanceof Channel) {
 			return;
 		}
-		if (!Context::inCoroutine()) {
+        if (Coroutine::getCid() === -1) {
 			return;
 		}
 		$this->_items[$name] = new Channel((int)$max);
@@ -165,7 +166,7 @@ abstract class Pool extends Component
 	 */
 	protected function getFromChannel($name, mixed $callback): mixed
 	{
-		if (!Context::inCoroutine()) {
+        if (Coroutine::getCid() === -1) {
 			return $this->createClient($name, $callback);
 		}
 		if (!isset($this->_items[$name])) {
@@ -272,7 +273,7 @@ abstract class Pool extends Component
 	 */
 	public function size(string $name): mixed
 	{
-		if (!Context::inCoroutine()) {
+        if (Coroutine::getCid() === -1) {
 			return 0;
 		}
 		if (!isset($this->_items[$name])) {
@@ -288,7 +289,7 @@ abstract class Pool extends Component
 	 */
 	public function push(string $name, mixed $client)
 	{
-		if (!Context::inCoroutine()) {
+        if (Coroutine::getCid() === -1) {
 			return;
 		}
 		if (!isset($this->_items[$name])) {
@@ -307,7 +308,7 @@ abstract class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
-		if (!Context::inCoroutine() || !isset($this->_items[$name])) {
+		if (Coroutine::getCid() === -1 || !isset($this->_items[$name])) {
 			return;
 		}
 		$channel = $this->_items[$name];
