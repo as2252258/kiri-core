@@ -13,7 +13,6 @@ use HttpServer\Route\Router;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Snowflake;
-use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
