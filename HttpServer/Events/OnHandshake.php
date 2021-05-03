@@ -97,9 +97,8 @@ class OnHandshake extends Callback
     public function onHandler(SRequest $request, SResponse $response): void
     {
         try {
-            defer(function () {
-                fire(Event::SYSTEM_RESOURCE_CLEAN);
-            });
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+
             $this->execute($request, $response);
         } catch (\Throwable $exception) {
             $this->addError($exception, 'throwable');

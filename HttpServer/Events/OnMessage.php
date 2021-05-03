@@ -38,20 +38,14 @@ class OnMessage extends Callback
     public function onHandler(Server $server, Frame $frame)
     {
         try {
-            defer(function () {
-                fire(Event::SYSTEM_RESOURCE_CLEAN);
-            });
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
             if ($frame->opcode === 0x08) {
                 return;
             }
-            $clientInfo = $server->getClientInfo($frame->fd);
-            if (!Event::exists(($name = $this->getName($clientInfo)))) {
-                return;
-            }
-            Event::trigger($name, [$frame, $server]);
+            Event::trigger($this->getName($server, $frame), [$frame, $server]);
         } catch (\Throwable $exception) {
             $this->addError($exception, 'websocket');
-            if (!swoole()->exist($frame->fd)) {
+            if (!swoole()->isEstablished($frame->fd)) {
                 return;
             }
             $server->send($frame->fd, $exception->getMessage());
@@ -63,8 +57,10 @@ class OnMessage extends Callback
      * @param $clientInfo
      * @return string
      */
-    private function getName($clientInfo): string
+    private function getName(Server $server, Frame $frame): string
     {
+        $clientInfo = $server->getClientInfo($frame->fd);
+
         return 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_MESSAGE;
     }
 

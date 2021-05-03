@@ -27,15 +27,13 @@ class OnClose extends Callback
     public function onHandler(Server $server, int $fd)
     {
         try {
-            defer(function () {
-                fire(Event::SYSTEM_RESOURCE_RELEASES);
-            });
-			$clientInfo = $server->getClientInfo($fd);
-			if (!Event::exists(($name = $this->getName($clientInfo)))) {
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+            $clientInfo = $server->getClientInfo($fd);
+            if (!Event::exists(($name = $this->getName($clientInfo)))) {
                 return;
             }
-			Event::trigger($name, [$server, $fd]);
-		} catch (\Throwable $exception) {
+            Event::trigger($name, [$server, $fd]);
+        } catch (\Throwable $exception) {
             $this->addError($exception, 'throwable');
         }
     }

@@ -48,9 +48,8 @@ class OnReceive extends Callback
     public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
     {
         try {
-            defer(function () {
-                fire(Event::SYSTEM_RESOURCE_RELEASES);
-            });
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+
             $request = $this->_request($fd, $data, $reID);
             if (($node = $this->router->find_path($request)) === null) {
                 return $server->send($fd, Json::encode(['state' => 404]));

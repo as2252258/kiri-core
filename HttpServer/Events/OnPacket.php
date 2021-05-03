@@ -36,9 +36,8 @@ class OnPacket extends Callback
 	{
 		[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
 		try {
-			defer(function () {
-				fire(Event::SYSTEM_RESOURCE_RELEASES);
-			});
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+
 			$request = $this->_request($clientInfo, $server, $data);
 
 			$router = Snowflake::app()->getRouter();

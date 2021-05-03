@@ -51,9 +51,8 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-			Coroutine::defer(function () {
-				fire(Event::SYSTEM_RESOURCE_RELEASES);
-			});
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+
 			/** @var HResponse $response */
 			[$request, $response] = OnRequest::createContext($request, $response);
 

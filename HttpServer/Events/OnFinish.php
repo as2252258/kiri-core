@@ -27,9 +27,8 @@ class OnFinish extends Callback
     public function onHandler(Server $server, $task_id, $data)
     {
         try {
-            defer(function () {
-                fire(Event::SYSTEM_RESOURCE_RELEASES);
-            });
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+
             fire(Event::TASK_FINISH, [$task_id, $data]);
         } catch (\Throwable $exception) {
             $this->addError($exception, 'task');
