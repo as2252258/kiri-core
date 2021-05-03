@@ -115,56 +115,6 @@ if (!function_exists('swoole')) {
 }
 
 
-if (!function_exists('recursive_directory')) {
-
-
-	/**
-	 * @param DirectoryIterator $file
-	 * @throws Exception
-	 */
-	function recursive_callback(DirectoryIterator $file)
-	{
-		$attributes = Snowflake::getAnnotation();
-
-		$annotations = $attributes->getFilename($file->getRealPath());
-		if (empty($annotations)) {
-			return;
-		}
-
-		/** @var Attribute $value */
-		foreach ($annotations['methods'] as $name => $attribute) {
-			foreach ($attribute as $value) {
-				if (!($value instanceof Attribute)) {
-					continue;
-				}
-				$value->execute([$annotations['handler'], $name]);
-			}
-		}
-	}
-
-	/**
-	 * @param string $path
-	 */
-	function recursive_directory(string $path)
-	{
-		$directoryIterators = new \DirectoryIterator($path);
-		foreach ($directoryIterators as $directoryIterator) {
-			if ($directoryIterator->getFilename() === '.' || $directoryIterator->getFilename() === '..') {
-				continue;
-			}
-			if ($directoryIterator->isDir()) {
-				Recursive_directory($directoryIterator->getRealPath());
-			} else {
-				call_user_func('recursive_callback', $directoryIterator);
-			}
-		}
-		unset($directoryIterators);
-	}
-
-
-}
-
-
 if (!function_exists('directory')) {
 
 	/**

@@ -27,9 +27,6 @@ class Loader extends BaseObject
     private array $_classes = [];
 
 
-    private array $_fileMap = [];
-
-
     private array $_directory = [];
 
 
@@ -178,8 +175,6 @@ class Loader extends BaseObject
             $_array = $this->_methods($replace, $_array);
             $_array = $this->_properties($replace, $_array);
 
-            $this->_fileMap[$replace->getFileName()] = $replace->getName();
-
             $this->_classes[$replace->getName()] = $_array;
         } catch (Throwable $throwable) {
             $this->addError($throwable, 'throwable');
@@ -317,19 +312,6 @@ class Loader extends BaseObject
         $array = '/' . trim(implode('/', $array), '/');
 
         $this->_directory[$array][] = $className;
-    }
-
-
-    /**
-     * @param string $filename
-     * @return mixed
-     */
-    public function getClassByFilepath(string $filename): mixed
-    {
-        if (!isset($this->_fileMap[$filename])) {
-            return null;
-        }
-        return $this->_classes[$this->_fileMap[$filename]];
     }
 
 

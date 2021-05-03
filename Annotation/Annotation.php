@@ -203,13 +203,4 @@ class Annotation extends Component
 	}
 
 
-	/**
-	 * @param string $filename
-	 * @return mixed
-	 */
-	public function getFilename(string $filename): mixed
-	{
-		return $this->_loader->getClassByFilepath($filename);
-	}
-
 }
