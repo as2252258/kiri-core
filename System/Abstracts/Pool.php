@@ -174,7 +174,7 @@ abstract class Pool extends Component
 		if ($this->_items[$name]->isEmpty()) {
 			$this->createByCallback($name, $callback);
 		}
-		$connection = $this->_items[$name]->pop(0.002);
+		$connection = $this->_items[$name]->pop();
 		if (!$this->checkCanUse($name, $connection)) {
 			return $this->createClient($name, $callback);
 		} else {
@@ -297,6 +297,7 @@ abstract class Pool extends Component
 		if (!$this->_items[$name]->isFull()) {
 			$this->_items[$name]->push($client);
 		}
+		unset($client);
 	}
 
 
