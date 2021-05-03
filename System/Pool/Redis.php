@@ -131,8 +131,6 @@ class Redis extends Pool
 		try {
 			if (!($client instanceof SRedis)) {
 				$result = false;
-			} else if (!$client->isConnected() || !$client->ping('connect.')) {
-				$result = false;
 			} else {
 				$result = true;
 			}
