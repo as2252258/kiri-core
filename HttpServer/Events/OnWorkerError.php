@@ -30,8 +30,8 @@ class OnWorkerError extends Callback
     {
         Event::trigger(Event::SERVER_WORKER_ERROR);
 
-        $message = sprintf('Worker#%d::%d error stop. signal %d, exit_code %d',
-            $worker_id, $signal, $worker_pid, $exit_code
+        $message = sprintf('Worker#%d::%d error stop. signal %d, exit_code %d, msg %s',
+            $worker_id, $worker_pid, $signal, $exit_code, swoole_strerror(swoole_last_error())
         );
 
         write($message, 'worker-exit');
