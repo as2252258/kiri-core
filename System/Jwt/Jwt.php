@@ -136,14 +136,9 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
         } else if ($headers instanceof HttpHeaders) {
             $headers = $headers->getHeaders();
         }
-
         $this->data = $headers;
-        if (empty($unionId)) {
-            throw new AuthException('您还未登录或已登录超时');
-        }
-        $source = $header['source'] ?? 'browser';
-        if (empty($source) || !in_array($source, $this->source)) {
-            throw new Exception('未知的登录设备');
+        if (!isset($this->data['source'])) {
+            $this->data['source'] = 'browser';
         }
         return $this->createEncrypt($unionId);
     }
@@ -177,7 +172,6 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
         foreach ($caches as $cache) {
             $redis->del($cache);
         }
-
         return $refresh;
     }
 
@@ -279,9 +273,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
     {
         $source = $this->getSource();
         if (!empty($_source)) $source = $_source;
-        if (empty($source)) {
-            throw new AuthException("未知的登陆设备");
-        }
+
         return 'Tmp_Token:' . strtoupper($source) . ':' . $token;
     }
 
