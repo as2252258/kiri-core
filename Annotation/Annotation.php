@@ -180,7 +180,7 @@ class Annotation extends Component
 	 * @return void
 	 * @throws Exception
 	 */
-	public function read(string $path, string $namespace, string $alias = 'root'): void
+	public function read(string $path, string $namespace = 'App', string $alias = 'root'): void
 	{
 
 		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
