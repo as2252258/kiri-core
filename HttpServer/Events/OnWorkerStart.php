@@ -35,7 +35,7 @@ class OnWorkerStart extends Callback
 
         $annotation = Snowflake::app()->getAnnotation();
         if ($worker_id >= $server->setting['worker_num']) {
-            $annotation->read(MODEL_PATH, 'App\Models');
+            $annotation->read(MODEL_PATH, 'App');
             $annotation->runtime(APP_PATH, [CONTROLLER_PATH, TASK_PATH, LISTENER_PATH]);
             $this->onTask($server, $annotation);
         } else {
