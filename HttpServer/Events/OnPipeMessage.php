@@ -48,25 +48,7 @@ class OnPipeMessage extends Callback
 		if (empty($message['handler'] ?? null)) {
 			throw new Exception('unknown handler');
 		}
-		/** @var Crontab $handler */
-		$handler = $message['handler'];
-		defer(function () use ($handler) {
-			if ($handler->isRecover() !== 999) {
-				return;
-			}
-			$redis = Snowflake::app()->getRedis();
-
-			$name = $handler->getName();
-			if (!$redis->exists('stop:crontab:' . $name)) {
-				$redis->set('crontab:' . $name, swoole_serialize($handler));
-				$tickTime = time() + $handler->getTickTime();
-				$redis->zAdd(Producer::CRONTAB_KEY, $tickTime, $name);
-			} else {
-				$redis->del('crontab:' . $name);
-				$redis->del('stop:crontab:' . $name);
-			}
-		});
-		$handler->increment()->execute();
+        $message['handler']->increment()->execute();
 		return 'success';
 	}
 
