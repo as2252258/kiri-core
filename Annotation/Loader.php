@@ -169,7 +169,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array['handler'] = $replace->getName();
+            $_array['handler'] = $replace->newInstance();
             $_array['target'] = [];
             $_array['methods'] = [];
             $_array['property'] = [];
@@ -349,38 +349,24 @@ class Loader extends BaseObject
                 continue;
             }
 
-            $class = $this->newInstance($annotations['handler']);
             /** @var \Annotation\Attribute $value */
             foreach ($annotations['target'] ?? [] as $value) {
-                $value->execute($class);
+                $value->execute($annotations['handler']);
             }
             foreach ($annotations['methods'] as $name => $attribute) {
                 foreach ($attribute as $value) {
                     if ($value instanceof Relation) {
-                        $annotation->addRelate($class::class, $value->name, $name);
+                        $annotation->addRelate($className, $value->name, $name);
                     } else if ($value instanceof Get) {
-                        $annotation->addGets($class::class, $value->name, $name);
+                        $annotation->addGets($className, $value->name, $name);
                     } else if ($value instanceof Set) {
-                        $annotation->addSets($class::class, $value->name, $name);
+                        $annotation->addSets($className, $value->name, $name);
                     } else {
-                        $value->execute($class, $name);
+                        $value->execute($annotations['handler'], $name);
                     }
                 }
             }
         }
-    }
-
-
-    /**
-     * @param $class
-     * @return object
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
-     */
-    private function newInstance($class)
-    {
-        $reflection = Snowflake::getDi()->getReflect($class);
-        return $reflection?->newInstance();
     }
 
 }
