@@ -33,27 +33,15 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        $annotation = $this->settings();
+        $annotation = Snowflake::app()->getAnnotation();
+//        $annotation->read(directory('app'),'App');
+//        $annotation->runtime(directory('app'));
+
         if ($worker_id < $server->setting['worker_num']) {
             $this->onWorker($server, $annotation);
         } else {
             $this->onTask($server, $annotation);
         }
-    }
-
-
-    /**
-     * @return \Annotation\Annotation
-     * @throws \Exception
-     */
-    private function settings(): Annotation
-    {
-        $content = System::readFile(storage('runtime.php'));
-
-        $annotation = Snowflake::app()->getAnnotation();
-        $annotation->setLoader(unserialize($content));
-
-        return $annotation;
     }
 
 
