@@ -12,6 +12,7 @@ use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Runtime;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\System;
@@ -56,7 +57,7 @@ class Kafka extends \Snowflake\Process\Process
 	 */
 	public function before(Process $process): void
 	{
-		$content = System::readFile(storage('runtime.php'));
+		$content = System::readFile(storage(Runtime::CACHE_NAME));
 
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->setLoader(unserialize($content));
