@@ -117,14 +117,11 @@ class Connection extends Component
      */
     private function getPdo($sql): PDO
     {
-        $connections = $this->connections();
-        $connections->setTimeout($this->timeout);
         if ($this->isWrite($sql)) {
-            $connect = $connections->get(['cds' => $this->cds, 'username' => $this->username, 'password' => $this->password], true);
+            return $this->masterInstance();
         } else {
-            $connect = $connections->get(['cds' => $this->slaveConfig['cds'], 'username' => $this->username, 'password' => $this->password], false);
+            return $this->slaveInstance();
         }
-        return $connect;
     }
 
     /**
@@ -185,8 +182,8 @@ class Connection extends Component
      */
     public function slaveInstance(): PDO
     {
-        if (empty($this->slaveConfig)) {
-            $this->slaveConfig = ['cds' => $this->cds, 'username' => $this->username, 'password' => $this->password];
+        if (empty($this->slaveConfig) || Db::transactionsActive()) {
+            return $this->masterInstance();
         }
         return $this->connections()->get($this->slaveConfig, false);
     }
