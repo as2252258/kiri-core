@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Runtime;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\System;
@@ -34,14 +35,13 @@ class OnWorkerStart extends Callback
         putenv('worker=' . $worker_id);
 
         $annotation = Snowflake::app()->getAnnotation();
+        $annotation->setLoader(unserialize(file_get_contents(storage(Runtime::CACHE_NAME))));
         if ($worker_id >= $server->setting['worker_num']) {
-            $annotation->read(MODEL_PATH, 'App');
             $annotation->runtime(APP_PATH, [CONTROLLER_PATH, TASK_PATH, LISTENER_PATH]);
             $this->onTask($server, $annotation);
         } else {
-            $annotation->read(directory('app'), 'App');
-            $annotation->runtime(directory('app'));
-
+            $annotation->runtime(CONTROLLER_PATH);
+            $annotation->runtime(directory('app'), [CONTROLLER_PATH]);
             $this->onWorker($server, $annotation);
         }
     }

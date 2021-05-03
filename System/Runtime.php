@@ -22,6 +22,9 @@ class Runtime extends Command
     public string $description = 'create app file cache';
 
 
+    const CACHE_NAME = '.runtime.cache';
+
+
 	/**
 	 * @param Input $dtl
 	 * @throws Exception
@@ -31,7 +34,7 @@ class Runtime extends Command
         // TODO: Implement onHandler() method.
         $annotation = Snowflake::app()->getAnnotation();
 
-        $runtime = storage('runtime.php');
+        $runtime = storage(static::CACHE_NAME);
 
         Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
     }
