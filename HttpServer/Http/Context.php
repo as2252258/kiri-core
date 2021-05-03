@@ -24,9 +24,9 @@ class Context extends BaseContext
      */
     public static function setContext($id, $context, $key = null): mixed
     {
-        if (!static::inCoroutine()) {
-            return static::setStatic($id, $context, $key);
-        }
+//        if (!static::inCoroutine()) {
+//            return static::setStatic($id, $context, $key);
+//        }
         return self::setCoroutine($id, $context, $key);
     }
 
@@ -106,9 +106,9 @@ class Context extends BaseContext
      */
     public static function getContext($id, $key = null): mixed
     {
-        if (!static::inCoroutine()) {
-            return static::loadByStatic($id, $key);
-        }
+//        if (!static::inCoroutine()) {
+//            return static::loadByStatic($id, $key);
+//        }
         return static::loadByContext($id, $key);
     }
 
