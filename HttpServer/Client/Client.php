@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace HttpServer\Client;
 
 use Exception;
-
+use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine\Http\Client as SClient;
 
 /**
@@ -63,7 +63,7 @@ class Client extends ClientAbstracts
 			}
 			return $this->fail($client->getStatusCode(), $message, $body, $client->getHeaders());
 		} catch (\Throwable $exception) {
-			$this->addError($exception,'rpc');
+			$this->addError($exception, 'rpc');
 			return $this->fail(500, $exception->getMessage(), [
 				'file' => $exception->getFile(),
 				'line' => $exception->getLine()
@@ -94,7 +94,7 @@ class Client extends ClientAbstracts
 		}
 		$client->setHeaders($this->getHeader());
 		$client->setMethod(strtoupper($this->getMethod()));
-		if (strtolower($this->getMethod()) == self::GET && !empty($data)) {
+		if ($this->isGet() && !empty($data)) {
 			$path .= '?' . $data;
 		} else {
 			$this->setData($this->mergeParams($data));
@@ -111,7 +111,7 @@ class Client extends ClientAbstracts
 	/**
 	 * @return array
 	 */
-	private function settings(): array
+	#[Pure] private function settings(): array
 	{
 		$sslCert = $this->getSslCertFile();
 		$sslKey = $this->getSslKeyFile();

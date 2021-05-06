@@ -371,7 +371,7 @@ class Columns extends Component
 			return $type;
 		}
 		$replace = preg_replace('/\(\d+(,\d+)?\)(\s+\w+)*/', '', $type);
-		if (str_contains(' ', $replace)) {
+		if (str_contains($replace, ' ')) {
 			$replace = explode(' ', $replace)[1];
 		}
 		return $replace;

@@ -19,10 +19,10 @@ class Curl extends ClientAbstracts
 	 * @param $method
 	 * @param $path
 	 * @param array $params
-	 * @return Result|bool|array|string
+	 * @return Result|array|string
 	 * @throws Exception
 	 */
-	public function request($method, $path, $params = []): Result|bool|array|string
+	public function request($method, $path, $params = []): Result|array|string
 	{
 		if ($method == self::GET) {
 			$path = $this->joinGetParams($path, $params);

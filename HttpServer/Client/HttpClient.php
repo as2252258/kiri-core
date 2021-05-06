@@ -4,7 +4,8 @@
 namespace HttpServer\Client;
 
 
-
+use Exception;
+use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -22,16 +23,17 @@ class HttpClient extends Component
 	 */
 	public static function NewRequest(): IClient
 	{
-		return Coroutine::getCid() > 0 ? Client::NewRequest() : Curl::NewRequest();
+		return Coroutine::getCid() > -1 ? Client::NewRequest() : Curl::NewRequest();
 	}
 
 
 	/**
 	 * @return Http2
+	 * @throws Exception
 	 */
 	public static function http2(): Http2
 	{
-		return Snowflake::app()->http2;
+		return Snowflake::app()->get('http2');
 	}
 
 }
