@@ -47,7 +47,7 @@ class HttpParams
 		$this->socket = $socket ?? [];
 		$this->body = $body ?? '';
 
-		var_dump($body);
+		var_dump($this->body);
 	}
 
 	/**
