@@ -46,8 +46,6 @@ class HttpParams
 		$this->files = $files ?? [];
 		$this->socket = $socket ?? [];
 		$this->body = $body ?? '';
-
-		var_dump($this->body);
 	}
 
 	/**
