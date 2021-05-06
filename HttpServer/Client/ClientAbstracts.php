@@ -10,6 +10,8 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Core\Help;
 use Swoole\Coroutine\System;
 
+defined('SPLIT_URL') or define('SPLIT_URL', '/(http[s]?:\/\/)?(([\w\-_]+\.)+\w+(:\d+)?)((\/[a-zA-Z0-9\-]+)+[\/]?(\?[a-zA-Z]+=.*)?)?/');
+
 
 /**
  * Class ClientAbstracts
@@ -94,7 +96,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $contentType
 	 */
-	public function setContentType(string $contentType)
+	public function setContentType(string $contentType): void
 	{
 		$this->header['Content-Type'] = $contentType;
 	}
@@ -233,7 +235,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $key
 	 * @param $value
 	 */
-	public function addHeader($key, $value)
+	public function addHeader($key, $value): void
 	{
 		$this->header[$key] = $value;
 	}
@@ -280,9 +282,9 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $value
-	 * @return $this
+	 * @return static
 	 */
-	public function setMethod(string $value): self
+	public function setMethod(string $value): static
 	{
 		$this->method = $value;
 		return $this;
