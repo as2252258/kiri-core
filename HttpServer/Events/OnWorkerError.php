@@ -36,25 +36,7 @@ class OnWorkerError extends Callback
         );
         write($message, 'worker-exit');
 
-
-        $email = Config::get('email');
-        if (empty($email) || !$email['enable']) {
-            return;
-        }
-        $transport = (new \Swift_SmtpTransport($email['host'], $email['465']))
-            ->setUsername($email['username'])
-            ->setPassword($email['password']);
-        $mailer = new \Swift_Mailer($transport);
-
-        // Create a message
-        $message = (new \Swift_Message('Wonderful Subject'))
-            ->setFrom([$email['send']['address'] => $email['send']['nickname']])
-            ->setBody('Here is the message itself');
-
-        foreach ($email['receive'] as $item) {
-            $message->setTo([$item['address'], $item['address'] => $item['nickname']]);
-        }
-        $mailer->send($message);
+        $this->system_mail($message);
     }
 
 }

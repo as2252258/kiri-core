@@ -79,29 +79,31 @@ abstract class Callback extends HttpService
 		return Request::createListenRequest($fd, $data, $reID);
 	}
 
-    /**
-     * @param $message
-     * @throws
-     */
-    protected function system_mail($message)
+	/**
+	 * @param $messageContent
+	 * @throws Exception
+	 */
+    protected function system_mail($messageContent)
     {
         try {
-            if (!Config::get('email.enable', false)) {
-                return;
-            }
-            $mail = $this->createEmail();
-            $receives = Config::get('email.receive');
-            if (empty($receives) || !is_array($receives)) {
-                throw new Exception('接收人信息错误');
-            }
-            foreach ($receives as $receive) {
-                $mail->addAddress($receive['address'], $receive['nickname']);                 // Add a recipient
-            }
-            $mail->isHTML(true);                                                                                            // Set email format to HTML
-            $mail->Subject = 'service error';
-            $mail->Body = $message;
-            $mail->AltBody = $message;
-            $mail->send();
+	        $email = Config::get('email');
+	        if (empty($email) || !$email['enable']) {
+		        return;
+	        }
+	        $transport = (new \Swift_SmtpTransport($email['host'], $email['465']))
+		        ->setUsername($email['username'])
+		        ->setPassword($email['password']);
+	        $mailer = new \Swift_Mailer($transport);
+
+	        // Create a message
+	        $message = (new \Swift_Message('Wonderful Subject'))
+		        ->setFrom([$email['send']['address'] => $email['send']['nickname']])
+		        ->setBody('Here is the message itself');
+
+	        foreach ($email['receive'] as $item) {
+		        $message->setTo([$item['address'], $item['address'] => $item['nickname']]);
+	        }
+	        $mailer->send($messageContent);
         } catch (\Throwable $e) {
             $this->addError($e, 'email');
         }
