@@ -21,9 +21,6 @@ class Event extends BaseObject
 
     private static array $_events = [];
 
-    const EVENT_ERROR = 'WORKER:ERROR';
-    const EVENT_STOP = 'WORKER:STOP';
-    const EVENT_EXIT = 'WORKER:EXIT';
 
     const PIPE_MESSAGE = 'SERVER:PIPE:MESSAGE';
     const TASK_FINISH = 'SERVER:TASK::FINISH';

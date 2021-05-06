@@ -71,6 +71,7 @@ class Client extends ClientAbstracts
 		}
 	}
 
+
 	/**
 	 * @param $data
 	 * @param $host
@@ -85,27 +86,39 @@ class Client extends ClientAbstracts
 		} else {
 			$client = new SClient($host, $this->getPort(), false);
 		}
-		if (strpos($path, '/') !== 0) {
-			$path = '/' . $path;
-		}
 		$client->set($this->settings());
 		if (!empty($this->getAgent())) {
 			$this->addHeader('User-Agent', $this->getAgent());
 		}
 		$client->setHeaders($this->getHeader());
 		$client->setMethod(strtoupper($this->getMethod()));
-		if ($this->isGet() && !empty($data)) {
-			$path .= '?' . $data;
-		} else {
-			$this->setData($this->mergeParams($data));
-		}
-
-		if (!empty($this->getData())) {
-			$client->setData($this->getData());
-		}
-		$client->execute($path);
+		$client->execute($this->setParams($client, $path, $data));
 		$client->close();
 		return $client;
+	}
+
+
+	/**
+	 * @param $client
+	 * @param $path
+	 * @param $data
+	 * @return string
+	 */
+	private function setParams(SClient $client, $path, $data): string
+	{
+		if ($this->isGet()) {
+			if (!empty($data)) $path .= '?' . $data;
+			if (!empty($this->getData())) {
+				$client->setData($this->getData());
+			}
+		} else {
+			if (!empty($this->getData())) {
+				$client->setData($this->getData());
+			} else {
+				$client->setData($this->mergeParams($data));
+			}
+		}
+		return $path;
 	}
 
 	/**

@@ -676,6 +676,15 @@ abstract class ClientAbstracts extends Component implements IClient
 		return strtolower($this->method) === self::POST;
 	}
 
+	/**
+	 * @return bool
+	 * check isPost Request
+	 */
+	#[Pure] public function isUpload(): bool
+	{
+		return strtolower($this->method) === self::UPLOAD;
+	}
+
 
 	/**
 	 * @return bool
