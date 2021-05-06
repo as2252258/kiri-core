@@ -458,9 +458,6 @@ if (!function_exists('request')) {
 	 */
 	function request(): Request
 	{
-		if (!Context::hasContext('request')) {
-			return new Request();
-		}
 		return Context::getContext('request');
 	}
 
