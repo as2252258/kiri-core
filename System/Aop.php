@@ -20,7 +20,7 @@ class Aop extends Component
 {
 
 
-    private array $_aop = [];
+    private static array $_aop = [];
 
 
     /**
@@ -31,13 +31,13 @@ class Aop extends Component
     {
         [$class, $method] = $handler;
         $alias = $class::class . '::' . $method;
-        if (!isset($this->_aop[$alias])) {
-            $this->_aop[$alias] = [];
+        if (!isset(static::$_aop[$alias])) {
+            static::$_aop[$alias] = [];
         }
-        if (in_array($aspect, $this->_aop[$alias])) {
+        if (in_array($aspect, static::$_aop[$alias])) {
             return;
         }
-        $this->_aop[$alias][] = $aspect;
+	    static::$_aop[$alias][] = $aspect;
     }
 
 
@@ -55,7 +55,7 @@ class Aop extends Component
             return call_user_func($handler, ...$params);
         }
         $aopName = $handler[0]::class . '::' . $handler[1];
-        if (!isset($this->_aop[$aopName])) {
+        if (!isset(static::$_aop[$aopName])) {
             return $this->notFound($handler, $params);
         }
         return $this->invoke($handler, $params, $aopName);
@@ -73,7 +73,7 @@ class Aop extends Component
 	 */
     private function invoke($handler, $params, $aopName): mixed
     {
-        $reflect = Snowflake::getDi()->getReflect(current($this->_aop[$aopName]));
+        $reflect = Snowflake::getDi()->getReflect(current(static::$_aop[$aopName]));
         if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
             throw new Exception(ASPECT_ERROR . IAspect::class);
         }

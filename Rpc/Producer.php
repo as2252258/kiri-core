@@ -17,16 +17,16 @@ use Snowflake\Snowflake;
 class Producer extends Component
 {
 
-	private array $producers = [];
+	private static array $producers = [];
 
 
-	private array $classAlias = [];
+	private static array $classAlias = [];
 
 
-	private array $consumers = [];
+	private static array $consumers = [];
 
 
-	private array $cods = [];
+	private static array $cods = [];
 
 
 	/**
@@ -36,11 +36,11 @@ class Producer extends Component
 	 */
 	public function addProducer(string $name, array $handler, array $node)
 	{
-		$this->classAlias[$handler[0]::class] = $name;
+		static::$classAlias[$handler[0]::class] = $name;
 
-		$this->consumers[$name] = $handler[0];
+		static::$consumers[$name] = $handler[0];
 
-		$this->producers[$name] = $node;
+		static::$producers[$name] = $node;
 	}
 
 
@@ -52,13 +52,13 @@ class Producer extends Component
 	{
 		$class = $handler[0]::class;
 
-		if (!isset($this->classAlias[$class])) {
+		if (!isset(static::$classAlias[$class])) {
 			return;
 		}
 
-		$name = $this->classAlias[$class];
+		$name = static::$classAlias[$class];
 
-		$this->cods[$name . '.' . $cmd] = $handler;
+		static::$cods[$name . '.' . $cmd] = $handler;
 	}
 
 
@@ -69,7 +69,7 @@ class Producer extends Component
 	 */
 	public function dispatch($cmd, mixed ...$params): mixed
 	{
-		$handler = $this->cods[$cmd] ?? null;
+		$handler = static::$cods[$cmd] ?? null;
 		if (empty($handler)) {
 			return false;
 		}
@@ -84,10 +84,10 @@ class Producer extends Component
 	 */
 	public function get($name): mixed
 	{
-		if (!isset($this->consumers[$name])) {
+		if (!isset(static::$consumers[$name])) {
 			throw new Exception('Unknown rpc client.');
 		}
-		return $this->consumers[$name];
+		return static::$consumers[$name];
 	}
 
 
@@ -97,7 +97,7 @@ class Producer extends Component
 	public function getService(): array
 	{
 		$array = [];
-		foreach (array_keys($this->cods) as $key) {
+		foreach (array_keys(static::$cods) as $key) {
 			$explode = explode('.', $key);
 			$prefix = array_shift($explode);
 
@@ -119,7 +119,7 @@ class Producer extends Component
 	 */
 	public function getClient(string $name, string $host = null): Client
 	{
-		$producer = $this->producers[$name] ?? null;
+		$producer = static::$producers[$name] ?? null;
 		if ($producer === null) {
 			throw new Exception('Unknown rpc client config.');
 		}

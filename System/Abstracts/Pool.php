@@ -20,7 +20,7 @@ abstract class Pool extends Component
 {
 
     /** @var Channel[] */
-    private array $_items = [];
+    private static array $_items = [];
 
     public int $max = 60;
 
@@ -29,7 +29,7 @@ abstract class Pool extends Component
     public int $lastTime = 0;
 
 
-    protected array $hasCreate = [];
+    protected static array $hasCreate = [];
 
 
     /**
@@ -37,10 +37,10 @@ abstract class Pool extends Component
      */
     public function increment(string $name)
     {
-        if (!isset($this->hasCreate[$name])) {
-            $this->hasCreate[$name] = 0;
+        if (!isset(static::$hasCreate[$name])) {
+            static::$hasCreate[$name] = 0;
         }
-        $this->hasCreate[$name] += 1;
+        static::$hasCreate[$name] += 1;
     }
 
 
@@ -49,13 +49,13 @@ abstract class Pool extends Component
      */
     public function decrement(string $name)
     {
-        if (!isset($this->hasCreate[$name])) {
+        if (!isset(static::$hasCreate[$name])) {
             return;
         }
-        if ($this->hasCreate[$name] <= 0) {
+        if (static::$hasCreate[$name] <= 0) {
             return;
         }
-        $this->hasCreate[$name] -= 1;
+        static::$hasCreate[$name] -= 1;
     }
 
 
@@ -101,7 +101,7 @@ abstract class Pool extends Component
             $names[] = $name;
             $this->pop($channel, $name, $retain_number);
         }
-        $this->_items = [];
+        static::$_items = [];
         if ($retain_number == 0) {
             Timer::clear($this->creates);
             $this->creates = -1;
@@ -114,10 +114,10 @@ abstract class Pool extends Component
      */
     protected function clearCreateLog($name): void
     {
-        if (!isset($this->hasCreate[$name])) {
+        if (!isset(static::$hasCreate[$name])) {
             return;
         }
-        $this->hasCreate[$name] = 0;
+        static::$hasCreate[$name] = 0;
     }
 
 
@@ -151,13 +151,13 @@ abstract class Pool extends Component
     public function initConnections($driver, $name, $isMaster = false, $max = 60)
     {
         $name = $this->name($driver, $name, $isMaster);
-        if (isset($this->_items[$name]) && $this->_items[$name] instanceof Channel) {
+        if (isset(static::$_items[$name]) && static::$_items[$name] instanceof Channel) {
             return;
         }
         if (Coroutine::getCid() === -1) {
             return;
         }
-        $this->_items[$name] = new Channel((int)$max);
+        static::$_items[$name] = new Channel((int)$max);
         $this->max = (int)$max;
     }
 
@@ -173,13 +173,13 @@ abstract class Pool extends Component
         if (Coroutine::getCid() === -1) {
             return $this->createClient($name, $callback);
         }
-        if (!isset($this->_items[$name])) {
-            $this->_items[$name] = new Channel($this->max);
+        if (!isset(static::$_items[$name])) {
+            static::$_items[$name] = new Channel($this->max);
         }
-        if ($this->_items[$name]->isEmpty()) {
+        if (static::$_items[$name]->isEmpty()) {
             $this->createByCallback($name, $callback);
         }
-        $connection = $this->_items[$name]->pop();
+        $connection = static::$_items[$name]->pop();
         if (!$this->checkCanUse($name, $connection)) {
             return $this->createClient($name, $callback);
         } else {
@@ -198,7 +198,7 @@ abstract class Pool extends Component
         if ($this->creates === -1 && !is_callable($callback)) {
             $this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
         }
-        $this->_items[$name]->push($this->createClient($name, $callback));
+        static::$_items[$name]->push($this->createClient($name, $callback));
     }
 
 
@@ -251,10 +251,10 @@ abstract class Pool extends Component
      */
     public function canCreate(string $name): bool
     {
-        if (!isset($this->hasCreate[$name])) {
-            $this->hasCreate[$name] = 0;
+        if (!isset(static::$hasCreate[$name])) {
+            static::$hasCreate[$name] = 0;
         }
-        return $this->hasCreate[$name] < $this->max;
+        return static::$hasCreate[$name] < $this->max;
     }
 
 
@@ -264,8 +264,8 @@ abstract class Pool extends Component
      */
     public function hasItem(string $name): bool
     {
-        if (isset($this->_items[$name])) {
-            return !$this->_items[$name]->isEmpty();
+        if (isset(static::$_items[$name])) {
+            return !static::$_items[$name]->isEmpty();
         }
         return false;
     }
@@ -280,10 +280,10 @@ abstract class Pool extends Component
         if (Coroutine::getCid() === -1) {
             return 0;
         }
-        if (!isset($this->_items[$name])) {
+        if (!isset(static::$_items[$name])) {
             return 0;
         }
-        return $this->_items[$name]->length();
+        return static::$_items[$name]->length();
     }
 
 
@@ -296,11 +296,11 @@ abstract class Pool extends Component
         if (Coroutine::getCid() === -1) {
             return;
         }
-        if (!isset($this->_items[$name])) {
-            $this->_items[$name] = new Channel($this->max);
+        if (!isset(static::$_items[$name])) {
+            static::$_items[$name] = new Channel($this->max);
         }
-        if (!$this->_items[$name]->isFull()) {
-            $this->_items[$name]->push($client);
+        if (!static::$_items[$name]->isFull()) {
+            static::$_items[$name]->push($client);
         }
         unset($client);
     }
@@ -312,15 +312,15 @@ abstract class Pool extends Component
      */
     public function clean(string $name)
     {
-        if (Coroutine::getCid() === -1 || !isset($this->_items[$name])) {
+        if (Coroutine::getCid() === -1 || !isset(static::$_items[$name])) {
             return;
         }
-        $channel = $this->_items[$name];
+        $channel = static::$_items[$name];
         $this->pop($channel, $name, 0);
         if ($this->creates > -1) {
             Timer::clear($this->creates);
         }
-        $this->_items[$name] = null;
+        static::$_items[$name] = null;
     }
 
 
@@ -329,7 +329,7 @@ abstract class Pool extends Component
      */
     protected function getChannels(): array
     {
-        return $this->_items;
+        return static::$_items;
     }
 
 

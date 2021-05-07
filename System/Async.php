@@ -17,7 +17,7 @@ class Async extends Component
 {
 
 
-    private array $_absences = [];
+    private static array $_absences = [];
 
 
     /**
@@ -26,7 +26,7 @@ class Async extends Component
      */
     public function addAsync(string $name, Task $handler)
     {
-        $this->_absences[$name] = $handler::class;
+        static::$_absences[$name] = $handler::class;
     }
 
 
@@ -42,12 +42,12 @@ class Async extends Component
             return;
         }
 
-        if (!isset($this->_absences[$name])) {
+        if (!isset(static::$_absences[$name])) {
             return;
         }
 
         /** @var Task $class */
-        $class = new $this->_absences[$name]();
+        $class = Snowflake::createObject(static::$_absences[$name]);
         $class->setParams($params);
 
         $randWorkerId = random_int(0, $server->setting['task_worker_num'] - 1);

@@ -18,7 +18,7 @@ class Channel extends Component
 {
 
 
-    private array $_channels = [];
+    private static array $_channels = [];
 
 
     /**
@@ -42,10 +42,10 @@ class Channel extends Component
      */
     private function channelInit(string $name = ''): bool|SplQueue
     {
-        if (!isset($this->_channels[$name]) || !($this->_channels[$name] instanceof SplQueue)) {
-            $this->_channels[$name] = new SplQueue();
+        if (!isset(static::$_channels[$name]) || !(static::$_channels[$name] instanceof SplQueue)) {
+            static::$_channels[$name] = new SplQueue();
         }
-        return $this->_channels[$name];
+        return static::$_channels[$name];
     }
 
 
@@ -56,7 +56,7 @@ class Channel extends Component
     public function cleanAll()
     {
         /** @var SplQueue $channel */
-        foreach ($this->_channels as $channel) {
+        foreach (static::$_channels as $channel) {
             if (!($channel instanceof SplQueue)) {
                 continue;
             }
@@ -64,16 +64,15 @@ class Channel extends Component
                 $channel->dequeue();
             }
         }
-        $this->_channels = [];
+        static::$_channels = [];
     }
 
-    /**
-     * @param $timeout
-     * @param Closure $closure
-     * @param string $name
-     * @return mixed
-     * @throws Exception
-     */
+
+	/**
+	 * @param string $name
+	 * @param Closure $closure
+	 * @return mixed
+	 */
     public function pop(string $name, Closure $closure): mixed
     {
         $channel = $this->channelInit($name);
