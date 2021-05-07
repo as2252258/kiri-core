@@ -10,6 +10,8 @@ use HttpServer\Http\Context;
 use Redis as SRedis;
 use Snowflake\Abstracts\Pool;
 use Snowflake\Exception\RedisConnectException;
+use Swoole\Coroutine;
+use Swoole\Runtime;
 
 /**
  * Class RedisClient
@@ -36,10 +38,10 @@ class Redis extends Pool
 	 */
 	public function canCreate(string $name): bool
 	{
-		if (!isset($this->hasCreate[$name])) {
-			$this->hasCreate[$name] = 0;
+		if (!isset(static::$hasCreate[$name])) {
+			static::$hasCreate[$name] = 0;
 		}
-		return $this->hasCreate[$name] >= $this->max;
+		return static::$hasCreate[$name] >= $this->max;
 	}
 
 
@@ -69,6 +71,9 @@ class Redis extends Pool
 	 */
 	public function createClient(string $name, mixed $config): SRedis
 	{
+		if (Coroutine::getCid() === -1) {
+			Runtime::enableCoroutine(false);
+		}
 		$redis = new SRedis();
 		if (!$redis->pconnect($config['host'], (int)$config['port'], $config['timeout'])) {
 			throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
