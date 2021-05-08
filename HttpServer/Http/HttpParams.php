@@ -13,6 +13,7 @@ use Exception;
 use HttpServer\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
+use Snowflake\Core\Help;
 use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -207,6 +208,9 @@ class HttpParams
 	 */
 	#[Pure] public function load(): array
 	{
+		if (is_string($this->body)){
+			$this->body = Help::toArray($this->body);
+		}
 		return array_merge($this->files ?? [], $this->body ?? [], $this->gets ?? [], $this->socket ?? []);
 	}
 
