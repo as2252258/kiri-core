@@ -378,7 +378,7 @@ class Snowflake
 	public static function getWebSocket(): ?Server
 	{
 		$server = static::app()->getSwoole();
-		if (!($server instanceof Server)) {
+		if (!($server instanceof \Swoole\Server)) {
 			return null;
 		}
 		return $server;
