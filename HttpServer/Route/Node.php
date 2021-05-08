@@ -48,16 +48,16 @@ class Node extends HttpService
     public string $htmlSuffix = '.html';
     public bool $enableHtmlSuffix = false;
     public array $namespace = [];
-    public array $middleware = [];
+    public static array $middleware = [];
 
     /** @var array|Closure */
     public Closure|array $callback = [];
 
     private string $_alias = '';
 
-    private array $_interceptors = [];
-    private array $_after = [];
-    private array $_limits = [];
+    private static array $_interceptors = [];
+    private static array $_after = [];
+    private static array $_limits = [];
 
 
     /**
@@ -203,7 +203,7 @@ class Node extends HttpService
      */
     #[Pure] public function hasInterceptor(): bool
     {
-        return count($this->_interceptors) > 0;
+        return count(static::$_interceptors) > 0;
     }
 
 
@@ -212,7 +212,7 @@ class Node extends HttpService
      */
     #[Pure] public function hasLimits(): bool
     {
-        return count($this->_limits) > 0;
+        return count(static::$_limits) > 0;
     }
 
 
@@ -223,13 +223,13 @@ class Node extends HttpService
      */
     public function afterDispatch($response = null): mixed
     {
-        if (is_object($this->_after[0])) {
-            return call_user_func($this->_after, \request(), $response);
+        if (is_object(static::$_after[0])) {
+            return call_user_func(static::$_after, \request(), $response);
         }
-        foreach ($this->_after as $value) {
+        foreach (static::$_after as $value) {
             call_user_func($value, \request(), $response);
         }
-        return $this->_after;
+        return static::$_after;
     }
 
 
@@ -238,7 +238,7 @@ class Node extends HttpService
      */
     public function getInterceptor(): array
     {
-        return $this->_interceptors;
+        return static::$_interceptors;
     }
 
 
@@ -247,7 +247,7 @@ class Node extends HttpService
      */
     public function getAfters(): array
     {
-        return $this->_after;
+        return static::$_after;
     }
 
 
@@ -256,7 +256,7 @@ class Node extends HttpService
      */
     #[Pure] public function hasAfter(): bool
     {
-        return count($this->_after) > 0;
+        return count(static::$_after) > 0;
     }
 
 
@@ -265,7 +265,7 @@ class Node extends HttpService
      */
     public function getLimits(): array
     {
-        return $this->_limits;
+        return static::$_limits;
     }
 
     /**
@@ -337,10 +337,10 @@ class Node extends HttpService
             $handler = [$handler];
         }
         foreach ($handler as $closure) {
-            if (in_array($closure, $this->_interceptors)) {
+            if (in_array($closure, static::$_interceptors)) {
                 continue;
             }
-            $this->_interceptors[] = $closure;
+            static::$_interceptors[] = $closure;
         }
     }
 
@@ -385,10 +385,10 @@ class Node extends HttpService
             $handler = [$handler];
         }
         foreach ($handler as $closure) {
-            if (in_array($closure, $this->_after)) {
+            if (in_array($closure, static::$_after)) {
                 continue;
             }
-            $this->_after[] = $closure;
+            static::$_after[] = $closure;
         }
     }
 
@@ -403,10 +403,10 @@ class Node extends HttpService
             $handler = [$handler];
         }
         foreach ($handler as $closure) {
-            if (in_array($closure, $this->_limits)) {
+            if (in_array($closure, static::$_limits)) {
                 continue;
             }
-            $this->_limits[] = $closure;
+            static::$_limits[] = $closure;
         }
     }
 
@@ -493,10 +493,10 @@ class Node extends HttpService
     {
         if (empty($class)) return $this;
         foreach ($class as $closure) {
-            if (in_array($closure, $this->middleware)) {
+            if (in_array($closure, static::$middleware)) {
                 continue;
             }
-            $this->middleware[] = $closure;
+            static::$middleware[] = $closure;
         }
         return $this;
     }
@@ -507,7 +507,7 @@ class Node extends HttpService
      */
     public function getMiddleWares(): array
     {
-        return $this->middleware;
+        return static::$middleware;
     }
 
 
