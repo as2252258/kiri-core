@@ -64,7 +64,7 @@ class Help
 	public static function toArray($xml): mixed
 	{
 		if (empty($xml)) {
-			return null;
+			return [];
 		} else if (is_array($xml)) {
 			return $xml;
 		}
