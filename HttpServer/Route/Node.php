@@ -35,7 +35,7 @@ class Node extends HttpService
     public string $method = '';
 
     /** @var Node[] $childes */
-    public array $childes = [];
+    private static array $childes = [];
 
     public array $group = [];
 
@@ -429,12 +429,12 @@ class Node extends HttpService
     {
         $field = (string)$field;
         /** @var Node $oLod */
-        $oLod = $this->childes[$field] ?? null;
+        $oLod = static::$childes[$field] ?? null;
         if (!empty($oLod)) {
             $node = $oLod;
         }
-        $this->childes[$field] = $node;
-        return $this->childes[$field];
+        static::$childes[$field] = $node;
+        return static::$childes[$field];
     }
 
 
@@ -445,19 +445,19 @@ class Node extends HttpService
      */
     public function findNode(string $search): ?Node
     {
-        if (empty($this->childes)) {
+        if (empty(static::$childes)) {
             return null;
         }
 
-        if (isset($this->childes[$search])) {
-            return $this->childes[$search];
+        if (isset(static::$childes[$search])) {
+            return static::$childes[$search];
         }
 
         $_searchMatch = '/<(\w+)?:(.+)?>/';
-        foreach ($this->childes as $key => $val) {
+        foreach (static::$childes as $key => $val) {
             if (preg_match($_searchMatch, (string)$key, $match)) {
                 Input()->addGetParam($match[1] ?? '--', $search);
-                return $this->childes[$key];
+                return static::$childes[$key];
             }
         }
         return null;
