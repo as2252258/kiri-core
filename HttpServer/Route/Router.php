@@ -27,7 +27,7 @@ defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
 class Router extends HttpService implements RouterInterface
 {
 	/** @var Node[] $nodes */
-	public static array $nodes = [];
+	public array $nodes = [];
 	public array $groupTacks = [];
 	public ?string $dir = 'App\\Http\\Controllers';
 
@@ -104,8 +104,8 @@ class Router extends HttpService implements RouterInterface
 	public function addRoute($path, $handler, $method = 'any'): ?Node
 	{
 		$method = strtolower($method);
-		if (!isset(static::$nodes[$method])) {
-			static::$nodes[$method] = [];
+		if (!isset($this->nodes[$method])) {
+			$this->nodes[$method] = [];
 		}
 
 		if ($handler instanceof Closure) {
@@ -130,9 +130,9 @@ class Router extends HttpService implements RouterInterface
 	{
 		$path = $this->resolve($path);
 
-		static::$nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
+		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
 
-		return static::$nodes[$method][$path]->bindHandler($handler);
+		return $this->nodes[$method][$path]->bindHandler($handler);
 	}
 
 
@@ -164,9 +164,9 @@ class Router extends HttpService implements RouterInterface
 	{
 		list($first, $explode) = $this->split($path);
 
-		$parent = static::$nodes[$method][$first] ?? null;
+		$parent = $this->nodes[$method][$first] ?? null;
 		if (empty($parent)) {
-			static::$nodes[$method][$first] = $parent = $this->NodeInstance('/', 0, $method);
+			$this->nodes[$method][$first] = $parent = $this->NodeInstance('/', 0, $method);
 		}
 
 		if ($first !== '/') {
@@ -298,6 +298,7 @@ class Router extends HttpService implements RouterInterface
 	public function NodeInstance($value, $index = 0, $method = 'get'): Node
 	{
 		$node = new Node();
+		$node->childes = [];
 		$node->path = $value;
 		$node->index = $index;
 		$node->method = $method;
@@ -420,10 +421,10 @@ class Router extends HttpService implements RouterInterface
 	public function tree_search(?array $explode, $method): ?Node
 	{
 		if (empty($explode)) {
-			return static::$nodes[$method]['/'] ?? null;
+			return $this->nodes[$method]['/'] ?? null;
 		}
 		$first = array_shift($explode);
-		if (!($parent = static::$nodes[$method][$first] ?? null)) {
+		if (!($parent = $this->nodes[$method][$first] ?? null)) {
 			return null;
 		}
 		if (empty($explode)) {
@@ -470,7 +471,7 @@ class Router extends HttpService implements RouterInterface
 	public function each(): array
 	{
 		$paths = [];
-		foreach (static::$nodes as $node) {
+		foreach ($this->nodes as $node) {
 			/** @var Node[] $node */
 			foreach ($node as $path => $_node) {
 				$paths[] = strtoupper($_node->method) . ' : ' . $path;
@@ -520,10 +521,10 @@ class Router extends HttpService implements RouterInterface
 		$method = $request->getMethod();
 		$uri = $request->headers->get('request_uri', '/');
 
-		if (!isset(static::$nodes[$method])) {
+		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		$methods = static::$nodes[$method];
+		$methods = $this->nodes[$method];
 		if (isset($methods[$uri])) {
 			return $methods[$uri];
 		}
@@ -541,10 +542,10 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function search($uri, $method): Node|null
 	{
-		if (!isset(static::$nodes[$method])) {
+		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		$methods = static::$nodes[$method];
+		$methods = $this->nodes[$method];
 		if (isset($methods[$uri])) {
 			return $methods[$uri];
 		}
@@ -559,13 +560,13 @@ class Router extends HttpService implements RouterInterface
 	private function search_options($request): ?Node
 	{
 		$method = $request->getMethod();
-		if (!isset(static::$nodes[$method])) {
+		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		if (!isset(static::$nodes[$method]['*'])) {
+		if (!isset($this->nodes[$method]['*'])) {
 			return null;
 		}
-		return static::$nodes[$method]['*'];
+		return $this->nodes[$method]['*'];
 	}
 
 
