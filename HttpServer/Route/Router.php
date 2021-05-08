@@ -31,8 +31,6 @@ class Router extends HttpService implements RouterInterface
 	public array $groupTacks = [];
 	public ?string $dir = 'App\\Http\\Controllers';
 
-	public array $hashMap = [];
-
 	const NOT_FOUND = 'Page not found or method not allowed.';
 
 	/** @var string[] */
@@ -100,6 +98,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param $handler
 	 * @param string $method
 	 * @return ?Node
+	 * @throws Exception
 	 */
 	public function addRoute($path, $handler, $method = 'any'): ?Node
 	{
@@ -159,6 +158,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param $handler
 	 * @param string $method
 	 * @return Node
+	 * @throws Exception
 	 */
 	private function tree($path, $handler, $method = 'any'): Node
 	{
@@ -182,6 +182,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param array $explode
 	 * @param $method
 	 * @return Node
+	 * @throws Exception
 	 */
 	private function bindNode(Node $parent, array $explode, $method): Node
 	{
