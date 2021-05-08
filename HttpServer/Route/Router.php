@@ -298,6 +298,7 @@ class Router extends HttpService implements RouterInterface
 	public function NodeInstance($value, $index = 0, $method = 'get'): Node
 	{
 		$node = new Node();
+		$node->childes = [];
 		$node->path = $value;
 		$node->index = $index;
 		$node->method = $method;

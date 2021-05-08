@@ -35,7 +35,7 @@ class Node extends HttpService
     public string $method = '';
 
     /** @var Node[] $childes */
-    public static array $childes = [];
+    public array $childes = [];
 
     public array $group = [];
 
@@ -48,16 +48,16 @@ class Node extends HttpService
     public string $htmlSuffix = '.html';
     public bool $enableHtmlSuffix = false;
     public array $namespace = [];
-    public static array $middleware = [];
+    public array $middleware = [];
 
     /** @var array|Closure */
     public Closure|array $callback = [];
 
     private string $_alias = '';
 
-    private static array $_interceptors = [];
-    private static array $_after = [];
-    private static array $_limits = [];
+    private array $_interceptors = [];
+    private array $_after = [];
+    private array $_limits = [];
 
 
     /**
@@ -203,7 +203,7 @@ class Node extends HttpService
      */
     #[Pure] public function hasInterceptor(): bool
     {
-        return count(static::$_interceptors) > 0;
+        return count($this->_interceptors) > 0;
     }
 
 
@@ -212,7 +212,7 @@ class Node extends HttpService
      */
     #[Pure] public function hasLimits(): bool
     {
-        return count(static::$_limits) > 0;
+        return count($this->_limits) > 0;
     }
 
 
@@ -223,13 +223,13 @@ class Node extends HttpService
      */
     public function afterDispatch($response = null): mixed
     {
-        if (is_object(static::$_after[0])) {
-            return call_user_func(static::$_after, \request(), $response);
+        if (is_object($this->_after[0])) {
+            return call_user_func($this->_after, \request(), $response);
         }
-        foreach (static::$_after as $value) {
+        foreach ($this->_after as $value) {
             call_user_func($value, \request(), $response);
         }
-        return static::$_after;
+        return $this->_after;
     }
 
 
@@ -238,7 +238,7 @@ class Node extends HttpService
      */
     public function getInterceptor(): array
     {
-        return static::$_interceptors;
+        return $this->_interceptors;
     }
 
 
@@ -247,7 +247,7 @@ class Node extends HttpService
      */
     public function getAfters(): array
     {
-        return static::$_after;
+        return $this->_after;
     }
 
 
@@ -256,7 +256,7 @@ class Node extends HttpService
      */
     #[Pure] public function hasAfter(): bool
     {
-        return count(static::$_after) > 0;
+        return count($this->_after) > 0;
     }
 
 
@@ -265,7 +265,7 @@ class Node extends HttpService
      */
     public function getLimits(): array
     {
-        return static::$_limits;
+        return $this->_limits;
     }
 
     /**
@@ -337,10 +337,10 @@ class Node extends HttpService
             $handler = [$handler];
         }
         foreach ($handler as $closure) {
-            if (in_array($closure, static::$_interceptors)) {
+            if (in_array($closure, $this->_interceptors)) {
                 continue;
             }
-            static::$_interceptors[] = $closure;
+            $this->_interceptors[] = $closure;
         }
     }
 
@@ -385,10 +385,10 @@ class Node extends HttpService
             $handler = [$handler];
         }
         foreach ($handler as $closure) {
-            if (in_array($closure, static::$_after)) {
+            if (in_array($closure, $this->_after)) {
                 continue;
             }
-            static::$_after[] = $closure;
+            $this->_after[] = $closure;
         }
     }
 
@@ -403,10 +403,10 @@ class Node extends HttpService
             $handler = [$handler];
         }
         foreach ($handler as $closure) {
-            if (in_array($closure, static::$_limits)) {
+            if (in_array($closure, $this->_limits)) {
                 continue;
             }
-            static::$_limits[] = $closure;
+            $this->_limits[] = $closure;
         }
     }
 
@@ -429,12 +429,12 @@ class Node extends HttpService
     {
         $field = (string)$field;
         /** @var Node $oLod */
-        $oLod = static::$childes[$field] ?? null;
+        $oLod = $this->childes[$field] ?? null;
         if (!empty($oLod)) {
             $node = $oLod;
         }
-        static::$childes[$field] = $node;
-        return static::$childes[$field];
+        $this->childes[$field] = $node;
+        return $this->childes[$field];
     }
 
 
@@ -445,19 +445,19 @@ class Node extends HttpService
      */
     public function findNode(string $search): ?Node
     {
-        if (empty(static::$childes)) {
+        if (empty($this->childes)) {
             return null;
         }
 
-        if (isset(static::$childes[$search])) {
-            return static::$childes[$search];
+        if (isset($this->childes[$search])) {
+            return $this->childes[$search];
         }
 
         $_searchMatch = '/<(\w+)?:(.+)?>/';
-        foreach (static::$childes as $key => $val) {
+        foreach ($this->childes as $key => $val) {
             if (preg_match($_searchMatch, (string)$key, $match)) {
                 Input()->addGetParam($match[1] ?? '--', $search);
-                return static::$childes[$key];
+                return $this->childes[$key];
             }
         }
         return null;
@@ -493,10 +493,10 @@ class Node extends HttpService
     {
         if (empty($class)) return $this;
         foreach ($class as $closure) {
-            if (in_array($closure, static::$middleware)) {
+            if (in_array($closure, $this->middleware)) {
                 continue;
             }
-            static::$middleware[] = $closure;
+            $this->middleware[] = $closure;
         }
         return $this;
     }
@@ -507,7 +507,7 @@ class Node extends HttpService
      */
     public function getMiddleWares(): array
     {
-        return static::$middleware;
+        return $this->middleware;
     }
 
 
