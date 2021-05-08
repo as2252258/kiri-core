@@ -30,7 +30,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
     public function alert(mixed $message, array $context = array())
@@ -48,7 +47,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
     public function error(mixed $message, array $context = array())
@@ -60,7 +58,7 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
     public function warning(mixed $message, array $context = array())
     {
@@ -71,7 +69,7 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
     public function notice(mixed $message, array $context = array())
     {
@@ -82,7 +80,7 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ComponentException
+	 * @throws Exception
 	 */
     public function info(mixed $message, array $context = array())
     {
@@ -94,7 +92,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
     public function debug(mixed $message, array $context = array())
@@ -107,7 +104,6 @@ class Logger implements LoggerInterface
 	 * @param $level
 	 * @param $message
 	 * @param array $context
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
     public function log($level, mixed $message, array $context = array())

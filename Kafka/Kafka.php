@@ -173,8 +173,8 @@ class Kafka extends \Snowflake\Process\Process
 			$conf->set('metadata.broker.list', $kafka['brokers']);
 			$conf->set('socket.timeout.ms', '30000');
 
-			logger()->debug('kafka listen groupId ' . $kafka['groupId']);
-			logger()->debug('kafka listen brokers ' . $kafka['brokers']);
+			debug('kafka listen groupId ' . $kafka['groupId']);
+			debug('kafka listen brokers ' . $kafka['brokers']);
 
 			if (function_exists('pcntl_sigprocmask')) {
 				pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));

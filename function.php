@@ -848,7 +848,6 @@ if (!function_exists('swoole_substr_json_decode')) {
 
 if (!function_exists('swoole_substr_unserialize')) {
 
-
 	/**
 	 * @param $packet
 	 * @param int $length
@@ -860,3 +859,45 @@ if (!function_exists('swoole_substr_unserialize')) {
 	}
 
 }
+
+
+if (!function_exists('debug')) {
+
+	/**
+	 * @param $message
+	 * @param string $method
+	 * @throws Exception
+	 */
+	function debug(mixed $message, string $method = 'app')
+	{
+		Snowflake::app()->debug($message, $method);
+	}
+
+}
+
+if (!function_exists('error')) {
+
+	/**
+	 * @param $message
+	 * @param string $method
+	 * @throws Exception
+	 */
+	function error(mixed $message, $method = 'error')
+	{
+		Snowflake::app()->error($message, $method);
+	}
+}
+
+if (!function_exists('success')) {
+
+	/**
+	 * @param $message
+	 * @param string $method
+	 * @throws Exception
+	 */
+	function success(mixed $message, $method = 'app')
+	{
+		Snowflake::app()->success($message, $method);
+	}
+}
+

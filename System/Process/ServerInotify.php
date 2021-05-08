@@ -282,8 +282,7 @@ class ServerInotify extends Process
 		if (str_contains($message, 'The file descriptor is not an inotify instance')) {
 			return;
 		}
-		logger()->debug('Error:' . $message);
-		logger()->debug($file . ':' . $line);
+		debug('Error:' . $message . ' at ' . $file . ':' . $line);
 	}
 
 
