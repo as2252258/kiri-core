@@ -208,9 +208,6 @@ class HttpParams
 	 */
 	#[Pure] public function load(): array
 	{
-		if (is_string($this->body)){
-			$this->body = Help::toArray($this->body);
-		}
 		return array_merge($this->files ?? [], $this->body ?? [], $this->gets ?? [], $this->socket ?? []);
 	}
 
