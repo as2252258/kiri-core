@@ -185,9 +185,7 @@ class Http2 extends Component
 		$request->headers = array_merge($request->headers, [
 			'Host' => $domain
 		]);
-		defer(function () use ($domain, $path, $request, $method) {
-			$this->channel->push($request, 'request.' . $method . $path);
-		});
+		defer(fn() => $this->channel->push($request, 'request.' . $method . $path));
 		return $this->doRequest($request, $domain, $isSsl, $timeout);
 	}
 
@@ -217,9 +215,7 @@ class Http2 extends Component
 	private function doRequest(Request $request, $domain, $ssl, $timeout): mixed
 	{
 		$client = $this->getClient($domain, $ssl, $timeout);
-		defer(function () use ($client, $domain) {
-			$this->channel->push($client, 'http2.' . $domain);
-		});
+		defer(fn() => $this->channel->push($client, 'http2.' . $domain));
 		$client->send($request);
 		if (Context::getContext('http2isRecv') === false) {
 			return null;
