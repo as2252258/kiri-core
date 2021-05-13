@@ -50,11 +50,15 @@ class File
 
 	/**
 	 * @return string
+	 * @throws Exception
 	 */
 	public function rename(): string
 	{
 		if (!empty($this->newName)) {
 			return $this->newName;
+		}
+		if (!file_exists($this->getTmpPath())) {
+			throw new Exception('(' . $this->name . ')Failed to open stream: No such file or directory');
 		}
 		$param = ['tmp_name' => $this->getTmpPath()];
 		$this->newName = Snowflake::rename($param);
@@ -68,33 +72,28 @@ class File
 	 */
 	public function getContent(): string
 	{
-//		$open = fopen($this->getTmpPath(), 'r');
+		$open = fopen($this->getTmpPath(), 'r');
 
 		@move_uploaded_file($this->tmp_name, storage($this->name));
 
+		$limit = 1024000;
 
-		var_dump(file_get_contents($this->getTmpPath()));
+		$stat = fstat($open);
 
-		return '';
-
-//		$limit = 1024000;
-//
-//		$stat = fstat($open);
-//
-//		$sleep = $offset = 0;
-//		$content = '';
-//		while ($file = fread($open, $limit)) {
-//			$content .= $file;
-//			fseek($open, $offset);
-//			if ($sleep > 0) {
-//				sleep($sleep);
-//			}
-//			if ($offset >= $stat['size']) {
-//				break;
-//			}
-//			$offset += $limit;
-//		}
-//		return $content;
+		$sleep = $offset = 0;
+		$content = '';
+		while ($file = fread($open, $limit)) {
+			$content .= $file;
+			fseek($open, $offset);
+			if ($sleep > 0) {
+				sleep($sleep);
+			}
+			if ($offset >= $stat['size']) {
+				break;
+			}
+			$offset += $limit;
+		}
+		return $content;
 	}
 
 
