@@ -44,7 +44,7 @@ class File
 			throw new Exception($this->getErrorInfo());
 		}
 
-		file_put_contents($path, $this->_content);
+		@move_uploaded_file($this->tmp_name, $path);
 		if (!file_exists($path)) {
 			return false;
 		}
@@ -61,12 +61,42 @@ class File
 			return $this->newName;
 		}
 
-		$this->_content  = file_get_contents($this->getTmpPath());
+		if (!file_exists($this->getTmpPath())) {
+			throw new Exception('(' . $this->name . ')Failed to open stream: No such file or directory');
+		}
 
-		$this->newName = md5($this->_content);
+		return $this->name;
+	}
 
-//		$this->newName = Snowflake::rename($this->getTmpPath());
-		return $this->newName;
+
+	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getContent(): string
+	{
+		$open = fopen($this->getTmpPath(), 'r');
+
+//		@move_uploaded_file($this->tmp_name, storage($this->name));
+
+		$limit = 1024000;
+
+		$stat = fstat($open);
+
+		$sleep = $offset = 0;
+		$content = '';
+		while ($file = fread($open, $limit)) {
+			$content .= $file;
+			fseek($open, $offset);
+			if ($sleep > 0) {
+				sleep($sleep);
+			}
+			if ($offset >= $stat['size']) {
+				break;
+			}
+			$offset += $limit;
+		}
+		return $content;
 	}
 
 
