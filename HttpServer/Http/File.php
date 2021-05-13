@@ -64,6 +64,11 @@ class File
 			throw new Exception('(' . $this->name . ')Failed to open stream: No such file or directory');
 		}
 
+
+		$content = file_get_contents($this->getTmpPath());
+		var_dump($content);
+
+
 		$this->newName = Snowflake::rename($this->getTmpPath());
 		return $this->newName;
 	}
