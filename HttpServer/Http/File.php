@@ -65,11 +65,10 @@ class File
 		}
 
 
-		$content = file_get_contents($this->getTmpPath());
-		var_dump($content);
+		var_dump($this->getContent());
 
 
-		$this->newName = Snowflake::rename($this->getTmpPath());
+//		$this->newName = Snowflake::rename($this->getTmpPath());
 		return $this->newName;
 	}
 
@@ -82,7 +81,7 @@ class File
 	{
 		$open = fopen($this->getTmpPath(), 'r');
 
-		@move_uploaded_file($this->tmp_name, storage($this->name));
+//		@move_uploaded_file($this->tmp_name, storage($this->name));
 
 		$limit = 1024000;
 
