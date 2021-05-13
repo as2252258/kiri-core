@@ -485,14 +485,14 @@ class Snowflake
 
 
 	/**
-	 * @param $tmp
+	 * @param $tmp_name
 	 * @return string
 	 */
-	public static function rename($tmp): string
+	public static function rename($tmp_name): string
 	{
-		$hash = md5_file($tmp['tmp_name']);
+		$hash = md5_file($tmp_name);
 
-		$later = '.' . exif_imagetype($tmp['tmp_name']);
+		$later = '.' . exif_imagetype($tmp_name);
 
 		$match = '/(\w{12})(\w{5})(\w{9})(\w{6})/';
 		$tmp = preg_replace($match, '$1-$2-$3-$4', $hash);

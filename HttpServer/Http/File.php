@@ -18,6 +18,9 @@ class File
 	public mixed $type = '';
 	public mixed $size = '';
 
+
+	private string $_content = '';
+
 	private string $newName = '';
 	private array $errorInfo = [
 		0 => 'UPLOAD_ERR_OK.',
@@ -60,8 +63,8 @@ class File
 		if (!file_exists($this->getTmpPath())) {
 			throw new Exception('(' . $this->name . ')Failed to open stream: No such file or directory');
 		}
-		$param = ['tmp_name' => $this->getTmpPath()];
-		$this->newName = Snowflake::rename($param);
+
+		$this->newName = Snowflake::rename($this->getTmpPath());
 		return $this->newName;
 	}
 
