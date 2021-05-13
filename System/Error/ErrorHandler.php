@@ -55,8 +55,6 @@ class ErrorHandler extends Component implements ErrorInterface
 			return;
 		}
 
-		var_dump($lastError);
-
 		$this->category = 'shutdown';
 
 		$messages = explode(PHP_EOL, $lastError['message']);
@@ -78,9 +76,6 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		Event::trigger(Event::SYSTEM_RESOURCE_CLEAN);
 
-        var_dump($exception);
-
-
         $this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
 
@@ -93,8 +88,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function errorHandler()
 	{
 		$error = func_get_args();
-
-        var_dump(func_get_args());
 
         $path = ['file' => $error[2], 'line' => $error[3]];
 
