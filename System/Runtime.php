@@ -38,6 +38,11 @@ class Runtime extends Command
         $runtime = storage(static::CACHE_NAME);
 
         $configs = Snowflake::app()->getConfig()->getData();
+	    array_walk_recursive($configs, function (&$value, $key) {
+		    if ($value instanceof \Closure) {
+			    $value = null;
+		    }
+	    });
 
         Snowflake::writeFile(storage(static::CONFIG_NAME), serialize($configs));
         Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
