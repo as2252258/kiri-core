@@ -37,7 +37,9 @@ class Runtime extends Command
 
         $runtime = storage(static::CACHE_NAME);
 
-        Snowflake::writeFile(storage(static::CONFIG_NAME), serialize(sweep()));
+        $configs = Snowflake::app()->getConfig()->getData();
+
+        Snowflake::writeFile(storage(static::CONFIG_NAME), serialize($configs));
         Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
     }
 
