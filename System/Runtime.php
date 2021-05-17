@@ -23,6 +23,7 @@ class Runtime extends Command
 
 
     const CACHE_NAME = '.runtime.cache';
+    const CONFIG_NAME = '.config.cache';
 
 
 	/**
@@ -36,6 +37,7 @@ class Runtime extends Command
 
         $runtime = storage(static::CACHE_NAME);
 
+        Snowflake::writeFile(storage(static::CONFIG_NAME), serialize(sweep()));
         Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
     }
 
