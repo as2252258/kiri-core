@@ -51,7 +51,7 @@ class OnWorkerStart extends Callback
 		putenv('state=start');
 		putenv('worker=' . $worker_id);
 
-		$serialize = file_get_contents(Runtime::CONFIG_NAME);
+		$serialize = file_get_contents(storage(Runtime::CONFIG_NAME));
 
 		Config::sets(unserialize($serialize));
 	}
