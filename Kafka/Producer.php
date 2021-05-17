@@ -29,8 +29,6 @@ use Snowflake\Snowflake;
 class Producer extends Component
 {
 
-    private string $_topic = '';
-
 
     private Conf $conf;
     private TopicConf $topicConf;
@@ -81,17 +79,6 @@ class Producer extends Component
 
 
     /**
-     * @param $servers
-     * @return Producer
-     */
-    public function setTopic(string $servers): static
-    {
-        $this->_topic = $servers;
-        return $this;
-    }
-
-
-    /**
      * @param string $topic
      * @param array $params
      * @param string|null $groupId
@@ -131,12 +118,14 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param string $toPic
-     * @param string|null $key
-     * @param array $data
-     * @param string|null $groupId
-     */
+	/**
+	 * @param string $toPic
+	 * @param string|null $key
+	 * @param array $data
+	 * @param string|null $groupId
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
     public function batch(string $toPic, ?string $key, array $data, ?string $groupId = null)
     {
         $this->beforePushMessage($toPic, $groupId);
@@ -167,7 +156,6 @@ class Producer extends Component
         }
         $this->setGroupId($consumers['groupId']);
         $this->setBrokers($consumers['brokers']);
-        $this->setTopic($topic);
     }
 
 
