@@ -6,12 +6,11 @@
  * Time: 11:50
  */
 declare(strict_types=1);
+
 namespace Snowflake\Abstracts;
 
 use Exception;
-
 use Snowflake\Exception\ConfigException;
-use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
 
 
@@ -46,6 +45,17 @@ class Config extends Component
 		return $this->data[$key] = $value;
 	}
 
+
+	/**
+	 * @param array $configs
+	 * @throws Exception
+	 */
+	public static function sets(array $configs)
+	{
+		$config = Snowflake::app()->getConfig();
+		$config->data = $configs;
+	}
+
 	/**
 	 * @param $key
 	 * @param bool $try
@@ -69,7 +79,7 @@ class Config extends Component
 				}
 				return $default;
 			}
-			if (!is_array($instance[$value]) ) {
+			if (!is_array($instance[$value])) {
 				return $instance[$value];
 			}
 			$instance = $instance[$value];

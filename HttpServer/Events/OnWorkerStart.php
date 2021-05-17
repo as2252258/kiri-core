@@ -6,6 +6,7 @@ namespace HttpServer\Events;
 use Annotation\Annotation;
 use Exception;
 use HttpServer\Abstracts\Callback;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Runtime;
@@ -33,6 +34,8 @@ class OnWorkerStart extends Callback
     {
         putenv('state=start');
         putenv('worker=' . $worker_id);
+
+        Config::sets(sweep(APP_PATH . 'config'));
 
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize(file_get_contents(storage(Runtime::CACHE_NAME))));
