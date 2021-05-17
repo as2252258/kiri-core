@@ -53,6 +53,9 @@ class Config extends Component
 	public static function sets(array $configs)
 	{
 		$config = Snowflake::app()->getConfig();
+		if (empty($configs)) {
+			return;
+		}
 		$config->data = $configs;
 	}
 
