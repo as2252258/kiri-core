@@ -6,7 +6,6 @@ namespace Kafka;
 
 use Exception;
 use Psr\Log\LoggerInterface;
-use Snowflake\Exception\ComponentException;
 use Snowflake\Snowflake;
 
 /**
