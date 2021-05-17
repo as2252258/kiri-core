@@ -35,7 +35,7 @@ class OnWorkerStart extends Callback
         putenv('state=start');
         putenv('worker=' . $worker_id);
 
-        Config::sets(sweep(APP_PATH . 'config'));
+        Config::sets(sweep());
 
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->setLoader(unserialize(file_get_contents(storage(Runtime::CACHE_NAME))));
