@@ -678,6 +678,11 @@ if (!function_exists('sweep')) {
 	{
 		$array = [];
 		foreach (glob($configPath . '/*') as $config) {
+
+			var_dump($config);
+
+			var_dump(require_once "$config");
+
 			$array = array_merge(require_once "$config", $array);
 		}
 		return $array;
