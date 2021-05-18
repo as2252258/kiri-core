@@ -36,19 +36,18 @@ class Runtime extends Command
 		$annotation = Snowflake::app()->getAnnotation();
 
 		$runtime = storage(static::CACHE_NAME);
+		$config = storage(static::CONFIG_NAME);
 
-		$configs = $this->configEach();
-
-		Snowflake::writeFile(storage(static::CONFIG_NAME), serialize($configs));
+		Snowflake::writeFile($config, $this->configEach());
 		Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
 	}
 
 
 	/**
-	 * @return array
+	 * @return string
 	 * @throws Exception
 	 */
-	public function configEach(): array
+	public function configEach(): string
 	{
 		$array = [];
 		$configs = Snowflake::app()->getConfig();
@@ -62,7 +61,7 @@ class Runtime extends Command
 				$array[$key] = $datum;
 			}
 		}
-		return $array;
+		return serialize($array);
 	}
 
 
