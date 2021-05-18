@@ -533,6 +533,7 @@ class Snowflake
 	 * @param string $event
 	 * @param null $data
 	 * @return false|string
+	 * @throws Exception
 	 */
 	public static function param(string $event, $data = NULL): bool|string
 	{

@@ -62,7 +62,7 @@ class Command extends \Console\Command
 	 */
 	private function generate_runtime_builder()
 	{
-		exec(PHP_BINARY . ' snowflake runtime:builder');
+		exec(PHP_BINARY . ' ' . APP_PATH . 'snowflake runtime:builder');
 	}
 
 }
