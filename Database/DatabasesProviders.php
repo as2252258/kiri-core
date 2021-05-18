@@ -77,7 +77,6 @@ class DatabasesProviders extends Providers
 		}
 		$application = Snowflake::app();
 		foreach ($databases as $name => $database) {
-			var_dump($database['cds']);
 			/** @var Connection $connection */
 			$connection = $application->set('databases.' . $name, [
 				'class'       => Connection::class,
