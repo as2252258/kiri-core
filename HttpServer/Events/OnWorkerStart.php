@@ -90,6 +90,7 @@ class OnWorkerStart extends Callback
 	}
 
 
+
 	/**
 	 * @param Server $server
 	 * @param Annotation $annotation
