@@ -40,6 +40,8 @@ class Runtime extends Command
 
 		Snowflake::writeFile($config, $this->configEach());
 		Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
+
+		return 'ok';
 	}
 
 
