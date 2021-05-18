@@ -153,10 +153,7 @@ abstract class BaseApplication extends Service
 	 */
 	public function parseInt($config)
 	{
-		$_config = Snowflake::app()->getConfig();
-		foreach ($config as $key => $value) {
-			$_config->setData($key, $value);
-		}
+		Config::sets($config);
 		if ($storage = Config::get('storage', 'storage')) {
 			if (!str_contains($storage, APP_PATH)) {
 				$storage = APP_PATH . $storage . '/';
