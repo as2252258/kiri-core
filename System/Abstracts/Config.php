@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;
+use Snowflake\Core\ArrayAccess;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -56,7 +57,7 @@ class Config extends Component
 		if (empty($configs)) {
 			return;
 		}
-		$config->data = $configs;
+		$config->data = ArrayAccess::merge($config->data, $configs);
 	}
 
 	/**
