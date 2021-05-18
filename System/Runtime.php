@@ -61,6 +61,7 @@ class Runtime extends Command
 				$array[$key] = $datum;
 			}
 		}
+		var_dump(serialize($array));
 		return serialize($array);
 	}
 
