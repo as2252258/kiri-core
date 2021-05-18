@@ -256,6 +256,7 @@ class ServerInotify extends Process
 		Snowflake::reload();
 	}
 
+
 	/**
 	 * @throws Exception
 	 */
