@@ -171,7 +171,7 @@ class Command extends Component
         if (($result = $this->getPdoStatement()) === false) {
             return $result;
         }
-        if ($isInsert === false) {
+        if ($isInsert === false || !$hasAutoIncrement) {
             return true;
         }
         if ($result == 0 && $hasAutoIncrement->isAutoIncrement()) {
