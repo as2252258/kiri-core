@@ -121,7 +121,7 @@ class Node extends HttpService
      */
     public function createDispatch(): Closure
     {
-        return function () {
+        return static function () {
             $dispatchParam = Context::getContext('dispatch-param');
             if (empty($dispatchParam)) {
                 $dispatchParam = [\request()];
