@@ -307,6 +307,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 */
 	public function exists(): bool
 	{
+		var_dump($this->execute($this->builder->one())->fetchColumn());
 		return $this->execute($this->builder->one())->fetchColumn() !== false;
 	}
 
