@@ -5,7 +5,6 @@ namespace Snowflake\Abstracts;
 
 
 use Exception;
-use HttpServer\Http\Context;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Exception\ConfigException;
 use Swoole\Coroutine;
@@ -19,318 +18,319 @@ use Swoole\Timer;
 abstract class Pool extends Component
 {
 
-    /** @var Channel[] */
-    private static array $_items = [];
+	/** @var Channel[] */
+	private static array $_items = [];
 
-    public int $max = 60;
+	public int $max = 60;
 
-    public int $creates = -1;
+	public int $creates = -1;
 
-    public int $lastTime = 0;
-
-
-    protected static array $hasCreate = [];
+	public int $lastTime = 0;
 
 
-    /**
-     * @param string $name
-     */
-    public function increment(string $name)
-    {
-        if (!isset(static::$hasCreate[$name])) {
-            static::$hasCreate[$name] = 0;
-        }
-        static::$hasCreate[$name] += 1;
-    }
+	protected static array $hasCreate = [];
 
 
-    /**
-     * @param string $name
-     */
-    public function decrement(string $name)
-    {
-        if (!isset(static::$hasCreate[$name])) {
-            return;
-        }
-        if (static::$hasCreate[$name] <= 0) {
-            return;
-        }
-        static::$hasCreate[$name] -= 1;
-    }
+	/**
+	 * @param string $name
+	 */
+	public function increment(string $name)
+	{
+		if (!isset(static::$hasCreate[$name])) {
+			static::$hasCreate[$name] = 0;
+		}
+		static::$hasCreate[$name] += 1;
+	}
 
 
-    /**
-     * @return array
-     * @throws ConfigException
-     */
-    private function getClearTime(): array
-    {
-        $firstClear = Config::get('pool.clear.start', 600);
-        $lastClear = Config::get('pool.clear.end', 300);
-        return [$firstClear, $lastClear];
-    }
+	/**
+	 * @param string $name
+	 */
+	public function decrement(string $name)
+	{
+		if (!isset(static::$hasCreate[$name])) {
+			return;
+		}
+		if (static::$hasCreate[$name] <= 0) {
+			return;
+		}
+		static::$hasCreate[$name] -= 1;
+	}
 
 
-    /**
-     * @throws Exception
-     */
-    public function Heartbeat_detection()
-    {
-        if (env('state') == 'exit') {
-            Timer::clear($this->creates);
-            $this->creates = -1;
-        } else if ($this->lastTime != 0) {
-            [$firstClear, $lastClear] = $this->getClearTime();
-            if ($this->lastTime + $firstClear < time()) {
-                $this->flush(0);
-            } else if ($this->lastTime + $lastClear < time()) {
-                $this->flush(2);
-            }
-        }
-    }
+	/**
+	 * @return array
+	 * @throws ConfigException
+	 */
+	private function getClearTime(): array
+	{
+		$firstClear = Config::get('pool.clear.start', 600);
+		$lastClear = Config::get('pool.clear.end', 300);
+		return [$firstClear, $lastClear];
+	}
 
 
-    /**
-     * @param $retain_number
-     * @throws Exception
-     */
-    protected function flush($retain_number)
-    {
-        $channels = $this->getChannels();
-        foreach ($channels as $name => $channel) {
-            $names[] = $name;
-            $this->pop($channel, $name, $retain_number);
-        }
-        static::$_items = [];
-        if ($retain_number == 0) {
-            Timer::clear($this->creates);
-            $this->creates = -1;
-        }
-    }
+	/**
+	 * @throws Exception
+	 */
+	public function Heartbeat_detection()
+	{
+		if (env('state') == 'exit') {
+			Timer::clear($this->creates);
+			$this->creates = -1;
+		} else if ($this->lastTime != 0) {
+			[$firstClear, $lastClear] = $this->getClearTime();
+			if ($this->lastTime + $firstClear < time()) {
+				$this->flush(0);
+			} else if ($this->lastTime + $lastClear < time()) {
+				$this->flush(2);
+			}
+		}
+	}
 
 
-    /**
-     * @param $name
-     */
-    protected function clearCreateLog($name): void
-    {
-        if (!isset(static::$hasCreate[$name])) {
-            return;
-        }
-        static::$hasCreate[$name] = 0;
-    }
+	/**
+	 * @param $retain_number
+	 * @throws Exception
+	 */
+	protected function flush($retain_number)
+	{
+		$channels = $this->getChannels();
+		foreach ($channels as $name => $channel) {
+			$names[] = $name;
+			$this->pop($channel, $name, $retain_number);
+		}
+		static::$_items = [];
+		if ($retain_number == 0) {
+			Timer::clear($this->creates);
+			$this->creates = -1;
+		}
+	}
 
 
-    /**
-     * @param $channel
-     * @param $name
-     * @param $retain_number
-     * @throws Exception
-     */
-    protected function pop($channel, $name, $retain_number): void
-    {
-        if (Coroutine::getCid() === -1) {
-	        return;
-        }
-        while ($channel->length() > $retain_number) {
-            $connection = $channel->pop();
-            if ($connection) {
-                unset($connection);
-            }
-            $this->decrement($name);
-        }
-    }
+	/**
+	 * @param $name
+	 */
+	protected function clearCreateLog($name): void
+	{
+		if (!isset(static::$hasCreate[$name])) {
+			return;
+		}
+		static::$hasCreate[$name] = 0;
+	}
 
 
-    /**
-     * @param $driver
-     * @param $name
-     * @param false $isMaster
-     * @param int $max
-     */
-    public function initConnections($driver, $name, $isMaster = false, $max = 60)
-    {
-        $name = $this->name($driver, $name, $isMaster);
-        if (isset(static::$_items[$name]) && static::$_items[$name] instanceof Channel) {
-            return;
-        }
-        if (Coroutine::getCid() === -1) {
-            return;
-        }
-        static::$_items[$name] = new Channel((int)$max);
-        $this->max = (int)$max;
-    }
+	/**
+	 * @param $channel
+	 * @param $name
+	 * @param $retain_number
+	 * @throws Exception
+	 */
+	protected function pop($channel, $name, $retain_number): void
+	{
+		if (Coroutine::getCid() === -1) {
+			return;
+		}
+		while ($channel->length() > $retain_number) {
+			$connection = $channel->pop();
+			if ($connection) {
+				unset($connection);
+			}
+			$this->decrement($name);
+		}
+	}
 
 
-    /**
-     * @param $name
-     * @param array $callback
-     * @return array
-     * @throws Exception
-     */
-    protected function getFromChannel($name, mixed $callback): mixed
-    {
-        if (Coroutine::getCid() === -1) {
-            return $this->createClient($name, $callback);
-        }
-        if (!isset(static::$_items[$name])) {
-            static::$_items[$name] = new Channel($this->max);
-        }
-        if (static::$_items[$name]->isEmpty()) {
-            $this->createByCallback($name, $callback);
-        }
-        $connection = static::$_items[$name]->pop();
-        if (!$this->checkCanUse($name, $connection)) {
-            return $this->createClient($name, $callback);
-        } else {
-            return $connection;
-        }
-    }
+	/**
+	 * @param $driver
+	 * @param $name
+	 * @param false $isMaster
+	 * @param int $max
+	 */
+	public function initConnections($driver, $name, $isMaster = false, $max = 60)
+	{
+		$name = $this->name($driver, $name, $isMaster);
+		if (isset(static::$_items[$name]) && static::$_items[$name] instanceof Channel) {
+			return;
+		}
+		if (Coroutine::getCid() === -1) {
+			return;
+		}
+		static::$_items[$name] = new Channel((int)$max);
+		$this->max = (int)$max;
+	}
 
 
-    /**
-     * @param $name
-     * @param mixed $callback
-     * @throws Exception
-     */
-    private function createByCallback($name, mixed $callback): void
-    {
-        if ($this->creates === -1 && !is_callable($callback)) {
-            $this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
-        }
-        static::$_items[$name]->push($this->createClient($name, $callback));
-    }
+	/**
+	 * @param $name
+	 * @param array $callback
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function getFromChannel($name, mixed $callback): mixed
+	{
+		if (Coroutine::getCid() === -1) {
+			return $this->createClient($name, $callback);
+		}
+		$channel = static::$_items[$name] ?? new Channel($this->max);
+		if (!isset(static::$_items[$name])) {
+			static::$_items[$name] = $channel;
+		}
+		if ($channel->isEmpty()) {
+			$this->createByCallback($channel, $name, $callback);
+		}
+		$connection = $channel->pop();
+		if (!$this->checkCanUse($name, $connection)) {
+			return $this->createClient($name, $callback);
+		} else {
+			return $connection;
+		}
+	}
 
 
-    abstract public function createClient(string $name, mixed $config): mixed;
+	/**
+	 * @param $channel
+	 * @param $name
+	 * @param mixed $callback
+	 */
+	private function createByCallback(Channel $channel, $name, mixed $callback): void
+	{
+		if ($this->creates === -1 && !is_callable($callback)) {
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
+		}
+		$channel->push($this->createClient($name, $callback));
+	}
 
 
-    /**
-     * @param $driver
-     * @param $cds
-     * @param false $isMaster
-     * @return string
-     */
-    #[Pure] public function name($driver, $cds, $isMaster = false): string
-    {
-        if ($isMaster === true) {
-            return $cds . '_master';
-        } else {
-            return $cds . '_slave';
-        }
-    }
+	abstract public function createClient(string $name, mixed $config): mixed;
 
 
-    /**
-     * @param string $name
-     * @param $client
-     * @return bool
-     * 检查连接可靠性
-     */
-    public function checkCanUse(string $name, mixed $client): bool
-    {
-        return true;
-    }
+	/**
+	 * @param $driver
+	 * @param $cds
+	 * @param false $isMaster
+	 * @return string
+	 */
+	#[Pure] public function name($driver, $cds, $isMaster = false): string
+	{
+		if ($isMaster === true) {
+			return $cds . '_master';
+		} else {
+			return $cds . '_slave';
+		}
+	}
 
 
-    /**
-     * @param array $config
-     * @param $isMaster
-     * @return mixed
-     * @throws Exception
-     */
-    public function get(mixed $config, bool $isMaster): mixed
-    {
-        throw new Exception('Undefined system processing function.');
-    }
+	/**
+	 * @param string $name
+	 * @param $client
+	 * @return bool
+	 * 检查连接可靠性
+	 */
+	public function checkCanUse(string $name, mixed $client): bool
+	{
+		return true;
+	}
 
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function canCreate(string $name): bool
-    {
-        if (!isset(static::$hasCreate[$name])) {
-            static::$hasCreate[$name] = 0;
-        }
-        return static::$hasCreate[$name] < $this->max;
-    }
+	/**
+	 * @param array $config
+	 * @param $isMaster
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function get(mixed $config, bool $isMaster): mixed
+	{
+		throw new Exception('Undefined system processing function.');
+	}
 
 
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function hasItem(string $name): bool
-    {
-        if (isset(static::$_items[$name])) {
-            return !static::$_items[$name]->isEmpty();
-        }
-        return false;
-    }
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	public function canCreate(string $name): bool
+	{
+		if (!isset(static::$hasCreate[$name])) {
+			static::$hasCreate[$name] = 0;
+		}
+		return static::$hasCreate[$name] < $this->max;
+	}
 
 
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function size(string $name): mixed
-    {
-        if (Coroutine::getCid() === -1) {
-            return 0;
-        }
-        if (!isset(static::$_items[$name])) {
-            return 0;
-        }
-        return static::$_items[$name]->length();
-    }
+	/**
+	 * @param $name
+	 * @return bool
+	 */
+	public function hasItem(string $name): bool
+	{
+		if (isset(static::$_items[$name])) {
+			return !static::$_items[$name]->isEmpty();
+		}
+		return false;
+	}
 
 
-    /**
-     * @param $name
-     * @param $client
-     */
-    public function push(string $name, mixed $client)
-    {
-        if (Coroutine::getCid() === -1) {
-            return;
-        }
-        if (!isset(static::$_items[$name])) {
-            static::$_items[$name] = new Channel($this->max);
-        }
-        if (!static::$_items[$name]->isFull()) {
-            static::$_items[$name]->push($client);
-        }
-        unset($client);
-    }
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function size(string $name): mixed
+	{
+		if (Coroutine::getCid() === -1) {
+			return 0;
+		}
+		if (!isset(static::$_items[$name])) {
+			return 0;
+		}
+		return static::$_items[$name]->length();
+	}
 
 
-    /**
-     * @param string $name
-     * @throws Exception
-     */
-    public function clean(string $name)
-    {
-        if (Coroutine::getCid() === -1 || !isset(static::$_items[$name])) {
-            return;
-        }
-        $channel = static::$_items[$name];
-        $this->pop($channel, $name, 0);
-        if ($this->creates > -1) {
-            Timer::clear($this->creates);
-        }
-        static::$_items[$name] = null;
-    }
+	/**
+	 * @param $name
+	 * @param $client
+	 */
+	public function push(string $name, mixed $client)
+	{
+		if (Coroutine::getCid() === -1) {
+			return;
+		}
+		if (!isset(static::$_items[$name])) {
+			static::$_items[$name] = new Channel($this->max);
+		}
+		if (!static::$_items[$name]->isFull()) {
+			static::$_items[$name]->push($client);
+		}
+		unset($client);
+	}
 
 
-    /**
-     * @return Channel[]
-     */
-    protected function getChannels(): array
-    {
-        return static::$_items;
-    }
+	/**
+	 * @param string $name
+	 * @throws Exception
+	 */
+	public function clean(string $name)
+	{
+		if (Coroutine::getCid() === -1 || !isset(static::$_items[$name])) {
+			return;
+		}
+		$channel = static::$_items[$name];
+		$this->pop($channel, $name, 0);
+		if ($this->creates > -1) {
+			Timer::clear($this->creates);
+		}
+		static::$_items[$name] = null;
+	}
+
+
+	/**
+	 * @return Channel[]
+	 */
+	protected function getChannels(): array
+	{
+		return static::$_items;
+	}
 
 
 }
