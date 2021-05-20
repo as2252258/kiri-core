@@ -121,15 +121,16 @@ class Node extends HttpService
      */
     public function createDispatch(): Closure
     {
-        return static function () {
+    	$handler  = $this->handler;
+        return static function () use ($handler) {
             $dispatchParam = Context::getContext('dispatch-param');
             if (empty($dispatchParam)) {
                 $dispatchParam = [\request()];
             }
-            if ($this->handler instanceof Closure) {
-                return call_user_func($this->handler, ...$dispatchParam);
+            if ($handler instanceof Closure) {
+                return call_user_func($handler, ...$dispatchParam);
             }
-            return \aop($this->handler, $dispatchParam);
+            return \aop($handler, $dispatchParam);
         };
     }
 
