@@ -121,12 +121,12 @@ abstract class Pool extends Component
 
 
 	/**
-	 * @param $channel
+	 * @param Channel $channel
 	 * @param $name
 	 * @param $retain_number
 	 * @throws Exception
 	 */
-	protected function pop($channel, $name, $retain_number): void
+	protected function pop(Channel $channel, $name, $retain_number): void
 	{
 		if (Coroutine::getCid() === -1) {
 			return;
@@ -296,11 +296,12 @@ abstract class Pool extends Component
 		if (Coroutine::getCid() === -1) {
 			return;
 		}
+		$channel = static::$_items[$name] ?? new Channel($this->max);
 		if (!isset(static::$_items[$name])) {
-			static::$_items[$name] = new Channel($this->max);
+			static::$_items[$name] = $channel;
 		}
-		if (!static::$_items[$name]->isFull()) {
-			static::$_items[$name]->push($client);
+		if (!$channel->isFull()) {
+			$channel->push($client);
 		}
 		unset($client);
 	}
@@ -320,6 +321,7 @@ abstract class Pool extends Component
 		if ($this->creates > -1) {
 			Timer::clear($this->creates);
 		}
+		$channel->close();
 		static::$_items[$name] = null;
 	}
 
