@@ -173,7 +173,7 @@ abstract class Pool extends Component
 			return $this->createClient($name, $callback);
 		}
 		$channel = static::$_items[$name] ?? new Channel($this->max);
-		if (!isset(static::$_items[$name])) {
+		if (!((static::$_items[$name] ?? null) instanceof Channel)) {
 			static::$_items[$name] = $channel;
 		}
 		if ($channel->isEmpty()) {
@@ -296,11 +296,12 @@ abstract class Pool extends Component
 		if (Coroutine::getCid() === -1) {
 			return;
 		}
+		$channel = static::$_items[$name] ?? new Channel($this->max);
 		if (!isset(static::$_items[$name])) {
-			static::$_items[$name] = new Channel($this->max);
+			static::$_items[$name] = $channel;
 		}
-		if (!static::$_items[$name]->isFull()) {
-			static::$_items[$name]->push($client);
+		if (!$channel->isFull()) {
+			$channel->push($client);
 		}
 		unset($client);
 	}
