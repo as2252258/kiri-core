@@ -173,7 +173,7 @@ abstract class Pool extends Component
 			return $this->createClient($name, $callback);
 		}
 		$channel = static::$_items[$name] ?? new Channel($this->max);
-		if (!isset(static::$_items[$name])) {
+		if (!((static::$_items[$name] ?? null) instanceof Channel)) {
 			static::$_items[$name] = $channel;
 		}
 		if ($channel->isEmpty()) {
