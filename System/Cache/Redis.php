@@ -92,7 +92,7 @@ if (_nx ~= 0) then
 end
 return 0
 SCRIPT;
-		return $this->proxy()->eval($script, [$key, $timeout], 1);
+		return $this->proxy()->eval($script, ['{lock}:' . $key, $timeout], 1);
 	}
 
 
@@ -104,7 +104,7 @@ SCRIPT;
 	public function unlock($key): int
 	{
 		$redis = $this->proxy();
-		return $redis->del($key);
+		return $redis->del('{lock}:' . $key);
 	}
 
 
