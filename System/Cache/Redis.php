@@ -35,10 +35,10 @@ class Redis extends Component
 	 */
 	public function init()
 	{
-		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'destroy']);
-		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'release']);
-		Event::on(Event::SERVER_WORKER_START, [$this, 'createPool']);
-		Event::on(Event::SERVER_TASK_START, [$this, 'createPool']);
+		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, '____destroy']);
+		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, '____release']);
+		Event::on(Event::SERVER_WORKER_START, [$this, '____createPool']);
+		Event::on(Event::SERVER_TASK_START, [$this, '____createPool']);
 	}
 
 
@@ -46,7 +46,7 @@ class Redis extends Component
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function createPool()
+	public function ____createPool()
 	{
 		$connections = Snowflake::app()->getRedisFromPool();
 
@@ -67,8 +67,8 @@ class Redis extends Component
 	 */
 	public function __call($name, $arguments): mixed
 	{
-		if (method_exists($this, $name)) {
-			$data = $this->{$name}(...$arguments);
+		if (method_exists($this, '____' . $name)) {
+			$data = $this->{'____' . $name}(...$arguments);
 		} else {
 			$data = $this->proxy()->{$name}(...$arguments);
 		}
@@ -82,7 +82,7 @@ class Redis extends Component
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function lock($key, $timeout = 5): bool|int
+	public function ____lock($key, $timeout = 5): bool|int
 	{
 		$script = <<<SCRIPT
 local _nx = redis.call('setnx',KEYS[1], ARGV[1])
@@ -101,7 +101,7 @@ SCRIPT;
 	 * @return int
 	 * @throws Exception
 	 */
-	public function unlock($key): int
+	public function ____unlock($key): int
 	{
 		$redis = $this->proxy();
 		return $redis->del('{lock}:' . $key);
@@ -112,7 +112,7 @@ SCRIPT;
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function release()
+	public function ____release()
 	{
 		$connections = Snowflake::app()->getRedisFromPool();
 		$connections->release($this->get_config(), true);
@@ -123,7 +123,7 @@ SCRIPT;
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function destroy()
+	public function ____destroy()
 	{
 		$connections = Snowflake::app()->getRedisFromPool();
 		$connections->destroy($this->get_config(), true);
