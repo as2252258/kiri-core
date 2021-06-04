@@ -137,10 +137,14 @@ SCRIPT;
 	{
 		$connections = Snowflake::app()->getRedisFromPool();
 
-		$client = $connections->get($this->get_config(), true);
+		$config = $this->get_config();
+
+		$client = $connections->get($config, true);
 		if (!($client instanceof \Redis)) {
 			throw new Exception('Redis connections more.');
 		}
+		$client->select($client['databases']);
+		$client->_prefix($client['prefix']);
 		return $client;
 	}
 
@@ -150,15 +154,7 @@ SCRIPT;
 	 */
 	public function get_config(): array
 	{
-		return Config::get('cache.redis', false, [
-			'host'         => '127.0.0.1',
-			'port'         => '6379',
-			'prefix'       => Config::get('id'),
-			'auth'         => '',
-			'databases'    => '0',
-			'read_timeout' => -1,
-			'timeout'      => -1,
-		]);
+		return Config::get('cache.redis', null, true);
 	}
 
 }
