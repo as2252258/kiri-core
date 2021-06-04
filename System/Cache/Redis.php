@@ -143,8 +143,8 @@ SCRIPT;
 		if (!($client instanceof \Redis)) {
 			throw new Exception('Redis connections more.');
 		}
-		$client->select($client['databases']);
-		$client->_prefix($client['prefix']);
+		$client->select($config['databases']);
+		$client->_prefix($config['prefix']);
 		return $client;
 	}
 
