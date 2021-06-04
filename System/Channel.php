@@ -79,7 +79,7 @@ class Channel extends Component
         if ($channel->isEmpty()) {
             return call_user_func($closure);
         }
-        return $channel->dequeue();
+        return clone $channel->dequeue();
     }
 
 
