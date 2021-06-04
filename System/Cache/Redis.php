@@ -70,7 +70,9 @@ class Redis extends Component
 		if (method_exists($this, '____' . $name)) {
 			$data = $this->{'____' . $name}(...$arguments);
 		} else {
-			$data = $this->proxy()->{$name}(...$arguments);
+			$client = $this->proxy();
+			$data = $client->{$name}(...$arguments);
+			var_dump($client->getLastError());
 		}
 		return $data;
 	}
