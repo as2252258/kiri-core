@@ -72,7 +72,9 @@ class Redis extends Component
 		} else {
 			$client = $this->proxy();
 			$data = $client->{$name}(...$arguments);
-			var_dump($client->getLastError());
+			if ($client->getLastError() !== null) {
+				var_dump($client->getLastError());
+			}
 		}
 		return $data;
 	}
