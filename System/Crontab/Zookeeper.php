@@ -123,7 +123,7 @@ local _two = redis.call('zRangeByScore', KEYS[1], '0', ARGV[1])
 
 redis.call('ZREM', KEYS[1], unpack(_two))
 
-return _two
+return {_two}
 SCRIPT;
 		$data = $redis->eval($script, [Producer::CRONTAB_KEY, (string)time()], 1);
 		var_dump($data);
