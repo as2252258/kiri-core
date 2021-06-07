@@ -119,7 +119,7 @@ class Zookeeper extends Process
 	private function loadCarobTask(Redis|\Redis $redis): array
 	{
 		$script = <<<SCRIPT
-local _two = redis.call('ZRANGEBYSCORE', KEYS[1], '0', ARGV[1])
+local _two = redis.call('zRangeByScore', KEYS[1], '0', ARGV[1])
 
 redis.call('ZREM', KEYS[1], unpack(_two))
 
