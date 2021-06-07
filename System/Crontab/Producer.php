@@ -16,7 +16,7 @@ use Snowflake\Snowflake;
 class Producer extends Component
 {
 
-    const CRONTAB_KEY = '_application:system:crontab';
+    const CRONTAB_KEY = '_application:{crontab}:system:crontab';
 
 
     /**
