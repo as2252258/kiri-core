@@ -125,7 +125,9 @@ redis.call('ZREM', KEYS[1], unpack(_two))
 
 return _two
 SCRIPT;
-		return $redis->eval($script, [Producer::CRONTAB_KEY, (string)time()], 1);
+		$data = $redis->eval($script, [Producer::CRONTAB_KEY, (string)time()], 1);
+		var_dump($data);
+		return [];
 	}
 
 }
