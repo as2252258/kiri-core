@@ -127,9 +127,7 @@ end
 
 return _two
 SCRIPT;
-		$data = $redis->eval($script, [Producer::CRONTAB_KEY, (string)time()], 1);
-		var_dump($data);
-		return [];
+		return $redis->eval($script, [Producer::CRONTAB_KEY, (string)time()], 1);
 	}
 
 }
