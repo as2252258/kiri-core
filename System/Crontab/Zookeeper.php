@@ -121,6 +121,9 @@ class Zookeeper extends Process
 		$script = <<<SCRIPT
 local _two = redis.call('zRangeByScore', KEYS[1], '0', ARGV[1])
 
+if (table.getn(_two) > 0) then
+	redis.call('ZREM', KEYS[1], unpack(_two))
+end
 
 return _two
 SCRIPT;
