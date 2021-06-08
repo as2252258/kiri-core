@@ -31,9 +31,6 @@ class CoreMiddleware implements Middleware
 	{
 		$headers = $request->headers;
 
-
-		var_export(get_called_class());
-
 		/** @var Response $response */
 		$response = Snowflake::getApp('response');
 		$response->addHeader('Access-Control-Allow-Origin', '*');
