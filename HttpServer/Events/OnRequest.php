@@ -16,6 +16,7 @@ use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Throwable;
 
 /**
  * Class OnRequest
@@ -59,7 +60,7 @@ class OnRequest extends Callback
 				return $response->close(404);
 			}
 			return $this->router->dispatch();
-		} catch (ExitException | Error | \Throwable $exception) {
+		} catch (ExitException | Error | Throwable $exception) {
 			$this->addError($exception, 'throwable');
 			return $this->sendErrorMessage($request, $response, $exception);
 		}
@@ -81,11 +82,11 @@ class OnRequest extends Callback
 	/**
 	 * @param $sRequest
 	 * @param $sResponse
-	 * @param $exception
+	 * @param Throwable $exception
 	 * @return bool|string
 	 * @throws Exception
 	 */
-	protected function sendErrorMessage($sRequest, $sResponse, $exception): bool|string
+	protected function sendErrorMessage($sRequest, $sResponse, Throwable $exception): bool|string
 	{
 		$this->addError($exception, 'throwable');
 		if ($sResponse instanceof Response) {
@@ -95,14 +96,16 @@ class OnRequest extends Callback
 		$headers = $sRequest->headers->get('access-control-request-headers');
 		$methods = $sRequest->headers->get('access-control-request-method');
 
+		/** @var HResponse $sResponse */
 		$sResponse->addHeader('Access-Control-Allow-Origin', '*');
 		$sResponse->addHeader('Access-Control-Allow-Headers', $headers);
 		$sResponse->addHeader('Access-Control-Request-Method', $methods);
 
+		return $sResponse->send($exception->getMessage(), $exception->getCode());
+
 		if (!($exception instanceof ExitException)) {
 			return $sResponse->send(\logger()->exception($exception), 200);
 		} else {
-			return $sResponse->send($exception->getMessage(), $exception?->getCode() ?? 200);
 		}
 	}
 
