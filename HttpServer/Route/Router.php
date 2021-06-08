@@ -504,26 +504,6 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @return string
-	 * @throws Exception
-	 */
-	private function notFundCore(): string
-	{
-		/** @var Response $response */
-		$response = \response();
-
-		/** @var Request $request */
-		$request = Context::getContext('request');
-
-		$response->addHeader('Access-Control-Allow-Origin', '*');
-		$response->addHeader('Access-Control-Allow-Headers', $request->headers->get('access-control-request-headers'));
-		$response->addHeader('Access-Control-Request-Method', $request->headers->get('access-control-request-method'));
-
-		return '[' . \request()->getMethod() . ':' . \request()->getUri() . ']' . self::NOT_FOUND;
-	}
-
-
-	/**
 	 * @param $exception
 	 * @return mixed
 	 * @throws Exception

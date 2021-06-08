@@ -50,7 +50,7 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): mixed
 	{
 		try {
-            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
 			/** @var HResponse $response */
 			[$request, $response] = OnRequest::createContext($request, $response);
@@ -102,7 +102,7 @@ class OnRequest extends Callback
 		if (!($exception instanceof ExitException)) {
 			return $sResponse->send(\logger()->exception($exception), 200);
 		} else {
-			return $sResponse->send($exception->getMessage(), 200);
+			return $sResponse->send($exception->getMessage(), $exception?->getCode() ?? 200);
 		}
 	}
 
