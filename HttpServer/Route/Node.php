@@ -358,6 +358,7 @@ class Node extends HttpService
         if (empty($annotation)) {
             return $this;
         }
+        var_export($annotation);
         foreach ($annotation as $attribute) {
             if ($attribute instanceof Interceptor) {
                 $this->addInterceptor($attribute->interceptor);
