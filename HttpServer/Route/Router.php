@@ -7,7 +7,9 @@ use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Controller;
+use HttpServer\Http\Context;
 use HttpServer\Http\Request;
+use HttpServer\Http\Response;
 use HttpServer\IInterface\Middleware;
 use HttpServer\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
@@ -490,13 +492,33 @@ class Router extends HttpService implements RouterInterface
 	{
 		$node = $this->find_path(\request());
 		if (!($node instanceof Node)) {
-			return send('[' . \request()->getMethod() . ':' . \request()->getUri() . ']' . self::NOT_FOUND);
+			return send($this->notFundCore());
 		}
 		send(($response = $node->dispatch()), 200);
 		if (!$node->hasAfter()) {
 			return null;
 		}
 		return $node->afterDispatch($response);
+	}
+
+
+	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	private function notFundCore(): string
+	{
+		/** @var Response $response */
+		$response = \response();
+
+		/** @var Request $request */
+		$request = Context::getContext('request');
+
+		$response->addHeader('Access-Control-Allow-Origin', '*');
+		$response->addHeader('Access-Control-Allow-Headers', $request->headers->get('access-control-request-headers'));
+		$response->addHeader('Access-Control-Request-Method', $request->headers->get('access-control-request-method'));
+
+		return '[' . \request()->getMethod() . ':' . \request()->getUri() . ']' . self::NOT_FOUND;
 	}
 
 
