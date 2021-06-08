@@ -492,10 +492,6 @@ class Node extends HttpService
 	public function addMiddleware(Closure|array $class): static
 	{
 		if (empty($class)) return $this;
-
-		if ($this->path == 'xiaqi') {
-			var_dump($this->middleware);
-		}
 		foreach ($class as $closure) {
 			if (in_array($closure, $this->middleware)) {
 				continue;
