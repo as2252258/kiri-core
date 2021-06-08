@@ -16,6 +16,7 @@ use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Swoole\Http\Status;
 use Throwable;
 
 /**
@@ -101,11 +102,10 @@ class OnRequest extends Callback
 		$sResponse->addHeader('Access-Control-Allow-Headers', $headers);
 		$sResponse->addHeader('Access-Control-Request-Method', $methods);
 
-		return $sResponse->send($exception->getMessage(), $exception->getCode());
-
 		if (!($exception instanceof ExitException)) {
 			return $sResponse->send(\logger()->exception($exception), 200);
 		} else {
+			return $sResponse->send($exception->getMessage(), 200);
 		}
 	}
 
