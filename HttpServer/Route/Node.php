@@ -354,11 +354,11 @@ class Node extends HttpService
 	public function annotationInject(string $className, string $action): Node
 	{
 		$annotation = annotation()->getMethods($className, $action);
-		if (empty($annotation)) {
-			return $this;
-		}
 		if ($action == 'xiaqi') {
 			var_export($annotation);
+		}
+		if (empty($annotation)) {
+			return $this;
 		}
 		foreach ($annotation as $attribute) {
 			if ($attribute instanceof Interceptor) {
