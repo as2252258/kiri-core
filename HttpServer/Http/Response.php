@@ -244,11 +244,12 @@ class Response extends HttpService
 		$response->header('Content-Type', $this->getContentType());
 		$response->header('Run-Time', $this->getRuntime());
 
+		var_dump($this->headers);
 		if (empty($this->headers) || !is_array($this->headers)) {
 			return $response;
 		}
 		foreach ($this->headers as $key => $header) {
-			$response->header($key, $header, true);
+			$response->header($key, $header);
 		}
 		$this->headers = [];
 		return $response;
