@@ -158,6 +158,8 @@ class Response extends HttpService
 	{
 		$sendData = $this->parseData($context);
 
+		var_dump($sendData);
+
 		$response = Context::getContext('response');
 		if ($response instanceof SResponse) {
 			$this->sendData($response, $sendData, $statusCode);
