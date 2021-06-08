@@ -496,6 +496,9 @@ class Node extends HttpService
 	{
 		if (empty($class)) return $this;
 		foreach ($class as $closure) {
+			if ($this->path == 'xiaqi') {
+				var_dump(in_array($closure, $this->middleware));
+			}
 			if (in_array($closure, $this->middleware)) {
 				continue;
 			}
