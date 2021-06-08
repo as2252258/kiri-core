@@ -7,6 +7,7 @@ use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Controller;
+use HttpServer\Exception\RequestException;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -492,7 +493,7 @@ class Router extends HttpService implements RouterInterface
 	{
 		$node = $this->find_path(\request());
 		if (!($node instanceof Node)) {
-			return send($this->notFundCore());
+			throw new RequestException(self::NOT_FOUND,404);
 		}
 		send(($response = $node->dispatch()), 200);
 		if (!$node->hasAfter()) {
