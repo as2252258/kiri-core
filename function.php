@@ -380,13 +380,14 @@ if (!function_exists('trimAll')) {
 
 
 	/**
-	 * @param $content
-	 * @param int $len
-	 * @param string $encode
+	 * 空白字符替换
+	 * @param string $content 内容
+	 * @param int $len 截取长度
+	 * @param string $encode 编码
 	 * @param bool $htmlTags
-	 * @return string|string[]|null
+	 * @return array|string|null
 	 */
-	function trimAll($content, $len = 0, $encode = 'utf-8', $htmlTags = true): array|string|null
+	function trimAll(string $content, $len = 0, $encode = 'utf-8', $htmlTags = true): array|string|null
 	{
 		$str = trim($content);
 		if ($htmlTags) {
