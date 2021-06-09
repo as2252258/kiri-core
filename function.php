@@ -376,7 +376,7 @@ if (!function_exists('logger')) {
 }
 
 
-if (!function_exists('trimAll')) {
+if (!function_exists('trim_blank')) {
 
 
 	/**
@@ -387,7 +387,7 @@ if (!function_exists('trimAll')) {
 	 * @param bool $htmlTags
 	 * @return array|string|null
 	 */
-	function trimAll(string $content, $len = 0, $encode = 'utf-8', $htmlTags = true): array|string|null
+	function trim_blank(string $content, $len = 0, $encode = 'utf-8', $htmlTags = true): array|string|null
 	{
 		$str = trim($content);
 		if ($htmlTags) {
