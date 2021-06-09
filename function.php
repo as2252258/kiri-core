@@ -375,6 +375,34 @@ if (!function_exists('logger')) {
 	}
 }
 
+
+if (!function_exists('trimAll')) {
+
+
+	/**
+	 * @param $content
+	 * @param int $len
+	 * @param string $encode
+	 * @param bool $htmlTags
+	 * @return string|string[]|null
+	 */
+	function trimAll($content, $len = 0, $encode = 'utf-8', $htmlTags = true): array|string|null
+	{
+		$str = trim($content);
+		if ($htmlTags) {
+			$str = strip_tags($str);
+		}
+		$str = preg_replace('/[\n|\r|\t]+/', '', $str);
+		$str = preg_replace("/(\s|\&nbsp\;|　|\xc2\xa0)/", '', $str);
+		if ($len > 0) {
+			return mb_substr($str, 0, $len, $encode);
+		} else {
+			return $str;
+		}
+	}
+}
+
+
 if (!function_exists('get_file_extension')) {
 
 	function get_file_extension($filename)
