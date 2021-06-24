@@ -26,9 +26,11 @@ class OnConnect extends Callback
 	public function onHandler(Server $server, int $fd, int $reactorId)
 	{
 		try {
-            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
-
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 			if (($clientInfo = $server->getClientInfo($fd, $reactorId)) === false) {
+				return;
+			}
+			if (isset($clientInfo['websocket_status'])) {
 				return;
 			}
 			fire($this->getName($clientInfo), [$server, $fd, $reactorId]);

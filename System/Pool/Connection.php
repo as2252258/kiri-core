@@ -239,7 +239,7 @@ class Connection extends Pool
 	 * @param bool $isMaster
 	 * @throws Exception
 	 */
-	public function disconnect($coroutineName, $isMaster = false)
+	public function disconnect($coroutineName, bool $isMaster = false)
 	{
 		$coroutineName = $this->name($coroutineName, $isMaster);
 		$this->clean($coroutineName);
