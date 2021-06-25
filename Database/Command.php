@@ -59,7 +59,7 @@ class Command extends Component
 	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	public function save(bool $isInsert = TRUE, bool $hasAutoIncrement = null): int|bool|array|string|null
+	public function save(bool $isInsert = TRUE, ?bool $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		return $this->execute(static::EXECUTE, $isInsert, $hasAutoIncrement);
 	}
@@ -117,7 +117,7 @@ class Command extends Component
 	 * @return int|bool|array|string|null
 	 * @throws Exception
 	 */
-	private function execute($type, $isInsert = null, bool $hasAutoIncrement = null): int|bool|array|string|null
+	private function execute($type, $isInsert = null, ?bool $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		try {
 			$this->debug('Execute: ' . $this->sql);
