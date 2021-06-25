@@ -6,9 +6,7 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Error\Logger;
 use Snowflake\Event;
-use Snowflake\Snowflake;
 use Swoole\Timer;
 
 /**

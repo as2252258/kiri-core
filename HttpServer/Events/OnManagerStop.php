@@ -18,7 +18,7 @@ class OnManagerStop extends Callback
 {
 
 	/**
-	 * @param $server
+	 * @param Server $server
 	 * @throws Exception
 	 */
 	public function onHandler(Server $server)

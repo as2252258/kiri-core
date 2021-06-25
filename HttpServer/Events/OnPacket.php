@@ -8,7 +8,6 @@ use Exception;
 use HttpServer\Abstracts\Callback;
 use Snowflake\Core\Json;
 use Snowflake\Event;
-use Snowflake\Snowflake;
 use Swoole\Server;
 
 /**
@@ -18,45 +17,30 @@ use Swoole\Server;
 class OnPacket extends Callback
 {
 
-
-	public int $port = 0;
-
-
-	public string $host = '';
-
-
 	/**
 	 * @param Server $server
-	 * @param $data
-	 * @param $clientInfo
+	 * @param string $data
+	 * @param array $client
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onHandler(Server $server, string $data, array $clientInfo): mixed
+	public function onHandler(Server $server, string $data, array $client): mixed
 	{
-		[$host, $port] = [$clientInfo['address'], $clientInfo['port']];
 		try {
-            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
-			$request = $this->_request($clientInfo, $server, $data);
+			$client['server_port'] = $client['port'];
+			$name = $this->getName($client, Event::SERVER_RECEIVE);
 
-			$router = Snowflake::app()->getRouter();
-			if (($node = $router->find_path($request)) === null) {
-				return $server->sendto($host, $port, Json::encode(['state' => 404]));
-			}
-
-			$dispatch = $node->dispatch();
-			if (!is_string($dispatch)) $dispatch = Json::encode($dispatch);
-			if (empty($dispatch)) {
-				$dispatch = Json::encode(['state' => 0, 'message' => 'ok']);
-			}
-			return $server->sendto($host, $port, $dispatch);
+			$result = Event::trigger($name, [$server, $data, $client]);
 		} catch (\Throwable $exception) {
-			$this->addError($exception, 'packet');
-
-			$response = Json::encode(['state' => 500, 'message' => $exception->getMessage()]);
-
-			return $server->sendto($host, $port, $response);
+			$result = logger()->exception($exception);
+		} finally {
+			if (is_array($result) || is_object($result)) {
+				$result = Json::encode($result);
+			}
+			$sendData = [$client['address'], $client['port'], $result];
+			return $server->sendto(...$sendData);
 		}
 	}
 

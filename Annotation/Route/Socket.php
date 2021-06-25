@@ -7,10 +7,6 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use Exception;
 use HttpServer\Route\Router;
-use ReflectionException;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -30,21 +26,18 @@ use Snowflake\Snowflake;
 	 * @param string|null $uri
 	 * @param string $version
 	 */
-	public function __construct(
-		public string $event,
-		public ?string $uri = null,
-		public string $version = 'v.1.0'
-	)
+	public function __construct(public string $event, public ?string $uri = null, public string $version = 'v.1.0')
 	{
 	}
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return Router
 	 * @throws Exception
 	 */
-    public function execute(mixed $class, mixed $method = null): Router
+	public function execute(mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();

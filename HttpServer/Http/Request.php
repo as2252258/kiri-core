@@ -415,10 +415,10 @@ class Request extends HttpService
 	{
 		$mainstay = sprintf("%.6f", microtime(true)); // 带毫秒的时间戳
 
-		$timestamp = floor($mainstay);                          // 时间戳
-		$milliseconds = round(($mainstay - $timestamp) * 1000); // 毫秒
+		$timestamp = floatval($mainstay);                          // 时间戳
+		$milliseconds = round(($mainstay - $timestamp) * 1000);    // 毫秒
 
-		$datetime = date("Y-m-d H:i:s", $timestamp) . '.' . $milliseconds;
+		$datetime = date("Y-m-d H:i:s", (int)$timestamp) . '.' . $milliseconds;
 
 		$tmp = [
 			'[Debug ' . $datetime . '] ',
@@ -427,7 +427,6 @@ class Request extends HttpService
 			'`' . $this->headers->getHeader('user-agent') . '`',
 			$this->getRuntime()
 		];
-
 		return implode(' ', $tmp);
 	}
 
@@ -500,10 +499,11 @@ class Request extends HttpService
 	 * @param $fd
 	 * @param $data
 	 * @param int $reID
-	 * @return Request
+	 * @return mixed|null
+	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public static function createListenRequest($fd, $data, $reID = 0): Request
+	public static function rpcRequest($fd, $data, int $reID = 0): Request|null
 	{
 		$sRequest = new Request();
 
@@ -514,28 +514,11 @@ class Request extends HttpService
 		$sRequest->params = new HttpParams($data, [], []);
 
 		$port = $sRequest->clientInfo['server_port'];
-
-		$sRequest->headers->setRequestUri('add-port-listen/port_' . $port);
-		$sRequest->headers->setRequestMethod(self::HTTP_LISTEN);
-
-		$sRequest->checkIsRpcClient()->parseUri();
-
-		return Context::setContext('request', $sRequest);
-	}
-
-
-	/**
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	private function checkIsRpcClient(): static
-	{
-		$port = $this->clientInfo['server_port'];
 		if (($rpc = Config::get('rpc.port', 0)) !== $port) {
-			return $this;
+			return null;
 		}
 
-		[$cmd, $repeat, $body] = explode("\n", $this->params->getBody());
+		[$cmd, $repeat, $body] = explode("\n", $sRequest->params->getBody());
 		if (is_null($body) || is_null($cmd) || !empty($repeat)) {
 			throw new Exception('Protocol format error.');
 		}
@@ -543,10 +526,12 @@ class Request extends HttpService
 		if (is_string($body) && is_null($data = Json::decode($body))) {
 			throw new Exception('Protocol format error.');
 		}
-		$this->headers->setRequestUri('rpc/p' . $rpc . '/' . ltrim($cmd, '/'));
-		$this->headers->setRequestMethod(Request::HTTP_CMD);
 
-		return $this;
+		$sRequest->params->setPosts($data);
+		$sRequest->headers->setRequestUri('rpc/p' . $rpc . '/' . ltrim($cmd, '/'));
+		$sRequest->headers->setRequestMethod(Request::HTTP_CMD);
+
+		return Context::setContext('request', $sRequest);
 	}
 
 
@@ -556,7 +541,7 @@ class Request extends HttpService
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private static function getClientInfo($fd, $re = 0): mixed
+	private static function getClientInfo($fd, int $re = 0): mixed
 	{
 		$server = Snowflake::app()->getSwoole();
 		if (!is_array($fd)) {

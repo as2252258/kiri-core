@@ -7,12 +7,9 @@ namespace HttpServer\Events;
 use Exception;
 use HttpServer\Abstracts\Callback;
 use HttpServer\Http\Request;
-use HttpServer\Route\Router;
-use ReflectionException;
+use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Event;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
 use Swoole\Server;
 
 /**
@@ -22,56 +19,36 @@ use Swoole\Server;
 class OnReceive extends Callback
 {
 
-    public int $port = 0;
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * @param int $reID
+	 * @param string $data
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
+	{
+		try {
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
+			$client = $server->getClientInfo($fd, $reID);
+			$name = $this->getName($client, Event::SERVER_RECEIVE);
 
-    public string $host = '';
-
-
-    private Router $router;
-
-
-    public function init()
-    {
-        $this->router = Snowflake::app()->getRouter();
-    }
-
-
-    /**
-     * @param Server $server
-     * @param int $fd
-     * @param int $reID
-     * @param string $data
-     * @return mixed
-     * @throws Exception
-     */
-    public function onHandler(Server $server, int $fd, int $reID, string $data): mixed
-    {
-        try {
-            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
-
-            $request = $this->_request($fd, $data, $reID);
-            if (($node = $this->router->find_path($request)) === null) {
-                return $server->send($fd, Json::encode(['state' => 404]));
-            }
-            $dispatch = $node->dispatch();
-            if (!is_string($dispatch)) $dispatch = Json::encode($dispatch);
-            if (empty($dispatch)) {
-                $dispatch = Json::encode(['state' => 0, 'message' => 'ok']);
-            }
-            if ($server->exist($fd)) {
-                return $server->send($fd, $dispatch);
-            }
-            return $dispatch;
-        } catch (\Throwable $exception) {
-            $this->addError($exception, 'receive');
-            $error = ['state' => 500, 'message' => $exception->getMessage()];
-            if ($server->exist($fd)) {
-                return $server->send($fd, Json::encode($error));
-            }
-            return Json::encode($error);
-        }
-    }
+			if (Config::get('rpc.port', 0) == $client['server_port']) {
+				$result = router()->find_path(Request::rpcRequest($fd, $data, $reID))?->dispatch();
+			} else {
+				$result = Event::trigger($name, [$server, $data, $client]);
+			}
+			if (is_array($result) || is_object($result)) {
+				$result = Json::encode($result);
+			}
+		} catch (\Throwable $exception) {
+			$result = logger()->exception($exception);
+		} finally {
+			return $server->send($fd, $result);
+		}
+	}
 
 
 }

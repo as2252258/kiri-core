@@ -33,20 +33,10 @@ class OnConnect extends Callback
 			if (isset($clientInfo['websocket_status'])) {
 				return;
 			}
-			fire($this->getName($clientInfo), [$server, $fd, $reactorId]);
+			fire($this->getName($clientInfo, Event::SERVER_CONNECT), [$server, $fd, $reactorId]);
 		} catch (\Throwable $throwable) {
 			$this->addError($throwable, 'connect');
 		}
-	}
-
-
-	/**
-	 * @param array $clientInfo
-	 * @return string
-	 */
-	private function getName(array $clientInfo): string
-	{
-		return 'listen ' . $clientInfo['server_port'] . ' ' . Event::SERVER_CONNECT;
 	}
 
 
