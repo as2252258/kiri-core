@@ -154,7 +154,7 @@ class Response extends HttpService
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function send($context = '', $statusCode = 200): mixed
+	public function send(string $context = '', int $statusCode = 200): mixed
 	{
 		$sendData = $this->parseData($context);
 
@@ -223,7 +223,8 @@ class Response extends HttpService
 	 */
 	private function sendData($response, $sendData, $status): void
 	{
-		if (!Snowflake::getWebSocket()->exist($response->fd)) {
+		$server = Snowflake::app()->getSwoole();
+		if (!$server->exist($response->fd) || $server->isEstablished($response->fd)) {
 			return;
 		}
 		if (is_array($sendData)) {
