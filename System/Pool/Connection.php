@@ -60,7 +60,7 @@ class Connection extends Pool
 			Context::setContext('begin_' . $coroutineName, 0);
 		}
 		Context::increment('begin_' . $coroutineName);
-		if (!Context::getContext('begin_' . $coroutineName) !== 0) {
+		if (Context::getContext('begin_' . $coroutineName) != 0) {
 			return;
 		}
 		$connection = Context::getContext($coroutineName);
@@ -93,16 +93,6 @@ class Connection extends Pool
 
 
 	/**
-	 * @param $name
-	 * @param false $isMaster
-	 * @return array
-	 */
-	private function getIndex($name, $isMaster = false): array
-	{
-		return [Coroutine::getCid(), $this->name('mysql', $name, $isMaster)];
-	}
-
-	/**
 	 * @param $coroutineName
 	 */
 	public function rollback($coroutineName)
@@ -129,7 +119,7 @@ class Connection extends Pool
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function get(mixed $config, $isMaster = false): mixed
+	public function get(mixed $config, bool $isMaster = false): mixed
 	{
 		$coroutineName = $this->name('mysql', $config['cds'], $isMaster);
 		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
