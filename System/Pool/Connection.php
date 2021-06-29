@@ -175,6 +175,7 @@ class Connection extends Pool
 			$client->commit();
 		}
 		$this->push($coroutineName, $client);
+		Context::remove($coroutineName);
 		$this->lastTime = time();
 	}
 
@@ -231,6 +232,7 @@ class Connection extends Pool
 	 */
 	public function disconnect($coroutineName, bool $isMaster = false)
 	{
+		Context::remove($coroutineName);
 		$coroutineName = $this->name($coroutineName, $isMaster);
 		$this->clean($coroutineName);
 	}

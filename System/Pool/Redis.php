@@ -51,7 +51,7 @@ class Redis extends Pool
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function get(mixed $config, $isMaster = false): mixed
+	public function get(mixed $config, bool $isMaster = false): mixed
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
@@ -98,7 +98,7 @@ class Redis extends Pool
 	 * @param array $config
 	 * @param bool $isMaster
 	 */
-	public function release(array $config, $isMaster = false)
+	public function release(array $config, bool $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
@@ -116,7 +116,7 @@ class Redis extends Pool
 	 * @param bool $isMaster
 	 * @throws Exception
 	 */
-	public function destroy(array $config, $isMaster = false)
+	public function destroy(array $config, bool $isMaster = false)
 	{
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
