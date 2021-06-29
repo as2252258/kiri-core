@@ -95,17 +95,17 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
         $this->public = $publicKey;
     }
 
-    /**
-     * @param $timeout
-     */
+	/**
+	 * @param int $timeout
+	 */
     public function setTimeout(int $timeout)
     {
         $this->timeout = $timeout;
     }
 
-    /**
-     * @param $timeout
-     */
+	/**
+	 * @param string $timeout
+	 */
     public function setKey(string $timeout)
     {
         $this->key = $timeout;
@@ -127,7 +127,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
      * @return array
      * @throws Exception
      */
-    public function create(int $unionId, $headers = []): array
+    public function create(int $unionId, array $headers = []): array
     {
         $this->user = $unionId;
         $this->config['time'] = time();
@@ -181,7 +181,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
      * @return array
      * @throws
      */
-    private function assembly(array $param, $update = FALSE): array
+    private function assembly(array $param, bool $update = FALSE): array
     {
         if (isset($param['sign'])) {
             unset($param['sign']);
@@ -204,7 +204,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
      * @return array
      * @throws Exception
      */
-    public function refresh($headers = []): array
+    public function refresh(array $headers = []): array
     {
         $this->data = $headers;
         if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
@@ -222,11 +222,11 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
         return $this->create($this->user, $headers);
     }
 
-    /**
-     * @param $param
-     *
-     * @return array
-     */
+	/**
+	 * @param array $param
+	 *
+	 * @return array
+	 */
     private function initialize(array $param): array
     {
         $_param = [
@@ -292,7 +292,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
      *
      * @return string
      */
-    private function token(int $user, $param = [], $requestTime = NULL): string
+    private function token(int $user, array $param = [], $requestTime = NULL): string
     {
         $str = '';
 
@@ -349,7 +349,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
      * @param array $data
      * @param int $user
      * @return bool
-     * @throws AuthException
+     * @throws AuthException|Exception
      */
     public function check(array $data, int $user): bool
     {

@@ -104,7 +104,7 @@ class BaseObject implements Configure
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function addError($message, $model = 'app'): bool
+	public function addError($message, string $model = 'app'): bool
 	{
 		if ($message instanceof \Throwable) {
 			$Throwable = $message;

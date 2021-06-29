@@ -177,7 +177,7 @@ abstract class Pool extends Component
 			static::$_items[$name] = $channel;
 		}
 		if ($channel->isEmpty()) {
-			$this->createByCallback($channel, $name, $callback);
+			return $this->createClient($name, $callback);
 		}
 		$connection = $channel->pop();
 		if (!$this->checkCanUse($name, $connection)) {
@@ -189,7 +189,7 @@ abstract class Pool extends Component
 
 
 	/**
-	 * @param $channel
+	 * @param Channel $channel
 	 * @param $name
 	 * @param mixed $callback
 	 */
@@ -211,7 +211,7 @@ abstract class Pool extends Component
 	 * @param false $isMaster
 	 * @return string
 	 */
-	#[Pure] public function name($driver, $cds, $isMaster = false): string
+	#[Pure] public function name($driver, $cds, bool $isMaster = false): string
 	{
 		if ($isMaster === true) {
 			return $cds . '_master';
@@ -259,7 +259,7 @@ abstract class Pool extends Component
 
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 * @return bool
 	 */
 	public function hasItem(string $name): bool
@@ -272,7 +272,7 @@ abstract class Pool extends Component
 
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 * @return mixed
 	 */
 	public function size(string $name): mixed
@@ -288,8 +288,8 @@ abstract class Pool extends Component
 
 
 	/**
-	 * @param $name
-	 * @param $client
+	 * @param string $name
+	 * @param mixed $client
 	 */
 	public function push(string $name, mixed $client)
 	{
