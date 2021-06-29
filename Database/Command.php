@@ -121,8 +121,6 @@ class Command extends Component
 	private function execute($type, $isInsert = null, mixed $hasAutoIncrement = null): int|bool|array|string|null
 	{
 		try {
-			$this->debug('Execute: ' . $this->sql);
-
 			$time = microtime(true);
 			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
@@ -130,7 +128,7 @@ class Command extends Component
 				$result = $this->search($type);
 			}
 			if (microtime(true) - $time >= 0.02) {
-				$this->debug('Mysql:' . Json::encode([$this->sql, $this->params]));
+				$this->debug('Mysql:' . Json::encode([$this->sql, $this->params]) . (microtime(true) - $time));
 			}
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
