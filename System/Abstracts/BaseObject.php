@@ -11,7 +11,6 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -218,7 +217,7 @@ class BaseObject implements Configure
 		}
 		$content = (empty($method) ? '' : $method . ': ') . $message;
 
-		$message = "\033[41;37m" . PHP_EOL . "[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $content . PHP_EOL . "\033[0m";
+		$message = "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $content . "\033[0m" . PHP_EOL;
 
 		if (!empty($file)) {
 			$message .= "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . "\033[0m";
