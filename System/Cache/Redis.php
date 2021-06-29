@@ -12,6 +12,7 @@ namespace Snowflake\Cache;
 use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\Json;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -20,7 +21,7 @@ use Snowflake\Snowflake;
  * Class Redis
  * @package Snowflake\Snowflake\Cache
  * @see \Redis
- * 
+ *
  */
 class Redis extends Component
 {
@@ -68,11 +69,17 @@ class Redis extends Component
 	 */
 	public function __call($name, $arguments): mixed
 	{
+		$time = microtime(true);
 		if (method_exists($this, $name)) {
 			$data = $this->{$name}(...$arguments);
 		} else {
 			$data = $this->proxy()->{$name}(...$arguments);
 		}
+
+		if (microtime(true) - $time >= 0.02) {
+			$this->debug('Redis:' . Json::encode([$name, $arguments]));
+		}
+
 		return $data;
 	}
 
@@ -83,7 +90,7 @@ class Redis extends Component
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function lock($key, $timeout = 5): bool|int
+	public function lock($key, int $timeout = 5): bool|int
 	{
 		$script = <<<SCRIPT
 local _nx = redis.call('setnx',KEYS[1], ARGV[1])

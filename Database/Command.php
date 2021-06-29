@@ -14,6 +14,7 @@ use Exception;
 use PDO;
 use PDOStatement;
 use Snowflake\Abstracts\Component;
+use Snowflake\Core\Json;
 
 /**
  * Class Command
@@ -121,10 +122,15 @@ class Command extends Component
 	{
 		try {
 			$this->debug('Execute: ' . $this->sql);
+
+			$time = microtime(true);
 			if ($type === static::EXECUTE) {
 				$result = $this->insert_or_change($isInsert, $hasAutoIncrement);
 			} else {
 				$result = $this->search($type);
+			}
+			if (microtime(true) - $time >= 0.02) {
+				$this->debug('Mysql:' . Json::encode([$this->sql, $this->params]));
 			}
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
