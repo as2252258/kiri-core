@@ -176,15 +176,13 @@ abstract class Pool extends Component
 		if (!((static::$_items[$name] ?? null) instanceof Channel)) {
 			static::$_items[$name] = $channel;
 		}
-		if ($channel->isEmpty()) {
-			return $this->createClient($name, $callback);
+		if (!$channel->isEmpty()) {
+			$connection = $channel->pop();
+			if ($this->checkCanUse($name, $connection)) {
+				return $connection;
+			}
 		}
-		$connection = $channel->pop();
-		if (!$this->checkCanUse($name, $connection)) {
-			return $this->createClient($name, $callback);
-		} else {
-			return $connection;
-		}
+		return $this->createClient($name, $callback);
 	}
 
 
