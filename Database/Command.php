@@ -128,7 +128,7 @@ class Command extends Component
 				$result = $this->search($type);
 			}
 			if (microtime(true) - $time >= 0.02) {
-				$this->debug('Mysql:' . Json::encode([$this->sql, $this->params]) . (microtime(true) - $time));
+				$this->warning('Mysql:' . Json::encode([$this->sql, $this->params]) . (microtime(true) - $time));
 			}
 			if ($this->prepare) {
 				$this->prepare->closeCursor();
