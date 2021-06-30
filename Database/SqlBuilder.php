@@ -74,7 +74,7 @@ class SqlBuilder extends Component
 	 * @return bool|array
 	 * @throws Exception
 	 */
-	public function mathematics(array $attributes, $opera = '+'): bool|array
+	public function mathematics(array $attributes, string $opera = '+'): bool|array
 	{
 		$string = $array = [];
 
@@ -104,7 +104,7 @@ class SqlBuilder extends Component
 	 * @return array
 	 * @throws Exception
 	 */
-	public function insert(array $attributes, $isBatch = false): array
+	public function insert(array $attributes, bool $isBatch = false): array
 	{
 		$update = sprintf('INSERT INTO %s', $this->tableName());
 		if ($isBatch === false) {
@@ -156,16 +156,39 @@ class SqlBuilder extends Component
 	 * @return array[]
 	 * a=:b,
 	 */
-	private function builderParams(array $attributes, bool $isInsert = false, $params = [], $order = 0): array
+	#[Pure] private function builderParams(array $attributes, bool $isInsert = false, array $params = [], int $order = 0): array
 	{
 		$keys = [];
 		foreach ($attributes as $key => $value) {
 			if ($isInsert === true) {
 				$keys[] = ':' . $key . $order;
+				$params[$key . $order] = $value;
 			} else {
-				$keys[] = $key . '=:' . $key . $order;
+				[$keys, $params] = $this->resolveParams($key, $value, $order, $params, $keys);
 			}
+		}
+		return [$keys, $params];
+	}
+
+
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @param int $order
+	 * @param array $params
+	 * @param array $keys
+	 * @return array
+	 */
+	private function resolveParams(string $key, mixed $value, int $order, array $params, array $keys): array
+	{
+		if (
+			str_starts_with($value, '+') ||
+			str_starts_with($value, '-')
+		) {
+			$keys[] = $key . '=' . $key . $value;
+		} else {
 			$params[$key . $order] = $value;
+			$keys[] = $key . '=:' . $key . $order;
 		}
 		return [$keys, $params];
 	}
@@ -226,7 +249,7 @@ class SqlBuilder extends Component
 	 * @return string
 	 * @throws Exception
 	 */
-	private function _prefix($hasOrder = false): string
+	private function _prefix(bool $hasOrder = false): string
 	{
 		$select = '';
 		if (!empty($this->query->from)) {
@@ -286,7 +309,7 @@ class SqlBuilder extends Component
 	 * @return string
 	 * @throws Exception
 	 */
-	public function get($isCount = false): string
+	public function get(bool $isCount = false): string
 	{
 		if ($isCount === false) {
 			return $this->all();
