@@ -102,7 +102,7 @@ class OnTask extends Callback
 	private function runTaskHandler($data): ?array
 	{
 		try {
-            defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+            defer(fn() => fire(Event::SYSTEM_RESOURCE_CLEAN));
 
             $serialize = $this->before($data);
 			if ($serialize === null) {
