@@ -267,15 +267,14 @@ class Connection extends Component
     {
         $substr = strtoupper(substr($sql, 0, 6));
 
-        if (!str_contains('`' . $dbname . '`', $sql)) {
-            $sql = match ($substr) {
-                'SELECT', 'SHOW F', 'DELETE' => preg_replace('/FROM\s+([a-zA-Z\-_]+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql),
-                'UPDATE' => preg_replace('/UPDATE\s+([a-zA-Z\-_]+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql),
-                'INSERT' => preg_replace('/INSERT INTO\s+([a-zA-Z\-_]+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql),
-                'TRUNCA' => preg_replace('/TRUNCATE\s+([a-zA-Z\-_]+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql),
-                default => throw new Exception('database error')
-            };
-        }
+        $sql = str_replace('`' . $dbname . '`', '', $sql);
+        $sql = match ($substr) {
+            'SELECT', 'SHOW F', 'DELETE' => preg_replace('/FROM\s+([a-zA-Z\-_]+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql),
+            'UPDATE' => preg_replace('/UPDATE\s+([a-zA-Z\-_]+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql),
+            'INSERT' => preg_replace('/INSERT INTO\s+([a-zA-Z\-_]+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql),
+            'TRUNCA' => preg_replace('/TRUNCATE\s+([a-zA-Z\-_]+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql),
+            default => throw new Exception('database error')
+        };
         $sql = preg_replace('/INNER JOIN\s+([a-zA-Z\-_]+)\s/', 'INNER JOIN `' . $dbname . '`.$1 ', $sql);
         $command = new Command(['db' => $this, 'sql' => $sql]);
         return $command->bindValues($attributes);
