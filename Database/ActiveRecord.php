@@ -196,7 +196,7 @@ class ActiveRecord extends BaseActiveRecord
         if (is_bool($create)) {
             return false;
         }
-        return static::getDb()->createCommand($create[0], $create[1])->exec();
+        return static::getDb()->createCommand($create[0], static::getDbName(), $create[1])->exec();
     }
 
 

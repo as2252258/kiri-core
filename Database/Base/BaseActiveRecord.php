@@ -433,7 +433,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 //        $trance = $dbConnection->beginTransaction();
         try {
-            if (!($lastId = (int)$dbConnection->createCommand($sql, $param)->save(true, $this))) {
+            if (!($lastId = (int)$dbConnection->createCommand($sql, static::getDbName(), $param)->save(true, $this))) {
                 throw new Exception('保存失败.');
             }
 //            $trance->commit();
@@ -499,7 +499,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
         }
 
 //        $trance = $command->beginTransaction();
-        if (!$command->createCommand(...$generate)->save(false, $this)) {
+        if (!$command->createCommand($generate[0], static::getDbName(), $generate[1])->save(false, $this)) {
 //            $trance->rollback();
             return false;
         }
@@ -769,6 +769,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
         return true;
     }
 
+
+    private static string $ab_name = '';
+
+
     /**
      * @return Connection
      * @throws Exception
@@ -998,7 +1002,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
     public function offsetUnset(mixed $offset)
     {
         if (!isset($this->_attributes[$offset])
-        && !isset($this->_oldAttributes[$offset])) {
+            && !isset($this->_oldAttributes[$offset])) {
             return;
         }
         unset($this->_attributes[$offset]);
@@ -1032,8 +1036,20 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public static function setDatabaseConnect($dbName): Connection
     {
+        static::$ab_name = $dbName;
+
         return Snowflake::app()->db->get($dbName);
     }
+
+
+    /**
+     * @return string
+     */
+    public static function getDbName()
+    {
+        return static::$ab_name;
+    }
+
 
     /**
      * @return Columns
@@ -1043,7 +1059,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
     {
         return static::getDb()->getSchema()
             ->getColumns()
-            ->table(static::getTable());
+            ->table(static::getDbName() . '.' . static::getTable());
     }
 
     /**

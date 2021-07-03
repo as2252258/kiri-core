@@ -62,11 +62,6 @@ class Service extends Component
 
             $object = Snowflake::createObject($config);
         }
-
-        unset($config['class']);
-
-        Snowflake::configure($object, $config);
-
         return $this->_components[$id] = $object;
     }
 
