@@ -266,18 +266,78 @@ class Connection extends Component
     public function createCommand($sql = null, $dbname = '', array $attributes = []): Command
     {
         if (!empty($dbname)) {
-            $substr = strtoupper(substr($sql, 0, 6));
-            $sql = match ($substr) {
-                'SELECT', 'SHOW F', 'DELETE' => preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql),
-                'UPDATE' => preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql),
-                'INSERT' => preg_replace('/INSERT INTO\s+(\w+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql),
-                'TRUNCA' => preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql),
-                default => throw new Exception('database error')
-            };
-            $sql = preg_replace('/INNER JOIN\s+(\w+)\s/', 'INNER JOIN `' . $dbname . '`.$1 ', $sql);
+            $sql = $this->clear($dbname, $sql);
         }
-        $command = new Command(['db' => $this, 'sql' => $sql]);
+        $command = new Command(['db' => $this, 'sql' => $this->innerJoinMatch($dbname, $sql)]);
         return $command->bindValues($attributes);
+    }
+
+
+    private function clear($dbname, $sql)
+    {
+        $substr = strtoupper(substr($sql, 0, 6));
+        return match ($substr) {
+            'SELECT', 'SHOW F', 'DELETE' => $this->selectMatch($dbname, $sql),
+            'UPDATE' => $this->updateMatch($dbname, $sql),
+            'INSERT' => $this->insertMatch($dbname, $sql),
+            'TRUNCA' => $this->truncateMatch($dbname, $sql),
+            default => $sql
+        };
+    }
+
+
+    /**
+     * @param $dbname
+     * @param $sql
+     * @return array|string|string[]|null
+     */
+    private function selectMatch($dbname, $sql)
+    {
+        return preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql);
+    }
+
+
+    /**
+     * @param $dbname
+     * @param $sql
+     * @return array|string|string[]|null
+     */
+    private function innerJoinMatch($dbname, $sql)
+    {
+        return preg_replace('/(INNER|LEFT|RIGHT) JOIN\s+(\w+)\s/', '$1 JOIN `' . $dbname . '`.$2 ', $sql);
+    }
+
+
+    /**
+     * @param $dbname
+     * @param $sql
+     * @return array|string|string[]|null
+     */
+    private function updateMatch($dbname, $sql)
+    {
+        return preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql);
+    }
+
+
+    /**
+     * @param $dbname
+     * @param $sql
+     * @return array|string|string[]|null
+     */
+    private function insertMatch($dbname, $sql)
+    {
+        return preg_replace('/INSERT INTO\s+(\w+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql);
+    }
+
+
+    /**
+     * @param $dbname
+     * @param $sql
+     * @return array|string|string[]|null
+     */
+    private function truncateMatch($dbname, $sql)
+    {
+        return preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql);
     }
 
 
