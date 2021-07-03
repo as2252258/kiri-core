@@ -57,11 +57,7 @@ class Config extends Component
 		if (empty($configs)) {
 			return;
 		}
-		if (!empty($config->data)) {
-			$config->data = ArrayAccess::merge($config->data, $configs);
-		} else {
-			$config->data = $configs;
-		}
+        $config->data = $configs;
 	}
 
 	/**
