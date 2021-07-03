@@ -37,6 +37,8 @@ class Connection extends Component
     public string $charset = 'utf-8';
     public string $tablePrefix = '';
 
+    public string $database = '';
+
     public int $timeout = 1900;
 
     public int $maxNumber = 200;
@@ -172,7 +174,10 @@ class Connection extends Component
     public function masterInstance(): PDO
     {
         return $this->connections()->get([
-            'cds' => $this->cds, 'username' => $this->username, 'password' => $this->password
+            'cds'      => $this->cds,
+            'username' => $this->username,
+            'password' => $this->password,
+            'database' => $this->database
         ], true);
     }
 

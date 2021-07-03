@@ -53,8 +53,7 @@ class Redis extends Pool
 	 */
 	public function get(mixed $config, bool $isMaster = false): mixed
 	{
-		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis', 'redis:' . $config['host'], $isMaster);
 		if (!Context::hasContext($coroutineName)) {
             return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
 		}
@@ -100,8 +99,7 @@ class Redis extends Pool
 	 */
 	public function release(array $config, bool $isMaster = false)
 	{
-		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis', 'redis:' . $config['host'], $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
@@ -118,8 +116,7 @@ class Redis extends Pool
 	 */
 	public function destroy(array $config, bool $isMaster = false)
 	{
-		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
-		$coroutineName = $this->name('redis', 'redis:' . $name, $isMaster);
+		$coroutineName = $this->name('redis', 'redis:' . $config['host'], $isMaster);
 		if (Context::hasContext($coroutineName)) {
 			$this->decrement($coroutineName);
 		}
