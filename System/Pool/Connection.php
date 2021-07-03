@@ -144,6 +144,7 @@ class Connection extends Pool
         if (Coroutine::getCid() === -1) {
             Runtime::enableCoroutine(false);
         }
+        var_dump($config);
         $cds = 'mysql:dbname=' . $config['database'] . ';host=' . $config['cds'];
         var_dump($cds);
         $link = new PDO($cds, $config['username'], $config['password'], [
