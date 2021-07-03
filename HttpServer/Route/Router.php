@@ -37,7 +37,7 @@ class Router extends HttpService implements RouterInterface
     const NOT_FOUND = 'Page not found or method not allowed.';
 
     /** @var string[] */
-    public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive'];
+    public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive', 'head'];
 
 
     public ?Closure $middleware = null;
