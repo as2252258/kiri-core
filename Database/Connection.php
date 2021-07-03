@@ -273,6 +273,9 @@ class Connection extends Component
             'TRUNCA' => preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql),
             default => throw new Exception('database error')
         };
+
+        $sql = preg_replace('/INNER JOIN\s+(\w+)\s/', 'INNER JOIN $1', $sql);
+
         $command = new Command(['db' => $this, 'sql' => $sql]);
         return $command->bindValues($attributes);
     }
