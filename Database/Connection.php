@@ -265,7 +265,7 @@ class Connection extends Component
      */
     public function createCommand($sql = null, array $attributes = []): Command
     {
-        $sql = preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $this->database . '`.$1', $sql);
+        $sql = preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $this->database . '`.$1 ', $sql);
 
         $command = new Command(['db' => $this, 'sql' => $sql]);
         return $command->bindValues($attributes);
