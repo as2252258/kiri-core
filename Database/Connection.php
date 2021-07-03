@@ -274,7 +274,7 @@ class Connection extends Component
             default => throw new Exception('database error')
         };
 
-        $sql = preg_replace('/INNER JOIN\s+(\w+)\s/', 'INNER JOIN $1', $sql);
+        $sql = preg_replace('/INNER JOIN\s+(\w+)\s/', 'INNER JOIN `'.$dbname.'`.$1 ', $sql);
 
         $command = new Command(['db' => $this, 'sql' => $sql]);
         return $command->bindValues($attributes);
