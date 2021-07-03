@@ -265,7 +265,7 @@ class Connection extends Component
      */
     public function createCommand($sql = null, array $attributes = []): Command
     {
-        $substr = strtoupper(substr($sql, 1, 6));
+        $substr = strtoupper(substr($sql, 0, 5));
 
         var_dump($substr);
 
