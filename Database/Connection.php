@@ -267,9 +267,8 @@ class Connection extends Component
     {
         $substr = strtoupper(substr($sql, 0, 6));
         $sql = match ($substr) {
-            'SELECT', 'SHOW F' => preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $this->database . '`.$1 ', $sql),
+            'SELECT', 'SHOW F', 'DELETE' => preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $this->database . '`.$1 ', $sql),
             'UPDATE' => preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $this->database . '`.$1 SET', $sql),
-            'DELETE' => preg_replace('/DELETE FROM\s+(\w+)\s+/', 'DELETE FROM `' . $this->database . '`.$1', $sql),
             'INSERT' => preg_replace('/INSERT INTO\s+(\w+)\s+/', 'INSERT INTO `' . $this->database . '`.$1', $sql),
             'TRUNCA' => preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $this->database . '`.$1', $sql),
             default => throw new Exception('database error')
