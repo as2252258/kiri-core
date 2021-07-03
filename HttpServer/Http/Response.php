@@ -228,7 +228,7 @@ class Response extends HttpService
         if (!$server->exist($response->fd)) {
             return;
         }
-        if ($server instanceof Server && !$server->isEstablished($response->fd)) {
+        if ($server instanceof Server && $server->isEstablished($response->fd)) {
             return;
         }
         if (is_array($sendData)) {
