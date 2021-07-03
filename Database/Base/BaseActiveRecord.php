@@ -26,6 +26,7 @@ use Exception;
 use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Event as SEvent;
 use Snowflake\Exception\NotFindClassException;
@@ -1047,7 +1048,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
      */
     public static function getDbName()
     {
-        return static::$ab_name;
+        return Config::get('databases.connections.' . static::$ab_name . '.database');
     }
 
 
