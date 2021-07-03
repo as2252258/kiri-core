@@ -269,7 +269,7 @@ class Connection extends Component
         $sql = match ($substr) {
             'SELECT', 'SHOW F', 'DELETE' => preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql),
             'UPDATE' => preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql),
-            'INSERT' => preg_replace('/INSERT INTO\s+(\w+)\s+/', 'INSERT INTO `' . $dbname . '`.$1', $sql),
+            'INSERT' => preg_replace('/INSERT INTO\s+(\w+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql),
             'TRUNCA' => preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql),
             default => throw new Exception('database error')
         };
