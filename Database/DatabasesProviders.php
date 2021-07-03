@@ -59,6 +59,7 @@ class DatabasesProviders extends Providers
 			'password'    => $config['password'],
 			'tablePrefix' => $config['tablePrefix'],
 			'maxNumber'   => $config['maxNumber'],
+			'database'    => $config['database'],
 			'charset'     => $config['charset'] ?? 'utf8mb4',
 			'slaveConfig' => $config['slaveConfig']
 		]);
@@ -85,7 +86,8 @@ class DatabasesProviders extends Providers
 				'username'    => $database['username'],
 				'password'    => $database['password'],
 				'tablePrefix' => $database['tablePrefix'],
-				'maxNumber'   => $database['maxNumber'],
+                'database'    => $database['database'],
+                'maxNumber'   => $database['maxNumber'],
 				'charset'     => $database['charset'] ?? 'utf8mb4',
 				'slaveConfig' => $database['slaveConfig']
 			]);
