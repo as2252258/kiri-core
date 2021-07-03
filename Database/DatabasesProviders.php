@@ -76,6 +76,8 @@ class DatabasesProviders extends Providers
 		if (empty($databases)) {
 			return;
 		}
+		var_dump($databases);
+
 		$application = Snowflake::app();
 		foreach ($databases as $name => $database) {
 			/** @var Connection $connection */
