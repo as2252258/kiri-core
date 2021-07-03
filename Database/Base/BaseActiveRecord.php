@@ -1060,7 +1060,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
     {
         return static::getDb()->getSchema()
             ->getColumns()
-            ->table(static::getTable());
+            ->table('`' . static::getDbName() . '`.' . static::getTable());
     }
 
     /**
