@@ -37,6 +37,8 @@ class Connection extends Component
     public string $charset = 'utf-8';
     public string $tablePrefix = '';
 
+    public string $database = '';
+
     public int $timeout = 1900;
 
     public int $maxNumber = 200;
