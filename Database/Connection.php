@@ -270,7 +270,7 @@ class Connection extends Component
         var_dump($substr);
 
         $sql = match ($substr) {
-            'SELECT' => preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $this->database . '`.$1 ', $sql),
+            'SELECT', 'SHOW F' => preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $this->database . '`.$1 ', $sql),
             'UPDATE' => preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $this->database . '`.$1 SET', $sql),
             'DELETE' => preg_replace('/DELETE FROM\s+(\w+)\s+/', 'DELETE FROM `' . $this->database . '`.$1', $sql),
             'INSERT' => preg_replace('/INSERT INTO\s+(\w+)\s+/', 'INSERT INTO `' . $this->database . '`.$1', $sql),
