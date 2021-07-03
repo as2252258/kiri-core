@@ -145,6 +145,7 @@ class Connection extends Pool
             Runtime::enableCoroutine(false);
         }
         $cds = 'mysql:dbname=' . $config['database'] . ';host=' . $config['cds'];
+        var_dump($cds);
         $link = new PDO($cds, $config['username'], $config['password'], [
             PDO::ATTR_EMULATE_PREPARES         => false,
             PDO::ATTR_CASE                     => PDO::CASE_NATURAL,
