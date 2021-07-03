@@ -125,7 +125,9 @@ class Connection extends Pool
         if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
             return $pdo;
         }
+        /** @var PDO $connections */
         $connections = $this->getFromChannel($coroutineName, $config);
+        $connections->query('use `' . $config['database'].'`');
         if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
             $number > 0 && $connections->beginTransaction();
         }

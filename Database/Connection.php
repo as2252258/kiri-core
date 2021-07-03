@@ -41,7 +41,8 @@ class Connection extends Component
 
     public int $timeout = 1900;
 
-    public int $maxNumber = 200;
+    public int $maxNumber = 30;
+    public int $minNumber = 10;
 
     /**
      * @var bool
