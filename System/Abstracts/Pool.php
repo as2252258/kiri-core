@@ -73,7 +73,7 @@ abstract class Pool extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function Heartbeat_detection($ticker, string $name, bool $isMaster)
+	public function Heartbeat_detection($ticker, string $name)
 	{
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
@@ -158,7 +158,7 @@ abstract class Pool extends Component
 			return;
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name, $isMaster);
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
 		}
 		static::$_items[$name] = new Channel($max);
 		$this->max = $max;
@@ -304,7 +304,6 @@ abstract class Pool extends Component
 		}
 		$channel = $this->getChannel($name);
 		if (!$channel->isFull()) {
-			var_dump($name);
 			$channel->push($client);
 		}
 		unset($client);
