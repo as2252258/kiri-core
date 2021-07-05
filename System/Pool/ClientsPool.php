@@ -82,34 +82,36 @@ class ClientsPool extends Component
 			$min = Config::get('databases.pool.min', 1);
 
 			$num = [];
+			$total = 0;
 			foreach (static::$_connections as $key => $channel) {
 				if (!isset($num[$key])) {
 					$num[$key] = 0;
 				}
+				if ($channel->length() > $min) {
+					$this->flush($channel, $min);
+				}
 				$num[$key] += $channel->length();
+				if (str_starts_with('Mysql:', $key)) {
+					$total += $channel->length();
+				}
 			}
-			var_dump($num);
-
-//			$length = $this->getChannel($name)->length();
-//			if ($length > $min) {
-//				$this->flush($min);
-//			}
-//			$this->debug("$name -> ($length:$min)");
+			if ($total < 1) {
+				Timer::clear($this->creates);
+				$this->creates = -1;
+			}
+			$this->debug('use client ' . $total);
 		}
 	}
 
 
 	/**
+	 * @param $channel
 	 * @param $retain_number
 	 * @throws Exception
 	 */
-	public function flush($retain_number)
+	public function flush($channel, $retain_number)
 	{
-		$channels = $this->getChannels();
-		foreach ($channels as $name => $channel) {
-			$names[] = $name;
-			$this->pop($channel, $name, $retain_number);
-		}
+		$this->pop($channel, $retain_number);
 		static::$_connections = [];
 		if ($retain_number == 0) {
 			Timer::clear($this->creates);
@@ -120,11 +122,10 @@ class ClientsPool extends Component
 
 	/**
 	 * @param Channel $channel
-	 * @param $name
 	 * @param $retain_number
 	 * @throws Exception
 	 */
-	protected function pop(Channel $channel, $name, $retain_number): void
+	protected function pop(Channel $channel, $retain_number): void
 	{
 		if (Coroutine::getCid() === -1) {
 			return;
@@ -134,7 +135,6 @@ class ClientsPool extends Component
 			if ($connection) {
 				unset($connection);
 			}
-			$this->decrement($name);
 		}
 	}
 
@@ -292,12 +292,7 @@ class ClientsPool extends Component
 			return;
 		}
 		$channel = static::$_connections[$name];
-		$this->pop($channel, $name, 0);
-		if ($this->creates > -1) {
-			Timer::clear($this->creates);
-		}
-		$channel->close();
-		static::$_connections[$name] = null;
+		$this->pop($channel, 0);
 	}
 
 
