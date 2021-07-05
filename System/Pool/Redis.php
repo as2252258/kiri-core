@@ -94,6 +94,7 @@ class Redis extends Pool
 		}
 
 		$this->push($coroutineName, Context::getContext($coroutineName));
+		Context::remove($coroutineName);
 	}
 
 	/**
