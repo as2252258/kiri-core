@@ -174,6 +174,9 @@ abstract class Pool extends Component
 	{
 		if (!isset(static::$_items[$name])) {
 			static::$_items[$name] = new Channel(Config::get('databases.pool.max', 10));
+			if ($this->creates === -1) {
+				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
+			}
 		}
 		return static::$_items[$name];
 	}
@@ -247,19 +250,6 @@ abstract class Pool extends Component
 	public function get(mixed $config, bool $isMaster): mixed
 	{
 		throw new Exception('Undefined system processing function.');
-	}
-
-
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
-	public function canCreate(string $name): bool
-	{
-		if (!isset(static::$hasCreate[$name])) {
-			static::$hasCreate[$name] = 0;
-		}
-		return static::$hasCreate[$name] < $this->max;
 	}
 
 

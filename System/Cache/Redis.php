@@ -55,9 +55,9 @@ class Redis extends Component
 		$config = $this->get_config();
 		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 
-		$length = env('REDIS.POOL_LENGTH', 100);
+		$length = (int)env('REDIS.POOL_LENGTH', 100);
 
-		$connections->initConnections('redis', 'redis:' . $name, true, $length);
+		$connections->initConnections('redis', $name, true, $length);
 	}
 
 

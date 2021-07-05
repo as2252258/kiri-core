@@ -9,6 +9,7 @@ use Exception;
 use HttpServer\Http\Context;
 use Redis as SRedis;
 use Snowflake\Abstracts\Pool;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\RedisConnectException;
 use Swoole\Coroutine;
 use Swoole\Runtime;
@@ -33,19 +34,6 @@ class Redis extends Pool
 
 
 	/**
-	 * @param string $name
-	 * @return bool
-	 */
-	public function canCreate(string $name): bool
-	{
-		if (!isset(static::$hasCreate[$name])) {
-			static::$hasCreate[$name] = 0;
-		}
-		return static::$hasCreate[$name] >= $this->max;
-	}
-
-
-	/**
 	 * @param mixed $config
 	 * @param bool $isMaster
 	 * @return mixed
@@ -53,9 +41,9 @@ class Redis extends Pool
 	 */
 	public function get(mixed $config, bool $isMaster = false): mixed
 	{
-		$coroutineName = $this->name('redis', 'redis:' . $config['host'], $isMaster);
+		$coroutineName = $this->name('redis', $config['host'], $isMaster);
 		if (!Context::hasContext($coroutineName)) {
-            return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
+			return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
 		}
 		return Context::getContext($coroutineName);
 	}
@@ -96,17 +84,16 @@ class Redis extends Pool
 	/**
 	 * @param array $config
 	 * @param bool $isMaster
+	 * @throws ConfigException
 	 */
 	public function release(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('redis', 'redis:' . $config['host'], $isMaster);
+		$coroutineName = $this->name('redis', $config['host'], $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
 
 		$this->push($coroutineName, Context::getContext($coroutineName));
-        Context::remove($coroutineName);
-		$this->lastTime = time();
 	}
 
 	/**
@@ -116,12 +103,12 @@ class Redis extends Pool
 	 */
 	public function destroy(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('redis', 'redis:' . $config['host'], $isMaster);
+		$coroutineName = $this->name('redis', $config['host'], $isMaster);
 		if (Context::hasContext($coroutineName)) {
 			$this->decrement($coroutineName);
 		}
-        Context::remove($coroutineName);
-        $this->flush(0);
+		Context::remove($coroutineName);
+		$this->flush(0);
 	}
 
 	/**
@@ -148,7 +135,6 @@ class Redis extends Pool
 			return $result;
 		}
 	}
-
 
 
 }
