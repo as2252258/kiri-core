@@ -82,11 +82,13 @@ class ClientsPool extends Component
 		} else {
 			$min = Config::get('databases.pool.min', 1);
 
-			$length = $this->getChannel($name)->length();
-			if ($length > $min) {
-				$this->flush($min);
-			}
-			$this->debug("$name -> ($length:$min)");
+			var_dump(array_keys(static::$_connections));
+
+//			$length = $this->getChannel($name)->length();
+//			if ($length > $min) {
+//				$this->flush($min);
+//			}
+//			$this->debug("$name -> ($length:$min)");
 		}
 	}
 
