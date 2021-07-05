@@ -80,29 +80,38 @@ class ClientsPool extends Component
 			Timer::clear($this->creates);
 			$this->creates = -1;
 		} else {
-			$min = Config::get('databases.pool.min', 1);
+			$this->heartbeat_flush();
+		}
+	}
 
-			$num = [];
-			$total = 0;
-			foreach (static::$_connections as $key => $channel) {
-				if (!isset($num[$key])) {
-					$num[$key] = 0;
-				}
-				if ($channel->length() > $min) {
-					$this->flush($channel, $min);
-				}
-				$length = $channel->length();
 
-				$num[$key] += $length;
-				if (str_starts_with($key, 'Mysql') && (Snowflake::isWorker() || Snowflake::isTask()) && $length > 0) {
-					$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $length);
-				}
-				$total += $length;
+	/**
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	private function heartbeat_flush()
+	{
+		$min = Config::get('databases.pool.min', 1);
+
+		$num = [];
+		$total = 0;
+		foreach (static::$_connections as $key => $channel) {
+			if (!isset($num[$key])) {
+				$num[$key] = 0;
 			}
-			if ($total < 1) {
-				Timer::clear($this->creates);
-				$this->creates = -1;
+			$length = $channel->length();
+			if ($length > $min) {
+				$this->flush($channel, $min);
 			}
+			$num[$key] += $length;
+			if (str_starts_with($key, 'Mysql') && (Snowflake::isWorker() || Snowflake::isTask()) && $length > 0) {
+				$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $length);
+			}
+			$total += $length;
+		}
+		if ($total < 1) {
+			Timer::clear($this->creates);
+			$this->creates = -1;
 		}
 	}
 
