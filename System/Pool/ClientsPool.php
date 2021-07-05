@@ -81,7 +81,14 @@ class ClientsPool extends Component
 		} else {
 			$min = Config::get('databases.pool.min', 1);
 
-			var_dump(array_keys(static::$_connections));
+			$num = [];
+			foreach (static::$_connections as $key => $channel) {
+				if (!isset($num[$key])) {
+					$num[$key] = 0;
+				}
+				$num[$key] += $channel->length();
+			}
+			var_dump($num);
 
 //			$length = $this->getChannel($name)->length();
 //			if ($length > $min) {
