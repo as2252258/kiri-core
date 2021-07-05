@@ -9,6 +9,7 @@ use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
@@ -91,8 +92,7 @@ class ClientsPool extends Component
 					$this->flush($channel, $min);
 				}
 				$num[$key] += $channel->length();
-
-				if (str_starts_with($key, 'Mysql')) {
+				if (str_starts_with($key, 'Mysql') && (Snowflake::isWorker() || Snowflake::isTask())) {
 					$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $total);
 				}
 				$total += $channel->length();
