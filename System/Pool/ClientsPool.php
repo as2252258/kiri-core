@@ -92,7 +92,9 @@ class ClientsPool extends Component
 				}
 				$num[$key] += $channel->length();
 
-				$this->debug('use client -> ' . $key . ':' . $total);
+				if (str_starts_with('Mysql', $key)) {
+					$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $total);
+				}
 
 				$total += $channel->length();
 			}
