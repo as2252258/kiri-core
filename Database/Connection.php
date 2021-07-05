@@ -109,9 +109,9 @@ class Connection extends Component
 		$connections = $this->connections();
 		$pool = Config::get('databases.pool.max', 10);
 
-		$connections->initConnections($this->cds, true, $pool);
+		$connections->initConnections('Mysql:' . $this->cds, true, $pool);
 		if (!empty($this->slaveConfig) && $this->cds != $this->slaveConfig['cds']) {
-			$connections->initConnections($this->slaveConfig['cds'], false, $pool);
+			$connections->initConnections('Mysql:' . $this->slaveConfig['cds'], false, $pool);
 		}
 	}
 
