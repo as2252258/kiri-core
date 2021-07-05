@@ -81,9 +81,9 @@ abstract class Pool extends Component
 		} else {
 			$min = Config::get('databases.pool.min', 1);
 			if (($length = $this->getChannel($name)->length()) > $min) {
+				$this->debug("$length -> min length $min");
 				$this->flush($min);
 			}
-			$this->debug("$length -> min length $min");
 		}
 	}
 
