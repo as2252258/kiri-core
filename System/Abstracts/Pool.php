@@ -80,10 +80,10 @@ abstract class Pool extends Component
 			$this->creates = -1;
 		} else {
 			$min = Config::get('databases.pool.min', 1);
-			$channel = $this->getChannel($name);
-			if ($channel->length() > $min) {
+			if (($length = $this->getChannel($name)->length()) > $min) {
 				$this->flush($min);
 			}
+			$this->debug("$length -> min length $min");
 		}
 	}
 
@@ -155,6 +155,9 @@ abstract class Pool extends Component
 		if (Coroutine::getCid() === -1) {
 			return;
 		}
+		if ($this->creates === -1) {
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
+		}
 		static::$_items[$name] = new Channel($max);
 		$this->max = $max;
 	}
@@ -194,27 +197,15 @@ abstract class Pool extends Component
 				return $connection;
 			}
 		}
-		if ($this->creates === -1 && !is_callable($callback)) {
-			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
-		}
 		return $this->createClient($name, $callback);
 	}
 
 
 	/**
-	 * @param Channel $channel
-	 * @param $name
-	 * @param mixed $callback
+	 * @param string $name
+	 * @param mixed $config
+	 * @return mixed
 	 */
-	private function createByCallback(Channel $channel, $name, mixed $callback): void
-	{
-		if ($this->creates === -1 && !is_callable($callback)) {
-			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection']);
-		}
-		$channel->push($this->createClient($name, $callback));
-	}
-
-
 	abstract public function createClient(string $name, mixed $config): mixed;
 
 
