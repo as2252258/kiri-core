@@ -109,8 +109,12 @@ class ClientsPool extends Component
 			}
 			$total += $length;
 		}
+		write(var_export($num,true),'connections');
 		if ($total < 1) {
 			Timer::clear($this->creates);
+			if (Snowflake::isWorker() || Snowflake::isTask()){
+				$this->debug('Worker #' . env('worker') . ' clear time tick.');
+			}
 			$this->creates = -1;
 		}
 	}
@@ -125,10 +129,6 @@ class ClientsPool extends Component
 	{
 		$this->pop($channel, $retain_number);
 		static::$_connections = [];
-		if ($retain_number == 0) {
-			Timer::clear($this->creates);
-			$this->creates = -1;
-		}
 	}
 
 
