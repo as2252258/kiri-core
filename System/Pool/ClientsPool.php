@@ -166,7 +166,7 @@ class ClientsPool extends Component
 			return;
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(3000, [$this, 'Heartbeat_detection']);
+			$this->creates = Timer::tick(60000, [$this, 'Heartbeat_detection']);
 		}
 		static::$_connections[$name] = new Channel($max);
 		$this->max = $max;
@@ -184,7 +184,7 @@ class ClientsPool extends Component
 			static::$_connections[$name] = new Channel(Config::get('databases.pool.max', 10));
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(3000, [$this, 'Heartbeat_detection']);
+			$this->creates = Timer::tick(60000, [$this, 'Heartbeat_detection']);
 		}
 		return static::$_connections[$name];
 	}
