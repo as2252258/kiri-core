@@ -80,9 +80,12 @@ class ClientsPool extends Component
 			$this->creates = -1;
 		} else {
 			$min = Config::get('databases.pool.min', 1);
-			if ($this->getChannel($name)->length() > $min) {
+
+			$length = $this->getChannel($name)->length();
+			if ($length > $min) {
 				$this->flush($min);
 			}
+			$this->debug("$name -> ($length:$min)");
 		}
 	}
 
@@ -142,7 +145,7 @@ class ClientsPool extends Component
 			return;
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
+			$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection'], $name);
 		}
 		static::$_connections[$name] = new Channel($max);
 		$this->max = $max;
