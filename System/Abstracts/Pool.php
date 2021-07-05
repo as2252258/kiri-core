@@ -299,9 +299,11 @@ abstract class Pool extends Component
 	 */
 	public function push(string $name, mixed $client)
 	{
+		var_dump($name);
 		if (Coroutine::getCid() === -1) {
 			return;
 		}
+		var_dump($name, $client);
 		$channel = $this->getChannel($name);
 		if (!$channel->isFull()) {
 			$channel->push($client);
