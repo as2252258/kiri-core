@@ -73,9 +73,8 @@ class ClientsPool extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function Heartbeat_detection($ticker, string $name)
+	public function Heartbeat_detection($ticker)
 	{
-		var_dump($name);
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
 			$this->creates = -1;
@@ -148,7 +147,7 @@ class ClientsPool extends Component
 			return;
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection'], $name);
+			$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection']);
 		}
 		static::$_connections[$name] = new Channel($max);
 		$this->max = $max;
@@ -165,7 +164,7 @@ class ClientsPool extends Component
 		if (!isset(static::$_connections[$name])) {
 			static::$_connections[$name] = new Channel(Config::get('databases.pool.max', 10));
 			if ($this->creates === -1) {
-				$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection'], $name);
+				$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection']);
 			}
 		}
 		return static::$_connections[$name];
