@@ -194,6 +194,9 @@ class Connection extends Component
 		if (empty($this->slaveConfig) || Db::transactionsActive()) {
 			return $this->masterInstance();
 		}
+		if ($this->slaveConfig['cds'] == $this->cds) {
+			return $this->masterInstance();
+		}
 		return $this->connections()->get($this->slaveConfig, false);
 	}
 
@@ -298,9 +301,9 @@ class Connection extends Component
 	/**
 	 * @param $dbname
 	 * @param $sql
-	 * @return array|string|string[]|null
+	 * @return array|string|null
 	 */
-	private function selectMatch($dbname, $sql)
+	private function selectMatch($dbname, $sql): array|string|null
 	{
 		return preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql);
 	}

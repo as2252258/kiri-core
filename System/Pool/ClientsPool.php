@@ -92,7 +92,8 @@ class ClientsPool extends Component
 					$this->flush($channel, $min);
 				}
 				$num[$key] += $channel->length();
-				if (str_starts_with($key, 'Mysql') && (Snowflake::isWorker() || Snowflake::isTask())) {
+				if (str_starts_with($key, 'Mysql') && (Snowflake::isWorker() || Snowflake::isTask())
+					&& $channel->length() > 0) {
 					$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $total);
 				}
 				$total += $channel->length();
