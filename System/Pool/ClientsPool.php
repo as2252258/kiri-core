@@ -91,15 +91,15 @@ class ClientsPool extends Component
 					$this->flush($channel, $min);
 				}
 				$num[$key] += $channel->length();
-				if (str_starts_with('Mysql:', $key)) {
-					$total += $channel->length();
-				}
+
+				$this->debug('use client -> ' . $key . ':' . $total);
+
+				$total += $channel->length();
 			}
 			if ($total < 1) {
 				Timer::clear($this->creates);
 				$this->creates = -1;
 			}
-			$this->debug('use client ' . $total);
 		}
 	}
 
