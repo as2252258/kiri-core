@@ -53,11 +53,10 @@ class Redis extends Component
 		$connections = Snowflake::app()->getRedisFromPool();
 
 		$config = $this->get_config();
-		$name = $config['host'] . ':' . $config['prefix'] . ':' . $config['databases'];
 
 		$length = (int)env('REDIS.POOL_LENGTH', 100);
 
-		$connections->initConnections('redis', $name, true, $length);
+		$connections->initConnections('Redis:' . $config['host'], true, $length);
 	}
 
 

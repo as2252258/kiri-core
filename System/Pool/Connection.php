@@ -113,15 +113,31 @@ class Connection extends Component
 		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
 			return $pdo;
 		}
-		/** @var PDO $connections */
-		$connections = $this->getPool()->getFromChannel($coroutineName);
-		if (empty($connections)) {
+		if (Coroutine::getCid() === -1) {
 			$connections = $this->createClient($coroutineName, $config);
+		} else {
+			/** @var PDO $connections */
+			$connections = $this->getPool()->getFromChannel($coroutineName);
+			if (empty($connections)) {
+				$connections = $this->createClient($coroutineName, $config);
+			}
 		}
 		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
 			$number > 0 && $connections->beginTransaction();
 		}
 		return Context::setContext($coroutineName, $connections);
+	}
+
+
+	/**
+	 * @param $name
+	 * @param $isMaster
+	 * @param $max
+	 * @throws Exception
+	 */
+	public function initConnections($name, $isMaster, $max)
+	{
+		$this->getPool()->initConnections($name, $isMaster, $max);
 	}
 
 

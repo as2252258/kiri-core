@@ -126,4 +126,16 @@ class Redis extends Component
 	}
 
 
+	/**
+	 * @param $name
+	 * @param $isMaster
+	 * @param $max
+	 * @throws Exception
+	 */
+	public function initConnections($name, $isMaster, $max)
+	{
+		$this->getPool()->initConnections($name, $isMaster, $max);
+	}
+
+
 }

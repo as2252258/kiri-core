@@ -107,18 +107,6 @@ class ClientsPool extends Component
 
 
 	/**
-	 * @param $name
-	 */
-	protected function clearCreateLog($name): void
-	{
-		if (!isset(static::$hasCreate[$name])) {
-			return;
-		}
-		static::$hasCreate[$name] = 0;
-	}
-
-
-	/**
 	 * @param Channel $channel
 	 * @param $name
 	 * @param $retain_number
@@ -140,12 +128,11 @@ class ClientsPool extends Component
 
 
 	/**
-	 * @param $driver
 	 * @param $name
 	 * @param false $isMaster
 	 * @param int $max
 	 */
-	public function initConnections($driver, $name, bool $isMaster = false, int $max = 60)
+	public function initConnections($name, bool $isMaster = false, int $max = 60)
 	{
 		$name = $this->name($name, $isMaster);
 		if (isset(static::$_connections[$name]) && static::$_connections[$name] instanceof Channel) {
