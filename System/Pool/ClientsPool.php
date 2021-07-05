@@ -182,9 +182,9 @@ class ClientsPool extends Component
 	{
 		if (!isset(static::$_connections[$name])) {
 			static::$_connections[$name] = new Channel(Config::get('databases.pool.max', 10));
-			if ($this->creates === -1) {
-				$this->creates = Timer::tick(3000, [$this, 'Heartbeat_detection']);
-			}
+		}
+		if ($this->creates === -1) {
+			$this->creates = Timer::tick(3000, [$this, 'Heartbeat_detection']);
 		}
 		return static::$_connections[$name];
 	}
