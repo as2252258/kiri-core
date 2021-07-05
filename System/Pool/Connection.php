@@ -156,7 +156,7 @@ class Connection extends Component
 		$link = new PDO($cds, $config['username'], $config['password'], [
 			PDO::ATTR_EMULATE_PREPARES         => false,
 			PDO::ATTR_CASE                     => PDO::CASE_NATURAL,
-			PDO::ATTR_TIMEOUT                  => $this->timeout,
+			PDO::ATTR_TIMEOUT                  => 60,
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::MYSQL_ATTR_INIT_COMMAND       => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
 		]);
