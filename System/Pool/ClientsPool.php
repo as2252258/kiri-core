@@ -75,6 +75,7 @@ class ClientsPool extends Component
 	 */
 	public function Heartbeat_detection($ticker, string $name)
 	{
+		var_dump($name);
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
 			$this->creates = -1;
@@ -162,7 +163,7 @@ class ClientsPool extends Component
 		if (!isset(static::$_connections[$name])) {
 			static::$_connections[$name] = new Channel(Config::get('databases.pool.max', 10));
 			if ($this->creates === -1) {
-				$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
+				$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection'], $name);
 			}
 		}
 		return static::$_connections[$name];
