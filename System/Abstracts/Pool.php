@@ -75,7 +75,6 @@ abstract class Pool extends Component
 	 */
 	public function Heartbeat_detection($ticker, string $name, bool $isMaster)
 	{
-		$name = $this->name('', $name, $isMaster);
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
 			$this->creates = -1;
