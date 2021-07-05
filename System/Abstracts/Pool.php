@@ -83,6 +83,8 @@ abstract class Pool extends Component
 			if (($length = $this->getChannel($name)->length()) > $min) {
 				$this->debug("$length -> min length $min");
 				$this->flush($min);
+			} else {
+				$this->debug("$length -> min length $min");
 			}
 		}
 	}
@@ -170,11 +172,10 @@ abstract class Pool extends Component
 	 */
 	private function getChannel($name): Channel
 	{
-		$channel = static::$_items[$name] ?? new Channel(Config::get('databases.pool.max', 10));
-		if (!((static::$_items[$name] ?? null) instanceof Channel)) {
-			static::$_items[$name] = $channel;
+		if (!isset(static::$_items[$name])) {
+			static::$_items[$name] = new Channel(Config::get('databases.pool.max', 10));
 		}
-		return $channel;
+		return static::$_items[$name];
 	}
 
 
@@ -294,16 +295,14 @@ abstract class Pool extends Component
 	/**
 	 * @param string $name
 	 * @param mixed $client
+	 * @throws ConfigException
 	 */
 	public function push(string $name, mixed $client)
 	{
 		if (Coroutine::getCid() === -1) {
 			return;
 		}
-		$channel = static::$_items[$name] ?? new Channel($this->max);
-		if (!isset(static::$_items[$name])) {
-			static::$_items[$name] = $channel;
-		}
+		$channel = $this->getChannel($name);
 		if (!$channel->isFull()) {
 			$channel->push($client);
 		}
