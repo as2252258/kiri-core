@@ -92,8 +92,7 @@ class ClientsPool extends Component
 				}
 				$num[$key] += $channel->length();
 
-				var_dump($key);
-				if (str_starts_with('Mysql', $key)) {
+				if (str_starts_with($key, 'Mysql')) {
 					$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $total);
 				}
 				$total += $channel->length();
@@ -156,7 +155,7 @@ class ClientsPool extends Component
 			return;
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection']);
+			$this->creates = Timer::tick(3000, [$this, 'Heartbeat_detection']);
 		}
 		static::$_connections[$name] = new Channel($max);
 		$this->max = $max;
@@ -173,7 +172,7 @@ class ClientsPool extends Component
 		if (!isset(static::$_connections[$name])) {
 			static::$_connections[$name] = new Channel(Config::get('databases.pool.max', 10));
 			if ($this->creates === -1) {
-				$this->creates = Timer::tick(30000, [$this, 'Heartbeat_detection']);
+				$this->creates = Timer::tick(3000, [$this, 'Heartbeat_detection']);
 			}
 		}
 		return static::$_connections[$name];
