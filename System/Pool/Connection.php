@@ -202,9 +202,9 @@ class Connection extends Component
 	 * batch release
 	 * @throws Exception
 	 */
-	public function connection_clear()
+	public function connection_clear($name, $isMaster)
 	{
-		$this->getPool()->flush(0);
+		$this->getPool()->clean($this->getPool()->name($name, $isMaster));
 	}
 
 

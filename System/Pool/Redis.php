@@ -108,8 +108,8 @@ class Redis extends Component
 		if (Context::hasContext($coroutineName)) {
 			$this->getPool()->decrement($coroutineName);
 		}
+		$this->getPool()->clean($coroutineName);
 		Context::remove($coroutineName);
-		$this->getPool()->flush(0);
 	}
 
 
