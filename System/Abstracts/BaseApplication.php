@@ -38,6 +38,7 @@ use Snowflake\Event;
 use Snowflake\Exception\InitException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Jwt\Jwt;
+use Snowflake\Pool\ClientsPool;
 use Snowflake\Pool\Connection;
 use Snowflake\Pool\Pool as SPool;
 use Snowflake\Pool\Redis as SRedis;
@@ -435,6 +436,16 @@ abstract class BaseApplication extends Service
 
 
 	/**
+	 * @return ClientsPool
+	 * @throws Exception
+	 */
+	public function getClientsPool(): ClientsPool
+	{
+		return $this->get('clientsPool');
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	protected function moreComponents(): void
@@ -444,6 +455,7 @@ abstract class BaseApplication extends Service
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
 			'pool'              => ['class' => SPool::class],
+			'clientsPool'       => ['class' => ClientsPool::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
 			'annotation'        => ['class' => SAnnotation::class],

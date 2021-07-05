@@ -8,9 +8,10 @@ namespace Snowflake\Pool;
 use Exception;
 use HttpServer\Http\Context;
 use Redis as SRedis;
-use Snowflake\Abstracts\Pool;
+use Snowflake\Abstracts\Component;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\RedisConnectException;
+use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Swoole\Runtime;
 
@@ -18,19 +19,10 @@ use Swoole\Runtime;
  * Class RedisClient
  * @package Snowflake\Snowflake\Pool
  */
-class Redis extends Pool
+class Redis extends Component
 {
 
-
-	public int $_create = 0;
-
-	/**
-	 * @param $value
-	 */
-	public function setLength($value)
-	{
-		$this->max = $value;
-	}
+	private ?ClientsPool $clientsPool = null;
 
 
 	/**
@@ -41,11 +33,18 @@ class Redis extends Pool
 	 */
 	public function get(mixed $config, bool $isMaster = false): mixed
 	{
-		$coroutineName = $this->name('redis', $config['host'], $isMaster);
-		if (!Context::hasContext($coroutineName)) {
-			return Context::setContext($coroutineName, $this->getFromChannel($coroutineName, $config));
+		$coroutineName = $this->getPool()->name('Redis:' . $config['host'], $isMaster);
+		if (Context::hasContext($coroutineName)) {
+			return Context::getContext($coroutineName);
 		}
-		return Context::getContext($coroutineName);
+		if (Coroutine::getCid() === -1) {
+			return Context::setContext($coroutineName, $this->createClient($coroutineName, $config));
+		}
+		$clients = $this->getPool()->getFromChannel($coroutineName);
+		if (empty($clients)) {
+			return Context::setContext($coroutineName, $this->createClient($coroutineName, $config));
+		}
+		return Context::setContext($coroutineName, $clients);
 	}
 
 
@@ -75,7 +74,7 @@ class Redis extends Pool
 		$redis->setOption(SRedis::OPT_READ_TIMEOUT, $config['read_timeout']);
 		$redis->setOption(SRedis::OPT_PREFIX, $config['prefix']);
 
-		$this->increment($name);
+		$this->getPool()->increment($name);
 
 		return $redis;
 	}
@@ -85,15 +84,16 @@ class Redis extends Pool
 	 * @param array $config
 	 * @param bool $isMaster
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function release(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('redis', $config['host'], $isMaster);
+		$coroutineName = $this->getPool()->name('Redis:' . $config['host'], $isMaster);
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
 
-		$this->push($coroutineName, Context::getContext($coroutineName));
+		$this->getPool()->push($coroutineName, Context::getContext($coroutineName));
 		Context::remove($coroutineName);
 	}
 
@@ -104,37 +104,25 @@ class Redis extends Pool
 	 */
 	public function destroy(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('redis', $config['host'], $isMaster);
+		$coroutineName = $this->getPool()->name('Redis:' . $config['host'], $isMaster);
 		if (Context::hasContext($coroutineName)) {
-			$this->decrement($coroutineName);
+			$this->getPool()->decrement($coroutineName);
 		}
 		Context::remove($coroutineName);
-		$this->flush(0);
+		$this->getPool()->flush(0);
 	}
 
+
 	/**
-	 * @param string $name
-	 * @param mixed $client
-	 * @return bool
+	 * @return ClientsPool
 	 * @throws Exception
 	 */
-	public function checkCanUse(string $name, mixed $client): bool
+	public function getPool(): ClientsPool
 	{
-		try {
-			if (!($client instanceof SRedis)) {
-				$result = false;
-			} else {
-				$result = true;
-			}
-		} catch (\Throwable $exception) {
-			$this->addError($exception, 'redis');
-			$result = false;
-		} finally {
-			if (!$result) {
-				$this->decrement($name);
-			}
-			return $result;
+		if (!$this->clientsPool) {
+			$this->clientsPool = Snowflake::app()->getClientsPool();
 		}
+		return $this->clientsPool;
 	}
 
 
