@@ -92,6 +92,7 @@ class ClientsPool extends Component
 				}
 				$num[$key] += $channel->length();
 
+				var_dump($key);
 				if (str_starts_with('Mysql', $key)) {
 					$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $total);
 				}
