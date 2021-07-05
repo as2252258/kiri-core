@@ -73,7 +73,7 @@ abstract class Pool extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function Heartbeat_detection(string $name, bool $isMaster)
+	public function Heartbeat_detection($ticker, string $name, bool $isMaster)
 	{
 		$name = $this->name('', $name, $isMaster);
 		if (env('state') == 'exit') {
