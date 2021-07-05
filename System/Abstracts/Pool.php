@@ -73,17 +73,16 @@ abstract class Pool extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function Heartbeat_detection()
+	public function Heartbeat_detection(string $name)
 	{
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
 			$this->creates = -1;
-		} else if ($this->lastTime != 0) {
-			[$firstClear, $lastClear] = $this->getClearTime();
-			if ($this->lastTime + $firstClear < time()) {
-				$this->flush(0);
-			} else if ($this->lastTime + $lastClear < time()) {
-				$this->flush(2);
+		} else {
+			$min = Config::get('databases.pool.min', 1);
+			$channel = $this->getChannel($name);
+			if ($channel->length() > $min) {
+				$this->flush($min);
 			}
 		}
 	}
@@ -147,7 +146,7 @@ abstract class Pool extends Component
 	 * @param false $isMaster
 	 * @param int $max
 	 */
-	public function initConnections($driver, $name, $isMaster = false, $max = 60)
+	public function initConnections($driver, $name, bool $isMaster = false, int $max = 60)
 	{
 		$name = $this->name($driver, $name, $isMaster);
 		if (isset(static::$_items[$name]) && static::$_items[$name] instanceof Channel) {
@@ -156,8 +155,23 @@ abstract class Pool extends Component
 		if (Coroutine::getCid() === -1) {
 			return;
 		}
-		static::$_items[$name] = new Channel((int)$max);
-		$this->max = (int)$max;
+		static::$_items[$name] = new Channel($max);
+		$this->max = $max;
+	}
+
+
+	/**
+	 * @param $name
+	 * @return Channel
+	 * @throws ConfigException
+	 */
+	private function getChannel($name): Channel
+	{
+		$channel = static::$_items[$name] ?? new Channel(Config::get('databases.pool.max', 10));
+		if (!((static::$_items[$name] ?? null) instanceof Channel)) {
+			static::$_items[$name] = $channel;
+		}
+		return $channel;
 	}
 
 
@@ -172,15 +186,16 @@ abstract class Pool extends Component
 		if (Coroutine::getCid() === -1) {
 			return $this->createClient($name, $callback);
 		}
-		$channel = static::$_items[$name] ?? new Channel($this->max);
-		if (!((static::$_items[$name] ?? null) instanceof Channel)) {
-			static::$_items[$name] = $channel;
-		}
+
+		$channel = $this->getChannel($name);
 		if (!$channel->isEmpty()) {
 			$connection = $channel->pop();
 			if ($this->checkCanUse($name, $connection)) {
 				return $connection;
 			}
+		}
+		if ($this->creates === -1 && !is_callable($callback)) {
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
 		}
 		return $this->createClient($name, $callback);
 	}
@@ -221,7 +236,7 @@ abstract class Pool extends Component
 
 	/**
 	 * @param string $name
-	 * @param $client
+	 * @param mixed $client
 	 * @return bool
 	 * 检查连接可靠性
 	 */
@@ -233,7 +248,7 @@ abstract class Pool extends Component
 
 	/**
 	 * @param array $config
-	 * @param $isMaster
+	 * @param bool $isMaster
 	 * @return mixed
 	 * @throws Exception
 	 */

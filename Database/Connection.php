@@ -17,6 +17,7 @@ use JetBrains\PhpStorm\Pure;
 use PDO;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -106,9 +107,11 @@ class Connection extends Component
     public function fill()
     {
         $connections = $this->connections();
-        $connections->initConnections('mysql', $this->cds, true, $this->maxNumber);
-        if (!empty($this->slaveConfig)) {
-            $connections->initConnections('mysql', $this->slaveConfig['cds'], false, $this->maxNumber);
+        $pool = Config::get('databases.pool.max',10);
+
+        $connections->initConnections('mysql', $this->cds, true, $pool);
+        if (!empty($this->slaveConfig) && $this->cds != $this->slaveConfig['cds']) {
+            $connections->initConnections('mysql', $this->slaveConfig['cds'], false, $pool);
         }
     }
 
@@ -257,13 +260,14 @@ class Connection extends Component
         return $instance;
     }
 
-    /**
-     * @param $sql
-     * @param array $attributes
-     * @return Command
-     * @throws
-     */
-    public function createCommand($sql = null, $dbname = '', array $attributes = []): Command
+	/**
+	 * @param null $sql
+	 * @param string $dbname
+	 * @param array $attributes
+	 * @return Command
+	 * @throws Exception
+	 */
+    public function createCommand($sql = null, string $dbname = '', array $attributes = []): Command
     {
         if (!empty($dbname)) {
             $sql = $this->clear($dbname, $sql);
@@ -273,7 +277,12 @@ class Connection extends Component
     }
 
 
-    private function clear($dbname, $sql)
+	/**
+	 * @param $dbname
+	 * @param $sql
+	 * @return array|string|null
+	 */
+    private function clear($dbname, $sql): array|string|null
     {
         $substr = strtoupper(substr($sql, 0, 6));
         return match ($substr) {
@@ -297,45 +306,45 @@ class Connection extends Component
     }
 
 
-    /**
-     * @param $dbname
-     * @param $sql
-     * @return array|string|string[]|null
-     */
-    private function innerJoinMatch($dbname, $sql)
+	/**
+	 * @param $dbname
+	 * @param $sql
+	 * @return array|string|null
+	 */
+    private function innerJoinMatch($dbname, $sql): array|string|null
     {
         return preg_replace('/(INNER|LEFT|RIGHT) JOIN\s+(\w+)\s/', '$1 JOIN `' . $dbname . '`.$2 ', $sql);
     }
 
 
-    /**
-     * @param $dbname
-     * @param $sql
-     * @return array|string|string[]|null
-     */
-    private function updateMatch($dbname, $sql)
+	/**
+	 * @param $dbname
+	 * @param $sql
+	 * @return array|string|null
+	 */
+    private function updateMatch($dbname, $sql): array|string|null
     {
         return preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql);
     }
 
 
-    /**
-     * @param $dbname
-     * @param $sql
-     * @return array|string|string[]|null
-     */
-    private function insertMatch($dbname, $sql)
+	/**
+	 * @param $dbname
+	 * @param $sql
+	 * @return array|string|null
+	 */
+    private function insertMatch($dbname, $sql): array|string|null
     {
         return preg_replace('/INSERT INTO\s+(\w+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql);
     }
 
 
-    /**
-     * @param $dbname
-     * @param $sql
-     * @return array|string|string[]|null
-     */
-    private function truncateMatch($dbname, $sql)
+	/**
+	 * @param $dbname
+	 * @param $sql
+	 * @return array|string|null
+	 */
+    private function truncateMatch($dbname, $sql): array|string|null
     {
         return preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql);
     }
