@@ -73,18 +73,19 @@ abstract class Pool extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function Heartbeat_detection(string $name)
+	public function Heartbeat_detection(string $name, bool $isMaster)
 	{
+		$name = $this->name('', $name, $isMaster);
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
 			$this->creates = -1;
 		} else {
 			$min = Config::get('databases.pool.min', 1);
 			if (($length = $this->getChannel($name)->length()) > $min) {
-				$this->debug("$length -> min length $min");
+				$this->debug("$name -> $length -> min length $min");
 				$this->flush($min);
 			} else {
-				$this->debug("$length -> min length $min");
+				$this->debug("$name -> $length -> min length $min");
 			}
 		}
 	}
@@ -158,7 +159,7 @@ abstract class Pool extends Component
 			return;
 		}
 		if ($this->creates === -1) {
-			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name);
+			$this->creates = Timer::tick(1000, [$this, 'Heartbeat_detection'], $name, $isMaster);
 		}
 		static::$_items[$name] = new Channel($max);
 		$this->max = $max;
