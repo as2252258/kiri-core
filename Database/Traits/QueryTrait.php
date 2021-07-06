@@ -137,7 +137,7 @@ trait QueryTrait
 	 */
 	public function getTable(): string
 	{
-		return '`' . $this->modelClass::getDbName() . '`' . $this->modelClass::getTable();
+		return $this->modelClass::getTable();
 	}
 
 
