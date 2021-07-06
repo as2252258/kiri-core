@@ -20,7 +20,6 @@ use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Throwable;
-use function Input;
 
 /**
  * Class Node
@@ -448,15 +447,11 @@ class Node extends HttpService
 		if (empty($this->childes)) {
 			return null;
 		}
-
 		if (isset($this->childes[$search])) {
 			return $this->childes[$search];
 		}
-
-		$_searchMatch = '/<(\w+)?:(.+)?>/';
 		foreach ($this->childes as $key => $val) {
-			if (preg_match($_searchMatch, (string)$key, $match)) {
-				Input()->addGetParam($match[1] ?? '--', $search);
+			if ($search == $key) {
 				return $this->childes[$key];
 			}
 		}
