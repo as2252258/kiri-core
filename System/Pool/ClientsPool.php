@@ -29,6 +29,9 @@ class ClientsPool extends Component
 
 	public int $creates = -1;
 
+
+	private array $_times = [];
+
 	protected static array $hasCreate = [];
 
 
@@ -91,28 +94,28 @@ class ClientsPool extends Component
 	 */
 	private function heartbeat_flush()
 	{
-		$min = Config::get('databases.pool.min', 1);
-
 		$num = [];
 		$total = 0;
+		$min = Config::get('databases.pool.min', 1);
 		foreach (static::$_connections as $key => $channel) {
 			if (!isset($num[$key])) {
 				$num[$key] = 0;
 			}
-			$length = $channel->length();
-			if ($length > $min) {
+			if (time() - $this->_times[$key] ?? time() > 300) {
+				$this->flush($channel, 0);
+			} else if ($channel->length() > $min) {
 				$this->flush($channel, $min);
 			}
-			$num[$key] += $length;
+			$num[$key] += ($length = $channel->length());
 			if (str_starts_with($key, 'Mysql') && (Snowflake::isWorker() || Snowflake::isTask()) && $length > 0) {
 				$this->debug('Worker #' . env('worker') . ' use client -> ' . $key . ':' . $length);
 			}
 			$total += $length;
 		}
-		write(var_export($num,true),'connections');
+		write(var_export($num, true), 'connections');
 		if ($total < 1) {
 			Timer::clear($this->creates);
-			if (Snowflake::isWorker() || Snowflake::isTask()){
+			if (Snowflake::isWorker() || Snowflake::isTask()) {
 				$this->debug('Worker #' . env('worker') . ' clear time tick.');
 			}
 			$this->creates = -1;
@@ -197,6 +200,7 @@ class ClientsPool extends Component
 	 */
 	public function getFromChannel($name): mixed
 	{
+		$this->_times[$name] = '';
 		$channel = $this->getChannel($name);
 		if (!$channel->isEmpty()) {
 			$connection = $channel->pop();
