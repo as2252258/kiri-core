@@ -6,7 +6,6 @@ namespace HttpServer;
 
 use Exception;
 use Snowflake\Abstracts\Component;
-use Snowflake\Exception\ConfigException;
 
 
 /**
@@ -51,7 +50,7 @@ class Shutdown extends Component
 
 		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
 		if (file_exists($master_pid)) {
-			$this->close($master_pid);
+			$this->close(file_get_contents($master_pid));
 		}
 		$this->closeOther();
 	}
@@ -109,33 +108,64 @@ class Shutdown extends Component
 	 */
 	public function directoryCheck(string $path): bool
 	{
-		$dir = new \DirectoryIterator($path);
-		if ($dir->getSize() < 1) {
-			return true;
-		}
-		foreach ($dir as $value) {
-			if ($value->isDot()) continue;
+		$values = $this->getProcessPidS($path);
+		if (empty($values)) return false;
 
-			if (!$value->valid()) continue;
-
-			$this->close($value->getRealPath());
+		$diff = array_diff($values, $this->getPidS());
+		foreach ($diff as $value) {
+			$this->pidIsExists($value);
 		}
 		return false;
 	}
 
 
 	/**
+	 * @param $path
+	 * @return array|bool
+	 */
+	private function getProcessPidS($path): bool|array
+	{
+		$values = [];
+		$dir = new \DirectoryIterator($path);
+		if ($dir->getSize() < 1) {
+			return $values;
+		}
+		foreach ($dir as $value) {
+			if ($value->isDot()) continue;
+
+			if (!$value->valid()) continue;
+
+			$_value = file_get_contents($value->getRealPath());
+			if (empty($_value)) {
+				continue;
+			}
+			$values[] = intval($_value);
+		}
+		return $values;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	private function getPidS(): array
+	{
+		exec('ps -eo pid', $output);
+		return array_filter($output, function ($value) {
+			return intval($value);
+		});
+	}
+
+
+	/**
 	 * @param string $value
 	 */
-	public function close(string $value)
+	public function close(mixed $value)
 	{
-		$content = file_get_contents($value);
-
-		while ($this->pidIsExists($content)) {
-			exec('kill -15 ' . $content);
+		while ($this->pidIsExists($value)) {
+			exec('kill -15 ' . $value);
 			usleep(100);
 		}
-
 		clearstatcache($value);
 		if (file_exists($value)) {
 			@unlink($value);
