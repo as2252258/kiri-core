@@ -155,7 +155,7 @@ class Response extends HttpService
      * @return bool
      * @throws Exception
      */
-    public function send($context = '', int $statusCode = 200): mixed
+    public function send(string $context = '', int $statusCode = 200): mixed
     {
         $sendData = $this->parseData($context);
 
@@ -192,19 +192,18 @@ class Response extends HttpService
 
     /**
      * @param $result
-     * @return string
+     * @return void
      * @throws Exception
      */
-    private function printResult($result): string
+    private function printResult($result): void
     {
         $result = Help::toString($result);
         $string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
 
         fire('CONSOLE_END');
         if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
-            return (string)$result;
+	        return;
         }
-
         if (empty($result)) {
             $string .= 'success!' . PHP_EOL . PHP_EOL;
         } else {
@@ -212,8 +211,6 @@ class Response extends HttpService
         }
         $string .= 'Command End!' . PHP_EOL . PHP_EOL;
         print_r($string);
-
-        return (string)$result;
     }
 
     /**
@@ -297,7 +294,7 @@ class Response extends HttpService
      * @return mixed
      * @throws Exception
      */
-    public function close($statusCode = 200, $message = ''): mixed
+    public function close(int $statusCode = 200, string $message = ''): mixed
     {
         return $this->send($message, $statusCode);
     }
@@ -309,7 +306,7 @@ class Response extends HttpService
      * @param string $message
      * @return mixed
      */
-    public function closeClient($clientId, $statusCode = 200, $message = ''): mixed
+    public function closeClient($clientId,int $statusCode = 200,string $message = ''): mixed
     {
         $socket = Snowflake::getWebSocket();
         if (!$socket->exist($clientId)) {
@@ -326,7 +323,7 @@ class Response extends HttpService
      * @param int $sleep
      * @return string
      */
-    public function sendFile(string $path, $offset = 0, $limit = 1024000, $sleep = 0): string
+    public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): string
     {
         $open = fopen($path, 'r');
 

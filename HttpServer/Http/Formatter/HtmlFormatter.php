@@ -23,7 +23,7 @@ use HttpServer\IInterface\IFormatter;
 class HtmlFormatter extends HttpService implements IFormatter
 {
 
-	public $data;
+	public mixed $data;
 
 	/** @var Response */
 	public Response $status;

@@ -465,7 +465,7 @@ class Request extends HttpService
 			$sRequest->params->setPosts($request->post ?? []);
 		}
 
-		$sRequest->headers = new HttpHeaders(ArrayAccess::merge($request->server, $request->header));
+		$sRequest->headers = new HttpHeaders(array_merge($request->server, $request->header));
 		$sRequest->uri = $sRequest->headers->get('request_uri');
 
 		$sRequest->parseUri();
@@ -475,11 +475,11 @@ class Request extends HttpService
 
 	/**
 	 * @param $frame
-	 * @param $route
+	 * @param string $route
 	 * @param string $event
 	 * @return Request
 	 */
-	public static function socketQuery($frame, $event = Socket::MESSAGE, $route = 'event'): Request
+	public static function socketQuery($frame, string $event = Socket::MESSAGE, string $route = 'event'): Request
 	{
 		$sRequest = new Request();
 		$sRequest->fd = $frame->fd;
