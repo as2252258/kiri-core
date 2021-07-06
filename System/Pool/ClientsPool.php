@@ -101,7 +101,7 @@ class ClientsPool extends Component
 			if (!isset($num[$key])) {
 				$num[$key] = 0;
 			}
-			if (time() - $this->_times[$key] ?? time() > 120) {
+			if (time() - ($this->_times[$key] ?? time()) > 120) {
 				$this->flush($channel, 0);
 			} else if ($channel->length() > $min) {
 				$this->flush($channel, $min);
@@ -200,7 +200,7 @@ class ClientsPool extends Component
 	 */
 	public function getFromChannel($name): mixed
 	{
-		$this->_times[$name] = '';
+		$this->_times[$name] = time();
 		$channel = $this->getChannel($name);
 		if (!$channel->isEmpty()) {
 			$connection = $channel->pop();
