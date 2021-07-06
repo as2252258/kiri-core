@@ -140,6 +140,8 @@ class Shutdown extends Component
 				continue;
 			}
 			$values[] = intval($_value);
+
+			@unlink($value->getRealPath());
 		}
 		return $values;
 	}
