@@ -742,7 +742,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 		$table = trim($table, '{{%}}');
 		if ($tablePrefix) {
-			$table = '`' . static::getDbName() . '`.' . $tablePrefix . $table;
+			$table = $tablePrefix . $table;
 		}
 		return '`' . static::getDbName() . '`.' . $table;
 	}
