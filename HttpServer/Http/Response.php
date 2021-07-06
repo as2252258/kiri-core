@@ -149,13 +149,13 @@ class Response extends HttpService
         return !($this->response instanceof SResponse) && !($this->response instanceof S2Response);
     }
 
-    /**
-     * @param string $context
-     * @param int $statusCode
-     * @return bool
-     * @throws Exception
-     */
-    public function send(string $context = '', int $statusCode = 200): mixed
+	/**
+	 * @param string|null $context
+	 * @param int $statusCode
+	 * @return bool
+	 * @throws Exception
+	 */
+    public function send(?string $context = '', int $statusCode = 200): mixed
     {
         $sendData = $this->parseData($context);
 
