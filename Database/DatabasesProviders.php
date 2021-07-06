@@ -109,7 +109,7 @@ class DatabasesProviders extends Providers
      */
     public function getConfig($name): mixed
     {
-        return Config::get('databases.' . $name, null, true);
+        return Config::get('databases.connections.' . $name, null, true);
     }
 
 
