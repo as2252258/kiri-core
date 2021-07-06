@@ -272,84 +272,8 @@ class Connection extends Component
 	 */
 	public function createCommand($sql = null, string $dbname = '', array $attributes = []): Command
 	{
-		if (!empty($dbname)) {
-			$sql = $this->clear($dbname, $sql);
-		}
-		$command = new Command(['db' => $this, 'sql' => $this->innerJoinMatch($dbname, $sql)]);
+		$command = new Command(['db' => $this, 'sql' => $sql]);
 		return $command->bindValues($attributes);
-	}
-
-
-	/**
-	 * @param $dbname
-	 * @param $sql
-	 * @return array|string|null
-	 */
-	private function clear($dbname, $sql): array|string|null
-	{
-		$substr = strtoupper(substr($sql, 0, 6));
-		return match ($substr) {
-			'SELECT', 'SHOW F', 'DELETE' => $this->selectMatch($dbname, $sql),
-			'UPDATE' => $this->updateMatch($dbname, $sql),
-			'INSERT' => $this->insertMatch($dbname, $sql),
-			'TRUNCA' => $this->truncateMatch($dbname, $sql),
-			default => $sql
-		};
-	}
-
-
-	/**
-	 * @param $dbname
-	 * @param $sql
-	 * @return array|string|null
-	 */
-	private function selectMatch($dbname, $sql): array|string|null
-	{
-		return preg_replace('/FROM\s+(\w+)\s+/', 'FROM `' . $dbname . '`.$1 ', $sql);
-	}
-
-
-	/**
-	 * @param $dbname
-	 * @param $sql
-	 * @return array|string|null
-	 */
-	private function innerJoinMatch($dbname, $sql): array|string|null
-	{
-		return preg_replace('/(INNER|LEFT|RIGHT) JOIN\s+(\w+)\s/', '$1 JOIN `' . $dbname . '`.$2 ', $sql);
-	}
-
-
-	/**
-	 * @param $dbname
-	 * @param $sql
-	 * @return array|string|null
-	 */
-	private function updateMatch($dbname, $sql): array|string|null
-	{
-		return preg_replace('/UPDATE\s+(\w+)\s+SET/', 'UPDATE `' . $dbname . '`.$1 SET', $sql);
-	}
-
-
-	/**
-	 * @param $dbname
-	 * @param $sql
-	 * @return array|string|null
-	 */
-	private function insertMatch($dbname, $sql): array|string|null
-	{
-		return preg_replace('/INSERT INTO\s+(\w+)/', 'INSERT INTO `' . $dbname . '`.$1', $sql);
-	}
-
-
-	/**
-	 * @param $dbname
-	 * @param $sql
-	 * @return array|string|null
-	 */
-	private function truncateMatch($dbname, $sql): array|string|null
-	{
-		return preg_replace('/TRUNCATE\s+(\w+)\s+/', 'TRUNCATE `' . $dbname . '`.$1', $sql);
 	}
 
 

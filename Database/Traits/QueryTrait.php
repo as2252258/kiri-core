@@ -16,7 +16,6 @@ use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
 use Database\Query;
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -138,7 +137,7 @@ trait QueryTrait
 	 */
 	public function getTable(): string
 	{
-		return $this->modelClass::getTable();
+		return '`' . $this->modelClass::getDbName() . '`' . $this->modelClass::getTable();
 	}
 
 
