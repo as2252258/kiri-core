@@ -112,6 +112,7 @@ class Shutdown extends Component
 		if (empty($values)) return false;
 
 		$diff = array_diff($values, $this->getPidS());
+		var_dump($diff);
 		foreach ($diff as $value) {
 			$this->pidIsExists($value);
 		}
