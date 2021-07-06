@@ -133,7 +133,7 @@ class Shutdown extends Component
 
 		while ($this->pidIsExists($content)) {
 			exec('kill -15 ' . $content);
-			sleep(1);
+			usleep(100);
 		}
 
 		clearstatcache($value);
