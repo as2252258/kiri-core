@@ -17,6 +17,7 @@ use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
 use Snowflake\Application;
 use Snowflake\Core\ArrayAccess;
+use Snowflake\Core\Json;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
@@ -644,12 +645,14 @@ if (!function_exists('send')) {
 
 	/**
 	 * @param $context
-	 * @param $statusCode
+	 * @param int $statusCode
 	 * @return mixed
 	 * @throws Exception
 	 */
-	function send($context, $statusCode = 404): mixed
+	function send($context, int $statusCode = 404): mixed
 	{
+		if (is_array($context)) $context = Json::encode($context);
+
 		return \response()->send($context, $statusCode);
 	}
 
