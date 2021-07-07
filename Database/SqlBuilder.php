@@ -52,19 +52,8 @@ class SqlBuilder extends Component
 	public function update(array $attributes): bool|array
 	{
 		[$string, $array] = $this->builderParams($attributes);
-		if (empty($string) || empty($array)) {
-			return $this->addError('None data update.');
-		}
 
-		$condition = $this->conditionToString();
-		if (!empty($condition)) {
-			$condition = ' WHERE ' . $condition;
-		}
-
-		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $condition;
-		$update .= $this->builderLimit($this->query);
-
-		return [$update, $array];
+		return $this->__updateBuilder($string, $array);
 	}
 
 
@@ -76,12 +65,23 @@ class SqlBuilder extends Component
 	 */
 	public function mathematics(array $attributes, string $opera = '+'): bool|array
 	{
-		$string = $array = [];
+		$string = [];
 
 		foreach ($attributes as $attribute => $value) {
 			$string[] = $attribute . '=' . $attribute . $opera . $value;
 		}
+		return $this->__updateBuilder($string, []);
+	}
 
+
+	/**
+	 * @param array $string
+	 * @param array $params
+	 * @return array|bool
+	 * @throws Exception
+	 */
+	private function __updateBuilder(array $string,array $params): array|bool
+	{
 		if (empty($string)) {
 			return $this->addError('None data update.');
 		}
@@ -94,7 +94,7 @@ class SqlBuilder extends Component
 		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $condition;
 		$update .= $this->builderLimit($this->query);
 
-		return [$update, []];
+		return [$update, $params];
 	}
 
 
