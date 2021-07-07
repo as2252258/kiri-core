@@ -66,7 +66,6 @@ class SqlBuilder extends Component
 	public function mathematics(array $attributes, string $opera = '+'): bool|array
 	{
 		$string = [];
-
 		foreach ($attributes as $attribute => $value) {
 			$string[] = $attribute . '=' . $attribute . $opera . $value;
 		}
@@ -80,7 +79,7 @@ class SqlBuilder extends Component
 	 * @return array|bool
 	 * @throws Exception
 	 */
-	private function __updateBuilder(array $string,array $params): array|bool
+	private function __updateBuilder(array $string, array $params): array|bool
 	{
 		if (empty($string)) {
 			return $this->addError('None data update.');
@@ -92,7 +91,7 @@ class SqlBuilder extends Component
 		}
 
 		$update = 'UPDATE ' . $this->tableName() . ' SET ' . implode(',', $string) . $condition;
-		$update .= $this->builderLimit($this->query);
+		$update .= $this->builderLimit($this->query, false);
 
 		return [$update, $params];
 	}
@@ -185,7 +184,7 @@ class SqlBuilder extends Component
 			str_starts_with($value, '+ ') ||
 			str_starts_with($value, '- ')
 		) {
-			$keys[] = $key . '=' . $key . $value;
+			$keys[] = $key . '=' . $key . ' ' . $value;
 		} else {
 			$params[$key . $order] = $value;
 			$keys[] = $key . '=:' . $key . $order;
