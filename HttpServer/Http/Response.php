@@ -150,12 +150,12 @@ class Response extends HttpService
     }
 
 	/**
-	 * @param string|null $context
+	 * @param mixed $context
 	 * @param int $statusCode
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function send(?string $context = '', int $statusCode = 200): mixed
+    public function send(mixed $context = '', int $statusCode = 200): mixed
     {
         $sendData = $this->parseData($context);
 
