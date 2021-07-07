@@ -298,7 +298,7 @@ class Db implements ISqlBuilder
 			return null;
 		}
 
-		return $db->createCommand('SHOW CREATE TABLE ' . $table)->one();
+		return $db->createCommand('SHOW CREATE TABLE `' . $db->database . '`.' . $table)->one();
 	}
 
 	/**
