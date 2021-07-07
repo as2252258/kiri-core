@@ -46,7 +46,7 @@ abstract class BaseValidator
 	 * BaseValidator constructor.
 	 * @param array $config
 	 */
-	public function __construct($config = [])
+	public function __construct(array $config = [])
 	{
 		$this->regConfig($config);
 	}

@@ -22,12 +22,12 @@ class GiiModel extends GiiBase
 	public ?array $fields;
 
 	/**
-	 * ModelFile constructor.
-	 * @param $classFileName
-	 * @param $tableName
-	 * @param $visible
-	 * @param $res
-	 * @param $fields
+	 * GiiModel constructor.
+	 * @param string $classFileName
+	 * @param string $tableName
+	 * @param array $visible
+	 * @param array $res
+	 * @param array $fields
 	 */
 	public function __construct(string $classFileName, string $tableName, array $visible, array $res, array $fields)
 	{
@@ -308,16 +308,20 @@ use Database\ActiveRecord;
 		if (empty($data)) return '';
 		$string = [];
 		foreach ($data as $key => $_val) {
-			if (is_string($key) && str_contains($key, ',')) {
-				$key = '[' . $key . ']';
+			if (in_array($_val[0][1], $this->type['float'])) {
+				$e_x = explode(',', $key);
+				$key = '\'round\' => ' . $e_x[1] . ', \'maxLength\' => ' . ((int)$e_x[0] + 1);
+			} else if (is_string($key) && str_contains($key, ',')) {
+				$key = '\'between\' => [' . $key . ']';
+			} else {
+				$key = '\'maxLength\' => ' . $key;
 			}
 			if (count($_val) == 1) {
-				[$typeRule, $type, $rule, $field] = current($_val);
 				$_tmp = '
-			[\'' . $field . '\', \'' . ($type == 'enum' ? 'enum' : 'maxLength') . '\' => ' . $key . ']';
+			[\'' . $_val[3] . '\', ' . ($_val[1] == 'enum' ? '\'enum\' => ' . $key : $key) . ']';
 			} else {
 				$_tmp = '
-			[[\'' . implode('\', \'', array_column($_val, 3)) . '\'], \'maxLength\' => ' . $key . ']';
+			[[\'' . implode('\', \'', array_column($_val, 3)) . '\'], ' . $key . ']';
 			}
 			$string[] = $_tmp;
 		}

@@ -102,6 +102,9 @@ class Validator extends BaseValidator
 			'class'  => 'validator\LengthValidator',
 			'method' => 'default',
 		],
+		'round'    => [
+			'class'  => 'validator\RoundValidator',
+		],
 	];
 
 	/**

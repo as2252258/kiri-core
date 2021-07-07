@@ -37,14 +37,11 @@ class LengthValidator extends BaseValidator
 		if (is_null($value)) {
 			return $this->addError('The param :attribute is null');
 		}
-		switch (strtolower($this->method)) {
-			case self::MAX_LENGTH:
-				return $this->maxLength($value);
-			case self::MIN_LENGTH:
-				return $this->minLength($value);
-			default:
-				return $this->defaultLength($value);
-		}
+		return match (strtolower($this->method)) {
+			self::MAX_LENGTH => $this->maxLength($value),
+			self::MIN_LENGTH => $this->minLength($value),
+			default => $this->defaultLength($value),
+		};
 	}
 
 	/**
