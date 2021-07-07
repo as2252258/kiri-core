@@ -416,6 +416,10 @@ use Database\ActiveRecord;
 	 */
 	private function setCreateSql($table): string
 	{
+		if (isset(Gii::$createSqls[$table])) {
+			return Gii::$createSqls[$table];
+		}
+
 		$text = Db::showCreateSql($table, $this->db)['Create Table'] ?? '';
 
 		$_tmp = [];
@@ -423,7 +427,7 @@ use Database\ActiveRecord;
 			$_tmp[] = '// ' . $val;
 		}
 
-		return implode(PHP_EOL, $_tmp);
+		return Gii::$createSqls[$table] = implode(PHP_EOL, $_tmp);
 	}
 
 

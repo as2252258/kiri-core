@@ -12,9 +12,6 @@ namespace Gii;
 use Database\Connection;
 use Database\Db;
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
-
-use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Exception\ConfigException;
@@ -40,6 +37,9 @@ class Gii
 
 	public string $controllerPath = APP_PATH . 'app/Http/Controllers/';
 	public string $controllerNamespace = 'App\\Http\\Controllers\\';
+
+
+	public static array $createSqls = [];
 
 
 	public array $keyword = [

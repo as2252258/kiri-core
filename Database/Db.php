@@ -261,7 +261,7 @@ class Db implements ISqlBuilder
 		if (empty($db)) {
 			$db = Snowflake::app()->get('db');
 		}
-		return $db->createCommand('DROP TABLE ' . $table)->delete();
+		return $db->createCommand('DROP TABLE `' . $db->database . '`.' . $table)->delete();
 	}
 
 	/**
@@ -277,7 +277,7 @@ class Db implements ISqlBuilder
 			$db = Snowflake::app()->get('db');
 		}
 
-		return $db->createCommand('TRUNCATE ' . $table)->exec();
+		return $db->createCommand('TRUNCATE `' . $db->database . '`.' . $table)->exec();
 	}
 
 	/**
@@ -317,7 +317,7 @@ class Db implements ISqlBuilder
 			return null;
 		}
 
-		return $db->createCommand('SHOW FULL FIELDS FROM ' . $table)->all();
+		return $db->createCommand('SHOW FULL FIELDS FROM `' . $db->database . '`.' . $table)->all();
 	}
 
 
