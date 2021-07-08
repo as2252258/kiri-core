@@ -41,8 +41,8 @@ abstract class Process extends \Swoole\Process implements SProcess
 		putenv('environmental=' . Snowflake::PROCESS);
 
 		fire(Event::SERVER_WORKER_START);
-		if (Snowflake::getPlatform()->isLinux()) {
-			swoole_set_process_name($this->getProcessName());
+		if (Snowflake::getPlatform()->isLinux())  {
+			name($this->pid, $this->getProcessName());
 		}
 		if (method_exists($this, 'before')) {
 			$this->before($process);

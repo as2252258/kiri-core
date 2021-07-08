@@ -35,7 +35,6 @@ use function Co\run;
  * @package Snowflake
  *
  * @property-read Config $config
- * @property-read WchatProviders $wchat
  */
 class Application extends BaseApplication
 {
@@ -60,6 +59,9 @@ class Application extends BaseApplication
 
         $this->import(CrontabProviders::class);
     }
+
+
+
 
 
     /**
