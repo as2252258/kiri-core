@@ -5,11 +5,11 @@ namespace Snowflake\Jwt;
 
 use Exception;
 use HttpServer\Http\HttpHeaders;
-use Snowflake\Cache\Redis;
+use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
+use Snowflake\Cache\Redis;
 use Snowflake\Core\Str;
 use Snowflake\Exception\AuthException;
-use Snowflake\Abstracts\Component;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -21,20 +21,20 @@ use Snowflake\Snowflake;
 class Jwt extends Component
 {
 
-    /** @var int $user */
-    private int $user;
+	/** @var int $user */
+	private int $user;
 
-    private array $data;
+	private array $data;
 
-    private array $source = ['browser', 'android', 'iphone', 'pc', 'mingame'];
+	private array $source = ['browser', 'android', 'iphone', 'pc', 'mingame'];
 
-    private array $config = ['token' => ''];
+	private array $config = ['token' => ''];
 
-    private ?int $timeout = 7200;
+	private ?int $timeout = 7200;
 
-    private string $key = 'www.xshucai.com';
+	private string $key = 'www.xshucai.com';
 
-    private ?string $public = '-----BEGIN PUBLIC KEY-----
+	private ?string $public = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6BuML3gtLGde7QKNuNST
 UCB9gdHC7XIpOc7Wx2I64Esj3UxWHTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6Xad
 jqfjEWpTy4WwGYsOfH0tFl3wAmse0lebF4NFsS9pzrikQT6c9qsVm88pCjvg4i5t
@@ -44,7 +44,7 @@ WlQhpQrA5/wKd76dCzjvqw9M32OiZl2lCKT73cV8GUvt7BNsM1SiPhqfY7nhO6y3
 cwIDAQAB
 -----END PUBLIC KEY-----';
 
-    private ?string $private = '-----BEGIN RSA PRIVATE KEY-----
+	private ?string $private = '-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEA6BuML3gtLGde7QKNuNSTUCB9gdHC7XIpOc7Wx2I64Esj3UxW
 HTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6XadjqfjEWpTy4WwGYsOfH0tFl3wAmse
 0lebF4NFsS9pzrikQT6c9qsVm88pCjvg4i5tWhTMEnpTFDYoDR0KXlLXltQMudBB
@@ -73,419 +73,435 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 -----END RSA PRIVATE KEY-----';
 
 
-    /**
-     * @throws ConfigException
-     */
-    public function init()
-    {
-        if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
-            return;
-        }
-        $this->public = Config::get('ssl.public', $this->public);
-        $this->private = Config::get('ssl.private', $this->private);
-        $this->timeout = Config::get('ssl.timeout', 7200);
-    }
+	/**
+	 * @throws ConfigException
+	 */
+	public function init()
+	{
+		if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
+			return;
+		}
+		$this->public = Config::get('ssl.public', $this->public);
+		$this->private = Config::get('ssl.private', $this->private);
+		$this->timeout = Config::get('ssl.timeout', 7200);
+	}
 
 
-    /**
-     * @param string $publicKey
-     */
-    public function setPublic(string $publicKey)
-    {
-        $this->public = $publicKey;
-    }
+	/**
+	 * @param string $publicKey
+	 */
+	public function setPublic(string $publicKey)
+	{
+		$this->public = $publicKey;
+	}
 
 	/**
 	 * @param int $timeout
 	 */
-    public function setTimeout(int $timeout)
-    {
-        $this->timeout = $timeout;
-    }
+	public function setTimeout(int $timeout)
+	{
+		$this->timeout = $timeout;
+	}
 
 	/**
 	 * @param string $timeout
 	 */
-    public function setKey(string $timeout)
-    {
-        $this->key = $timeout;
-    }
+	public function setKey(string $timeout)
+	{
+		$this->key = $timeout;
+	}
 
-    /**
-     * @param string $privateKey
-     */
-    public function setPrivate(string $privateKey)
-    {
-        $this->private = $privateKey;
-    }
+	/**
+	 * @param string $privateKey
+	 */
+	public function setPrivate(string $privateKey)
+	{
+		$this->private = $privateKey;
+	}
 
 
-    /**
-     * @param int $unionId
-     * @param array $headers
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function create(int $unionId, array $headers = []): array
-    {
-        $this->user = $unionId;
-        $this->config['time'] = time();
-        if (empty($headers)) {
-            $headers = request()->headers->getHeaders();
-        } else if ($headers instanceof HttpHeaders) {
-            $headers = $headers->getHeaders();
-        }
-        $this->data = $headers;
-        if (!isset($this->data['source'])) {
-            $this->data['source'] = 'browser';
-        }
-        return $this->createEncrypt($unionId);
-    }
+	/**
+	 * @param int $unionId
+	 * @param array $headers
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function create(int $unionId, array $headers = []): array
+	{
+		$this->user = $unionId;
+		$this->config['time'] = time();
+		if (empty($headers)) {
+			$headers = request()->headers->getHeaders();
+		} else if ($headers instanceof HttpHeaders) {
+			$headers = $headers->getHeaders();
+		}
+		$this->data = $headers;
+		if (!isset($this->data['source'])) {
+			$this->data['source'] = 'browser';
+		}
+		return $this->createEncrypt($unionId);
+	}
 
-    /**
-     * @param $unionId
-     * @return array
-     * @throws Exception
-     * 对相关信息进行加密
-     */
-    private function createEncrypt($unionId): array
-    {
-        $caches = $this->clear($unionId);
-        $param = $this->assembly(array_merge($this->config, [
-            'user'  => $unionId,
-            'token' => $this->token($unionId, [
-                'device' => Str::rand(128),
-            ], $this->config['time']),
-        ]), TRUE);
-        $refresh = array_intersect_key($param, $this->config);
+	/**
+	 * @param $unionId
+	 * @return array
+	 * @throws Exception
+	 * 对相关信息进行加密
+	 */
+	private function createEncrypt($unionId): array
+	{
+		$caches = $this->clear($unionId);
+		$param = $this->assembly(array_merge($this->config, [
+			'user'  => $unionId,
+			'token' => $this->token($unionId, [
+				'device' => Str::rand(128),
+			], $this->config['time']),
+		]), TRUE);
+		$refresh = array_intersect_key($param, $this->config);
 
-        $params['user'] = $this->user;
-        $params['token'] = $refresh['token'];
-        $json = json_encode($params, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE);
+		$params['user'] = $this->user;
+		$params['token'] = $refresh['token'];
+		$json = json_encode($params, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE);
 
-        openssl_private_encrypt($json, $encode, $this->private);
-        $refresh['refresh'] = base64_encode($encode);
-        $this->setRefresh($refresh['refresh']);
+		openssl_private_encrypt($json, $encode, $this->private);
+		$refresh['refresh'] = base64_encode($encode);
+		$this->setRefresh($refresh['refresh']);
 
-        $redis = $this->getRedis();
-        foreach ($caches as $cache) {
-            $redis->del($cache);
-        }
-        return $refresh;
-    }
+		$redis = $this->getRedis();
+		foreach ($caches as $cache) {
+			$redis->del($cache);
+		}
+		return $refresh;
+	}
 
-    /**
-     * @param bool $update
-     * @param array $param
-     * @return array
-     * @throws
-     */
-    private function assembly(array $param, bool $update = FALSE): array
-    {
-        if (isset($param['sign'])) {
-            unset($param['sign']);
-        }
-        $param = $this->initialize($param);
-        asort($param, SORT_STRING);
-        $_tmp = [];
-        foreach ($param as $key => $val) {
-            $_tmp[] = trim($key) . '=>' . trim((string)$val);
-        }
-        $param['sign'] = md5(implode(':', $_tmp));
-        if ($update) {
-            $this->setCache($param);
-        }
-        return $param;
-    }
+	/**
+	 * @param bool $update
+	 * @param array $param
+	 * @return array
+	 * @throws
+	 */
+	private function assembly(array $param, bool $update = FALSE): array
+	{
+		if (isset($param['sign'])) {
+			unset($param['sign']);
+		}
+		$param = $this->initialize($param);
+		asort($param, SORT_STRING);
+		$_tmp = [];
+		foreach ($param as $key => $val) {
+			$_tmp[] = trim($key) . '=>' . trim((string)$val);
+		}
+		$param['sign'] = md5(implode(':', $_tmp));
+		if ($update) {
+			$this->setCache($param);
+		}
+		return $param;
+	}
 
-    /**
-     * @param array $headers
-     * @return array
-     * @throws Exception
-     */
-    public function refresh(array $headers = []): array
-    {
-        $this->data = $headers;
-        if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
-            throw new AuthException('信息解码失败.');
-        }
+	/**
+	 * @param array $headers
+	 * @return array
+	 * @throws Exception
+	 */
+	public function refresh(array $headers = []): array
+	{
+		$this->data = $headers;
+		if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
+			throw new AuthException('信息解码失败.');
+		}
 
-        $this->user = $data['user'];
+		$this->user = $data['user'];
 
-        if (!$this->getRedis()->exists('refresh:' . $this->user)) {
-            throw new AuthException('refresh data error.');
-        }
+		if (!$this->getRedis()->exists('refresh:' . $this->user)) {
+			throw new AuthException('refresh data error.');
+		}
 
-        $this->getRedis()->del('refresh:' . $this->user);
+		$this->getRedis()->del('refresh:' . $this->user);
 
-        return $this->create($this->user, $headers);
-    }
+		return $this->create($this->user, $headers);
+	}
+
+
+	/**
+	 * @param array $headers
+	 * @return mixed
+	 * @throws AuthException
+	 */
+	public function getTokenUser(array $headers = []): int
+	{
+		$this->data = $headers;
+		if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
+			throw new AuthException('信息解码失败.');
+		}
+		return (int)$data['user'];
+	}
+
 
 	/**
 	 * @param array $param
 	 *
 	 * @return array
 	 */
-    private function initialize(array $param): array
-    {
-        $_param = [
-            'version' => '1',
-            'source'  => $this->getSource(),
-        ];
-        if (!isset($param['device'])) {
-            $param['device'] = Str::rand(128);
-        }
-        return array_merge($_param, $param);
-    }
+	private function initialize(array $param): array
+	{
+		$_param = [
+			'version' => '1',
+			'source'  => $this->getSource(),
+		];
+		if (!isset($param['device'])) {
+			$param['device'] = Str::rand(128);
+		}
+		return array_merge($_param, $param);
+	}
 
-    /**
-     * @param array $data
-     * @throws Exception
-     */
-    private function setCache(array $data)
-    {
-        $redis = $this->getRedis();
-        $redis->hMset($this->authKey($this->getSource(), $data['token']), $data);
-        $redis->expire($this->authKey($this->getSource(), $data['token']), $this->timeout);
-    }
+	/**
+	 * @param array $data
+	 * @throws Exception
+	 */
+	private function setCache(array $data)
+	{
+		$redis = $this->getRedis();
+		$redis->hMset($this->authKey($this->getSource(), $data['token']), $data);
+		$redis->expire($this->authKey($this->getSource(), $data['token']), $this->timeout);
+	}
 
-    /**
-     * @param string $refresh
-     * @throws Exception
-     */
-    private function setRefresh(string $refresh)
-    {
-        $redis = $this->getRedis();
+	/**
+	 * @param string $refresh
+	 * @throws Exception
+	 */
+	private function setRefresh(string $refresh)
+	{
+		$redis = $this->getRedis();
 
-        $redis->set('refresh:' . $this->user, $refresh);
-        $redis->expire('refresh:' . $this->user, $this->timeout);
-    }
+		$redis->set('refresh:' . $this->user, $refresh);
+		$redis->expire('refresh:' . $this->user, $this->timeout);
+	}
 
-    /**
-     * @param string $_source
-     * @param string $token
-     *
-     * @return string
-     * @throws Exception
-     */
-    private function authKey(string $_source, string $token): string
-    {
-        $source = $this->getSource();
-        if (!empty($_source)) $source = $_source;
+	/**
+	 * @param string $_source
+	 * @param string $token
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	private function authKey(string $_source, string $token): string
+	{
+		$source = $this->getSource();
+		if (!empty($_source)) $source = $_source;
 
-        return 'Tmp_Token:' . strtoupper($source) . ':' . $token;
-    }
+		return 'Tmp_Token:' . strtoupper($source) . ':' . $token;
+	}
 
-    /**
-     * @return string
-     */
-    public function getSource(): string
-    {
-        return $this->data['source'] ?? 'browser';
-    }
+	/**
+	 * @return string
+	 */
+	public function getSource(): string
+	{
+		return $this->data['source'] ?? 'browser';
+	}
 
-    /**
-     * @param int $user
-     * @param array $param
-     * @param null $requestTime
-     *
-     * @return string
-     */
-    private function token(int $user, array $param = [], $requestTime = NULL): string
-    {
-        $str = '';
+	/**
+	 * @param int $user
+	 * @param array $param
+	 * @param null $requestTime
+	 *
+	 * @return string
+	 */
+	private function token(int $user, array $param = [], $requestTime = NULL): string
+	{
+		$str = '';
 
-        $user = (string)$user;
-        $_user = str_split(md5($user . md5($user)));
-        ksort($_user);
-        foreach ($_user as $key => $val) {
-            $str .= md5(sha1($key . $val . $this->key));
-        }
-        foreach ($param as $key => $val) {
-            $str .= md5($str . sha1($key . md5($val)));
-        }
-        $str .= sha1(base64_encode((string)$requestTime));
-        return $this->preg(md5($str . $user));
-    }
+		$user = (string)$user;
+		$_user = str_split(md5($user . md5($user)));
+		ksort($_user);
+		foreach ($_user as $key => $val) {
+			$str .= md5(sha1($key . $val . $this->key));
+		}
+		foreach ($param as $key => $val) {
+			$str .= md5($str . sha1($key . md5($val)));
+		}
+		$str .= sha1(base64_encode((string)$requestTime));
+		return $this->preg(md5($str . $user));
+	}
 
-    /**
-     * @param string $str
-     *
-     * @return array|string|null 将字符串替换成指定格式
-     */
-    private function preg(string $str): null|array|string
-    {
-        return preg_replace('/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/', '$1-$2-$3-$4-$5', $str);
-    }
+	/**
+	 * @param string $str
+	 *
+	 * @return array|string|null 将字符串替换成指定格式
+	 */
+	private function preg(string $str): null|array|string
+	{
+		return preg_replace('/(\w{10})(\w{3})(\w{4})(\w{9})(\w{6})/', '$1-$2-$3-$4-$5', $str);
+	}
 
-    /**
-     * @param int $user
-     * @return string[]
-     * @throws Exception
-     */
-    public function clear(int $user): array
-    {
-        $this->user = $user;
-        $redis = $this->getRedis();
-        if (is_bool($refresh = $redis->get('refresh:' . $this->user))) {
-            return [];
-        };
-        openssl_public_decrypt(base64_decode($refresh), $info, $this->public);
+	/**
+	 * @param int $user
+	 * @return string[]
+	 * @throws Exception
+	 */
+	public function clear(int $user): array
+	{
+		$this->user = $user;
+		$redis = $this->getRedis();
+		if (is_bool($refresh = $redis->get('refresh:' . $this->user))) {
+			return [];
+		};
+		openssl_public_decrypt(base64_decode($refresh), $info, $this->public);
 
-        $_tmp = [];
-        if (!empty($info) && $json = json_decode($info, true)) {
-            if (!isset($json['token'])) {
-                return [];
-            }
-            foreach ($this->source as $value) {
-                $_tmp[] = $this->authKey($value, $json['token']);
-            }
-        }
-        return $_tmp;
-    }
+		$_tmp = [];
+		if (!empty($info) && $json = json_decode($info, true)) {
+			if (!isset($json['token'])) {
+				return [];
+			}
+			foreach ($this->source as $value) {
+				$_tmp[] = $this->authKey($value, $json['token']);
+			}
+		}
+		return $_tmp;
+	}
 
-    /**
-     * @param array $data
-     * @param int $user
-     * @return bool
-     * @throws AuthException|Exception
-     */
-    public function check(array $data, int $user): bool
-    {
-        $this->data = $data;
-        $this->user = $user;
+	/**
+	 * @param array $data
+	 * @param int $user
+	 * @return bool
+	 * @throws AuthException|Exception
+	 */
+	public function check(array $data, int $user): bool
+	{
+		$this->data = $data;
+		$this->user = $user;
 
-        if (empty($this->user)) return FALSE;
-        $cache = $this->getUserModel();
-        if (empty($cache)) {
-            return FALSE;
-        }
+		if (empty($this->user)) return FALSE;
+		$cache = $this->getUserModel();
+		if (empty($cache)) {
+			return FALSE;
+		}
 
-        $merge = $this->assembly(array_merge($cache, [
-            'token' => $data['token'],
-        ]));
-        $check = array_diff_assoc($this->initialize($cache), $merge);
-        return !((bool)count($check));
-    }
+		$merge = $this->assembly(array_merge($cache, [
+			'token' => $data['token'],
+		]));
+		$check = array_diff_assoc($this->initialize($cache), $merge);
+		return !((bool)count($check));
+	}
 
-    /**
-     * @return mixed
-     * @throws
-     */
-    public function getCurrentOnlineUser(): int
-    {
-        $this->data = request()->headers->getHeaders();
+	/**
+	 * @return mixed
+	 * @throws
+	 */
+	public function getCurrentOnlineUser(): int
+	{
+		$this->data = request()->headers->getHeaders();
 
-        return $this->loadByCache();
-    }
-
-
-    /**
-     * @param string $token
-     * @param string $source
-     * @return mixed
-     * @throws AuthException
-     */
-    public function getOnlineUserByToken(string $token, string $source = 'BROWSER'): int
-    {
-        $this->data['token'] = $token;
-        $this->data['source'] = $source;
-
-        return $this->loadByCache();
-    }
+		return $this->loadByCache();
+	}
 
 
-    /**
-     * @return int
-     * @throws AuthException
-     * @throws Exception
-     */
-    private function loadByCache(): int
-    {
-        $model = $this->getUserModel();
-        if (empty($model)) {
-            return (int)$this->addError('授权信息已过期！');
-        }
-        if (!isset($model['user'])) {
-            return (int)$this->addError('授权信息错误！');
-        }
-        if (!$this->check($this->data, (int)$model['user'])) {
-            return (int)$this->addError('授权信息不合法！');
-        }
+	/**
+	 * @param string $token
+	 * @param string $source
+	 * @return mixed
+	 * @throws AuthException
+	 */
+	public function getOnlineUserByToken(string $token, string $source = 'BROWSER'): int
+	{
+		$this->data['token'] = $token;
+		$this->data['source'] = $source;
 
-        $this->expireRefresh();
-
-        return (int)$model['user'];
-    }
+		return $this->loadByCache();
+	}
 
 
-    /**
-     * @param array $header
-     * @return mixed
-     * @throws AuthException
-     * @throws Exception
-     */
-    public static function checkAuth(array $header = []): mixed
-    {
-        $instance = Snowflake::app()->getJwt();
-        if (empty($header)) {
-            $header = request()->headers->getHeaders();
-        }
+	/**
+	 * @return int
+	 * @throws AuthException
+	 * @throws Exception
+	 */
+	private function loadByCache(): int
+	{
+		$model = $this->getUserModel();
+		if (empty($model)) {
+			return (int)$this->addError('授权信息已过期！');
+		}
+		if (!isset($model['user'])) {
+			return (int)$this->addError('授权信息错误！');
+		}
+		if (!$this->check($this->data, (int)$model['user'])) {
+			return (int)$this->addError('授权信息不合法！');
+		}
 
-        $instance->data = $header;
-        $model = $instance->getUserModel();
-        if (empty($model) || !isset($model['user'])) {
-            return false;
-        }
+		$this->expireRefresh();
 
-        if (!$instance->check($header, (int)$model['user'])) {
-            return false;
-        }
-        $instance->expireRefresh();
-        return $model['user'];
-    }
+		return (int)$model['user'];
+	}
 
-    /**
-     * @param null $token
-     * @param null $source
-     * @throws Exception
-     */
-    public function expireRefresh($token = null, $source = null)
-    {
-        if (!empty($token)) {
-            $this->data['token'] = $token;
-        }
-        if (!empty($source)) {
-            $this->data['source'] = $source;
-        }
-        if (!isset($this->data['token'])) {
-            return;
-        }
-        $key = $this->authKey($this->getSource(), $this->data['token']);
-        $this->getRedis()->expire($key, $this->timeout);
-    }
 
-    /**
-     * @return bool|array
-     * @throws Exception
-     */
-    private function getUserModel(): bool|array
-    {
-        if (!isset($this->data['token'])) {
-            return $this->addError('暂无访问权限！');
-        }
-        $key = $this->authKey($this->getSource(), $this->data['token']);
-        return $this->getRedis()->hGetAll($key);
-    }
+	/**
+	 * @param array $header
+	 * @return mixed
+	 * @throws AuthException
+	 * @throws Exception
+	 */
+	public static function checkAuth(array $header = []): mixed
+	{
+		$instance = Snowflake::app()->getJwt();
+		if (empty($header)) {
+			$header = request()->headers->getHeaders();
+		}
 
-    /**
-     * @return Redis|\Redis
-     * @throws
-     */
-    private function getRedis(): Redis|\Redis
-    {
-        return Snowflake::app()->getRedis();
-    }
+		$instance->data = $header;
+		$model = $instance->getUserModel();
+		if (empty($model) || !isset($model['user'])) {
+			return false;
+		}
+
+		if (!$instance->check($header, (int)$model['user'])) {
+			return false;
+		}
+		$instance->expireRefresh();
+		return $model['user'];
+	}
+
+	/**
+	 * @param null $token
+	 * @param null $source
+	 * @throws Exception
+	 */
+	public function expireRefresh($token = null, $source = null)
+	{
+		if (!empty($token)) {
+			$this->data['token'] = $token;
+		}
+		if (!empty($source)) {
+			$this->data['source'] = $source;
+		}
+		if (!isset($this->data['token'])) {
+			return;
+		}
+		$key = $this->authKey($this->getSource(), $this->data['token']);
+		$this->getRedis()->expire($key, $this->timeout);
+	}
+
+	/**
+	 * @return bool|array
+	 * @throws Exception
+	 */
+	private function getUserModel(): bool|array
+	{
+		if (!isset($this->data['token'])) {
+			return $this->addError('暂无访问权限！');
+		}
+		$key = $this->authKey($this->getSource(), $this->data['token']);
+		return $this->getRedis()->hGetAll($key);
+	}
+
+	/**
+	 * @return Redis|\Redis
+	 * @throws
+	 */
+	private function getRedis(): Redis|\Redis
+	{
+		return Snowflake::app()->getRedis();
+	}
 
 }
