@@ -22,7 +22,7 @@ abstract class HttpService extends Component
 	 * @param string $category
 	 * @throws Exception
 	 */
-	protected function write($message, $category = 'app')
+	protected function write($message, string $category = 'app')
 	{
 		$logger = Snowflake::app()->getLogger();
 		$logger->write($message, $category);
