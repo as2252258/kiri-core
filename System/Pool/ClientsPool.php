@@ -81,6 +81,9 @@ class ClientsPool extends Component
 	{
 		if (env('state') == 'exit') {
 			Timer::clear($this->creates);
+			foreach (static::$_connections as $channel) {
+				$this->flush($channel, 0);
+			}
 			$this->creates = -1;
 		} else {
 			$this->heartbeat_flush();
