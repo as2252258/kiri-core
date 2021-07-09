@@ -39,7 +39,7 @@ class Logger extends Component
 
 
     /**
-     * @param $message
+     * @param mixed $message
      * @param string $method
      * @param null $file
      * @throws Exception
@@ -51,18 +51,18 @@ class Logger extends Component
 
 
     /**
-     * @param $message
+     * @param mixed $message
      * @param string $method
      * @throws Exception
      */
-    public function trance($message, $method = 'app')
+    public function trance(mixed $message, string $method = 'app')
     {
         $this->writer($message, $method);
     }
 
 
     /**
-     * @param $message
+     * @param mixed $message
      * @param string $method
      * @param null $file
      * @throws Exception
@@ -72,13 +72,13 @@ class Logger extends Component
         $this->writer($message, $method);
     }
 
-    /**
-     * @param $message
-     * @param string $method
-     * @param null $file
-     * @throws Exception
-     */
-    public function success(mixed $message, $method = 'app', $file = null)
+	/**
+	 * @param mixed $message
+	 * @param string $method
+	 * @param null $file
+	 * @throws Exception
+	 */
+    public function success(mixed $message, string $method = 'app', $file = null)
     {
         $this->writer($message, $method);
     }
@@ -89,9 +89,8 @@ class Logger extends Component
      * @return string
      * @throws Exception
      */
-    private function writer($message, $method = 'app'): string
+    private function writer($message, string $method = 'app'): string
     {
-    	return '';
         $this->print_r($message, $method);
         if ($message instanceof Throwable) {
             $message = $message->getMessage();
@@ -115,10 +114,10 @@ class Logger extends Component
 
     /**
      * @param $message
-     * @param $method
+     * @param string $method
      * @throws Exception
      */
-    public function print_r($message, $method = '')
+    public function print_r($message, string $method = '')
     {
         $debug = Config::get('debug', ['enable' => false]);
         if ((bool)$debug['enable'] === true) {
@@ -168,7 +167,6 @@ class Logger extends Component
 	 */
     public function write(string $messages, string $method = 'app')
     {
-    	return;
         if (empty($messages)) {
             return;
         }
