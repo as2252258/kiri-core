@@ -13,7 +13,6 @@ use Exception;
 use HttpServer\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Snowflake\Core\Help;
 use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -36,12 +35,12 @@ class HttpParams
 
 	/**
 	 * HttpParams constructor.
-	 * @param $body
-	 * @param $get
-	 * @param $files
+	 * @param mixed $body
+	 * @param array|null $get
+	 * @param array|null $files
 	 * @param array $socket
 	 */
-	public function __construct(mixed $body, ?array $get, ?array $files, $socket = [])
+	public function __construct(mixed $body, ?array $get, ?array $files, array $socket = [])
 	{
 		$this->gets = $get ?? [];
 		$this->files = $files ?? [];
@@ -216,7 +215,7 @@ class HttpParams
 	 * @param array $defaultValue
 	 * @return mixed
 	 */
-	public function array($name, $defaultValue = []): mixed
+	public function array($name, array $defaultValue = []): mixed
 	{
 		return $this->body[$name] ?? $defaultValue;
 	}
@@ -238,7 +237,7 @@ class HttpParams
 	}
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 * @param bool $isNeed
 	 * @return mixed
 	 * @throws RequestException
@@ -278,13 +277,13 @@ class HttpParams
 	}
 
 	/**
-	 * @param      $name
+	 * @param string $name
 	 * @param bool $isNeed
 	 * @param int $round
 	 * @return float|null
 	 * @throws RequestException
 	 */
-	public function float(string $name, bool $isNeed = FALSE, $round = 0): ?float
+	public function float(string $name, bool $isNeed = FALSE, int $round = 0): ?float
 	{
 		$int = $this->required($name, $isNeed);
 		if ($int === null) {
@@ -312,9 +311,13 @@ class HttpParams
 			return $string;
 		}
 		if (is_numeric($length)) {
-			$length = [$length, $length];
+			if ($length !== mb_strlen((string)$string)) {
+				throw new RequestException("The minimum value cannot be lower than $length, has length $length");
+			}
+			return $string;
+		} else {
+			return $this->between($string, $length[0], $length[1] ?? $length[0]);
 		}
-		return $this->between($string, $length[0], $length[1] ?? $length[0]);
 	}
 
 	/**
@@ -337,7 +340,7 @@ class HttpParams
 	}
 
 	/**
-	 * @param      $name
+	 * @param string $name
 	 * @param bool $isNeed
 	 *
 	 * @return string|null
