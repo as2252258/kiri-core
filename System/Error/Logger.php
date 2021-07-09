@@ -91,6 +91,7 @@ class Logger extends Component
      */
     private function writer($message, $method = 'app'): string
     {
+    	return '';
         $this->print_r($message, $method);
         if ($message instanceof Throwable) {
             $message = $message->getMessage();
@@ -145,7 +146,7 @@ class Logger extends Component
      * @param string $application
      * @return mixed
      */
-    public function getLastError($application = 'app'): mixed
+    public function getLastError(string $application = 'app'): mixed
     {
         $filetype = [];
         foreach ($this->logs as $key => $val) {
@@ -160,13 +161,14 @@ class Logger extends Component
         return end($filetype);
     }
 
-    /**
-     * @param $messages
-     * @param string $method
-     * @throws
-     */
-    public function write(string $messages, $method = 'app')
+	/**
+	 * @param string $messages
+	 * @param string $method
+	 * @throws Exception
+	 */
+    public function write(string $messages, string $method = 'app')
     {
+    	return;
         if (empty($messages)) {
             return;
         }
