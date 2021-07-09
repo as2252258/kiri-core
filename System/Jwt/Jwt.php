@@ -8,6 +8,7 @@ use HttpServer\Http\HttpHeaders;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Cache\Redis;
+use Snowflake\Core\Json;
 use Snowflake\Core\Str;
 use Snowflake\Exception\AuthException;
 use Snowflake\Exception\ConfigException;
@@ -234,6 +235,9 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
 			throw new AuthException('信息解码失败.');
 		}
+
+		$data = Json::decode($data, true);
+
 		return (int)$data['user'];
 	}
 
