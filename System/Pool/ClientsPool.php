@@ -83,7 +83,9 @@ class ClientsPool extends Component
 			Timer::clear($this->creates);
 			foreach (static::$_connections as $channel) {
 				$this->flush($channel, 0);
+				$channel->close();
 			}
+			static::$_connections = [];
 			$this->creates = -1;
 		} else {
 			$this->heartbeat_flush();
@@ -134,7 +136,6 @@ class ClientsPool extends Component
 	public function flush($channel, $retain_number)
 	{
 		$this->pop($channel, $retain_number);
-		static::$_connections = [];
 	}
 
 
@@ -183,11 +184,15 @@ class ClientsPool extends Component
 	 * @param $name
 	 * @return Channel
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	private function getChannel($name): Channel
 	{
 		if (!isset(static::$_connections[$name])) {
 			static::$_connections[$name] = new Channel(Config::get('databases.pool.max', 10));
+		}
+		if (static::$_connections[$name]->errCode == SWOOLE_CHANNEL_CLOSED){
+			throw new Exception('Channel is Close.');
 		}
 		if ($this->creates === -1) {
 			$this->creates = Timer::tick(60000, [$this, 'Heartbeat_detection']);
