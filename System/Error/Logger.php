@@ -167,8 +167,8 @@ class Logger extends Component
 	 */
     public function write(string $messages, string $method = 'app')
     {
-        if (empty($messages)) {
-            return;
+	    return;
+	    if (empty($messages)) {
         }
 
         $fileName = 'server-' . date('Y-m-d') . '.log';
