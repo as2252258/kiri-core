@@ -92,7 +92,7 @@ class Node extends HttpService
 	{
 		if (is_string($handler) && str_contains($handler, '@')) {
 			list($controller, $action) = explode('@', $handler);
-			if (!empty($this->namespace)) {
+			if (!class_exists($controller) || !empty($this->namespace)) {
 				$controller = implode('\\', $this->namespace) . '\\' . $controller;
 			}
 			$this->handler = $this->getReflect($controller, $action);
