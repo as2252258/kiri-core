@@ -81,26 +81,22 @@ class Service extends Component
      * @return mixed
      * @throws Exception
      */
-    public function set($id, $definition): mixed
+    public function set($id, $definition): void
     {
         if ($definition === NULL) {
-            return $this->remove($id);
+            $this->remove($id);
+            return;
         }
 
         $this->_ids[] = $id;
 
         unset($this->_components[$id]);
         if (is_object($definition) || is_callable($definition, TRUE)) {
-            return $this->_definition[$id] = $definition;
+            $this->_definition[$id] = $definition;
         } else if (!is_array($definition)) {
             throw new ComponentException("Unexpected configuration type for the \"$id\" component: " . gettype($definition));
         }
-        if (!isset($definition['class'])) {
-            throw new ComponentException("The configuration for the \"$id\" component must contain a \"class\" element.");
-        } else {
-            $this->_definition[$id] = $definition;
-        }
-        return $this->get($id);
+        $this->_definition[$id] = $definition;
     }
 
     /**

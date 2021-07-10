@@ -60,6 +60,25 @@ class Event extends BaseObject
     const SERVER_MESSAGE = 'on message';
     const SERVER_CLIENT_CLOSE = 'SERVER:CLIENT:CLOSE';
 
+    const SERVER_ON_START = 'Start';
+    const SERVER_ON_SHUTDOWN = 'Shutdown';
+    const SERVER_ON_WORKER_START = 'WorkerStart';
+    const SERVER_ON_WORKER_STOP = 'WorkerStop';
+    const SERVER_ON_WORKER_EXIT = 'WorkerExit';
+    const SERVER_ON_CONNECT = 'Connect';
+    const SERVER_ON_RECEIVE = 'Receive';
+    const SERVER_ON_PACKET = 'Packet';
+    const SERVER_ON_REQUEST = 'request';
+    const SERVER_ON_CLOSE = 'Close';
+    const SERVER_ON_TASK = 'Task';
+    const SERVER_ON_FINISH = 'Finish';
+    const SERVER_ON_PIPE_MESSAGE = 'PipeMessage';
+    const SERVER_ON_WORKER_ERROR = 'WorkerError';
+    const SERVER_ON_MANAGER_START = 'ManagerStart';
+    const SERVER_ON_MANAGER_STOP = 'ManagerStop';
+    const SERVER_ON_BEFORE_RELOAD = 'BeforeReload';
+    const SERVER_ON_AFTER_RELOAD = 'AfterReload';
+
 
     /**
      * @param $name

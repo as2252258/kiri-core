@@ -33,9 +33,7 @@ class Packet extends Tcp
 	 */
 	public function onBaseListener()
 	{
-		$this->on('connect', $this->createHandler('connect'));
 		$this->on('packet', $this->createHandler('packet'));
-		$this->on('close', $this->createHandler('close'));
 	}
 
 

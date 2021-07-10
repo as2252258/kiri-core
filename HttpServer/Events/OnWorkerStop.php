@@ -26,9 +26,6 @@ class OnWorkerStop extends Callback
 	{
 		Event::trigger(Event::SERVER_WORKER_STOP);
 
-		$this->clearMysqlClient();
-		$this->clearRedisClient();
-
 		fire(Event::SYSTEM_RESOURCE_CLEAN);
 
 		Timer::clearAll();

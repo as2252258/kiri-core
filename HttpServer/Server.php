@@ -276,7 +276,7 @@ class Server extends HttpService
 
     /**
      * @param $config
-     * @return \Swoole\Server|Packet|Receive|Http|Websocket|null
+     * @return mixed
      * @throws ConfigException
      * @throws Exception
      */
@@ -288,7 +288,7 @@ class Server extends HttpService
         }
         $server = $this->dispatchCreate($config, $settings);
         if (isset($config['events'])) {
-            $this->createEventListen($config);
+            $this->createEventListen($server, $config);
         }
         return $server;
     }
@@ -298,33 +298,26 @@ class Server extends HttpService
      * @param $config
      * @throws Exception
      */
-    protected function createEventListen($config)
+    protected function createEventListen($server, $config)
     {
         if (!is_array($config['events'])) {
             return;
         }
         foreach ($config['events'] as $name => $_event) {
-            if ($name !== Event::SERVER_CLIENT_CLOSE) {
-                Event::on('listen ' . $config['port'] . ' ' . $name, $_event);
-            } else {
-                Event::on($name, $_event);
-            }
+            $server->on($name, $_event);
         }
     }
 
     /**
      * @param $config
      * @param $settings
-     * @return \Swoole\Server|Packet|Receive|Http|Websocket|null
+     * @return mixed
      * @throws Exception
      */
-    private function dispatchCreate($config, $settings): \Swoole\Server|Packet|Receive|Http|Websocket|null
+    private function dispatchCreate($config, $settings): mixed
     {
-        if (Snowflake::port_already($config['port'])) {
-            return $this->error_stop($config['host'], $config['port']);
-        }
         if (!($this->swoole instanceof \Swoole\Server)) {
-            return $this->parseServer($config, $settings);
+            $this->parseServer($config, $settings);
         }
         return $this->addListener($config);
     }
@@ -405,31 +398,21 @@ class Server extends HttpService
      */
     private function onListenerBind($server, $config): Packet|Websocket|Receive|Http|null
     {
-        $this->bindServerEvent($server, $config['type']);
+        if (self::PACKAGE == $config['type']) {
+            $this->onBindCallback($server, 'packet', $config['events'][Event::SERVER_ON_PACKET] ?? [make(OnPacket::class), 'onHandler']);
+        } else if ($config['type'] == self::TCP) {
+            $this->onBindCallback($server, 'connect', $config['events'][Event::SERVER_ON_CONNECT] ?? [make(OnConnect::class), 'onHandler']);
+            $this->onBindCallback($server, 'close', $config['events'][Event::SERVER_ON_CLOSE] ?? [make(OnClose::class), 'onHandler']);
+            $this->onBindCallback($server, 'receive', $config['events'][Event::SERVER_ON_RECEIVE] ?? [make(OnReceive::class), 'onHandler']);
+        } else if ($config['type'] === self::HTTP) {
+            $this->onBindCallback($server, 'request', $config['events'][Event::SERVER_ON_REQUEST] ?? [make(OnRequest::class), 'onHandler']);
+        } else {
+            throw new Exception('Unknown server type(' . $config['type'] . ').');
+        }
 
         $this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
 
         return $this->swoole;
-    }
-
-
-    /**
-     * @param string $type
-     * @throws Exception
-     */
-    private function bindServerEvent($server, $type = self::TCP)
-    {
-        if (self::PACKAGE == $type) {
-            $this->onBindCallback($server, 'packet', [make(OnPacket::class), 'onHandler']);
-        } else if ($type == self::TCP) {
-            $this->onBindCallback($server, 'connect', [make(OnConnect::class), 'onHandler']);
-            $this->onBindCallback($server, 'close', [make(OnClose::class), 'onHandler']);
-            $this->onBindCallback($server, 'receive', [make(OnReceive::class), 'onHandler']);
-        } else if ($type === self::HTTP) {
-            $this->onBindCallback($server, 'request', [make(OnRequest::class), 'onHandler']);
-        } else {
-            throw new Exception('Unknown server type(' . $type . ').');
-        }
     }
 
 

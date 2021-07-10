@@ -18,15 +18,16 @@ class Channel extends Component
 {
 
 
-	private static array $_channels = [];
+	private static ?array $_channels = [];
 
 
-	private static array $_waitRecover = [];
+	private static ?array $_waitRecover = [];
 
 
 	public function init()
 	{
 		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'recover']);
+		Event::on(Event::SERVER_WORKER_EXIT, [$this, 'cleanAll']);
 	}
 
 
@@ -84,15 +85,7 @@ class Channel extends Component
 	 */
 	public function cleanAll()
 	{
-		/** @var SplQueue $channel */
-		foreach (static::$_channels as $channel) {
-			if (!($channel instanceof SplQueue)) {
-				continue;
-			}
-			while ($channel->count() > 0) {
-				$channel->dequeue();
-			}
-		}
+        static::$_channels = null;
 		static::$_channels = [];
 	}
 
