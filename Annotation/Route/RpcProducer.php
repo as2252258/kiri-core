@@ -47,7 +47,7 @@ use Snowflake\Snowflake;
         $router = Snowflake::app()->getRouter();
         $cmd = $this->cmd;
         $callback = function (Actuator $actuator) use ($cmd, $class, $method) {
-            $actuator->addListener($cmd, $class . '@' . $method);
+            $actuator->addListener($cmd, $class::class . '@' . $method);
         };
         $router->addRpcService($this->port, $callback);
         return $router;
