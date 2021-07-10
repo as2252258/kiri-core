@@ -406,6 +406,8 @@ class Server extends HttpService
             $this->onBindCallback($server, 'receive', $config['events'][Event::SERVER_ON_RECEIVE] ?? [make(OnReceive::class), 'onHandler']);
         } else if ($config['type'] === self::HTTP) {
             $this->onBindCallback($server, 'request', $config['events'][Event::SERVER_ON_REQUEST] ?? [make(OnRequest::class), 'onHandler']);
+            $server->on('connect', null);
+            $server->on('close', null);
         } else {
             throw new Exception('Unknown server type(' . $config['type'] . ').');
         }
