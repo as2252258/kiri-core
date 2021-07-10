@@ -53,7 +53,7 @@ class DatabasesProviders extends Providers
         $config = $this->getConfig($name);
 
         $max = Config::get('databases.pool.max', 30);
-        return $application->set('databases.' . $name, [
+        $application->set('databases.' . $name, [
             'class'       => Connection::class,
             'id'          => $config['id'],
             'cds'         => $config['cds'],
@@ -65,6 +65,7 @@ class DatabasesProviders extends Providers
             'charset'     => $config['charset'] ?? 'utf8mb4',
             'slaveConfig' => $config['slaveConfig']
         ]);
+        return $application->get('databases.' . $name);
     }
 
 
@@ -75,7 +76,6 @@ class DatabasesProviders extends Providers
     public function createPool()
     {
         $databases = Config::get('databases.connections', []);
-        var_dump($databases);
         if (empty($databases)) {
             return;
         }
