@@ -31,6 +31,8 @@ class Websocket extends HAWebsocket
 		$this->on('handshake', $this->createHandler('handshake'));
 		$this->on('message', $this->createHandler('message'));
 		$this->on('close', $this->createHandler('close'));
+
+		var_dump($this->getCallback('close'));
 	}
 
 }
