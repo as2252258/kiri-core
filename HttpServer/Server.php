@@ -304,7 +304,7 @@ class Server extends HttpService
             return;
         }
         foreach ($config['events'] as $name => $_event) {
-            $server->on($name, $_event);
+            $server->on(strtolower($name), $_event);
         }
     }
 
