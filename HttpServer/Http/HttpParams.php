@@ -263,17 +263,7 @@ class HttpParams
 	 */
 	public function int(string $name, bool $isNeed = FALSE, array|int|null $min = NULL, int|null $max = NULL): ?int
 	{
-		$int = $this->required($name, $isNeed);
-		if (is_null($int)) return null;
-		if (is_array($min)) {
-			list($min, $max) = $min;
-		}
-		$length = strlen((string)$int);
-		if (!is_numeric($int) || intval($int) != $int) {
-			throw new RequestException("The request parameter $name must integer.");
-		}
-		$this->between($length, $min, $max);
-		return (int)$int;
+		return (int)$this->required($name, $isNeed);
 	}
 
 	/**
@@ -285,15 +275,7 @@ class HttpParams
 	 */
 	public function float(string $name, bool $isNeed = FALSE, int $round = 0): ?float
 	{
-		$int = $this->required($name, $isNeed);
-		if ($int === null) {
-			return null;
-		}
-		if ($round > 0) {
-			return round(floatval($int), $round);
-		} else {
-			return floatval($int);
-		}
+        return (float)$this->required($name, $isNeed);
 	}
 
 	/**
@@ -306,37 +288,7 @@ class HttpParams
 	 */
 	public function string(string $name, bool $isNeed = FALSE, int|array|null $length = NULL): ?string
 	{
-		$string = $this->required($name, $isNeed);
-		if ($string === null || $length === null) {
-			return $string;
-		}
-		if (is_numeric($length)) {
-			if ($length !== mb_strlen((string)$string)) {
-				throw new RequestException("The minimum value cannot be lower than $length, has length $length");
-			}
-			return $string;
-		} else {
-			return $this->between($string, $length[0], $length[1] ?? $length[0]);
-		}
-	}
-
-	/**
-	 * @param $string
-	 * @param $min
-	 * @param $max
-	 * @return mixed
-	 * @throws RequestException
-	 */
-	private function between($string, $min, $max): mixed
-	{
-		$_length = mb_strlen((string)$string);
-		if ($min !== NULL && $_length < $min) {
-			throw new RequestException("The minimum value cannot be lower than $min, has length $_length");
-		}
-		if ($max !== NULL && $_length > $max) {
-			throw new RequestException("Maximum cannot exceed $max, has length " . $_length);
-		}
-		return $string;
+		return (string)$this->required($name, $isNeed);
 	}
 
 	/**
@@ -368,11 +320,7 @@ class HttpParams
 	 */
 	public function bool(string $name, bool $isNeed = FALSE): bool
 	{
-		$email = $this->required($name, $isNeed);
-		if ($email === null) {
-			return false;
-		}
-		return (bool)$email;
+		return (boolean)$this->required($name, $isNeed);
 	}
 
 	/**

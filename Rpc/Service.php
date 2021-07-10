@@ -32,67 +32,69 @@ use Snowflake\Snowflake;
 class Service extends Component
 {
 
+    const defaultConfig = [
+        'open_tcp_keepalive'      => true,
+        'tcp_keepidle'            => 30,
+        'tcp_keepinterval'        => 10,
+        'tcp_keepcount'           => 10,
+        'open_http_protocol'      => false,
+        'open_websocket_protocol' => false,
+    ];
 
-	/**
-	 * @param Packet|Websocket|Receive|Http|null $server
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	public function instance(Packet|Websocket|Receive|null|Http $server): void
-	{
-		$service = Config::get('rpc');
-		if (empty($service) || !is_array($service)) {
-			return;
-		}
-		$mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
+    /**
+     * @param Packet|Websocket|Receive|Http|null $server
+     * @throws ConfigException
+     * @throws Exception
+     */
+    public function instance(Packet|Websocket|Receive|null|Http $server): void
+    {
+        $service = Config::get('rpc');
+        if (empty($service) || !is_array($service)) {
+            return;
+        }
+        $mode = $service['mode'] ?? SWOOLE_SOCK_TCP6;
 
-		if (Snowflake::port_already($service['port'])) {
-			throw new Exception($this->already($service));
-		}
-		$this->debug(Snowflake::listen($service));
+        if (Snowflake::port_already($service['port'])) {
+            throw new Exception($this->already($service));
+        }
+        $this->debug(Snowflake::listen($service));
 
-		$this->addCallback($mode);
+        if (!isset($service['setting'])) {
+            $service['setting'] = self::defaultConfig;
+        }
 
-		$rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
-		$rpcServer->set($service['setting'] ?? [
-				'open_tcp_keepalive'      => true,
-				'tcp_keepidle'            => 30,
-				'tcp_keepinterval'        => 10,
-				'tcp_keepcount'           => 10,
-				'open_http_protocol'      => false,
-				'open_websocket_protocol' => false,
-			]);
-	}
-
-
-	/**
-	 * @param $service
-	 * @return string
-	 */
-	#[Pure] private function already($service): string
-	{
-		return sprintf('Port %s::%d is already.', $service['host'], $service['port']);
-	}
+        $rpcServer = $server->addlistener($service['host'], $service['port'], $mode);
+        $rpcServer->set($service['setting']);
+        $this->addCallback($rpcServer, $mode);
+    }
 
 
-	/**
-	 * @param $mode
-	 * @throws Exception
-	 */
-	private function addCallback($mode)
-	{
-		$tcp = [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6];
+    /**
+     * @param $service
+     * @return string
+     */
+    #[Pure] private function already($service): string
+    {
+        return sprintf('Port %s::%d is already.', $service['host'], $service['port']);
+    }
 
-		$server = Snowflake::app()->getServer();
-		$server->onBindCallback('connect', [make(OnConnect::class), 'onHandler']);
-		$server->onBindCallback('close', [make(OnClose::class), 'onHandler']);
 
-		if (in_array($mode, $tcp)) {
-			$server->onBindCallback('receive', [make(OnReceive::class), 'onHandler']);
-		} else {
-			$server->onBindCallback('packet', [make(OnReceive::class), 'onHandler']);
-		}
-	}
+    /**
+     * @param $mode
+     * @throws Exception
+     */
+    private function addCallback($rpcServer, $mode)
+    {
+        $tcp = [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6];
+        $server = Snowflake::app()->getServer();
+        if (in_array($mode, $tcp)) {
+            $server->onBindCallback($rpcServer, 'connect', [make(OnConnect::class), 'onHandler']);
+            $server->onBindCallback($rpcServer, 'close', [make(OnClose::class), 'onHandler']);
+            $server->onBindCallback($rpcServer, 'receive', [make(OnReceive::class), 'onHandler']);
+        } else {
+            $server->onBindCallback($rpcServer, 'packet', [make(OnReceive::class), 'onHandler']);
+        }
+    }
 
 
 }

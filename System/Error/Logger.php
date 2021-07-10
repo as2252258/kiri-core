@@ -31,9 +31,14 @@ class Logger extends Component
     private array $logs = [];
 
 
+    private array $sources = [];
+
+
     public function init()
     {
         Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'insert']);
+        Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'closeSource']);
+        Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'closeSource']);
         Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'insert']);
     }
 
@@ -72,12 +77,12 @@ class Logger extends Component
         $this->writer($message, $method);
     }
 
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param null $file
-	 * @throws Exception
-	 */
+    /**
+     * @param mixed $message
+     * @param string $method
+     * @param null $file
+     * @throws Exception
+     */
     public function success(mixed $message, string $method = 'app', $file = null)
     {
         $this->writer($message, $method);
@@ -160,32 +165,52 @@ class Logger extends Component
         return end($filetype);
     }
 
-	/**
-	 * @param string $messages
-	 * @param string $method
-	 * @throws Exception
-	 */
+    /**
+     * @param string $messages
+     * @param string $method
+     * @throws Exception
+     */
     public function write(string $messages, string $method = 'app')
     {
-	    return;
-	    if (empty($messages)) {
+        if (empty($messages)) {
+            return;
         }
 
-        $fileName = 'server-' . date('Y-m-d') . '.log';
-        $dirName = 'log/' . (empty($method) ? 'app' : $method);
-        $logFile = '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL;
-        Snowflake::writeFile(storage($fileName, $dirName), $logFile, FILE_APPEND);
+        $dirName = 'log/' . ($method ?? 'app');
 
-        $files = glob(storage(null, $dirName) . '/*');
-        if (count($files) >= 15) {
-            $command = 'find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;';
-            if (Coroutine::getCid() !== -1) {
-                Coroutine\System::exec($command);
-            } else {
-                \shell_exec($command);
-            }
+        $fileName = storage('server-' . date('Y-m-d') . '.log', $dirName);
+        if (!isset($this->sources[$fileName])) {
+            $this->sources[$fileName] = fopen(storage($fileName, $dirName), 'rw');
         }
+        fwrite($this->sources[$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
+
+        $this->clearHistoryFile($dirName);
     }
+
+
+    /**
+     * 清理文件资源
+     */
+    public function closeSource()
+    {
+        foreach ($this->sources as $source) {
+            fclose($source);
+        }
+        $this->sources = [];
+    }
+
+
+    /**
+     * @param string $dirName
+     * @throws \Exception
+     */
+    private function clearHistoryFile(string $dirName)
+    {
+        $command = 'find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;';
+
+        Coroutine::getCid() !== -1 ? Coroutine\System::exec($command) : \shell_exec($command);
+    }
+
 
     /**
      * @param $logFile

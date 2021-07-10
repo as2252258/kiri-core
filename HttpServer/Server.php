@@ -304,10 +304,10 @@ class Server extends HttpService
             return;
         }
         foreach ($config['events'] as $name => $_event) {
-            if ($name === Event::SERVER_CLIENT_CLOSE) {
-                Event::on($name, $_event);
-            }else{
+            if ($name !== Event::SERVER_CLIENT_CLOSE) {
                 Event::on('listen ' . $config['port'] . ' ' . $name, $_event);
+            } else {
+                Event::on($name, $_event);
             }
         }
     }
@@ -342,10 +342,8 @@ class Server extends HttpService
             exit($this->addError(sprintf('Listen %s::%d fail.', $config['host'], $config['port'])));
         }
 
-        if (isset($config['settings']) && is_array($config['settings'])) {
-            $newListener->set($config['settings']);
-        }
-        $this->onListenerBind($config);
+        $newListener->set($config['settings'] ?? []);
+        $this->onListenerBind($newListener, $config);
 
         return $this->swoole;
     }
@@ -405,9 +403,9 @@ class Server extends HttpService
      * @return Packet|Websocket|Receive|Http|null
      * @throws Exception
      */
-    private function onListenerBind($config): Packet|Websocket|Receive|Http|null
+    private function onListenerBind($server, $config): Packet|Websocket|Receive|Http|null
     {
-        $this->bindServerEvent($config['type']);
+        $this->bindServerEvent($server, $config['type']);
 
         $this->debug(sprintf('Check listen %s::%d -> ok', $config['host'], $config['port']));
 
@@ -419,18 +417,16 @@ class Server extends HttpService
      * @param string $type
      * @throws Exception
      */
-    private function bindServerEvent($type = self::TCP)
+    private function bindServerEvent($server, $type = self::TCP)
     {
-        if (in_array($type, [self::PACKAGE, self::TCP])) {
-            $this->onBindCallback('connect', [make(OnConnect::class), 'onHandler']);
-            $this->onBindCallback('close', [make(OnClose::class), 'onHandler']);
-            if ($type == self::PACKAGE) {
-                $this->onBindCallback('packet', [make(OnPacket::class), 'onHandler']);
-            } else if ($type == self::TCP) {
-                $this->onBindCallback('receive', [make(OnReceive::class), 'onHandler']);
-            }
+        if (self::PACKAGE == $type) {
+            $this->onBindCallback($server, 'packet', [make(OnPacket::class), 'onHandler']);
+        } else if ($type == self::TCP) {
+            $this->onBindCallback($server, 'connect', [make(OnConnect::class), 'onHandler']);
+            $this->onBindCallback($server, 'close', [make(OnClose::class), 'onHandler']);
+            $this->onBindCallback($server, 'receive', [make(OnReceive::class), 'onHandler']);
         } else if ($type === self::HTTP) {
-            $this->onBindCallback('request', [make(OnRequest::class), 'onHandler']);
+            $this->onBindCallback($server, 'request', [make(OnRequest::class), 'onHandler']);
         } else {
             throw new Exception('Unknown server type(' . $type . ').');
         }
@@ -442,12 +438,12 @@ class Server extends HttpService
      * @param $callback
      * @throws Exception
      */
-    public function onBindCallback($name, $callback)
+    public function onBindCallback($server, $name, $callback)
     {
-        if ($this->swoole->getCallback($name) !== null) {
+        if ($server->getCallback($name) !== null) {
             return;
         }
-        $this->swoole->on($name, $callback);
+        $server->on($name, $callback);
     }
 
 
