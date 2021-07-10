@@ -47,24 +47,9 @@ class DatabasesProviders extends Providers
     public function get($name): Connection
     {
         $application = Snowflake::app();
-        if ($application->has('databases.' . $name)) {
-            return $application->get('databases.' . $name);
+        if (!$application->has('databases.' . $name)) {
+            $application->set('databases.' . $name, $this->_settings($this->getConfig($name)));
         }
-        $config = $this->getConfig($name);
-
-        $max = Config::get('databases.pool.max', 30);
-        $application->set('databases.' . $name, [
-            'class'       => Connection::class,
-            'id'          => $config['id'],
-            'cds'         => $config['cds'],
-            'username'    => $config['username'],
-            'password'    => $config['password'],
-            'tablePrefix' => $config['tablePrefix'],
-            'maxNumber'   => $max,
-            'database'    => $config['database'],
-            'charset'     => $config['charset'] ?? 'utf8mb4',
-            'slaveConfig' => $config['slaveConfig']
-        ]);
         return $application->get('databases.' . $name);
     }
 
@@ -79,27 +64,36 @@ class DatabasesProviders extends Providers
         if (empty($databases)) {
             return;
         }
-
-        $max = Config::get('databases.pool', ['max' => 10, 'min' => 10]);
-
         $application = Snowflake::app();
         foreach ($databases as $name => $database) {
             /** @var Connection $connection */
-            $connection = $application->set('databases.' . $name, [
-                'class'       => Connection::class,
-                'id'          => $database['id'],
-                'cds'         => $database['cds'],
-                'username'    => $database['username'],
-                'password'    => $database['password'],
-                'tablePrefix' => $database['tablePrefix'],
-                'database'    => $database['database'],
-                'maxNumber'   => $max['max'],
-                'minNumber'   => $max['min'],
-                'charset'     => $database['charset'] ?? 'utf8mb4',
-                'slaveConfig' => $database['slaveConfig']
-            ]);
-            $connection->fill();
+            $application->set('databases.' . $name, $this->_settings($database));
+            $application->get('databases.' . $name)->fill();
         }
+    }
+
+
+    /**
+     * @param $database
+     * @return array
+     * @throws \Snowflake\Exception\ConfigException
+     */
+    private function _settings($database)
+    {
+        $max = Config::get('databases.pool.max', 30);
+        return [
+            'class'       => Connection::class,
+            'id'          => $database['id'],
+            'cds'         => $database['cds'],
+            'username'    => $database['username'],
+            'password'    => $database['password'],
+            'tablePrefix' => $database['tablePrefix'],
+            'database'    => $database['database'],
+            'maxNumber'   => $max['max'],
+            'minNumber'   => $max['min'],
+            'charset'     => $database['charset'] ?? 'utf8mb4',
+            'slaveConfig' => $database['slaveConfig']
+        ];
     }
 
 
