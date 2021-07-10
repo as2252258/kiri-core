@@ -317,7 +317,7 @@ class Server extends HttpService
     private function dispatchCreate($config, $settings): mixed
     {
         if (!($this->swoole instanceof \Swoole\Server)) {
-            $this->parseServer($config, $settings);
+            return $this->parseServer($config, $settings);
         }
         return $this->addListener($config);
     }
