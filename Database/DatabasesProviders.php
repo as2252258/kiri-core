@@ -80,7 +80,7 @@ class DatabasesProviders extends Providers
      */
     private function _settings($database)
     {
-        $max = Config::get('databases.pool.max', 30);
+        $max = Config::get('databases.pool', [0, 10]);
         return [
             'class'       => Connection::class,
             'id'          => $database['id'],
