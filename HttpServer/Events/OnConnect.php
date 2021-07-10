@@ -27,6 +27,9 @@ class OnConnect extends Callback
 	{
 		try {
 			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+
+			var_dump($fd.' On Connect');
+
 			if (($clientInfo = $server->getClientInfo($fd, $reactorId)) === false) {
 				return;
 			}
