@@ -18,6 +18,7 @@ class OnClose extends Callback
 {
 
 
+
 	/**
 	 * @param Server $server
 	 * @param int $fd
