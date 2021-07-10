@@ -75,6 +75,7 @@ class DatabasesProviders extends Providers
     public function createPool()
     {
         $databases = Config::get('databases.connections', []);
+        var_dump($databases);
         if (empty($databases)) {
             return;
         }
