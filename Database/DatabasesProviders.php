@@ -82,7 +82,7 @@ class DatabasesProviders extends Providers
      * @return array
      * @throws \Snowflake\Exception\ConfigException
      */
-    private function _settings($database)
+    private function _settings($database): array
     {
         return [
             'class'       => Connection::class,
