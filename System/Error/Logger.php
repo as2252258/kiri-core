@@ -172,8 +172,8 @@ class Logger extends Component
      */
     public function write(string $messages, string $method = 'app')
     {
+        return;
         if (empty($messages)) {
-            return;
         }
 
         $dirName = 'log/' . ($method ?? 'app');
