@@ -28,7 +28,7 @@ class OnClose extends Callback
 		try {
 			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
-			Event::trigger(Event::SERVER_CLIENT_CLOSE, [$server, $fd]);
+			Event::trigger(Event::SERVER_ON_CLOSE, [$server, $fd]);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		}
