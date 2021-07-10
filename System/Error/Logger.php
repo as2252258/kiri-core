@@ -180,7 +180,7 @@ class Logger extends Component
 
         $fileName = storage('server-' . date('Y-m-d') . '.log', $dirName);
         if (!isset($this->sources[$fileName])) {
-            $this->sources[$fileName] = fopen(storage($fileName, $dirName), 'rw');
+            $this->sources[$fileName] = fopen($fileName, 'rw');
         }
         fwrite($this->sources[$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
 
