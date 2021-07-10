@@ -405,7 +405,6 @@ class Server extends HttpService
             $this->onBindCallback($server, 'connect', $config['events'][Event::SERVER_ON_CONNECT] ?? [make(OnConnect::class), 'onHandler']);
             $this->onBindCallback($server, 'close', $config['events'][Event::SERVER_ON_CLOSE] ?? [make(OnClose::class), 'onHandler']);
             $this->onBindCallback($server, 'receive', $config['events'][Event::SERVER_ON_RECEIVE] ?? [make(OnReceive::class), 'onHandler']);
-            $server->on('connect', $http);
         } else if ($config['type'] === self::HTTP) {
             $this->onBindCallback($server, 'request', $config['events'][Event::SERVER_ON_REQUEST] ?? [make(OnRequest::class), 'onHandler']);
             $server->on('connect', $http);

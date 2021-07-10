@@ -17,7 +17,7 @@ use Swoole\Server;
 class OnClose extends Callback
 {
 
-    
+
 
 	/**
 	 * @param Server $server
