@@ -24,6 +24,8 @@ use Snowflake\Abstracts\Config;
 class DatabasesProviders extends Providers
 {
 
+    private array $_pooLength = ['min' => 0, 'max' => 1];
+
 
     /**
      * @param Application $application
@@ -32,6 +34,8 @@ class DatabasesProviders extends Providers
     public function onImport(Application $application)
     {
         $application->set('db', $this);
+
+        $this->_pooLength = Config::get('databases.pool', ['min' => 0, 'max' => 1]);
 
         Event::on(Event::SERVER_TASK_START, [$this, 'createPool']);
         Event::on(Event::SERVER_WORKER_START, [$this, 'createPool']);
@@ -80,7 +84,6 @@ class DatabasesProviders extends Providers
      */
     private function _settings($database)
     {
-        $max = Config::get('databases.pool', [0, 10]);
         return [
             'class'       => Connection::class,
             'id'          => $database['id'],
@@ -89,8 +92,8 @@ class DatabasesProviders extends Providers
             'password'    => $database['password'],
             'tablePrefix' => $database['tablePrefix'],
             'database'    => $database['database'],
-            'maxNumber'   => $max['max'],
-            'minNumber'   => $max['min'],
+            'maxNumber'   => $this->_pooLength['max'],
+            'minNumber'   => $this->_pooLength['min'],
             'charset'     => $database['charset'] ?? 'utf8mb4',
             'slaveConfig' => $database['slaveConfig']
         ];
