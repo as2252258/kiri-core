@@ -33,6 +33,7 @@ class Websocket extends HAWebsocket
      */
     public function onBaseListener()
     {
+        $this->on('connect', function () {});
         $this->on('handshake', $this->createHandler('handshake'));
         $this->on('message', $this->createHandler('message'));
         $this->on('close', $this->createHandler('close'));
