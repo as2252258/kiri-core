@@ -426,9 +426,9 @@ class Server extends HttpService
      */
     public function onBindCallback($server, $name, $callback)
     {
-        if ($server->getCallback($name) !== null) {
-            return;
-        }
+//        if ($server->getCallback($name) !== null) {
+//            return;
+//        }
         $server->on($name, $callback);
     }
 
