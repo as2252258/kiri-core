@@ -29,12 +29,13 @@ use Snowflake\Snowflake;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function execute(mixed $class, mixed $method = null): mixed
-	{
+    public function execute(mixed $class, mixed $method = null): bool
+    {
 		$async = Snowflake::app()->getAsync();
 		$async->addAsync($this->name, $class);
 		return true;

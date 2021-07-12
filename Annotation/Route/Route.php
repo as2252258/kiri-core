@@ -29,9 +29,9 @@ use Snowflake\Snowflake;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return Router
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
     public function execute(mixed $class, mixed $method = null): Router

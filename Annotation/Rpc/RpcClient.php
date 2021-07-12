@@ -37,12 +37,13 @@ use Snowflake\Snowflake;
     }
 
 
-    /**
-     * @param array $handler
-     * @return mixed
-     * @throws Exception
-     */
-    public function execute(mixed $class, mixed $method = ''): mixed
+	/**
+	 * @param mixed $class
+	 * @param mixed $method
+	 * @return bool
+	 * @throws Exception
+	 */
+    public function execute(mixed $class, mixed $method = ''): bool
     {
         $rpc = Snowflake::app()->getRpc();
         $rpc->addProducer($this->cmd, [$class, $method], $this->config);

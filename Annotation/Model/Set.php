@@ -6,6 +6,7 @@ namespace Annotation\Model;
 
 use Annotation\Attribute;
 use Database\ActiveRecord;
+use Exception;
 use Snowflake\Snowflake;
 
 #[\Attribute(\Attribute::TARGET_METHOD)] class Set extends Attribute
@@ -25,7 +26,7 @@ use Snowflake\Snowflake;
      * @param mixed $class
      * @param mixed|null $method
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(mixed $class, mixed $method = null): bool
 	{

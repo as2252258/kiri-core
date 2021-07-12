@@ -21,7 +21,7 @@ use Snowflake\Snowflake;
 	 * @param string|array $interceptor
 	 * @throws
 	 */
-	#[Pure] public function __construct(public string|array $interceptor)
+	public function __construct(public string|array $interceptor)
 	{
 		if (is_string($this->interceptor)) {
 			$this->interceptor = [$this->interceptor];
@@ -40,7 +40,8 @@ use Snowflake\Snowflake;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return Interceptor
 	 */
     public function execute(mixed $class, mixed $method = null): static

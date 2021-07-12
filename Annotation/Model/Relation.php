@@ -6,6 +6,7 @@ namespace Annotation\Model;
 
 use Annotation\Attribute;
 use Database\ActiveRecord;
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Snowflake;
 
@@ -28,8 +29,10 @@ use Snowflake\Snowflake;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return bool
+	 * @throws Exception
 	 */
     public function execute(mixed $class, mixed $method = null): bool
 	{

@@ -39,7 +39,8 @@ use Snowflake\Snowflake;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return Limits
 	 */
     public function execute(mixed $class, mixed $method = null): static

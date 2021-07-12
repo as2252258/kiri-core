@@ -37,10 +37,10 @@ use Snowflake\Snowflake;
     /**
      * @param object $class
      * @param string $method
-     * @return mixed
-     * @throws \Exception
+     * @return bool
+     * @throws Exception
      */
-    public function execute(mixed $class, mixed $method = null): mixed
+    public function execute(mixed $class, mixed $method = null): bool
     {
         $class = ['class' => $class::class];
         if (!empty($this->args)) {

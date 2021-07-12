@@ -35,7 +35,8 @@ use Annotation\Attribute;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return array
 	 */
     public function execute(mixed $class, mixed $method = null): array

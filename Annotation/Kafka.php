@@ -4,6 +4,7 @@
 namespace Annotation;
 
 
+use Exception;
 use Kafka\ConsumerInterface;
 use Kafka\TaskContainer;
 use Snowflake\Snowflake;
@@ -26,11 +27,13 @@ use Snowflake\Snowflake;
     }
 
 
-    /**
-     * @param array $handler
-     * @return mixed
-     */
-    public function execute(mixed $class, mixed $method = null): mixed
+	/**
+	 * @param mixed $class
+	 * @param mixed|null $method
+	 * @return bool
+	 * @throws Exception
+	 */
+    public function execute(mixed $class, mixed $method = null): bool
     {
         if (!($class instanceof ConsumerInterface)) {
             return false;

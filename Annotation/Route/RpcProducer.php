@@ -35,12 +35,12 @@ use Snowflake\Snowflake;
     }
 
 
-
-    /**
-     * @param array $handler
-     * @return Router
-     * @throws Exception
-     */
+	/**
+	 * @param mixed $class
+	 * @param mixed|null $method
+	 * @return Router
+	 * @throws Exception
+	 */
     public function execute(mixed $class, mixed $method = null): Router
     {
         // TODO: Implement setHandler() method.

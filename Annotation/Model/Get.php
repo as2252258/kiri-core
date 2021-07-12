@@ -7,6 +7,7 @@ namespace Annotation\Model;
 use Annotation\Annotation;
 use Attribute;
 use Database\ActiveRecord;
+use Exception;
 use Snowflake\Snowflake;
 
 
@@ -27,10 +28,12 @@ use Snowflake\Snowflake;
     }
 
 
-    /**
-     * @param array $handler
-     * @return ActiveRecord
-     */
+	/**
+	 * @param mixed $class
+	 * @param mixed|null $method
+	 * @return bool
+	 * @throws Exception
+	 */
     public function execute(mixed $class, mixed $method = null): bool
     {
         $annotation = Snowflake::getAnnotation();

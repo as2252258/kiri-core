@@ -29,12 +29,13 @@ use Snowflake\Event as SEvent;
 
 
 	/**
-	 * @param array $handler
+	 * @param mixed $class
+	 * @param mixed|null $method
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function execute(mixed $class, mixed $method = null): mixed
-	{
+    public function execute(mixed $class, mixed $method = null): bool
+    {
 		// TODO: Implement execute() method.
 		SEvent::on($this->name, [$class, $method], $this->params);
 		return true;

@@ -5,6 +5,7 @@ namespace Annotation;
 
 
 use Exception;
+use ReflectionException;
 use ReflectionProperty;
 use Snowflake\Snowflake;
 
@@ -26,12 +27,14 @@ use Snowflake\Snowflake;
     }
 
 
-    /**
-     * @param array $handler
-     * @return mixed
-     * @throws Exception
-     */
-    public function execute(mixed $class, mixed $method = null): mixed
+	/**
+	 * @param mixed $class
+	 * @param mixed|null $method
+	 * @return bool
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+    public function execute(mixed $class, mixed $method = null): bool
     {
         $injectValue = $this->parseInjectValue();
         if (!($method instanceof ReflectionProperty)) {
