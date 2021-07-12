@@ -45,7 +45,7 @@ class Service extends Component
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function init()
     {
@@ -101,11 +101,12 @@ class Service extends Component
     }
 
 
-    /**
-     * @param \Swoole\Server $server
-     * @param int $fd
-     * @param int $reactorId
-     */
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * @param int $reactorId
+	 * @throws Exception
+	 */
     private function onConnect(Server $server, int $fd, int $reactorId)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
@@ -118,11 +119,12 @@ class Service extends Component
     }
 
 
-    /**
-     * @param \Swoole\Server $server
-     * @param int $fd
-     * on tcp client close
-     */
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * on tcp client close
+	 * @throws Exception
+	 */
     private function onClose(Server $server, int $fd)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
@@ -132,11 +134,11 @@ class Service extends Component
 
 
     /**
-     * @param \Swoole\Server $server
+     * @param Server $server
      * @param int $fd
      * @param int $reID
      * @param string $data
-     * @throws \Exception
+     * @throws Exception
      */
     private function onReceive(Server $server, int $fd, int $reID, string $data)
     {
@@ -156,13 +158,12 @@ class Service extends Component
     }
 
 
-    /**
-     * @param \Swoole\Server $server
-     * @param int $fd
-     * @param int $reID
-     * @param string $data
-     * @throws \Exception
-     */
+	/**
+	 * @param Server $server
+	 * @param string $data
+	 * @param array $client
+	 * @throws Exception
+	 */
     private function onPacket(Server $server, string $data, array $client)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
@@ -179,15 +180,13 @@ class Service extends Component
     }
 
 
-    /**
-     * @param \Swoole\Server $server
-     * @param int $fd
-     * @param int $reID
-     * @param string $data
-     * @return mixed
-     * @throws \Exception
-     */
-    private function requestSpl(int $server_port, string $data)
+	/**
+	 * @param int $server_port
+	 * @param string $data
+	 * @return mixed
+	 * @throws Exception
+	 */
+    private function requestSpl(int $server_port, string $data): mixed
     {
         $sRequest = new Request();
 

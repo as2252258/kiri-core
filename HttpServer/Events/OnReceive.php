@@ -35,11 +35,7 @@ class OnReceive extends Callback
 			$client = $server->getClientInfo($fd, $reID);
 			$name = $this->getName($client, Event::SERVER_RECEIVE);
 
-			if (Config::get('rpc.port', 0) == $client['server_port']) {
-				$result = router()->find_path(Request::rpcRequest($fd, $data, $reID))?->dispatch();
-			} else {
-				$result = Event::trigger($name, [$server, $data, $client]);
-			}
+			$result = Event::trigger($name, [$server, $data, $client]);
 			if (is_array($result) || is_object($result)) {
 				$result = Json::encode($result);
 			}
