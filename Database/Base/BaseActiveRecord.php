@@ -28,7 +28,6 @@ use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\TraitApplication;
-use Snowflake\Event as SEvent;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -136,42 +135,13 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @param $name
-	 * @param $method
-	 * @return static
-	 */
-	public function addGets($name, $method): static
-	{
-		if (!isset($this->_annotations[self::GET])) {
-			$this->_annotations[self::GET] = [];
-		}
-		$this->_annotations[self::GET][$name] = [$this, $method];
-		return $this;
-	}
-
-
-	/**
-	 * @param $name
-	 * @param $method
-	 * @return static
-	 */
-	public function addSets($name, $method): static
-	{
-		if (!isset($this->_annotations[self::SET])) {
-			$this->_annotations[self::SET] = [];
-		}
-		$this->_annotations[self::SET][$name] = [$this, $method];
-		return $this;
-	}
-
-
-	/**
 	 * @return array
 	 */
 	public function getActions(): array
 	{
 		return $this->actions;
 	}
+
 
 	/**
 	 * @return bool
@@ -181,11 +151,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		return $this->isNewExample === TRUE;
 	}
 
+
 	/**
 	 * @param bool $bool
 	 * @return $this
 	 */
-	public function setIsCreate($bool = FALSE): static
+	public function setIsCreate(bool $bool = FALSE): static
 	{
 		$this->isNewExample = $bool;
 		return $this;
@@ -200,6 +171,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		return Snowflake::app()->getLogger()->getLastError('mysql');
 	}
+
 
 	/**
 	 * @return bool
@@ -216,6 +188,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		}
 		return false;
 	}
+
 
 	/**
 	 * @throws Exception
@@ -336,7 +309,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	public static function deleteByCondition($condition = NULL, $attributes = [], $if_condition_is_null = false): bool
+	public static function deleteByCondition($condition = NULL, array $attributes = [], bool $if_condition_is_null = false): bool
 	{
 		if (empty($condition)) {
 			if (!$if_condition_is_null) {
@@ -426,28 +399,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	private function insert($param, $attributes): bool|static
 	{
-		if (empty($param)) {
-			return FALSE;
-		}
-		$dbConnection = static::getDb();
-
 		[$sql, $param] = SqlBuilder::builder(static::find())->insert($param);
-
-//        $trance = $dbConnection->beginTransaction();
-		try {
-			if (!($lastId = (int)$dbConnection->createCommand($sql, static::getDbName(), $param)->save(true, $this))) {
-				throw new Exception('保存失败.');
-			}
-//            $trance->commit();
-			$lastId = $this->setPrimary($lastId, $param);
-
-			$this->refresh();
-
-			SEvent::trigger(self::AFTER_SAVE, [$attributes, $param]);
-		} catch (\Throwable $exception) {
-//            $trance->rollback();
-			$lastId = $this->addError($exception, 'mysql');
+		$dbConnection = static::getDb()->createCommand($sql, static::getDbName(), $param);
+		if (!($lastId = (int)$dbConnection->save(true, $this))) {
+			throw new Exception('保存失败.');
 		}
+		$lastId = $this->setPrimary($lastId, $param);
+
+		$this->refresh()->afterSave($attributes, $param);
+
 		return $lastId;
 	}
 
@@ -486,33 +446,18 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	private function updateInternal($fields, $condition, $param): bool|static
 	{
-		if (empty($param)) {
-			return true;
-		}
-		$command = static::getDb();
-
 		if ($this->hasPrimary()) {
 			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
 		}
-
 		$generate = SqlBuilder::builder(static::find()->where($condition))->update($param);
 		if (is_bool($generate)) {
 			return $generate;
 		}
-
-//        $trance = $command->beginTransaction();
-		if (!$command->createCommand($generate[0], static::getDbName(), $generate[1])->save(false, $this)) {
-//            $trance->rollback();
-			return false;
+		$command = static::getDb()->createCommand($generate[0], static::getDbName(), $generate[1]);
+		if ($command->save(false, $this)) {
+			return $this->refresh()->afterSave($fields, $param);
 		}
-
-//        $trance->commit();
-
-		$this->refresh();
-
-		SEvent::trigger(self::AFTER_SAVE, [$fields, $param]);
-
-		return true;
+		return false;
 	}
 
 	/**
@@ -525,22 +470,18 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (!is_null($data)) {
 			$this->_attributes = merge($this->_attributes, $data);
 		}
-
 		if (!$this->validator($this->rules())) {
 			return false;
 		}
-
-		if (!SEvent::trigger(self::BEFORE_SAVE, [$this], $this)) {
-			return false;
+		if ($this->beforeSave($this)) {
+			static::getDb()->enablingTransactions();
+			[$change, $condition, $fields] = $this->filtration_and_separation();
+			if (!$this->isNewExample) {
+				return $this->updateInternal($fields, $condition, $change);
+			}
+			return $this->insert($change, $fields);
 		}
-
-		static::getDb()->enablingTransactions();
-		[$change, $condition, $fields] = $this->filtration_and_separation();
-
-		if (!$this->isNewExample) {
-			return $this->updateInternal($fields, $condition, $change);
-		}
-		return $this->insert($change, $fields);
+		return false;
 	}
 
 
@@ -614,19 +555,12 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		$_tmp = [];
 		$condition = [];
-		$columns = static::getColumns();
-
-		$format = $columns->getAllField();
-
 		foreach ($this->_attributes as $key => $val) {
 			$oldValue = $this->_oldAttributes[$key] ?? null;
-			if ($val !== $oldValue) {
-				$_tmp[$key] = $this->toFormat($columns, $format, $key, $val);
-				if (is_bool($_tmp[$key])) {
-					unset($_tmp[$key]);
-				}
-			} else {
+			if ($val === $oldValue) {
 				$condition[$key] = $val;
+			} else {
+				$_tmp[$key] = $val;
 			}
 		}
 		return [$_tmp, $condition, array_keys($_tmp)];
@@ -837,21 +771,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @throws Exception
 	 */
 	public function __get($name): mixed
-	{
-		if (Snowflake::app()->has($name)) {
-			return Snowflake::getApp($name);
-		} else {
-			return $this->_gets($name);
-		}
-	}
-
-
-	/**
-	 * @param $name
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function _gets($name): mixed
 	{
 		$value = $this->_attributes[$name] ?? null;
 		$method = $this->_get_annotation($name, static::GET);

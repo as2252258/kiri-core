@@ -269,7 +269,7 @@ if (!function_exists('write')) {
 	 * @param string $category
 	 * @throws Exception
 	 */
-	function write(string $messages, $category = 'app')
+	function write(string $messages, string $category = 'app')
 	{
 		$logger = Snowflake::app()->getLogger();
 		$logger->write($messages, $category);

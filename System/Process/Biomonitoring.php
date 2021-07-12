@@ -45,7 +45,7 @@ class Biomonitoring extends Process
 		$server = Snowflake::app()->getSwoole();
 		Timer::tick(1000, function () use ($server) {
 			clearstatcache();
-			if (($size = filesize($server->setting['log_file'])) > 1024000000) {
+			if (filesize($server->setting['log_file']) > 1024000000) {
 				@unlink($server->setting['log_file']);
 				Process::kill($server->master_pid, SIGRTMIN);
 			}

@@ -82,7 +82,7 @@ class ServerInotify extends Process
 	 * @param bool $isReload
 	 * @throws Exception
 	 */
-	private function loadDirs($isReload = false)
+	private function loadDirs(bool $isReload = false)
 	{
 		foreach ($this->dirs as $value) {
 			if (is_bool($path = realpath($value))) {
@@ -120,7 +120,7 @@ class ServerInotify extends Process
 	 * @return void
 	 * @throws Exception
 	 */
-	private function loadByDir($path, $isReload = false): void
+	private function loadByDir($path, bool $isReload = false): void
 	{
 		if (!is_string($path)) {
 			return;
