@@ -158,17 +158,16 @@ class Node extends HttpService
 	{
 		$middleWares = $this->getMiddleWares();
 		$middleWares = $this->annotation_limit($this, $middleWares);
-		$middleWares = $this->annotation_interceptor($this, $middleWares);
-		return $middleWares;
+		return $this->annotation_interceptor($this, $middleWares);
 	}
 
 
 	/**
 	 * @param Node $node
-	 * @param $middleWares
+	 * @param array $middleWares
 	 * @return array
 	 */
-	protected function annotation_interceptor(Node $node, $middleWares = []): array
+	#[Pure] protected function annotation_interceptor(Node $node, array $middleWares = []): array
 	{
 		if (!$node->hasInterceptor()) {
 			return $middleWares;
@@ -182,10 +181,10 @@ class Node extends HttpService
 
 	/**
 	 * @param Node $node
-	 * @param $middleWares
+	 * @param array $middleWares
 	 * @return array
 	 */
-	protected function annotation_limit(Node $node, $middleWares = []): array
+	#[Pure] protected function annotation_limit(Node $node, array $middleWares = []): array
 	{
 		if (!$node->hasLimits()) {
 			return $middleWares;
@@ -268,7 +267,7 @@ class Node extends HttpService
 	}
 
 	/**
-	 * @param $request
+	 * @param Request $request
 	 * @return bool
 	 */
 	public function methodAllow(Request $request): bool
