@@ -40,7 +40,7 @@ class Service extends Component
      * @return mixed
      * @throws Exception
      */
-    public function get($id, $try = true): mixed
+    public function get($id, bool $try = true): mixed
     {
         if (isset($this->_components[$id])) {
             return $this->_components[$id];
@@ -56,13 +56,10 @@ class Service extends Component
             if (is_object($config)) {
                 return $this->_components[$id] = $config;
             }
-            $object = Snowflake::createObject($config);
         } else {
             $config = $this->_alias[$id];
-
-            $object = Snowflake::createObject($config);
         }
-        return $this->_components[$id] = $object;
+	    return $this->_components[$id] = Snowflake::createObject($config);
     }
 
     /**
