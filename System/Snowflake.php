@@ -67,7 +67,7 @@ class Snowflake
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function set($alias, $array = []): mixed
+	public static function set($alias, array $array = []): mixed
 	{
 		return static::app()->set($alias, $array);
 	}

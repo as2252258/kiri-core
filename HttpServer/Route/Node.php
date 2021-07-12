@@ -17,7 +17,10 @@ use HttpServer\Controller;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
+use Snowflake\Aop;
 use Snowflake\Core\Json;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Throwable;
 
@@ -109,27 +112,46 @@ class Node extends HttpService
 		}
 		if (!empty($this->handler)) {
 			$this->callback = Reduce::reduce($this->createDispatch(), $this->annotation());
+			$this->setAop();
 		}
 		return $this;
 	}
 
+	private array $_aop;
+
 
 	/**
 	 * @return Closure
+	 * @throws Exception
 	 */
 	public function createDispatch(): Closure
 	{
-		$handler = $this->handler;
-		return static function () use ($handler) {
-			$dispatchParam = Context::getContext('dispatch-param');
-			if (empty($dispatchParam)) {
-				$dispatchParam = [\request()];
+		return static function () {
+			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
+			if (empty($this->_aop) || $this->handler instanceof Closure) {
+				return call_user_func($this->handler, ...$dispatchParam);
 			}
-			if ($handler instanceof Closure) {
-				return call_user_func($handler, ...$dispatchParam);
-			}
-			return \aop($handler, $dispatchParam);
+			return call_user_func($this->_aop[0], $this->_aop[1], $dispatchParam);
 		};
+	}
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	private function setAop()
+	{
+		/** @var Aop $aop */
+		$aop = Snowflake::app()->get('aop');
+		if (!$aop->hasAop($this->handler)) {
+			return;
+		}
+		$reflect = $aop->getAop($this->handler);
+
+		$method = $reflect->getMethod('invoke');
+
+		$this->_aop = [[$method, 'invokeArgs'], $reflect->newInstance($this->handler)];
 	}
 
 

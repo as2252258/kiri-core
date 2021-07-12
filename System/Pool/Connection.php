@@ -32,7 +32,8 @@ class Connection extends Component
 	 */
 	public function inTransaction($cds): bool
 	{
-		return Context::getContext('begin_' . $this->getPool()->name('Mysql:' . $cds, true)) == 0;
+		$name = $this->getPool()->name('Mysql:' . $cds, true);
+		return Context::getContext('begin_' . $name) == 0;
 	}
 
 	/**
@@ -122,7 +123,7 @@ class Connection extends Component
 				$connections = $this->createClient($coroutineName, $config);
 			}
 		}
-		if ($number = Context::getContext('begin_' . $coroutineName, Coroutine::getCid())) {
+		if ($number = Context::getContext('begin_' . $coroutineName)) {
 			$number > 0 && $connections->beginTransaction();
 		}
 		return Context::setContext($coroutineName, $connections);

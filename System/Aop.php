@@ -5,6 +5,8 @@ namespace Snowflake;
 
 
 use Exception;
+use Reflection;
+use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Exception\NotFindClassException;
@@ -20,25 +22,35 @@ class Aop extends Component
 {
 
 
-    private static array $_aop = [];
+	private static array $_aop = [];
 
 
-    /**
-     * @param array $handler
-     * @param string $aspect
-     */
-    public function aop_add(array $handler, string $aspect)
-    {
-        [$class, $method] = $handler;
-        $alias = $class::class . '::' . $method;
-        if (!isset(static::$_aop[$alias])) {
-            static::$_aop[$alias] = [];
-        }
-        if (in_array($aspect, static::$_aop[$alias])) {
-            return;
-        }
-	    static::$_aop[$alias][] = $aspect;
-    }
+	/**
+	 * @param array $handler
+	 * @param string $aspect
+	 */
+	public function aop_add(array $handler, string $aspect)
+	{
+		[$class, $method] = $handler;
+		$alias = $class::class . '::' . $method;
+		if (!isset(static::$_aop[$alias])) {
+			static::$_aop[$alias] = [];
+		}
+		if (in_array($aspect, static::$_aop[$alias])) {
+			return;
+		}
+		static::$_aop[$alias][] = $aspect;
+	}
+
+
+	/**
+	 * @param $handler
+	 * @return bool
+	 */
+	public function hasAop($handler): bool
+	{
+		return isset(static::$_aop[$handler[0]::class . '::' . $handler[1]]);
+	}
 
 
 	/**
@@ -49,38 +61,38 @@ class Aop extends Component
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-    final public function dispatch($handler, $params): mixed
-    {
-        if ($handler instanceof \Closure) {
-            return call_user_func($handler, ...$params);
-        }
-        $aopName = $handler[0]::class . '::' . $handler[1];
-        if (!isset(static::$_aop[$aopName])) {
-            return $this->notFound($handler, $params);
-        }
-        return $this->invoke($handler, $params, $aopName);
-    }
+	final public function dispatch($handler, $params): mixed
+	{
+		$aopName = $handler[0]::class . '::' . $handler[1];
+
+		$reflect = Snowflake::getDi()->getReflect(current(static::$_aop[$aopName]));
+		if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
+			throw new Exception(ASPECT_ERROR . IAspect::class);
+		}
+		$method = $reflect->getMethod('invoke');
+
+		return $method->invokeArgs($reflect->newInstance($handler), $params);
+	}
+
 
 
 	/**
-	 * @param $handler
-	 * @param $params
-	 * @param $aopName
-	 * @return mixed
-	 * @throws ReflectionException
+	 * @param array $handler
+	 * @return ReflectionClass
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-    private function invoke($handler, $params, $aopName): mixed
-    {
-        $reflect = Snowflake::getDi()->getReflect(current(static::$_aop[$aopName]));
-        if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
-            throw new Exception(ASPECT_ERROR . IAspect::class);
-        }
-        $method = $reflect->getMethod('invoke');
+	public function getAop(array $handler): ReflectionClass
+	{
+		$aopName = $handler[0]::class . '::' . $handler[1];
 
-        return $method->invokeArgs($reflect->newInstance($handler), $params);
-    }
+		$reflect = Snowflake::getDi()->getReflect(current(static::$_aop[$aopName]));
+		if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
+			throw new Exception(ASPECT_ERROR . IAspect::class);
+		}
+		return $reflect;
+	}
 
 
 	/**
@@ -89,12 +101,12 @@ class Aop extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-    private function notFound($handler, $params): mixed
-    {
-        if (!method_exists($handler[0], $handler[1])) {
-            return response()->close(404);
-        }
-        return call_user_func($handler, ...$params);
-    }
+	private function notFound($handler, $params): mixed
+	{
+		if (!method_exists($handler[0], $handler[1])) {
+			return response()->close(404);
+		}
+		return call_user_func($handler, ...$params);
+	}
 
 }
