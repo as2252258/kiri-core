@@ -174,18 +174,13 @@ class Logger extends Component
 		}
 
 		$to_day = date('Y-m-d');
+		if (!isset($this->sources[$to_day])) $this->sources[$to_day] = [];
 
-		$dirName = 'log/' . ($method ?? 'app');
-		if (!isset($this->sources[$to_day])) {
-			$this->sources[$to_day] = [];
-		}
-
-		$fileName = storage('server-' . $to_day . '.log', $dirName);
+		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
 		if (!isset($this->sources[$to_day][$fileName])) {
 			$this->sources[$to_day][$fileName] = fopen($fileName, 'rw');
 		}
-
-		fwrite($this->sources[$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
+		fwrite($this->sources[$to_day][$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
 
 		$this->clearHistoryFile($dirName);
 
