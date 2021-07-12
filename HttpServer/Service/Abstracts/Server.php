@@ -53,7 +53,7 @@ trait Server
     {
         $this->on('Shutdown', $this->createHandler('shutdown'));
         $this->on('Start', $this->createHandler('start'));
-        if ($this->setting['task_worker_num'] ?? 0 > 0) {
+        if (($this->setting['task_worker_num'] ?? 0) > 0) {
             $this->on('Finish', $this->createHandler('finish'));
             $this->on('Task', $this->createHandler('task'));
         }
@@ -62,8 +62,8 @@ trait Server
 
 
     /**
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
+     * @throws ReflectionException
+     * @throws NotFindClassException
      */
     private function onManager()
     {
@@ -76,8 +76,8 @@ trait Server
 
 
     /**
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
+     * @throws ReflectionException
+     * @throws NotFindClassException
      */
     private function onWorker()
     {
@@ -89,8 +89,8 @@ trait Server
 
 
     /**
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
+     * @throws ReflectionException
+     * @throws NotFindClassException
      */
     private function onOther()
     {
