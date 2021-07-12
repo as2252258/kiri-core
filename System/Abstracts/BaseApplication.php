@@ -319,7 +319,7 @@ abstract class BaseApplication extends Service
 	 */
 	public function getMysqlFromPool(): Connection
 	{
-		return $this->get('pool')->getDb();
+		return $this->get('connections');
 	}
 
 
@@ -329,7 +329,7 @@ abstract class BaseApplication extends Service
 	 */
 	public function getRedisFromPool(): SRedis
 	{
-		return $this->get('pool')->getRedis();
+		return $this->get('redis_connections');
 	}
 
 
