@@ -22,7 +22,7 @@ use Swoole\Runtime;
 class Redis extends Component
 {
 
-	private ?ClientsPool $clientsPool = null;
+	private ?Pool $clientsPool = null;
 
 
 	/**
@@ -114,10 +114,10 @@ class Redis extends Component
 
 
 	/**
-	 * @return ClientsPool
+	 * @return Pool
 	 * @throws Exception
 	 */
-	public function getPool(): ClientsPool
+	public function getPool(): Pool
 	{
 		if (!$this->clientsPool) {
 			$this->clientsPool = Snowflake::app()->getClientsPool();

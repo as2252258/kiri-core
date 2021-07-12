@@ -23,7 +23,7 @@ use Snowflake\Channel;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
-use Snowflake\Pool\ClientsPool;
+use Snowflake\Pool\Pool;
 use Snowflake\Pool\Connection;
 use Rpc\Producer as RPCProducer;
 
@@ -53,7 +53,7 @@ use Rpc\Producer as RPCProducer;
  * @property Channel $channel
  * @property Shutdown $shutdown
  * @property Emit $emit
- * @property ClientsPool $clientsPool
+ * @property Pool $clientsPool
  */
 trait TraitApplication
 {

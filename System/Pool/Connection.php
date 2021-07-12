@@ -20,7 +20,7 @@ use Throwable;
 class Connection extends Component
 {
 
-	private ?ClientsPool $clientsPool = null;
+	private ?Pool $clientsPool = null;
 
 
 	/**
@@ -247,10 +247,10 @@ class Connection extends Component
 
 
 	/**
-	 * @return ClientsPool
+	 * @return Pool
 	 * @throws Exception
 	 */
-	public function getPool(): ClientsPool
+	public function getPool(): Pool
 	{
 		if (!$this->clientsPool) {
 			$this->clientsPool = Snowflake::app()->getClientsPool();
