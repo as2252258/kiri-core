@@ -129,11 +129,10 @@ class Node extends HttpService
 		$application = $this;
 		return static function () use ($application) {
 			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
-			if (empty($application->_aop) || $application->handler instanceof Closure) {
-				return call_user_func($application->handler, ...$dispatchParam);
+			if (!empty($application->_aop)) {
+				return call_user_func($application->_aop[0], $application->_aop[1], $dispatchParam);
 			}
-			$application->_aop[] = $dispatchParam;
-			return call_user_func(...$application->_aop);
+			return call_user_func($application->handler, ...$dispatchParam);
 		};
 	}
 
