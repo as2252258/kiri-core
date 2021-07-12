@@ -141,12 +141,13 @@ class Node extends HttpService
 	/**
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	private function setAop()
 	{
 		/** @var Aop $aop */
 		$aop = Snowflake::app()->get('aop');
-		if (!$aop->hasAop($this->handler)) {
+		if (!is_array($this->handler) || !$aop->hasAop($this->handler)) {
 			return;
 		}
 		$reflect = $aop->getAop($this->handler);
