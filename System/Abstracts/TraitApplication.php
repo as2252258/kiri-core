@@ -25,7 +25,6 @@ use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\ClientsPool;
 use Snowflake\Pool\Connection;
-use Snowflake\Pool\Pool as SPool;
 use Rpc\Producer as RPCProducer;
 
 /**
@@ -33,7 +32,6 @@ use Rpc\Producer as RPCProducer;
  * @package Snowflake\Abstracts
  * @property Event $event
  * @property Router $router
- * @property SPool $pool
  * @property \Redis|Redis $redis
  * @property Server $server
  * @property Response $response

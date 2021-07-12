@@ -40,7 +40,6 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Jwt\Jwt;
 use Snowflake\Pool\ClientsPool;
 use Snowflake\Pool\Connection;
-use Snowflake\Pool\Pool as SPool;
 use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Swoole\Table;
@@ -454,7 +453,6 @@ abstract class BaseApplication extends Service
 			'error'             => ['class' => ErrorHandler::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
-			'pool'              => ['class' => SPool::class],
 			'clientsPool'       => ['class' => ClientsPool::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
