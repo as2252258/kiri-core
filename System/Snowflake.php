@@ -158,7 +158,7 @@ class Snowflake
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function createObject($className, $construct = []): mixed
+	public static function createObject($className, array $construct = []): mixed
 	{
 		if (is_object($className)) {
 			return $className;

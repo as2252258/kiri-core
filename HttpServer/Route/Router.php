@@ -102,7 +102,7 @@ class Router extends HttpService implements RouterInterface
      * @return ?Node
      * @throws Exception
      */
-    public function addRoute($path, $handler, $method = 'any'): ?Node
+    public function addRoute($path, $handler, string $method = 'any'): ?Node
     {
         $method = strtolower($method);
         if (!isset(static::$nodes[$method])) {

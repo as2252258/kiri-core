@@ -63,7 +63,7 @@ class Server extends HttpService
      * @param $process
      * @param array $params
      */
-    public function addProcess($name, $process, $params = [])
+    public function addProcess($name, $process, array $params = [])
     {
         $this->process[$name] = $process;
         $this->params[$name] = $params;
