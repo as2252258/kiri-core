@@ -18,7 +18,7 @@ class Reader
 	 * @param int $size
 	 * @return array and int
 	 */
-	public static function readerServerLogPagination($filepath, $page = 1, $size = 20): array
+	public static function readerServerLogPagination($filepath, int $page = 1, int $size = 20): array
 	{
 		$count = 0;
 		$strings = [];
@@ -54,9 +54,9 @@ class Reader
 	 * @param $filename
 	 * @param $start
 	 * @param $lines
-	 * @return mixed
+	 * @return array
 	 */
-	public static function read_backward_line($filename, $start, $lines): mixed
+	public static function read_backward_line($filename, $start, $lines): array
 	{
 		$lines++;
 		$offset = -1;
@@ -123,7 +123,7 @@ class Reader
 	 * @param int $size
 	 * @return array
 	 */
-	public static function folderPagination($filepath, $page = 1, $size = 20): array
+	public static function folderPagination($filepath, int $page = 1, int $size = 20): array
 	{
 		$count = 0;
 		$strings = [];

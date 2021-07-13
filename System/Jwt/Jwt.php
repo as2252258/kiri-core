@@ -76,6 +76,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 	/**
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function init()
 	{
@@ -235,9 +236,10 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		if (!openssl_public_decrypt(base64_decode($headers['refresh']), $data, $this->public)) {
 			throw new AuthException('信息解码失败.');
 		}
-
 		$data = Json::decode($data, true);
-
+		if (!isset($headers['token']) || $data['token'] != $headers['token']) {
+			throw new AuthException('信息解码失败.');
+		}
 		return (int)$data['user'];
 	}
 

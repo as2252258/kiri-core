@@ -30,9 +30,7 @@ class Str
         if ($length < 1) $length = 20;
         $default = self::STRING . strtoupper(self::STRING) . self::NUMBER;
         $default = str_split($default);
-        for ($i = 0; $i < $length; $i++) {
-            $string .= $default[array_rand($default)];
-        }
+	    $string .= str_repeat($default[array_rand($default)], $length);
         return (string)$string;
     }
 
@@ -47,9 +45,7 @@ class Str
         $number = '';
         $default = str_split(self::NUMBER);
         if ($length < 1) $length = 1;
-        for ($i = 0; $i < $length; $i++) {
-            $number .= $default[array_rand($default)];
-        }
+	    $number .= str_repeat($default[array_rand($default)], $length);
         return $number;
     }
 
@@ -61,7 +57,7 @@ class Str
      *
      * @return string
      */
-    public static function cut_str_utf8($string, $sullen, $strip_tags = true, $append = '...'): string
+    public static function cut_str_utf8($string, $sullen, bool $strip_tags = true, string $append = '...'): string
     {
         if ($strip_tags) {
             $string = strip_tags($string);
@@ -119,7 +115,7 @@ class Str
      * @param string $append
      * @return string
      */
-    public static function cut($string, int $length = 20, $append = '...'): string
+    public static function cut($string, int $length = 20, string $append = '...'): string
     {
         if (empty($string)) {
             return '';
@@ -145,7 +141,7 @@ class Str
      *
      * @return string
      */
-    public static function encrypt($str, $number = 10, $key = 'xshucai.com'): string
+    public static function encrypt($str, int $number = 10, string $key = 'xshucai.com'): string
     {
         $res = [];
         $add = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -243,13 +239,13 @@ class Str
      * @return string
      * @throws Exception
      */
-    public static function token(int $user, $param = [], $requestTime = NULL): string
+    public static function token(int $user, array $param = [], $requestTime = NULL): string
     {
         $str = '';
         if (!$requestTime) {
             $requestTime = microtime(true);
         }
-        $_user = str_split(md5($user . md5($user)));
+        $_user = str_split(md5($user . md5((string)$user)));
         ksort($_user);
         foreach ($_user as $key => $val) {
             $str .= md5(sha1($key . $val . 'www.xshucai.com'));
@@ -259,7 +255,7 @@ class Str
                 $str .= md5($str . sha1($key . md5($val)));
             }
         }
-        $str .= sha1(base64_encode($requestTime));
+        $str .= sha1(base64_encode((string)$requestTime));
 
         $md5 = md5($str . $user);
 
