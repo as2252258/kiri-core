@@ -178,7 +178,7 @@ class Node extends HttpService
 	/**
 	 * @return array
 	 */
-	protected function annotation(): array
+	#[Pure] protected function annotation(): array
 	{
 		$middleWares = $this->getMiddleWares();
 		$middleWares = $this->annotation_limit($this, $middleWares);
