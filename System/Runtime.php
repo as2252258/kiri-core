@@ -28,9 +28,10 @@ class Runtime extends Command
 
 	/**
 	 * @param Input $dtl
+	 * @return string
 	 * @throws Exception
 	 */
-	public function onHandler(Input $dtl)
+	public function onHandler(Input $dtl): string
 	{
 		// TODO: Implement onHandler() method.
 		$annotation = Snowflake::app()->getAnnotation();
