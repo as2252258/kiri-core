@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Snowflake\Abstracts;
 
 use Exception;
-use Snowflake\Core\ArrayAccess;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -24,7 +23,7 @@ class Config extends Component
 
 	const ERROR_MESSAGE = 'The not find %s in app configs.';
 
-	protected $data;
+	protected mixed $data;
 
 
 	/**
@@ -63,15 +62,15 @@ class Config extends Component
 	/**
 	 * @param $key
 	 * @param bool $try
-	 * @param mixed $default
+	 * @param mixed|null $default
 	 * @return mixed
 	 * @throws
 	 */
-	public static function get($key, $default = null, $try = FALSE): mixed
+	public static function get($key, mixed $default = null, bool $try = FALSE): mixed
 	{
 		$instance = Snowflake::app()->getConfig()->getData();
 		if (!str_contains($key, '.')) {
-			return isset($instance[$key]) ? $instance[$key] : $default;
+			return $instance[$key] ?? $default;
 		}
 		foreach (explode('.', $key) as $value) {
 			if (empty($value)) {
@@ -107,8 +106,9 @@ class Config extends Component
 	 * @param $key
 	 * @param bool $must_not_null
 	 * @return bool
+	 * @throws Exception
 	 */
-	public static function has($key, $must_not_null = false): bool
+	public static function has($key, bool $must_not_null = false): bool
 	{
 		$config = Snowflake::app()->getConfig();
 		if (!isset($config->data[$key])) {
@@ -121,12 +121,4 @@ class Config extends Component
 		return !empty($config);
 	}
 
-	/**
-	 * @param $name
-	 * @param $value
-	 */
-	public function __set($name, $value)
-	{
-		$this->data[$name] = $value;
-	}
 }
