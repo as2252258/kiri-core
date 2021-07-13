@@ -48,7 +48,7 @@ class Logger extends Component
 	 */
 	public function debug(mixed $message, string $method = 'app', $file = null)
 	{
-		$this->writer($message, $method);
+		$this->output($message);
 	}
 
 
@@ -59,7 +59,7 @@ class Logger extends Component
 	 */
 	public function trance(mixed $message, string $method = 'app')
 	{
-		$this->writer($message, $method);
+		$this->output($message);
 	}
 
 
@@ -82,35 +82,25 @@ class Logger extends Component
 	 */
 	public function success(mixed $message, string $method = 'app', $file = null)
 	{
-		$this->writer($message, $method);
+		$this->output($message);
 	}
 
 	/**
 	 * @param $message
 	 * @param string $method
-	 * @return string
+	 * @return void
 	 * @throws Exception
 	 */
-	private function writer($message, string $method = 'app'): string
+	private function writer($message, string $method = 'app'): void
 	{
 		$this->print_r($message, $method);
-		if ($message instanceof Throwable) {
-			$message = $message->getMessage();
-		} else {
-			if (is_array($message) || is_object($message)) {
-				$message = $this->arrayFormat($message);
-			}
-		}
-		if (is_array($message)) {
-			$message = $this->arrayFormat($message);
-		}
+		$message = $this->arrayFormat($message);
 		if (!empty($message)) {
 			if (!is_array($this->logs)) {
 				$this->logs = [];
 			}
 			$this->logs[] = [$method, $message];
 		}
-		return $message;
 	}
 
 
@@ -150,7 +140,7 @@ class Logger extends Component
 	public function getLastError(string $application = 'app'): mixed
 	{
 		$filetype = [];
-		foreach ($this->logs as $key => $val) {
+		foreach ($this->logs as $val) {
 			if ($val[0] != $application) {
 				continue;
 			}
@@ -286,16 +276,7 @@ class Logger extends Component
 		} else if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
-
-		$filetype = [];
-		foreach ($data as $key => $val) {
-			if (is_array($val)) {
-				$filetype[] = $this->arrayFormat($val);
-			} else {
-				$filetype[] = (is_string($key) ? $key . ' : ' : '') . $val;
-			}
-		}
-		return implode(PHP_EOL, $filetype);
+		return Json::encode($data);
 	}
 
 

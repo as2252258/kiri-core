@@ -143,11 +143,11 @@ class ErrorHandler extends Component implements ErrorInterface
 
 	/**
 	 * @param $message
-	 * @param $category
+	 * @param string $category
 	 *
 	 * @throws Exception
 	 */
-	public function writer($message, $category = 'app')
+	public function writer($message, string $category = 'app')
 	{
 		Snowflake::app()->debug($message, $category);
 	}
