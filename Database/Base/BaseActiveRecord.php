@@ -28,6 +28,7 @@ use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\TraitApplication;
+use Snowflake\Application;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -71,6 +72,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	private array $_annotations = [];
+
+
+	protected ?Application $container;
 
 
 	/**
@@ -125,6 +129,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function init()
 	{
+		$this->container = Snowflake::app();
 		if (!Context::hasContext(Relation::class)) {
 			$relation = Snowflake::createObject(Relation::class);
 			$this->_relation = Context::setContext(Relation::class, $relation);
