@@ -9,7 +9,6 @@ use Database\DatabasesProviders;
 use HttpServer\Client\Client;
 use HttpServer\Client\Curl;
 use HttpServer\Client\Http2;
-use HttpServer\Emit;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\HttpFilter;
@@ -52,7 +51,6 @@ use Rpc\Producer as RPCProducer;
  * @property RPCProducer $rpc
  * @property Channel $channel
  * @property Shutdown $shutdown
- * @property Emit $emit
  * @property Pool $clientsPool
  */
 trait TraitApplication

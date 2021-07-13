@@ -21,13 +21,10 @@ use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Input;
 use Snowflake\Abstracts\Kernel;
-use Snowflake\Core\Json;
 use Snowflake\Crontab\CrontabProviders;
 use Snowflake\Exception\NotFindClassException;
 use stdClass;
 use Swoole\Timer;
-use Wchat\WchatProviders;
-use function Co\run;
 
 /**
  * Class Init
@@ -106,10 +103,10 @@ class Application extends BaseApplication
     }
 
 
-    /**
-     * @param $kernel
-     * @return $this
-     */
+	/**
+	 * @param Kernel $kernel
+	 * @return $this
+	 */
     public function commands(Kernel $kernel): static
     {
         foreach ($kernel->getCommands() as $command) {
