@@ -8,7 +8,9 @@ use Swoole\Server;
 class HTTPServerListener
 {
 
-	protected mixed $_http;
+	protected static mixed $_http;
+
+	use ListenerHelper;
 
 
 	/**
@@ -19,17 +21,14 @@ class HTTPServerListener
 	 * @param int $mode
 	 * @param array|null $settings
 	 */
-	public function __construct(mixed $server, string $host, int $port, int $mode, ?array $settings = [])
+	public static function instance(mixed $server, string $host, int $port, int $mode, ?array $settings = [])
 	{
-		$this->_http = $server->addlistener($host, $port, $mode);
-		$this->_http->set($settings['settings'] ?? []);
+		static::$_http = $server->addlistener($host, $port, $mode);
+		static::$_http->set($settings['settings'] ?? []);
 		if ($server->getCallback('request') === null) {
-			$server->on('request', $settings['events'][BASEServerListener::SERVER_ON_REQUEST] ?? [$this, 'onRequest']);
+			$server->on('request', $settings['events'][BASEServerListener::SERVER_ON_REQUEST] ?? [static::class, 'onRequest']);
 		}
-		if (!in_array($server->setting['dispatch_mode'] ?? 2, [1, 3]) || $server->setting['enable_unsafe_event'] ?? false == true) {
-			$this->_http->on('connect', $settings['events'][BASEServerListener::SERVER_ON_CONNECT] ?? [$this, 'onConnect']);
-			$this->_http->on('close', $settings['events'][BASEServerListener::SERVER_ON_CLOSE] ?? [$this, 'onClose']);
-		}
+        static::onConnectAndClose($server, static::$_http);
 	}
 
 
@@ -37,7 +36,7 @@ class HTTPServerListener
 	 * @param Server $server
 	 * @param int $fd
 	 */
-	public function onConnect(Server $server, int $fd)
+	public static function onConnect(Server $server, int $fd)
 	{
 		var_dump(__FILE__ . ':' . __LINE__);
 	}
@@ -47,7 +46,7 @@ class HTTPServerListener
 	 * @param Request $request
 	 * @param Response $response
 	 */
-	public function onRequest(Request $request, Response $response)
+	public static function onRequest(Request $request, Response $response)
 	{
 		$response->setStatusCode(200);
 		$response->end('');
@@ -58,7 +57,7 @@ class HTTPServerListener
 	 * @param Server $server
 	 * @param int $fd
 	 */
-	public function onClose(Server $server, int $fd)
+	public static function onClose(Server $server, int $fd)
 	{
 	}
 

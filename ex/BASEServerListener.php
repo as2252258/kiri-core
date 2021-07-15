@@ -142,13 +142,20 @@ class BASEServerListener
 	 */
 	private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
-		$match = match ($type) {
-			self::SERVER_TYPE_TCP => TCPServerListener::class,
-			self::SERVER_TYPE_UDP => UDPServerListener::class,
-			self::SERVER_TYPE_HTTP => HTTPServerListener::class,
-			self::SERVER_TYPE_WEBSOCKET => WebSocketServerListener::class
-		};
-		new $match($this->server, $host, $port, $mode, $settings);
+		switch ($type) {
+            case self::SERVER_TYPE_TCP:
+                TCPServerListener::instance($this->server, $host, $port, $mode, $settings);
+                break;
+            case self::SERVER_TYPE_UDP:
+                UDPServerListener::instance($this->server, $host, $port, $mode, $settings);
+                break;
+            case self::SERVER_TYPE_HTTP:
+                HTTPServerListener::instance($this->server, $host, $port, $mode, $settings);
+                break;
+            case self::SERVER_TYPE_WEBSOCKET:
+                WebSocketServerListener::instance($this->server, $host, $port, $mode, $settings);
+                break;
+		}
 	}
 
 
@@ -181,15 +188,15 @@ class BASEServerListener
 	{
 		if ($this->server->setting['task_worker_num'] > 0) $this->addTaskListener($settings['events']);
 		if ($type === BASEServerListener::SERVER_TYPE_WEBSOCKET) {
-			$this->server->on('handshake', $settings['events'][static::SERVER_ON_HANDSHAKE] ?? [$this, 'nullHasNeed']);
-			$this->server->on('message', $settings['events'][static::SERVER_ON_MESSAGE] ?? [$this, 'nullHasNeed']);
-			$this->server->on('close', $settings['events'][static::SERVER_ON_CLOSE] ?? [$this, 'nullHasNeed']);
+			$this->server->on('handshake', $settings['events'][static::SERVER_ON_HANDSHAKE] ?? [WebSocketServerListener::class, 'onHandshake']);
+			$this->server->on('message', $settings['events'][static::SERVER_ON_MESSAGE] ?? [WebSocketServerListener::class, 'onMessage']);
+			$this->server->on('close', $settings['events'][static::SERVER_ON_CLOSE] ?? [WebSocketServerListener::class, 'onClose']);
 		} else if ($type === BASEServerListener::SERVER_TYPE_UDP) {
-			$this->server->on('packet', $settings['events'][static::SERVER_ON_PACKET] ?? [$this, 'nullHasNeed']);
+			$this->server->on('packet', $settings['events'][static::SERVER_ON_PACKET] ?? [UDPServerListener::class, 'onPacket']);
 		} else if ($type === BASEServerListener::SERVER_TYPE_HTTP) {
-			$this->server->on('request', $settings['events'][static::SERVER_ON_REQUEST] ?? [$this, 'nullHasNeed']);
+			$this->server->on('request', $settings['events'][static::SERVER_ON_REQUEST] ?? [HTTPServerListener::class, 'onRequest']);
 		} else {
-			$this->server->on('receive', $settings['events'][static::SERVER_ON_RECEIVE] ?? [$this, 'nullHasNeed']);
+			$this->server->on('receive', $settings['events'][static::SERVER_ON_RECEIVE] ?? [TCPServerListener::class, 'onReceive']);
 		}
 		foreach ($settings['events'] as $event_type => $callback) {
 			if ($this->server->getCallback($event_type) !== null) {
@@ -213,13 +220,6 @@ class BASEServerListener
 		}
 		$this->server->on('finish', $events[static::SERVER_ON_FINISH] ?? [ServerTask::class, 'onFinish']);
 	}
-
-
-	public function nullHasNeed()
-	{
-
-	}
-
 }
 
 

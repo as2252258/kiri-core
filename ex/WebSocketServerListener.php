@@ -13,7 +13,7 @@ use Swoole\WebSocket\Frame;
 class WebSocketServerListener
 {
 
-	protected mixed $_http;
+	protected static mixed $_http;
 
 
 	/**
@@ -24,22 +24,22 @@ class WebSocketServerListener
 	 * @param int $mode
 	 * @param array|null $settings
 	 */
-	public function __construct(mixed $server, string $host, int $port, int $mode, ?array $settings = [])
+	public static function instance(mixed $server, string $host, int $port, int $mode, ?array $settings = [])
 	{
-		$this->_http = $server->addlistener($host, $port, $mode);
-		$this->_http->set($settings['settings'] ?? []);
-		$this->_http->on('handshake', $settings['events'][BASEServerListener::SERVER_ON_HANDSHAKE] ?? [$this, 'onHandshake']);
-		$this->_http->on('message', $settings['events'][BASEServerListener::SERVER_ON_MESSAGE] ?? [$this, 'onMessage']);
-		$this->_http->on('connect', $settings['events'][BASEServerListener::SERVER_ON_CONNECT] ?? [$this, 'onConnect']);
-		$this->_http->on('close', $settings['events'][BASEServerListener::SERVER_ON_CLOSE] ?? [$this, 'onClose']);
-	}
+		static::$_http = $server->addlistener($host, $port, $mode);
+		static::$_http->set($settings['settings'] ?? []);
+		static::$_http->on('handshake', $settings['events'][BASEServerListener::SERVER_ON_HANDSHAKE] ?? [static::class, 'onHandshake']);
+		static::$_http->on('message', $settings['events'][BASEServerListener::SERVER_ON_MESSAGE] ?? [static::class, 'onMessage']);
+		static::$_http->on('connect', $settings['events'][BASEServerListener::SERVER_ON_CONNECT] ?? [static::class, 'onConnect']);
+		static::$_http->on('close', $settings['events'][BASEServerListener::SERVER_ON_CLOSE] ?? [static::class, 'onClose']);
+    }
 
 
 	/**
 	 * @param Request $request
 	 * @param Response $response
 	 */
-	public function onHandshake(Request $request, Response $response)
+	public static function onHandshake(Request $request, Response $response)
 	{
 
 	}
@@ -49,7 +49,7 @@ class WebSocketServerListener
 	 * @param Server $server
 	 * @param int $fd
 	 */
-	public function onConnect(Server $server, int $fd)
+	public static function onConnect(Server $server, int $fd)
 	{
 		var_dump(__FILE__ . ':' . __LINE__);
 	}
@@ -59,7 +59,7 @@ class WebSocketServerListener
 	 * @param \Swoole\WebSocket\Server|Server $server
 	 * @param Frame $frame
 	 */
-	public function onMessage(\Swoole\WebSocket\Server|Server $server, Frame $frame)
+	public static function onMessage(\Swoole\WebSocket\Server|Server $server, Frame $frame)
 	{
 	}
 
@@ -68,7 +68,7 @@ class WebSocketServerListener
 	 * @param Server $server
 	 * @param int $fd
 	 */
-	public function onClose(Server $server, int $fd)
+	public static function onClose(Server $server, int $fd)
 	{
 	}
 
