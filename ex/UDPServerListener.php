@@ -1,5 +1,6 @@
 <?php
 
+require_once 'ListenerHelper.php';
 
 use Swoole\Server;
 
@@ -23,6 +24,9 @@ class UDPServerListener
 	 */
 	public static function instance(Server $server, string $host, int $port, int $mode, ?array $settings = [])
 	{
+		if (!in_array($mode, [SWOOLE_UDP, SWOOLE_UDP6])) {
+			trigger_error('Port mode ' . $host . '::' . $port . ' must is udp listener type.');
+		}
 		static::$_udp = $server->addlistener($host, $port, $mode);
 		static::$_udp->set($settings['settings'] ?? []);
 		static::$_udp->on('packet', $settings['events'][BASEServerListener::SERVER_ON_PACKET] ?? [static::class, 'onPacket']);

@@ -127,7 +127,7 @@ class Router extends HttpService implements RouterInterface
      * @param string $method
      * @return ?Node
      */
-    private function hash($path, $handler, $method = 'any'): ?Node
+    private function hash($path, $handler, string $method = 'any'): ?Node
     {
         $path = $this->resolve($path);
 
@@ -162,7 +162,7 @@ class Router extends HttpService implements RouterInterface
      * @return Node
      * @throws Exception
      */
-    private function tree($path, $handler, $method = 'any'): Node
+    private function tree($path, $handler, string $method = 'any'): Node
     {
         list($first, $explode) = $this->split($path);
 
@@ -243,12 +243,13 @@ class Router extends HttpService implements RouterInterface
     }
 
 
-    /**
-     * @param $port
-     * @param callable $callback
-     * @return false|mixed
-     */
-    public function addRpcService($port, callable $callback)
+	/**
+	 * @param $port
+	 * @param callable $callback
+	 * @return mixed
+	 * @throws Exception
+	 */
+    public function addRpcService($port, callable $callback): mixed
     {
         return call_user_func($callback, new Actuator($port));
     }
@@ -296,8 +297,8 @@ class Router extends HttpService implements RouterInterface
     /**
      * @param $route
      * @param $handler
-     * @return \HttpServer\Route\Node|null
-     * @throws \Exception
+     * @return Node|null
+     * @throws Exception
      */
     public function head($route, $handler): ?Node
     {
@@ -318,12 +319,12 @@ class Router extends HttpService implements RouterInterface
 
     /**
      * @param $value
-     * @param $index
-     * @param $method
+     * @param int $index
+     * @param string $method
      * @return Node
      * @throws
      */
-    public function NodeInstance($value, $index = 0, $method = 'get'): Node
+    public function NodeInstance($value, int $index = 0, string $method = 'get'): Node
     {
         $node = new Node();
         $node->childes = [];

@@ -1,6 +1,9 @@
 <?php
 
+use SInterface\CustomProcess;
+use Swoole\Coroutine;
 use Swoole\Http\Server as HServer;
+use Swoole\Process;
 use Swoole\Server;
 use Swoole\WebSocket\Server as WServer;
 use Task\ServerTask;
@@ -10,6 +13,22 @@ require_once 'TCPServerListener.php';
 require_once 'UDPServerListener.php';
 require_once 'WebSocketServerListener.php';
 require_once 'Task/ServerTask.php';
+require_once 'ListenerHelper.php';
+require_once 'Manager/ServerManager.php';
+require_once 'Manager/ServerBase.php';
+require_once 'Worker/ServerWorker.php';
+
+
+/**
+ * @param Closure $closure
+ * @param int $sleep
+ */
+function loop(Closure $closure, int $sleep = 1)
+{
+	call_user_func($closure);
+
+	loop($closure, $sleep);
+}
 
 /**
  * Class BASEServerListener
@@ -108,10 +127,100 @@ class BASEServerListener
 	{
 		$context = BASEServerListener::getContext();
 		$configs = require_once 'server.php';
-		foreach ($configs['servers']['handler'] as $config) {
+
+		foreach ($this->sortService($configs['server']['ports']) as $config) {
 			$this->startListenerHandler($context, $config);
 		}
+		$this->addProcess(RelationshipSystemProcess::class);
+		$this->addServerEventCallback($this->getSystemEvents($configs));
 		$context->server->start();
+	}
+
+
+	/**
+	 * @param string|CustomProcess $customProcess
+	 * @param null $redirect_stdin_and_stdout
+	 * @param int|null $pipe_type
+	 * @param bool $enable_coroutine
+	 */
+	public function addProcess(string|CustomProcess $customProcess, $redirect_stdin_and_stdout = null, ?int $pipe_type = SOCK_DGRAM, bool $enable_coroutine = true)
+	{
+		if (is_string($customProcess)) {
+			$implements = class_implements($customProcess);
+			if (!in_array(CustomProcess::class, $implements)) {
+				trigger_error('custom process must implement ' . CustomProcess::class);
+			}
+			$customProcess = new $customProcess($this->server);
+		}
+		/** @var Process $process */
+		$process = $this->server->addProcess(
+			new Process(
+				function (Process $soloProcess) use ($customProcess) {
+					$soloProcess->name($customProcess->getProcessName($soloProcess));
+					/** @var \Swoole\Coroutine\Socket $export */
+					$export = $soloProcess->exportSocket();
+					loop(function () use ($export, $customProcess) {
+						$read = $export->recv();
+						if (!empty($read)) {
+							$customProcess->receive($read);
+						}
+					});
+					$customProcess->onHandler($soloProcess);
+				},
+				$redirect_stdin_and_stdout,
+				$pipe_type,
+				$enable_coroutine
+			)
+		);
+		/** @var \Swoole\Coroutine\Socket $socket */
+		$socket = $process->exportSocket();
+		$socket->send("");
+	}
+
+
+	/**
+	 * @param array $ports
+	 * @return array
+	 */
+	private function sortService(array $ports): array
+	{
+		$array = [];
+		foreach ($ports as $port) {
+			if ($port['type'] == static::SERVER_TYPE_WEBSOCKET) {
+				array_unshift($array, $port);
+			} else if ($port['type'] == static::SERVER_TYPE_HTTP) {
+				if (!empty($array) && $array[0]['type'] == self::SERVER_TYPE_WEBSOCKET) {
+					$array[] = $port;
+				} else {
+					array_unshift($array, $port);
+				}
+			} else {
+				$array[] = $port;
+			}
+		}
+		return $array;
+	}
+
+
+	/**
+	 * @param array $configs
+	 * @return array
+	 */
+	private function getSystemEvents(array $configs): array
+	{
+		return array_intersect_key($configs['server']['events'] ?? [], [
+			BASEServerListener::SERVER_ON_PIPE_MESSAGE  => '',
+			BASEServerListener::SERVER_ON_SHUTDOWN      => '',
+			BASEServerListener::SERVER_ON_WORKER_START  => '',
+			BASEServerListener::SERVER_ON_WORKER_ERROR  => '',
+			BASEServerListener::SERVER_ON_WORKER_EXIT   => '',
+			BASEServerListener::SERVER_ON_WORKER_STOP   => '',
+			BASEServerListener::SERVER_ON_MANAGER_START => '',
+			BASEServerListener::SERVER_ON_MANAGER_STOP  => '',
+			BASEServerListener::SERVER_ON_BEFORE_RELOAD => '',
+			BASEServerListener::SERVER_ON_AFTER_RELOAD  => '',
+			BASEServerListener::SERVER_ON_START         => '',
+		]);
 	}
 
 
@@ -143,18 +252,18 @@ class BASEServerListener
 	private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
 		switch ($type) {
-            case self::SERVER_TYPE_TCP:
-                TCPServerListener::instance($this->server, $host, $port, $mode, $settings);
-                break;
-            case self::SERVER_TYPE_UDP:
-                UDPServerListener::instance($this->server, $host, $port, $mode, $settings);
-                break;
-            case self::SERVER_TYPE_HTTP:
-                HTTPServerListener::instance($this->server, $host, $port, $mode, $settings);
-                break;
-            case self::SERVER_TYPE_WEBSOCKET:
-                WebSocketServerListener::instance($this->server, $host, $port, $mode, $settings);
-                break;
+			case self::SERVER_TYPE_TCP:
+				TCPServerListener::instance($this->server, $host, $port, $mode, $settings);
+				break;
+			case self::SERVER_TYPE_UDP:
+				UDPServerListener::instance($this->server, $host, $port, $mode, $settings);
+				break;
+			case self::SERVER_TYPE_HTTP:
+				HTTPServerListener::instance($this->server, $host, $port, $mode, $settings);
+				break;
+			case self::SERVER_TYPE_WEBSOCKET:
+				WebSocketServerListener::instance($this->server, $host, $port, $mode, $settings);
+				break;
 		}
 	}
 
@@ -186,7 +295,7 @@ class BASEServerListener
 	 */
 	private function addDefaultListener(string $type, array $settings): void
 	{
-		if ($this->server->setting['task_worker_num'] > 0) $this->addTaskListener($settings['events']);
+		if (($this->server->setting['task_worker_num'] ?? 0) > 0) $this->addTaskListener($settings['events']);
 		if ($type === BASEServerListener::SERVER_TYPE_WEBSOCKET) {
 			$this->server->on('handshake', $settings['events'][static::SERVER_ON_HANDSHAKE] ?? [WebSocketServerListener::class, 'onHandshake']);
 			$this->server->on('message', $settings['events'][static::SERVER_ON_MESSAGE] ?? [WebSocketServerListener::class, 'onMessage']);
@@ -198,7 +307,19 @@ class BASEServerListener
 		} else {
 			$this->server->on('receive', $settings['events'][static::SERVER_ON_RECEIVE] ?? [TCPServerListener::class, 'onReceive']);
 		}
-		foreach ($settings['events'] as $event_type => $callback) {
+		$this->addServerEventCallback($settings['events']);
+	}
+
+
+	/**
+	 * @param array $events
+	 */
+	private function addServerEventCallback(array $events)
+	{
+		if (count($events) < 1) {
+			return;
+		}
+		foreach ($events as $event_type => $callback) {
 			if ($this->server->getCallback($event_type) !== null) {
 				continue;
 			}

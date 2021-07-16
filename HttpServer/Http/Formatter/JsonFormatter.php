@@ -18,7 +18,7 @@ use HttpServer\IInterface\IFormatter;
  */
 class JsonFormatter extends HttpService implements IFormatter
 {
-	public $data;
+	public mixed $data;
 
 	public int $status = 200;
 

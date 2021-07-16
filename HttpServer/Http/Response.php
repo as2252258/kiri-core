@@ -14,13 +14,11 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
+use HttpServer\IInterface\IFormatter;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Help;
-use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 use Swoole\Http\Response as SResponse;
-use Swoole\Http2\Response as S2Response;
-use Swoole\WebSocket\Server;
 
 /**
  * Class Response
@@ -29,125 +27,134 @@ use Swoole\WebSocket\Server;
 class Response extends HttpService
 {
 
-    const JSON = 'json';
-    const XML = 'xml';
-    const HTML = 'html';
+	const JSON = 'json';
+	const XML = 'xml';
+	const HTML = 'html';
 
-    /** @var ?string */
-    public ?string $format = null;
+	/** @var ?string */
+	public ?string $format = null;
 
-    /** @var int */
-    public int $statusCode = 200;
+	/** @var int */
+	public int $statusCode = 200;
 
-    public ?SResponse $response = null;
-    public bool $isWebSocket = false;
-    public array $headers = [];
+	public ?SResponse $response = null;
+	public array $headers = [];
+	public array $cookies = [];
 
-    private float $startTime = 0;
+	private float $startTime = 0;
 
-    private array $_format_maps = [
-        self::JSON => JsonFormatter::class,
-        self::XML  => XmlFormatter::class,
-        self::HTML => HtmlFormatter::class
-    ];
+	private array $_format_maps = [
+		self::JSON => JsonFormatter::class,
+		self::XML  => XmlFormatter::class,
+		self::HTML => HtmlFormatter::class
+	];
 
-    public int $fd = 0;
+	public int $fd = 0;
 
-    /**
-     * @param $format
-     * @return $this
-     */
-    public function setFormat($format): static
-    {
-        $this->format = $format;
-        return $this;
-    }
+	/**
+	 * @param $format
+	 * @return $this
+	 */
+	public function setFormat($format): static
+	{
+		$this->format = $format;
+		return $this;
+	}
 
-    /**
-     * 清理无用数据
-     */
-    public function clear(): void
-    {
-        $this->fd = 0;
-        $this->isWebSocket = false;
-        $this->format = null;
-    }
+	/**
+	 * 清理无用数据
+	 */
+	public function clear(): void
+	{
+		$this->fd = 0;
+		$this->format = null;
+	}
 
-    /**
-     * @return string
-     */
-    public function getContentType(): string
-    {
-        if ($this->format == null || $this->format == static::JSON) {
-            return 'application/json;charset=utf-8';
-        } else if ($this->format == static::XML) {
-            return 'application/xml;charset=utf-8';
-        } else {
-            return 'text/html;charset=utf-8';
-        }
-    }
-
-
-    /**
-     * @param $content
-     * @return mixed
-     */
-    public function toHtml($content): mixed
-    {
-        $this->format = self::HTML;
-        return $content;
-    }
+	/**
+	 * @return string
+	 */
+	public function getContentType(): string
+	{
+		if ($this->format == null || $this->format == static::JSON) {
+			return 'application/json;charset=utf-8';
+		} else if ($this->format == static::XML) {
+			return 'application/xml;charset=utf-8';
+		} else {
+			return 'text/html;charset=utf-8';
+		}
+	}
 
 
-    /**
-     * @param $content
-     * @return mixed
-     */
-    public function toJson($content): mixed
-    {
-        $this->format = self::JSON;
-        return $content;
-    }
+	/**
+	 * @param $content
+	 * @return string
+	 */
+	public function toHtml($content): string
+	{
+		$this->format = self::HTML;
+		return (string)$content;
+	}
 
 
-    /**
-     * @param $content
-     * @return mixed
-     */
-    public function toXml($content): mixed
-    {
-        $this->format = self::XML;
-        return $content;
-    }
+	/**
+	 * @param $content
+	 * @return string|bool
+	 */
+	public function toJson($content): string|bool
+	{
+		$this->format = self::JSON;
+		return json_encode($content, JSON_UNESCAPED_UNICODE);
+	}
 
 
-    /**
-     * @return mixed
-     * @throws Exception
-     */
-    public function sender(): mixed
-    {
-        return $this->send(func_get_args());
-    }
+	/**
+	 * @param $content
+	 * @return mixed
+	 */
+	public function toXml($content): mixed
+	{
+		$this->format = self::XML;
+		return $content;
+	}
 
-    /**
-     * @param $key
-     * @param $value
-     * @return Response
-     */
-    public function addHeader($key, $value): static
-    {
-        $this->headers[$key] = $value;
-        return $this;
-    }
 
-    /**
-     * @return bool
-     */
-    private function isClient(): bool
-    {
-        return !($this->response instanceof SResponse) && !($this->response instanceof S2Response);
-    }
+	/**
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function sender(): mixed
+	{
+		return $this->send(func_get_args());
+	}
+
+	/**
+	 * @param $key
+	 * @param $value
+	 * @return Response
+	 */
+	public function addHeader($key, $value): static
+	{
+		$this->headers[$key] = $value;
+		return $this;
+	}
+
+	/**
+	 * @param $name
+	 * @param null $value
+	 * @param null $expires
+	 * @param null $path
+	 * @param null $domain
+	 * @param null $secure
+	 * @param null $httponly
+	 * @param null $samesite
+	 * @param null $priority
+	 * @return Response
+	 */
+	public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
+	{
+		$this->cookies[] = func_get_args();
+		return $this;
+	}
 
 	/**
 	 * @param mixed $context
@@ -155,212 +162,211 @@ class Response extends HttpService
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function send(mixed $context = '', int $statusCode = 200): mixed
-    {
-        $sendData = $this->parseData($context);
+	public function send(mixed $context = '', int $statusCode = 200): mixed
+	{
+		$sendData = $this->parseData($context);
+		$response = Context::getContext('response');
+		if ($response instanceof SResponse) {
+			$this->sendData($response, $sendData, $statusCode);
+		} else {
+			$this->printResult($sendData);
+		}
+		return $sendData;
+	}
 
-        $response = Context::getContext('response');
-        if ($response instanceof SResponse) {
-            $this->sendData($response, $sendData, $statusCode);
-        } else {
-            if (!empty(request()->fd)) {
-                return '';
-            }
-            $this->printResult($sendData);
-        }
-        return $sendData;
-    }
+	/**
+	 * @param $context
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function parseData($context): mixed
+	{
+		if (!empty($context) && !is_string($context)) {
+			/** @var IFormatter $class */
+			$class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
 
-    /**
-     * @param $context
-     * @return mixed
-     * @throws Exception
-     */
-    private function parseData($context): mixed
-    {
-        if (empty($context)) {
-            return $context;
-        }
-        if (isset($this->_format_maps[$this->format])) {
-            $class['class'] = $this->_format_maps[$this->format];
-        } else {
-            $class['class'] = HtmlFormatter::class;
-        }
-        $format = Snowflake::createObject($class);
-        return $format->send($context)->getData();
-    }
+			$di = Snowflake::getDi()->get($class);
+			$context = $di->send($context)->getData();
+		}
+		return $context;
+	}
 
-    /**
-     * @param $result
-     * @return void
-     * @throws Exception
-     */
-    private function printResult($result): void
-    {
-        $result = Help::toString($result);
-        $string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
+	/**
+	 * @param $result
+	 * @return void
+	 * @throws Exception
+	 */
+	private function printResult($result): void
+	{
+		$result = Help::toString($result);
+		$string = PHP_EOL . 'Command Result: ' . PHP_EOL . PHP_EOL;
+		fire('CONSOLE_END');
+		if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
+			return;
+		}
+		if (empty($result)) {
+			$string .= 'success!' . PHP_EOL . PHP_EOL;
+		} else {
+			$string .= $result . PHP_EOL . PHP_EOL;
+		}
+		$string .= 'Command End!' . PHP_EOL . PHP_EOL;
+		print_r($string);
+	}
 
-        fire('CONSOLE_END');
-        if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
-	        return;
-        }
-        if (empty($result)) {
-            $string .= 'success!' . PHP_EOL . PHP_EOL;
-        } else {
-            $string .= $result . PHP_EOL . PHP_EOL;
-        }
-        $string .= 'Command End!' . PHP_EOL . PHP_EOL;
-        print_r($string);
-    }
-
-    /**
-     * @param $response
-     * @param $sendData
-     * @param $status
-     * @throws Exception
-     */
-    private function sendData($response, $sendData, $status): void
-    {
-        $server = Snowflake::app()->getSwoole();
-        if (!$server->exist($response->fd)) {
-            return;
-        }
-        if (is_array($sendData)) {
-            $sendData = Json::encode($sendData);
-        }
-        $this->setHeaders($response, $status)->end($sendData);
-    }
+	/**
+	 * @param SResponse $response
+	 * @param $sendData
+	 * @param $status
+	 * @throws Exception
+	 */
+	private function sendData(SResponse $response, $sendData, $status): void
+	{
+		if (!$response->isWritable()) {
+			return;
+		}
+		$this->setHeaders($response);
+		$response->status($status);
+		$response->end($sendData);
+	}
 
 
-    /**
-     * @param SResponse $response
-     * @param $status
-     * @return SResponse
-     */
-    private function setHeaders(SResponse $response, $status): SResponse
-    {
-        $response->status($status);
-        $response->header('Content-Type', $this->getContentType());
-        $response->header('Run-Time', $this->getRuntime());
-
-        if (empty($this->headers) || !is_array($this->headers)) {
-            return $response;
-        }
-        foreach ($this->headers as $key => $header) {
-            $response->header($key, $header);
-        }
-        $this->headers = [];
-        return $response;
-    }
+	/**
+	 * @param SResponse $response
+	 * @return void
+	 */
+	private function setHeaders(SResponse $response): void
+	{
+		$response->header('Content-Type', $this->getContentType());
+		$response->header('Run-Time', $this->getRuntime());
+		if (empty($this->headers) || !is_array($this->headers)) {
+			return;
+		}
+		foreach ($this->headers as $key => $header) {
+			$response->header($key, $header);
+		}
+		$this->headers = [];
+	}
 
 
-    /**
-     * @param $url
-     * @param array $param
-     * @return int
-     */
-    public function redirect($url, array $param = []): int
-    {
-        if (!empty($param)) {
-            $url .= '?' . http_build_query($param);
-        }
-        $url = ltrim($url, '/');
-        if (!preg_match('/^http/', $url)) {
-            $url = '/' . $url;
-        }
-        return $this->response->redirect($url);
-    }
-
-    /**
-     * @param null $response
-     * @return static
-     * @throws Exception
-     */
-    public static function create($response = null): static
-    {
-        Context::setContext('response', $response);
-
-        $ciResponse = Snowflake::getApp('response');
-        $ciResponse->response = $response;
-        $ciResponse->startTime = microtime(true);
-        $ciResponse->format = self::JSON;
-        return $ciResponse;
-    }
+	/**
+	 * @param SResponse $response
+	 * @return void
+	 */
+	private function setCookies(SResponse $response): void
+	{
+		if (empty($this->cookies) || !is_array($this->cookies)) {
+			return;
+		}
+		foreach ($this->cookies as $header) {
+			$response->setCookie(...$header);
+		}
+		$this->cookies = [];
+	}
 
 
-    /**
-     * @param int $statusCode
-     * @param string $message
-     * @return mixed
-     * @throws Exception
-     */
-    public function close(int $statusCode = 200, string $message = ''): mixed
-    {
-        return $this->send($message, $statusCode);
-    }
+	/**
+	 * @param $url
+	 * @param array $param
+	 * @return int
+	 */
+	public function redirect($url, array $param = []): mixed
+	{
+		if (!empty($param)) {
+			$url .= '?' . http_build_query($param);
+		}
+		$url = ltrim($url, '/');
+		if (!preg_match('/^http/', $url)) {
+			$url = '/' . $url;
+		}
+		/** @var SResponse $response */
+		$response = Context::getContext('response');
+		if (!empty($response)) {
+			return $response->redirect($url);
+		}
+		return false;
+	}
 
 
-    /**
-     * @param $clientId
-     * @param int $statusCode
-     * @param string $message
-     * @return mixed
-     */
-    public function closeClient($clientId,int $statusCode = 200,string $message = ''): mixed
-    {
-        $socket = Snowflake::getWebSocket();
-        if (!$socket->exist($clientId)) {
-            return true;
-        }
-        return $socket->close($clientId, true);
-    }
+	/**
+	 * @param null $response
+	 * @return static
+	 * @throws Exception
+	 */
+	public static function create($response = null): static
+	{
+		Context::setContext('response', $response);
+		$ciResponse = Snowflake::getDi()->get(SResponse::class);
+		$ciResponse->startTime = microtime(true);
+		$ciResponse->format = self::JSON;
+		return $ciResponse;
+	}
 
 
-    /**
-     * @param string $path
-     * @param int $offset
-     * @param int $limit
-     * @param int $sleep
-     * @return string
-     */
-    public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): string
-    {
-        $open = fopen($path, 'r');
-
-        $stat = fstat($open);
-
-        while ($file = fread($open, $limit)) {
-            $this->response->write($file);
-            fseek($open, $offset);
-            if ($sleep > 0) {
-                sleep($sleep);
-            }
-            if ($offset >= $stat['size']) {
-                break;
-            }
-            $offset += $limit;
-        }
-        $this->response->end();
-        $this->response = null;
-        return '';
-    }
+	/**
+	 * @param int $statusCode
+	 * @param string $message
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function close(int $statusCode = 200, string $message = ''): mixed
+	{
+		return $this->send($message, $statusCode);
+	}
 
 
-    /**
-     * @throws Exception
-     */
-    public function sendNotFind()
-    {
-        $this->format = static::HTML;
-        $this->send('', 404);
-    }
+	/**
+	 * @param $clientId
+	 * @param int $statusCode
+	 * @param string $message
+	 * @return mixed
+	 */
+	public function closeClient($clientId, int $statusCode = 200, string $message = ''): mixed
+	{
+		$socket = Snowflake::getWebSocket();
+		if (!$socket->exist($clientId)) {
+			return true;
+		}
+		return $socket->close($clientId, true);
+	}
 
-    /**
-     * @return string
-     */
-    #[Pure] public function getRuntime(): string
-    {
-        return sprintf('%.5f', microtime(TRUE) - $this->startTime);
-    }
+
+	/**
+	 * @param string $path
+	 * @param int $offset
+	 * @param int $limit
+	 * @param int $sleep
+	 * @return string
+	 */
+	public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): string
+	{
+		$open = fopen($path, 'r');
+
+		$stat = fstat($open);
+
+
+		/** @var SResponse $response */
+		$response = Context::getContext('response');
+		$response->header('Content-length', $stat['size']);
+		while ($file = fread($open, $limit)) {
+			$response->write($file);
+			fseek($open, $offset);
+			if ($sleep > 0) sleep($sleep);
+			if ($offset >= $stat['size']) {
+				break;
+			}
+			$offset += $limit;
+		}
+		$response->end();
+		return '';
+	}
+
+
+	/**
+	 * @return string
+	 */
+	#[Pure] public function getRuntime(): string
+	{
+		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
+	}
 
 }

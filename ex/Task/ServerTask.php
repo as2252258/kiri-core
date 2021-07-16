@@ -28,7 +28,7 @@ class ServerTask
 		} catch (\Throwable $exception) {
 			$data = [$exception->getMessage()];
 		} finally {
-			$server->finish(serialize($data));
+			$server->finish($data);
 		}
 	}
 
@@ -48,7 +48,7 @@ class ServerTask
 		} catch (\Throwable $exception) {
 			$data = [$exception->getMessage()];
 		} finally {
-			$server->finish(serialize($data));
+			$server->finish($data);
 		}
 	}
 
