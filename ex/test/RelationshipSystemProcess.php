@@ -32,15 +32,6 @@ class RelationshipSystemProcess implements CustomProcess
 
 
 	/**
-	 * @param mixed $data
-	 */
-	public function receive(mixed $data): void
-	{
-
-	}
-
-
-	/**
 	 *
 	 */
 	public function onHandler(Process $process): void

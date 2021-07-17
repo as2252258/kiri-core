@@ -28,10 +28,5 @@ interface CustomProcess
 	public function onHandler(Process $process): void;
 
 
-	/**
-	 * @param mixed $data
-	 */
-	public function receive(mixed $data): void;
-
 
 }
