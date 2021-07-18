@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SInterface;
+namespace Server\SInterface;
 
 
 use Swoole\Server;

@@ -36,6 +36,7 @@
     "psr-4": {
       "Snowflake\\": "System/",
       "HttpServer\\": "HttpServer/",
+      "Server\\": "Server/",
       "validator\\": "Validator/",
       "Console\\": "Console/",
       "Database\\": "Database/",

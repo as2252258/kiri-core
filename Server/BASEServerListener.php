@@ -1,34 +1,15 @@
 <?php
 
-use SInterface\CustomProcess;
-use Swoole\Coroutine;
+namespace Server;
+
+use Server\SInterface\CustomProcess;
+use Snowflake\Snowflake;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;
 use Swoole\WebSocket\Server as WServer;
-use Task\ServerTask;
+use Server\Task\ServerTask;
 
-require_once 'HTTPServerListener.php';
-require_once 'TCPServerListener.php';
-require_once 'UDPServerListener.php';
-require_once 'WebSocketServerListener.php';
-require_once 'Task/ServerTask.php';
-require_once 'ListenerHelper.php';
-require_once 'Manager/ServerManager.php';
-require_once 'Manager/ServerBase.php';
-require_once 'Worker/ServerWorker.php';
-
-
-/**
- * @param Closure $closure
- * @param int $sleep
- */
-function loop(Closure $closure, int $sleep = 1)
-{
-    call_user_func($closure);
-
-    loop($closure, $sleep);
-}
 
 /**
  * Class BASEServerListener
@@ -48,35 +29,6 @@ class BASEServerListener
 
 
     private static ?BASEServerListener $BASEServerListener = null;
-
-
-    const SERVER_TYPE_HTTP = 'http';
-    const SERVER_TYPE_WEBSOCKET = 'ws';
-    const SERVER_TYPE_TCP = 'tcp';
-    const SERVER_TYPE_UDP = 'udp';
-    const SERVER_TYPE_BASE = 'base';
-
-
-    const SERVER_ON_START = 'Start';
-    const SERVER_ON_SHUTDOWN = 'Shutdown';
-    const SERVER_ON_WORKER_START = 'WorkerStart';
-    const SERVER_ON_WORKER_STOP = 'WorkerStop';
-    const SERVER_ON_WORKER_EXIT = 'WorkerExit';
-    const SERVER_ON_CONNECT = 'Connect';
-    const SERVER_ON_HANDSHAKE = 'handshake';
-    const SERVER_ON_MESSAGE = 'message';
-    const SERVER_ON_RECEIVE = 'Receive';
-    const SERVER_ON_PACKET = 'Packet';
-    const SERVER_ON_REQUEST = 'request';
-    const SERVER_ON_CLOSE = 'Close';
-    const SERVER_ON_TASK = 'Task';
-    const SERVER_ON_FINISH = 'Finish';
-    const SERVER_ON_PIPE_MESSAGE = 'PipeMessage';
-    const SERVER_ON_WORKER_ERROR = 'WorkerError';
-    const SERVER_ON_MANAGER_START = 'ManagerStart';
-    const SERVER_ON_MANAGER_STOP = 'ManagerStop';
-    const SERVER_ON_BEFORE_RELOAD = 'BeforeReload';
-    const SERVER_ON_AFTER_RELOAD = 'AfterReload';
 
 
     /**
@@ -131,7 +83,6 @@ class BASEServerListener
         foreach ($this->sortService($configs['server']['ports']) as $config) {
             $this->startListenerHandler($context, $config);
         }
-        $this->addProcess(RelationshipSystemProcess::class);
         $this->addServerEventCallback($this->getSystemEvents($configs));
         $context->server->start();
     }
@@ -169,10 +120,10 @@ class BASEServerListener
     {
         $array = [];
         foreach ($ports as $port) {
-            if ($port['type'] == static::SERVER_TYPE_WEBSOCKET) {
+            if ($port['type'] == Constant::SERVER_TYPE_WEBSOCKET) {
                 array_unshift($array, $port);
-            } else if ($port['type'] == static::SERVER_TYPE_HTTP) {
-                if (!empty($array) && $array[0]['type'] == self::SERVER_TYPE_WEBSOCKET) {
+            } else if ($port['type'] == Constant::SERVER_TYPE_HTTP) {
+                if (!empty($array) && $array[0]['type'] == Constant::SERVER_TYPE_WEBSOCKET) {
                     $array[] = $port;
                 } else {
                     array_unshift($array, $port);
@@ -192,17 +143,17 @@ class BASEServerListener
     private function getSystemEvents(array $configs): array
     {
         return array_intersect_key($configs['server']['events'] ?? [], [
-            BASEServerListener::SERVER_ON_PIPE_MESSAGE  => '',
-            BASEServerListener::SERVER_ON_SHUTDOWN      => '',
-            BASEServerListener::SERVER_ON_WORKER_START  => '',
-            BASEServerListener::SERVER_ON_WORKER_ERROR  => '',
-            BASEServerListener::SERVER_ON_WORKER_EXIT   => '',
-            BASEServerListener::SERVER_ON_WORKER_STOP   => '',
-            BASEServerListener::SERVER_ON_MANAGER_START => '',
-            BASEServerListener::SERVER_ON_MANAGER_STOP  => '',
-            BASEServerListener::SERVER_ON_BEFORE_RELOAD => '',
-            BASEServerListener::SERVER_ON_AFTER_RELOAD  => '',
-            BASEServerListener::SERVER_ON_START         => '',
+            Constant::PIPE_MESSAGE  => '',
+            Constant::SHUTDOWN      => '',
+            Constant::WORKER_START  => '',
+            Constant::WORKER_ERROR  => '',
+            Constant::WORKER_EXIT   => '',
+            Constant::WORKER_STOP   => '',
+            Constant::MANAGER_START => '',
+            Constant::MANAGER_STOP  => '',
+            Constant::BEFORE_RELOAD => '',
+            Constant::AFTER_RELOAD  => '',
+            Constant::START         => '',
         ]);
     }
 
@@ -235,16 +186,16 @@ class BASEServerListener
     private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
     {
         switch ($type) {
-            case self::SERVER_TYPE_TCP:
+            case Constant::SERVER_TYPE_TCP:
                 TCPServerListener::instance($this->server, $host, $port, $mode, $settings);
                 break;
-            case self::SERVER_TYPE_UDP:
+            case Constant::SERVER_TYPE_UDP:
                 UDPServerListener::instance($this->server, $host, $port, $mode, $settings);
                 break;
-            case self::SERVER_TYPE_HTTP:
+            case Constant::SERVER_TYPE_HTTP:
                 HTTPServerListener::instance($this->server, $host, $port, $mode, $settings);
                 break;
-            case self::SERVER_TYPE_WEBSOCKET:
+            case Constant::SERVER_TYPE_WEBSOCKET:
                 WebSocketServerListener::instance($this->server, $host, $port, $mode, $settings);
                 break;
         }
@@ -261,9 +212,11 @@ class BASEServerListener
     private function createBaseServer(string $type, string $host, int $port, int $mode, array $settings = [])
     {
         $match = match ($type) {
-            self::SERVER_TYPE_BASE, self::SERVER_TYPE_TCP, self::SERVER_TYPE_UDP => Server::class,
-            self::SERVER_TYPE_HTTP => HServer::class,
-            self::SERVER_TYPE_WEBSOCKET => WServer::class
+            Constant::SERVER_TYPE_BASE,
+            Constant::SERVER_TYPE_TCP,
+            Constant::SERVER_TYPE_UDP => Server::class,
+            Constant::SERVER_TYPE_HTTP => HServer::class,
+            Constant::SERVER_TYPE_WEBSOCKET => WServer::class
         };
         $this->server = new $match($host, $port, SWOOLE_PROCESS, $mode);
         $this->server->set($settings['settings']);
@@ -279,16 +232,20 @@ class BASEServerListener
     private function addDefaultListener(string $type, array $settings): void
     {
         if (($this->server->setting['task_worker_num'] ?? 0) > 0) $this->addTaskListener($settings['events']);
-        if ($type === BASEServerListener::SERVER_TYPE_WEBSOCKET) {
-            $this->server->on('handshake', $settings['events'][static::SERVER_ON_HANDSHAKE] ?? [WebSocketServerListener::class, 'onHandshake']);
-            $this->server->on('message', $settings['events'][static::SERVER_ON_MESSAGE] ?? [WebSocketServerListener::class, 'onMessage']);
-            $this->server->on('close', $settings['events'][static::SERVER_ON_CLOSE] ?? [WebSocketServerListener::class, 'onClose']);
-        } else if ($type === BASEServerListener::SERVER_TYPE_UDP) {
-            $this->server->on('packet', $settings['events'][static::SERVER_ON_PACKET] ?? [UDPServerListener::class, 'onPacket']);
-        } else if ($type === BASEServerListener::SERVER_TYPE_HTTP) {
-            $this->server->on('request', $settings['events'][static::SERVER_ON_REQUEST] ?? [HTTPServerListener::class, 'onRequest']);
+        if ($type === Constant::SERVER_TYPE_WEBSOCKET) {
+            $reflect = Snowflake::getDi()->getReflect(WebSocketServerListener::class)?->newInstance();
+            $this->server->on('handshake', $settings['events'][Constant::HANDSHAKE] ?? [$reflect, 'onHandshake']);
+            $this->server->on('message', $settings['events'][Constant::MESSAGE] ?? [$reflect, 'onMessage']);
+            $this->server->on('close', $settings['events'][Constant::CLOSE] ?? [$reflect, 'onClose']);
+        } else if ($type === Constant::SERVER_TYPE_UDP) {
+            $reflect = Snowflake::getDi()->getReflect(UDPServerListener::class)?->newInstance();
+            $this->server->on('packet', $settings['events'][Constant::PACKET] ?? [$reflect, 'onPacket']);
+        } else if ($type === Constant::SERVER_TYPE_HTTP) {
+            $reflect = Snowflake::getDi()->getReflect(HTTPServerListener::class)?->newInstance();
+            $this->server->on('request', $settings['events'][Constant::REQUEST] ?? [$reflect, 'onRequest']);
         } else {
-            $this->server->on('receive', $settings['events'][static::SERVER_ON_RECEIVE] ?? [TCPServerListener::class, 'onReceive']);
+            $reflect = Snowflake::getDi()->getReflect(TCPServerListener::class)?->newInstance();
+            $this->server->on('receive', $settings['events'][Constant::RECEIVE] ?? [$reflect, 'onReceive']);
         }
         $this->addServerEventCallback($settings['events']);
     }
@@ -317,12 +274,13 @@ class BASEServerListener
     private function addTaskListener(array $events = []): void
     {
         $task_use_object = $this->server->setting['task_object'] ?? $this->server->setting['task_use_object'] ?? false;
+        $reflect = Snowflake::getDi()->getReflect(ServerTask::class)?->newInstance();
         if ($task_use_object || $this->server->setting['task_enable_coroutine']) {
-            $this->server->on('task', $events[static::SERVER_ON_TASK] ?? [ServerTask::class, 'onCoroutineTask']);
+            $this->server->on('task', $events[Constant::TASK] ?? [$reflect, 'onCoroutineTask']);
         } else {
-            $this->server->on('task', $events[static::SERVER_ON_TASK] ?? [ServerTask::class, 'onTask']);
+            $this->server->on('task', $events[Constant::TASK] ?? [$reflect, 'onTask']);
         }
-        $this->server->on('finish', $events[static::SERVER_ON_FINISH] ?? [ServerTask::class, 'onFinish']);
+        $this->server->on('finish', $events[Constant::FINISH] ?? [$reflect, 'onFinish']);
     }
 }
 
