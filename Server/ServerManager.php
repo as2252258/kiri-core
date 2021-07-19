@@ -88,7 +88,7 @@ class ServerManager extends Abstracts\Server
 	public function initBaseServer($configs): void
 	{
 		$context = ServerManager::getContext();
-		foreach ($this->sortService($configs['server']['ports']) as $config) {
+		foreach ($this->sortService($configs['ports']) as $config) {
 			$this->startListenerHandler($context, $config);
 		}
 		$this->addServerEventCallback($this->getSystemEvents($configs));
