@@ -85,16 +85,13 @@ class ServerManager extends Abstracts\Server
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function start(): void
+	public function initBaseServer($configs): void
 	{
 		$context = ServerManager::getContext();
-		$configs = require_once 'server.php';
-
 		foreach ($this->sortService($configs['server']['ports']) as $config) {
 			$this->startListenerHandler($context, $config);
 		}
 		$this->addServerEventCallback($this->getSystemEvents($configs));
-		$context->server->start();
 	}
 
 

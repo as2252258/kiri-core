@@ -53,63 +53,13 @@ class Service extends Component
     }
 
 
-    /**
-     * @param Packet|Websocket|Receive|Http|null $server
-     * @throws ConfigException
-     * @throws Exception
-     */
-    public function instance(Packet|Websocket|Receive|null|Http $server): void
-    {
-        $service = Config::get('rpc');
-        if (!is_array($service) || empty($service)) {
-            return;
-        }
-
-        $listen_type = $service['mode'] ?? SWOOLE_SOCK_TCP6;
-        $rpcServer = $server->addlistener($service['host'], $service['port'], $listen_type);
-        if ($rpcServer === false) {
-            throw new Exception('Listen rpc service fail.');
-        }
-        $this->debug(Snowflake::listen($service));
-
-        $rpcServer->set($service['setting'] ?? self::defaultConfig);
-        $this->addCallback($rpcServer, $service, $listen_type);
-    }
-
-
-	/**
-	 * @param $rpcServer
-	 * @param $config
-	 * @param $mode
-	 * @throws Exception
-	 */
-    private function addCallback($rpcServer, $config, $mode)
-    {
-        $tcp = [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6];
-        $server = Snowflake::app()->getServer();
-        if (in_array($mode, $tcp)) {
-            $connectCallback = $config['events'][Event::SERVER_ON_CONNECT] ?? [$this, 'onConnect'];
-            $server->onBindCallback($rpcServer, 'connect', $connectCallback);
-
-            $connectCallback = $config['events'][Event::SERVER_ON_CLOSE] ?? [$this, 'onClose'];
-            $server->onBindCallback($rpcServer, 'close', $connectCallback);
-
-            $connectCallback = $config['events'][Event::SERVER_ON_CONNECT] ?? [$this, 'onReceive'];
-            $server->onBindCallback($rpcServer, 'receive', $connectCallback);
-        } else {
-            $connectCallback = $config['events'][Event::SERVER_ON_PACKET] ?? [$this, 'onPacket'];
-            $server->onBindCallback($rpcServer, 'packet', $connectCallback);
-        }
-    }
-
-
 	/**
 	 * @param Server $server
 	 * @param int $fd
 	 * @param int $reactorId
 	 * @throws Exception
 	 */
-    private function onConnect(Server $server, int $fd, int $reactorId)
+    public function onConnect(Server $server, int $fd, int $reactorId)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
@@ -127,7 +77,7 @@ class Service extends Component
 	 * on tcp client close
 	 * @throws Exception
 	 */
-    private function onClose(Server $server, int $fd)
+    public function onClose(Server $server, int $fd)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
@@ -142,7 +92,7 @@ class Service extends Component
      * @param string $data
      * @throws Exception
      */
-    private function onReceive(Server $server, int $fd, int $reID, string $data)
+    public function onReceive(Server $server, int $fd, int $reID, string $data)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
         try {
@@ -166,7 +116,7 @@ class Service extends Component
 	 * @param array $client
 	 * @throws Exception
 	 */
-    private function onPacket(Server $server, string $data, array $client)
+    public function onPacket(Server $server, string $data, array $client)
     {
         defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
         try {
@@ -188,7 +138,7 @@ class Service extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-    private function requestSpl(int $server_port, string $data): mixed
+    public function requestSpl(int $server_port, string $data): mixed
     {
         $sRequest = new Request();
 
