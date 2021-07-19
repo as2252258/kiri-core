@@ -4,10 +4,17 @@
 namespace Server\Task;
 
 
+use ReflectionException;
 use Server\SInterface\TaskExecute;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
 
+
+/**
+ * Class ServerTask
+ * @package Server\Task
+ */
 class ServerTask
 {
 
@@ -49,8 +56,8 @@ class ServerTask
     /**
      * @param $data
      * @return null
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
+     * @throws ReflectionException
+     * @throws NotFindClassException
      */
     private function resolve($data)
     {

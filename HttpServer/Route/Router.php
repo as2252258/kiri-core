@@ -546,7 +546,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function find_path(Request $request): ?Node
     {
-        return $this->Branch_search($request);
+//        return $this->Branch_search($request);
         $method = $request->getMethod();
         $uri = $request->headers->get('request_uri', '/');
 

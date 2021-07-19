@@ -77,10 +77,12 @@ class Service extends Component
     }
 
 
-    /**
-     * @param $mode
-     * @throws Exception
-     */
+	/**
+	 * @param $rpcServer
+	 * @param $config
+	 * @param $mode
+	 * @throws Exception
+	 */
     private function addCallback($rpcServer, $config, $mode)
     {
         $tcp = [SWOOLE_SOCK_TCP, SWOOLE_TCP, SWOOLE_TCP6, SWOOLE_SOCK_TCP6];

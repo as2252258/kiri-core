@@ -3,41 +3,36 @@
 namespace Server;
 
 
+use Closure;
+use ReflectionException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
+
+/**
+ * Trait ListenerHelper
+ * @package Server
+ */
 trait ListenerHelper
 {
 
 
-    /**
-     * @param $server
-     * @param $newServer
-     */
-    public static function onConnectAndClose($settings, $newServer)
-    {
-        $reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
-
-        $newServer->on('connect', static::callback(Constant::CONNECT, $settings['events'], [$reflect, 'onConnect']));
-        $newServer->on('close', static::callback(Constant::CLOSE, $settings['events'], [$reflect, 'onClose']));
-    }
-
-
-    /**
-     * @param string $name
-     * @param array $events
-     * @param array|\Closure $default
-     * @return array|\Closure|mixed
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
-     */
-    protected static function callback(string $name, array $events, array|\Closure $default)
+	/**
+	 * @param string $name
+	 * @param array $events
+	 * @param array|Closure $default
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+    protected static function callback(string $name, array $events, array|Closure $default): mixed
     {
         if (!is_array($events) || !isset($events[$name])) {
             return $default;
         }
 
         $callback = $events[$name];
-        if ($callback instanceof \Closure) {
+        if ($callback instanceof Closure) {
             return $callback;
         }
         $object = Snowflake::getDi()->getReflect($callback[0]);

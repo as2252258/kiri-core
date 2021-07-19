@@ -2,18 +2,33 @@
 
 namespace Server\Manager;
 
-class ServerManager
+use Server\Abstracts\Server;
+use Server\Constant;
+
+
+/**
+ * Class ServerManager
+ * @package Server\Manager
+ */
+class ServerManager extends Server
 {
 
 
-	public function onManagerStart()
+	/**
+	 * @param \Swoole\Server $server
+	 */
+	public function onManagerStart(\Swoole\Server $server)
 	{
-
+		$this->runEvent(Constant::MANAGER_START, null, [$server]);
 	}
 
-	public function onManagerStop()
-	{
 
+	/**
+	 * @param \Swoole\Server $server
+	 */
+	public function onManagerStop(\Swoole\Server $server)
+	{
+		$this->runEvent(Constant::MANAGER_STOP, null, [$server]);
 	}
 
 

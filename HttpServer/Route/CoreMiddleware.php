@@ -21,6 +21,11 @@ use Snowflake\Snowflake;
 class CoreMiddleware implements Middleware
 {
 
+
+	/** @var int  */
+	public int $zOrder = 0;
+
+
 	/**
 	 * @param Request $request
 	 * @param Closure $next

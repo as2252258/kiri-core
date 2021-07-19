@@ -4,6 +4,10 @@
 namespace Server;
 
 
+/**
+ * Class Constant
+ * @package Server
+ */
 class Constant
 {
 
@@ -14,6 +18,7 @@ class Constant
     const WORKER_EXIT = 'WorkerExit';
     const CONNECT = 'Connect';
     const HANDSHAKE = 'handshake';
+    const DISCONNECT = 'disconnect';
     const MESSAGE = 'message';
     const RECEIVE = 'Receive';
     const PACKET = 'Packet';

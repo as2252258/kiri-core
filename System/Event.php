@@ -218,7 +218,7 @@ class Event extends BaseObject
 	 * @return bool
 	 * @throws Exception
 	 */
-    public static function trigger($name, $parameter = null, $handler = null, $is_remove = false): bool
+    public static function trigger($name, $parameter = null, $handler = null, bool $is_remove = false): bool
     {
         $events = static::get($name, $handler);
         if (empty($events)) {
@@ -256,10 +256,10 @@ class Event extends BaseObject
 
     /**
      * @param $defaultParameter
-     * @param $parameter
+     * @param array $parameter
      * @return array
      */
-    private static function mergeParams($defaultParameter, $parameter = []): array
+    private static function mergeParams($defaultParameter, array $parameter = []): array
     {
         if (empty($defaultParameter)) {
             $defaultParameter = $parameter;

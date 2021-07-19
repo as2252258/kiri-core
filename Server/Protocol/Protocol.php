@@ -12,7 +12,7 @@ abstract class Protocol
      * @param $data
      * @return array
      */
-    public function resolveProtocol($data)
+    public function resolveProtocol($data): array
     {
         $explode = explode("\r\n\r\n", $data);
 

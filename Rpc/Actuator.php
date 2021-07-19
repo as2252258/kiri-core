@@ -4,6 +4,7 @@
 namespace Rpc;
 
 
+use Exception;
 use HttpServer\Route\Router;
 use Snowflake\Snowflake;
 
@@ -22,7 +23,7 @@ class Actuator
     /**
      * Actuator constructor.
      * @param int $port
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(public int $port)
     {
@@ -33,7 +34,7 @@ class Actuator
     /**
      * @param string $path
      * @param string|callable $callback
-     * @throws \Exception
+     * @throws Exception
      */
     public function addListener(string $path, string|callable $callback): void
     {
