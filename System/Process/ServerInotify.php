@@ -11,6 +11,7 @@ namespace Snowflake\Process;
 
 
 use Exception;
+use Server\SInterface\CustomProcess;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -21,7 +22,7 @@ use Swoole\Timer;
  * Class ServerInotify
  * @package Snowflake\Snowflake\Server
  */
-class ServerInotify extends Process
+class ServerInotify implements CustomProcess
 {
 	private mixed $inotify;
 	private bool $isReloading = false;
@@ -35,24 +36,9 @@ class ServerInotify extends Process
 
 	/**
 	 * @param \Swoole\Process $process
-	 * @throws ConfigException
-	 */
-	public function before(\Swoole\Process $process): void
-	{
-		// TODO: Implement before() method.
-		set_error_handler([$this, 'onErrorHandler']);
-		$this->dirs = Config::get('inotify', [APP_PATH]);
-		if (extension_loaded('inotify')) {
-			$this->inotify = inotify_init();
-			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
-		}
-	}
-
-
-	/**
 	 * @return string
 	 */
-	public function getProcessName(): string
+	public function getProcessName(\Swoole\Process $process): string
 	{
 		return 'file change process';
 	}
@@ -64,7 +50,12 @@ class ServerInotify extends Process
 	 */
 	public function onHandler(\Swoole\Process $process): void
 	{
+		// TODO: Implement before() method.
+		set_error_handler([$this, 'onErrorHandler']);
+		$this->dirs = Config::get('inotify', [APP_PATH]);
 		if (extension_loaded('inotify')) {
+			$this->inotify = inotify_init();
+			$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 			foreach ($this->dirs as $dir) {
 				if (!is_dir($dir)) continue;
 				$this->watch($dir);

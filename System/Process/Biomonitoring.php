@@ -6,6 +6,7 @@ namespace Snowflake\Process;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Server\SInterface\CustomProcess;
 use Snowflake\Snowflake;
 use Swoole\Timer;
 
@@ -13,23 +14,15 @@ use Swoole\Timer;
  * Class Biomonitoring
  * @package components
  */
-class Biomonitoring extends Process
+class Biomonitoring implements CustomProcess
 {
 
 
 	/**
 	 * @param \Swoole\Process $process
-	 */
-	public function before(\Swoole\Process $process): void
-	{
-		// TODO: Implement before() method.
-	}
-
-
-	/**
 	 * @return string
 	 */
-	#[Pure] public function getProcessName(): string
+	#[Pure] public function getProcessName(\Swoole\Process $process): string
 	{
 		// TODO: Implement getProcessName() method.
 		return get_called_class();
