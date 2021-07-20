@@ -2,6 +2,7 @@
 
 namespace Server;
 
+use Exception;
 use HttpServer\Route\Router;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
@@ -24,6 +25,16 @@ class HTTPServerListener extends Abstracts\Server
 
 	private Router $router;
 
+
+	/**
+	 * HTTPServerListener constructor.
+	 * @throws Exception
+	 */
+	public function __construct()
+	{
+		$this->router = Snowflake::getApp('router');
+	}
+
 	/**
 	 * UDPServerListener constructor.
 	 * @param Server|\Swoole\WebSocket\Server|\Swoole\Http\Server $server
@@ -34,7 +45,7 @@ class HTTPServerListener extends Abstracts\Server
 	 * @return Server\Port
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public static function instance(mixed $server, string $host, int $port, int $mode, ?array $settings = []): Server\Port
 	{
