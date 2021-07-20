@@ -96,7 +96,7 @@ class HTTPServerListener extends Abstracts\Server
 			/** @var HResponse $response */
 			[$request, $response] = [HRequest::create($request), HResponse::create($response)];
 			if ($request->is('favicon.ico')) {
-				$response->close(404);
+				throw new Exception('Not found.', 404);
 			} else {
 				$this->router->dispatch();
 			}
