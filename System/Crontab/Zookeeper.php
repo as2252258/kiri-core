@@ -5,11 +5,12 @@ namespace Snowflake\Crontab;
 
 
 use Exception;
+use Server\SInterface\CustomProcess;
 use Snowflake\Abstracts\Config;
 use Snowflake\Cache\Redis;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Process\Process;
 use Snowflake\Snowflake;
+use Swoole\Process;
 use Swoole\Timer;
 use Throwable;
 
@@ -17,7 +18,7 @@ use Throwable;
  * Class Zookeeper
  * @package Snowflake\Process
  */
-class Zookeeper extends Process
+class Zookeeper implements CustomProcess
 {
 
 
@@ -28,12 +29,13 @@ class Zookeeper extends Process
 
 
 	/**
+	 * @param Process $process
 	 * @return string
 	 * @throws ConfigException
 	 */
-	public function getProcessName(): string
+	public function getProcessName(Process $process): string
 	{
-		$name = Config::get('id', 'system') . '[' . $this->pid . ']';
+		$name = Config::get('id', 'system') . '[' . $process->pid . ']';
 		if (!empty($prefix)) {
 			$name .= '.Crontab zookeeper';
 		}
@@ -42,25 +44,10 @@ class Zookeeper extends Process
 
 
 	/**
-	 * @param \Swoole\Process $process
+	 * @param Process $process
 	 * @throws Exception
 	 */
-	public function before(\Swoole\Process $process): void
-	{
-		/** @var Producer $crontab */
-		$crontab = Snowflake::app()->get('crontab');
-		$crontab->clearAll();
-
-		$this->server = $server = Snowflake::app()->getSwoole();
-		$this->workerNum = $server->setting['worker_num'] + $server->setting['task_worker_num'];
-	}
-
-
-	/**
-	 * @param \Swoole\Process $process
-	 * @throws Exception
-	 */
-	public function onHandler(\Swoole\Process $process): void
+	public function onHandler(Process $process): void
 	{
 		Timer::tick(100, [$this, 'loop']);
 	}
