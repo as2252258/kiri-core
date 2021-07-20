@@ -18,15 +18,12 @@ use HttpServer\Http\Response;
 use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
-use HttpServer\Service\Http;
-use HttpServer\Service\Packet;
-use HttpServer\Service\Receive;
-use HttpServer\Service\Websocket;
 use HttpServer\Shutdown;
 use JetBrains\PhpStorm\Pure;
 use Kafka\Producer;
 use Kafka\TaskContainer;
 use ReflectionException;
+use Server\ServerManager;
 use Snowflake\Aop;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
@@ -38,8 +35,8 @@ use Snowflake\Event;
 use Snowflake\Exception\InitException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Jwt\Jwt;
-use Snowflake\Pool\Pool;
 use Snowflake\Pool\Connection;
+use Snowflake\Pool\Pool;
 use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Swoole\Table;
@@ -385,12 +382,11 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Http|Packet|Receive|Websocket|null
-	 * @throws Exception
+	 * @return \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
 	 */
-	public function getSwoole(): Packet|Websocket|Receive|Http|null
+	public function getSwoole(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
 	{
-		return $this->getServer()->getServer();
+		return ServerManager::getContext()->getServer();
 	}
 
 
