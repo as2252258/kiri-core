@@ -294,6 +294,15 @@ class ServerManager extends Abstracts\Server
 
 
 	/**
+	 *
+	 */
+	public function start()
+	{
+		$this->server->start();
+	}
+
+
+	/**
 	 * @param string $class
 	 * @return object
 	 * @throws NotFindClassException
