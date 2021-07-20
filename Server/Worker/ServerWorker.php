@@ -30,6 +30,9 @@ class ServerWorker extends \Server\Abstracts\Server
         $annotation = Snowflake::app()->getAnnotation();
         $annotation->read(APP_PATH);
 
+        $loader = Snowflake::app()->getRouter();
+        $loader->_loader();
+
         $this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
         if ($workerId >= $server->setting['worker_num'] + 1) {
             $annotation->runtime(CONTROLLER_PATH);
