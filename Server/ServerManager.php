@@ -55,7 +55,6 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function getServer(): Server|WServer|HServer|null
 	{
-		var_dump($this->server);
 		return $this->server;
 	}
 
@@ -172,6 +171,7 @@ class ServerManager extends Abstracts\Server
 	 * @param array $config
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws \Exception
 	 */
 	private function startListenerHandler(ServerManager $context, array $config)
 	{
@@ -180,8 +180,13 @@ class ServerManager extends Abstracts\Server
 		} else {
 			$config['settings'] = array_merge($configs['settings'] ?? [], $config['settings'] ?? []);
 
+			if (!isset($config['settings']['log_file'])) {
+				$config['settings']['log_file'] = storage('system.log');
+			}
+			if (!isset($config['settings']['pid_file'])) {
+				$config['settings']['pid_file'] = storage('.pid');
+			}
 			$config['events'] = array_merge($configs['events'] ?? [], $config['events'] ?? []);
-
 			$context->createBaseServer($config['type'], $config['host'], $config['port'], $config['mode'], $config);
 		}
 	}
