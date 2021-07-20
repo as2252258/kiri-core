@@ -113,9 +113,9 @@ class Router extends HttpService implements RouterInterface
             $handler = Closure::bind($handler, new Controller());
         }
 
-        if ($this->useTree === ROUTER_TREE) {
-            return $this->tree($path, $handler, $method);
-        }
+//        if ($this->useTree === ROUTER_TREE) {
+//            return $this->tree($path, $handler, $method);
+//        }
 
         return $this->hash($path, $handler, $method);
     }
