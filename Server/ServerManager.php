@@ -112,7 +112,9 @@ class ServerManager extends Abstracts\Server
 		}
 		/** @var Process $process */
 		$this->server->addProcess(new Process(function (Process $soloProcess) use ($customProcess) {
-			$soloProcess->name($customProcess->getProcessName($soloProcess));
+			if (Snowflake::getPlatform()->isLinux()) {
+				$soloProcess->name($customProcess->getProcessName($soloProcess));
+			}
 			$customProcess->onHandler($soloProcess);
 		},
 			$redirect_stdin_and_stdout, $pipe_type, $enable_coroutine));
