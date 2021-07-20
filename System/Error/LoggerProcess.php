@@ -6,6 +6,7 @@ namespace Snowflake\Error;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Server\SInterface\CustomProcess;
 use Snowflake\Core\Json;
 use Snowflake\Exception\ComponentException;
 use Snowflake\Process\Process;
@@ -17,23 +18,13 @@ use Swoole\Coroutine;
  * Class LoggerProcess
  * @package Snowflake\Error
  */
-class LoggerProcess extends Process
+class LoggerProcess implements CustomProcess
 {
-
-
-	/**
-	 * @param \Swoole\Process $process
-	 */
-	public function before(\Swoole\Process $process): void
-	{
-		// TODO: Implement before() method.
-	}
-
 
 	/**
 	 * @return string
 	 */
-	#[Pure] public function getProcessName(): string
+	#[Pure] public function getProcessName(\Swoole\Process $process): string
 	{
 		// TODO: Implement getProcessName() method.
 		return get_called_class();
