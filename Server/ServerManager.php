@@ -372,7 +372,3 @@ class ServerManager extends Abstracts\Server
 		$this->server->on('finish', $events[Constant::FINISH] ?? [$reflect, 'onFinish']);
 	}
 }
-
-
-$context = ServerManager::getContext();
-$context->start();
