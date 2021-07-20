@@ -3,13 +3,19 @@
 namespace Server;
 
 use Exception;
+use HttpServer\Exception\ExitException;
+use HttpServer\Http\Request as HRequest;
+use HttpServer\Http\Response as HResponse;
 use HttpServer\Route\Router;
 use ReflectionException;
+use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
+use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
+use Throwable;
 
 
 /**
@@ -84,13 +90,20 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function onRequest(Request $request, Response $response)
 	{
-		$this->router->find_path(new \HttpServer\Http\Request());
+		try {
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
-		if (!$response->isWritable()) {
-			return;
+			/** @var HResponse $response */
+			[$request, $response] = [HRequest::create($request), HResponse::create($response)];
+			if ($request->is('favicon.ico')) {
+				$response->close(404);
+			} else {
+				$this->router->dispatch();
+			}
+		} catch (ExitException | Error | Throwable $exception) {
+			$response->status($exception->getCode() == 0 ? 500 : $exception->getCode());
+			$response->end($exception->getMessage());
 		}
-		$response->status(200);
-		$response->end('');
 	}
 
 
