@@ -9,12 +9,15 @@ use HttpServer\Service\Http;
 use HttpServer\Service\Packet;
 use HttpServer\Service\Receive;
 use HttpServer\Service\Websocket;
+use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Rpc\Service;
 use Server\Constant;
 use Server\ServerManager;
 use Snowflake\Abstracts\Config;
 use Snowflake\Error\LoggerProcess;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Process\Biomonitoring;
 use Snowflake\Snowflake;
 use Swoole\Runtime;
@@ -84,8 +87,8 @@ class Server extends HttpService
 
     /**
      * @param $rpcService
-     * @throws \ReflectionException
-     * @throws \Snowflake\Exception\NotFindClassException
+     * @throws ReflectionException
+     * @throws NotFindClassException
      */
     private function rpcListener($rpcService)
     {
@@ -183,23 +186,9 @@ class Server extends HttpService
     /**
      * @return \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
      */
-    public function getServer(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
+    #[Pure] public function getServer(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
     {
         return $this->manager->getServer();
-    }
-
-
-    /**
-     * @param $name
-     * @param $callback
-     * @throws Exception
-     */
-    public function onBindCallback($server, $name, $callback)
-    {
-//        if ($server->getCallback($name) !== null) {
-//            return;
-//        }
-        $server->on($name, $callback);
     }
 
 }

@@ -55,6 +55,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function getServer(): Server|WServer|HServer|null
 	{
+		var_dump($this->server);
 		return $this->server;
 	}
 
