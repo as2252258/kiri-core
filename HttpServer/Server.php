@@ -33,8 +33,8 @@ class Server extends HttpService
 {
 
     private array $process = [
-        'biomonitoring'  => Biomonitoring::class,
-        'logger_process' => LoggerProcess::class
+        Biomonitoring::class,
+        LoggerProcess::class
     ];
 
 
@@ -50,14 +50,12 @@ class Server extends HttpService
     }
 
 
-    /**
-     * @param $name
-     * @param $process
-     * @param array $params
-     */
+	/**
+	 * @param $process
+	 */
     public function addProcess($process)
     {
-        $this->manager->addProcess($process);
+    	$this->process[] = $process;
     }
 
 
