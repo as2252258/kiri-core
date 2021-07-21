@@ -3,11 +3,10 @@
 namespace Server\Worker;
 
 use Exception;
-use Psr\Log\Test\TestLogger;
 use Server\Constant;
-use Server\ServerManager;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Runtime;
 use Snowflake\Snowflake;
 use Swoole\Server;
@@ -40,11 +39,32 @@ class ServerWorker extends \Server\Abstracts\Server
 			$loader = Snowflake::app()->getRouter();
 			$loader->_loader();
 
+			$this->setProcessName(sprintf('Worker[%d]#%03d.', $server->worker_pid, $workerId));
+
 			$annotation->runtime(CONTROLLER_PATH);
 			$annotation->runtime(MODEL_PATH);
 		} else {
+			$this->setProcessName(sprintf('Tasker[%d]#%03d.', $server->worker_pid, $workerId));
+
 			$annotation->runtime(APP_PATH, [CONTROLLER_PATH]);
 		}
+	}
+
+
+	/**
+	 * @param $prefix
+	 * @throws ConfigException
+	 */
+	private function setProcessName($prefix)
+	{
+		if (Snowflake::getPlatform()->isMac()) {
+			return;
+		}
+		$name = Config::get('id', 'system-service') . '.';
+		if (!empty($prefix)) {
+			$name .= '.' . $prefix;
+		}
+		swoole_set_process_name($name);
 	}
 
 
