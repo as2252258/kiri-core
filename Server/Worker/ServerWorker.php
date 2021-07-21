@@ -33,7 +33,7 @@ class ServerWorker extends \Server\Abstracts\Server
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app');
 
-		debug(sprintf('Worker[%d]#%d start.', $server->worker_pid, $workerId));
+		debug(sprintf('Worker[%d]#%03d start.', $server->worker_pid, $workerId));
 
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 		if ($workerId >= $server->setting['worker_num'] + 1) {
