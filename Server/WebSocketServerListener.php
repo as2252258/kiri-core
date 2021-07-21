@@ -106,7 +106,7 @@ class WebSocketServerListener extends Abstracts\Server
 	 */
 	public function onConnect(Server $server, int $fd)
 	{
-		$this->runEvent(Constant::MESSAGE, fn() => $server->confirm($fd), [$server, $fd]);
+		$this->runEvent(Constant::CONNECT, fn() => $server->confirm($fd), [$server, $fd]);
 	}
 
 
@@ -126,7 +126,7 @@ class WebSocketServerListener extends Abstracts\Server
 	 */
 	public function onClose(Server $server, int $fd)
 	{
-		$this->runEvent(Constant::MESSAGE, fn() => $server->confirm($fd), [$server, $fd]);
+		$this->runEvent(Constant::CLOSE, fn() => $server->confirm($fd), [$server, $fd]);
 	}
 
 }

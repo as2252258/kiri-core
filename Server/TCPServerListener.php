@@ -31,6 +31,7 @@ class TCPServerListener extends Abstracts\Server
 	 * @return Server\Port
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public static function instance(Server $server, string $host, int $port, int $mode, ?array $settings = []): Server\Port
 	{
@@ -44,13 +45,12 @@ class TCPServerListener extends Abstracts\Server
 		static::$_tcp->set($settings['settings'] ?? []);
 		static::$_tcp->on('receive', [$reflect, 'onReceive']);
 		static::$_tcp->on('connect', [$reflect, 'onConnect']);
+		static::$_tcp->on('close', [$reflect, 'onClose']);
 		if (swoole_version() >= '4.7.0') {
 			static::$_tcp->on('disconnect', [$reflect, 'onDisconnect']);
 			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-		} else {
-			static::$_tcp->on('close', [$reflect, 'onClose']);
-			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 		}
+		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 		$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
 		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 
