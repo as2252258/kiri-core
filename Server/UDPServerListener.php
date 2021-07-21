@@ -4,6 +4,7 @@ namespace Server;
 
 use Exception;
 use ReflectionException;
+use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
@@ -56,10 +57,13 @@ class UDPServerListener extends Abstracts\Server
 	 * @param Server $server
 	 * @param string $data
 	 * @param array $clientInfo
+	 * @throws Exception
 	 */
 	public function onPacket(Server $server, string $data, array $clientInfo)
 	{
 		$this->runEvent(Constant::MESSAGE, null, [$server, $data, $clientInfo]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 }

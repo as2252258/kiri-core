@@ -4,6 +4,7 @@ namespace Server;
 
 use Exception;
 use ReflectionException;
+use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
@@ -62,20 +63,26 @@ class TCPServerListener extends Abstracts\Server
 	 * @param Server $server
 	 * @param int $fd
 	 * @param int|null $reactor_id
+	 * @throws Exception
 	 */
 	public function onDisconnect(Server $server, int $fd, ?int $reactor_id = null)
 	{
 		$this->runEvent(Constant::HANDSHAKE, null, [$server, $fd, $reactor_id]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onConnect(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CONNECT, null, [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
@@ -84,20 +91,26 @@ class TCPServerListener extends Abstracts\Server
 	 * @param int $fd
 	 * @param int $reactor_id
 	 * @param string $data
+	 * @throws Exception
 	 */
 	public function onReceive(Server $server, int $fd, int $reactor_id, string $data)
 	{
 		$this->runEvent(Constant::RECEIVE, null, [$server, $fd, $reactor_id, $data]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onClose(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 }

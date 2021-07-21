@@ -6,6 +6,7 @@ namespace Server\Abstracts;
 
 use Closure;
 use Exception;
+use Snowflake\Event;
 use Snowflake\Snowflake;
 
 
@@ -18,6 +19,19 @@ abstract class Server
 
 
 	protected array $_events = [];
+
+
+	protected Event $_event;
+
+
+	/**
+	 * Server constructor.
+	 * @throws Exception
+	 */
+	public function __construct()
+	{
+		$this->_event = Snowflake::getApp('event');
+	}
 
 
 	/**

@@ -4,6 +4,7 @@ namespace Server;
 
 use Exception;
 use ReflectionException;
+use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Request;
@@ -86,6 +87,8 @@ class WebSocketServerListener extends Abstracts\Server
 			$response->setHeader($key, $val);
 		}
 		$this->runEvent(Constant::HANDSHAKE, fn() => $this->disconnect($request, $response), [$request, $response]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
@@ -103,30 +106,39 @@ class WebSocketServerListener extends Abstracts\Server
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onConnect(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CONNECT, fn() => $server->confirm($fd), [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
 	/**
 	 * @param \Swoole\WebSocket\Server $server
 	 * @param Frame $frame
+	 * @throws Exception
 	 */
 	public function onMessage(\Swoole\WebSocket\Server $server, Frame $frame)
 	{
 		$this->runEvent(Constant::MESSAGE, fn() => $server->push($frame->fd, '.'), [$server, $frame]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onClose(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CLOSE, fn() => $server->confirm($fd), [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 }

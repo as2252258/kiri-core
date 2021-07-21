@@ -32,9 +32,6 @@ class HTTPServerListener extends Abstracts\Server
 	private Router $router;
 
 
-	private Event $_event;
-
-
 	/**
 	 * HTTPServerListener constructor.
 	 * @throws Exception
@@ -42,7 +39,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function __construct()
 	{
 		$this->router = Snowflake::getApp('router');
-		$this->_event = Snowflake::getApp('event');
+		parent::__construct();
 	}
 
 	/**
@@ -83,10 +80,13 @@ class HTTPServerListener extends Abstracts\Server
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onConnect(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CONNECT, null, [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
@@ -104,6 +104,7 @@ class HTTPServerListener extends Abstracts\Server
 			}
 			$this->router->dispatch();
 		} catch (ExitException | Error | Throwable $exception) {
+			$response->setHeader('Content-Type', 'text/html; charset=utf-8');
 			$response->status($exception->getCode() == 0 ? 500 : $exception->getCode());
 			$response->end($exception->getMessage());
 		} finally {
@@ -115,20 +116,26 @@ class HTTPServerListener extends Abstracts\Server
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onDisconnect(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::DISCONNECT, null, [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
 	/**
 	 * @param Server $server
 	 * @param int $fd
+	 * @throws Exception
 	 */
 	public function onClose(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 }
