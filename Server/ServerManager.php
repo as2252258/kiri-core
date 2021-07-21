@@ -116,7 +116,7 @@ class ServerManager extends Abstracts\Server
 		}
 		/** @var Process $process */
 		$this->server->addProcess(new Process(function (Process $soloProcess) use ($customProcess) {
-			$system = sprintf('Process[%d].%s', $soloProcess->pid, Config::get('id', 'system-service'));
+			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
 			if (Snowflake::getPlatform()->isLinux()) {
 				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
 			}
