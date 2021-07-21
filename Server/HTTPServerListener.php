@@ -93,7 +93,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-//			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
 			[$request, $_] = [HRequest::create($request), HResponse::create($response)];
 			if ($request->is('favicon.ico')) {
