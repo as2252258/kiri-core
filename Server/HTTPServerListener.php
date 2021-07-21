@@ -113,7 +113,17 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function onDisconnect(Server $server, int $fd)
 	{
-		$this->runEvent(Constant::CONNECT, null, [$server, $fd]);
+		$this->runEvent(Constant::DISCONNECT, null, [$server, $fd]);
+	}
+
+
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 */
+	public function onClose(Server $server, int $fd)
+	{
+		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
 	}
 
 }
