@@ -36,7 +36,7 @@ class ServerWorker extends \Server\Abstracts\Server
 		debug(sprintf('Worker[%d]#%03d start.', $server->worker_pid, $workerId));
 
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
-		if ($workerId >= $server->setting['worker_num'] + 1) {
+		if ($workerId < $server->setting['worker_num']) {
 			$loader = Snowflake::app()->getRouter();
 			$loader->_loader();
 
