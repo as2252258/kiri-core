@@ -21,6 +21,7 @@ use Snowflake\Core\Json;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
 
@@ -681,13 +682,47 @@ if (!function_exists('env')) {
 
 }
 
+
+if (!function_exists('di')) {
+
+
+	/**
+	 * @param string $className
+	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	function di(string $className): mixed
+	{
+		return Snowflake::getDi()->get($className);
+	}
+
+}
+
+if (!function_exists('duplicate')) {
+
+
+	/**
+	 * @param string $className
+	 * @return mixed
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	function duplicate(string $className): mixed
+	{
+		$class = di($className);
+		return clone $class;
+	}
+
+}
+
 if (!function_exists('sweep')) {
 
 	/**
 	 * @param string $configPath
 	 * @return array|false|string|null
 	 */
-	function sweep($configPath = APP_PATH . 'config'): bool|array|string|null
+	function sweep(string $configPath = APP_PATH . 'config'): bool|array|string|null
 	{
 		$array = [];
 		foreach (glob($configPath . '/*') as $config) {

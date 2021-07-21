@@ -7,6 +7,7 @@ namespace Annotation;
 use Exception;
 use ReflectionException;
 use ReflectionProperty;
+use Snowflake\Core\Str;
 use Snowflake\Snowflake;
 
 /**
@@ -37,16 +38,12 @@ use Snowflake\Snowflake;
 	public function execute(mixed $class, mixed $method = null): bool
 	{
 		$injectValue = $this->parseInjectValue();
-		if (!($method instanceof ReflectionProperty)) {
-			$method = Snowflake::getDi()->getClassProperty($class, $method);
-			if (!$method) {
-				return false;
-			}
+		if (!($method = $this->getProperty($class, $method))) {
+			return false;
 		}
-
 		/** @var ReflectionProperty $class */
 		if ($method->isPrivate() || $method->isProtected()) {
-			$method = 'set' . ucfirst($class->getName());
+			$method = 'set' . ucfirst(Str::convertUnderline($method->getName()));
 			if (!method_exists($class, $method)) {
 				return false;
 			}
@@ -55,6 +52,24 @@ use Snowflake\Snowflake;
 			$class->{$method->getName()} = $injectValue;
 		}
 		return true;
+	}
+
+
+	/**
+	 * @param $class
+	 * @param $method
+	 * @return ReflectionProperty|bool
+	 */
+	private function getProperty($class, $method): ReflectionProperty|bool
+	{
+		if ($method instanceof ReflectionProperty) {
+			return $method;
+		}
+		$method = Snowflake::getDi()->getClassProperty($class, $method);
+		if (!$method) {
+			return false;
+		}
+		return $method;
 	}
 
 

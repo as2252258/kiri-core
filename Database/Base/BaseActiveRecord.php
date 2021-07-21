@@ -24,7 +24,6 @@ use Database\Relation;
 use Database\SqlBuilder;
 use Database\Traits\HasBase;
 use Exception;
-use HttpServer\Http\Context;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
@@ -142,12 +141,20 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
+	 * @param Relation $relation
+	 */
+	public function setRelation(Relation $relation)
+	{
+		$this->_relation = $relation;
+	}
+
+
+	/**
 	 * @throws Exception
 	 */
 	public function init()
 	{
 		$this->container = Snowflake::app();
-
 		$an = Snowflake::app()->getAnnotation();
 		$an->injectProperty($this);
 	}
@@ -1010,12 +1017,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function populate(array $data): static
 	{
-//        $class = Snowflake::app()->getChannel();
-//        /** @var static $model */
-//        $model = $class->pop(static::class, function () {
-//            return new static();
-//        });
-		$model = new static();
+		$model = duplicate(static::class);
 		$model->_attributes = $data;
 		$model->_oldAttributes = $data;
 		$model->setIsCreate(false);

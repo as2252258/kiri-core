@@ -47,10 +47,10 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	 *
 	 * @param $query
 	 * @param array $array
-	 * @param null|string|ActiveRecord $model
+	 * @param string|ActiveRecord|null $model
 	 * @throws Exception
 	 */
-	public function __construct($query, array $array = [], $model = null)
+	public function __construct($query, array $array = [], string|ActiveRecord $model = null)
 	{
 		$this->_item = $array;
 		$this->query = $query;
@@ -111,7 +111,7 @@ abstract class AbstractCollection extends Component implements \IteratorAggregat
 	public function getModel(): ActiveRecord
 	{
 		if (!is_object($this->model)) {
-			$this->model = $this->model::populate([]);
+			$this->model = duplicate($this->model);
 			$this->model->setIsCreate(false);
 		}
 		return $this->model;
