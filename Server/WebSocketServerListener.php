@@ -50,9 +50,9 @@ class WebSocketServerListener extends Abstracts\Server
 		static::$_http->on('message', [$reflect, 'onMessage']);
 		static::$_http->on('close', [$reflect, 'onClose']);
 
-		$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::CONNECT] ?? null);
-		$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::HANDSHAKE] ?? null);
-		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::MESSAGE] ?? null);
+		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+		$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
+		$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 
 		return static::$_http;
