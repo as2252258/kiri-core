@@ -711,7 +711,7 @@ if (!function_exists('duplicate')) {
 	function duplicate(string $className): mixed
 	{
 		$class = di($className);
-		return unserialize(serialize($class));
+		return clone $class;
 	}
 
 }
