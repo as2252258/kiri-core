@@ -117,7 +117,7 @@ class Loader extends BaseObject
 		if (!isset(static::$_methods[$class])) {
 			return [];
 		}
-		$properties = static::$_methods[$class]['methods'];
+		$properties = static::$_methods[$class];
 		if (!empty($method) && isset($properties[$method])) {
 			return $properties[$method];
 		}
