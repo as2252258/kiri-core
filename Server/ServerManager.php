@@ -9,6 +9,7 @@ use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
 use Server\Task\ServerTask;
 use Snowflake\Abstracts\Config;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Server as HServer;
@@ -251,6 +252,7 @@ class ServerManager extends Abstracts\Server
 	 * @param array $settings
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws ConfigException
 	 */
 	private function createBaseServer(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
@@ -261,7 +263,10 @@ class ServerManager extends Abstracts\Server
 			Constant::SERVER_TYPE_WEBSOCKET => WServer::class
 		};
 		$this->server = new $match($host, $port, SWOOLE_PROCESS, $mode);
-		$this->server->set($settings['settings']);
+		$this->server->set(array_merge(
+			Config::get('server.setting', []),
+			$settings['settings']
+		));
 		$this->addDefaultListener($type, $settings);
 	}
 
