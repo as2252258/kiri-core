@@ -147,6 +147,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	public function init()
 	{
 		$this->container = Snowflake::app();
+
+		$an = Snowflake::app()->getAnnotation();
+		$an->injectProperty($this);
 	}
 
 

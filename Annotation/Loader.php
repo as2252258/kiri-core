@@ -242,10 +242,9 @@ class Loader extends BaseObject
 				}
 				$_method[] = $attribute->newInstance();
 			}
-
-			static::$_methods[$replace->getName()][$method->getName()] = $_method;
-
-			$_array['methods'][$method->getName()] = $_method;
+			if (!empty($_method)) {
+				static::$_methods[$replace->getName()][$method->getName()] = $_method;
+			}
 		}
 		return $_array;
 	}
@@ -268,10 +267,9 @@ class Loader extends BaseObject
 				}
 				$_property[] = $attribute->newInstance();
 			}
-
-			static::$_property[$replace->getName()][$method->getName()] = $_property;
-
-			$_array['property'][$method->getName()] = $_property;
+			if (!empty($_property)) {
+				static::$_property[$replace->getName()][$method->getName()] = $_property;
+			}
 		}
 		return $_array;
 	}
@@ -348,7 +346,7 @@ class Loader extends BaseObject
 			if ($annotations === null) {
 				continue;
 			}
-			foreach ($annotations['methods'] as $name => $attribute) {
+			foreach (static::$_methods[$className] as $name => $attribute) {
 				$this->methods($annotations, $attribute, $annotation, $className, $name);
 			}
 		}
