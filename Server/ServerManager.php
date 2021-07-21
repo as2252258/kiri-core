@@ -264,7 +264,7 @@ class ServerManager extends Abstracts\Server
 		};
 		$this->server = new $match($host, $port, SWOOLE_PROCESS, $mode);
 		$this->server->set(array_merge(
-			Config::get('server.setting', []),
+			Config::get('server.settings', []),
 			$settings['settings']
 		));
 		$this->addDefaultListener($type, $settings);
