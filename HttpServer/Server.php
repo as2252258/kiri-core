@@ -32,161 +32,163 @@ defined('PID_PATH') or define('PID_PATH', APP_PATH . 'storage/server.pid');
 class Server extends HttpService
 {
 
-    private array $process = [
-        Biomonitoring::class,
-        LoggerProcess::class
-    ];
+	private array $process = [
+		Biomonitoring::class,
+		LoggerProcess::class
+	];
 
 
-    private ServerManager $manager;
+	private ServerManager $manager;
 
 
-    /**
-     *
-     */
-    public function init()
-    {
-        $this->manager = ServerManager::getContext();
-    }
+	/**
+	 *
+	 */
+	public function init()
+	{
+		$this->manager = ServerManager::getContext();
+	}
 
 
 	/**
 	 * @param $process
 	 */
-    public function addProcess($process)
-    {
-    	$this->process[] = $process;
-    }
+	public function addProcess($process)
+	{
+		$this->process[] = $process;
+	}
 
 
-    /**
-     * @return string start server
-     *
-     * start server
-     * @throws ConfigException
-     * @throws Exception
-     */
-    public function start(): string
-    {
-        $this->manager->initBaseServer(Config::get('server', [], true));
+	/**
+	 * @return string start server
+	 *
+	 * start server
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public function start(): string
+	{
+		$this->manager->initBaseServer(Config::get('server', [], true));
 
-        $rpcService = Config::get('rpc', []);
-        if (!empty($rpcService)) {
-            $this->rpcListener($rpcService);
-        }
-        foreach ($this->process as $process) {
-            $this->manager->addProcess($process);
-        }
-        Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
+		$rpcService = Config::get('rpc', []);
+		if (!empty($rpcService)) {
+			$this->rpcListener($rpcService);
+		}
 
-        return $this->manager->getServer()->start();
-    }
+		$processes = array_merge($this->process, Config::get('processes', []));
+		foreach ($processes as $process) {
+			$this->manager->addProcess($process);
+		}
+		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
 
-
-    /**
-     * @param $rpcService
-     * @throws ReflectionException
-     * @throws NotFindClassException
-     */
-    private function rpcListener($rpcService)
-    {
-        $rpcService['events'][Constant::CONNECT] = [Service::class, 'onConnect'];
-        $rpcService['events'][Constant::DISCONNECT] = [Service::class, 'onClose'];
-        $rpcService['events'][Constant::CLOSE] = [Service::class, 'onClose'];
-        $rpcService['events'][Constant::RECEIVE] = [Service::class, 'onReceive'];
-        $rpcService['events'][Constant::PACKET] = [Service::class, 'onPacket'];
-        $this->manager->addListener($rpcService['type'], $rpcService['host'], $rpcService['port'], $rpcService['mode'], $rpcService);
-    }
+		return $this->manager->getServer()->start();
+	}
 
 
-    /**
-     * @param $host
-     * @param $Port
-     * @return Packet|Websocket|Receive|Http|null
-     * @throws Exception
-     */
-    public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
-    {
-        $this->error(sprintf('Port %s::%d is already.', $host, $Port));
-        if ($this->swoole) {
-            $this->swoole->shutdown();
-        } else {
-            $this->shutdown();
-        }
-        return $this->swoole;
-    }
+	/**
+	 * @param $rpcService
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	private function rpcListener($rpcService)
+	{
+		$rpcService['events'][Constant::CONNECT] = [Service::class, 'onConnect'];
+		$rpcService['events'][Constant::DISCONNECT] = [Service::class, 'onClose'];
+		$rpcService['events'][Constant::CLOSE] = [Service::class, 'onClose'];
+		$rpcService['events'][Constant::RECEIVE] = [Service::class, 'onReceive'];
+		$rpcService['events'][Constant::PACKET] = [Service::class, 'onPacket'];
+		$this->manager->addListener($rpcService['type'], $rpcService['host'], $rpcService['port'], $rpcService['mode'], $rpcService);
+	}
 
 
-    /**
-     * @return bool
-     * @throws ConfigException
-     * @throws Exception
-     */
-    public function isRunner(): bool
-    {
-        $port = Config::get('servers');
-        if (empty($port)) {
-            return false;
-        }
-        foreach ($port as $value) {
-            if ($this->checkPort($value['port'])) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * @param $host
+	 * @param $Port
+	 * @return Packet|Websocket|Receive|Http|null
+	 * @throws Exception
+	 */
+	public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
+	{
+		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
+		if ($this->swoole) {
+			$this->swoole->shutdown();
+		} else {
+			$this->shutdown();
+		}
+		return $this->swoole;
+	}
 
 
-    /**
-     * @param $port
-     * @return bool
-     * @throws Exception
-     */
-    private function checkPort($port): bool
-    {
-        if (Snowflake::getPlatform()->isLinux()) {
-            exec('netstat -tunlp | grep ' . $port, $output);
-        } else {
-            exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
-        }
-        return !empty($output);
-    }
+	/**
+	 * @return bool
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public function isRunner(): bool
+	{
+		$port = Config::get('servers');
+		if (empty($port)) {
+			return false;
+		}
+		foreach ($port as $value) {
+			if ($this->checkPort($value['port'])) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 
-    /**
-     * @return void
-     *
-     * start server
-     * @throws Exception
-     */
-    public function shutdown()
-    {
-        /** @var Shutdown $shutdown */
-        $shutdown = Snowflake::app()->get('shutdown');
-        $shutdown->shutdown();
-    }
+	/**
+	 * @param $port
+	 * @return bool
+	 * @throws Exception
+	 */
+	private function checkPort($port): bool
+	{
+		if (Snowflake::getPlatform()->isLinux()) {
+			exec('netstat -tunlp | grep ' . $port, $output);
+		} else {
+			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
+		}
+		return !empty($output);
+	}
 
 
-    /**
-     * @param $daemon
-     * @return Server
-     */
-    public function setDaemon($daemon): static
-    {
-        if (!in_array($daemon, [0, 1])) {
-            return $this;
-        }
-        $this->daemon = $daemon;
-        return $this;
-    }
+	/**
+	 * @return void
+	 *
+	 * start server
+	 * @throws Exception
+	 */
+	public function shutdown()
+	{
+		/** @var Shutdown $shutdown */
+		$shutdown = Snowflake::app()->get('shutdown');
+		$shutdown->shutdown();
+	}
 
 
-    /**
-     * @return \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
-     */
-    #[Pure] public function getServer(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
-    {
-        return $this->manager->getServer();
-    }
+	/**
+	 * @param $daemon
+	 * @return Server
+	 */
+	public function setDaemon($daemon): static
+	{
+		if (!in_array($daemon, [0, 1])) {
+			return $this;
+		}
+		$this->daemon = $daemon;
+		return $this;
+	}
+
+
+	/**
+	 * @return \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
+	 */
+	#[Pure] public function getServer(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
+	{
+		return $this->manager->getServer();
+	}
 
 }
