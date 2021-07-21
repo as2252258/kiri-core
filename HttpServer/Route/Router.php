@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Controller;
 use HttpServer\Http\Request;
+use HttpServer\Http\Response;
 use HttpServer\IInterface\Middleware;
 use HttpServer\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
@@ -43,6 +44,9 @@ class Router extends HttpService implements RouterInterface
 	public int $useTree = ROUTER_TREE;
 
 
+	public ?Response $response = null;
+
+
 	/**
 	 * @param Closure $middleware
 	 */
@@ -54,11 +58,14 @@ class Router extends HttpService implements RouterInterface
 
 	/**
 	 * @throws ConfigException
+	 * @throws Exception
 	 * 初始化函数路径
 	 */
 	public function init()
 	{
 		$this->dir = Config::get('http.namespace', $this->dir);
+
+		$this->response = Snowflake::app()->get('response');
 	}
 
 
@@ -513,17 +520,18 @@ class Router extends HttpService implements RouterInterface
 	 * @return mixed
 	 * @throws
 	 */
-	public function dispatch(): mixed
+	public function dispatch(): void
 	{
 		$node = $this->find_path(\request());
 		if (!($node instanceof Node)) {
-			return send(\request()->getUri() . ' -> ' . self::NOT_FOUND);
+			$this->response->setFormat(Response::HTML);
+			$this->response->send('<h1>404</h1>');
+		} else {
+			$this->response->send(($response = $node->dispatch()), 200);
+			if ($node->hasAfter()) {
+				$node->afterDispatch($response);
+			}
 		}
-		send(($response = $node->dispatch()), 200);
-		if (!$node->hasAfter()) {
-			return null;
-		}
-		return $node->afterDispatch($response);
 	}
 
 

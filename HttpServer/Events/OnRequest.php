@@ -16,7 +16,6 @@ use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\Http\Status;
 use Throwable;
 
 /**
@@ -49,7 +48,7 @@ class OnRequest extends Callback
 	 * @return void
 	 * @throws Exception
 	 */
-	public function onHandler(Request $request, Response $response): mixed
+	public function onHandler(Request $request, Response $response): void
 	{
 		try {
 			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
@@ -58,12 +57,13 @@ class OnRequest extends Callback
 			[$request, $response] = OnRequest::createContext($request, $response);
 
 			if ($request->is('favicon.ico')) {
-				return $response->close(404);
+				$response->close(404);
+			} else {
+				$this->router->dispatch();
 			}
-			return $this->router->dispatch();
 		} catch (ExitException | Error | Throwable $exception) {
 			$this->addError($exception, 'throwable');
-			return $this->sendErrorMessage($request, $response, $exception);
+			$this->sendErrorMessage($request, $response, $exception);
 		}
 	}
 

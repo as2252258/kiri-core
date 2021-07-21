@@ -82,7 +82,6 @@ class Request extends HttpService
 		$this->fd = $fd;
 	}
 
-
 	/**
 	 * @return array|null
 	 * @throws Exception
@@ -243,12 +242,11 @@ class Request extends HttpService
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function adapter(): mixed
+	public function adapter(): void
 	{
 		if (!$this->isHead()) {
-			return router()->dispatch();
+			router()->dispatch();
 		}
-		return '';
 	}
 
 
