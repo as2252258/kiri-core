@@ -27,15 +27,15 @@ abstract class Server
 	 */
 	public function setEvents(string $name, ?array $events): void
 	{
-		if (!is_callable($events)) {
-			return;
-		}
 		if (is_array($events) && is_string($events[0])) {
 			$reflect = Snowflake::getDi()->getReflect($events[0]);
 			if (!$reflect) {
 				throw new Exception('Checks the class is c\'not instantiable.');
 			}
 			$events[0] = $reflect->newInstance();
+		}
+		if (!is_callable($events)) {
+			return;
 		}
 		$this->_events[$name] = $events;
 	}
