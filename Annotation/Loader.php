@@ -27,10 +27,16 @@ class Loader extends BaseObject
 {
 
 
-	private array $_classes = [];
+	private static array $_classes = [];
 
 
-	private array $_directory = [];
+	private static array $_directory = [];
+
+
+	private static array $_property = [];
+
+
+	private static array $_methods = [];
 
 
 	private array $_annotationMaps = [];
@@ -41,7 +47,7 @@ class Loader extends BaseObject
 	 */
 	public function getDirectory(): array
 	{
-		return $this->_directory;
+		return static::$_directory;
 	}
 
 	/**
@@ -60,7 +66,7 @@ class Loader extends BaseObject
 	 */
 	public function getClasses(): array
 	{
-		return $this->_classes;
+		return static::$_classes;
 	}
 
 
@@ -71,14 +77,13 @@ class Loader extends BaseObject
 	 */
 	public function getProperty(string $class, string $property = ''): mixed
 	{
-		if (!isset($this->_classes[$class])) {
+		if (!isset(static::$_property[$class])) {
 			return null;
 		}
-		$properties = $this->_classes[$class]['property'];
-		if (!empty($property) && isset($properties[$property])) {
-			return $properties[$property];
+		if (!empty($property)) {
+			return static::$_property[$class][$property] ?? [];
 		}
-		return $properties;
+		return static::$_property[$class];
 	}
 
 
@@ -109,10 +114,10 @@ class Loader extends BaseObject
 	 */
 	public function getMethod(string $class, string $method = ''): array
 	{
-		if (!isset($this->_classes[$class])) {
+		if (!isset(static::$_classes[$class])) {
 			return [];
 		}
-		$properties = $this->_classes[$class]['methods'];
+		$properties = static::$_classes[$class]['methods'];
 		if (!empty($method) && isset($properties[$method])) {
 			return $properties[$method];
 		}
@@ -126,7 +131,7 @@ class Loader extends BaseObject
 	 */
 	public function getTarget(string $class): array
 	{
-		return $this->_classes[$class] ?? [];
+		return static::$_classes[$class] ?? [];
 	}
 
 
@@ -144,8 +149,8 @@ class Loader extends BaseObject
 			if ($path->isDir()) {
 				$iterator = new DirectoryIterator($path->getRealPath());
 				$directory = rtrim($path->getRealPath(), '/');
-				if (!isset($this->_directory[$directory])) {
-					$this->_directory[$directory] = [];
+				if (!isset(static::$_directory[$directory])) {
+					static::$_directory[$directory] = [];
 				}
 				$this->_scanDir($iterator, $namespace);
 			} else {
@@ -181,7 +186,7 @@ class Loader extends BaseObject
 			$_array = $this->_methods($replace, $_array);
 			$_array = $this->_properties($replace, $_array);
 
-			$this->_classes[$replace->getName()] = $_array;
+			static::$_classes[$replace->getName()] = $_array;
 		} catch (Throwable $throwable) {
 			$this->addError($throwable, 'throwable');
 		}
@@ -237,6 +242,9 @@ class Loader extends BaseObject
 				}
 				$_method[] = $attribute->newInstance();
 			}
+
+			static::$_methods[$replace->getName()][$method->getName()] = $_method;
+
 			$_array['methods'][$method->getName()] = $_method;
 		}
 		return $_array;
@@ -260,6 +268,9 @@ class Loader extends BaseObject
 				}
 				$_property[] = $attribute->newInstance();
 			}
+
+			static::$_property[$replace->getName()][$method->getName()] = $_property;
+
 			$_array['property'][$method->getName()] = $_property;
 		}
 		return $_array;
@@ -275,7 +286,7 @@ class Loader extends BaseObject
 	{
 		try {
 			$path = '/' . trim($path, '/');
-			foreach ($this->_directory as $key => $_path) {
+			foreach (static::$_directory as $key => $_path) {
 				$key = '/' . trim($key, '/');
 				if (!str_starts_with($key, $path) || in_array($key, $outPath)) {
 					continue;
@@ -317,7 +328,7 @@ class Loader extends BaseObject
 
 		$array = '/' . trim(implode('/', $array), '/');
 
-		$this->_directory[$array][] = $className;
+		static::$_directory[$array][] = $className;
 	}
 
 
@@ -333,7 +344,7 @@ class Loader extends BaseObject
 		$annotation = Snowflake::getAnnotation();
 
 		foreach ($classes as $className) {
-			$annotations = $this->_classes[$className] ?? null;
+			$annotations = static::$_classes[$className] ?? null;
 			if ($annotations === null) {
 				continue;
 			}

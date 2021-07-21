@@ -87,7 +87,7 @@ class Event extends BaseObject
      * @param bool $isAppend
      * @throws Exception
      */
-    public static function on($name, $callback, $parameter = [], $isAppend = false)
+    public static function on($name, $callback, array $parameter = [], bool $isAppend = false)
     {
         if (!isset(static::$_events[$name])) {
             static::$_events[$name] = [];
@@ -204,7 +204,7 @@ class Event extends BaseObject
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function dispatch($name, $params = [], $scope = null): bool
+    public function dispatch($name, array $params = [], $scope = null): bool
     {
         return static::trigger($name, $params, $scope);
     }

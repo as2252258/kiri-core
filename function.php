@@ -553,37 +553,18 @@ if (!function_exists('storage')) {
 }
 
 
-if (!function_exists('listen')) {
-
-
-	/**
-	 * @param $name
-	 * @param $callback
-	 * @param $params
-	 * @param $isAppend
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	function listen($name, $callback, $params = [], $isAppend = true)
-	{
-		Event::on($name, $callback, $params, $isAppend);
-	}
-
-}
-
-
 if (!function_exists('event')) {
 
 
 	/**
 	 * @param $name
 	 * @param $callback
-	 * @param $params
-	 * @param $isAppend
+	 * @param array $params
+	 * @param bool $isAppend
 	 * @throws Exception
 	 * @throws Exception
 	 */
-	function event($name, $callback, $params = [], $isAppend = true)
+	function event($name, $callback, array $params = [], bool $isAppend = true)
 	{
 		Event::on($name, $callback, $params, $isAppend);
 	}

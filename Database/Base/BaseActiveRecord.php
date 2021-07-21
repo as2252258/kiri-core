@@ -11,6 +11,7 @@ namespace Database\Base;
 
 
 use Annotation\Event;
+use Annotation\Inject;
 use ArrayAccess;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
@@ -71,9 +72,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	protected ?string $primary = NULL;
 
 
+	/**
+	 * @var array
+	 */
 	private array $_annotations = [];
 
 
+	/**
+	 * @var Application|null
+	 */
 	protected ?Application $container;
 
 
@@ -82,11 +89,23 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	protected bool $isNewExample = TRUE;
 
+
+	/**
+	 * @var array
+	 */
 	protected array $actions = [];
 
+
+	/**
+	 * @var Relation|null
+	 */
+	#[Inject(Relation::class)]
 	protected ?Relation $_relation;
 
 
+	/**
+	 * @var array
+	 */
 	private array $_with = [];
 
 	/**
@@ -123,19 +142,11 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function init()
 	{
 		$this->container = Snowflake::app();
-		if (!Context::hasContext(Relation::class)) {
-			$relation = Snowflake::createObject(Relation::class);
-			$this->_relation = Context::setContext(Relation::class, $relation);
-		} else {
-			$this->_relation = Context::getContext(Relation::class);
-		}
 	}
 
 

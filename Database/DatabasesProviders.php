@@ -7,6 +7,7 @@ namespace Database;
 use Annotation\IAnnotation;
 use Exception;
 use ReflectionException;
+use Server\Constant;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
 use Snowflake\Event;
@@ -38,7 +39,6 @@ class DatabasesProviders extends Providers
         $this->_pooLength = Config::get('databases.pool', ['min' => 0, 'max' => 1]);
 
         Event::on(Event::SERVER_TASK_START, [$this, 'createPool']);
-        Event::on(Event::SERVER_WORKER_START, [$this, 'createPool']);
     }
 
 
@@ -80,7 +80,6 @@ class DatabasesProviders extends Providers
     /**
      * @param $database
      * @return array
-     * @throws \Snowflake\Exception\ConfigException
      */
     private function _settings($database): array
     {

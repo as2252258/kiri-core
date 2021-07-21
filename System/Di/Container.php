@@ -47,6 +47,8 @@ class Container extends BaseObject
 	 */
 	private array $_reflection = [];
 
+	private array $_reflectionProperty = [];
+
 
 	private array $_property = [];
 
@@ -68,7 +70,7 @@ class Container extends BaseObject
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function get($class, $constrict = [], $config = []): mixed
+	public function get($class, array $constrict = [], array $config = []): mixed
 	{
 		if (isset($this->_singletons[$class])) {
 			return $this->_singletons[$class];
@@ -198,10 +200,10 @@ class Container extends BaseObject
 	 */
 	public function getClassProperty(string $class, string $property = null): ReflectionProperty|null|array
 	{
-		if (!isset($this->_property[$class])) {
+		if (!isset($this->_reflectionProperty[$class])) {
 			return null;
 		}
-		$properties = $this->_property[$class];
+		$properties = $this->_reflectionProperty[$class];
 		if (!empty($property)) {
 			return $properties[$property] ?? null;
 		}
@@ -246,24 +248,25 @@ class Container extends BaseObject
 
 	/**
 	 * @param ReflectionClass $reflectionClass
-	 * @return $this
+	 * @return void
 	 */
-	private function scanProperty(ReflectionClass $reflectionClass): static
+	private function scanProperty(ReflectionClass $reflectionClass): void
 	{
-		$lists = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
+		$properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
 			ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED
 		);
 
 		$className = $reflectionClass->getName();
-		foreach ($lists as $list) {
-			$targets = $list->getAttributes(Inject::class);
+		foreach ($properties as $property) {
+			$targets = $property->getAttributes(Inject::class);
 			if (count($targets) < 1) {
 				continue;
 			}
 
-			$this->_property[$className][$list->getName()] = $targets[0]->newInstance();
+			$this->_reflectionProperty[$className][$property->getName()] = $property;
+
+			$this->_property[$className][$property->getName()] = $targets[0]->newInstance();
 		}
-		return $this;
 	}
 
 

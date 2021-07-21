@@ -3,8 +3,10 @@
 namespace Server;
 
 use Closure;
+use Exception;
 use ReflectionException;
 use Server\SInterface\CustomProcess;
+use Server\SInterface\TaskExecute;
 use Server\Task\ServerTask;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -173,7 +175,7 @@ class ServerManager extends Abstracts\Server
 	 * @param array $config
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function startListenerHandler(ServerManager $context, array $config)
 	{
@@ -352,6 +354,29 @@ class ServerManager extends Abstracts\Server
 			}
 			$this->server->on($event_type, $callback);
 		}
+	}
+
+
+	/**
+	 * @param TaskExecute|string $handler
+	 * @param array $params
+	 * @param int $workerId
+	 * @throws Exception
+	 */
+	public function task(TaskExecute|string $handler, array $params = [], int $workerId = 0)
+	{
+		if ($workerId === null || $workerId <= $this->server->setting['worker_num']) {
+			$workerId = random_int($this->server->setting['worker_num'] + 1,
+				$this->server->setting['worker_num'] + 1 + $this->server->setting['task_worker_num']);
+		}
+		if (is_string($handler)) {
+			$implements = Snowflake::getDi()->getReflect($handler);
+			if (!in_array(TaskExecute::class, $implements->getInterfaceNames())) {
+				throw new Exception('Task must instance ' . TaskExecute::class);
+			}
+			$handler = $implements->newInstanceArgs($params);
+		}
+		$this->server->task(serialize($handler), $workerId);
 	}
 
 
