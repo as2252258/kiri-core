@@ -153,7 +153,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function getSystemEvents(array $configs): array
 	{
-		return array_intersect_key($configs['server']['events'] ?? [], [
+		return array_intersect_key($configs['events'] ?? [], [
 			Constant::PIPE_MESSAGE  => '',
 			Constant::SHUTDOWN      => '',
 			Constant::WORKER_START  => '',
@@ -342,6 +342,8 @@ class ServerManager extends Abstracts\Server
 
 	/**
 	 * @param array $events
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	private function addServerEventCallback(array $events): void
 	{
@@ -351,6 +353,9 @@ class ServerManager extends Abstracts\Server
 		foreach ($events as $event_type => $callback) {
 			if ($this->server->getCallback($event_type) !== null) {
 				continue;
+			}
+			if (is_array($callback) && !is_object($callback[0])) {
+				$callback[0] = Snowflake::getDi()->get($callback[0]);
 			}
 			$this->server->on($event_type, $callback);
 		}
