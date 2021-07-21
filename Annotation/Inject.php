@@ -65,6 +65,7 @@ use Snowflake\Snowflake;
 		if ($method instanceof ReflectionProperty) {
 			return $method;
 		}
+		if (is_object($class)) $class = $class::class;
 		$method = Snowflake::getDi()->getClassProperty($class, $method);
 		if (!$method) {
 			return false;
