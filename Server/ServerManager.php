@@ -8,6 +8,7 @@ use ReflectionException;
 use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
 use Server\Task\ServerTask;
+use Snowflake\Abstracts\Config;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Server as HServer;
@@ -102,6 +103,7 @@ class ServerManager extends Abstracts\Server
 	 * @param null $redirect_stdin_and_stdout
 	 * @param int|null $pipe_type
 	 * @param bool $enable_coroutine
+	 * @throws Exception
 	 */
 	public function addProcess(string|CustomProcess $customProcess, $redirect_stdin_and_stdout = null, ?int $pipe_type = SOCK_DGRAM, bool $enable_coroutine = true)
 	{
@@ -114,8 +116,9 @@ class ServerManager extends Abstracts\Server
 		}
 		/** @var Process $process */
 		$this->server->addProcess(new Process(function (Process $soloProcess) use ($customProcess) {
+			$system = sprintf('Process[%d].%s', $soloProcess->pid, Config::get('id', 'system-service'));
 			if (Snowflake::getPlatform()->isLinux()) {
-				$soloProcess->name($customProcess->getProcessName($soloProcess));
+				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
 			}
 			$customProcess->onHandler($soloProcess);
 		},
