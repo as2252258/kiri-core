@@ -60,7 +60,7 @@ class ServerWorker extends \Server\Abstracts\Server
 		if (Snowflake::getPlatform()->isMac()) {
 			return;
 		}
-		$name = Config::get('id', 'system-service') . '.';
+		$name = Config::get('id', 'system-service');
 		if (!empty($prefix)) {
 			$name .= '.' . $prefix;
 		}
