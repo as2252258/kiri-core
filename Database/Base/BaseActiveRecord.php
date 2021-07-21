@@ -24,6 +24,7 @@ use Database\Relation;
 use Database\SqlBuilder;
 use Database\Traits\HasBase;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
@@ -42,6 +43,7 @@ use validator\Validator;
  * @property bool $isCreate
  * @method rules()
  * @method static tableName()
+ * @property Application $application
  */
 abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 {
@@ -70,17 +72,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/** @var null|string */
 	protected ?string $primary = NULL;
 
-
 	/**
 	 * @var array
 	 */
 	private array $_annotations = [];
-
-
-	/**
-	 * @var Application|null
-	 */
-	protected ?Application $container;
 
 
 	/**
@@ -106,6 +101,15 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @var array
 	 */
 	private array $_with = [];
+
+
+	/**
+	 * @return Application
+	 */
+	#[Pure] public function getApplication(): Application
+	{
+		return Snowflake::app();
+	}
 
 	/**
 	 * @param $data
@@ -154,7 +158,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function init()
 	{
-		$this->container = Snowflake::app();
 		$an = Snowflake::app()->getAnnotation();
 		$an->injectProperty($this);
 	}
@@ -773,7 +776,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 
 	/**
-	 * @param $name
+	 * @param string|null $name
 	 * @param string $method
 	 * @return string|null
 	 * @throws Exception
@@ -856,7 +859,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getAnnotation($type = self::GET): array
+	protected function getAnnotation(string $type = self::GET): array
 	{
 		return $this->_annotations[$type] ?? [];
 	}
@@ -867,7 +870,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param string $type
 	 * @return bool
 	 */
-	protected function hasAnnotation($name, $type = self::GET): bool
+	protected function hasAnnotation($name, string $type = self::GET): bool
 	{
 		if (!isset($this->_annotations[$type])) {
 			return false;

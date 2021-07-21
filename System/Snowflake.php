@@ -95,7 +95,7 @@ class Snowflake
 	 * @param $name
 	 * @return bool
 	 */
-	public static function has($name): bool
+	#[Pure] public static function has($name): bool
 	{
 		return static::$service->has($name);
 	}
