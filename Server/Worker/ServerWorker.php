@@ -39,12 +39,12 @@ class ServerWorker extends \Server\Abstracts\Server
 			$loader = Snowflake::app()->getRouter();
 			$loader->_loader();
 
-			$this->setProcessName(sprintf('Worker[%d]#%03d.', $server->worker_pid, $workerId));
+			$this->setProcessName(sprintf('Worker #%03d[%d]', $server->worker_pid, $workerId));
 
 			$annotation->runtime(CONTROLLER_PATH);
 			$annotation->runtime(MODEL_PATH);
 		} else {
-			$this->setProcessName(sprintf('Tasker[%d]#%03d.', $server->worker_pid, $workerId));
+			$this->setProcessName(sprintf('Tasker #%03d[%d]', $server->worker_pid, $workerId));
 
 			$annotation->runtime(APP_PATH, [CONTROLLER_PATH]);
 		}
