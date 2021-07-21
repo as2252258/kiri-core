@@ -540,7 +540,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		$validate = Validator::getInstance();
 		$validate->setParams($this->_attributes);
 		$validate->setModel($this);
-		foreach ($rule as $Key => $val) {
+		foreach ($rule as $val) {
 			$field = array_shift($val);
 			if (empty($val)) {
 				continue;
@@ -696,15 +696,8 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (empty($table)) {
 			throw new Exception('You need add static method `tableName` and return table name.');
 		}
-
-		if (str_starts_with($table, $tablePrefix)) {
-			return '`' . static::getDbName() . '`.' . $table;
-		} else if (!str_starts_with($table, '{{%')) {
-			return '`' . static::getDbName() . '`.' . $table;
-		}
-
 		$table = trim($table, '{{%}}');
-		if ($tablePrefix) {
+		if (!empty($tablePrefix) && !str_starts_with($table, $tablePrefix)) {
 			$table = $tablePrefix . $table;
 		}
 		return '`' . static::getDbName() . '`.' . $table;
