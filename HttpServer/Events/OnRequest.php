@@ -51,7 +51,7 @@ class OnRequest extends Callback
 	public function onHandler(Request $request, Response $response): void
 	{
 		try {
-			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+//			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
 			/** @var HResponse $response */
 			[$request, $response] = OnRequest::createContext($request, $response);
