@@ -81,13 +81,12 @@ use Snowflake\Snowflake;
 	private function parseInjectValue(): mixed
 	{
 		if (class_exists($this->className)) {
-			$injectValue = Snowflake::getDi()->get($this->className, $this->args);
+			return Snowflake::getDi()->get($this->className, $this->args);
 		} else if (Snowflake::app()->has($this->className)) {
-			$injectValue = Snowflake::app()->get($this->className);
+			return Snowflake::app()->get($this->className);
 		} else {
-			$injectValue = $this->className;
+			return $this->className;
 		}
-		return $injectValue;
 	}
 
 }
