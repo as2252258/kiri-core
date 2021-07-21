@@ -93,8 +93,7 @@ class HTTPServerListener extends Abstracts\Server
 		try {
 			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 
-			/** @var HResponse $response */
-			[$request, $response] = [HRequest::create($request), HResponse::create($response)];
+			[$request, $_] = [HRequest::create($request), HResponse::create($response)];
 			if ($request->is('favicon.ico')) {
 				throw new Exception('Not found.', 404);
 			}
