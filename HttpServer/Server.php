@@ -92,11 +92,14 @@ class Server extends HttpService
 	 */
 	private function rpcListener($rpcService)
 	{
-		$rpcService['events'][Constant::CONNECT] = [Service::class, 'onConnect'];
-		$rpcService['events'][Constant::DISCONNECT] = [Service::class, 'onClose'];
-		$rpcService['events'][Constant::CLOSE] = [Service::class, 'onClose'];
-		$rpcService['events'][Constant::RECEIVE] = [Service::class, 'onReceive'];
-		$rpcService['events'][Constant::PACKET] = [Service::class, 'onPacket'];
+		if (in_array($rpcService['mode'], [SWOOLE_SOCK_UDP, SWOOLE_UDP, SWOOLE_UDP6, SWOOLE_SOCK_UDP6])) {
+			$rpcService['events'][Constant::PACKET] = [Service::class, 'onPacket'];
+		} else {
+			$rpcService['events'][Constant::RECEIVE] = [Service::class, 'onReceive'];
+			$rpcService['events'][Constant::CONNECT] = [Service::class, 'onConnect'];
+			$rpcService['events'][Constant::DISCONNECT] = [Service::class, 'onDisconnect'];
+			$rpcService['events'][Constant::CLOSE] = [Service::class, 'onClose'];
+		}
 		$this->manager->addListener($rpcService['type'], $rpcService['host'], $rpcService['port'], $rpcService['mode'], $rpcService);
 	}
 
