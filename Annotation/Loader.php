@@ -342,26 +342,25 @@ class Loader extends BaseObject
 		$annotation = Snowflake::getAnnotation();
 
 		foreach ($classes as $className) {
-			$annotations = static::$_classes[$className] ?? null;
-			if ($annotations === null) {
+			if (!isset(static::$_methods[$className])) {
 				continue;
 			}
 			foreach (static::$_methods[$className] as $name => $attribute) {
-				$this->methods($annotations, $attribute, $annotation, $className, $name);
+				$this->methods($attribute, $annotation, $className, $name);
 			}
 		}
 	}
 
 
 	/**
-	 * @param $annotations
 	 * @param $attribute
 	 * @param $annotation
 	 * @param $className
 	 * @param $name
 	 */
-	private function methods($annotations, $attribute, $annotation, $className, $name)
+	private function methods($attribute, $annotation, $className, $name)
 	{
+		$handler = static::$_classes[$className]['handler'];
 		foreach ($attribute as $value) {
 			if ($value instanceof Relation) {
 				$annotation->addRelate($className, $value->name, $name);
@@ -370,7 +369,7 @@ class Loader extends BaseObject
 			} else if ($value instanceof Set) {
 				$annotation->addSets($className, $value->name, $name);
 			} else {
-				$value->execute($annotations['handler'], $name);
+				$value->execute($handler, $name);
 			}
 		}
 	}
