@@ -549,8 +549,8 @@ class Router extends HttpService implements RouterInterface
 		$uri = $request->headers->get('request_uri', '/');
 
 		$methods = static::$nodes[$method][$uri] ?? null;
-		if (!is_null($methods[$uri])) {
-			return $methods[$uri];
+		if (!is_null($methods)) {
+			return $methods;
 		}
 		if ($request->isOption) {
 			return static::$nodes[$method]['*'] ?? null;
