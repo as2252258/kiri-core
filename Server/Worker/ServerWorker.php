@@ -5,6 +5,7 @@ namespace Server\Worker;
 use Exception;
 use Server\Constant;
 use Snowflake\Abstracts\Config;
+use Snowflake\Core\Help;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Runtime;
@@ -150,23 +151,9 @@ class ServerWorker extends \Server\Abstracts\Server
 	{
 		try {
 			$email = Config::get('email');
-			if (empty($email) || !$email['enable']) {
-				return;
+			if (!empty($email) && ($email['enable'] ?? false) == true) {
+				Help::sendEmail($email, 'Service Error', $messageContent);
 			}
-			$transport = (new \Swift_SmtpTransport($email['host'], $email['465']))
-				->setUsername($email['username'])
-				->setPassword($email['password']);
-			$mailer = new \Swift_Mailer($transport);
-
-			// Create a message
-			$message = (new \Swift_Message('Wonderful Subject'))
-				->setFrom([$email['send']['address'] => $email['send']['nickname']])
-				->setBody('Here is the message itself');
-
-			foreach ($email['receive'] as $item) {
-				$message->setTo([$item['address'], $item['address'] => $item['nickname']]);
-			}
-			$mailer->send($messageContent);
 		} catch (\Throwable $e) {
 			error($e, 'email');
 		}

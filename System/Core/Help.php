@@ -6,7 +6,6 @@ namespace Snowflake\Core;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 
 
 /**
@@ -20,7 +19,7 @@ class Help
 	 * @param array $data
 	 * @return string
 	 */
-	#[Pure] public static function toXml(array $data): string
+	public static function toXml(array $data): string
 	{
 		$xml = "<xml>";
 		foreach ($data as $key => $val) {
@@ -171,10 +170,10 @@ class Help
 	/**
 	 * @param array $array
 	 * @param $key
-	 * @param $type
+	 * @param string $type
 	 * @return string
 	 */
-	public static function sign(array $array, $key, $type = 'MD5'): string
+	public static function sign(array $array, $key, string $type = 'MD5'): string
 	{
 		ksort($array, SORT_ASC);
 		$string = [];
@@ -191,6 +190,26 @@ class Help
 		} else {
 			return hash('sha256', $string);
 		}
+	}
+
+
+	/**
+	 * @param $email
+	 * @param string $Subject
+	 * @param $messageContent
+	 */
+	public static function sendEmail($email, string $Subject, $messageContent)
+	{
+		$mailer = new \Swift_Mailer((new \Swift_SmtpTransport($email['host'], $email['port']))
+			->setUsername($email['username'])->setPassword($email['password']));
+		$message = (new \Swift_Message($Subject))
+			->setFrom([$email['send']['address'] => $email['send']['nickname']])
+			->setBody('Here is the message itself');
+
+		foreach ($email['receive'] as $item) {
+			$message->setTo([$item['address'], $item['address'] => $item['nickname']]);
+		}
+		$mailer->send($messageContent);
 	}
 
 }
