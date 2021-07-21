@@ -32,6 +32,9 @@ class HTTPServerListener extends Abstracts\Server
 	private Router $router;
 
 
+	private Event $_event;
+
+
 	/**
 	 * HTTPServerListener constructor.
 	 * @throws Exception
@@ -39,6 +42,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function __construct()
 	{
 		$this->router = Snowflake::getApp('router');
+		$this->_event = Snowflake::getApp('event');
 	}
 
 	/**
@@ -89,12 +93,11 @@ class HTTPServerListener extends Abstracts\Server
 	/**
 	 * @param Request $request
 	 * @param Response $response
+	 * @throws Exception
 	 */
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
-
 			[$request, $_] = [HRequest::create($request), HResponse::create($response)];
 			if ($request->is('favicon.ico')) {
 				throw new Exception('Not found.', 404);
@@ -103,6 +106,8 @@ class HTTPServerListener extends Abstracts\Server
 		} catch (ExitException | Error | Throwable $exception) {
 			$response->status($exception->getCode() == 0 ? 500 : $exception->getCode());
 			$response->end($exception->getMessage());
+		} finally {
+			$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 		}
 	}
 
