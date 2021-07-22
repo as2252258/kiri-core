@@ -168,7 +168,9 @@ class Logger extends Component
 
 		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
 		if (!isset($this->sources[$to_day][$fileName]) || !is_writable($this->sources[$to_day][$fileName])) {
-			$this->sources[$to_day][$fileName] = fopen($fileName, 'rw');
+			if (!($this->sources[$to_day][$fileName] = fopen($fileName, 'rw'))) {
+				return;
+			}
 		}
 		fwrite($this->sources[$to_day][$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
 
