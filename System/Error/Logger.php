@@ -168,12 +168,13 @@ class Logger extends Component
 
 		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
 		if (!isset($this->sources[$to_day][$fileName]) || !is_writable($this->sources[$to_day][$fileName])) {
-			if (!($this->sources[$to_day][$fileName] = fopen($fileName, 'rw'))) {
-				return;
-			}
+			$this->sources[$to_day][$fileName] = fopen($fileName, 'rw');
 		}
-		fwrite($this->sources[$to_day][$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
-
+		try {
+			fwrite($this->sources[$to_day][$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
+		} catch (Throwable $exception) {
+			$this->output($exception->getMessage());
+		}
 		$this->clearHistoryFile($dirName);
 
 		$this->clearPrevLog($to_day);
