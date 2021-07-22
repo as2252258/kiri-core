@@ -103,6 +103,12 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
+
+			$response->status(200);
+			$response->end();
+
+			return;
+
 			[$request, $_] = [HRequest::create($request), HResponse::create($response)];
 			if ($request->is('favicon.ico')) {
 				throw new Exception('Not found.', 404);
