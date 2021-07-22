@@ -167,7 +167,7 @@ class Logger extends Component
 		if (!isset($this->sources[$to_day])) $this->sources[$to_day] = [];
 
 		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
-		if (!isset($this->sources[$to_day][$fileName])) {
+		if (!isset($this->sources[$to_day][$fileName]) || !is_resource($this->sources[$to_day][$fileName])) {
 			$this->sources[$to_day][$fileName] = fopen($fileName, 'rw');
 		}
 		try {
