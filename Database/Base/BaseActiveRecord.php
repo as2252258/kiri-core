@@ -106,7 +106,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @return Application
 	 */
-	#[Pure] public function getApplication(): Application
+	#[Pure] private function getApplication(): Application
 	{
 		return Snowflake::app();
 	}
