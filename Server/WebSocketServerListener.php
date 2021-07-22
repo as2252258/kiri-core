@@ -10,6 +10,7 @@ use Snowflake\Snowflake;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
+use Swoole\Server\Port;
 use Swoole\WebSocket\Frame;
 
 
@@ -45,6 +46,10 @@ class WebSocketServerListener extends Abstracts\Server
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
 
 		static::$_http = $server->addlistener($host, $port, $mode);
+		if (!(static::$_http instanceof Port)) {
+			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
+		}
+
 		static::$_http->set($settings['settings'] ?? []);
 		static::$_http->on('connect', [$reflect, 'onConnect']);
 		static::$_http->on('handshake', [$reflect, 'onHandshake']);

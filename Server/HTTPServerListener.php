@@ -15,6 +15,7 @@ use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
+use Swoole\Server\Port;
 use Throwable;
 
 
@@ -25,7 +26,7 @@ use Throwable;
 class HTTPServerListener extends Abstracts\Server
 {
 
-	protected static mixed $_http;
+	protected static bool|Port $_http;
 
 	use ListenerHelper;
 
@@ -63,6 +64,10 @@ class HTTPServerListener extends Abstracts\Server
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
 		static::$_http = $server->addlistener($host, $port, $mode);
+		if (!(static::$_http instanceof Port)) {
+			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
+		}
+
 		static::$_http->set($settings['settings'] ?? []);
 		static::$_http->on('request', [$reflect, 'onRequest']);
 		static::$_http->on('connect', [$reflect, 'onConnect']);

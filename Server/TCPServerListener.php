@@ -8,6 +8,7 @@ use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
+use Swoole\Server\Port;
 
 
 /**
@@ -19,7 +20,7 @@ class TCPServerListener extends Abstracts\Server
 
 	use ListenerHelper;
 
-	protected static mixed $_tcp;
+	protected static bool|Port $_tcp;
 
 
 	/**
@@ -29,12 +30,12 @@ class TCPServerListener extends Abstracts\Server
 	 * @param int $port
 	 * @param int $mode
 	 * @param array|null $settings
-	 * @return Server\Port
+	 * @return Port
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function instance(Server $server, string $host, int $port, int $mode, ?array $settings = []): Server\Port
+	public static function instance(Server $server, string $host, int $port, int $mode, ?array $settings = []): Port
 	{
 		if (!in_array($mode, [SWOOLE_TCP, SWOOLE_TCP6])) {
 			trigger_error('Port mode ' . $host . '::' . $port . ' must is tcp listener type.');
@@ -43,6 +44,9 @@ class TCPServerListener extends Abstracts\Server
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
 		static::$_tcp = $server->addlistener($host, $port, $mode);
+		if (!(static::$_tcp instanceof Port)) {
+			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
+		}
 		static::$_tcp->set($settings['settings'] ?? []);
 		static::$_tcp->on('receive', [$reflect, 'onReceive']);
 		static::$_tcp->on('connect', [$reflect, 'onConnect']);

@@ -8,6 +8,7 @@ use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Server;
+use Swoole\Server\Port;
 
 
 /**
@@ -17,7 +18,7 @@ use Swoole\Server;
 class UDPServerListener extends Abstracts\Server
 {
 
-	protected static mixed $_udp;
+	protected static bool|Port $_udp;
 
 
 	use ListenerHelper;
@@ -44,6 +45,10 @@ class UDPServerListener extends Abstracts\Server
 		$reflect = Snowflake::getDi()->getReflect(static::class)->newInstance();
 
 		static::$_udp = $server->addlistener($host, $port, $mode);
+		if (!(static::$_udp instanceof Port)) {
+			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
+		}
+
 		static::$_udp->set($settings['settings'] ?? []);
 		static::$_udp->on('packet', [$reflect, 'onPacket']);
 

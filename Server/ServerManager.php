@@ -71,6 +71,7 @@ class ServerManager extends Abstracts\Server
 	 * @param array $settings
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws ConfigException
 	 */
 	public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
