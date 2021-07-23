@@ -42,7 +42,7 @@ class Producer extends Component
      * @param array $config
      * @throws Exception
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         parent::__construct($config);
         if (!class_exists(Conf::class)) {
@@ -56,10 +56,10 @@ class Producer extends Component
     }
 
 
-    /**
-     * @param $servers
-     * @return Producer
-     */
+	/**
+	 * @param string $servers
+	 * @return Producer
+	 */
     public function setBrokers(string $servers): static
     {
         $this->conf->set('metadata.broker.list', $servers);

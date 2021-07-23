@@ -62,10 +62,11 @@ class Kafka implements CustomProcess
     }
 
 
-    /**
-     * @param array $kafkaServer
-     * @throws \Exception
-     */
+	/**
+	 * @param Process $process
+	 * @param array $kafkaServer
+	 * @throws \Exception
+	 */
     private function waite(Process $process, array $kafkaServer)
     {
         try {
