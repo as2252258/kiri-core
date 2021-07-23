@@ -48,7 +48,7 @@ class Logger extends Component
 	 */
 	public function debug(mixed $message, string $method = 'app', $file = null)
 	{
-		if (Config::get('environment') == 'pro') {
+		if (Config::get('environment', 'pro') == 'pro') {
 			return;
 		}
 		$this->output($message);
@@ -62,7 +62,7 @@ class Logger extends Component
 	 */
 	public function trance(mixed $message, string $method = 'app')
 	{
-		if (Config::get('environment') == 'pro') {
+		if (Config::get('environment', 'pro') == 'pro') {
 			return;
 		}
 		$this->output($message);
@@ -88,7 +88,7 @@ class Logger extends Component
 	 */
 	public function success(mixed $message, string $method = 'app', $file = null)
 	{
-		if (Config::get('environment') == 'pro') {
+		if (Config::get('environment', 'pro') == 'pro') {
 			return;
 		}
 		$this->output($message);
@@ -300,26 +300,12 @@ class Logger extends Component
 	 */
 	public function exception(Throwable $exception): mixed
 	{
-		$errorInfo = [
-			'message' => $exception->getMessage(),
-			'file'    => $exception->getFile(),
-			'line'    => $exception->getLine()
-		];
-		$this->error(var_export($errorInfo, true));
-
 		$code = $exception->getCode() == 0 ? 500 : $exception->getCode();
 
 		$logger = Snowflake::app()->getLogger();
-
-//		$string = 'Exception: ' . PHP_EOL;
-//		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
-//		$string .= '#.  file: ' . $errorInfo['file'] . PHP_EOL;
-//		$string .= '#.  line: ' . $errorInfo['line'] . PHP_EOL;
-//
-//		$logger->write($string . $exception->getTraceAsString(), 'trace');
 		$logger->write(jTraceEx($exception), 'exception');
 
-		return Json::to($code, $errorInfo['message'], [
+		return Json::to($code, $exception->getMessage(), [
 			'file' => $exception->getFile(),
 			'line' => $exception->getLine()
 		]);
