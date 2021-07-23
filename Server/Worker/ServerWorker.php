@@ -59,7 +59,7 @@ class ServerWorker extends \Server\Abstracts\Server
 			$annotation->runtime(CONTROLLER_PATH);
 			$annotation->runtime(MODEL_PATH);
 		} else {
-			echo sprintf("\033[36m[init]\033[0m Tasker[%d].#%03d start.", $server->worker_pid, $workerId) . PHP_EOL;
+			echo sprintf("\033[36m[init]\033[0m Tasker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
 
 			$this->setProcessName(sprintf('Tasker[%d].%d', $workerId, $server->worker_pid));
 

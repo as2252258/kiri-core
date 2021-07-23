@@ -122,6 +122,7 @@ class ServerManager extends Abstracts\Server
 			if (Snowflake::getPlatform()->isLinux()) {
 				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
 			}
+			echo sprintf("\033[36m[init]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
 			$customProcess->onHandler($soloProcess);
 		},
 			$redirect_stdin_and_stdout, $pipe_type, $enable_coroutine));
@@ -212,6 +213,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
+		echo sprintf("\033[36m[init]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
 		switch ($type) {
 			case Constant::SERVER_TYPE_TCP:
 				$this->ports[$port] = TCPServerListener::instance($this->server, $host, $port, $mode, $settings);
@@ -268,6 +270,9 @@ class ServerManager extends Abstracts\Server
 			Config::get('server.settings', []),
 			$settings['settings']
 		));
+
+		echo sprintf("\033[36m[init]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
+
 		$this->addDefaultListener($type, $settings);
 	}
 
