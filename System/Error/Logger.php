@@ -14,6 +14,7 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 use Throwable;
@@ -133,9 +134,15 @@ class Logger extends Component
 
 	/**
 	 * @param $message
+	 * @param string $method
+	 * @throws ConfigException
 	 */
-	public function output($message)
+	public function output($message, string $method = 'default')
 	{
+		if ($method !== 'error' &&
+			Config::get('environment', 'pro') == 'pro') {
+			return;
+		}
 		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
 			return;
 		}

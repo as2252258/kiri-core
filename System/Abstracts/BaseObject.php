@@ -226,7 +226,7 @@ class BaseObject implements Configure
 		if (!empty($file)) {
 			$message .= PHP_EOL . "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . "\033[0m";
 		}
-		$this->logger()->output($message . PHP_EOL);
+		$this->logger()->output($message . PHP_EOL, 'error');
 	}
 
 }
