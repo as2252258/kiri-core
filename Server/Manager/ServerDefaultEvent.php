@@ -49,7 +49,7 @@ class ServerDefaultEvent extends Server
 		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 		$this->runEvent(Constant::PIPE_MESSAGE,
 			function (\Swoole\Server $server, $src_worker_id, $message) {
-				call_user_func([$message, 'process']);
+				call_user_func([$message, 'execute']);
 			}, [
 				$server, $src_worker_id, $message
 			]
