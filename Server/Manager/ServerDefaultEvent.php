@@ -2,9 +2,11 @@
 
 namespace Server\Manager;
 
+use Exception;
 use Server\Abstracts\Server;
 use Server\Constant;
 use Server\SInterface\PipeMessage;
+use Snowflake\Event;
 
 
 /**
@@ -37,6 +39,7 @@ class ServerDefaultEvent extends Server
 	 * @param \Swoole\Server $server
 	 * @param int $src_worker_id
 	 * @param mixed $message
+	 * @throws Exception
 	 */
 	public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
 	{
@@ -46,7 +49,14 @@ class ServerDefaultEvent extends Server
 		if (!is_object($message) || !($message instanceof PipeMessage)) {
 			return;
 		}
-		$this->runEvent(Constant::PIPE_MESSAGE, null, [$server, $src_worker_id, $message]);
+		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		$this->runEvent(Constant::PIPE_MESSAGE,
+			function (\Swoole\Server $server, $src_worker_id, $message) {
+				call_user_func([$message, 'process']);
+			}, [
+				$server, $src_worker_id, $message
+			]
+		);
 	}
 
 
