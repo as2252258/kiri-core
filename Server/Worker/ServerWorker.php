@@ -2,6 +2,7 @@
 
 namespace Server\Worker;
 
+use Annotation\Annotation;
 use Exception;
 use Server\Constant;
 use Snowflake\Abstracts\Config;
@@ -33,19 +34,34 @@ class ServerWorker extends \Server\Abstracts\Server
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app');
 
-		debug(sprintf('Worker[%d]#%03d start.', $server->worker_pid, $workerId));
-
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
+
+		$this->workerInitExecutor($server, $annotation, $workerId);
+	}
+
+
+	/**
+	 * @param Server $server
+	 * @param Annotation $annotation
+	 * @param int $workerId
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	private function workerInitExecutor(Server $server, Annotation $annotation, int $workerId)
+	{
 		if ($workerId < $server->setting['worker_num']) {
 			$loader = Snowflake::app()->getRouter();
 			$loader->_loader();
 
-			$this->setProcessName(sprintf('Worker #%03d[%d]', $server->worker_pid, $workerId));
+			echo sprintf('Worker[%d].#%03d start.', $server->worker_pid, $workerId) . PHP_EOL;
+			$this->setProcessName(sprintf('Worker[%d].#%03d', $workerId, $server->worker_pid));
 
 			$annotation->runtime(CONTROLLER_PATH);
 			$annotation->runtime(MODEL_PATH);
 		} else {
-			$this->setProcessName(sprintf('Tasker #%03d[%d]', $server->worker_pid, $workerId));
+			echo sprintf('Tasker[%d].#%03d start.', $server->worker_pid, $workerId) . PHP_EOL;
+
+			$this->setProcessName(sprintf('Tasker[%d].#%03d', $workerId, $server->worker_pid));
 
 			$annotation->runtime(APP_PATH, [CONTROLLER_PATH]);
 		}

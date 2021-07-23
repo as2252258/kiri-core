@@ -886,7 +886,7 @@ if (!function_exists('swoole_substr_json_decode')) {
 	 * @param int $length
 	 * @return mixed
 	 */
-	function swoole_substr_json_decode($packet, $length = 0): mixed
+	function swoole_substr_json_decode($packet, int $length = 0): mixed
 	{
 		return json_decode($packet, true);
 	}
@@ -901,7 +901,7 @@ if (!function_exists('swoole_substr_unserialize')) {
 	 * @param int $length
 	 * @return mixed
 	 */
-	function swoole_substr_unserialize($packet, $length = 0): mixed
+	function swoole_substr_unserialize($packet, int $length = 0): mixed
 	{
 		return unserialize($packet);
 	}
@@ -912,7 +912,7 @@ if (!function_exists('swoole_substr_unserialize')) {
 if (!function_exists('debug')) {
 
 	/**
-	 * @param $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @throws Exception
 	 */
@@ -926,11 +926,11 @@ if (!function_exists('debug')) {
 if (!function_exists('error')) {
 
 	/**
-	 * @param $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @throws Exception
 	 */
-	function error(mixed $message, $method = 'error')
+	function error(mixed $message, string $method = 'error')
 	{
 		Snowflake::app()->error($message, $method);
 	}
@@ -939,11 +939,11 @@ if (!function_exists('error')) {
 if (!function_exists('success')) {
 
 	/**
-	 * @param $message
+	 * @param mixed $message
 	 * @param string $method
 	 * @throws Exception
 	 */
-	function success(mixed $message, $method = 'app')
+	function success(mixed $message, string $method = 'app')
 	{
 		Snowflake::app()->success($message, $method);
 	}
