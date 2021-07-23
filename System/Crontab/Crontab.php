@@ -202,6 +202,9 @@ abstract class Crontab implements PipeMessage
 			$redis->hSet(self::WAIT_END, $name_md5, static::getSerialize($this));
 
 			call_user_func([$this, 'process']);
+
+			$this->execute_number += 1;
+
 			$redis->hDel(self::WAIT_END, $name_md5);
 		} catch (\Throwable $throwable) {
 			$this->application->addError($throwable, 'throwable');
@@ -214,8 +217,7 @@ abstract class Crontab implements PipeMessage
 	 */
 	public function afterExecute()
 	{
-		$aot = $this->isRecover();
-		if ($aot !== 999) {
+		if ($this->isRecover() !== 999) {
 			return;
 		}
 		$redis = $this->application->getRedis();
