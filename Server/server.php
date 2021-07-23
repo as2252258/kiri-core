@@ -3,7 +3,7 @@
 
 use Server\Constant;
 use Server\HTTPServerListener;
-use Server\Manager\ServerBase;
+use Server\Manager\ServerDefaultEvent;
 use Server\Manager\ServerManager;
 use Server\TCPServerListener;
 use Server\UDPServerListener;
@@ -33,17 +33,17 @@ return [
 			'tcp_defer_accept'         => 1
 		],
 		'events'   => [
-			Constant::PIPE_MESSAGE  => [ServerBase::class, 'onPipeMessage'],
-			Constant::SHUTDOWN      => [ServerBase::class, 'onShutdown'],
+			Constant::PIPE_MESSAGE  => [ServerDefaultEvent::class, 'onPipeMessage'],
+			Constant::SHUTDOWN      => [ServerDefaultEvent::class, 'onShutdown'],
 			Constant::WORKER_START  => [ServerWorker::class, 'onWorkerStart'],
 			Constant::WORKER_ERROR  => [ServerWorker::class, 'onWorkerError'],
 			Constant::WORKER_EXIT   => [ServerWorker::class, 'onWorkerExit'],
 			Constant::WORKER_STOP   => [ServerWorker::class, 'onWorkerStop'],
 			Constant::MANAGER_START => [ServerManager::class, 'onManagerStart'],
 			Constant::MANAGER_STOP  => [ServerManager::class, 'onManagerStop'],
-			Constant::BEFORE_RELOAD => [ServerBase::class, 'onBeforeReload'],
-			Constant::AFTER_RELOAD  => [ServerBase::class, 'onAfterReload'],
-			Constant::START         => [ServerBase::class, 'onStart'],
+			Constant::BEFORE_RELOAD => [ServerDefaultEvent::class, 'onBeforeReload'],
+			Constant::AFTER_RELOAD  => [ServerDefaultEvent::class, 'onAfterReload'],
+			Constant::START         => [ServerDefaultEvent::class, 'onStart'],
 		],
 		'ports'    => [
 			[

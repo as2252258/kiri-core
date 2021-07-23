@@ -4,13 +4,14 @@ namespace Server\Manager;
 
 use Server\Abstracts\Server;
 use Server\Constant;
+use Server\SInterface\PipeMessage;
 
 
 /**
- * Class ServerBase
+ * Class ServerDefaultEvent
  * @package Server\Manager
  */
-class ServerBase extends Server
+class ServerDefaultEvent extends Server
 {
 
 
@@ -39,6 +40,12 @@ class ServerBase extends Server
 	 */
 	public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
 	{
+		if (is_null($message = unserialize($message))) {
+			return;
+		}
+		if (!is_object($message) || !($message instanceof PipeMessage)) {
+			return;
+		}
 		$this->runEvent(Constant::PIPE_MESSAGE, null, [$server, $src_worker_id, $message]);
 	}
 
@@ -48,7 +55,7 @@ class ServerBase extends Server
 	 */
 	public function onBeforeReload(\Swoole\Server $server)
 	{
-		$this->runEvent(Constant::PIPE_MESSAGE, null, [$server]);
+		$this->runEvent(Constant::BEFORE_RELOAD, null, [$server]);
 	}
 
 
@@ -57,7 +64,7 @@ class ServerBase extends Server
 	 */
 	public function onAfterReload(\Swoole\Server $server)
 	{
-		$this->runEvent(Constant::PIPE_MESSAGE, null, [$server]);
+		$this->runEvent(Constant::AFTER_RELOAD, null, [$server]);
 	}
 
 }
