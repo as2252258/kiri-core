@@ -201,7 +201,7 @@ abstract class Crontab implements PipeMessage
 
 			$redis->hSet(self::WAIT_END, $name_md5, static::getSerialize($this));
 
-			call_user_func([$this, 'process'], ...$this->params);
+			call_user_func([$this, 'process']);
 			$redis->hDel(self::WAIT_END, $name_md5);
 		} catch (\Throwable $throwable) {
 			$this->application->addError($throwable, 'throwable');
@@ -215,7 +215,6 @@ abstract class Crontab implements PipeMessage
 	public function afterExecute()
 	{
 		$aot = $this->isRecover();
-		var_dump($aot);
 		if ($aot !== 999) {
 			return;
 		}
