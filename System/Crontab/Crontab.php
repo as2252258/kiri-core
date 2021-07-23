@@ -214,7 +214,9 @@ abstract class Crontab implements PipeMessage
 	 */
 	public function afterExecute()
 	{
-		if ($this->isRecover() !== 999) {
+		$aot = $this->isRecover();
+		var_dump($aot);
+		if ($aot !== 999) {
 			return;
 		}
 		$redis = $this->application->getRedis();
