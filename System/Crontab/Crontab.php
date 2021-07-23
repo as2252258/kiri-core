@@ -252,7 +252,7 @@ abstract class Crontab implements PipeMessage
 			if (!$this->isMaxExecute()) {
 				return 999;
 			}
-			call_user_func([$this, 'max_execute'], ...$this->getParams());
+			call_user_func([$this, 'max_execute']);
 			return $redis->del('crontab:' . $crontab_name);
 		} catch (\Throwable $throwable) {
 			return $this->application->addError($throwable, 'throwable');
