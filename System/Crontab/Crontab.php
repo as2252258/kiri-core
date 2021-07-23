@@ -6,16 +6,17 @@ namespace Snowflake\Crontab;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\BaseObject;
-use Snowflake\Core\Json;
+use Server\SInterface\PipeMessage;
+use Snowflake\Application;
 use Snowflake\Snowflake;
 use Swoole\Timer;
 
 /**
  * Class Async
  * @package Snowflake
+ * @property Application $application
  */
-abstract class Crontab extends BaseObject
+abstract class Crontab implements PipeMessage
 {
 
 	const WAIT_END = 'crontab:wait:execute';
@@ -40,6 +41,29 @@ abstract class Crontab extends BaseObject
 
 
 	private int $execute_number = 0;
+
+
+	/**
+	 * Crontab constructor.
+	 * @param mixed $params
+	 * @param false $isLoop
+	 * @param int $tickTime
+	 */
+	public function __construct(mixed $params, bool $isLoop = false, int $tickTime = 1)
+	{
+		$this->params = $params;
+		$this->isLoop = $isLoop;
+		$this->tickTime = $tickTime;
+	}
+
+
+	/**
+	 * @return Application
+	 */
+	#[Pure] private function getApplication(): Application
+	{
+		return Snowflake::app();
+	}
 
 
 	/**
@@ -110,27 +134,6 @@ abstract class Crontab extends BaseObject
 	}
 
 
-	public function setParams(): void
-	{
-		$this->params = func_get_args();
-	}
-
-	/**
-	 * @param int $tickTime
-	 */
-	public function setTickTime(int $tickTime): void
-	{
-		$this->tickTime = $tickTime;
-	}
-
-	/**
-	 * @param bool $isLoop
-	 */
-	public function setIsLoop(bool $isLoop): void
-	{
-		$this->isLoop = $isLoop;
-	}
-
 	/**
 	 * @param int $max_execute_number
 	 */
@@ -155,14 +158,6 @@ abstract class Crontab extends BaseObject
 		return $this->timerId;
 	}
 
-	/**
-	 * @param int $timerId
-	 */
-	public function setTimerId(int $timerId): void
-	{
-		$this->timerId = $timerId;
-	}
-
 
 	/**
 	 *
@@ -170,26 +165,22 @@ abstract class Crontab extends BaseObject
 	 */
 	public function clearTimer()
 	{
-		$this->warning('crontab timer clear.');
+		$this->application->warning('crontab timer clear.');
 		if (Timer::exists($this->timerId)) {
 			Timer::clear($this->timerId);
 		}
 	}
 
 
-	abstract public function process(): mixed;
-
-	abstract public function max_execute(): mixed;
-
-	abstract public function isStop(): bool;
-
-
 	/**
 	 * @param $name
 	 * @return mixed
 	 */
-	public function __get($name): mixed
+	#[Pure] public function __get($name): mixed
 	{
+		if ($name === 'application') {
+			return $this->getApplication();
+		}
 		if (!isset($this->params[$name])) {
 			return null;
 		}
@@ -202,32 +193,32 @@ abstract class Crontab extends BaseObject
 	 */
 	public function execute(): void
 	{
-		defer(fn() => $this->afterExecute());
 		try {
-			$redis = Snowflake::app()->getRedis();
+			$redis = $this->application->getRedis();
 
 			$name_md5 = $this->getName();
 
 			$redis->hSet(self::WAIT_END, $name_md5, static::getSerialize($this));
 
-			$params = call_user_func([$this, 'process'], ...$this->params);
+			call_user_func([$this, 'process'], ...$this->params);
 			$redis->hDel(self::WAIT_END, $name_md5);
-			if ($params === null) {
-				return;
-			}
-			write(Json::encode(['name' => $this->name, 'response' => serialize($params)]), 'crontab');
 		} catch (\Throwable $throwable) {
-			logger()->addError($throwable, 'throwable');
+			$this->application->addError($throwable, 'throwable');
+		} finally {
+			$this->afterExecute();
 		}
 	}
 
 
+	/**
+	 * @throws Exception
+	 */
 	public function afterExecute()
 	{
 		if ($this->isRecover() !== 999) {
 			return;
 		}
-		$redis = Snowflake::app()->getRedis();
+		$redis = $this->application->getRedis();
 
 		$name = $this->getName();
 		if (!$redis->exists('stop:crontab:' . $name)) {
@@ -248,22 +239,21 @@ abstract class Crontab extends BaseObject
 	public function isRecover(): bool|int
 	{
 		try {
-			$redis = Snowflake::app()->getRedis();
-			if ($redis->exists('stop:crontab:' . $this->getName())) {
-				$redis->del('stop:crontab:' . $this->getName());
-				return true;
+			$redis = $this->application->getRedis();
+			$crontab_name = $this->getName();
+			if ($redis->exists('stop:crontab:' . $crontab_name)) {
+				return $redis->del('stop:crontab:' . $crontab_name);
 			}
 			if ($this->isExit()) {
-				return $redis->del('crontab:' . $this->getName());
+				return $redis->del('crontab:' . $crontab_name);
 			}
-			if ($this->isMaxExecute()) {
-				call_user_func([$this, 'max_execute'], ...$this->getParams());
-				return $redis->del('crontab:' . $this->getName());
-			} else {
+			if (!$this->isMaxExecute()) {
 				return 999;
 			}
+			call_user_func([$this, 'max_execute'], ...$this->getParams());
+			return $redis->del('crontab:' . $crontab_name);
 		} catch (\Throwable $throwable) {
-			return logger()->addError($throwable, 'throwable');
+			return $this->application->addError($throwable, 'throwable');
 		}
 	}
 

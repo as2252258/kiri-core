@@ -11,7 +11,22 @@ namespace Server\SInterface;
 interface PipeMessage
 {
 
-	public function process();
+	/**
+	 *
+	 */
+	public function process(): void;
+
+
+	/**
+	 *
+	 */
+	public function max_execute(): void;
+
+
+	/**
+	 * @return bool
+	 */
+	public function isStop(): bool;
 
 
 }

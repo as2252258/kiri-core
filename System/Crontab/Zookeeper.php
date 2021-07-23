@@ -5,6 +5,7 @@ namespace Snowflake\Crontab;
 
 
 use Exception;
+use Server\ServerManager;
 use Server\SInterface\CustomProcess;
 use Snowflake\Abstracts\Config;
 use Snowflake\Cache\Redis;
@@ -23,9 +24,6 @@ class Zookeeper implements CustomProcess
 
 
 	private int $workerNum = 0;
-
-
-	private mixed $server;
 
 
 	/**
@@ -49,7 +47,7 @@ class Zookeeper implements CustomProcess
 	 */
 	public function onHandler(Process $process): void
 	{
-		Timer::tick(100, [$this, 'loop']);
+		Timer::tick(300, [$this, 'loop']);
 	}
 
 
@@ -81,8 +79,8 @@ class Zookeeper implements CustomProcess
 				return;
 			}
 			$params['handler'] = swoole_unserialize($handler);
-
-			$this->server->sendMessage($params, $this->getWorker());
+			$server = ServerManager::getContext()->getServer();
+			$server->sendMessage($params, $this->getWorker());
 		} catch (Throwable $exception) {
 			logger()->addError($exception);
 		}
@@ -91,10 +89,15 @@ class Zookeeper implements CustomProcess
 
 	/**
 	 * @return int
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function getWorker(): int
 	{
+		if ($this->workerNum == 0) {
+			$server = ServerManager::getContext()->getServer();
+
+			$this->workerNum = $server->setting['worker_num'] + ($server->setting['task_worker_num'] ?? 0);
+		}
 		return random_int(0, $this->workerNum - 1);
 	}
 
