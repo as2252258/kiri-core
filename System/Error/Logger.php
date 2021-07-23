@@ -48,6 +48,9 @@ class Logger extends Component
 	 */
 	public function debug(mixed $message, string $method = 'app', $file = null)
 	{
+		if (Config::get('environment') == 'pro') {
+			return;
+		}
 		$this->output($message);
 	}
 
@@ -59,6 +62,9 @@ class Logger extends Component
 	 */
 	public function trance(mixed $message, string $method = 'app')
 	{
+		if (Config::get('environment') == 'pro') {
+			return;
+		}
 		$this->output($message);
 	}
 
@@ -82,6 +88,9 @@ class Logger extends Component
 	 */
 	public function success(mixed $message, string $method = 'app', $file = null)
 	{
+		if (Config::get('environment') == 'pro') {
+			return;
+		}
 		$this->output($message);
 	}
 
@@ -93,14 +102,15 @@ class Logger extends Component
 	 */
 	private function writer($message, string $method = 'app'): void
 	{
-		$this->print_r($message, $method);
-		$message = $this->arrayFormat($message);
-		if (!empty($message)) {
-			if (!is_array($this->logs)) {
-				$this->logs = [];
-			}
-			$this->logs[] = [$method, $message];
+		if (empty($message)) {
+			return;
 		}
+		$message = print_r($message, true);
+		$this->print_r($message, $method);
+		if (!is_array($this->logs)) {
+			$this->logs = [];
+		}
+		$this->logs[] = [$method, $message];
 	}
 
 
@@ -301,12 +311,12 @@ class Logger extends Component
 
 		$logger = Snowflake::app()->getLogger();
 
-		$string = 'Exception: ' . PHP_EOL;
-		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
-		$string .= '#.  file: ' . $errorInfo['file'] . PHP_EOL;
-		$string .= '#.  line: ' . $errorInfo['line'] . PHP_EOL;
-
-		$logger->write($string . $exception->getTraceAsString(), 'trace');
+//		$string = 'Exception: ' . PHP_EOL;
+//		$string .= '#.  message: ' . $errorInfo['message'] . PHP_EOL;
+//		$string .= '#.  file: ' . $errorInfo['file'] . PHP_EOL;
+//		$string .= '#.  line: ' . $errorInfo['line'] . PHP_EOL;
+//
+//		$logger->write($string . $exception->getTraceAsString(), 'trace');
 		$logger->write(jTraceEx($exception), 'exception');
 
 		return Json::to($code, $errorInfo['message'], [

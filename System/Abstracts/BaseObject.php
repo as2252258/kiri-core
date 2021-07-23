@@ -11,6 +11,7 @@ namespace Snowflake\Abstracts;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Snowflake\Error\Logger;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
 
@@ -28,7 +29,7 @@ class BaseObject implements Configure
 	 * @param array $config
 	 * @throws Exception
 	 */
-	public function __construct($config = [])
+	public function __construct(array $config = [])
 	{
 		if (!empty($config) && is_array($config)) {
 			Snowflake::configure($this, $config);
@@ -118,9 +119,18 @@ class BaseObject implements Configure
 			}
 			$this->error($message);
 		}
-		$logger = Snowflake::app()->getLogger();
-		$logger->error($message, $model);
+		$this->logger()->error($message, $model);
 		return FALSE;
+	}
+
+
+	/**
+	 * @return Logger
+	 * @throws Exception
+	 */
+	private function logger(): Logger
+	{
+		return Snowflake::app()->getLogger();
 	}
 
 
@@ -138,8 +148,7 @@ class BaseObject implements Configure
 		$message = "\033[35m[" . date('Y-m-d H:i:s') . '][DEBUG]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::app()->getLogger();
-		$socket->output($message);
+		$this->logger()->output($message);
 	}
 
 
@@ -157,8 +166,7 @@ class BaseObject implements Configure
 		$message = "\033[34m[" . date('Y-m-d H:i:s') . '][INFO]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::app()->getLogger();
-		$socket->output($message);
+		$this->logger()->output($message);
 	}
 
 
@@ -177,8 +185,7 @@ class BaseObject implements Configure
 		$message = "\033[36m[" . date('Y-m-d H:i:s') . '][SUCCESS]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-		$socket = Snowflake::app()->getLogger();
-		$socket->output($message);
+		$this->logger()->output($message);
 	}
 
 
@@ -197,9 +204,7 @@ class BaseObject implements Configure
 		$message = "\033[33m[" . date('Y-m-d H:i:s') . '][WARNING]: ' . $message . "\033[0m";
 		$message .= PHP_EOL;
 
-
-		$socket = Snowflake::app()->getLogger();
-		$socket->output($message);
+		$this->logger()->output($message);
 	}
 
 
@@ -211,7 +216,6 @@ class BaseObject implements Configure
 	 */
 	public function error(mixed $message, $method = null, $file = null)
 	{
-		$socket = Snowflake::app()->getLogger();
 		if ($message instanceof \Throwable) {
 			$message = $message->getMessage() . " on line " . $message->getLine() . " at file " . $message->getFile();
 		}
@@ -222,7 +226,7 @@ class BaseObject implements Configure
 		if (!empty($file)) {
 			$message .= PHP_EOL . "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . "\033[0m";
 		}
-		$socket->output($message . PHP_EOL);
+		$this->logger()->output($message . PHP_EOL);
 	}
 
 }
