@@ -25,13 +25,13 @@ abstract class Crontab implements PipeMessage
 	private string $name = '';
 
 
-	private mixed $params = [];
+	private mixed $params;
 
 
-	private int $tickTime = 1;
+	private int $tickTime;
 
 
-	private bool $isLoop = false;
+	private bool $isLoop;
 
 
 	private int $timerId = -1;
