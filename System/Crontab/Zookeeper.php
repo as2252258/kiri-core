@@ -74,13 +74,11 @@ class Zookeeper implements CustomProcess
 	private function dispatch(Redis|\Redis $redis, $value)
 	{
 		try {
-			$params['action'] = 'crontab';
 			if (empty($handler = $redis->get('crontab:' . $value))) {
 				return;
 			}
-			$params['handler'] = swoole_unserialize($handler);
 			$server = ServerManager::getContext()->getServer();
-			$server->sendMessage($params, $this->getWorker());
+			$server->sendMessage(swoole_unserialize($handler), $this->getWorker());
 		} catch (Throwable $exception) {
 			logger()->addError($exception);
 		}

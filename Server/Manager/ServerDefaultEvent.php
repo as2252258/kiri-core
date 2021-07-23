@@ -43,9 +43,6 @@ class ServerDefaultEvent extends Server
 	 */
 	public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
 	{
-		if (is_null($message = unserialize($message))) {
-			return;
-		}
 		if (!is_object($message) || !($message instanceof PipeMessage)) {
 			return;
 		}
