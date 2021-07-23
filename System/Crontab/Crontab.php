@@ -193,18 +193,14 @@ abstract class Crontab implements PipeMessage
 	 */
 	public function execute(): void
 	{
-		defer(fn() => $this->afterExecute());
 		try {
+			defer(fn() => $this->afterExecute());
 			$redis = $this->application->getRedis();
 
 			$name_md5 = $this->getName();
-
 			$redis->hSet(self::WAIT_END, $name_md5, static::getSerialize($this));
-
 			call_user_func([$this, 'process']);
-
 			$this->execute_number += 1;
-
 			$redis->hDel(self::WAIT_END, $name_md5);
 		} catch (\Throwable $throwable) {
 			$this->application->addError($throwable, 'throwable');
@@ -221,7 +217,6 @@ abstract class Crontab implements PipeMessage
 			return;
 		}
 		$redis = $this->application->getRedis();
-
 		$name = $this->getName();
 		if (!$redis->exists('stop:crontab:' . $name)) {
 			$redis->set('crontab:' . $name, swoole_serialize($this));
@@ -275,10 +270,7 @@ abstract class Crontab implements PipeMessage
 	 */
 	private function isExit(): bool
 	{
-		if ($this->isStop()) {
-			return true;
-		}
-		if (!$this->isLoop) {
+		if ($this->isStop() || !$this->isLoop) {
 			return true;
 		}
 		return false;
