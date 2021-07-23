@@ -193,6 +193,7 @@ abstract class Crontab implements PipeMessage
 	 */
 	public function execute(): void
 	{
+		defer(fn() => $this->afterExecute());
 		try {
 			$redis = $this->application->getRedis();
 
@@ -204,8 +205,6 @@ abstract class Crontab implements PipeMessage
 			$redis->hDel(self::WAIT_END, $name_md5);
 		} catch (\Throwable $throwable) {
 			$this->application->addError($throwable, 'throwable');
-		} finally {
-			$this->afterExecute();
 		}
 	}
 
