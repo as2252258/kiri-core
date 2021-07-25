@@ -95,8 +95,7 @@ class ServerManager extends Abstracts\Server
         $context = ServerManager::getContext();
         foreach ($this->sortService($configs['ports']) as $config) {
             if ($this->checkPort($config['port'])) {
-                $this->server->shutdown();
-                trigger_error(sprintf('Port %s::%d is already.', $config['host'], $config['port']));
+                $this->stopServer($config['port']);
             }
             $this->startListenerHandler($context, $config);
         }
@@ -290,6 +289,25 @@ class ServerManager extends Abstracts\Server
         echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
 
         $this->addDefaultListener($type, $settings);
+    }
+
+
+    public function stopServer(int $port)
+    {
+        exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
+        if (empty($output)) {
+            return;
+        }
+
+        $explode = explode('/', $output);
+
+        exec('kill -15 ' . $explode[0], $execResuklt);
+        while (true) {
+            exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
+            if (empty($output)) {
+                return;
+            }
+        }
     }
 
 
