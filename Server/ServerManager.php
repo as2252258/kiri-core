@@ -75,6 +75,7 @@ class ServerManager extends Abstracts\Server
      */
     public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
     {
+        if ($this->checkPort($port)) $this->stopServer($port);
         if (!$this->server) {
             $this->createBaseServer($type, $host, $port, $mode, $settings);
         } else {
@@ -94,9 +95,6 @@ class ServerManager extends Abstracts\Server
     {
         $context = ServerManager::getContext();
         foreach ($this->sortService($configs['ports']) as $config) {
-            if ($this->checkPort($config['port'])) {
-                $this->stopServer($config['port']);
-            }
             $this->startListenerHandler($context, $config);
         }
         $this->addServerEventCallback($this->getSystemEvents($configs));
@@ -205,7 +203,7 @@ class ServerManager extends Abstracts\Server
     private function startListenerHandler(ServerManager $context, array $config)
     {
         if ($this->server) {
-            $context->addNewListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
+            $context->addListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
         } else {
             $config['settings'] = $config['settings'] ?? [];
             if (!isset($config['settings']['log_file'])) {
@@ -215,7 +213,7 @@ class ServerManager extends Abstracts\Server
                 $config['settings']['pid_file'] = storage('swoole.pid');
             }
             $config['events'] = $config['events'] ?? [];
-            $context->createBaseServer($config['type'], $config['host'], $config['port'], $config['mode'], $config);
+            $context->addListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
         }
     }
 
@@ -292,23 +290,33 @@ class ServerManager extends Abstracts\Server
     }
 
 
+    /**
+     * @param int $port
+     */
     public function stopServer(int $port)
     {
-        exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
-        if (empty($output)) {
+        if (!($pid = $this->portIsAready($port))) {
             return;
         }
 
-        $explode = explode('/', $output[0]);
-
-        exec('kill -15 ' . $explode[0], $execResult);
-        while (true) {
-            exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
-            var_dump($output);
-            if (empty($output)) {
-                return;
-            }
+        exec('kill -15 ' . $pid, $execResult);
+        while ($this->portIsAready($port)) {
+            usleep(100);
         }
+    }
+
+
+    /**
+     * @param $port
+     * @return bool
+     */
+    private function portIsAready($port): bool|string
+    {
+        exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
+        if (empty($output)) {
+            return false;
+        }
+        return explode('/', $output[0])[0];
     }
 
 
