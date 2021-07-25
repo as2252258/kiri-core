@@ -304,6 +304,7 @@ class ServerManager extends Abstracts\Server
         exec('kill -15 ' . $explode[0], $execResult);
         while (true) {
             exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
+            var_dump($output);
             if (empty($output)) {
                 return;
             }
