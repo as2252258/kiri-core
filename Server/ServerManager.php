@@ -299,9 +299,9 @@ class ServerManager extends Abstracts\Server
             return;
         }
 
-        $explode = explode('/', $output);
+        $explode = explode('/', $output[0]);
 
-        exec('kill -15 ' . $explode[0], $execResuklt);
+        exec('kill -15 ' . $explode[0], $execResult);
         while (true) {
             exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
             if (empty($output)) {
