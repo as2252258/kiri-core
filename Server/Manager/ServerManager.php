@@ -14,9 +14,10 @@ class ServerManager extends Server
 {
 
 
-	/**
-	 * @param \Swoole\Server $server
-	 */
+    /**
+     * @param \Swoole\Server $server
+     * @throws \Snowflake\Exception\ConfigException
+     */
 	public function onManagerStart(\Swoole\Server $server)
 	{
         $this->setProcessName(sprintf('manger[%d].0', $server->manager_pid));

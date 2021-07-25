@@ -17,9 +17,10 @@ class ServerDefaultEvent extends Server
 {
 
 
-	/**
-	 * @param \Swoole\Server $server
-	 */
+    /**
+     * @param \Swoole\Server $server
+     * @throws \Snowflake\Exception\ConfigException
+     */
 	public function onStart(\Swoole\Server $server)
 	{
         $this->setProcessName(sprintf('start[%d].server', $server->master_pid));
