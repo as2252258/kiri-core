@@ -296,6 +296,9 @@ class ServerInotify implements CustomProcess
 
         $files = scandir($dir);
         foreach ($files as $f) {
+            if ($f == '.' || $f == '..') {
+                continue;
+            }
             if (!is_dir($f) && !str_ends_with($f, '.php')) {
                 continue;
             }
