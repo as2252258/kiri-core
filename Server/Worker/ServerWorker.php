@@ -124,7 +124,7 @@ class ServerWorker extends \Server\Abstracts\Server
         $coros = Coroutine::listCoroutines();
         foreach($coros as $cid)
         {
-            Coroutine::cancel($cid);
+            var_dump(Coroutine::cancel($cid), swoole_last_error());
         }
         Snowflake::getApp('logger')->insert();
 	}
