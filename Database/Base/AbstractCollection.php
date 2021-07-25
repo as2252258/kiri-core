@@ -26,142 +26,136 @@ use Traversable;
 abstract class AbstractCollection extends Component implements \IteratorAggregate, \ArrayAccess
 {
 
-	/**
-	 * @var ActiveRecord[]
-	 */
-	protected array $_item = [];
+    /**
+     * @var ActiveRecord[]
+     */
+    protected array $_item = [];
 
-	protected ActiveRecord|string|null $model;
+    protected ActiveRecord|string|null $model;
 
-	protected ActiveQuery $query;
-
-
-	public function clean()
-	{
-		unset($this->query, $this->model, $this->_item);
-	}
+    protected ActiveQuery $query;
 
 
-	/**
-	 * Collection constructor.
-	 *
-	 * @param $query
-	 * @param array $array
-	 * @param string|ActiveRecord|null $model
-	 * @throws Exception
-	 */
-	public function __construct($query, array $array = [], string|ActiveRecord $model = null)
-	{
-		$this->_item = $array;
-		$this->query = $query;
-		$this->model = $model;
-
-		parent::__construct([]);
-	}
+    public function clean()
+    {
+        unset($this->query, $this->model, $this->_item);
+    }
 
 
-	/**
-	 * @return int
-	 */
-	#[Pure] public function getLength(): int
-	{
-		return count($this->_item);
-	}
+    /**
+     * Collection constructor.
+     *
+     * @param $query
+     * @param array $array
+     * @param string|ActiveRecord|null $model
+     * @throws Exception
+     */
+    public function __construct($query, array $array = [], string|ActiveRecord $model = null)
+    {
+        $this->_item = $array;
+        $this->query = $query;
+        $this->model = duplicate($model);
+
+        parent::__construct([]);
+    }
 
 
-	/**
-	 * @param $item
-	 */
-	public function setItems($item)
-	{
-		$this->_item = $item;
-	}
+    /**
+     * @return int
+     */
+    #[Pure] public function getLength(): int
+    {
+        return count($this->_item);
+    }
 
 
-	/**
-	 * @param $model
-	 */
-	public function setModel($model)
-	{
-		$this->model = $model;
-	}
-
-	/**
-	 * @param $item
-	 */
-	public function addItem($item)
-	{
-		array_push($this->_item, $item);
-	}
-
-	/**
-	 * @return Traversable|CollectionIterator|ArrayIterator
-	 * @throws Exception
-	 */
-	public function getIterator(): Traversable|CollectionIterator|ArrayIterator
-	{
-		return new CollectionIterator($this->model, $this->query, $this->_item);
-	}
+    /**
+     * @param $item
+     */
+    public function setItems($item)
+    {
+        $this->_item = $item;
+    }
 
 
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function getModel(): ActiveRecord
-	{
-		if (!is_object($this->model)) {
-			$this->model = duplicate($this->model);
-			$this->model->setIsCreate(false);
-		}
-		return $this->model;
-	}
+    /**
+     * @param $model
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
+    }
+
+    /**
+     * @param $item
+     */
+    public function addItem($item)
+    {
+        array_push($this->_item, $item);
+    }
+
+    /**
+     * @return Traversable|CollectionIterator|ArrayIterator
+     * @throws Exception
+     */
+    public function getIterator(): Traversable|CollectionIterator|ArrayIterator
+    {
+        return new CollectionIterator($this->model, $this->query, $this->_item);
+    }
 
 
-	/**
-	 * @param mixed $offset
-	 * @return bool
-	 */
-	public function offsetExists(mixed $offset): bool
-	{
-		return !empty($this->_item) && isset($this->_item[$offset]);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return ActiveRecord|null
-	 * @throws Exception
-	 */
-	public function offsetGet(mixed $offset): ?ActiveRecord
-	{
-		if (!$this->offsetExists($offset)) {
-			return NULL;
-		}
-
-		if ($this->_item[$offset] instanceof ActiveRecord) {
-			return $this->_item[$offset];
-		}
-
-		return $this->model::populate($this->_item[$offset]);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 */
-	public function offsetSet(mixed $offset, mixed $value)
-	{
-		$this->_item[$offset] = $value;
-	}
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function getModel(): ActiveRecord
+    {
+        return $this->model;
+    }
 
 
-	/**
-	 * @param mixed $offset
-	 */
-	public function offsetUnset(mixed $offset)
-	{
-		if ($this->offsetExists($offset)) {
-			unset($this->_item[$offset]);
-		}
-	}
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        return !empty($this->_item) && isset($this->_item[$offset]);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return ActiveRecord|null
+     * @throws Exception
+     */
+    public function offsetGet(mixed $offset): ?ActiveRecord
+    {
+        if (!$this->offsetExists($offset)) {
+            return NULL;
+        }
+        if (!($this->_item[$offset] instanceof ActiveRecord)) {
+            return $this->model->setAttributes($this->_item[$offset]);
+        }
+        return $this->_item[$offset];
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     */
+    public function offsetSet(mixed $offset, mixed $value)
+    {
+        $this->_item[$offset] = $value;
+    }
+
+
+    /**
+     * @param mixed $offset
+     */
+    public function offsetUnset(mixed $offset)
+    {
+        if ($this->offsetExists($offset)) {
+            unset($this->_item[$offset]);
+        }
+    }
 }

@@ -126,7 +126,7 @@ class ActiveRecord extends BaseActiveRecord
 		if (empty($attributes)) {
 			return $logger->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
-		$select = self::getModelClass();
+		$select = duplicate(static::class);
 		$select->attributes = $attributes;
 		if (!$select->save()) {
 			return $logger->addError($select->getLastError(), 'mysql');
@@ -150,27 +150,13 @@ class ActiveRecord extends BaseActiveRecord
 		/** @var static $select */
 		$select = static::find()->where($condition)->first();
 		if (empty($select)) {
-			$select = self::getModelClass();
+			$select = duplicate(static::class);
 		}
 		$select->attributes = $attributes;
 		if (!$select->save()) {
 			return $logger->addError($select->getLastError(), 'mysql');
 		}
 		return $select;
-	}
-
-
-	/**
-	 * @return static
-	 * @throws Exception
-	 */
-	private static function getModelClass(): static
-	{
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-		return $channel->pop(static::class, function () {
-			return new static();
-		});
 	}
 
 
@@ -306,10 +292,6 @@ class ActiveRecord extends BaseActiveRecord
 			$data[$key] = $this->{$item}($data[$key] ?? null);
 		}
 		$data = array_merge($data, $this->runRelate());
-
-		$class = Snowflake::app()->getChannel();
-		$class->push($this, static::class);
-
 		return $data;
 	}
 

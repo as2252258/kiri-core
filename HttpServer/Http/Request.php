@@ -6,6 +6,7 @@ namespace HttpServer\Http;
 use Annotation\Route\Socket;
 use Exception;
 use HttpServer\Abstracts\HttpService;
+use HttpServer\Http\Response as HResponse;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
@@ -451,7 +452,7 @@ class Request extends HttpService
 	 * @param \Swoole\Http\Request $request
 	 * @return mixed
 	 */
-	public static function create(\Swoole\Http\Request $request): Request
+	public static function create(\Swoole\Http\Request $request, \Swoole\Http\Response $response): Request
 	{
 		/** @var Request $sRequest */
 		$sRequest = Context::setContext('request', new Request());
@@ -467,6 +468,8 @@ class Request extends HttpService
 		$sRequest->uri = $sRequest->headers->get('request_uri');
 
 		$sRequest->parseUri();
+
+        HResponse::create($response);
 		return $sRequest;
 	}
 

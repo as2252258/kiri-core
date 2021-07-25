@@ -56,7 +56,7 @@ class CollectionIterator extends \ArrayIterator
 	 */
 	protected function newModel($current): ActiveRecord
 	{
-		return $this->model::populate($current);
+		return $this->model->setAttributes($current);
 	}
 
 
