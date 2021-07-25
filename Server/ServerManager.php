@@ -94,9 +94,29 @@ class ServerManager extends Abstracts\Server
     {
         $context = ServerManager::getContext();
         foreach ($this->sortService($configs['ports']) as $config) {
+            if ($this->checkPort($config['port'])) {
+                $this->server->shutdown();
+                trigger_error(sprintf('Port %s::%d is already.', $config['host'], $config['port']));
+            }
             $this->startListenerHandler($context, $config);
         }
         $this->addServerEventCallback($this->getSystemEvents($configs));
+    }
+
+
+    /**
+     * @param $port
+     * @return bool
+     * @throws Exception
+     */
+    private function checkPort($port): bool
+    {
+        if (Snowflake::getPlatform()->isLinux()) {
+            exec('netstat -tunlp | grep ' . $port, $output);
+        } else {
+            exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
+        }
+        return !empty($output);
     }
 
 
