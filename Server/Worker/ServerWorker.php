@@ -11,6 +11,7 @@ use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Runtime;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Server;
 use Swoole\Timer;
 
@@ -120,7 +121,12 @@ class ServerWorker extends \Server\Abstracts\Server
 
         Event::trigger(Event::SERVER_WORKER_EXIT, [$server, $workerId]);
 
-		Snowflake::getApp('logger')->insert();
+        $coros = Coroutine::listCoroutines();
+        foreach($coros as $cid)
+        {
+            Coroutine::cancel($cid);
+        }
+        Snowflake::getApp('logger')->insert();
 	}
 
 
