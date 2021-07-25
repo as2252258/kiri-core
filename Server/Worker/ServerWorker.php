@@ -97,6 +97,8 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		Event::trigger(Event::SERVER_WORKER_STOP);
 
+		var_dump('worker stop .' . $workerId);
+
 		fire(Event::SYSTEM_RESOURCE_CLEAN);
 
 		Timer::clearAll();
@@ -114,7 +116,9 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		putenv('state=exit');
 
-		Event::trigger(Event::SERVER_WORKER_EXIT, [$server, $workerId]);
+        var_dump('worker exit .' . $workerId);
+
+        Event::trigger(Event::SERVER_WORKER_EXIT, [$server, $workerId]);
 
 		Snowflake::getApp('logger')->insert();
 	}
