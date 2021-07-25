@@ -266,10 +266,12 @@ class ServerManager extends Abstracts\Server
 			Constant::SERVER_TYPE_WEBSOCKET => WServer::class
 		};
 		$this->server = new $match($host, $port, SWOOLE_PROCESS, $mode);
-		$this->server->set(array_merge(
-			Config::get('server.settings', []),
-			$settings['settings']
-		));
+
+		$merges = array_merge(Config::get('server.settings', []), $settings['settings']);
+		if (!isset($merges['pid_file'])){
+		    $merges['pid_file'] = storage('swoole.pid');
+        }
+		$this->server->set($merges);
 
 		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
 
