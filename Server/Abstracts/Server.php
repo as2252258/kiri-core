@@ -6,7 +6,9 @@ namespace Server\Abstracts;
 
 use Closure;
 use Exception;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
 
@@ -22,6 +24,25 @@ abstract class Server
 
 
 	protected Event $_event;
+
+
+
+
+    /**
+     * @param $prefix
+     * @throws ConfigException
+     */
+    protected function setProcessName($prefix)
+    {
+        if (Snowflake::getPlatform()->isMac()) {
+            return;
+        }
+        $name = Config::get('id', 'system-service');
+        if (!empty($prefix)) {
+            $name .= '.' . $prefix;
+        }
+        swoole_set_process_name($name);
+    }
 
 
 	/**

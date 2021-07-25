@@ -68,22 +68,6 @@ class ServerWorker extends \Server\Abstracts\Server
 	}
 
 
-	/**
-	 * @param $prefix
-	 * @throws ConfigException
-	 */
-	private function setProcessName($prefix)
-	{
-		if (Snowflake::getPlatform()->isMac()) {
-			return;
-		}
-		$name = Config::get('id', 'system-service');
-		if (!empty($prefix)) {
-			$name .= '.' . $prefix;
-		}
-		swoole_set_process_name($name);
-	}
-
 
 	/**
 	 * @param $worker_id
