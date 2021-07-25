@@ -22,7 +22,7 @@ class ServerDefaultEvent extends Server
 	 */
 	public function onStart(\Swoole\Server $server)
 	{
-        $this->setProcessName(sprintf('start[%d].server', $server->worker_pid));
+        $this->setProcessName(sprintf('start[%d].server', $server->master_pid));
 
         $this->runEvent(Constant::START, null, [$server]);
 	}

@@ -54,14 +54,14 @@ class ServerWorker extends \Server\Abstracts\Server
 			$loader->_loader();
 
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
-			$this->setProcessName(sprintf('Worker[%d].%d', $workerId, $server->worker_pid));
+			$this->setProcessName(sprintf('Worker[%d].%d', $server->worker_pid, $workerId));
 
 			$annotation->runtime(CONTROLLER_PATH);
 			$annotation->runtime(MODEL_PATH);
 		} else {
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
 
-			$this->setProcessName(sprintf('Tasker[%d].%d', $workerId, $server->worker_pid));
+			$this->setProcessName(sprintf('Tasker[%d].%d', $server->worker_pid, $workerId));
 
 			$annotation->runtime(APP_PATH, [CONTROLLER_PATH]);
 		}

@@ -19,7 +19,7 @@ class ServerManager extends Server
 	 */
 	public function onManagerStart(\Swoole\Server $server)
 	{
-        $this->setProcessName(sprintf('manger[%d].0', $server->worker_pid));
+        $this->setProcessName(sprintf('manger[%d].0', $server->manager_pid));
 
         $this->runEvent(Constant::MANAGER_START, null, [$server]);
 	}
