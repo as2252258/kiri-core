@@ -117,15 +117,8 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		putenv('state=exit');
 
-        var_dump('worker exit .' . $workerId);
-
         Event::trigger(Event::SERVER_WORKER_EXIT, [$server, $workerId]);
 
-        $coros = Coroutine::listCoroutines();
-        foreach($coros as $cid)
-        {
-            var_dump(Coroutine::cancel($cid), swoole_last_error());
-        }
         Snowflake::getApp('logger')->insert();
 	}
 
