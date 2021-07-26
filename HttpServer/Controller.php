@@ -33,21 +33,21 @@ class Controller
      * @var \HttpServer\Http\Request
      */
     #[Inject(className: 'request', withContext: true)]
-    protected Request $request;
+    protected ?Request $request = null;
 
 
     /**
      * @var \HttpServer\Http\HttpParams
      */
     #[Inject(className: 'input', withContext: true)]
-    protected HttpParams $input;
+    protected ?HttpParams $input = null;
 
 
     /**
      * @var \HttpServer\Http\HttpHeaders
      */
     #[Inject(className: 'header', withContext: true)]
-    protected HttpHeaders $header;
+    protected ?HttpHeaders $header = null;
 
 
     /**
@@ -56,7 +56,7 @@ class Controller
      * @var \HttpServer\Http\Response
      */
     #[Inject('response')]
-    protected Response $response;
+    protected ?Response $response = null;
 
 
 }
