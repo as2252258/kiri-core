@@ -58,10 +58,13 @@ class Snowflake
         $attributes = static::getDi()->getClassProperty($class::class);
         /**
          * @var string $property
-         * @var \Annotation\Attribute $attribute
+         * @var \ReflectionProperty $attribute
          */
         foreach ($attributes as $property => $attribute) {
-            $attribute->execute($class, $property);
+
+            foreach ($attribute->getAttributes() as $item) {
+                $item->newInstance()->execute($class, $property);
+            }
         }
     }
 
