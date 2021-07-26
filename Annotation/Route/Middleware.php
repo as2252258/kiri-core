@@ -5,6 +5,7 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
+use HttpServer\Route\Middlewares;
 use Snowflake\Snowflake;
 use HttpServer\IInterface\Middleware as IMiddleware;
 
@@ -16,38 +17,40 @@ use HttpServer\IInterface\Middleware as IMiddleware;
 {
 
 
-	/**
-	 * Interceptor constructor.
-	 * @param string|array $middleware
-	 * @throws
-	 */
-	public function __construct(public string|array $middleware)
-	{
-		if (is_string($this->middleware)) {
-			$this->middleware = [$this->middleware];
-		}
+    /**
+     * Interceptor constructor.
+     * @param string|array $middleware
+     * @throws
+     */
+    public function __construct(public string|array $middleware)
+    {
+        if (is_string($this->middleware)) {
+            $this->middleware = [$this->middleware];
+        }
 
-		$array = [];
-		foreach ($this->middleware as $key => $value) {
-			$sn = Snowflake::createObject($value);
-			if (!($sn instanceof IMiddleware)) {
-				continue;
-			}
-			$array[] = [$sn, 'onHandler'];
-		}
-		$this->middleware = $array;
-	}
+        $array = [];
+        foreach ($this->middleware as $value) {
+            $sn = Snowflake::createObject($value);
+            if (!($sn instanceof IMiddleware)) {
+                continue;
+            }
+            $array[] = [$sn, 'onHandler'];
+        }
+        $this->middleware = $array;
+    }
 
 
-	/**
-	 * @param mixed $class
-	 * @param mixed|null $method
-	 * @return Middleware
-	 */
+    /**
+     * @param mixed $class
+     * @param mixed|null $method
+     * @return Middleware
+     */
     public function execute(mixed $class, mixed $method = null): static
-	{
-		return $this;
-	}
+    {
+        $middleware = Snowflake::getDi()->get(Middlewares::class);
+        $middleware->addMiddlewares($class, $method, $this->middleware);
+        return $this;
+    }
 
 
 }

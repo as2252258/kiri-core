@@ -38,13 +38,6 @@ class Loader extends BaseObject
 
     private static array $_methods = [];
 
-    /**
-     * @return array
-     */
-    public function getDirectory(): array
-    {
-        return static::$_directory;
-    }
 
     /**
      * @param $path
@@ -55,16 +48,6 @@ class Loader extends BaseObject
     {
         $this->_scanDir(new DirectoryIterator($path), $namespace);
     }
-
-
-    /**
-     * @return array
-     */
-    public function getClasses(): array
-    {
-        return static::$_classes;
-    }
-
 
     /**
      * @param string $class
@@ -122,16 +105,6 @@ class Loader extends BaseObject
 
 
     /**
-     * @param string $class
-     * @return array
-     */
-    public function getTarget(string $class): array
-    {
-        return static::$_classes[$class] ?? [];
-    }
-
-
-    /**
      * @param DirectoryIterator $paths
      * @param $namespace
      * @throws Exception
@@ -173,16 +146,7 @@ class Loader extends BaseObject
             }
             $this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
-            $_array['handler'] = $replace->newInstance();
-            $_array['target'] = [];
-            $_array['methods'] = [];
-            $_array['property'] = [];
-
-            $_array = $this->_targets($replace, $_array);
-            $_array = $this->_methods($replace, $_array);
-            $_array = $this->_properties($replace, $_array);
-
-            static::$_classes[$replace->getName()] = $_array;
+            static::$_classes[] = $replace->getName();
         } catch (Throwable $throwable) {
             $this->addError($throwable, 'throwable');
         }
@@ -203,75 +167,6 @@ class Loader extends BaseObject
 
 
     /**
-     * @param ReflectionClass $replace
-     * @param array $_array
-     * @return array
-     */
-    private function _targets(ReflectionClass $replace, array $_array): array
-    {
-        foreach ($replace->getAttributes() as $attribute) {
-            if ($attribute->getName() == Attribute::class) {
-                continue;
-            }
-            if ($attribute->getName() == Target::class) {
-                continue;
-            }
-            $_array['target'][] = $attribute->newInstance();
-        }
-        return $_array;
-    }
-
-
-    /**
-     * @param ReflectionClass $replace
-     * @param array $_array
-     * @return array
-     */
-    private function _methods(ReflectionClass $replace, array $_array): array
-    {
-        $methods = $replace->getMethods(ReflectionMethod::IS_PUBLIC);
-        foreach ($methods as $method) {
-            $_method = [];
-            foreach ($method->getAttributes() as $attribute) {
-                if (!class_exists($attribute->getName())) {
-                    continue;
-                }
-                $_method[] = $attribute->newInstance();
-            }
-            if (!empty($_method)) {
-                static::$_methods[$replace->getName()][$method->getName()] = $_method;
-            }
-        }
-        return $_array;
-    }
-
-
-    /**
-     * @param ReflectionClass $replace
-     * @param array $_array
-     * @return array
-     */
-    private function _properties(ReflectionClass $replace, array $_array): array
-    {
-        $methods = $replace->getProperties();
-        foreach ($methods as $method) {
-            $_property = [];
-            if ($method->isStatic()) continue;
-            foreach ($method->getAttributes() as $attribute) {
-                if (!class_exists($attribute->getName())) {
-                    continue;
-                }
-                $_property[] = $attribute->newInstance();
-            }
-            if (!empty($_property)) {
-                static::$_property[$replace->getName()][$method->getName()] = $_property;
-            }
-        }
-        return $_array;
-    }
-
-
-    /**
      * @param string $path
      * @param string|array $outPath
      * @throws Exception
@@ -280,15 +175,22 @@ class Loader extends BaseObject
     {
         try {
             $path = '/' . trim($path, '/');
+
+            $paths = [];
             foreach (static::$_directory as $key => $_path) {
                 $key = '/' . trim($key, '/');
                 if (!str_starts_with($key, $path) || in_array($key, $outPath)) {
                     continue;
                 }
-                $this->execute($_path);
+
+                foreach ($_path as $item) {
+                    $paths[] = $item;
+                }
             }
+            return $paths;
         } catch (Throwable $exception) {
             $this->addError($exception, 'throwable');
+            return [];
         }
     }
 
@@ -325,39 +227,5 @@ class Loader extends BaseObject
         static::$_directory[$array][] = $className;
     }
 
-
-    /**
-     * @param array $classes
-     * @throws Exception
-     */
-    private function execute(array $classes)
-    {
-        if (empty($classes)) {
-            return;
-        }
-        foreach ($classes as $className) {
-            if (!isset(static::$_methods[$className])) {
-                continue;
-            }
-            foreach (static::$_methods[$className] as $name => $attribute) {
-                $this->methods($attribute, $className, $name);
-            }
-        }
-    }
-
-
-    /**
-     * @param $attribute
-     * @param $annotation
-     * @param $className
-     * @param $name
-     */
-    private function methods($attribute, $className, $name)
-    {
-        $handler = static::$_classes[$className]['handler'];
-        foreach ($attribute as $value) {
-            $value->execute($handler, $name);
-        }
-    }
 
 }

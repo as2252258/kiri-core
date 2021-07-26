@@ -192,14 +192,9 @@ class Annotation extends Component
 	 * @param string|array $outPath
 	 * @throws Exception
 	 */
-	public function runtime(string $dir, string|array $outPath = '')
+	public function runtime(string $dir)
 	{
-		if (empty($outPath)) {
-			$outPath = [];
-		} else if (is_string($outPath)) {
-			$outPath = [$outPath];
-		}
-		$this->_loader->loadByDirectory($dir, $outPath);
+		return $this->_loader->loadByDirectory($dir);
 	}
 
 

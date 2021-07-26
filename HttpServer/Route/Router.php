@@ -44,6 +44,9 @@ class Router extends HttpService implements RouterInterface
     public int $useTree = ROUTER_TREE;
 
 
+    private static array $controllers = [];
+
+
     public ?Response $response = null;
 
 
@@ -119,10 +122,6 @@ class Router extends HttpService implements RouterInterface
             $handler = Closure::bind($handler, new Controller());
         }
 
-//        if ($this->useTree === ROUTER_TREE) {
-//            return $this->tree($path, $handler, $method);
-//        }
-
         return $this->hash($path, $handler, $method);
     }
 
@@ -136,7 +135,6 @@ class Router extends HttpService implements RouterInterface
     private function hash($path, $handler, string $method = 'any'): ?Node
     {
         $path = $this->resolve($path);
-
         static::$nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
 
         return static::$nodes[$method][$path]->bindHandler($handler);
@@ -343,11 +341,9 @@ class Router extends HttpService implements RouterInterface
         if ($this->middleware instanceof \Closure) {
             $node->addMiddleware([$this->middleware]);
         }
-
         if (is_array($name)) {
             $node->addMiddleware($this->resolve_middleware($name));
         }
-
         return $node;
     }
 
@@ -527,10 +523,7 @@ class Router extends HttpService implements RouterInterface
             $this->response->setFormat(Response::HTML);
             $this->response->send('<h1 style="text-align: center;">404</h1>');
         } else {
-            $this->response->send(($response = $node->dispatch()), 200);
-            if ($node->hasAfter()) {
-                $node->afterDispatch($response);
-            }
+            $this->response->send($node->dispatch(), 200);
         }
     }
 
@@ -637,6 +630,14 @@ class Router extends HttpService implements RouterInterface
     public function _loader()
     {
         $this->loadRouteDir(APP_PATH . 'routes');
+        $classes = Snowflake::getAnnotation()->runtime(CONTROLLER_PATH);
+        foreach ($classes as $class) {
+            $instance = Snowflake::getDi()->get($class);
+            $methods = Snowflake::getDi()->getMethodAttribute($class);
+            foreach ($methods as $method => $attribute) {
+                $attribute->execute($instance, $method);
+            }
+        }
     }
 
     /**
