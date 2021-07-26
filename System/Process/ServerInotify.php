@@ -299,13 +299,12 @@ class ServerInotify implements CustomProcess
             if ($f == '.' || $f == '..') {
                 continue;
             }
-            if (!is_dir($f) && !str_ends_with($f, '.php')) {
-                continue;
-            }
             $path = $dir . '/' . $f;
             //递归目录
             if (is_dir($path)) {
                 $this->watch($path);
+            } else if (!str_ends_with($f, '.php')) {
+                continue;
             }
 
             //检测文件类型
