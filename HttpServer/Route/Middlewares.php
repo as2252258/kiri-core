@@ -52,6 +52,9 @@ class Middlewares extends BaseObject
      */
     public function callerMiddlewares($class, $method, $caller)
     {
+        if (is_object($class)) {
+            $class = $class::class;
+        }
         $middlewares = static::$_middlewares[$class . '::' . $method] ?? [];
         if (empty($middlewares)) {
             return $caller;
