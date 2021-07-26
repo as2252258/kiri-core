@@ -106,16 +106,11 @@ class HTTPServerListener extends Abstracts\Server
     public function onRequest(Request $request, Response $response)
     {
         try {
-            if (ApplicationStore::getStore()->getStatus() == 'exit') {
-                $response->status(401);
-                $response->end();
-                return;
+            if (HRequest::create($request, $response)->is('favicon.ico')) {
+                $this->router->status404();
+            } else {
+                $this->router->dispatch();
             }
-            $request = HRequest::create($request, $response);
-            if ($request->is('favicon.ico')) {
-                throw new Exception('Not found.', 404);
-            }
-            $this->router->dispatch();
         } catch (ExitException | Error | Throwable $exception) {
             $response->setHeader('Content-Type', 'text/html; charset=utf-8');
             $response->status($exception->getCode() == 0 ? 500 : $exception->getCode());
