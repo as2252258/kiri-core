@@ -94,7 +94,7 @@ class Node extends HttpService
         } else {
             $this->handler = $handler;
         }
-        if (!empty($this->handler)) {
+        if (!empty($this->handler) && is_array($this->handler)) {
             $this->callback = di(Middlewares::class)->callerMiddlewares(
                 $this->handler[0], $this->handler[1], $this->createDispatch()
             );
