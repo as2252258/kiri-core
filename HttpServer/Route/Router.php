@@ -635,8 +635,12 @@ class Router extends HttpService implements RouterInterface
             $instance = Snowflake::getDi()->get($class);
             $methods = Snowflake::getDi()->getMethodAttribute($class);
             foreach ($methods as $method => $attribute) {
-                var_dump($attribute);
-                $attribute->execute($instance, $method);
+                if (empty($attribute)) {
+                    continue;
+                }
+                foreach ($attribute as $item) {
+                    $item->execute($instance, $method);
+                }
             }
         }
     }
