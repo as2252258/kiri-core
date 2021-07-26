@@ -97,6 +97,7 @@ class SqlBuilder extends Component
 	}
 
 
+
 	/**
 	 * @param array $attributes
 	 * @param false $isBatch
