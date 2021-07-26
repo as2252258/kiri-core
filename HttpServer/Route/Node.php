@@ -9,6 +9,7 @@ use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
+use HttpServer\Controller;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
@@ -95,7 +96,7 @@ class Node extends HttpService
             $this->handler = $handler;
         }
         if (!empty($this->handler) && is_array($this->handler)) {
-            $this->callback = di(Middlewares::class)->callerMiddlewares(
+            $this->callback = di(MiddlewareManager::class)->callerMiddlewares(
                 $this->handler[0], $this->handler[1], $this->createDispatch()
             );
         }
@@ -114,10 +115,12 @@ class Node extends HttpService
 
         /** @var Aop $aop */
         $aop = Snowflake::app()->get('aop');
-        if (!is_array($this->handler) || !$aop->hasAop($this->handler)) {
+        if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
             return static function () use ($application) {
                 $dispatchParam = Context::getContext('dispatch-param', [\request()]);
-
+                if (is_array($this->handler)){
+                    Snowflake::injectProperty($this->handler[0]);
+                }
                 return call_user_func($application->handler, ...$dispatchParam);
             };
         }
@@ -129,7 +132,9 @@ class Node extends HttpService
             $dispatchParam = Context::getContext('dispatch-param', [\request()]);
 
             $asp = $reflect->newInstance($this->handler);
-
+            if (is_array($this->handler)){
+                Snowflake::injectProperty($this->handler[0]);
+            }
             call_user_func($callback, $asp, $dispatchParam);
         };
     }

@@ -463,38 +463,16 @@ class Request extends HttpService
         if (!empty($request->post)) {
             $sRequest->params->setPosts($request->post ?? []);
         }
+        Context::setContext(HttpParams::class, $sRequest->params);
 
         $sRequest->headers = new HttpHeaders(array_merge($request->server, $request->header));
+        Context::setContext(HttpHeaders::class, $sRequest->headers);
+
         $sRequest->uri = $sRequest->headers->get('request_uri');
 
         $sRequest->parseUri();
 
-        Context::setContext('input', $sRequest->params);
-        Context::setContext('header', $sRequest->headers);
-
         return $sRequest;
-    }
-
-
-    /**
-     * @param $frame
-     * @param string $route
-     * @param string $event
-     * @return Request
-     */
-    public static function socketQuery($frame, string $event = Socket::MESSAGE, string $route = 'event'): Request
-    {
-        $sRequest = new Request();
-        $sRequest->fd = $frame->fd;
-        $sRequest->startTime = microtime(true);
-
-        $sRequest->params = new HttpParams([], [], []);
-        $sRequest->headers = new HttpHeaders([]);
-        $sRequest->headers->replace('request_method', 'sw::socket');
-        $sRequest->headers->replace('request_uri', $event . '::' . $route);
-        $sRequest->parseUri();
-
-        return Context::setContext('request', $sRequest);
     }
 
 

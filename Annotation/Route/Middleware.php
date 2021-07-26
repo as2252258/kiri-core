@@ -5,7 +5,7 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
-use HttpServer\Route\Middlewares;
+use HttpServer\Route\MiddlewareManager;
 use Snowflake\Snowflake;
 use HttpServer\IInterface\Middleware as IMiddleware;
 
@@ -47,7 +47,7 @@ use HttpServer\IInterface\Middleware as IMiddleware;
      */
     public function execute(mixed $class, mixed $method = null): static
     {
-        $middleware = Snowflake::getDi()->get(Middlewares::class);
+        $middleware = Snowflake::getDi()->get(MiddlewareManager::class);
         $middleware->addMiddlewares($class, $method, $this->middleware);
         return $this;
     }

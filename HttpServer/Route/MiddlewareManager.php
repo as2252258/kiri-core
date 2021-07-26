@@ -9,10 +9,10 @@ use Snowflake\Abstracts\BaseObject;
 
 
 /**
- * Class Middlewares
+ * Class MiddlewareManager
  * @package HttpServer\Route
  */
-class Middlewares extends BaseObject
+class MiddlewareManager extends BaseObject
 {
 
     private static array $_middlewares = [];
@@ -26,7 +26,7 @@ class Middlewares extends BaseObject
     public function addMiddlewares($class, $method, array|string $middlewares)
     {
         if (is_object($class)) {
-            $class = get_class($class);
+            $class = $class::class;
         }
         if (!isset(static::$_middlewares[$class . '::' . $method])) {
             static::$_middlewares[$class . '::' . $method] = [];
@@ -42,6 +42,20 @@ class Middlewares extends BaseObject
             }
             static::$_middlewares[$class . '::' . $method][] = $middleware;
         }
+    }
+
+
+    /**
+     * @param $class
+     * @param $method
+     * @return bool
+     */
+    public function hasMiddleware($class, $method)
+    {
+        if (is_object($class)) {
+            $class = $class::class;
+        }
+        return isset(static::$_middlewares[$class . '::' . $method]);
     }
 
 

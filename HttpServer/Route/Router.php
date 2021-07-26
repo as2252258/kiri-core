@@ -370,7 +370,7 @@ class Router extends HttpService implements RouterInterface
                 $array[] = $this->getMiddlewareInstance($value);
             }
         }
-        return $array;
+        return array_filter($array);
     }
 
 
@@ -382,15 +382,14 @@ class Router extends HttpService implements RouterInterface
      */
     private function getMiddlewareInstance($value): null|Closure|array
     {
-        if (is_string($value)) {
-            $value = Snowflake::createObject($value);
-            if (!($value instanceof Middleware)) {
-                return null;
-            }
-            return [$value, 'onHandler'];
-        } else {
+        if (!is_string($value)) {
             return $value;
         }
+        $value = Snowflake::createObject($value);
+        if (!($value instanceof Middleware)) {
+            return null;
+        }
+        return [$value, 'onHandler'];
     }
 
 

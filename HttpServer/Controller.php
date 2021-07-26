@@ -5,21 +5,15 @@ namespace HttpServer;
 
 
 use Annotation\Inject;
-use Exception;
-use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
-use Snowflake\Abstracts\Input;
 use Snowflake\Abstracts\TraitApplication;
-use Snowflake\Snowflake;
 
 /**
  * Class WebController
  * @package Snowflake\Snowflake\Web
- * @property-read HttpParams $input
- * @property-read HttpHeaders $header
  */
 class Controller
 {
@@ -30,33 +24,33 @@ class Controller
     /**
      * inject request
      *
-     * @var \HttpServer\Http\Request
+     * @var \HttpServer\Http\Request|null
      */
-    #[Inject(className: 'request', withContext: true)]
-    protected ?Request $request = null;
+    #[Inject(value: 'request', withContext: true)]
+    public ?Request $request = null;
 
 
     /**
-     * @var \HttpServer\Http\HttpParams
+     * @var \HttpServer\Http\HttpParams|null
      */
-    #[Inject(className: 'input', withContext: true)]
-    protected ?HttpParams $input = null;
+    #[Inject(value: HttpParams::class, withContext: true)]
+    public ?HttpParams $input = null;
 
 
     /**
-     * @var \HttpServer\Http\HttpHeaders
+     * @var \HttpServer\Http\HttpHeaders|null
      */
-    #[Inject(className: 'header', withContext: true)]
-    protected ?HttpHeaders $header = null;
+    #[Inject(value: HttpHeaders::class, withContext: true)]
+    public ?HttpHeaders $header = null;
 
 
     /**
      * inject response
      *
-     * @var \HttpServer\Http\Response
+     * @var \HttpServer\Http\Response|null
      */
     #[Inject('response')]
-    protected ?Response $response = null;
+    public ?Response $response = null;
 
 
 }

@@ -21,10 +21,10 @@ use Snowflake\Snowflake;
 
     /**
      * Inject constructor.
-     * @param string $className
+     * @param string $value
      * @param array $args
      */
-    public function __construct(private string $className, public bool $withContext = false, private array $args = [])
+    public function __construct(private string $value, public bool $withContext = false, private array $args = [])
     {
     }
 
@@ -93,14 +93,14 @@ use Snowflake\Snowflake;
     private function parseInjectValue(): mixed
     {
         if ($this->withContext) {
-            return Context::getContext($this->className);
+            return Context::getContext($this->value);
         }
-        if (class_exists($this->className)) {
-            return Snowflake::getDi()->get($this->className, $this->args);
-        } else if (Snowflake::app()->has($this->className)) {
-            return Snowflake::app()->get($this->className);
+        if (class_exists($this->value)) {
+            return Snowflake::getDi()->get($this->value, $this->args);
+        } else if (Snowflake::app()->has($this->value)) {
+            return Snowflake::app()->get($this->value);
         } else {
-            return $this->className;
+            return $this->value;
         }
     }
 
