@@ -171,7 +171,7 @@ class Loader extends BaseObject
      * @param string|array $outPath
      * @throws Exception
      */
-    public function loadByDirectory(string $path, string|array $outPath = '')
+    public function loadByDirectory(string $path)
     {
         try {
             $path = '/' . trim($path, '/');
@@ -179,10 +179,9 @@ class Loader extends BaseObject
             $paths = [];
             foreach (static::$_directory as $key => $_path) {
                 $key = '/' . trim($key, '/');
-                if (!str_starts_with($key, $path) || in_array($key, $outPath)) {
+                if (!str_starts_with($key, $path)) {
                     continue;
                 }
-
                 foreach ($_path as $item) {
                     $paths[] = $item;
                 }
