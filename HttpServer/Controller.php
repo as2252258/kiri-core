@@ -19,7 +19,7 @@ use Snowflake\Snowflake;
  * Class WebController
  * @package Snowflake\Snowflake\Web
  * @property-read HttpParams $input
- * @property-read HttpHeaders $headers
+ * @property-read HttpHeaders $header
  */
 class Controller
 {
@@ -34,6 +34,20 @@ class Controller
      */
     #[Inject(className: 'request', withContext: true)]
     protected Request $request;
+
+
+    /**
+     * @var \HttpServer\Http\HttpParams
+     */
+    #[Inject(className: 'input', withContext: true)]
+    protected HttpParams $input;
+
+
+    /**
+     * @var \HttpServer\Http\HttpHeaders
+     */
+    #[Inject(className: 'header', withContext: true)]
+    protected HttpHeaders $header;
 
 
     /**
