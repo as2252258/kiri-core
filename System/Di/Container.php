@@ -172,7 +172,9 @@ class Container extends BaseObject
         if (empty($reflect) || !$reflect->isInstantiable()) {
             throw new NotFindClassException($class);
         }
-        $dependencies = array_merge($dependencies, $constrict);
+        foreach ($constrict as $key => $item) {
+            $dependencies[$key] = $item;
+        }
         unset($dependencies['class']);
         if (empty($config) || !is_array($config)) {
             $object = $this->newInstance($reflect, $dependencies);
