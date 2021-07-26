@@ -239,19 +239,13 @@ class Container extends BaseObject
             if ($method->isStatic()) {
                 continue;
             }
-            static::$_reflectionMethod[$class->getName()][$method->getName()] = $method;
-            static::$_methodsAttributes[$class->getName()][$method->getName()] = [];
+            $this->setReflectionMethod($class, $method);
             foreach ($method->getAttributes() as $attribute) {
                 if (!class_exists($attribute->getName())) {
                     continue;
                 }
 
-
-                $instance = $attribute->newInstance();
-
-                $this->setAttributeMapping($attribute, $class, $method, $instance);
-                $this->setMethodsAttributes($class, $method, $instance);
-                static::$_methodsAttributes[$class->getName()][$method->getName()][] = $attribute->newInstance();
+                $this->setMethodsAttributes($class, $method, $attribute->newInstance());
             }
         }
     }
@@ -262,12 +256,12 @@ class Container extends BaseObject
      * @param \ReflectionClass $class
      * @param $object
      */
-    private function setAttributeMapping(\ReflectionAttribute $attribute, ReflectionClass $class, $object)
+    private function setReflectionMethod(ReflectionClass $class, \ReflectionMethod $method)
     {
-        if (!isset(static::$_attributeMaping[$attribute->getName()])) {
-            static::$_attributeMaping[$attribute->getName()] = [];
+        if (!isset(static::$_attributeMaping[$class->getName()])) {
+            static::$_attributeMaping[$class->getName()] = [];
         }
-        static::$_attributeMaping[$attribute->getName()][$class->getName()][] = $object;
+        static::$_attributeMaping[$class->getName()][$method->getName()][] = $method;
     }
 
 
