@@ -32,8 +32,6 @@ class HTTPServerListener extends Abstracts\Server
 
     private Router $router;
 
-    private ApplicationStore $store;
-
 
     /**
      * HTTPServerListener constructor.
@@ -42,7 +40,6 @@ class HTTPServerListener extends Abstracts\Server
     public function __construct()
     {
         $this->router = Snowflake::getApp('router');
-        $this->store = ApplicationStore::getStore();
         parent::__construct();
     }
 
@@ -105,16 +102,19 @@ class HTTPServerListener extends Abstracts\Server
      */
     public function onRequest(Request $request, Response $response)
     {
+        [$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
         try {
-            if (HRequest::create($request, $response)->is('favicon.ico')) {
+            if ($sRequest->is('favicon.ico')) {
+                $this->router->status404();
+            } else if (!($node = $this->router->find_path($sRequest))) {
                 $this->router->status404();
             } else {
-                $this->router->dispatch();
+                $sResponse->send($node->dispatch(), 200);
             }
         } catch (Error | Throwable $exception) {
-            $response->setHeader('Content-Type', 'text/html; charset=utf-8');
-            $response->status($exception->getCode() == 0 ? 500 : $exception->getCode());
-            $response->end($exception->getMessage());
+            $sResponse->addHeader('Content-Type', 'text/html; charset=utf-8');
+            $sResponse->send($exception->getMessage(),
+                $exception->getCode() == 0 ? 500 : $exception->getCode());
         } finally {
             $this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
         }
