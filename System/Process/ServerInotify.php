@@ -233,7 +233,7 @@ class ServerInotify implements CustomProcess
     {
         exec(PHP_BINARY . ' ' . APP_PATH . 'snowflake runtime:builder', $output);
 
-        var_dump(implode(PHP_EOL, $output));
+        print_r(implode(PHP_EOL, $output));
 
         Snowflake::reload();
     }
