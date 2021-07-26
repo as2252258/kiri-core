@@ -118,8 +118,8 @@ class Node extends HttpService
         if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
             return static function () use ($application) {
                 $dispatchParam = Context::getContext('dispatch-param', [\request()]);
-                if (is_array($this->handler)){
-                    Snowflake::injectProperty($this->handler[0]);
+                if (is_array($application->handler)){
+                    Snowflake::injectProperty($application->handler[0]);
                 }
                 return call_user_func($application->handler, ...$dispatchParam);
             };
@@ -127,13 +127,12 @@ class Node extends HttpService
 
         $reflect = $aop->getAop($this->handler);
         $callback = [$reflect->getMethod('invoke'), 'invokeArgs'];
-
         return static function () use ($callback, $application, $reflect) {
             $dispatchParam = Context::getContext('dispatch-param', [\request()]);
 
-            $asp = $reflect->newInstance($this->handler);
-            if (is_array($this->handler)){
-                Snowflake::injectProperty($this->handler[0]);
+            $asp = $reflect->newInstance($application->handler);
+            if (is_array($application->handler)){
+                Snowflake::injectProperty($application->handler[0]);
             }
             call_user_func($callback, $asp, $dispatchParam);
         };
