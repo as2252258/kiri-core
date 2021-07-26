@@ -111,7 +111,7 @@ class HTTPServerListener extends Abstracts\Server
             } else {
                 $this->router->dispatch();
             }
-        } catch (ExitException | Error | Throwable $exception) {
+        } catch (Error | Throwable $exception) {
             $response->setHeader('Content-Type', 'text/html; charset=utf-8');
             $response->status($exception->getCode() == 0 ? 500 : $exception->getCode());
             $response->end($exception->getMessage());

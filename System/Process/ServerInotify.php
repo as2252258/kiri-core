@@ -271,6 +271,9 @@ class ServerInotify implements CustomProcess
     }
 
 
+    const IG_DIR = [APP_PATH . 'commands', APP_PATH . '.git', APP_PATH . '.gitee'];
+
+
     /**
      * @param $dir
      * @return bool
@@ -287,7 +290,7 @@ class ServerInotify implements CustomProcess
             return FALSE;
         }
 
-        if (in_array($dir, [APP_PATH . 'commands', APP_PATH . '.git', APP_PATH . '.gitee'])) {
+        if (in_array($dir, self::IG_DIR)) {
             return FALSE;
         }
 
