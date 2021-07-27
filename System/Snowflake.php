@@ -12,6 +12,7 @@ use Exception;
 use HttpServer\IInterface\Task;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
+use ReflectionProperty;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Di\Container;
@@ -58,7 +59,7 @@ class Snowflake
         $attributes = static::getDi()->getClassProperty($class::class);
         /**
          * @var string $property
-         * @var \ReflectionProperty $attribute
+         * @var ReflectionProperty $attribute
          */
         foreach ($attributes as $property => $attribute) {
 
