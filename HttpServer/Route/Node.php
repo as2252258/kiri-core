@@ -127,7 +127,7 @@ class Node extends HttpService
 	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	private function createDispatch(): Closure
+	#[Pure] private function createDispatch(): Closure
 	{
 		return $this->normalHandler($this, $this->handler);
 
@@ -161,6 +161,7 @@ class Node extends HttpService
 
 	/**
 	 * @param $application
+	 * @param $handler
 	 * @return Closure
 	 */
 	private function normalHandler($application, $handler): Closure
