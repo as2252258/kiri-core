@@ -6,7 +6,9 @@ namespace Annotation;
 
 use DirectoryIterator;
 use Exception;
+use ReflectionException;
 use Snowflake\Abstracts\Component;
+use Snowflake\Exception\NotFindClassException;
 
 /**
  * Class Annotation
@@ -166,6 +168,8 @@ class Annotation extends Component
 
 	/**
 	 * @param object $class
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function injectProperty(object $class)
 	{
@@ -189,10 +193,10 @@ class Annotation extends Component
 
 	/**
 	 * @param string $dir
-	 * @param string|array $outPath
+	 * @return array
 	 * @throws Exception
 	 */
-	public function runtime(string $dir)
+	public function runtime(string $dir): array
 	{
 		return $this->_loader->loadByDirectory($dir);
 	}

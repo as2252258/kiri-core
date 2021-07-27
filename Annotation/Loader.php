@@ -165,20 +165,20 @@ class Loader extends BaseObject
 
 	/**
 	 * @param string $path
-	 * @param string|array $outPath
+	 * @return array
 	 * @throws Exception
 	 */
-	public function loadByDirectory(string $path)
+	public function loadByDirectory(string $path): array
 	{
 		try {
 			$path = '/' . trim($path, '/');
-
 			$paths = [];
 			foreach (static::$_directory as $key => $_path) {
 				$key = '/' . trim($key, '/');
 				if (!str_starts_with($key, $path)) {
 					continue;
 				}
+				unset(static::$_directory[$key]);
 				foreach ($_path as $item) {
 					$paths[] = $item;
 				}
