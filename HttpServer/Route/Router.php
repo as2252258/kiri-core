@@ -36,7 +36,7 @@ class Router extends HttpService implements RouterInterface
     const NOT_FOUND = 'Page not found or method not allowed.';
 
     /** @var string[] */
-    public array $methods = ['get', 'post', 'options', 'put', 'delete', 'receive', 'head'];
+    public array $methods = ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'RECEIVE', 'HEAD'];
 
 
     public ?Closure $middleware = null;
@@ -232,7 +232,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function post($route, $handler): ?Node
     {
-        return $this->addRoute($route, $handler, 'post');
+        return $this->addRoute($route, $handler, 'POST');
     }
 
     /**
@@ -243,7 +243,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function get($route, $handler): ?Node
     {
-        return $this->addRoute($route, $handler, 'get');
+        return $this->addRoute($route, $handler, 'GET');
     }
 
 
@@ -267,7 +267,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function options($route, $handler): ?Node
     {
-        return $this->addRoute($route, $handler, 'options');
+        return $this->addRoute($route, $handler, 'OPTIONS');
     }
 
 
@@ -280,7 +280,7 @@ class Router extends HttpService implements RouterInterface
     public function any($route, $handler): Any
     {
         $nodes = [];
-        foreach (['get', 'post', 'options', 'put', 'delete', 'head'] as $method) {
+        foreach (['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'HEAD'] as $method) {
             $nodes[] = $this->addRoute($route, $handler, $method);
         }
         return new Any($nodes);
@@ -294,7 +294,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function delete($route, $handler): ?Node
     {
-        return $this->addRoute($route, $handler, 'delete');
+        return $this->addRoute($route, $handler, 'DELETE');
     }
 
 
@@ -306,7 +306,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function head($route, $handler): ?Node
     {
-        return $this->addRoute($route, $handler, 'head');
+        return $this->addRoute($route, $handler, 'HEAD');
     }
 
 
@@ -318,7 +318,7 @@ class Router extends HttpService implements RouterInterface
      */
     public function put($route, $handler): ?Node
     {
-        return $this->addRoute($route, $handler, 'put');
+        return $this->addRoute($route, $handler, 'PUT');
     }
 
     /**
@@ -328,7 +328,7 @@ class Router extends HttpService implements RouterInterface
      * @return Node
      * @throws
      */
-    public function NodeInstance($value, int $index = 0, string $method = 'get'): Node
+    public function NodeInstance($value, int $index = 0, string $method = 'GET'): Node
     {
         $node = new Node();
         $node->childes = [];
@@ -400,7 +400,7 @@ class Router extends HttpService implements RouterInterface
     private function loadNamespace($method): array
     {
         $name = array_column($this->groupTacks, 'namespace');
-        if ($method == 'package' || $method == 'receive') {
+        if ($method == 'package' || $method == 'RECEIVE') {
             $dir = 'App\\Listener';
         } else {
             $dir = $this->dir;
@@ -515,9 +515,9 @@ class Router extends HttpService implements RouterInterface
      * @return mixed
      * @throws
      */
-    public function dispatch(): void
+    public function dispatch(Request $request): void
     {
-        $node = $this->find_path(\request());
+        $node = $this->find_path($request);
         if (!($node instanceof Node)) {
             $this->response->setFormat(Response::HTML);
             $this->response->send('<h1 style="text-align: center;">404</h1>');
@@ -527,7 +527,10 @@ class Router extends HttpService implements RouterInterface
     }
 
 
-    public function status404()
+	/**
+	 * @throws Exception
+	 */
+    public function pageNotFound()
     {
         $this->response->setFormat(Response::HTML);
         $this->response->send('<h1 style="text-align: center;">404</h1>');
@@ -539,7 +542,7 @@ class Router extends HttpService implements RouterInterface
      * @return mixed
      * @throws Exception
      */
-    private function exception($exception): mixed
+    public function exception($exception): mixed
     {
         return Snowflake::app()->getLogger()->exception($exception);
     }

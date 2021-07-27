@@ -103,16 +103,15 @@ class HTTPServerListener extends Abstracts\Server
 		try {
 //			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 			[$sRequest, $sResponse] = $this->request($request, $response);
-			$node = $this->router->find_path($sRequest);
-			if ($node instanceof Node) {
-				$sResponse->send($node->dispatch());
-			} else {
-				$sResponse->send('404', 404);
-			}
+
+			$result = $this->router->dispatch($sRequest);
 		} catch (Error | Throwable $exception) {
-			$response->setHeader('Content-Type', 'text/html; charset=utf-8');
-			$response->setStatusCode(500);
-			$response->end(jTraceEx($exception, null, true));
+			$result = $this->router->exception($exception);
+		} finally {
+			if (!isset($sResponse)){
+				return;
+			}
+			$sResponse->send($result);
 		}
 	}
 
