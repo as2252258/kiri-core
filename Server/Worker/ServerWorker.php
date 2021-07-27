@@ -4,11 +4,13 @@ namespace Server\Worker;
 
 use Annotation\Annotation;
 use Exception;
+use ReflectionException;
 use Server\Constant;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Help;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Runtime;
 use Snowflake\Snowflake;
 use Swoole\Server;
@@ -37,7 +39,32 @@ class ServerWorker extends \Server\Abstracts\Server
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
-		$annotation->runtime(APP_PATH . 'app');
+		$this->interpretDirectory($annotation);
+	}
+
+
+	/**
+	 * @param $annotation
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 */
+	private function interpretDirectory($annotation)
+	{
+		$fileLists = $annotation->runtime(APP_PATH . 'app');
+
+		$di = Snowflake::getDi();
+		foreach ($fileLists as $class) {
+			$instance = $di->get($class);
+			$methods = $di->getMethodAttribute($class);
+			foreach ($methods as $method => $attribute) {
+				if (empty($attribute)) {
+					continue;
+				}
+				foreach ($attribute as $item) {
+					$item->execute($instance, $method);
+				}
+			}
+		}
 	}
 
 
