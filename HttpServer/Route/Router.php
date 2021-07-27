@@ -113,15 +113,12 @@ class Router extends HttpService implements RouterInterface
      */
     public function addRoute($path, $handler, string $method = 'any'): ?Node
     {
-        $method = strtolower($method);
         if (!isset(static::$nodes[$method])) {
             static::$nodes[$method] = [];
         }
-
         if ($handler instanceof Closure) {
-            $handler = Closure::bind($handler, new Controller());
+            $handler = Closure::bind($handler, di(Controller::class));
         }
-
         return $this->hash($path, $handler, $method);
     }
 
