@@ -19,11 +19,12 @@ use Snowflake\Snowflake;
 {
 
 
-    /**
-     * Inject constructor.
-     * @param string $value
-     * @param array $args
-     */
+	/**
+	 * Inject constructor.
+	 * @param string $value
+	 * @param bool $withContext
+	 * @param array $args
+	 */
     public function __construct(private string $value, public bool $withContext = false, private array $args = [])
     {
     }
@@ -78,7 +79,7 @@ use Snowflake\Snowflake;
             return $method;
         }
         if (is_object($class)) $class = $class::class;
-        $method = Snowflake::getDi()->getClassProperty($class, $method);
+        $method = Snowflake::getDi()->getClassReflectionProperty($class, $method);
         if (!$method || $method->isStatic()) {
             return false;
         }

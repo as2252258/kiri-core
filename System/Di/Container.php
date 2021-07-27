@@ -214,7 +214,7 @@ class Container extends BaseObject
      * @return mixed
      * @throws Exception
      */
-    private function propertyInject(ReflectionClass $reflect, $object): mixed
+    public function propertyInject(ReflectionClass $reflect, $object): mixed
     {
         if (!isset(static::$_propertyAttributes[$reflect->getName()])) {
             return $object;
@@ -228,7 +228,7 @@ class Container extends BaseObject
 
 
     /**
-     * @param \ReflectionClass $class
+     * @param ReflectionClass $class
      */
     private function resolveMethodAttribute(ReflectionClass $class)
     {
@@ -251,12 +251,11 @@ class Container extends BaseObject
     }
 
 
-    /**
-     * @param \ReflectionAttribute $attribute
-     * @param \ReflectionClass $class
-     * @param $object
-     */
-    private function setReflectionMethod(ReflectionClass $class, \ReflectionMethod $method)
+	/**
+	 * @param ReflectionClass $class
+	 * @param ReflectionMethod $method
+	 */
+    private function setReflectionMethod(ReflectionClass $class, ReflectionMethod $method)
     {
         if (!isset(static::$_attributeMaping[$class->getName()])) {
             static::$_attributeMaping[$class->getName()] = [];
@@ -265,12 +264,12 @@ class Container extends BaseObject
     }
 
 
-    /**
-     * @param \ReflectionAttribute $attribute
-     * @param \ReflectionClass $class
-     * @param $object
-     */
-    private function setMethodsAttributes(\ReflectionClass $attribute, ReflectionMethod $method, $object)
+	/**
+	 * @param ReflectionClass $attribute
+	 * @param ReflectionMethod $method
+	 * @param $object
+	 */
+    private function setMethodsAttributes(ReflectionClass $attribute, ReflectionMethod $method, $object)
     {
         if (!isset(static::$_methodsAttributes[$attribute->getName()])) {
             static::$_methodsAttributes[$attribute->getName()] = [];
@@ -280,7 +279,7 @@ class Container extends BaseObject
 
 
     /**
-     * @param \ReflectionClass $class
+     * @param ReflectionClass $class
      */
     private function resolveTargetAttribute(ReflectionClass $class)
     {
@@ -299,7 +298,7 @@ class Container extends BaseObject
     /**
      * @param $className
      * @param $method
-     * @return \ReflectionMethod|null
+     * @return ReflectionMethod|null
      */
     public function getReflectionMethod($className, $method): ?ReflectionMethod
     {
@@ -325,9 +324,9 @@ class Container extends BaseObject
     /**
      * @param string $class
      * @param string|null $property
-     * @return ReflectionProperty|array|null
+     * @return ReflectionProperty|ReflectionProperty[]|null
      */
-    public function getClassProperty(string $class, string $property = null): ReflectionProperty|null|array
+    public function getClassReflectionProperty(string $class, string $property = null): ReflectionProperty|null|array
     {
         if (!isset(static::$_reflectionProperty[$class])) {
             return null;

@@ -94,8 +94,26 @@ class Node extends HttpService
 		} else {
 			$this->handler = $handler;
 		}
-		if (!empty($this->handler) && is_array($this->handler)) {
-			$this->callback = di(MiddlewareManager::class)->callerMiddlewares(
+		return $this->injectMiddleware();
+	}
+
+
+	/**
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function injectMiddleware(): static
+	{
+		$manager = di(MiddlewareManager::class);
+		if ($this->handler instanceof Closure) {
+			if (!empty($this->middleware)) {
+				$this->callback = $manager->closureMiddlewares($this->middleware, $this->createDispatch());
+			} else {
+				$this->callback = $this->createDispatch();
+			}
+		} else {
+			$manager->addMiddlewares($this->handler[0], $this->handler[1], $this->middleware);
+			$this->callback = $manager->callerMiddlewares(
 				$this->handler[0], $this->handler[1], $this->createDispatch()
 			);
 		}

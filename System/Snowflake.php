@@ -56,7 +56,7 @@ class Snowflake
      */
     public static function injectProperty(object $class)
     {
-        $attributes = static::getDi()->getClassProperty($class::class);
+        $attributes = static::getDi()->getClassReflectionProperty($class::class);
         /**
          * @var string $property
          * @var ReflectionProperty $attribute
