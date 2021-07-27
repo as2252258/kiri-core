@@ -108,7 +108,7 @@ class Node extends HttpService
 	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	private function createDispatch()
+	private function createDispatch(): Closure
 	{
 		$application = $this;
 
