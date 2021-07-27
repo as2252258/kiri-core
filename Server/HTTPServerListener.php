@@ -103,9 +103,6 @@ class HTTPServerListener extends Abstracts\Server
 	{
 		[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 		try {
-			$sResponse->send('1');
-			return;
-
 			$node = $this->router->find_path($sRequest);
 			if (empty($node)) {
 				$sResponse->send('404', 404);

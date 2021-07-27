@@ -459,10 +459,8 @@ class Request extends HttpService
 		if (!empty($request->post)) {
 			$sRequest->params->setPosts($request->post ?? []);
 		}
-		Context::setContext(HttpParams::class, $sRequest->params);
 
 		$sRequest->headers = new HttpHeaders(array_merge($request->server, $request->header));
-		Context::setContext(HttpHeaders::class, $sRequest->headers);
 
 		$sRequest->uri = $sRequest->headers->get('request_uri');
 
