@@ -148,7 +148,7 @@ class Node extends HttpService
 	 */
 	private function normalHandler($application): Closure
 	{
-		return static function ($application) use ($application) {
+		return static function () use ($application) {
 			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
 			if (is_array($application->handler)) {
 				Snowflake::injectProperty($application->handler[0]);
