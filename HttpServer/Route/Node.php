@@ -115,24 +115,46 @@ class Node extends HttpService
 		/** @var Aop $aop */
 		$aop = Snowflake::app()->get('aop');
 		if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
-			return (static function ($application) {
-				$dispatchParam = Context::getContext('dispatch-param', [\request()]);
-				if (is_array($application->handler)) {
-					Snowflake::injectProperty($application->handler[0]);
-				}
-				return call_user_func($application->handler, ...$dispatchParam);
-			})($application);
+			return $this->normalHandler($application);
+		} else {
+			return $this->aopHandler($aop->getAop($this->handler), $application);
 		}
+	}
 
+
+	/**
+	 * @param $aop
+	 * @param $application
+	 * @return Closure
+	 */
+	private function aopHandler($aop, $application): Closure
+	{
 		$reflect = $aop->getAop($this->handler);
-		return (static function ($callback, $application, $reflect) {
+		$callback = [$reflect->getMethod('invoke'), 'invokeArgs'];
+		return static function () use ($callback, $application, $reflect) {
 			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
 			$asp = $reflect->newInstance($application->handler);
 			if (is_array($application->handler)) {
 				Snowflake::injectProperty($application->handler[0]);
 			}
 			call_user_func($callback, $asp, $dispatchParam);
-		})([$reflect->getMethod('invoke'), 'invokeArgs'], $application, $reflect);
+		};
+	}
+
+
+	/**
+	 * @param $application
+	 * @return Closure
+	 */
+	private function normalHandler($application): Closure
+	{
+		return static function ($application) use ($application) {
+			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
+			if (is_array($application->handler)) {
+				Snowflake::injectProperty($application->handler[0]);
+			}
+			return call_user_func($application->handler, ...$dispatchParam);
+		};
 	}
 
 
