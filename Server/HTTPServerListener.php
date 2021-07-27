@@ -112,9 +112,8 @@ class HTTPServerListener extends Abstracts\Server
                 $sResponse->send($node->dispatch(), 200);
             }
         } catch (Error | Throwable $exception) {
-            var_dump($exception->getMessage());
             $sResponse->addHeader('Content-Type', 'text/html; charset=utf-8');
-            $sResponse->send($exception->getMessage(),
+            $sResponse->send(jTraceEx($exception),
                 $exception->getCode() == 0 ? 500 : $exception->getCode());
         } finally {
             $this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
