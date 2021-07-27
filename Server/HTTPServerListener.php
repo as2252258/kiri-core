@@ -103,13 +103,12 @@ class HTTPServerListener extends Abstracts\Server
 	{
 		[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 		try {
-			if ($sRequest->is('favicon.ico')) {
-				$this->router->status404();
-			} else if (!($node = $this->router->find_path($sRequest))) {
-				$this->router->status404();
-			} else {
-				$sResponse->send($node->dispatch(), 200);
+			$node = $this->router->find_path($sRequest);
+			if (empty($node)) {
+				$sResponse->send('404', 404);
+				return;
 			}
+			$sResponse->send($node->dispatch(), 200);
 		} catch (Error | Throwable $exception) {
 			$sResponse->addHeader('Content-Type', 'text/html; charset=utf-8');
 			$sResponse->send(jTraceEx($exception, null, true),
