@@ -101,7 +101,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+//			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
 			[$sRequest, $sResponse] = $this->request($request, $response);
 
 			$result = $this->router->dispatch($sRequest);
