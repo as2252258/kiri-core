@@ -26,6 +26,7 @@ class HttpParams
 
 	private string|array|null $body = [];
 
+
 	/** @var array */
 	private array $gets = [];
 
@@ -33,19 +34,13 @@ class HttpParams
 	private array $files = [];
 	private array $socket = [];
 
+
 	/**
-	 * HttpParams constructor.
-	 * @param mixed $body
-	 * @param array|null $get
-	 * @param array|null $files
-	 * @param array $socket
+	 * @return mixed
 	 */
-	public function __construct(mixed $body, ?array $get, ?array $files, array $socket = [])
+	public function getRawContent(): mixed
 	{
-		$this->gets = $get ?? [];
-		$this->files = $files ?? [];
-		$this->socket = $socket ?? [];
-		$this->body = $body ?? '';
+		return $this->getRequest()->rawContent();
 	}
 
 	/**
@@ -152,7 +147,7 @@ class HttpParams
 	 */
 	public function get($name, $defaultValue = null, $call = null): mixed
 	{
-		return $this->gets[$name] ?? $defaultValue;
+		return $this->getRequest()->get[$name] ?? $defaultValue;
 	}
 
 	/**
@@ -163,7 +158,7 @@ class HttpParams
 	 */
 	public function post($name, $defaultValue = null, $call = null): mixed
 	{
-		$data = $this->body[$name] ?? $defaultValue;
+		$data = $this->getRequest()->post[$name] ?? $defaultValue;
 		if ($call !== null) {
 			$data = call_user_func($call, $data);
 		}
@@ -191,7 +186,7 @@ class HttpParams
 	 */
 	public function gets(): array
 	{
-		return $this->gets;
+		return $this->getRequest()->get;
 	}
 
 	/**
@@ -199,7 +194,9 @@ class HttpParams
 	 */
 	#[Pure] public function params(): array
 	{
-		return array_merge($this->body ?? [], $this->files ?? []);
+		$request = $this->getRequest();
+
+		return array_merge($request->post ?? [], $request->files ?? []);
 	}
 
 	/**
@@ -207,7 +204,8 @@ class HttpParams
 	 */
 	#[Pure] public function load(): array
 	{
-		return array_merge($this->files ?? [], $this->body ?? [], $this->gets ?? [], $this->socket ?? []);
+		$request = $this->getRequest();
+		return array_merge($request->files ?? [], $request->post ?? [], $request->gets ?? []);
 	}
 
 	/**
@@ -217,7 +215,7 @@ class HttpParams
 	 */
 	public function array($name, array $defaultValue = []): mixed
 	{
-		return $this->body[$name] ?? $defaultValue;
+		return $this->getRequest()->post[$name] ?? $defaultValue;
 	}
 
 	/**
@@ -228,10 +226,10 @@ class HttpParams
 	 */
 	public function file($name): File|null
 	{
-		if (!isset($this->files[$name])) {
+		$param = $this->getRequest()->files[$name] ?? null;
+		if (empty($param)) {
 			return null;
 		}
-		$param = $this->files[$name];
 		$param['class'] = File::class;
 		return Snowflake::createObject($param);
 	}
@@ -244,9 +242,7 @@ class HttpParams
 	 */
 	private function required(string $name, bool $isNeed = false): mixed
 	{
-		$body = array_merge($this->body ?? [], $this->socket ?? []);
-
-		$int = $body[$name] ?? NULL;
+		$int = $this->getRequest()->post[$name] ?? NULL;
 		if (is_null($int) && $isNeed === true) {
 			throw new RequestException("You need to add request parameter $name");
 		}
@@ -275,7 +271,7 @@ class HttpParams
 	 */
 	public function float(string $name, bool $isNeed = FALSE, int $round = 0): ?float
 	{
-        return (float)$this->required($name, $isNeed);
+		return (float)$this->required($name, $isNeed);
 	}
 
 	/**
@@ -420,6 +416,15 @@ class HttpParams
 		$load = $this->load();
 
 		return $load[$name] ?? null;
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	private function getRequest(): \Swoole\Http\Request
+	{
+		return Context::getContext('request');
 	}
 
 }

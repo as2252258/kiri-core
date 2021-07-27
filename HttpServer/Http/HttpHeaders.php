@@ -16,32 +16,13 @@ namespace HttpServer\Http;
 class HttpHeaders
 {
 
-	/**
-	 * @var string[]
-	 */
-	private array $headers = [];
-
-	/**
-	 * @var string[]
-	 */
-	private array $response = [];
-
-	/**
-	 * HttpHeaders constructor.
-	 * @param $headers
-	 */
-	public function __construct($headers)
-	{
-		$this->headers = $headers;
-	}
-
 
 	/**
 	 * @param string $uri
 	 */
 	public function setRequestUri(string $uri)
 	{
-		$this->headers['request_uri'] = $uri;
+		$this->replace('request_uri', $uri);
 	}
 
 
@@ -50,28 +31,9 @@ class HttpHeaders
 	 */
 	public function setRequestMethod(string $method)
 	{
-		$this->headers['request_method'] = $method;
+		$this->replace('request_method', $method);
 	}
 
-
-	/**
-	 * @param $name
-	 * @param $value
-	 */
-	public function setHeader($name, $value)
-	{
-		$this->response[$name] = $value;
-	}
-
-	/**
-	 * @param array $headers
-	 */
-	public function setHeaders(array $headers)
-	{
-		foreach ($headers as $key => $val) {
-			$this->response[$key] = $val;
-		}
-	}
 
 	/**
 	 * @param $name
@@ -79,7 +41,7 @@ class HttpHeaders
 	 */
 	public function replace($name, $value)
 	{
-		$this->headers[$name] = $value;
+		$this->addHeaders([$name => $value]);
 	}
 
 	/**
@@ -88,7 +50,7 @@ class HttpHeaders
 	 */
 	public function addHeader($name, $value)
 	{
-		$this->headers[$name] = $value;
+		$this->addHeaders([$name => $value]);
 	}
 
 	/**
@@ -100,19 +62,12 @@ class HttpHeaders
 		if (empty($headers)) {
 			return $this;
 		}
-		if (!empty($this->headers)) {
-			$headers = array_merge($this->headers, $headers);
+		$request = Context::getContext('request');
+		if (!empty($request->headers)) {
+			$headers = array_merge($request->headers, $headers);
 		}
-		$this->headers = $headers;
+		$request->headers = $headers;
 		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getResponseHeaders(): array
-	{
-		return $this->response;
 	}
 
 	/**
@@ -120,7 +75,7 @@ class HttpHeaders
 	 */
 	public function toArray(): array
 	{
-		return $this->headers;
+		return $this->___call();
 	}
 
 	/**
@@ -129,10 +84,11 @@ class HttpHeaders
 	 */
 	public function getHeader($name): ?string
 	{
-		if (!isset($this->headers[$name])) {
+		$headers = $this->___call();
+		if (!isset($headers[$name])) {
 			return null;
 		}
-		return $this->headers[$name];
+		return $headers[$name];
 	}
 
 
@@ -156,7 +112,8 @@ class HttpHeaders
 	 */
 	public function exists($name): bool
 	{
-		return isset($this->headers[$name]) && $this->headers[$name] != null;
+		$headers = $this->___call();
+		return isset($headers[$name]) && $headers[$name] != null;
 	}
 
 
@@ -165,7 +122,17 @@ class HttpHeaders
 	 */
 	public function getHeaders(): array
 	{
-		return $this->headers;
+		return $this->___call();
 	}
+
+
+	/**
+	 * @return mixed
+	 */
+	private function ___call(): array
+	{
+		return Context::getContext('request')->header ?? [];
+	}
+
 
 }
