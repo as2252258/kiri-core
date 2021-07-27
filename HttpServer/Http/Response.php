@@ -165,9 +165,9 @@ class Response extends HttpService
 	public function send(mixed $context = '', int $statusCode = 200): mixed
 	{
 		$sendData = $this->parseData($context);
-		$response = Context::getContext('response');
-		if ($response instanceof SResponse) {
-			$this->sendData($response, $sendData, $statusCode);
+		$this->statusCode = $statusCode;
+		if ($this->response instanceof SResponse) {
+			$this->sendData($sendData);
 		} else {
 			$this->printResult($sendData);
 		}
@@ -214,19 +214,21 @@ class Response extends HttpService
 	}
 
 	/**
-	 * @param SResponse $response
 	 * @param $sendData
-	 * @param $status
-	 * @throws Exception
 	 */
-	private function sendData(SResponse $response, $sendData, $status): void
+	private function sendData($sendData): void
 	{
-		if (!$response->isWritable()) {
+		if (!$this->response->isWritable()) {
 			return;
 		}
-		$this->setHeaders($response);
-		$response->status($status);
-		$response->end($sendData);
+		defer(fn() => $this->headers = []);
+		$this->response->header('Content-Type', $this->getContentType());
+		$this->response->header('Run-Time', $this->getRuntime());
+		foreach ($this->headers as $key => $header) {
+			$this->response->header($key, $header);
+		}
+		$this->response->status($this->statusCode);
+		$this->response->end($sendData);
 	}
 
 
@@ -294,8 +296,9 @@ class Response extends HttpService
 	 */
 	public static function create($response = null): static
 	{
-		Context::setContext('response', $response);
 		$ciResponse = Snowflake::getDi()->get(Response::class);
+		Context::setContext('response', $ciResponse);
+		$ciResponse->response = $response;
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;
 		return $ciResponse;
