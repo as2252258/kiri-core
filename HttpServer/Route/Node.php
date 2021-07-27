@@ -12,6 +12,7 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
+use ReflectionClass;
 use ReflectionException;
 use Snowflake\Aop;
 use Snowflake\Core\Json;
@@ -141,18 +142,18 @@ class Node extends HttpService
 
 
 	/**
-	 * @param $aop
+	 * @param ReflectionClass $reflect
 	 * @param $application
 	 * @return Closure
+	 * @throws ReflectionException|NotFindClassException
 	 */
-	private function aopHandler($aop, $application): Closure
+	private function aopHandler(ReflectionClass $reflect, $application): Closure
 	{
-		$reflect = $aop->getAop($this->handler);
 		$callback = [$reflect->getMethod('invoke'), 'invokeArgs'];
 
-		$instance = $reflect->newInstance($application->handler);
+		$instance = Snowflake::getDi()->get($reflect->getName());
 		return static function () use ($callback, $application, $instance, $reflect) {
-			call_user_func($callback, $instance, ...func_get_args());
+			call_user_func($callback, $instance);
 		};
 	}
 
@@ -164,7 +165,7 @@ class Node extends HttpService
 	private function normalHandler($application): Closure
 	{
 		return static function () use ($application) {
-			return call_user_func($application->handler, ...func_get_args());
+			return call_user_func($application->handler);
 		};
 	}
 

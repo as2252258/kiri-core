@@ -4,7 +4,6 @@
 namespace Snowflake\Error;
 
 
-use JetBrains\PhpStorm\Pure;
 use Snowflake\IAspect;
 
 
@@ -15,43 +14,39 @@ use Snowflake\IAspect;
 class LoggerAspect implements IAspect
 {
 
-    private string $className = '';
-    private string $methodName = '';
-
-
-    /**
-     * LoggerAspect constructor.
-     * @param array $handler
-     */
-    #[Pure] public function __construct(public array $handler)
-    {
-    }
+	private string $className = '';
+	private string $methodName = '';
 
 
 	/**
+	 * @param mixed $handler
 	 * @return mixed
 	 */
-    public function invoke(): mixed
-    {
-        $startTime = microtime(true);
+	public function invoke(mixed $handler): mixed
+	{
+		$startTime = microtime(true);
 
-        $data = call_user_func($this->handler, func_get_args());
+		$data = call_user_func($handler);
 
-        $this->print_runtime($startTime);
+		$this->print_runtime($handler, $startTime);
 
-        return $data;
-    }
+		return $data;
+	}
 
 
-    private function print_runtime($startTime)
-    {
-        $className = $this->handler[0]::class;
-        $methodName = $this->handler[1];
+	/**
+	 * @param $handler
+	 * @param $startTime
+	 */
+	private function print_runtime($handler, $startTime)
+	{
+		$className = $handler::class;
+		$methodName = $handler;
 
-        $runTime = round(microtime(true) - $startTime, 6);
-        echo sprintf('run %s::%s use time %6f', $className, $methodName, $runTime);
-        echo PHP_EOL;
-    }
+		$runTime = round(microtime(true) - $startTime, 6);
+		echo sprintf('run %s::%s use time %6f', $className, $methodName, $runTime);
+		echo PHP_EOL;
+	}
 
 
 }
