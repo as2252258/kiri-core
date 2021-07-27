@@ -149,10 +149,10 @@ class Node extends HttpService
 	{
 		$reflect = $aop->getAop($this->handler);
 		$callback = [$reflect->getMethod('invoke'), 'invokeArgs'];
-		return static function () use ($callback, $application, $reflect) {
-			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
 
-			call_user_func($callback, $reflect->newInstance($application->handler), $dispatchParam);
+		$instance = $reflect->newInstance($application->handler);
+		return static function () use ($callback, $application, $instance, $reflect) {
+			call_user_func($callback, $instance, ...func_get_args());
 		};
 	}
 
@@ -164,8 +164,7 @@ class Node extends HttpService
 	private function normalHandler($application): Closure
 	{
 		return static function () use ($application) {
-			$dispatchParam = Context::getContext('dispatch-param', [\request()]);
-			return call_user_func($application->handler, ...$dispatchParam);
+			return call_user_func($application->handler, ...func_get_args());
 		};
 	}
 
@@ -205,24 +204,6 @@ class Node extends HttpService
 			}
 		}
 		return true;
-	}
-
-
-	/**
-	 * @param Closure|array|string $handler
-	 * @throws Exception
-	 */
-	public function addLimits(Closure|string|array $handler)
-	{
-		if (!is_array($handler) || is_object($handler[0])) {
-			$handler = [$handler];
-		}
-		foreach ($handler as $closure) {
-			if (in_array($closure, $this->_limits)) {
-				continue;
-			}
-			$this->_limits[] = $closure;
-		}
 	}
 
 
