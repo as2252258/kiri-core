@@ -4,7 +4,6 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
-use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -488,11 +487,7 @@ if (!function_exists('request')) {
 	 */
 	function request(): Request
 	{
-		$request = Context::getContext('request');
-		if ($request === null) {
-			$request = make('request', Request::class);
-		}
-		return $request;
+		return di(Request::class);
 	}
 
 }
