@@ -129,13 +129,10 @@ class Node extends HttpService
 	 */
 	#[Pure] private function createDispatch(): Closure
 	{
-		return $this->normalHandler($this, $this->handler);
-
-
 		/** @var Aop $aop */
 		$aop = Snowflake::app()->get('aop');
 		if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
-			return $this->normalHandler($this);
+			return $this->normalHandler($this->handler);
 		} else {
 			return $this->aopHandler($aop->getAop($this->handler), $this);
 		}
@@ -164,7 +161,7 @@ class Node extends HttpService
 	 * @param $handler
 	 * @return Closure
 	 */
-	private function normalHandler($application, $handler): Closure
+	private function normalHandler($handler): Closure
 	{
 		return static function () use ($handler) {
 			return call_user_func($handler);
@@ -312,7 +309,6 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		Context::setContext('dispatch-param', func_get_args());
 		if (empty($this->callback)) {
 			return Json::to(404, $this->errorMsg());
 		}
