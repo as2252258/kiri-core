@@ -36,9 +36,9 @@ class Request extends HttpService
 
 	public int $fd = 0;
 
-	public ?HttpParams $params;
+	public ?HttpParams $params = null;
 
-	public ?HttpHeaders $headers;
+	public ?HttpHeaders $headers = null;
 
 	public bool $isCli = FALSE;
 
@@ -59,7 +59,7 @@ class Request extends HttpService
 
 
 	const HTTP_POST = 'post';
-	const HTTP_GET = 'get';
+	const HTTP_GET = 'GET';
 	const HTTP_CMD = 'rpc';
 	const HTTP_LISTEN = 'listen';
 	const HTTP_SOCKET = 'sw::socket';
@@ -124,7 +124,7 @@ class Request extends HttpService
 	 */
 	public function isHead(): bool
 	{
-		$result = $this->headers->getHeader('request_method') == 'head';
+		$result = $this->headers->getHeader('request_method') == 'HEAD';
 		if ($result) {
 			$this->setStatus(101);
 		} else {
@@ -222,16 +222,7 @@ class Request extends HttpService
 	 */
 	public function getUri(): string
 	{
-		if (!$this->headers) {
-			return 'command exec.';
-		}
-		if (!empty($this->uri)) {
-			return $this->uri;
-		}
-		$uri = $this->headers->getHeader('request_uri');
-		$uri = ltrim($uri, '/');
-		if (empty($uri)) return '/';
-		return $uri;
+		return $this->headers->getHeader('request_uri');
 	}
 
 
@@ -307,7 +298,7 @@ class Request extends HttpService
 	 */
 	public function getIsPost(): bool
 	{
-		return $this->getMethod() == 'post';
+		return $this->getMethod() == 'POST';
 	}
 
 	/**
@@ -324,7 +315,7 @@ class Request extends HttpService
 	 */
 	public function getIsOption(): bool
 	{
-		return $this->getMethod() == 'options';
+		return $this->getMethod() == 'OPTIONS';
 	}
 
 	/**
@@ -332,7 +323,7 @@ class Request extends HttpService
 	 */
 	public function getIsGet(): bool
 	{
-		return $this->getMethod() == 'get';
+		return $this->getMethod() == 'GET';
 	}
 
 	/**
@@ -340,7 +331,7 @@ class Request extends HttpService
 	 */
 	public function getIsDelete(): bool
 	{
-		return $this->getMethod() == 'delete';
+		return $this->getMethod() == 'DELETE';
 	}
 
 	/**
@@ -352,9 +343,9 @@ class Request extends HttpService
 	{
 		$method = $this->headers->get('request_method');
 		if (empty($method)) {
-			return 'get';
+			return 'GET';
 		}
-		return strtolower($method);
+		return $method;
 	}
 
 	/**
@@ -456,14 +447,12 @@ class Request extends HttpService
 		Context::setContext('request', $request);
 		/** @var Request $sRequest */
 		$sRequest = Snowflake::getDi()->get(Request::class);
-
-		$sRequest->params = di(HttpParams::class);
-		$sRequest->headers = di(HttpHeaders::class);
-
-		$sRequest->uri = $sRequest->headers->get('request_uri');
-
-		$sRequest->parseUri();
-
+		if ($sRequest->headers === null) {
+			$sRequest->headers = di(HttpHeaders::class);
+		}
+		if ($sRequest->params === null) {
+			$sRequest->params = di(HttpParams::class);
+		}
 		return $sRequest;
 	}
 
