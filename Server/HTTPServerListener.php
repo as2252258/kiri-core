@@ -144,7 +144,7 @@ class HTTPServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::DISCONNECT, null, [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+//		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
@@ -157,7 +157,7 @@ class HTTPServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+//		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 }
