@@ -843,7 +843,7 @@ if (!function_exists('jTraceEx')) {
 	 * @param null $seen
 	 * @return string
 	 */
-	function jTraceEx($e, $seen = null): string
+	function jTraceEx($e, $seen = null, $toHtml = false): string
 	{
 		$starter = $seen ? 'Caused by: ' : '';
 		$result = array();
@@ -866,9 +866,9 @@ if (!function_exists('jTraceEx')) {
 			$file = array_key_exists('file', $value) ? $value['file'] : 'Unknown Source';
 			$line = array_key_exists('file', $value) && array_key_exists('line', $value) && $value['line'] ? $value['line'] : null;
 		}
-		$result = join("\n", $result);
+		$result = join($toHtml ? "<br>" : "\n", $result);
 		if ($prev) {
-			$result .= "\n" . jTraceEx($prev, $seen);
+			$result .= ($toHtml ? "<br>" : "\n") . jTraceEx($prev, $seen, $toHtml);
 		}
 
 		return $result;
