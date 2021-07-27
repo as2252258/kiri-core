@@ -470,17 +470,4 @@ class Request extends HttpService
 	}
 
 
-	/**
-	 * @param string $key
-	 * @param mixed|null $defaultValue
-	 * @return mixed
-	 */
-	public function post(string $key, mixed $defaultValue = null): mixed
-	{
-		/** @var HttpParams $params */
-		$params = Context::getContext(HttpParams::class);
-		return $params->post($key, $defaultValue);
-	}
-
-
 }

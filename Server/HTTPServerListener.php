@@ -3,8 +3,7 @@
 namespace Server;
 
 use Exception;
-use HttpServer\Http\Request as HRequest;
-use HttpServer\Http\Response as HResponse;
+use HttpServer\Route\Node;
 use HttpServer\Route\Router;
 use ReflectionException;
 use Snowflake\Event;
@@ -101,21 +100,32 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function onRequest(Request $request, Response $response)
 	{
-		[$sRequest, $sResponse] = [HRequest::create($request), HResponse::create($response)];
 		try {
+			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+			[$sRequest, $sResponse] = $this->request($request, $response);
 			$node = $this->router->find_path($sRequest);
-			if (empty($node)) {
+			if ($node instanceof Node) {
+				$sResponse->send($node->dispatch());
+			} else {
 				$sResponse->send('404', 404);
-				return;
 			}
-			$sResponse->send($node->dispatch(), 200);
 		} catch (Error | Throwable $exception) {
-			$sResponse->addHeader('Content-Type', 'text/html; charset=utf-8');
-			$sResponse->send(jTraceEx($exception, null, true),
-				$exception->getCode() == 0 ? 500 : $exception->getCode());
-		} finally {
-			$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+			$response->setHeader('Content-Type', 'text/html; charset=utf-8');
+			$response->setStatusCode(500);
+			$response->end(jTraceEx($exception, null, true));
 		}
+	}
+
+
+	/**
+	 * @param Request $request
+	 * @param Response $response
+	 * @return array
+	 * @throws Exception
+	 */
+	public function request(Request $request, Response $response): array
+	{
+		return [\HttpServer\Http\Request::create($request), \HttpServer\Http\Response::create($response)];
 	}
 
 
