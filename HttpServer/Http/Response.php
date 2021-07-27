@@ -37,7 +37,6 @@ class Response extends HttpService
 	/** @var int */
 	public int $statusCode = 200;
 
-	public ?SResponse $response = null;
 	public array $headers = [];
 	public array $cookies = [];
 
@@ -166,10 +165,10 @@ class Response extends HttpService
 	{
 		$sendData = $this->parseData($context);
 		$this->statusCode = $statusCode;
-		if ($this->response instanceof SResponse) {
-			$this->sendData($sendData);
-		} else {
+		if (!Context::hasContext('response')) {
 			$this->printResult($sendData);
+		} else {
+			$this->sendData($sendData);
 		}
 		return $sendData;
 	}
@@ -218,35 +217,19 @@ class Response extends HttpService
 	 */
 	private function sendData($sendData): void
 	{
-		if (!$this->response->isWritable()) {
+		$response = Context::getContext('response');
+		if (!$response || !$response->isWritable()) {
 			return;
 		}
+		$this->setCookies($response);
 		defer(fn() => $this->headers = []);
-		$this->response->header('Content-Type', $this->getContentType());
-		$this->response->header('Run-Time', $this->getRuntime());
-		foreach ($this->headers as $key => $header) {
-			$this->response->header($key, $header);
-		}
-		$this->response->status($this->statusCode);
-		$this->response->end($sendData);
-	}
-
-
-	/**
-	 * @param SResponse $response
-	 * @return void
-	 */
-	private function setHeaders(SResponse $response): void
-	{
 		$response->header('Content-Type', $this->getContentType());
 		$response->header('Run-Time', $this->getRuntime());
-		if (empty($this->headers) || !is_array($this->headers)) {
-			return;
-		}
 		foreach ($this->headers as $key => $header) {
 			$response->header($key, $header);
 		}
-		$this->headers = [];
+		$response->status($this->statusCode);
+		$response->end($sendData);
 	}
 
 
@@ -256,9 +239,6 @@ class Response extends HttpService
 	 */
 	private function setCookies(SResponse $response): void
 	{
-		if (empty($this->cookies) || !is_array($this->cookies)) {
-			return;
-		}
 		foreach ($this->cookies as $header) {
 			$response->setCookie(...$header);
 		}

@@ -4,7 +4,6 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
-use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -614,11 +613,7 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response|stdClass
 	{
-		$response = Context::getContext('response');
-		if (empty($response)){
-			$response = Snowflake::getApp('response');
-		}
-		return $response;
+		return Snowflake::getDi()->get(Response::class);
 	}
 
 }
