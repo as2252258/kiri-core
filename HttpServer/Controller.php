@@ -24,32 +24,32 @@ class Controller
     /**
      * inject request
      *
-     * @var \HttpServer\Http\Request|null
+     * @var Request|null
      */
-    #[Inject(value: 'request', withContext: true)]
+    #[Inject(value: 'request')]
     public ?Request $request = null;
 
 
     /**
-     * @var \HttpServer\Http\HttpParams|null
+     * @var HttpParams|null
      */
-    #[Inject(value: HttpParams::class, withContext: true)]
+    #[Inject(value: HttpParams::class)]
     public ?HttpParams $input = null;
 
 
     /**
-     * @var \HttpServer\Http\HttpHeaders|null
+     * @var HttpHeaders|null
      */
-    #[Inject(value: HttpHeaders::class, withContext: true)]
+    #[Inject(value: HttpHeaders::class)]
     public ?HttpHeaders $header = null;
 
 
     /**
      * inject response
      *
-     * @var \HttpServer\Http\Response|null
+     * @var Response|null
      */
-    #[Inject('response')]
+    #[Inject(value: 'response')]
     public ?Response $response = null;
 
 
