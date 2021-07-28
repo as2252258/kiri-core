@@ -487,7 +487,7 @@ if (!function_exists('request')) {
 	 */
 	function request(): Request
 	{
-		return di(Request::class);
+		return Snowflake::app()->get('request');
 	}
 
 }
@@ -613,7 +613,7 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response|stdClass
 	{
-		return Snowflake::getDi()->get(Response::class);
+		return Snowflake::app()->get('response');
 	}
 
 }

@@ -277,7 +277,7 @@ class Response extends HttpService
 	public static function create($response = null): static
 	{
 		Context::setContext('response', $response);
-		$ciResponse = Snowflake::getDi()->get(Response::class);
+		$ciResponse = Snowflake::app()->get('response');
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;
 		return $ciResponse;
