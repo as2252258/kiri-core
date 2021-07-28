@@ -58,20 +58,18 @@ class HTTPServerListener extends Abstracts\Server
 		if (!in_array($mode, [SWOOLE_TCP, SWOOLE_TCP6])) {
 			trigger_error('Port mode ' . $host . '::' . $port . ' must is udp listener type.');
 		}
-
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
+		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 		static::$_http = $server->addlistener($host, $port, $mode);
 		if (!(static::$_http instanceof Port)) {
 			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
 		}
-
 		static::$_http->set($settings['settings'] ?? []);
 		static::$_http->on('request', [$reflect, 'onRequest']);
 		static::$_http->on('connect', [$reflect, 'onConnect']);
 		static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
 		static::$_http->on('close', [$reflect, 'onClose']);
-		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 		return static::$_http;
 	}
 
