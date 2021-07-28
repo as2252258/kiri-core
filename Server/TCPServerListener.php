@@ -43,6 +43,11 @@ class TCPServerListener extends Abstracts\Server
 
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
+		$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
+		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+		$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
+		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+
 		static::$_tcp = $server->addlistener($host, $port, $mode);
 		if (!(static::$_tcp instanceof Port)) {
 			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
@@ -51,14 +56,7 @@ class TCPServerListener extends Abstracts\Server
 		static::$_tcp->on('receive', [$reflect, 'onReceive']);
 		static::$_tcp->on('connect', [$reflect, 'onConnect']);
 		static::$_tcp->on('close', [$reflect, 'onClose']);
-		if (swoole_version() >= '4.7.0') {
-			static::$_tcp->on('disconnect', [$reflect, 'onDisconnect']);
-			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-		}
-		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
-		$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
-		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-
+		static::$_tcp->on('disconnect', [$reflect, 'onDisconnect']);
 		return static::$_tcp;
 	}
 

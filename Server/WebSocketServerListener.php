@@ -44,6 +44,10 @@ class WebSocketServerListener extends Abstracts\Server
 
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
+		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+		$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
+		$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
+		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 
 		static::$_http = $server->addlistener($host, $port, $mode);
 		if (!(static::$_http instanceof Port)) {
@@ -55,11 +59,6 @@ class WebSocketServerListener extends Abstracts\Server
 		static::$_http->on('handshake', [$reflect, 'onHandshake']);
 		static::$_http->on('message', [$reflect, 'onMessage']);
 		static::$_http->on('close', [$reflect, 'onClose']);
-
-		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-		$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
-		$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
-		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 
 		return static::$_http;
 	}

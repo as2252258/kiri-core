@@ -43,6 +43,7 @@ class UDPServerListener extends Abstracts\Server
 
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)->newInstance();
+		$reflect->setEvents(Constant::PACKET, $settings['events'][Constant::PACKET] ?? null);
 
 		static::$_udp = $server->addlistener($host, $port, $mode);
 		if (!(static::$_udp instanceof Port)) {
@@ -51,8 +52,6 @@ class UDPServerListener extends Abstracts\Server
 
 		static::$_udp->set($settings['settings'] ?? []);
 		static::$_udp->on('packet', [$reflect, 'onPacket']);
-
-		$reflect->setEvents(Constant::PACKET, $settings['events'][Constant::PACKET] ?? null);
 
 		return static::$_udp;
 	}
