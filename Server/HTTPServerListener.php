@@ -3,10 +3,8 @@
 namespace Server;
 
 use Exception;
-use HttpServer\Route\Node;
 use HttpServer\Route\Router;
 use ReflectionException;
-use Snowflake\Event;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Error;
@@ -65,7 +63,7 @@ class HTTPServerListener extends Abstracts\Server
 		if (!(static::$_http instanceof Port)) {
 			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
 		}
-		static::$_http->set($settings['settings'] ?? []);
+		static::$_http->set(array_merge($settings['settings'] ?? [], ['enable_unsafe_event' => false]));
 		static::$_http->on('request', [$reflect, 'onRequest']);
 		static::$_http->on('connect', [$reflect, 'onConnect']);
 		static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
@@ -94,14 +92,14 @@ class HTTPServerListener extends Abstracts\Server
 	{
 		try {
 //			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
-            /** @var \HttpServer\Http\Response $sResponse */
+			/** @var \HttpServer\Http\Response $sResponse */
 			[$sRequest, $sResponse] = $this->request($request, $response);
 
 			$result = $this->router->dispatch($sRequest);
 		} catch (Error | Throwable $exception) {
 			$result = $this->router->exception($exception);
 		} finally {
-			if (!isset($sResponse)){
+			if (!isset($sResponse)) {
 				return;
 			}
 			$sResponse->send($result);
