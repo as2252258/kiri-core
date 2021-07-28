@@ -69,13 +69,8 @@ class HTTPServerListener extends Abstracts\Server
 		static::$_http->set($settings['settings'] ?? []);
 		static::$_http->on('request', [$reflect, 'onRequest']);
 		static::$_http->on('connect', [$reflect, 'onConnect']);
-		if (swoole_version() >= '4.7.0') {
-			static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
-			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-		} else {
-            static::$_http->on('close', [$reflect, 'onClose']);
-            $reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
-        }
+		static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
+		static::$_http->on('close', [$reflect, 'onClose']);
 		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 		return static::$_http;
 	}
@@ -135,7 +130,6 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function onDisconnect(Server $server, int $fd)
 	{
-		$this->runEvent(Constant::DISCONNECT, null, [$server, $fd]);
 	}
 
 
@@ -146,7 +140,6 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function onClose(Server $server, int $fd)
 	{
-		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
 	}
 
 }
