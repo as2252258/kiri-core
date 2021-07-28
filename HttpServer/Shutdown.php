@@ -5,6 +5,7 @@ namespace HttpServer;
 
 
 use Exception;
+use Server\ServerManager;
 use Snowflake\Abstracts\Component;
 
 
@@ -48,7 +49,8 @@ class Shutdown extends Component
 			return;
 		}
 
-		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
+		$server = ServerManager::getContext()->getServer();
+		$master_pid = $server->setting['pid_file'] ?? PID_PATH;
 		if (file_exists($master_pid)) {
 			$this->close(file_get_contents($master_pid));
 		}
@@ -75,7 +77,8 @@ class Shutdown extends Component
 	 */
 	public function isRunning(): bool
 	{
-		$master_pid = Server()->setting['pid_file'] ?? PID_PATH;
+		$server = ServerManager::getContext()->getServer();
+		$master_pid = $server->setting['pid_file'] ?? PID_PATH;
 
 		if (!file_exists($master_pid)) {
 			return false;

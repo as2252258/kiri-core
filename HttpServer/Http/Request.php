@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HttpServer\Http;
 
+use Annotation\Inject;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
@@ -36,8 +37,18 @@ class Request extends HttpService
 
 	public int $fd = 0;
 
+
+	/**
+	 * @var HttpParams|null
+	 */
+	#[Inject(HttpParams::class)]
 	public ?HttpParams $params = null;
 
+
+	/**
+	 * @var HttpHeaders|null
+	 */
+	#[Inject(HttpHeaders::class)]
 	public ?HttpHeaders $headers = null;
 
 	public bool $isCli = FALSE;
@@ -440,20 +451,14 @@ class Request extends HttpService
 	 * @return Request
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public static function create(\Swoole\Http\Request $request): Request
 	{
 		$request->header = array_merge($request->header, $request->server);
 		Context::setContext('request', $request);
 		/** @var Request $sRequest */
-		$sRequest = Snowflake::getDi()->get(Request::class);
-		if ($sRequest->headers === null) {
-			$sRequest->headers = di(HttpHeaders::class);
-		}
-		if ($sRequest->params === null) {
-			$sRequest->params = di(HttpParams::class);
-		}
-		return $sRequest;
+		return Snowflake::app()->get('request');
 	}
 
 

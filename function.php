@@ -388,7 +388,7 @@ if (!function_exists('trim_blank')) {
 	 * @param bool $htmlTags
 	 * @return array|string|null
 	 */
-	function trim_blank(string $content, $len = 0, $encode = 'utf-8', $htmlTags = true): array|string|null
+	function trim_blank(string $content, int $len = 0, string $encode = 'utf-8', bool $htmlTags = true): array|string|null
 	{
 		$str = trim($content);
 		if ($htmlTags) {
@@ -505,20 +505,6 @@ if (!function_exists('Input')) {
 
 }
 
-if (!function_exists('Server')) {
-
-
-	/**
-	 * @return Http|Packet|Receive|Websocket|null
-	 * @throws Exception
-	 */
-	function Server(): Http|Packet|Receive|Websocket|null
-	{
-		return Snowflake::app()->getSwoole();
-	}
-
-}
-
 if (!function_exists('storage')) {
 
 	/**
@@ -527,7 +513,7 @@ if (!function_exists('storage')) {
 	 * @return string
 	 * @throws Exception
 	 */
-	function storage($fileName = '', $path = ''): string
+	function storage(string $fileName = '', string $path = ''): string
 	{
 
 		$basePath = rtrim(Snowflake::getStoragePath(), '/');
