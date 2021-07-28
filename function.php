@@ -508,12 +508,12 @@ if (!function_exists('Input')) {
 if (!function_exists('storage')) {
 
 	/**
-	 * @param string $fileName
-	 * @param string $path
+	 * @param string|null $fileName
+	 * @param string|null $path
 	 * @return string
 	 * @throws Exception
 	 */
-	function storage(string $fileName = '', string $path = ''): string
+	function storage(?string $fileName = '', ?string $path = ''): string
 	{
 
 		$basePath = rtrim(Snowflake::getStoragePath(), '/');
