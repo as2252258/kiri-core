@@ -14,7 +14,6 @@ use Database\Base\BaseActiveRecord;
 use Database\Traits\HasBase;
 use Exception;
 use ReflectionException;
-use Snowflake\Channel;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -228,13 +227,14 @@ class ActiveRecord extends BaseActiveRecord
 
 
 	/**
-	 * @param       $condition
+	 * @param mixed $condition
 	 * @param array $attributes
 	 *
 	 * @return bool
-	 * @throws Exception
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public static function updateAll(mixed $condition, $attributes = []): bool
+	public static function updateAll(mixed $condition, array $attributes = []): bool
 	{
 		$condition = static::find()->where($condition);
 		return $condition->batchUpdate($attributes);
@@ -247,7 +247,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return array|Collection
 	 * @throws Exception
 	 */
-	public static function findAll($condition, $attributes = []): array|Collection
+	public static function findAll($condition, array $attributes = []): array|Collection
 	{
 		$query = static::find()->where($condition);
 		if (!empty($attributes)) {
@@ -291,8 +291,7 @@ class ActiveRecord extends BaseActiveRecord
 		foreach ($lists as $key => $item) {
 			$data[$key] = $this->{$item}($data[$key] ?? null);
 		}
-		$data = array_merge($data, $this->runRelate());
-		return $data;
+		return array_merge($data, $this->runRelate());
 	}
 
 	/**
@@ -335,10 +334,10 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return ActiveQuery
+	 * @return ActiveQuery|HasCount
 	 * @throws Exception
 	 */
-	public function hasCount($modelName, $foreignKey, $localKey): mixed
+	public function hasCount($modelName, $foreignKey, $localKey): ActiveQuery|HasCount
 	{
 		if (($value = $this->getAttribute($localKey)) === null) {
 			throw new Exception("Need join table primary key.");
@@ -357,7 +356,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasMany($modelName, $foreignKey, $localKey): mixed
+	public function hasMany($modelName, $foreignKey, $localKey): ActiveQuery|HasMany
 	{
 		if (($value = $this->getAttribute($localKey)) === null) {
 			throw new Exception("Need join table primary key.");
@@ -375,7 +374,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return ActiveQuery
 	 * @throws Exception
 	 */
-	public function hasIn($modelName, $foreignKey, $localKey): mixed
+	public function hasIn($modelName, $foreignKey, $localKey): ActiveQuery|HasMany
 	{
 		if (($value = $this->getAttribute($localKey)) === null) {
 			throw new Exception("Need join table primary key.");
