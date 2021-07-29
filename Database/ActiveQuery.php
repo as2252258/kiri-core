@@ -53,7 +53,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 * @param array $config
 	 * @throws
 	 */
-	public function __construct($model, $config = [])
+	public function __construct($model, array $config = [])
 	{
 		$this->modelClass = $model;
 
@@ -117,7 +117,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 * @param bool $isArray
 	 * @return $this
 	 */
-	public function asArray($isArray = TRUE): static
+	public function asArray(bool $isArray = TRUE): static
 	{
 		$this->asArray = $isArray;
 		return $this;
@@ -130,7 +130,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function execute($sql, $params = []): Command
+	public function execute($sql, array $params = []): Command
 	{
 		return $this->modelClass::getDb()->createCommand($sql, $this->modelClass::getDbName(), $params);
 	}
@@ -204,7 +204,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function column(string $field, $setKey = ''): ?array
+	public function column(string $field, string $setKey = ''): ?array
 	{
 		return $this->all()->column($field, $setKey);
 	}
@@ -316,7 +316,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 * @return string|bool
 	 * @throws Exception
 	 */
-	public function delete($getSql = false): string|bool
+	public function delete(bool $getSql = false): string|bool
 	{
 		$sql = $this->builder->delete();
 		if ($getSql === false) {

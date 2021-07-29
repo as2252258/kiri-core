@@ -80,11 +80,12 @@ trait QueryTrait
 
 
 	/**
-	 * @param $condition
-	 * @param $condition1
-	 * @param $condition2
+	 * @param string|array $condition
+	 * @param string|array|Closure $condition1
+	 * @param string|array|Closure $condition2
 	 * @return $this
-	 * @throws Exception
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function if(string|array $condition, string|array|Closure $condition1, string|array|Closure $condition2): static
 	{
@@ -224,7 +225,7 @@ trait QueryTrait
 	 *
 	 * select * from tableName as t1
 	 */
-	public function alias($alias = 't1'): static
+	public function alias(string $alias = 't1'): static
 	{
 		$this->alias = $alias;
 		return $this;
@@ -294,8 +295,8 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param $tableName
-	 * @param $alias
+	 * @param string $tableName
+	 * @param string $alias
 	 * @param $onCondition
 	 * @param null $param
 	 * @return $this
@@ -419,7 +420,7 @@ trait QueryTrait
 	 *     'descTime desc'
 	 * ]
 	 */
-	public function orderBy($column, $sort = 'DESC'): static
+	public function orderBy($column, string $sort = 'DESC'): static
 	{
 		if (empty($column)) {
 			return $this;
@@ -442,7 +443,7 @@ trait QueryTrait
 	 * @return $this
 	 *
 	 */
-	private function addOrder($column, $sort = 'DESC'): static
+	private function addOrder($column, string $sort = 'DESC'): static
 	{
 		$column = trim($column);
 
@@ -459,7 +460,7 @@ trait QueryTrait
 	 *
 	 * @return $this
 	 */
-	public function select($column = '*'): static
+	public function select(array|string $column = '*'): static
 	{
 		if ($column == '*') {
 			$this->select = $column;
@@ -501,7 +502,7 @@ trait QueryTrait
 	 * @param string $opera
 	 * @return QueryTrait
 	 */
-	public function and(string $columns, string|int|null|bool $value = NULL, $opera = '='): static
+	public function and(string $columns, string|int|null|bool $value = NULL, string $opera = '='): static
 	{
 		if (!is_numeric($value) && !is_bool($value)) {
 			$value = '\'' . $value . '\'';
@@ -817,7 +818,7 @@ trait QueryTrait
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function makeClosureFunction(Closure|array $closure, $onlyWhere = false): string
+	public function makeClosureFunction(Closure|array $closure, bool $onlyWhere = false): string
 	{
 		$generate = $this->makeNewSqlGenerate();
 		if ($closure instanceof Closure) {
