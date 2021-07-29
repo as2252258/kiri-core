@@ -353,7 +353,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return ActiveQuery
+	 * @return ActiveQuery|HasMany
 	 * @throws Exception
 	 */
 	public function hasMany($modelName, $foreignKey, $localKey): ActiveQuery|HasMany
@@ -371,7 +371,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @param $modelName
 	 * @param $foreignKey
 	 * @param $localKey
-	 * @return ActiveQuery
+	 * @return ActiveQuery|HasMany
 	 * @throws Exception
 	 */
 	public function hasIn($modelName, $foreignKey, $localKey): ActiveQuery|HasMany
