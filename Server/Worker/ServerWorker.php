@@ -5,6 +5,7 @@ namespace Server\Worker;
 use Annotation\Annotation;
 use Exception;
 use ReflectionException;
+use Server\ApplicationStore;
 use Server\Constant;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Help;
@@ -33,6 +34,9 @@ class ServerWorker extends \Server\Abstracts\Server
 	public function onWorkerStart(Server $server, int $workerId)
 	{
 		$this->_setConfigCache($workerId);
+
+		$store = ApplicationStore::getStore()->add();
+
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app');
 
@@ -40,6 +44,8 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
+
+		$store->done();
 	}
 
 

@@ -92,6 +92,8 @@ class HTTPServerListener extends Abstracts\Server
 	{
 		try {
 //			defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+			ApplicationStore::getStore()->waite();
+
 			/** @var \HttpServer\Http\Response $sResponse */
 			[$sRequest, $sResponse] = $this->request($request, $response);
 
