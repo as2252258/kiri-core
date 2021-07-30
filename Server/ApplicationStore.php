@@ -17,6 +17,9 @@ class ApplicationStore
 	private Channel $lock;
 
 
+	/**
+	 * ApplicationStore constructor.
+	 */
 	private function __construct()
 	{
 		$this->lock = new Channel(99999);
