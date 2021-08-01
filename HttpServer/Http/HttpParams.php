@@ -55,10 +55,10 @@ class HttpParams
 	}
 
 	/**
-	 * @param array $data
+	 * @param array|null $data
 	 * 批量添加数据
 	 */
-	public function setPosts(array $data)
+	public function setPosts(?array $data)
 	{
 		if (!is_array($data)) {
 			return;
@@ -70,18 +70,18 @@ class HttpParams
 
 
 	/**
-	 * @param array $files
+	 * @param array|null $files
 	 */
-	public function setFiles(array $files): void
+	public function setFiles(?array $files): void
 	{
 		$this->_files = $files;
 	}
 
 
 	/**
-	 * @param array $gets
+	 * @param array|null $gets
 	 */
-	public function setGets(array $gets): void
+	public function setGets(?array $gets): void
 	{
 		$this->_gets = $gets;
 	}
