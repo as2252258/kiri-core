@@ -26,7 +26,7 @@ class Controller
      *
      * @var Request|null
      */
-    #[Inject(value: 'request')]
+    #[Inject(value: Request::class)]
     public ?Request $request = null;
 
 
@@ -49,7 +49,7 @@ class Controller
      *
      * @var Response|null
      */
-    #[Inject(value: 'response')]
+    #[Inject(value: Response::class)]
     public ?Response $response = null;
 
 

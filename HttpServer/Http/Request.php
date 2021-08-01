@@ -440,7 +440,7 @@ class Request extends HttpService
 		$httpRequest->params->setGets($request->get);
 		$httpRequest->params->setRawContent($request->rawContent(), $httpRequest);
 
-		return Context::setContext('request', $httpRequest);
+		return Context::setContext(Request::class, $httpRequest);
 	}
 
 

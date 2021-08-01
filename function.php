@@ -4,6 +4,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
+use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -483,7 +484,7 @@ if (!function_exists('request')) {
 	 */
 	function request(): Request
 	{
-		return Snowflake::app()->get('request');
+		return Context::getContext(Request::class);
 	}
 
 }
