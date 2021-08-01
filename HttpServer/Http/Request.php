@@ -427,6 +427,7 @@ class Request extends HttpService
 	{
 		$httpRequest = new Request();
 		$httpRequest->fd = $request->fd;
+		$httpRequest->startTime = microtime(true);
 
 		$httpRequest->headers = new HttpHeaders();
 		$httpRequest->headers->setHeaders(array_merge($request->header, $request->server));

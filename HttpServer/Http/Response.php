@@ -343,10 +343,11 @@ class Response extends HttpService
 
 	/**
 	 * @return string
+	 * @throws Exception
 	 */
-	#[Pure] public function getRuntime(): string
+	public function getRuntime(): string
 	{
-		return sprintf('%.5f', microtime(TRUE) - $this->startTime);
+		return sprintf('%.5f', microtime(TRUE) - request()->startTime);
 	}
 
 }
