@@ -228,24 +228,13 @@ class Request extends HttpService
 		return current($this->explode);
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getUri(): string
 	{
 		return $this->headers->getHeader('request_uri');
-	}
-
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function adapter(): void
-	{
-		if (!$this->isHead()) {
-			router()->dispatch();
-		}
 	}
 
 

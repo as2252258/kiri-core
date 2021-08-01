@@ -337,14 +337,13 @@ class ServerManager extends Abstracts\Server
 			$reflect = $this->getNewInstance(WebSocketServerListener::class);
 			$this->server->on('handshake', [$reflect, 'onHandshake']);
 			$this->server->on('message', [$reflect, 'onMessage']);
-			$this->server->on('close', [$reflect, 'onClose']);
-			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
+			$this->server->on('connect', [$reflect, 'onConnect']);
 
 			$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
-			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
 			$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+
+			$this->addCloseOrDisconnect($reflect, $settings);
 		} else if ($type === Constant::SERVER_TYPE_UDP) {
 			$reflect = $this->getNewInstance(UDPServerListener::class);
 			$this->server->on('packet', [$reflect, 'onPacket']);
