@@ -113,9 +113,9 @@ class HttpParams
 		}
 		$context_type = $contextType->headers->getContentType();
 		if (str_contains($context_type, 'json')) {
-			$this->setPosts(json_decode($content));
+			$this->addPosts(json_decode($content, true));
 		} else if (str_contains($context_type, 'xml')) {
-			$this->setPosts(Xml::toArray($content));
+			$this->addPosts(Xml::toArray($content));
 		} else {
 			$this->_rawContent = $content;
 		}
