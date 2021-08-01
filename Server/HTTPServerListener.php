@@ -101,6 +101,7 @@ class HTTPServerListener extends Abstracts\Server
 		} catch (Error | Throwable $exception) {
 			$result = $this->router->exception($exception);
 		} finally {
+			var_dump($result);
 			if (!isset($sResponse)) {
 				return;
 			}
