@@ -338,8 +338,10 @@ class ServerManager extends Abstracts\Server
 			$this->server->on('handshake', [$reflect, 'onHandshake']);
 			$this->server->on('message', [$reflect, 'onMessage']);
 			$this->server->on('close', [$reflect, 'onClose']);
+			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
 
 			$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
+			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
 			$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
@@ -388,13 +390,12 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function addCloseOrDisconnect($reflect, $settings): void
 	{
-		if (swoole_version() >= '4.7.0') {
-			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
+		if (swoole_version() >= '4.7') {
 			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-		} else {
-			$this->server->on('close', [$reflect, 'onClose']);
-			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
 		}
+		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+		$this->server->on('close', [$reflect, 'onClose']);
 	}
 
 

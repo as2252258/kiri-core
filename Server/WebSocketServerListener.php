@@ -46,6 +46,7 @@ class WebSocketServerListener extends Abstracts\Server
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
 		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 		$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
+		$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
 		$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 
@@ -58,6 +59,7 @@ class WebSocketServerListener extends Abstracts\Server
 		static::$_http->on('connect', [$reflect, 'onConnect']);
 		static::$_http->on('handshake', [$reflect, 'onHandshake']);
 		static::$_http->on('message', [$reflect, 'onMessage']);
+		static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
 		static::$_http->on('close', [$reflect, 'onClose']);
 
 		return static::$_http;
@@ -141,6 +143,19 @@ class WebSocketServerListener extends Abstracts\Server
 	public function onClose(Server $server, int $fd)
 	{
 		$this->runEvent(Constant::CLOSE, fn() => $server->confirm($fd), [$server, $fd]);
+
+		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+	}
+
+
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * @throws Exception
+	 */
+	public function onDisconnect(Server $server, int $fd)
+	{
+		$this->runEvent(Constant::DISCONNECT, fn() => $server->confirm($fd), [$server, $fd]);
 
 		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
