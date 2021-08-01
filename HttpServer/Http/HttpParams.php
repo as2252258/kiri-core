@@ -14,6 +14,7 @@ use HttpServer\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
+use Snowflake\Core\Xml;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -24,15 +25,17 @@ use Snowflake\Snowflake;
 class HttpParams
 {
 
-	private string|array|null $body = [];
+	/** @var array */
+	private array $_gets = [];
 
+
+	private array $_posts = [];
 
 	/** @var array */
-	private array $gets = [];
+	private array $_files = [];
 
-	/** @var array */
-	private array $files = [];
-	private array $socket = [];
+
+	private mixed $_rawContent = [];
 
 
 	/**
@@ -40,7 +43,7 @@ class HttpParams
 	 */
 	public function getRawContent(): mixed
 	{
-		return $this->getRequest()->rawContent();
+		return $this->_rawContent;
 	}
 
 	/**
@@ -61,66 +64,57 @@ class HttpParams
 			return;
 		}
 		foreach ($data as $key => $vla) {
-			$this->body[$key] = $vla;
+			$this->_posts[$key] = $vla;
 		}
 	}
 
 
 	/**
-	 * 删除参数
+	 * @param array $files
 	 */
-	public function clearBody()
+	public function setFiles(array $files): void
 	{
-		$this->body = [];
+		$this->_files = $files;
 	}
 
 
 	/**
-	 * 删除参数
+	 * @param array $gets
 	 */
-	public function clearGet()
+	public function setGets(array $gets): void
 	{
-		$this->gets = [];
+		$this->_gets = $gets;
 	}
 
 
 	/**
-	 * 清空文件上传信息
+	 * @param mixed $content
+	 * @param Request $contextType
 	 */
-	public function clearFile()
+	public function setRawContent(mixed $content, Request $contextType)
 	{
-		$this->files = [];
+		if (empty($content)) {
+			return;
+		}
+		$context_type = $contextType->headers->getContentType();
+		if (str_contains($context_type, 'json')) {
+			$this->setPosts(json_decode($content));
+		} else if (str_contains($context_type, 'xml')) {
+			$this->setPosts(Xml::toArray($content));
+		} else {
+			$this->_rawContent = $content;
+		}
 	}
 
 
 	/**
-	 * @return mixed
+	 * @return array
 	 */
-	public function getBody(): mixed
+	public function getBody(): array
 	{
-		return $this->body;
+		return $this->_posts;
 	}
 
-
-	/**
-	 * @return mixed
-	 */
-	public function getBodyAndClear(): mixed
-	{
-		$data = $this->body['body'];
-		$this->clearBody();
-		return $data;
-	}
-
-
-	/**
-	 * @param string $key
-	 * @param string $value
-	 */
-	public function addGetParam(string $key, string $value)
-	{
-		$this->gets[$key] = $value;
-	}
 
 	/**
 	 * @return int
@@ -129,6 +123,18 @@ class HttpParams
 	{
 		return (int)$this->get('page', 1);
 	}
+
+
+	/**
+	 * @param $name
+	 * @param null $default
+	 * @return mixed
+	 */
+	public function query($name, $default = null): mixed
+	{
+		return $this->_gets[$name] ?? $default;
+	}
+
 
 	/**
 	 * @return int
@@ -147,7 +153,7 @@ class HttpParams
 	 */
 	public function get($name, $defaultValue = null, $call = null): mixed
 	{
-		return $this->getRequest()->get[$name] ?? $defaultValue;
+		return $this->_gets[$name] ?? $defaultValue;
 	}
 
 	/**
@@ -158,7 +164,7 @@ class HttpParams
 	 */
 	public function post($name, $defaultValue = null, $call = null): mixed
 	{
-		$data = $this->getRequest()->post[$name] ?? $defaultValue;
+		$data = $this->_posts[$name] ?? $defaultValue;
 		if ($call !== null) {
 			$data = call_user_func($call, $data);
 		}
@@ -186,26 +192,23 @@ class HttpParams
 	 */
 	public function gets(): array
 	{
-		return $this->getRequest()->get;
+		return $this->_gets;
 	}
 
 	/**
 	 * @return array
 	 */
-	#[Pure] public function params(): array
+	public function params(): array
 	{
-		$request = $this->getRequest();
-
-		return array_merge($request->post ?? [], $request->files ?? []);
+		return array_merge($this->_posts ?? [], $this->_files ?? []);
 	}
 
 	/**
 	 * @return array
 	 */
-	#[Pure] public function load(): array
+	public function load(): array
 	{
-		$request = $this->getRequest();
-		return array_merge($request->files ?? [], $request->post ?? [], $request->gets ?? []);
+		return array_merge($this->_files ?? [], $this->_posts ?? [], $this->_gets ?? []);
 	}
 
 	/**
@@ -215,7 +218,7 @@ class HttpParams
 	 */
 	public function array($name, array $defaultValue = []): mixed
 	{
-		return $this->getRequest()->post[$name] ?? $defaultValue;
+		return $this->_posts[$name] ?? $defaultValue;
 	}
 
 	/**
@@ -226,12 +229,12 @@ class HttpParams
 	 */
 	public function file($name): File|null
 	{
-		$param = $this->getRequest()->files[$name] ?? null;
-		if (empty($param)) {
-			return null;
+		$param = $this->_files[$name] ?? null;
+		if (!empty($param)) {
+			$param['class'] = File::class;
+			return Snowflake::createObject($param);
 		}
-		$param['class'] = File::class;
-		return Snowflake::createObject($param);
+		return null;
 	}
 
 	/**
@@ -242,7 +245,7 @@ class HttpParams
 	 */
 	private function required(string $name, bool $isNeed = false): mixed
 	{
-		$int = $this->getRequest()->post[$name] ?? NULL;
+		$int = $this->_posts[$name] ?? NULL;
 		if (is_null($int) && $isNeed === true) {
 			throw new RequestException("You need to add request parameter $name");
 		}
@@ -416,15 +419,6 @@ class HttpParams
 		$load = $this->load();
 
 		return $load[$name] ?? null;
-	}
-
-
-	/**
-	 * @return mixed
-	 */
-	private function getRequest(): \Swoole\Http\Request
-	{
-		return Context::getContext('request');
 	}
 
 }
