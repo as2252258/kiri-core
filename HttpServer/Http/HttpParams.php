@@ -111,9 +111,9 @@ class HttpParams
 
 
 	/**
-	 * @return array
+	 * @return array|null
 	 */
-	public function getBody(): array
+	public function getBody(): ?array
 	{
 		return $this->_posts;
 	}
