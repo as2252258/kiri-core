@@ -94,7 +94,8 @@ class HTTPServerListener extends Abstracts\Server
 			/** @var \HttpServer\Http\Response $sResponse */
 			[$sRequest, $sResponse] = $this->request($request, $response);
 
-			$result = $this->router->dispatch($sRequest);
+			$result = 'ok';
+//			$result = $this->router->dispatch($sRequest);
 		} catch (Error | Throwable $exception) {
 			$result = $this->router->exception($exception);
 		} finally {
