@@ -428,9 +428,6 @@ class Request extends HttpService
 		$httpRequest = new Request();
 		$httpRequest->fd = $request->fd;
 
-		$server = ServerManager::getContext()->getServer();
-		$httpRequest->clientInfo = $server->getClientInfo($request->fd);
-
 		$httpRequest->headers = new HttpHeaders();
 		$httpRequest->headers->addHeaders(array_merge($request->header, $request->server));
 
