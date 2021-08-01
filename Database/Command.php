@@ -42,6 +42,8 @@ class Command extends Component
 	/** @var string */
 	private string $_modelName;
 
+	public string $dbname = '';
+
 	private ?PDOStatement $prepare = null;
 
 
@@ -130,9 +132,7 @@ class Command extends Component
 			if (microtime(true) - $time >= 0.02) {
 				$this->warning('Mysql:' . Json::encode([$this->sql, $this->params]) . (microtime(true) - $time));
 			}
-			if ($this->prepare) {
-				$this->prepare->closeCursor();
-			}
+			$this->prepare?->closeCursor();
 			return $result;
 		} catch (\Throwable $exception) {
 			return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');

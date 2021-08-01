@@ -42,9 +42,6 @@ class Connection extends Component
 
 	public int $timeout = 1900;
 
-	public int $maxNumber = 30;
-	public int $minNumber = 10;
-
 	/**
 	 * @var bool
 	 * enable database cache
@@ -85,9 +82,8 @@ class Connection extends Component
 			return;
 		}
 		$this->beginTransaction();
-
-		Event::on(Connection::TRANSACTION_COMMIT, [$this, 'commit'], false, true);
-		Event::on(Connection::TRANSACTION_ROLLBACK, [$this, 'rollback'], false, true);
+		Event::on(Connection::TRANSACTION_ROLLBACK, [$this, 'rollback'], [], true);
+		Event::on(Connection::TRANSACTION_COMMIT, [$this, 'commit'], [], true);
 	}
 
 	/**

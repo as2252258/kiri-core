@@ -26,21 +26,21 @@ class Controller
      *
      * @var Request|null
      */
-    #[Inject(value: Request::class)]
+    #[Inject('request')]
     public ?Request $request = null;
 
 
     /**
      * @var HttpParams|null
      */
-    #[Inject(value: HttpParams::class)]
+    #[Inject('input')]
     public ?HttpParams $input = null;
 
 
     /**
      * @var HttpHeaders|null
      */
-    #[Inject(value: HttpHeaders::class)]
+    #[Inject('header')]
     public ?HttpHeaders $header = null;
 
 
@@ -49,7 +49,7 @@ class Controller
      *
      * @var Response|null
      */
-    #[Inject(value: Response::class)]
+    #[Inject('response')]
     public ?Response $response = null;
 
 

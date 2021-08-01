@@ -127,7 +127,7 @@ class Node extends HttpService
 	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	#[Pure] private function createDispatch(): Closure
+	private function createDispatch(): Closure
 	{
 		/** @var Aop $aop */
 		$aop = Snowflake::app()->get('aop');
@@ -157,7 +157,6 @@ class Node extends HttpService
 
 
 	/**
-	 * @param $application
 	 * @param $handler
 	 * @return Closure
 	 */
