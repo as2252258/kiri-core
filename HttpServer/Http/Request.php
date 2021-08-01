@@ -424,8 +424,6 @@ class Request extends HttpService
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return Request
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public static function create(\Swoole\Http\Request $request): Request
 	{
@@ -433,13 +431,13 @@ class Request extends HttpService
 		$httpRequest->fd = $request->fd;
 		$httpRequest->startTime = microtime(true);
 
-		$httpRequest->headers = di(HttpHeaders::class);
+		$httpRequest->headers = new HttpHeaders();
 		$httpRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
 		$httpRequest->_uri = $httpRequest->headers->get('request_uri');
 		$httpRequest->_method = $httpRequest->headers->get('request_method');
 
-		$httpRequest->params = di(HttpParams::class);
+		$httpRequest->params = new HttpParams();
 		$httpRequest->params->setPosts($request->post);
 		$httpRequest->params->setFiles($request->files);
 		$httpRequest->params->setGets($request->get);
