@@ -3,6 +3,8 @@
 namespace Server;
 
 use Exception;
+use HttpServer\Http\Context;
+use HttpServer\Http\Request as HSRequest;
 use HttpServer\Route\Router;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
@@ -28,6 +30,8 @@ class HTTPServerListener extends Abstracts\Server
 
 	private Router $router;
 
+	private \HttpServer\Http\Response $response;
+
 
 	/**
 	 * HTTPServerListener constructor.
@@ -36,6 +40,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function __construct()
 	{
 		$this->router = Snowflake::getApp('router');
+		$this->response = Snowflake::getApp('response');
 		parent::__construct();
 	}
 
@@ -91,31 +96,14 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			/** @var \HttpServer\Http\Response $sResponse */
-			[$sRequest, $sResponse] = $this->request($request, $response);
+			Context::setContext(Response::class, $response);
 
-			$result = 'ok';
-//			$result = $this->router->dispatch($sRequest);
+			$result = $this->router->dispatch(HSRequest::create($request));
 		} catch (Error | Throwable $exception) {
 			$result = $this->router->exception($exception);
 		} finally {
-			if (!isset($sResponse)) {
-				return;
-			}
-			$sResponse->send($result);
+			$this->response->send($result);
 		}
-	}
-
-
-	/**
-	 * @param Request $request
-	 * @param Response $response
-	 * @return array
-	 * @throws Exception
-	 */
-	public function request(Request $request, Response $response): array
-	{
-		return [\HttpServer\Http\Request::create($request), \HttpServer\Http\Response::create($response)];
 	}
 
 
