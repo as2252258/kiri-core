@@ -429,7 +429,7 @@ class Request extends HttpService
 		$httpRequest->fd = $request->fd;
 
 		$httpRequest->headers = new HttpHeaders();
-		$httpRequest->headers->addHeaders(array_merge($request->header, $request->server));
+		$httpRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
 		$httpRequest->_uri = $httpRequest->headers->get('request_uri');
 		$httpRequest->_method = $httpRequest->headers->get('request_method');

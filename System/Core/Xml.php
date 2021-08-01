@@ -21,13 +21,12 @@ class Xml
 	 * @param bool $asArray
 	 * @return array|object
 	 */
-	public static function toArray($data, $asArray = true): object|array
+	public static function toArray($data, bool $asArray = true): object|array
 	{
 		$data = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($asArray) {
 			return json_decode(json_encode($data), TRUE);
 		}
-
 		return json_decode(json_encode($data));
 	}
 

@@ -68,6 +68,16 @@ class HttpHeaders
 		return $this;
 	}
 
+
+	/**
+	 * @param array $headers
+	 */
+	public function setHeaders(array $headers)
+	{
+		$this->_headers = $headers;
+	}
+
+
 	/**
 	 * @return array
 	 */
