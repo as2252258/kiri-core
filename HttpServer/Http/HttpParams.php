@@ -25,16 +25,19 @@ use Snowflake\Snowflake;
 class HttpParams
 {
 
-	/** @var array */
-	private array $_gets = [];
+	/** @var array|null */
+	private ?array $_gets = [];
 
 
-	private array $_posts = [];
-
-	/** @var array */
-	private array $_files = [];
+	/** @var array|null  */
+	private ?array $_posts = [];
 
 
+	/** @var array|null */
+	private ?array $_files = [];
+
+
+	/** @var mixed|array  */
 	private mixed $_rawContent = [];
 
 
