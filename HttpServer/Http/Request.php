@@ -7,8 +7,10 @@ use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Server\ServerManager;
 use Snowflake\Core\Json;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
@@ -96,7 +98,7 @@ class Request extends HttpService
 		if (empty($this->fd)) {
 			return null;
 		}
-		$server = Snowflake::app()->getSwoole();
+		$server = ServerManager::getContext()->getServer();
 
 		return $server->getClientInfo($this->fd);
 	}
@@ -422,6 +424,8 @@ class Request extends HttpService
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return Request
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public static function create(\Swoole\Http\Request $request): Request
 	{
@@ -429,13 +433,13 @@ class Request extends HttpService
 		$httpRequest->fd = $request->fd;
 		$httpRequest->startTime = microtime(true);
 
-		$httpRequest->headers = new HttpHeaders();
+		$httpRequest->headers = di(HttpHeaders::class);
 		$httpRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
 		$httpRequest->_uri = $httpRequest->headers->get('request_uri');
 		$httpRequest->_method = $httpRequest->headers->get('request_method');
 
-		$httpRequest->params = new HttpParams();
+		$httpRequest->params = di(HttpParams::class);
 		$httpRequest->params->setPosts($request->post);
 		$httpRequest->params->setFiles($request->files);
 		$httpRequest->params->setGets($request->get);
