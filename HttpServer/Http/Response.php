@@ -165,7 +165,7 @@ class Response extends HttpService
 	{
 		$sendData = $this->parseData($context);
 		$this->statusCode = $statusCode;
-		if (!Context::hasContext('response')) {
+		if (!Context::hasContext(SResponse::class)) {
 			$this->printResult($sendData);
 		} else {
 			$this->sendData($sendData);
@@ -217,8 +217,8 @@ class Response extends HttpService
 	 */
 	private function sendData($sendData): void
 	{
-		$response = Context::getContext('response');
-		if (!$response || !$response->isWritable()) {
+		$response = Context::getContext(SResponse::class);
+		if (!$response?->isWritable()) {
 			return;
 		}
 		$this->setCookies($response);
@@ -270,13 +270,11 @@ class Response extends HttpService
 
 
 	/**
-	 * @param null $response
 	 * @return static
 	 * @throws Exception
 	 */
-	public static function create($response = null): static
+	public static function create(): static
 	{
-		Context::setContext('response', $response);
 		$ciResponse = Snowflake::app()->get('response');
 		$ciResponse->startTime = microtime(true);
 		$ciResponse->format = self::JSON;
