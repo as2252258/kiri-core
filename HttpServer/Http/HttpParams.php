@@ -29,7 +29,7 @@ class HttpParams
 	private ?array $_gets = [];
 
 
-	/** @var array|null  */
+	/** @var array|null */
 	private ?array $_posts = [];
 
 
@@ -37,7 +37,7 @@ class HttpParams
 	private ?array $_files = [];
 
 
-	/** @var mixed|array  */
+	/** @var mixed|array */
 	private mixed $_rawContent = [];
 
 
@@ -58,13 +58,16 @@ class HttpParams
 	}
 
 	/**
-	 * @param array|null $data
+	 * @param mixed $data
 	 * 批量添加数据
 	 */
-	public function setPosts(?array $data)
+	public function setPosts(mixed $data)
 	{
 		if (!is_array($data)) {
 			return;
+		}
+		if (is_object($data)) {
+			$data = get_object_vars($data);
 		}
 		foreach ($data as $key => $vla) {
 			$this->_posts[$key] = $vla;
