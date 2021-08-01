@@ -29,8 +29,8 @@ class HttpParams
 	private ?array $_gets = [];
 
 
-	/** @var array|null */
-	private ?array $_posts = [];
+	/** @var mixed */
+	private mixed $_posts = [];
 
 
 	/** @var array|null */
@@ -63,9 +63,6 @@ class HttpParams
 	 */
 	public function setPosts(mixed $data): void
 	{
-		if (is_object($data)) {
-			$data = get_object_vars($data);
-		}
 		$this->_posts = $data;
 	}
 
