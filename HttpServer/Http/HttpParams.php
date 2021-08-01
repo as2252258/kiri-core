@@ -61,16 +61,25 @@ class HttpParams
 	 * @param mixed $data
 	 * 批量添加数据
 	 */
-	public function setPosts(mixed $data)
+	public function setPosts(mixed $data): void
 	{
-		if (!is_array($data)) {
-			return;
-		}
 		if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
-		foreach ($data as $key => $vla) {
-			$this->_posts[$key] = $vla;
+		$this->_posts = $data;
+	}
+
+
+	/**
+	 * @param mixed $data
+	 */
+	public function addPosts(mixed $data): void
+	{
+		if (is_object($data)) {
+			$data = get_object_vars($data);
+		}
+		foreach ($data as $key => $datum) {
+			$this->_posts[$key] = $datum;
 		}
 	}
 
