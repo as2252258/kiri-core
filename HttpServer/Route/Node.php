@@ -12,7 +12,6 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Snowflake\Aop;
 use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\IAspect;
@@ -120,14 +119,14 @@ class Node extends HttpService
 		$manager = di(MiddlewareManager::class);
 		if ($this->handler instanceof Closure) {
 			if (!empty($this->middleware)) {
-				$this->callback = $manager->closureMiddlewares($this->middleware, $this->createDispatch());
+				$this->callback = $manager->closureMiddlewares($this->middleware, $this->normalHandler($this->handler));
 			} else {
-				$this->callback = $this->createDispatch();
+				$this->callback = $this->normalHandler($this->handler);
 			}
 		} else {
 			$manager->addMiddlewares($this->handler[0], $this->handler[1], $this->middleware);
 			$this->callback = $manager->callerMiddlewares(
-				$this->handler[0], $this->handler[1], $this->createDispatch()
+				$this->handler[0], $this->handler[1], $this->aopHandler($this->getAop())
 			);
 		}
 		return $this;
@@ -157,32 +156,36 @@ class Node extends HttpService
 
 
 	/**
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	private function createDispatch(): Closure
-	{
-		/** @var Aop $aop */
-		$aop = Snowflake::getDi()->get(Aop::class);
-		if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
-			return $this->normalHandler($this->handler);
-		} else {
-			return $this->aopHandler($aop->getAop($this->handler));
-		}
-	}
-
-
-	/**
-	 * @param IAspect $reflect
+	 * @param IAspect|null $reflect
 	 * @return Closure
 	 */
-	private function aopHandler(IAspect $reflect): Closure
+	private function aopHandler(?IAspect $reflect): Closure
 	{
 		$params = $this->_injectParameters;
 		$handler = $this->handler;
 		return static function () use ($reflect, $handler, $params) {
 			return $reflect->invoke($handler, $params);
 		};
+	}
+
+
+	/**
+	 * @throws ReflectionException
+	 */
+	private function getAop(): ?IAspect
+	{
+		[$controller, $action] = $this->handler;
+
+		$aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
+		if (empty($aspect)) {
+			return null;
+		}
+		foreach ($aspect as $value) {
+			if ($value instanceof IAspect) {
+				return $value;
+			}
+		}
+		return null;
 	}
 
 
