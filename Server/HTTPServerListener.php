@@ -40,7 +40,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function __construct()
 	{
 		$this->router = Snowflake::getApp('router');
-		$this->response = Snowflake::getApp('response');
+		$this->response = di(\HttpServer\Http\Response::class);
 		parent::__construct();
 	}
 
