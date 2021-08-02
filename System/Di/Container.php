@@ -245,9 +245,13 @@ class Container extends BaseObject
 	/**
 	 * @param ReflectionClass|string $class
 	 * @return ReflectionMethod[]
+	 * @throws ReflectionException
 	 */
-	#[Pure] public function getReflectMethods(ReflectionClass|string $class): array
+	public function getReflectMethods(ReflectionClass|string $class): array
 	{
+		if (is_string($class)) {
+			$class = $this->getReflect($class);
+		}
 		return $this->getMethods($class);
 	}
 
@@ -256,8 +260,9 @@ class Container extends BaseObject
 	 * @param ReflectionClass|string $class
 	 * @param string $method
 	 * @return ReflectionMethod|null
+	 * @throws ReflectionException
 	 */
-	#[Pure] public function getReflectMethod(ReflectionClass|string $class, string $method): ?ReflectionMethod
+	public function getReflectMethod(ReflectionClass|string $class, string $method): ?ReflectionMethod
 	{
 		return $this->getReflectMethods($class)[$method] ?? null;
 	}
