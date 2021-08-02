@@ -49,16 +49,10 @@ class Request extends HttpService
 	#[Inject(HttpHeaders::class)]
 	public ?HttpHeaders $headers = null;
 
+
 	public bool $isCli = FALSE;
 
 	public float $startTime;
-
-	public ?array $clientInfo;
-
-
-	private string $_method = '';
-
-	private string $_uri = '';
 
 	public int $statusCode = 200;
 
@@ -81,27 +75,14 @@ class Request extends HttpService
 
 
 	/**
-	 * @param $fd
-	 */
-	public function setFd($fd)
-	{
-		$this->fd = $fd;
-	}
-
-	/**
 	 * @return array|null
 	 * @throws Exception
 	 */
 	public function getConnectInfo(): array|null
 	{
-		if (empty($this->fd)) {
-			return null;
-		}
 		$server = ServerManager::getContext()->getServer();
 
-		$request = Context::getContext(\Swoole\Http\Request::class);
-
-		return $server->getClientInfo($request->fd);
+		return $server->getClientInfo($this->getClientId());
 	}
 
 
@@ -112,7 +93,7 @@ class Request extends HttpService
 	{
 		$request = Context::getContext(\Swoole\Http\Request::class);
 
-		return $request->fd;
+		return $request->fd ?? 0;
 	}
 
 
@@ -421,7 +402,7 @@ class Request extends HttpService
 	 */
 	public function isNotFound(): bool
 	{
-		return Json::to(404, 'Page ' . $this->_uri . ' not found.');
+		return Json::to(404, 'Page ' . $this->headers->getRequestUri() . ' not found.');
 	}
 
 
