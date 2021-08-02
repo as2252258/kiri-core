@@ -41,8 +41,8 @@ class LoggerAspect implements IAspect
 	 */
 	private function print_runtime($handler, $startTime)
 	{
-		$className = $handler::class;
-		$methodName = $handler;
+		$className = $handler[0]::class;
+		$methodName = $handler[1];
 
 		$runTime = round(microtime(true) - $startTime, 6);
 		echo sprintf('run %s::%s use time %6f', $className, $methodName, $runTime);
