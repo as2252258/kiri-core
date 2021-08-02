@@ -162,6 +162,9 @@ class Node extends HttpService
 	 */
 	private function aopHandler(?IAspect $reflect): Closure
 	{
+	    if (is_null($reflect)) {
+	        return $this->normalHandler($this->handler);
+        }
 		$params = $this->_injectParameters;
 		$handler = $this->handler;
 		return static function () use ($reflect, $handler, $params) {
