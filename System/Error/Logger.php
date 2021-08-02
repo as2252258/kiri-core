@@ -183,11 +183,9 @@ class Logger extends Component
 		$to_day = date('Y-m-d');
 
 		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
-		try {
-			file_put_contents($fileName, '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
-		} catch (Throwable $exception) {
-			$this->output($exception->getMessage());
-		}
+
+		file_put_contents($fileName, '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
+
 		$this->clearHistoryFile($dirName);
 
 		$this->clearPrevLog($to_day);
