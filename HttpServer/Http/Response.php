@@ -70,28 +70,18 @@ class Response extends HttpService
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getContentType(): string
-	{
-		if ($this->format == null || $this->format == static::JSON) {
-			return 'application/json;charset=utf-8';
-		} else if ($this->format == static::XML) {
-			return 'application/xml;charset=utf-8';
-		} else {
-			return 'text/html;charset=utf-8';
-		}
-	}
-
-
-	/**
 	 * @param $content
 	 * @return string
 	 */
 	public function toHtml($content): string
 	{
 		$this->format = self::HTML;
-		return (string)$content;
+
+		/** @var SResponse $response */
+        $response = Context::getContext(SResponse::class);
+        $response->header('Content-Type','text/html;charset=utf-8');
+
+        return (string)$content;
 	}
 
 
@@ -102,7 +92,12 @@ class Response extends HttpService
 	public function toJson($content): string|bool
 	{
 		$this->format = self::JSON;
-		return json_encode($content, JSON_UNESCAPED_UNICODE);
+
+        /** @var SResponse $response */
+        $response = Context::getContext(SResponse::class);
+        $response->header('Content-Type','application/json;charset=utf-8');
+
+        return json_encode($content, JSON_UNESCAPED_UNICODE);
 	}
 
 
@@ -113,7 +108,12 @@ class Response extends HttpService
 	public function toXml($content): mixed
 	{
 		$this->format = self::XML;
-		return $content;
+
+        /** @var SResponse $response */
+        $response = Context::getContext(SResponse::class);
+        $response->header('Content-Type','application/xml;charset=utf-8');
+
+        return $content;
 	}
 
 
@@ -217,13 +217,19 @@ class Response extends HttpService
 	 */
 	private function sendData($sendData): void
 	{
+	    /** @var SResponse $response */
 		$response = Context::getContext(SResponse::class);
 		if (!$response?->isWritable()) {
 			return;
 		}
 		$this->setCookies($response);
 		defer(fn() => $this->headers = []);
-		$response->header('Content-Type', $this->getContentType());
+
+		var_dump($response);
+
+//		$response->header['']
+//
+//		$response->header('Content-Type', $this->getContentType());
 		$response->header('Run-Time', $this->getRuntime());
 		foreach ($this->headers as $key => $header) {
 			$response->header($key, $header);
