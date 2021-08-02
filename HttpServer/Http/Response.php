@@ -347,7 +347,7 @@ class Response extends HttpService
 	 */
 	public function getRuntime(): string
 	{
-		return sprintf('%.5f', microtime(TRUE) - request()->startTime);
+		return sprintf('%.5f', microtime(TRUE) - request()->getStartTime());
 	}
 
 }
