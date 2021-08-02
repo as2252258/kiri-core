@@ -71,6 +71,17 @@ trait Attributes
 
 
 	/**
+	 * @param string $class
+	 * @param string $method
+	 * @return bool
+	 */
+	public function hasMethod(string $class, string $method): bool
+	{
+		return isset($this->_classMethod[$class]) && isset($this->_classMethod[$class][$method]);
+	}
+
+
+	/**
 	 * @param ReflectionClass $class
 	 * @return array
 	 */

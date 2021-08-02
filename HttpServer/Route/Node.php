@@ -9,7 +9,6 @@ use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
-use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
@@ -17,6 +16,7 @@ use ReflectionException;
 use Snowflake\Aop;
 use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
+use Snowflake\IAspect;
 use Snowflake\Snowflake;
 
 /**
@@ -118,13 +118,35 @@ class Node extends HttpService
 				$this->handler[0], $this->handler[1], $this->createDispatch()
 			);
 		}
+		$this->setParameters($this->handler);
 		return $this;
 	}
+
+
+	private array $_injectParameters = [];
 
 
 	/**
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 */
+	private function setParameters($handler)
+	{
+		$container = Snowflake::getDi();
+		if ($handler instanceof Closure) {
+			$this->_injectParameters = $container->resolveFunctionParameters($handler);
+		} else {
+			[$controller, $action] = $this->handler;
+			if (is_object($controller)) {
+				$controller = get_class($controller);
+			}
+			$this->_injectParameters = $container->getMethodParameters($controller, $action);
+		}
+	}
+
+
+	/**
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function createDispatch(): Closure
@@ -134,24 +156,21 @@ class Node extends HttpService
 		if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
 			return $this->normalHandler($this->handler);
 		} else {
-			return $this->aopHandler($aop->getAop($this->handler), $this);
+			return $this->aopHandler($aop->getAop($this->handler));
 		}
 	}
 
 
 	/**
-	 * @param ReflectionClass $reflect
-	 * @param $application
+	 * @param IAspect $reflect
 	 * @return Closure
-	 * @throws ReflectionException|NotFindClassException
 	 */
-	private function aopHandler(ReflectionClass $reflect, $application): Closure
+	private function aopHandler(IAspect $reflect): Closure
 	{
-		$callback = [$reflect->getMethod('invoke'), 'invokeArgs'];
-
-		$instance = Snowflake::getDi()->get($reflect->getName());
-		return static function () use ($callback, $application, $instance, $reflect) {
-			call_user_func($callback, $instance);
+		$params = $this->_injectParameters;
+		$handler = $this->handler;
+		return static function () use ($reflect, $handler, $params) {
+			return $reflect->invoke($handler, $params);
 		};
 	}
 
@@ -162,8 +181,9 @@ class Node extends HttpService
 	 */
 	private function normalHandler($handler): Closure
 	{
-		return static function () use ($handler) {
-			return call_user_func($handler);
+		$params = $this->_injectParameters;
+		return static function () use ($handler, $params) {
+			return call_user_func($handler, ...$params);
 		};
 	}
 

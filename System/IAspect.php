@@ -8,10 +8,11 @@ interface IAspect
 {
 
 
-
-    /**
-     * @return mixed|void
-     */
-    public function invoke(mixed $handler);
+	/**
+	 * @param mixed $handler
+	 * @param array $params
+	 * @return mixed
+	 */
+    public function invoke(mixed $handler, array $params = []): mixed;
 
 }

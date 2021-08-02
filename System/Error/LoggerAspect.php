@@ -20,13 +20,14 @@ class LoggerAspect implements IAspect
 
 	/**
 	 * @param mixed $handler
+	 * @param array $params
 	 * @return mixed
 	 */
-	public function invoke(mixed $handler): mixed
+	public function invoke(mixed $handler, array $params = []): mixed
 	{
 		$startTime = microtime(true);
 
-		$data = call_user_func($handler);
+		$data = call_user_func($handler, ...$params);
 
 		$this->print_runtime($handler, $startTime);
 

@@ -14,6 +14,7 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
 use Snowflake\Abstracts\BaseObject;
@@ -280,26 +281,55 @@ class Container extends BaseObject
 		if (!($reflectMethod instanceof ReflectionMethod)) {
 			throw new ReflectionException("Class does not have a function $className::$method");
 		}
-		return $this->resolveMethodParameters($reflectMethod);
+		$className = $reflectMethod->getDeclaringClass()->getName();
+		if (isset($this->_parameters[$className]) && isset($this->_parameters[$className][$reflectMethod->getName()])) {
+			return $this->_parameters[$className][$reflectMethod->getName()];
+		}
+		return $this->setParameters($className, $reflectMethod->getName(), $this->resolveMethodParameters($reflectMethod));
 	}
 
 
 	/**
-	 * @param ReflectionMethod $reflectionMethod
+	 * @param $class
+	 * @param $method
+	 * @param $parameters
+	 */
+	private function setParameters($class, $method, $parameters)
+	{
+		if (!isset($this->_parameters[$class])) {
+			$this->_parameters[$class] = [];
+		}
+		if (!isset($this->_parameters[$class][$method])) {
+			$this->_parameters[$class][$method] = [];
+		}
+		return $this->_parameters[$class][$method] = $parameters;
+	}
+
+
+	/**
+	 * @param \Closure $reflectionMethod
 	 * @return array
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveMethodParameters(ReflectionMethod $reflectionMethod): array
+	public function resolveFunctionParameters(\Closure $reflectionMethod): array
 	{
-		$className = $reflectionMethod->getDeclaringClass()->getName();
-		if (isset($this->_parameters[$className]) && isset($this->_parameters[$className][$reflectionMethod->getName()])) {
-			return $this->_parameters[$className][$reflectionMethod->getName()];
-		}
+		return $this->resolveMethodParameters(new ReflectionFunction($reflectionMethod));
+	}
+
+
+	/**
+	 * @param ReflectionMethod|ReflectionFunction $reflectionMethod
+	 * @return array
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function resolveMethodParameters(ReflectionMethod|ReflectionFunction $reflectionMethod): array
+	{
 		if ($reflectionMethod->getNumberOfParameters() < 1) {
 			return [];
 		}
-		$this->_parameters[$className][$reflectionMethod->getName()] = $params = [];
+		$params = [];
 		foreach ($reflectionMethod->getParameters() as $key => $parameter) {
 			if ($parameter->isDefaultValueAvailable()) {
 				$params[$key] = $parameter->getDefaultValue();
@@ -317,7 +347,7 @@ class Container extends BaseObject
 				};
 			}
 		}
-		return $this->_parameters[$className][$reflectionMethod->getName()] = $params;
+		return $params;
 	}
 
 
