@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HttpServer\Route;
 
 
+use Annotation\Aspect;
 use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
@@ -180,23 +181,9 @@ class Node extends HttpService
 		if (empty($aspect)) {
 			return null;
 		}
-
-//        if ($this->path == '/user/attributes'){
-//            [$controller, $action] = $this->handler;
-//
-//            $aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
-//
-//            var_dump($aspect);
-//        }
-
 		foreach ($aspect as $value) {
-
-		    $implements = class_implements($value);
-            if ($this->path == '/user/attributes') {
-                var_dump($value, $implements);
-            }
-            if (isset($implements[IAspect::class])) {
-				return $value;
+            if ($value instanceof Aspect) {
+				return di($value->aspect);
 			}
 		}
 		return null;
