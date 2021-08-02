@@ -95,6 +95,7 @@ class Node extends HttpService
 		} else {
 			$this->handler = $handler;
 		}
+		$this->setParameters($this->handler);
 		return $this->injectMiddleware();
 	}
 
@@ -118,7 +119,6 @@ class Node extends HttpService
 				$this->handler[0], $this->handler[1], $this->createDispatch()
 			);
 		}
-		$this->setParameters($this->handler);
 		return $this;
 	}
 
@@ -130,7 +130,7 @@ class Node extends HttpService
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	private function setParameters($handler)
+	public function setParameters($handler)
 	{
 		$container = Snowflake::getDi();
 		if ($handler instanceof Closure) {
