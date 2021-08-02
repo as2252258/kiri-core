@@ -98,8 +98,9 @@ class HTTPServerListener extends Abstracts\Server
 		try {
 			Context::setContext(Response::class, $response);
 
-            $this->response->send('ok');
+//            $this->response->send('ok');
 
+            $result = 'ok';
 //            $result = $this->router->dispatch(HSRequest::create($request));
 		} catch (Error | Throwable $exception) {
 			$result = $this->router->exception($exception);
