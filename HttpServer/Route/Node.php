@@ -164,7 +164,7 @@ class Node extends HttpService
 	{
 		/** @var Aop $aop */
 		$aop = Snowflake::app()->get('aop');
-		var_dump($this->path . '->' . $aop->hasAop($this->handler));
+		var_dump($this->path . '->' . (int)$aop->hasAop($this->handler));
 		if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
 			return $this->normalHandler($this->handler);
 		} else {
