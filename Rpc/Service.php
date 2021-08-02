@@ -145,7 +145,7 @@ class Service extends \Server\Abstracts\Server
 
 		$sRequest->params->setPosts($data);
 		$sRequest->headers->setRequestUri('rpc/p' . $server_port . '/' . ltrim($cmd, '/'));
-		$sRequest->headers->setRequestMethod(Request::HTTP_CMD);
+		$sRequest->headers->setRequestMethod('rpc');
 
 		return Context::setContext(Request::class, $sRequest);
 	}

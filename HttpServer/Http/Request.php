@@ -3,14 +3,13 @@ declare(strict_types=1);
 
 namespace HttpServer\Http;
 
+use Annotation\Inject;
 use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
 use Server\ServerManager;
 use Snowflake\Core\Json;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
@@ -37,9 +36,17 @@ class Request extends HttpService
 	public int $fd = 0;
 
 
+	/**
+	 * @var HttpParams|null
+	 */
+	#[Inject(HttpHeaders::class)]
 	public ?HttpParams $params = null;
 
 
+	/**
+	 * @var HttpHeaders|null
+	 */
+	#[Inject(HttpHeaders::class)]
 	public ?HttpHeaders $headers = null;
 
 	public bool $isCli = FALSE;
@@ -62,14 +69,6 @@ class Request extends HttpService
 	const PLATFORM_IPHONE = 'iphone';
 	const PLATFORM_ANDROID = 'android';
 	const PLATFORM_WINDOWS = 'windows';
-
-
-	const HTTP_POST = 'post';
-	const HTTP_GET = 'GET';
-	const HTTP_CMD = 'rpc';
-	const HTTP_LISTEN = 'listen';
-	const HTTP_SOCKET = 'sw::socket';
-
 
 
 	private string $_platform = '';
@@ -100,7 +99,9 @@ class Request extends HttpService
 		}
 		$server = ServerManager::getContext()->getServer();
 
-		return $server->getClientInfo($this->fd);
+		$request = Context::getContext(\Swoole\Http\Request::class);
+
+		return $server->getClientInfo($request->fd);
 	}
 
 
@@ -109,16 +110,18 @@ class Request extends HttpService
 	 */
 	public function getClientId(): int
 	{
-		return $this->fd;
+		$request = Context::getContext(\Swoole\Http\Request::class);
+
+		return $request->fd;
 	}
 
 
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function isFavicon(): bool
+	public function isFavicon(): bool
 	{
-		return $this->_uri === 'favicon.ico';
+		return $this->headers->getRequestUri() === 'favicon.ico';
 	}
 
 	/**
@@ -134,7 +137,7 @@ class Request extends HttpService
 	 */
 	public function isHead(): bool
 	{
-		$result = $this->_method == 'HEAD';
+		$result = $this->headers->getRequestMethod() == 'HEAD';
 		if ($result) {
 			$this->setStatus(101);
 		} else {
@@ -165,7 +168,7 @@ class Request extends HttpService
 	 */
 	public function getIsPackage(): bool
 	{
-		return $this->_method == 'package';
+		return $this->headers->getRequestMethod() == 'package';
 	}
 
 	/**
@@ -173,7 +176,7 @@ class Request extends HttpService
 	 */
 	public function getIsReceive(): bool
 	{
-		return $this->_method == 'receive';
+		return $this->headers->getRequestMethod() == 'receive';
 	}
 
 
@@ -217,7 +220,7 @@ class Request extends HttpService
 	 */
 	public function getUri(): string
 	{
-		return $this->_uri;
+		return $this->headers->getRequestUri();
 	}
 
 	/**
@@ -228,7 +231,8 @@ class Request extends HttpService
 		if (!empty($this->_platform)) {
 			return $this->_platform;
 		}
-		$user = $this->headers->getHeader('user-agent');
+
+		$user = $this->headers->getAgent();
 		$match = preg_match('/\(.*\)?/', $user, $output);
 		if (!$match || count($output) < 1) {
 			return $this->_platform = 'unknown';
@@ -284,7 +288,7 @@ class Request extends HttpService
 	 */
 	public function getIsPost(): bool
 	{
-		return $this->_method == 'POST';
+		return $this->headers->getRequestMethod() == 'POST';
 	}
 
 	/**
@@ -301,7 +305,7 @@ class Request extends HttpService
 	 */
 	public function getIsOption(): bool
 	{
-		return $this->_method == 'OPTIONS';
+		return $this->headers->getRequestMethod() == 'OPTIONS';
 	}
 
 	/**
@@ -309,7 +313,7 @@ class Request extends HttpService
 	 */
 	public function getIsGet(): bool
 	{
-		return $this->_method == 'GET';
+		return $this->headers->getRequestMethod() == 'GET';
 	}
 
 	/**
@@ -317,7 +321,7 @@ class Request extends HttpService
 	 */
 	public function getIsDelete(): bool
 	{
-		return $this->_method == 'DELETE';
+		return $this->headers->getRequestMethod() == 'DELETE';
 	}
 
 	/**
@@ -327,7 +331,7 @@ class Request extends HttpService
 	 */
 	public function getMethod(): string
 	{
-		$method = $this->_method;
+		$method = $this->headers->getRequestMethod();
 		if (empty($method)) {
 			return 'GET';
 		}
@@ -396,7 +400,7 @@ class Request extends HttpService
 			'[Debug ' . $datetime . '] ',
 			$this->getIp(),
 			$this->getUri(),
-			'`' . $this->headers->getHeader('user-agent') . '`',
+			'`' . $this->headers->getAgent() . '`',
 			$this->getRuntime()
 		];
 		return implode(' ', $tmp);
@@ -407,9 +411,9 @@ class Request extends HttpService
 	 * @param $router
 	 * @return bool
 	 */
-	#[Pure] public function is($router): bool
+	public function is($router): bool
 	{
-		return $this->_uri == $router;
+		return $this->headers->getRequestUri() == $router;
 	}
 
 	/**
@@ -424,26 +428,15 @@ class Request extends HttpService
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return Request
+	 * @throws Exception
 	 */
 	public static function create(\Swoole\Http\Request $request): Request
 	{
-		$httpRequest = new Request();
-		$httpRequest->fd = $request->fd;
-		$httpRequest->startTime = microtime(true);
+		$request->header = array_merge($request->header, $request->server);
 
-		$httpRequest->headers = new HttpHeaders();
-		$httpRequest->headers->setHeaders(array_merge($request->header, $request->server));
+		Context::setContext(\Swoole\Http\Request::class, $request);
 
-		$httpRequest->_uri = $httpRequest->headers->get('request_uri');
-		$httpRequest->_method = $httpRequest->headers->get('request_method');
-
-		$httpRequest->params = new HttpParams();
-		$httpRequest->params->setPosts($request->post);
-		$httpRequest->params->setFiles($request->files);
-		$httpRequest->params->setGets($request->get);
-		$httpRequest->params->setRawContent($request->rawContent(), $httpRequest);
-
-		return Context::setContext(Request::class, $httpRequest);
+		return Snowflake::app()->get('request');
 	}
 
 

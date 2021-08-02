@@ -89,6 +89,7 @@ class Server extends HttpService
 	 * @param $rpcService
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws ConfigException
 	 */
 	private function rpcListener($rpcService)
 	{
@@ -100,6 +101,19 @@ class Server extends HttpService
 			$rpcService['events'][Constant::DISCONNECT] = [Service::class, 'onDisconnect'];
 			$rpcService['events'][Constant::CLOSE] = [Service::class, 'onClose'];
 		}
+		$rpcService['settings']['enable_unsafe_event'] = true;
+		$this->addRpcListener($rpcService);
+	}
+
+
+	/**
+	 * @param $rpcService
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function addRpcListener($rpcService)
+	{
 		$this->manager->addListener($rpcService['type'], $rpcService['host'], $rpcService['port'], $rpcService['mode'], $rpcService);
 	}
 

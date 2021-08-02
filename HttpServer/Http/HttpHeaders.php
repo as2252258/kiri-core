@@ -16,74 +16,12 @@ namespace HttpServer\Http;
 class HttpHeaders
 {
 
-
-	private array $_headers = [];
-
-
-	/**
-	 * @param string $uri
-	 */
-	public function setRequestUri(string $uri)
-	{
-		$this->_headers['request_uri'] = $uri;
-	}
-
-
-	/**
-	 * @param string $method
-	 */
-	public function setRequestMethod(string $method)
-	{
-		$this->_headers['request_method'] = $method;
-	}
-
-
-	/**
-	 * @param $name
-	 * @param $value
-	 */
-	public function replace($name, $value)
-	{
-		$this->_headers[$name] = $value;
-	}
-
-	/**
-	 * @param $name
-	 * @param $value
-	 */
-	public function addHeader($name, $value)
-	{
-		$this->_headers[$name] = $value;
-	}
-
-	/**
-	 * @param array $headers
-	 * @return $this
-	 */
-	public function addHeaders(array $headers): static
-	{
-		foreach ($headers as $key => $header) {
-			$this->_headers[$key] = $header;
-		}
-		return $this;
-	}
-
-
-	/**
-	 * @param array $headers
-	 */
-	public function setHeaders(array $headers)
-	{
-		$this->_headers = $headers;
-	}
-
-
 	/**
 	 * @return array
 	 */
 	public function toArray(): array
 	{
-		return $this->_headers;
+		return $this->__handler__();
 	}
 
 	/**
@@ -92,7 +30,7 @@ class HttpHeaders
 	 */
 	public function getHeader($name): ?string
 	{
-		return $this->_headers[$name] ?? null;
+		return $this->__handler__($name);
 	}
 
 
@@ -103,7 +41,7 @@ class HttpHeaders
 	 */
 	public function get($name, $default = null): mixed
 	{
-		return $this->_headers[$name] ?? $default;
+		return $this->__handler__($name, $default);
 	}
 
 
@@ -112,7 +50,34 @@ class HttpHeaders
 	 */
 	public function getContentType(): string
 	{
-		return $this->getHeader('content-type');
+		return $this->__handler__('content-type');
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getRequestUri(): ?string
+	{
+		return $this->__handler__('request_uri');
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getRequestMethod(): ?string
+	{
+		return $this->__handler__('request_method');
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getAgent(): mixed
+	{
+		return $this->__handler__('user-agent');
 	}
 
 
@@ -122,7 +87,7 @@ class HttpHeaders
 	 */
 	public function exists($name): bool
 	{
-		return isset($this->_headers[$name]) && $this->_headers[$name] != null;
+		return $this->__handler__($name) === null;
 	}
 
 
@@ -131,8 +96,23 @@ class HttpHeaders
 	 */
 	public function getHeaders(): array
 	{
-		return $this->_headers;
+		return $this->__handler__();
 	}
 
+
+	/**
+	 * @param null $name
+	 * @param null $default
+	 * @return mixed
+	 */
+	private function __handler__($name = null, $default = null): mixed
+	{
+		/** @var \Swoole\Http\Request $context */
+		$context = Context::getContext(\Swoole\Http\Request::class);
+		if (!empty($name)) {
+			return $context->header[$name] ?? $default;
+		}
+		return $context->header;
+	}
 
 }
