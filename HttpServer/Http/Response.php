@@ -224,12 +224,9 @@ class Response extends HttpService
 		}
 		$this->setCookies($response);
 		defer(fn() => $this->headers = []);
-
-		var_dump($response);
-
-//		$response->header['']
-//
-//		$response->header('Content-Type', $this->getContentType());
+		if (!isset($response->header['Content-Type'])) {
+		    $response->header('Content-Type', 'application/json;charset=utf-8');
+        }
 		$response->header('Run-Time', $this->getRuntime());
 		foreach ($this->headers as $key => $header) {
 			$response->header($key, $header);
