@@ -193,7 +193,7 @@ class Node extends HttpService
 
 		    $implements = class_implements($value);
             if ($this->path == '/user/attributes') {
-                var_dump($aspect);
+                var_dump($value, $implements);
             }
             if (isset($implements[IAspect::class])) {
 				return $value;
