@@ -39,7 +39,7 @@ class Request extends HttpService
 	/**
 	 * @var HttpParams|null
 	 */
-	#[Inject(HttpHeaders::class)]
+	#[Inject(HttpParams::class)]
 	public ?HttpParams $params = null;
 
 
