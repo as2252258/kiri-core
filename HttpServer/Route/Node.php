@@ -180,9 +180,9 @@ class Node extends HttpService
 		if (empty($aspect)) {
 			return null;
 		}
-		var_dump($aspect);
 		foreach ($aspect as $value) {
 			if ($value instanceof IAspect) {
+			    var_dump($value);
 				return $value;
 			}
 		}
