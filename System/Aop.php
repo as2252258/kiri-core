@@ -46,6 +46,7 @@ class Aop extends Component
 	 */
 	public function hasAop($handler): bool
 	{
+		var_dump($handler[0]::class . '::' . $handler[1]);
 		return isset(static::$_aop[$handler[0]::class . '::' . $handler[1]]);
 	}
 
@@ -81,7 +82,6 @@ class Aop extends Component
 	{
 		$aopName = $handler[0]::class . '::' . $handler[1];
 
-		var_dump($aopName);
 		$reflect = Snowflake::getDi()->get(current(static::$_aop[$aopName]));
 		if (!method_exists($reflect, 'invoke')) {
 			throw new Exception(ASPECT_ERROR . IAspect::class);
