@@ -145,7 +145,7 @@ class Loader extends BaseObject
 
 			static::$_classes[] = $replace->getName();
 		} catch (Throwable $throwable) {
-			$this->addError($throwable, 'throwable');
+			write(jTraceEx($throwable), 'throwable');
 		}
 	}
 
