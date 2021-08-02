@@ -128,15 +128,6 @@ class Node extends HttpService
 			$this->callback = $manager->callerMiddlewares(
 				$this->handler[0], $this->handler[1], $this->aopHandler($this->getAop())
 			);
-
-			if ($this->path == '/user/attributes'){
-                [$controller, $action] = $this->handler;
-
-                $aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
-
-                var_dump($aspect);
-            }
-
 		}
 		return $this;
 	}
@@ -189,9 +180,22 @@ class Node extends HttpService
 		if (empty($aspect)) {
 			return null;
 		}
+
+//        if ($this->path == '/user/attributes'){
+//            [$controller, $action] = $this->handler;
+//
+//            $aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
+//
+//            var_dump($aspect);
+//        }
+
 		foreach ($aspect as $value) {
+
 		    $implements = class_implements($value);
-			if (isset($implements[IAspect::class])) {
+            if ($this->path == '/user/attributes') {
+                var_dump($aspect);
+            }
+            if (isset($implements[IAspect::class])) {
 				return $value;
 			}
 		}
