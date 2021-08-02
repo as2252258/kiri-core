@@ -165,6 +165,9 @@ class Node extends HttpService
 	    if (is_null($reflect)) {
 	        return $this->normalHandler($this->handler);
         }
+
+	    var_dump($reflect);
+
 		$params = $this->_injectParameters;
 		$handler = $this->handler;
 		return static function () use ($reflect, $handler, $params) {
