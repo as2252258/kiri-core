@@ -818,9 +818,10 @@ if (!function_exists('jTraceEx')) {
 	/**
 	 * @param $e
 	 * @param null $seen
+	 * @param bool $toHtml
 	 * @return string
 	 */
-	function jTraceEx($e, $seen = null, $toHtml = false): string
+	function jTraceEx($e, $seen = null, bool $toHtml = false): string
 	{
 		$starter = $seen ? 'Caused by: ' : '';
 		$result = array();
