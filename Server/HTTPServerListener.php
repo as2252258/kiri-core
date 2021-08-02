@@ -105,7 +105,9 @@ class HTTPServerListener extends Abstracts\Server
 		} catch (Error | Throwable $exception) {
 			$result = $this->router->exception($exception);
 		} finally {
-			$this->response->send($result);
+		    $response->status(200);
+            $response->end();
+//			$this->response->send($result);
 		}
 	}
 
