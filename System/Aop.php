@@ -5,7 +5,6 @@ namespace Snowflake;
 
 
 use Exception;
-use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
 
@@ -34,7 +33,6 @@ class Aop extends Component
 		if (!isset(static::$_aop[$alias])) {
 			static::$_aop[$alias] = [];
 		}
-		var_dump($alias, $aspect);
 		if (in_array($aspect, static::$_aop[$alias])) {
 			return;
 		}
@@ -83,6 +81,7 @@ class Aop extends Component
 	{
 		$aopName = $handler[0]::class . '::' . $handler[1];
 
+		var_dump($aopName);
 		$reflect = Snowflake::getDi()->get(current(static::$_aop[$aopName]));
 		if (!method_exists($reflect, 'invoke')) {
 			throw new Exception(ASPECT_ERROR . IAspect::class);
