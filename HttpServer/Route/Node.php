@@ -128,6 +128,15 @@ class Node extends HttpService
 			$this->callback = $manager->callerMiddlewares(
 				$this->handler[0], $this->handler[1], $this->aopHandler($this->getAop())
 			);
+
+			if ($this->path == '/goods/detail'){
+                [$controller, $action] = $this->handler;
+
+                $aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
+
+                var_dump($aspect);
+            }
+
 		}
 		return $this;
 	}
