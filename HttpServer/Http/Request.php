@@ -87,6 +87,15 @@ class Request extends HttpService
 
 
 	/**
+	 * @return mixed
+	 */
+	public function getStartTime()
+	{
+		return $this->headers->get('request_time_float');
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public function getClientId(): int
