@@ -34,6 +34,7 @@ class Aop extends Component
 		if (!isset(static::$_aop[$alias])) {
 			static::$_aop[$alias] = [];
 		}
+		var_dump($alias, $aspect);
 		if (in_array($aspect, static::$_aop[$alias])) {
 			return;
 		}

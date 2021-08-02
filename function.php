@@ -10,6 +10,7 @@ use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
+use Snowflake\Aop;
 use Snowflake\Application;
 use Snowflake\Core\ArrayAccess;
 use Snowflake\Core\Json;
@@ -312,7 +313,7 @@ if (!function_exists('aop')) {
 	 */
 	function aop(mixed $handler, array $params = []): mixed
 	{
-		return Snowflake::app()->get('aop')->dispatch($handler, $params);
+		return Snowflake::getDi()->get(Aop::class)->dispatch($handler, $params);
 	}
 }
 

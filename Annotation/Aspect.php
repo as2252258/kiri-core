@@ -38,7 +38,7 @@ defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implem
             throw new Exception(ASPECT_ERROR . IAspect::class);
         }
         /** @var Aop $aop */
-        $aop = Snowflake::app()->get('aop');
+        $aop = Snowflake::app()->get(Aop::class);
 
         $aop->aop_add([$class, $method], $this->aspect);
 
