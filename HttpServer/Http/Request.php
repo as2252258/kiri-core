@@ -89,7 +89,7 @@ class Request extends HttpService
 	/**
 	 * @return mixed
 	 */
-	public function getStartTime()
+	public function getStartTime(): mixed
 	{
 		return $this->headers->get('request_time_float');
 	}
