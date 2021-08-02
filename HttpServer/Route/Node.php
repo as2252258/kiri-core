@@ -129,7 +129,7 @@ class Node extends HttpService
 				$this->handler[0], $this->handler[1], $this->aopHandler($this->getAop())
 			);
 
-			if ($this->path == '/goods/detail'){
+			if ($this->path == '/user/attributes'){
                 [$controller, $action] = $this->handler;
 
                 $aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
