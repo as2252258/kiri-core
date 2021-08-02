@@ -483,7 +483,7 @@ if (!function_exists('request')) {
 	 */
 	function request(): Request
 	{
-		return Snowflake::getFactory()->get('request');
+		return Snowflake::getDi()->get(Request::class);
 	}
 
 }
@@ -595,7 +595,7 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response|stdClass
 	{
-		return Snowflake::app()->get('response');
+		return Snowflake::getDi()->get(Response::class);
 	}
 
 }
