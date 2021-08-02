@@ -163,7 +163,7 @@ class Node extends HttpService
 	private function createDispatch(): Closure
 	{
 		/** @var Aop $aop */
-		$aop = Snowflake::app()->get(Aop::class);
+		$aop = Snowflake::getDi()->get(Aop::class);
 		if ($this->handler instanceof Closure || !$aop->hasAop($this->handler)) {
 			return $this->normalHandler($this->handler);
 		} else {
