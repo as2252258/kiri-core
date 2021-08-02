@@ -59,11 +59,12 @@ trait Attributes
 			| ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_ABSTRACT
 		) as $ReflectionMethod) {
 			$this->_classMethod[$className][$ReflectionMethod->getName()] = $ReflectionMethod;
+			$this->_classMethodNote[$className][$ReflectionMethod->getName()] = [];
 			foreach ($ReflectionMethod->getAttributes() as $attribute) {
 				if (!class_exists($attribute->getName())) {
 					continue;
 				}
-				$this->_classMethodNote[$className][] = $attribute->newInstance();
+				$this->_classMethodNote[$className][$ReflectionMethod->getName()][] = $attribute->newInstance();
 			}
 		}
 	}
@@ -93,7 +94,7 @@ trait Attributes
 				if (!class_exists($attribute->getName())) {
 					continue;
 				}
-				$this->_classPropertyNote[$className][] = $attribute->newInstance();
+				$this->_classPropertyNote[$className][$ReflectionMethod->getName()] = $attribute->newInstance();
 			}
 		}
 	}

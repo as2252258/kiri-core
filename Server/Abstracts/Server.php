@@ -28,21 +28,21 @@ abstract class Server
 
 
 
-    /**
-     * @param $prefix
-     * @throws ConfigException
-     */
-    protected function setProcessName($prefix)
-    {
-        if (Snowflake::getPlatform()->isMac()) {
-            return;
-        }
-        $name = Config::get('id', 'system-service');
-        if (!empty($prefix)) {
-            $name .= '.' . $prefix;
-        }
-        swoole_set_process_name($name);
-    }
+	/**
+	 * @param $prefix
+	 * @throws ConfigException
+	 */
+	protected function setProcessName($prefix)
+	{
+		if (Snowflake::getPlatform()->isMac()) {
+			return;
+		}
+		$name = Config::get('id', 'system-service');
+		if (!empty($prefix)) {
+			$name .= '.' . $prefix;
+		}
+		swoole_set_process_name($name);
+	}
 
 
 	/**
@@ -63,11 +63,7 @@ abstract class Server
 	public function setEvents(string $name, ?array $events): void
 	{
 		if (is_array($events) && is_string($events[0])) {
-			$reflect = Snowflake::getDi()->getReflect($events[0]);
-			if (!$reflect) {
-				throw new Exception('Checks the class is c\'not instantiable.');
-			}
-			$events[0] = $reflect->newInstance();
+			$events[0] = Snowflake::getDi()->get($events[0]);
 		}
 		if (!is_callable($events)) {
 			return;
