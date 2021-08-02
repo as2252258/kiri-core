@@ -11,7 +11,6 @@ use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
-use ReflectionClass;
 use ReflectionException;
 use Snowflake\Aop;
 use Snowflake\Core\Json;
@@ -85,11 +84,7 @@ class Node extends HttpService
 	public function bindHandler($handler): static
 	{
 		if (is_string($handler) && str_contains($handler, '@')) {
-			list($controller, $action) = explode('@', $handler);
-			if (!class_exists($controller) && !empty($this->namespace)) {
-				$controller = implode('\\', $this->namespace) . '\\' . $controller;
-			}
-			$this->handler = [Snowflake::getDi()->get($controller), $action];
+			$this->handler = $this->splitHandler($handler);
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
 		} else {
@@ -97,6 +92,22 @@ class Node extends HttpService
 		}
 		$this->setParameters($this->handler);
 		return $this->injectMiddleware();
+	}
+
+
+	/**
+	 * @param string $handler
+	 * @return array
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function splitHandler(string $handler): array
+	{
+		list($controller, $action) = explode('@', $handler);
+		if (!class_exists($controller) && !empty($this->namespace)) {
+			$controller = implode('\\', $this->namespace) . '\\' . $controller;
+		}
+		return [Snowflake::getDi()->get($controller), $action];
 	}
 
 
