@@ -134,7 +134,7 @@ class Node extends HttpService
 	}
 
 
-	private array $_injectParameters = [];
+	private ?array $_injectParameters = [];
 
 
 	/**
