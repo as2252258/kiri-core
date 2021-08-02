@@ -10,14 +10,13 @@ declare(strict_types=1);
 namespace Snowflake\Di;
 
 use Annotation\Inject;
-use Annotation\Target;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 use Snowflake\Abstracts\BaseObject;
-use Snowflake\Abstracts\Configure;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -28,63 +27,32 @@ use Snowflake\Snowflake;
 class Container extends BaseObject
 {
 
+	use Attributes;
+
 	/**
 	 * @var array
 	 *
 	 * instance class by className
 	 */
-	private static array $_singletons = [];
+	private array $_singletons = [];
 
 	/**
 	 * @var array
 	 *
 	 * class new instance construct parameter
 	 */
-	private static array $_constructs = [];
+	private array $_constructs = [];
 
 	/**
 	 * @var array
 	 *
 	 * implements \ReflectClass
 	 */
-	private static array $_reflection = [];
+	private array $_reflection = [];
 
 
-	/**
-	 * @var ReflectionProperty[]
-	 */
-	private static array $_reflectionProperty = [];
-
-	/**
-	 * @var ReflectionMethod[]
-	 */
-	private static array $_reflectionMethod = [];
-
-	/**
-	 * @var ReflectionClass[]
-	 */
-	private static array $_reflectionClass = [];
-
-
-	/**
-	 * @var array
-	 */
-	private static array $_propertyAttributes = [];
-
-
-	/**
-	 * @var array
-	 */
-	private static array $_methodsAttributes = [];
-
-
-	/**
-	 * @var array
-	 */
-	private static array $_targetAttributes = [];
-
-
-	private static array $_attributeMapping = [];
+	/** @var array */
+	private array $_parameters = [];
 
 
 	/**
@@ -92,7 +60,7 @@ class Container extends BaseObject
 	 *
 	 * The construct parameter
 	 */
-	private static array $_param = [];
+	private array $_param = [];
 
 	/**
 	 * @param       $class
@@ -106,50 +74,25 @@ class Container extends BaseObject
 	 */
 	public function get($class, array $constrict = [], array $config = []): mixed
 	{
-		if (isset(static::$_singletons[$class])) {
-			return static::$_singletons[$class];
-		} else if (!isset(static::$_constructs[$class])) {
-			return $this->resolve($class, $constrict, $config);
+		if (!isset($this->_singletons[$class])) {
+			$this->_singletons[$class] = $this->resolve($class, $constrict, $config);
 		}
-		$definition = static::$_constructs[$class];
-		if (is_callable($definition, TRUE)) {
-			return call_user_func($definition, $this, $constrict, $config);
-		} else if (is_array($definition)) {
-			return static::$_singletons[$class] = $this->resolveDefinition($definition, $class, $config, $constrict);
-		} else if (is_object($definition)) {
-			return static::$_singletons[$class] = $definition;
-		} else {
-			throw new NotFindClassException($class);
-		}
+		return $this->_singletons[$class];
 	}
 
 
 	/**
-	 * @param $definition
 	 * @param $class
-	 * @param $config
-	 * @param $constrict
-	 * @return mixed
+	 * @param array $constrict
+	 * @param array $config
+	 * @return object
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function resolveDefinition($definition, $class, $config, $constrict): mixed
+	public function newObject($class, array $constrict = [], array $config = []): object
 	{
-		if (!isset($definition['class'])) {
-			throw new NotFindClassException($class);
-		}
-		$_className = $definition['class'];
-		unset($definition['class']);
-
-		$definition = $this->mergeParam($class, $constrict);
-
-		if ($_className === $class) {
-			$object = $this->resolve($class, $definition, $config);
-		} else {
-			$object = $this->get($class, $definition, $config);
-		}
-		return $object;
+		return $this->resolve($class, $constrict, $config);
 	}
 
 
@@ -163,65 +106,44 @@ class Container extends BaseObject
 	 */
 	private function resolve($class, $constrict, $config): object
 	{
-		/** @var ReflectionClass $reflect */
-		[$reflect, $dependencies] = $this->resolveDependencies($class, $constrict);
+		$reflect = $this->resolveDependencies($class);
 		if (empty($reflect) || !$reflect->isInstantiable()) {
 			throw new NotFindClassException($class);
 		}
-		$object = $this->setConfig($config, $reflect, $dependencies, $class);
 
-		return $this->setClassAnnotation($reflect, $object);
-	}
+		$object = $this->setConfig($config, $reflect, $constrict);
 
-
-	/**
-	 * @param $reflect
-	 * @param $object
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function setClassAnnotation($reflect, $object): mixed
-	{
-		static::$_reflectionClass[$reflect->getName()] = [];
-		foreach ($reflect->getAttributes() as $attribute) {
-			static::$_reflectionClass[$reflect->getName()][] = $attribute->newInstance();
-		}
 		return $this->propertyInject($reflect, $object);
 	}
-
 
 	/**
 	 * @param $config
 	 * @param $reflect
 	 * @param $dependencies
-	 * @param $class
-	 * @return mixed
+	 * @return object
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	private function setConfig($config, $reflect, $dependencies, $class): mixed
+	private function setConfig($config, $reflect, $dependencies): object
 	{
-		if (empty($config) || !is_array($config)) {
-			$object = $this->newInstance($reflect, $dependencies);
-		} else if (!empty($dependencies) && $reflect->implementsInterface(Configure::class)) {
-			$dependencies[count($dependencies) - 1] = $config;
-			$object = $this->newInstance($reflect, $dependencies);
-		} else {
-			static::$_param[$class] = $config;
-
-			$object = $this->onAfterInit($this->newInstance($reflect, $dependencies), $config);
-		}
-		return $object;
+		$object = $this->newInstance($reflect, $dependencies);
+		return $this->onAfterInit($object, $config);
 	}
 
 
 	/**
-	 * @param $reflect
+	 * @param ReflectionClass $reflect
 	 * @param $dependencies
-	 * @return mixed
+	 * @return object
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
-	private function newInstance($reflect, $dependencies): mixed
+	private function newInstance(ReflectionClass $reflect, $dependencies): object
 	{
-		if (!empty($dependencies)) {
-			return $reflect->newInstanceArgs($dependencies);
+		$parameters = $this->getMethodParameters($reflect, '__construct');
+		$parameters = $this->mergeParam($parameters, $dependencies);
+		if (!empty($parameters)) {
+			return $reflect->newInstanceArgs($parameters);
 		}
 		return $reflect->newInstance();
 	}
@@ -235,10 +157,7 @@ class Container extends BaseObject
 	 */
 	public function propertyInject(ReflectionClass $reflect, $object): mixed
 	{
-		if (!isset(static::$_propertyAttributes[$reflect->getName()])) {
-			return $object;
-		}
-		foreach (static::$_propertyAttributes[$reflect->getName()] as $property => $inject) {
+		foreach ($this->getPropertyNote($reflect) as $property => $inject) {
 			/** @var Inject $inject */
 			$inject->execute($object, $property);
 		}
@@ -247,101 +166,14 @@ class Container extends BaseObject
 
 
 	/**
-	 * @param ReflectionClass $class
-	 */
-	private function resolveMethodAttribute(ReflectionClass $class)
-	{
-		if ($class->isAbstract() || $class->isTrait()) {
-			return;
-		}
-		foreach ($class->getMethods() as $method) {
-			if ($method->isStatic()) {
-				continue;
-			}
-			$this->setReflectionMethod($class, $method);
-			foreach ($method->getAttributes() as $attribute) {
-				if (!class_exists($attribute->getName())) {
-					continue;
-				}
-				$this->setMethodsAttributes($class, $method, $attribute->newInstance());
-			}
-		}
-	}
-
-
-	/**
-	 * @param ReflectionClass $class
-	 * @param ReflectionMethod $method
-	 */
-	private function setReflectionMethod(ReflectionClass $class, ReflectionMethod $method)
-	{
-		if (!isset(static::$_attributeMapping[$class->getName()])) {
-			static::$_attributeMapping[$class->getName()] = [];
-		}
-		static::$_attributeMapping[$class->getName()][$method->getName()][] = $method;
-	}
-
-
-	/**
-	 * @param ReflectionClass $attribute
-	 * @param ReflectionMethod $method
-	 * @param $object
-	 */
-	private function setMethodsAttributes(ReflectionClass $attribute, ReflectionMethod $method, $object)
-	{
-		if (!isset(static::$_methodsAttributes[$attribute->getName()])) {
-			static::$_methodsAttributes[$attribute->getName()] = [];
-		}
-		static::$_methodsAttributes[$attribute->getName()][$method->getName()][] = $object;
-	}
-
-
-	/**
-	 * @param ReflectionClass $class
-	 */
-	private function resolveTargetAttribute(ReflectionClass $class)
-	{
-		if ($class->isAbstract() || $class->isTrait()) {
-			return;
-		}
-		foreach ($class->getAttributes() as $method) {
-			if ($method->getName() == Target::class) {
-				continue;
-			}
-			static::$_targetAttributes[$class->getName()] = $method->newInstance();
-		}
-	}
-
-
-	/**
-	 * @param $className
-	 * @param $method
-	 * @return ReflectionMethod|null
-	 */
-	public function getReflectionMethod($className, $method): ?ReflectionMethod
-	{
-		return static::$_reflectionMethod[$className][$method] ?? null;
-	}
-
-
-	/**
-	 * @param $className
-	 * @return ReflectionMethod|null
-	 */
-	public function getTargetAnnotation($className): ?ReflectionMethod
-	{
-		return static::$_targetAttributes[$className] ?? null;
-	}
-
-
-	/**
 	 * @param $className
 	 * @param $method
 	 * @return array
+	 * @throws ReflectionException
 	 */
 	public function getMethodAttribute($className, $method = null): array
 	{
-		$methods = static::$_methodsAttributes[$className] ?? [];
+		$methods = $this->getMethodNote($this->getReflect($className));
 		if (!empty($method)) {
 			return $methods[$method] ?? [];
 		}
@@ -353,17 +185,18 @@ class Container extends BaseObject
 	 * @param string $class
 	 * @param string|null $property
 	 * @return ReflectionProperty|ReflectionProperty[]|null
+	 * @throws ReflectionException
 	 */
 	public function getClassReflectionProperty(string $class, string $property = null): ReflectionProperty|null|array
 	{
-		if (!isset(static::$_reflectionProperty[$class])) {
+		$lists = $this->getProperty($this->getReflect($class));
+		if (empty($lists)) {
 			return null;
 		}
-		$properties = static::$_reflectionProperty[$class];
 		if (!empty($property)) {
-			return $properties[$property] ?? null;
+			return $lists[$property] ?? null;
 		}
-		return $properties;
+		return $lists;
 	}
 
 
@@ -381,75 +214,78 @@ class Container extends BaseObject
 		return $object;
 	}
 
+
 	/**
 	 * @param $class
-	 * @param array $dependencies
+	 * @return ReflectionClass
+	 * @throws ReflectionException
+	 */
+	private function resolveDependencies($class): ReflectionClass
+	{
+		$this->_reflection[$class] = new ReflectionClass($class);
+		if (!$this->_reflection[$class]->isInstantiable()) {
+			throw new ReflectionException('Class ' . $class . ' cannot be instantiated');
+		}
+		$this->setPropertyNote($this->_reflection[$class]);
+		$this->setTargetNote($this->_reflection[$class]);
+		$this->setMethodNote($this->_reflection[$class]);
+		if (!is_null($construct = $this->_reflection[$class]->getConstructor())) {
+			$this->_constructs[$class] = $construct;
+		}
+		return $this->_reflection[$class];
+	}
+
+
+	/**
+	 * @param ReflectionClass|string $class
+	 * @return ReflectionMethod[]
+	 */
+	#[Pure] public function getReflectMethods(ReflectionClass|string $class): array
+	{
+		return $this->getMethods($class);
+	}
+
+
+	/**
+	 * @param ReflectionClass|string $class
+	 * @param string $method
+	 * @return ReflectionMethod|null
+	 */
+	#[Pure] public function getReflectMethod(ReflectionClass|string $class, string $method): ?ReflectionMethod
+	{
+		return $this->getReflectMethods($class)[$method] ?? null;
+	}
+
+
+	/**
+	 * @param ReflectionClass|string $class
+	 * @param string $method
 	 * @return array|null
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function resolveDependencies($class, array $dependencies = []): ?array
+	public function getMethodParameters(ReflectionClass|string $class, string $method): ?array
 	{
-		if (!isset(static::$_reflection[$class])) {
-			if (!($reflect = new ReflectionClass($class))->isInstantiable()) {
-				throw new ReflectionException('Class ' . $class . ' cannot be instantiated');
-			}
-			static::$_reflection[$class] = $reflect;
-			$this->resolveTargetAttribute(static::$_reflection[$class]);
-			$this->resolveMethodAttribute(static::$_reflection[$class]);
-			$this->scanProperty(static::$_reflection[$class]);
+		if (isset($this->_parameters[$class]) && isset($this->_parameters[$class][$method])) {
+			return $this->_parameters[$class][$method];
 		}
-		if (!is_null($construct = static::$_reflection[$class]->getConstructor())) {
-			foreach ($this->resolveMethodParam($construct) as $key => $item) {
-				$dependencies[$key] = $item;
-			}
+		$reflectMethod = $this->getReflectMethod($class, $method);
+		if (!($reflectMethod instanceof ReflectionMethod)) {
+			throw new ReflectionException("Class does not have a function $class::$method");
 		}
-		return [static::$_reflection[$class], $dependencies];
-	}
-
-
-	/**
-	 * @param ReflectionClass $reflectionClass
-	 * @return void
-	 */
-	private function scanProperty(ReflectionClass $reflectionClass): void
-	{
-		$properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
-			ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED
-		);
-
-		$className = $reflectionClass->getName();
-		foreach ($properties as $property) {
-			$targets = $property->getAttributes(Inject::class);
-			if (count($targets) < 1) {
-				continue;
-			}
-
-			static::$_reflectionProperty[$className][$property->getName()] = $property;
-
-			static::$_propertyAttributes[$className][$property->getName()] = $targets[0]->newInstance();
+		if ($reflectMethod->getNumberOfParameters() < 1) {
+			return [];
 		}
-	}
-
-
-	/**
-	 * @param ReflectionMethod|null $method
-	 * @return array
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	private function resolveMethodParam(?ReflectionMethod $method): array
-	{
-		$array = [];
-		foreach ($method->getParameters() as $parameter) {
+		$this->_parameters[$class][$method] = $params = [];
+		foreach ($reflectMethod->getParameters() as $key => $parameter) {
 			if ($parameter->isDefaultValueAvailable()) {
-				$array[] = $parameter->getDefaultValue();
+				$params[$key] = $parameter->getDefaultValue();
 			} else {
 				$type = $parameter->getType();
 				if (is_string($type) && class_exists($type)) {
-					$type = Snowflake::createObject($type);
+					$type = Snowflake::getDi()->get($type);
 				}
-				$array[] = match ($parameter->getType()) {
+				$params[$key] = match ($parameter->getType()) {
 					'string' => '',
 					'int', 'float' => 0,
 					'', null, 'object', 'mixed' => NULL,
@@ -458,23 +294,21 @@ class Container extends BaseObject
 				};
 			}
 		}
-		return $array;
+		return $this->_parameters[$class][$method] = $params;
 	}
 
 
 	/**
 	 * @param $class
 	 * @return ReflectionClass|null
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	public function getReflect($class): ?ReflectionClass
 	{
-		$reflect = static::$_reflection[$class] ?? null;
-		if (!is_null($reflect)) {
-			return $reflect;
+		if (!isset($this->_reflection[$class])) {
+			return $this->resolveDependencies($class);
 		}
-		return $this->resolveDependencies($class)[0];
+		return $this->_reflection[$class];
 	}
 
 	/**
@@ -488,8 +322,8 @@ class Container extends BaseObject
 			$class = $class::class;
 		}
 		unset(
-			static::$_reflection[$class], static::$_singletons[$class],
-			static::$_param[$class], static::$_constructs[$class]
+			$this->_reflection[$class], $this->_singletons[$class],
+			$this->_param[$class], $this->_constructs[$class]
 		);
 	}
 
@@ -498,10 +332,10 @@ class Container extends BaseObject
 	 */
 	public function flush(): static
 	{
-		static::$_reflection = [];
-		static::$_singletons = [];
-		static::$_param = [];
-		static::$_constructs = [];
+		$this->_reflection = [];
+		$this->_singletons = [];
+		$this->_param = [];
+		$this->_constructs = [];
 		return $this;
 	}
 
@@ -513,12 +347,12 @@ class Container extends BaseObject
 	 */
 	private function mergeParam($class, $newParam): array
 	{
-		if (empty(static::$_param[$class])) {
+		if (empty($this->_param[$class])) {
 			return $newParam;
 		} else if (empty($newParam)) {
-			return static::$_param[$class];
+			return $this->_param[$class];
 		}
-		$old = static::$_param[$class];
+		$old = $this->_param[$class];
 		foreach ($newParam as $key => $val) {
 			$old[$key] = $val;
 		}

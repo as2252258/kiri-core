@@ -10,6 +10,7 @@ use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use Snowflake\Abstracts\TraitApplication;
+use Snowflake\Application;
 
 /**
  * Class WebController
@@ -18,39 +19,48 @@ use Snowflake\Abstracts\TraitApplication;
 class Controller
 {
 
-    use TraitApplication;
+	use TraitApplication;
 
 
-    /**
-     * inject request
-     *
-     * @var Request|null
-     */
-    #[Inject('request')]
-    public ?Request $request = null;
+	/**
+	 * @param Application $container
+	 */
+	public function __construct(protected Application $container)
+	{
+
+	}
 
 
-    /**
-     * @var HttpParams|null
-     */
-    #[Inject('input')]
-    public ?HttpParams $input = null;
+	/**
+	 * inject request
+	 *
+	 * @var Request|null
+	 */
+	#[Inject('request')]
+	public ?Request $request = null;
 
 
-    /**
-     * @var HttpHeaders|null
-     */
-    #[Inject('header')]
-    public ?HttpHeaders $header = null;
+	/**
+	 * @var HttpParams|null
+	 */
+	#[Inject('input')]
+	public ?HttpParams $input = null;
 
 
-    /**
-     * inject response
-     *
-     * @var Response|null
-     */
-    #[Inject('response')]
-    public ?Response $response = null;
+	/**
+	 * @var HttpHeaders|null
+	 */
+	#[Inject('header')]
+	public ?HttpHeaders $header = null;
+
+
+	/**
+	 * inject response
+	 *
+	 * @var Response|null
+	 */
+	#[Inject('response')]
+	public ?Response $response = null;
 
 
 }

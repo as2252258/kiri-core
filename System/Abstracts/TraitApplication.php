@@ -16,15 +16,15 @@ use HttpServer\Route\Router;
 use HttpServer\Server;
 use HttpServer\Shutdown;
 use Kafka\Producer;
+use Rpc\Producer as RPCProducer;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
 use Snowflake\Channel;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
-use Snowflake\Pool\Pool;
 use Snowflake\Pool\Connection;
-use Rpc\Producer as RPCProducer;
+use Snowflake\Pool\Pool;
 
 /**
  * Trait TraitApplication
@@ -45,6 +45,7 @@ use Rpc\Producer as RPCProducer;
  * @property BaseGoto $goto
  * @property Producer $kafka
  * @property Client $client
+ * @property \Database\Connection $databases
  * @property Curl $curl
  * @property \Snowflake\Crontab\Producer $crontab
  * @property HttpFilter $filter

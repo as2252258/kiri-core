@@ -202,7 +202,7 @@ class Snowflake
 			$class = $className['class'];
 			unset($className['class']);
 
-			return static::$container->get($class, $construct, $className);
+			return static::$container->newObject($class, $construct, $className);
 		} else if (is_callable($className, TRUE)) {
 			return call_user_func($className, $construct);
 		} else {
@@ -250,7 +250,7 @@ class Snowflake
 	 */
 	public static function setManagerId($workerId): mixed
 	{
-		if (empty($workerId) || static::isDcoker()) {
+		if (empty($workerId) || static::isDocker()) {
 			return $workerId;
 		}
 
@@ -267,7 +267,7 @@ class Snowflake
 	 */
 	public static function setProcessId($workerId): mixed
 	{
-		if (empty($workerId) || static::isDcoker()) {
+		if (empty($workerId) || static::isDocker()) {
 			return $workerId;
 		}
 
@@ -280,7 +280,7 @@ class Snowflake
 	/**
 	 * @return bool
 	 */
-	public static function isDcoker(): bool
+	public static function isDocker(): bool
 	{
 		$output = shell_exec('[ -f /.dockerenv ] && echo yes || echo no');
 		if (trim($output) === 'yes') {
@@ -297,7 +297,7 @@ class Snowflake
 	 */
 	public static function setWorkerId($workerId): mixed
 	{
-		if (empty($workerId) || static::isDcoker()) {
+		if (empty($workerId) || static::isDocker()) {
 			return $workerId;
 		}
 
@@ -314,7 +314,7 @@ class Snowflake
 	 */
 	public static function setTaskId($workerId): mixed
 	{
-		if (empty($workerId) || static::isDcoker()) {
+		if (empty($workerId) || static::isDocker()) {
 			return $workerId;
 		}
 

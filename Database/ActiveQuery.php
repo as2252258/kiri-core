@@ -12,7 +12,6 @@ namespace Database;
 use Database\Traits\QueryTrait;
 use Exception;
 use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
 
 /**
  * Class ActiveQuery
@@ -107,19 +106,9 @@ class ActiveQuery extends Component implements ISqlBuilder
 		if (is_string($name)) {
 			$name = explode(',', $name);
 		}
-		foreach ($name as $key => $val) {
+		foreach ($name as $val) {
 			array_push($this->with, $val);
 		}
-		return $this;
-	}
-
-	/**
-	 * @param bool $isArray
-	 * @return $this
-	 */
-	public function asArray(bool $isArray = TRUE): static
-	{
-		$this->asArray = $isArray;
 		return $this;
 	}
 
@@ -137,20 +126,16 @@ class ActiveQuery extends Component implements ISqlBuilder
 
 
 	/**
-	 * @return ActiveRecord|array|null
+	 * @return ActiveRecord|null
 	 * @throws Exception
 	 */
-	public function first(): ActiveRecord|array|null
+	public function first(): ActiveRecord|null
 	{
 		$data = $this->execute($this->builder->one())->one();
 		if (empty($data)) {
 			return NULL;
 		}
-		$newModel = $this->modelClass::populate($data);
-		if ($this->asArray) {
-			return $newModel->toArray();
-		}
-		return $newModel;
+		return $this->modelClass::populate($data);
 	}
 
 

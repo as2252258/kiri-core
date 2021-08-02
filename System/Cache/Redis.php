@@ -25,12 +25,7 @@ use Snowflake\Snowflake;
  */
 class Redis extends Component
 {
-	public string $host = '127.0.0.1';
-	public string $auth = 'xl.2005113426';
-	public int $port = 6973;
-	public int $databases = 0;
-	public int $timeout = -1;
-	public string $prefix = 'idd';
+
 
 	/**
 	 * @throws Exception
@@ -54,7 +49,7 @@ class Redis extends Component
 
 		$config = $this->get_config();
 
-		$length = (int)env('REDIS.POOL_LENGTH', 100);
+		$length = Config::get('connections.pool.max',10);
 
 		$connections->initConnections('Redis:' . $config['host'], true, $length);
 	}

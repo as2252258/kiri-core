@@ -43,7 +43,7 @@ use validator\Validator;
  * @property bool $isCreate
  * @method rules()
  * @method static tableName()
- * @property Application $application
+ * @property Application $container
  */
 abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 {
@@ -106,7 +106,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @return Application
 	 */
-	#[Pure] private function getApplication(): Application
+	#[Pure] private function getContainer(): Application
 	{
 		return Snowflake::app();
 	}
@@ -322,13 +322,29 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 
 	/**
 	 * @return ActiveQuery
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public static function find(): ActiveQuery
 	{
-		return Snowflake::createObject(ActiveQuery::class, [static::class]);
+		return new ActiveQuery(get_called_class());
 	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public static function query(): ActiveQuery
+	{
+		return new ActiveQuery(get_called_class());
+	}
+
+
+	/**
+	 * @throws ConfigException
+	 */
+	protected function getConnection()
+	{
+		return Config::get('connections.' . static::$ab_name, null, true);
+	}
+
 
 	/**
 	 * @param null $condition
@@ -710,7 +726,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return bool
 	 * @throws Exception
 	 */
-	#[Event(ActiveRecord::AFTER_SAVE)]
+	#[Event(self::AFTER_SAVE)]
 	public function afterSave($attributes, $changeAttributes): bool
 	{
 		return true;
