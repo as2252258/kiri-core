@@ -133,7 +133,9 @@ class Response extends HttpService
 	 */
 	public function addHeader($key, $value): static
 	{
-		$this->headers[$key] = $value;
+        /** @var SResponse $response */
+        $response = Context::getContext(SResponse::class);
+        $response->header($key, $value);
 		return $this;
 	}
 
@@ -151,7 +153,9 @@ class Response extends HttpService
 	 */
 	public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
-		$this->cookies[] = func_get_args();
+        /** @var SResponse $response */
+        $response = Context::getContext(SResponse::class);
+        $response->cookie(...func_get_args());
 		return $this;
 	}
 
@@ -222,31 +226,14 @@ class Response extends HttpService
 		if (!$response?->isWritable()) {
 			return;
 		}
-		$this->setCookies($response);
-		defer(fn() => $this->headers = []);
 		if (!isset($response->header['Content-Type'])) {
 		    $response->header('Content-Type', 'application/json;charset=utf-8');
         }
 		$response->header('Run-Time', $this->getRuntime());
-		foreach ($this->headers as $key => $header) {
-			$response->header($key, $header);
-		}
 		$response->status($this->statusCode);
 		$response->end($sendData);
 	}
 
-
-	/**
-	 * @param SResponse $response
-	 * @return void
-	 */
-	private function setCookies(SResponse $response): void
-	{
-		foreach ($this->cookies as $header) {
-			$response->setCookie(...$header);
-		}
-		$this->cookies = [];
-	}
 
 
 	/**
