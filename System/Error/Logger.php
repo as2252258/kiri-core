@@ -181,14 +181,10 @@ class Logger extends Component
 		}
 
 		$to_day = date('Y-m-d');
-		if (!isset($this->sources[$to_day])) $this->sources[$to_day] = [];
 
 		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
-		if (!isset($this->sources[$to_day][$fileName]) || !is_resource($this->sources[$to_day][$fileName])) {
-			$this->sources[$to_day][$fileName] = fopen($fileName, 'rw');
-		}
 		try {
-			fwrite($this->sources[$to_day][$fileName], '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
+			file_put_contents($fileName, '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
 		} catch (Throwable $exception) {
 			$this->output($exception->getMessage());
 		}
