@@ -181,8 +181,8 @@ class Node extends HttpService
 			return null;
 		}
 		foreach ($aspect as $value) {
+		    var_dump(class_implements($value));
 			if ($value instanceof IAspect) {
-			    var_dump($value);
 				return $value;
 			}
 		}
