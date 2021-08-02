@@ -33,6 +33,7 @@ class Aop extends Component
 		if (!isset(static::$_aop[$alias])) {
 			static::$_aop[$alias] = [];
 		}
+		var_dump('add ' . $alias);
 		if (in_array($aspect, static::$_aop[$alias])) {
 			return;
 		}
@@ -46,7 +47,7 @@ class Aop extends Component
 	 */
 	public function hasAop($handler): bool
 	{
-		var_dump($handler[0]::class . '::' . $handler[1]);
+		var_dump('check ' . $handler[0]::class . '::' . $handler[1]);
 		return isset(static::$_aop[$handler[0]::class . '::' . $handler[1]]);
 	}
 
