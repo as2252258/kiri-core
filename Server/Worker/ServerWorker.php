@@ -66,9 +66,9 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		$di = Snowflake::getDi();
 		foreach ($fileLists as $file => $class) {
-			if (Snowflake::isTask() && str_contains($file, CONTROLLER_PATH)) {
-				continue;
-			}
+//			if (Snowflake::isTask() && str_contains($file, CONTROLLER_PATH)) {
+//				continue;
+//			}
 			$instance = $di->get($class);
 			$methods = $di->getMethodAttribute($class);
 			foreach ($methods as $method => $attribute) {
