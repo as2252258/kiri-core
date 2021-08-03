@@ -6,8 +6,6 @@ use Exception;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HSRequest;
 use HttpServer\Route\Router;
-use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
@@ -56,7 +54,15 @@ class HTTPServerListener extends Abstracts\Server
 		$this->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 
 		$server->set(array_merge($settings['settings'] ?? [], ['enable_unsafe_event' => false]));
-		$server->on('request', [$this, 'onRequest']);
+		if (isset($settings['events'][Constant::REQUEST])) {
+			$event = $settings['events'][Constant::REQUEST];
+			if (is_array($event) && is_string($event[0])) {
+				$event[0] = di($event[0]);
+			}
+			$server->on('request', $event);
+		} else {
+			$server->on('request', [$this, 'onRequest']);
+		}
 		$server->on('connect', [$this, 'onConnect']);
 		$server->on('close', [$this, 'onClose']);
 		return $server;
@@ -86,7 +92,7 @@ class HTTPServerListener extends Abstracts\Server
 
 			$this->router->dispatch(HSRequest::create($request));
 		} catch (Error | Throwable $exception) {
-            $this->response->send(jTraceEx($exception),500);
+			$this->response->send(jTraceEx($exception), 500);
 		}
 	}
 
