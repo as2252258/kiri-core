@@ -44,7 +44,7 @@ class Response extends HttpService
 
     private mixed $endData;
 
-    private array $_format_maps = [
+    const FORMAT_MAPS = [
         self::JSON => JsonFormatter::class,
         self::XML  => XmlFormatter::class,
         self::HTML => HtmlFormatter::class
@@ -213,7 +213,7 @@ class Response extends HttpService
             return $this->endData;
         }
 
-        $class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
+        $class = Response::FORMAT_MAPS[$this->format] ?? HtmlFormatter::class;
 
         return \di($class)->send($this->endData)->getData();
     }
