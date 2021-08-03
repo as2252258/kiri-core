@@ -15,7 +15,7 @@ class Schema extends Component
 {
 
 	/** @var ?Connection */
-	public ?Connection $db;
+	public ?Connection $db = null;
 
 	/** @var ?Columns $_column*/
 	private ?Columns $_column = null;
