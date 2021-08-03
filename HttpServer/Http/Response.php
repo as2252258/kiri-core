@@ -15,7 +15,6 @@ use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use HttpServer\IInterface\IFormatter;
-use JetBrains\PhpStorm\Pure;
 use Snowflake\Core\Help;
 use Snowflake\Snowflake;
 use Swoole\Http\Response as SResponse;
@@ -56,7 +55,15 @@ class Response extends HttpService
 	 */
 	public function setFormat($format): static
 	{
-		$this->format = $format;
+		/** @var SResponse $response */
+		$response = Context::getContext(SResponse::class);
+		if ($format == self::HTML) {
+			$response->header('Content-Type', 'text/html;charset=utf-8');
+		} else if ($format == self::XML) {
+			$response->header('Content-Type', 'application/xml;charset=utf-8');
+		} else {
+			$response->header('Content-Type', 'application/json;charset=utf-8');
+		}
 		return $this;
 	}
 
@@ -78,10 +85,10 @@ class Response extends HttpService
 		$this->format = self::HTML;
 
 		/** @var SResponse $response */
-        $response = Context::getContext(SResponse::class);
-        $response->header('Content-Type','text/html;charset=utf-8');
+		$response = Context::getContext(SResponse::class);
+		$response->header('Content-Type', 'text/html;charset=utf-8');
 
-        return (string)$content;
+		return (string)$content;
 	}
 
 
@@ -93,11 +100,11 @@ class Response extends HttpService
 	{
 		$this->format = self::JSON;
 
-        /** @var SResponse $response */
-        $response = Context::getContext(SResponse::class);
-        $response->header('Content-Type','application/json;charset=utf-8');
+		/** @var SResponse $response */
+		$response = Context::getContext(SResponse::class);
+		$response->header('Content-Type', 'application/json;charset=utf-8');
 
-        return json_encode($content, JSON_UNESCAPED_UNICODE);
+		return json_encode($content, JSON_UNESCAPED_UNICODE);
 	}
 
 
@@ -109,11 +116,11 @@ class Response extends HttpService
 	{
 		$this->format = self::XML;
 
-        /** @var SResponse $response */
-        $response = Context::getContext(SResponse::class);
-        $response->header('Content-Type','application/xml;charset=utf-8');
+		/** @var SResponse $response */
+		$response = Context::getContext(SResponse::class);
+		$response->header('Content-Type', 'application/xml;charset=utf-8');
 
-        return $content;
+		return $content;
 	}
 
 
@@ -133,9 +140,9 @@ class Response extends HttpService
 	 */
 	public function addHeader($key, $value): static
 	{
-        /** @var SResponse $response */
-        $response = Context::getContext(SResponse::class);
-        $response->header($key, $value);
+		/** @var SResponse $response */
+		$response = Context::getContext(SResponse::class);
+		$response->header($key, $value);
 		return $this;
 	}
 
@@ -153,9 +160,9 @@ class Response extends HttpService
 	 */
 	public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
-        /** @var SResponse $response */
-        $response = Context::getContext(SResponse::class);
-        $response->cookie(...func_get_args());
+		/** @var SResponse $response */
+		$response = Context::getContext(SResponse::class);
+		$response->cookie(...func_get_args());
 		return $this;
 	}
 
@@ -221,19 +228,18 @@ class Response extends HttpService
 	 */
 	private function sendData($sendData): void
 	{
-	    /** @var SResponse $response */
+		/** @var SResponse $response */
 		$response = Context::getContext(SResponse::class);
 		if (!$response?->isWritable()) {
 			return;
 		}
 		if (!isset($response->header['Content-Type'])) {
-		    $response->header('Content-Type', 'application/json;charset=utf-8');
-        }
+			$response->header('Content-Type', 'application/json;charset=utf-8');
+		}
 		$response->header('Run-Time', $this->getRuntime());
 		$response->status($this->statusCode);
 		$response->end($sendData);
 	}
-
 
 
 	/**
