@@ -121,7 +121,7 @@ class ActiveQuery extends Component implements ISqlBuilder
 	 */
 	public function execute($sql, array $params = []): Command
 	{
-		return $this->modelClass::getDb()->createCommand($sql, $this->modelClass::getDbName(), $params);
+		return $this->modelClass::getDb()->createCommand($sql, $params);
 	}
 
 

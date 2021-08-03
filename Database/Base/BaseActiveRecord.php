@@ -90,6 +90,10 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	protected array $actions = [];
 
 
+	/** @var string  */
+	private static string $connection = 'db';
+
+
 	/**
 	 * @var Relation|null
 	 */
@@ -325,7 +329,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function find(): ActiveQuery
 	{
-		return new ActiveQuery(get_called_class());
+		return static::query();
 	}
 
 	/**
@@ -342,7 +346,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	protected function getConnection()
 	{
-		return Config::get('connections.' . static::$ab_name, null, true);
+		return Config::get('connections.' . static::$connection, null, true);
 	}
 
 
@@ -445,7 +449,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	private function insert($param, $attributes): bool|static
 	{
 		[$sql, $param] = SqlBuilder::builder(static::find())->insert($param);
-		$dbConnection = static::getDb()->createCommand($sql, static::getDbName(), $param);
+		$dbConnection = static::getDb()->createCommand($sql, $param);
 		if (!($lastId = (int)$dbConnection->save(true, $this))) {
 			throw new Exception('保存失败.');
 		}
@@ -498,7 +502,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (is_bool($generate)) {
 			return $generate;
 		}
-		$command = static::getDb()->createCommand($generate[0], static::getDbName(), $generate[1]);
+		$command = static::getDb()->createCommand($generate[0], $generate[1]);
 		if ($command->save(false, $this)) {
 			return $this->refresh()->afterSave($fields, $param);
 		}
@@ -995,9 +999,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function setDatabaseConnect($dbName): Connection
 	{
-		static::$ab_name = $dbName;
-
-		return Snowflake::app()->db->get($dbName);
+		return Snowflake::app()->db->get(static::$connection = $dbName);
 	}
 
 
@@ -1007,7 +1009,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function getDbName(): string
 	{
-		return Config::get('databases.connections.' . static::$ab_name . '.database');
+		return Config::get('databases.connections.' . static::$connection . '.database');
 	}
 
 

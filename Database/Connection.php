@@ -261,12 +261,11 @@ class Connection extends Component
 
 	/**
 	 * @param null $sql
-	 * @param string $dbname
 	 * @param array $attributes
 	 * @return Command
 	 * @throws Exception
 	 */
-	public function createCommand($sql = null, string $dbname = '', array $attributes = []): Command
+	public function createCommand($sql = null, array $attributes = []): Command
 	{
 		$command = new Command(['db' => $this, 'sql' => $sql]);
 		return $command->bindValues($attributes);

@@ -11,8 +11,9 @@ namespace Database;
 
 use Database\Traits\QueryTrait;
 use Exception;
+use Snowflake\Abstracts\Config;
 use Snowflake\Event;
-use Snowflake\Snowflake;
+use Snowflake\Exception\ConfigException;
 
 /**
  * Class Db
@@ -54,6 +55,7 @@ class Db implements ISqlBuilder
 		static::$_inTransaction = false;
 	}
 
+
 	/**
 	 * @throws Exception
 	 */
@@ -67,6 +69,7 @@ class Db implements ISqlBuilder
 		static::$_inTransaction = false;
 	}
 
+
 	/**
 	 * @param $table
 	 *
@@ -74,10 +77,11 @@ class Db implements ISqlBuilder
 	 */
 	public static function table($table): Db|static
 	{
-		$db = new Db();
-		$db->from($table);
-		return $db;
+		$connection = new Db();
+		$connection->from($table);
+		return $connection;
 	}
+
 
 	/**
 	 * @param string $column
@@ -114,16 +118,15 @@ class Db implements ISqlBuilder
 
 
 	/**
-	 * @param Connection|null $db
+	 * @param Connection|null $connection
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function get(Connection $db = NULL): mixed
+	public function get(Connection $connection = NULL): mixed
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-		return $db->createCommand(SqlBuilder::builder($this)->one())
+		$connection = static::getDefaultConnection($connection);
+
+		return $connection->createCommand(SqlBuilder::builder($this)->one())
 			->all();
 	}
 
@@ -137,69 +140,70 @@ class Db implements ISqlBuilder
 	}
 
 	/**
-	 * @param Connection|null $db
+	 * @param Connection|null $connection
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function find(Connection $db = NULL): mixed
+	public function find(Connection $connection = NULL): mixed
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-		return $db->createCommand(SqlBuilder::builder($this)->all())
+		$connection = static::getDefaultConnection($connection);
+
+		return $connection->createCommand(SqlBuilder::builder($this)->all())
 			->one();
 	}
 
 	/**
-	 * @param Connection|NULL $db
+	 * @param Connection|NULL $connection
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function count(Connection $db = NULL): bool|int
+	public function count(Connection $connection = NULL): bool|int
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-		return $db->createCommand(SqlBuilder::builder($this)->count())
+		$connection = static::getDefaultConnection($connection);
+
+		return $connection->createCommand(SqlBuilder::builder($this)->count())
 			->exec();
 	}
 
 	/**
-	 * @param Connection|NULL $db
+	 * @param Connection|NULL $connection
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function exists(Connection $db = NULL): bool|int
+	public function exists(Connection $connection = NULL): bool|int
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-		return $db->createCommand(SqlBuilder::builder($this)->one())
+		$connection = static::getDefaultConnection($connection);
+
+		return $connection->createCommand(SqlBuilder::builder($this)->one())
 			->fetchColumn();
 	}
 
 	/**
 	 * @param string $sql
 	 * @param array $attributes
-	 * @param Connection|null $db
+	 * @param Connection|null $connection
 	 * @return array|bool|int|string|null
 	 * @throws Exception
 	 */
-	public static function findAllBySql(string $sql, array $attributes = [], Connection $db = NULL): int|bool|array|string|null
+	public static function findAllBySql(string $sql, array $attributes = [], Connection $connection = NULL): int|bool|array|string|null
 	{
-		return $db->createCommand($sql, $db?->database, $attributes)->all();
+		$connection = static::getDefaultConnection($connection);
+
+		return $connection->createCommand($sql, $attributes)->all();
 	}
 
 	/**
 	 * @param string $sql
 	 * @param array $attributes
-	 * @param Connection|NULL $db
+	 * @param Connection|NULL $connection
 	 * @return string|array|bool|int|null
 	 * @throws Exception
 	 */
-	public static function findBySql(string $sql, array $attributes = [], Connection $db = NULL): string|array|bool|int|null
+	public static function findBySql(string $sql, array $attributes = [], Connection $connection = NULL): string|array|bool|int|null
 	{
-		return $db->createCommand($sql, $db?->database, $attributes)->one();
+		$connection = static::getDefaultConnection($connection);
+
+		return $connection->createCommand($sql, $attributes)->one();
 	}
 
 	/**
@@ -235,115 +239,120 @@ class Db implements ISqlBuilder
 	}
 
 	/**
-	 * @param null $db
+	 * @param Connection|null $connection
 	 * @return bool|int
-	 * @throws Exception
+	 * @throws ConfigException
 	 */
-	public function delete($db = null): bool|int
+	public function delete(?Connection $connection = null): bool|int
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
+		$connection = static::getDefaultConnection($connection);
 
-		$query = $db->getBuild()->builder($this);
-
-		return $db->createCommand($query)->delete();
+		return $connection->createCommand($connection->getBuild()->builder($this))->delete();
 	}
 
 	/**
-	 * @param $table
-	 * @param null $db
+	 * @param string $table
+	 * @param null $connection
 	 * @return bool|int
-	 * @throws Exception
+	 * @throws ConfigException
 	 */
-	public static function drop($table, $db = null): bool|int
+	public static function drop(string $table, $connection = null): bool|int
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-		return $db->createCommand('DROP TABLE `' . $db->database . '`.' . $table)->delete();
+		$connection = static::getDefaultConnection($connection);
+
+		$sprint = sprintf('DROP TABLE `%s`.`%s`', $connection->database, $table);
+		return $connection->createCommand($sprint)->delete();
 	}
 
 	/**
-	 * @param $table
-	 * @param null $db
+	 * @param string $table
+	 * @param null $connection
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public static function truncate($table, $db = null): bool|int
+	public static function truncate(string $table, $connection = null): bool|int
 	{
+		$connection = static::getDefaultConnection($connection);
 
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-
-		return $db->createCommand('TRUNCATE `' . $db->database . '`.' . $table)->exec();
+		$sprint = sprintf('TRUNCATE `%s`.`%s`', $connection->database, $table);
+		return $connection->createCommand($sprint)->exec();
 	}
 
 	/**
-	 * @param $table
-	 * @param Connection|NULL $db
+	 * @param string $table
+	 * @param Connection|NULL $connection
 	 * @return mixed
-	 * @throws Exception
+	 * @throws ConfigException
 	 */
-	public static function showCreateSql($table, Connection $db = NULL): mixed
+	public static function showCreateSql(string $table, Connection $connection = NULL): mixed
 	{
+		$connection = static::getDefaultConnection($connection);
 
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
-
-
-		if (empty($table)) {
-			return null;
-		}
-
-		return $db->createCommand('SHOW CREATE TABLE `' . $db->database . '`.' . $table)->one();
+		$sprint = sprintf('SHOW CREATE TABLE `%s`.`%s`', $connection->database, $table);
+		return $connection->createCommand($sprint)->one();
 	}
 
 	/**
-	 * @param $table
-	 * @param Connection|NULL $db
+	 * @param string $table
+	 * @param Connection|NULL $connection
 	 * @return bool|int|null
-	 * @throws Exception
+	 * @throws ConfigException
 	 */
-	public static function desc($table, Connection $db = NULL): bool|int|null
+	public static function desc(string $table, Connection $connection = NULL): bool|int|null
 	{
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
+		$connection = static::getDefaultConnection($connection);
 
-		if (empty($table)) {
-			return null;
-		}
-
-		return $db->createCommand('SHOW FULL FIELDS FROM `' . $db->database . '`.' . $table)->all();
+		$sprint = sprintf('SHOW FULL FIELDS FROM `%s`.`%s`', $connection->database, $table);
+		return $connection->createCommand($sprint)->all();
 	}
 
 
 	/**
 	 * @param string $table
-	 * @param Connection|NULL $db
+	 * @param Connection|NULL $connection
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public static function show(string $table, Connection $db = NULL): mixed
+	public static function show(string $table, Connection $connection = NULL): mixed
 	{
 		if (empty($table)) {
 			return null;
 		}
-
-		if (empty($db)) {
-			$db = Snowflake::app()->get('db');
-		}
+		$connection = static::getDefaultConnection($connection);
 
 		$table = ['	const TABLE = \'select * from %s  where REFERENCED_TABLE_NAME=%s\';'];
-
-		return $db->createCommand((new Query())
+		return $connection->createCommand((new Query())
 			->select('*')
 			->from('INFORMATION_SCHEMA.KEY_COLUMN_USAGE')
 			->where(['REFERENCED_TABLE_NAME' => $table])
 			->getSql())->one();
 	}
+
+
+	/**
+	 * @param null|Connection $connection
+	 * @param null $name
+	 * @return mixed
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public static function getDefaultConnection(?Connection $connection, $name = null): Connection
+	{
+		if ($connection instanceof Connection) {
+			return $connection;
+		}
+		$databases = Config::get('databases.connections', []);
+		if (empty($databases) || !is_array($databases)) {
+			throw new Exception('Please configure the database link.');
+		}
+		if (!empty($name)) {
+			if (!isset($databases[$name])) {
+				throw new Exception('Please configure the database link.');
+			}
+			return $databases[$name];
+		}
+		return current($databases);
+	}
+
 
 }
