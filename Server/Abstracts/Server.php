@@ -27,9 +27,6 @@ abstract class Server
 	protected Event $_event;
 
 
-	abstract public function bindCallback(\Swoole\Server|Port $server, ?array $settings = []);
-
-
 
 	/**
 	 * @param $prefix
