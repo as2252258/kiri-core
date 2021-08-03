@@ -180,7 +180,7 @@ class Loader extends BaseObject
 				}
 				unset(static::$_directory[$key]);
 				foreach ($_path as $item) {
-					$paths[] = $item;
+					$paths[$key] = $item;
 				}
 			}
 			return $paths;
