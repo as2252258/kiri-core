@@ -9,6 +9,7 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Server\ServerManager;
+use Snowflake\Abstracts\BaseObject;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 
@@ -426,7 +427,7 @@ class Request extends HttpService
 
 		Context::setContext(\Swoole\Http\Request::class, $request);
 
-		Context::setContext(Response::class, new CoroutineResponse());
+		Context::setContext(CoroutineResponse::class, new CoroutineResponse());
 
 		return Snowflake::getDi()->get(Request::class);
 	}
