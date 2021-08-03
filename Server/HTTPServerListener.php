@@ -52,7 +52,6 @@ class HTTPServerListener extends Abstracts\Server
 	 * @param int $mode
 	 * @param array|null $settings
 	 * @return Server\Port
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
@@ -71,7 +70,6 @@ class HTTPServerListener extends Abstracts\Server
 		static::$_http->set(array_merge($settings['settings'] ?? [], ['enable_unsafe_event' => false]));
 		static::$_http->on('request', [$reflect, 'onRequest']);
 		static::$_http->on('connect', [$reflect, 'onConnect']);
-		static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
 		static::$_http->on('close', [$reflect, 'onClose']);
 		return static::$_http;
 	}

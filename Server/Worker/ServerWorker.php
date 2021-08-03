@@ -35,7 +35,7 @@ class ServerWorker extends \Server\Abstracts\Server
 	{
 		$this->_setConfigCache($workerId);
 
-		$store = ApplicationStore::getStore()->add();
+		$store = ApplicationStore::getStore()->instance();
 
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app');
@@ -50,7 +50,7 @@ class ServerWorker extends \Server\Abstracts\Server
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
 
-		$store->done();
+		$store->close();
 	}
 
 

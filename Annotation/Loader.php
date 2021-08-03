@@ -155,7 +155,6 @@ class Loader extends BaseObject
 	 * @param string $namespace
 	 * @return ReflectionClass|null
 	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	private function getReflect(DirectoryIterator $path, string $namespace): ?ReflectionClass
 	{

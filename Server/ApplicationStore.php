@@ -6,6 +6,7 @@ namespace Server;
 
 use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine\Channel;
+use const Grpc\CHANNEL_SHUTDOWN;
 
 class ApplicationStore
 {
@@ -22,7 +23,7 @@ class ApplicationStore
 	 */
 	private function __construct()
 	{
-		$this->lock = new Channel(99999);
+		$this->lock = new Channel(1);
 	}
 
 
@@ -41,9 +42,8 @@ class ApplicationStore
 	/**
 	 * @return $this
 	 */
-	public function add(): static
+	public function instance(): static
 	{
-		$this->lock->push(1);
 		return $this;
 	}
 
@@ -53,10 +53,17 @@ class ApplicationStore
 	 */
 	public function waite(): void
 	{
-		if ($this->lock->isEmpty()) {
+		if ($this->lock->errCode == SWOOLE_CHANNEL_CLOSED) {
 			return;
 		}
 		$this->lock->pop(-1);
+	}
+
+
+	public function close()
+	{
+		$this->lock->push(1);
+		$this->lock->close();
 	}
 
 

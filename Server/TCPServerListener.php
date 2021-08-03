@@ -43,7 +43,6 @@ class TCPServerListener extends Abstracts\Server
 
 		/** @var static $reflect */
 		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
-		$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
 		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 		$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
 		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
@@ -56,22 +55,7 @@ class TCPServerListener extends Abstracts\Server
 		static::$_tcp->on('receive', [$reflect, 'onReceive']);
 		static::$_tcp->on('connect', [$reflect, 'onConnect']);
 		static::$_tcp->on('close', [$reflect, 'onClose']);
-		static::$_tcp->on('disconnect', [$reflect, 'onDisconnect']);
 		return static::$_tcp;
-	}
-
-
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 * @param int|null $reactor_id
-	 * @throws Exception
-	 */
-	public function onDisconnect(Server $server, int $fd, ?int $reactor_id = null)
-	{
-		$this->runEvent(Constant::HANDSHAKE, null, [$server, $fd, $reactor_id]);
-
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
 	}
 
 
