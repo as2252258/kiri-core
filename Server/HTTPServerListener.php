@@ -92,6 +92,7 @@ class HTTPServerListener extends Abstracts\Server
 		try {
 			Context::setContext(Response::class, $response);
 
+            HSRequest::create($request);
 //			$this->router->dispatch(HSRequest::create($request));
 		} catch (Error | Throwable $exception) {
 //			$this->response->send(jTraceEx($exception), 500);
