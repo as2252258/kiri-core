@@ -236,13 +236,13 @@ class ServerManager extends Abstracts\Server
 		$this->ports[$port] = $this->server->addlistener($host, $port, $mode);
 		$this->ports[$port]->set($settings['settings'] ?? []);
 		$reflect = match ($type) {
-			Constant::SERVER_TYPE_TCP => Snowflake::getDi()->getReflect(TCPServerListener::class),
-			Constant::SERVER_TYPE_UDP => Snowflake::getDi()->getReflect(UDPServerListener::class),
-			Constant::SERVER_TYPE_HTTP => Snowflake::getDi()->getReflect(HTTPServerListener::class),
-			Constant::SERVER_TYPE_WEBSOCKET => Snowflake::getDi()->getReflect(WebSocketServerListener::class),
+			Constant::SERVER_TYPE_TCP => Snowflake::getDi()->newObject(TCPServerListener::class),
+			Constant::SERVER_TYPE_UDP => Snowflake::getDi()->newObject(UDPServerListener::class),
+			Constant::SERVER_TYPE_HTTP => Snowflake::getDi()->newObject(HTTPServerListener::class),
+			Constant::SERVER_TYPE_WEBSOCKET => Snowflake::getDi()->newObject(WebSocketServerListener::class),
 			default => throw new Exception(''),
 		};
-		$reflect->newInstance()->bindCallback($this->ports[$port], $settings['events'] ?? []);
+		$reflect->bindCallback($this->ports[$port], $settings['events'] ?? []);
 	}
 
 
@@ -363,11 +363,12 @@ class ServerManager extends Abstracts\Server
 	/**
 	 * @param string $class
 	 * @return object
+	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function getNewInstance(string $class): object
 	{
-		return Snowflake::getDi()->getReflect($class)?->newInstance();
+		return Snowflake::getDi()->newObject($class);
 	}
 
 
