@@ -346,6 +346,8 @@ class ServerManager extends Abstracts\Server
 				$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
 				$this->server->on('disconnect', [$reflect, 'onDisconnect']);
 			}
+
+			var_dump($this->server->getCallback('disconnect'));
 		} else if ($type === Constant::SERVER_TYPE_UDP) {
 			$reflect = $this->getNewInstance(UDPServerListener::class);
 			$this->server->on('packet', [$reflect, 'onPacket']);
