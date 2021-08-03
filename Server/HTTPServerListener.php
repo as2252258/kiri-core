@@ -6,6 +6,7 @@ use Annotation\Inject;
 use Exception;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HSRequest;
+use HttpServer\Route\Node;
 use HttpServer\Route\Router;
 use Server\Events\OnAfterRequest;
 use Snowflake\Event;
@@ -37,6 +38,7 @@ class HTTPServerListener extends Abstracts\Server
 	/** @var \HttpServer\Http\Response|mixed  */
 	#[Inject(\HttpServer\Http\Response::class)]
 	public \HttpServer\Http\Response $response;
+
 
 
 	/** @var EventDispatch */
@@ -90,15 +92,20 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			Context::setContext(Response::class, $response);
-
-            HSRequest::create($request);
-//			$this->router->dispatch(HSRequest::create($request));
-		} catch (Error | Throwable $exception) {
-//			$this->response->send(jTraceEx($exception), 500);
+            $node = $this->router->find_path(HSRequest::create($request));
+            if (!($node instanceof Node)) {
+                $this->response->setFormat(\HttpServer\Http\Response::HTML);
+                $data = '<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>';
+            } else {
+                $data= $node->dispatch();
+            }
+        } catch (Error | Throwable $exception) {
+            $data = jTraceEx($exception);
 		} finally {
-		    $response->status(200);
-		    $response->end('ok');
+		    if (Context::hasContext(Response::class)) {
+		        return;
+            }
+            Context::getContext(Response::class)->send($data,200, $response);
 			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}

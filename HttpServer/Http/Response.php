@@ -55,26 +55,10 @@ class Response extends HttpService
 	 */
 	public function setFormat($format): static
 	{
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-		if ($format == self::HTML) {
-			$response->header('Content-Type', 'text/html;charset=utf-8');
-		} else if ($format == self::XML) {
-			$response->header('Content-Type', 'application/xml;charset=utf-8');
-		} else {
-			$response->header('Content-Type', 'application/json;charset=utf-8');
-		}
-		return $this;
+        $this->format = $format;
+        return $this;
 	}
 
-	/**
-	 * 清理无用数据
-	 */
-	public function clear(): void
-	{
-		$this->fd = 0;
-		$this->format = null;
-	}
 
 	/**
 	 * @param $content
@@ -83,11 +67,6 @@ class Response extends HttpService
 	public function toHtml($content): string
 	{
 		$this->format = self::HTML;
-
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-		$response->header('Content-Type', 'text/html;charset=utf-8');
-
 		return (string)$content;
 	}
 
@@ -99,11 +78,6 @@ class Response extends HttpService
 	public function toJson($content): string|bool
 	{
 		$this->format = self::JSON;
-
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-		$response->header('Content-Type', 'application/json;charset=utf-8');
-
 		return json_encode($content, JSON_UNESCAPED_UNICODE);
 	}
 
@@ -115,23 +89,9 @@ class Response extends HttpService
 	public function toXml($content): mixed
 	{
 		$this->format = self::XML;
-
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-		$response->header('Content-Type', 'application/xml;charset=utf-8');
-
 		return $content;
 	}
 
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function sender(): mixed
-	{
-		return $this->send(func_get_args());
-	}
 
 	/**
 	 * @param $key
@@ -140,9 +100,7 @@ class Response extends HttpService
 	 */
 	public function addHeader($key, $value): static
 	{
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-		$response->header($key, $value);
+	    $this->headers[$key] = $value;
 		return $this;
 	}
 
@@ -160,11 +118,20 @@ class Response extends HttpService
 	 */
 	public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-		$response->cookie(...func_get_args());
+	    $this->cookies[] = func_get_args();
 		return $this;
 	}
+
+
+    /**
+     * @param $statusCode
+     */
+	public function setStatusCode($statusCode)
+    {
+	    $this->statusCode = $statusCode;
+    }
+
+
 
 	/**
 	 * @param mixed $context
@@ -172,15 +139,9 @@ class Response extends HttpService
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function send(mixed $context = '', int $statusCode = 200): mixed
+	public function send(mixed $context, int $statusCode, SResponse $response): mixed
 	{
 		$sendData = $this->parseData($context);
-
-		/** @var SResponse|null $response */
-        $response = Context::getContext(SResponse::class);
-		if ($response === null) {
-            return $this->printResult($sendData);
-		}
 
         $response->setStatusCode($statusCode);
         if (!isset($response->header['Content-Type'])) {

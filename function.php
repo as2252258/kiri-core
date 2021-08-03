@@ -4,6 +4,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
+use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -594,24 +595,10 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response|stdClass
 	{
-		return Snowflake::getDi()->get(Response::class);
-	}
-
-}
-
-if (!function_exists('send')) {
-
-	/**
-	 * @param $context
-	 * @param int $statusCode
-	 * @return mixed
-	 * @throws Exception
-	 */
-	function send($context, int $statusCode = 404): mixed
-	{
-		if (is_array($context)) $context = Json::encode($context);
-
-		return \response()->send($context, $statusCode);
+	    if (!Context::hasContext(Response::class)){
+            return Context::setContext(Response::class, new Response());
+        }
+		return Context::getContext(Response::class);
 	}
 
 }
