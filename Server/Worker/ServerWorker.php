@@ -43,7 +43,7 @@ class ServerWorker extends \Server\Abstracts\Server
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 
 		putenv('environmental=' . Snowflake::WORKER);
-		if ($workerId > $server->setting['worker_num']) {
+		if ($workerId >= $server->setting['worker_num']) {
 			putenv('environmental=' . Snowflake::TASK);
 		}
 
