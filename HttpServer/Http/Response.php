@@ -175,13 +175,20 @@ class Response extends HttpService
 	public function send(mixed $context = '', int $statusCode = 200): mixed
 	{
 		$sendData = $this->parseData($context);
-		$this->statusCode = $statusCode;
+
+		/** @var SResponse|null $response */
         $response = Context::getContext(SResponse::class);
 		if ($response === null) {
-			$this->printResult($sendData);
-		} else {
-			$this->sendData($response, $sendData);
+            return $this->printResult($sendData);
 		}
+
+        $response->setStatusCode($statusCode);
+        if (!isset($response->header['Content-Type'])) {
+            $response->header('Content-Type', 'application/json;charset=utf-8');
+        }
+        $response->header('Run-Time', $this->getRuntime());
+        $response->end($sendData);
+        Context::remove(SResponse::class);
 		return $sendData;
 	}
 
@@ -207,12 +214,12 @@ class Response extends HttpService
 	 * @return void
 	 * @throws Exception
 	 */
-	private function printResult($result): void
+	private function printResult($result): mixed
 	{
 		$result = Help::toString($result);
 		fire('CONSOLE_END');
 		if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
-			return;
+			return $result;
 		}
 		$string = 'Command Result: ' . PHP_EOL . PHP_EOL;
 		if (empty($result)) {
@@ -221,23 +228,9 @@ class Response extends HttpService
 			$string .= $result . PHP_EOL . PHP_EOL;
 		}
 		echo $string . 'Command End!' . PHP_EOL;
+		return $result;
 	}
 
-	/**
-	 * @param $sendData
-	 * @throws Exception
-	 */
-	private function sendData(SResponse $response, $sendData): void
-	{
-		if (!isset($response->header['Content-Type'])) {
-			$response->header('Content-Type', 'application/json;charset=utf-8');
-		}
-		$response->header('Run-Time', $this->getRuntime());
-		$response->status($this->statusCode);
-		$response->end($sendData);
-
-        Context::remove(SResponse::class);
-	}
 
 
 	/**
