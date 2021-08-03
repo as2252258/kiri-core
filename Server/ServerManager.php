@@ -226,25 +226,22 @@ class ServerManager extends Abstracts\Server
 	 * @param int $mode
 	 * @param array $settings
 	 * @throws ReflectionException
-	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
 		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
-		switch ($type) {
-			case Constant::SERVER_TYPE_TCP:
-				$this->ports[$port] = TCPServerListener::instance($this->server, $host, $port, $mode, $settings);
-				break;
-			case Constant::SERVER_TYPE_UDP:
-				$this->ports[$port] = UDPServerListener::instance($this->server, $host, $port, $mode, $settings);
-				break;
-			case Constant::SERVER_TYPE_HTTP:
-				$this->ports[$port] = HTTPServerListener::instance($this->server, $host, $port, $mode, $settings);
-				break;
-			case Constant::SERVER_TYPE_WEBSOCKET:
-				$this->ports[$port] = WebSocketServerListener::instance($this->server, $host, $port, $mode, $settings);
-				break;
-		}
+		/** @var Server\Port $service */
+		$this->ports[$port] = $this->server->addlistener($host, $port, $mode);
+		$this->ports[$port]->set($settings['settings'] ?? []);
+		$reflect = match ($type) {
+			Constant::SERVER_TYPE_TCP => Snowflake::getDi()->getReflect(TCPServerListener::class),
+			Constant::SERVER_TYPE_UDP => Snowflake::getDi()->getReflect(UDPServerListener::class),
+			Constant::SERVER_TYPE_HTTP => Snowflake::getDi()->getReflect(HTTPServerListener::class),
+			Constant::SERVER_TYPE_WEBSOCKET => Snowflake::getDi()->getReflect(WebSocketServerListener::class),
+			default => throw new Exception(''),
+		};
+		$reflect->newInstance()->bindCallback($this->ports[$port], $settings['events'] ?? []);
 	}
 
 
@@ -326,6 +323,7 @@ class ServerManager extends Abstracts\Server
 	 * @param array $settings
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function addDefaultListener(string $type, array $settings): void
 	{
@@ -334,46 +332,21 @@ class ServerManager extends Abstracts\Server
 			$this->addTaskListener($settings['events']);
 		}
 		if ($type === Constant::SERVER_TYPE_WEBSOCKET) {
+			/** @var WebSocketServerListener $reflect */
 			$reflect = $this->getNewInstance(WebSocketServerListener::class);
-			$this->server->on('handshake', [$reflect, 'onHandshake']);
-			$this->server->on('message', [$reflect, 'onMessage']);
-			$this->server->on('connect', [$reflect, 'onConnect']);
-			if (isset($settings['events'][Constant::REQUEST])) {
-				$request = $this->getNewInstance(HTTPServerListener::class);
-				if (is_array($settings['events'][Constant::REQUEST])) {
-					$settings['events'][Constant::REQUEST][0] = $this->getNewInstance($settings['events'][Constant::REQUEST][0]);
-				}
-				$this->server->on('request', $settings['events'][Constant::REQUEST] ?? [$request, 'onRequest']);
-			}
-			$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
-			$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
-			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+			$reflect->bindCallback($this->server, $settings);
 		} else if ($type === Constant::SERVER_TYPE_UDP) {
+			/** @var UDPServerListener $reflect */
 			$reflect = $this->getNewInstance(UDPServerListener::class);
-			$this->server->on('packet', [$reflect, 'onPacket']);
-
-			$reflect->setEvents(Constant::PACKET, $settings['events'][Constant::PACKET] ?? null);
+			$reflect->bindCallback($this->server, $settings);
 		} else if ($type === Constant::SERVER_TYPE_HTTP) {
+			/** @var HTTPServerListener $reflect */
 			$reflect = $this->getNewInstance(HTTPServerListener::class);
-			$this->server->on('request', [$reflect, 'onRequest']);
-			$this->server->on('connect', [$reflect, 'onConnect']);
-			$this->server->on('close', [$reflect, 'onClose']);
-
-			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
-			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+			$reflect->bindCallback($this->server, $settings);
 		} else {
+			/** @var TCPServerListener $reflect */
 			$reflect = $this->getNewInstance(TCPServerListener::class);
-			$this->server->on('connect', [$reflect, 'onConnect']);
-			$this->server->on('close', [$reflect, 'onClose']);
-			$this->server->on('receive', [$reflect, 'onReceive']);
-
-			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
-			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-			$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
-		}
-		if ($this->server instanceof WServer && swoole_version() >= '4.7') {
-			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
+			$reflect->bindCallback($this->server, $settings);
 		}
 	}
 

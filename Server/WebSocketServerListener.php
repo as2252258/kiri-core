@@ -27,41 +27,36 @@ class WebSocketServerListener extends Abstracts\Server
 
 	/**
 	 * @param mixed $server
-	 * @param string $host
-	 * @param int $port
-	 * @param int $mode
 	 * @param array|null $settings
 	 * @return Server\Port
 	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public static function instance(mixed $server, string $host, int $port, int $mode, ?array $settings = []): Server\Port
+	public function bindCallback(Server|Port $server, ?array $settings = []): Server\Port
 	{
-		if (!in_array($mode, [SWOOLE_TCP, SWOOLE_TCP6])) {
-			trigger_error('Port mode ' . $host . '::' . $port . ' must is udp listener type.');
+		$this->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+		$this->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
+		$this->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
+		$this->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+
+		$server->set($settings['settings'] ?? []);
+		$server->on('connect', [$this, 'onConnect']);
+		$server->on('handshake', [$this, 'onHandshake']);
+		$server->on('message', [$this, 'onMessage']);
+		$server->on('close', [$this, 'onClose']);
+
+		if (swoole_version() >= '4.7' && isset($settings['events'][Constant::DISCONNECT])) {
+			$this->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT]);
+			$server->on('disconnect', [$this, 'onDisconnect']);
 		}
 
-		/** @var static $reflect */
-		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
-		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-		$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
-		$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-		$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
-		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
-
-		static::$_http = $server->addlistener($host, $port, $mode);
-		if (!(static::$_http instanceof Port)) {
-			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
+		$events = $settings['events'][Constant::REQUEST] ?? [];
+		if (!empty($events) && is_array($events)) {
+			$events[0] = Snowflake::getDi()->get($events[0]);
+			$server->on('request', $events);
 		}
-
-		static::$_http->set($settings['settings'] ?? []);
-		static::$_http->on('connect', [$reflect, 'onConnect']);
-		static::$_http->on('handshake', [$reflect, 'onHandshake']);
-		static::$_http->on('message', [$reflect, 'onMessage']);
-		static::$_http->on('disconnect', [$reflect, 'onDisconnect']);
-		static::$_http->on('close', [$reflect, 'onClose']);
-
-		return static::$_http;
+		return $server;
 	}
 
 

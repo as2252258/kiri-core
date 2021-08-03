@@ -10,6 +10,7 @@ use Snowflake\Abstracts\Config;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Swoole\Server\Port;
 
 
 /**
@@ -25,6 +26,8 @@ abstract class Server
 
 	protected Event $_event;
 
+
+	abstract public function bindCallback(\Swoole\Server|Port $server, ?array $settings = []);
 
 
 

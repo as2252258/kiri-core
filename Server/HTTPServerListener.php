@@ -46,32 +46,21 @@ class HTTPServerListener extends Abstracts\Server
 
 	/**
 	 * UDPServerListener constructor.
-	 * @param Server|\Swoole\WebSocket\Server|\Swoole\Http\Server $server
-	 * @param string $host
-	 * @param int $port
-	 * @param int $mode
+	 * @param Server|Port $server
 	 * @param array|null $settings
 	 * @return Server\Port
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public static function instance(mixed $server, string $host, int $port, int $mode, ?array $settings = []): Server\Port
+	public function bindCallback(Server|Port $server, ?array $settings = []): Server\Port
 	{
-		if (!in_array($mode, [SWOOLE_TCP, SWOOLE_TCP6])) {
-			trigger_error('Port mode ' . $host . '::' . $port . ' must is udp listener type.');
-		}
-		/** @var static $reflect */
-		$reflect = Snowflake::getDi()->getReflect(static::class)?->newInstance();
-		$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-		static::$_http = $server->addlistener($host, $port, $mode);
-		if (!(static::$_http instanceof Port)) {
-			trigger_error('Port is  ' . $host . '::' . $port . ' must is tcp listener type.');
-		}
-		static::$_http->set(array_merge($settings['settings'] ?? [], ['enable_unsafe_event' => false]));
-		static::$_http->on('request', [$reflect, 'onRequest']);
-		static::$_http->on('connect', [$reflect, 'onConnect']);
-		static::$_http->on('close', [$reflect, 'onClose']);
-		return static::$_http;
+		$this->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+
+		$server->set(array_merge($settings['settings'] ?? [], ['enable_unsafe_event' => false]));
+		$server->on('request', [$this, 'onRequest']);
+		$server->on('connect', [$this, 'onConnect']);
+		$server->on('close', [$this, 'onClose']);
+		return $server;
 	}
 
 
