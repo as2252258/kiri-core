@@ -98,6 +98,7 @@ class HTTPServerListener extends Abstracts\Server
             }
             $data = $node->dispatch();
         } catch (Error | Throwable $exception) {
+            $response->header('Content-Type','text/html;charset=utf-8');
             $code = $exception->getCode() == 0 ? 500 : $exception->getCode();
             $data = $code ? $exception->getMessage() : jTraceEx($exception);
         } finally {
