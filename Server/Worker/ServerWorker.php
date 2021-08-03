@@ -67,7 +67,7 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		$di = Snowflake::getDi();
 		foreach ($fileLists as $file => $class) {
-			var_dump($server->worker_id >= $server->setting['worker_num'] && str_contains($file, CONTROLLER_PATH));
+			var_dump($file);
 			if ($server->worker_id >= $server->setting['worker_num'] && str_contains($file, CONTROLLER_PATH)) {
 				continue;
 			}
