@@ -209,11 +209,11 @@ class Response extends HttpService
 	private function printResult($result): void
 	{
 		$result = Help::toString($result);
-		$string = 'Command Result: ' . PHP_EOL . PHP_EOL;
 		fire('CONSOLE_END');
 		if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
 			return;
 		}
+		$string = 'Command Result: ' . PHP_EOL . PHP_EOL;
 		if (empty($result)) {
 			$string .= 'success!' . PHP_EOL . PHP_EOL;
 		} else {
@@ -224,6 +224,7 @@ class Response extends HttpService
 
 	/**
 	 * @param $sendData
+	 * @throws Exception
 	 */
 	private function sendData($sendData): void
 	{

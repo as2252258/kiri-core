@@ -513,7 +513,7 @@ class Router extends HttpService implements RouterInterface
 		$node = $this->find_path($request);
 		if (!($node instanceof Node)) {
 			$this->response->setFormat(Response::HTML);
-			$this->response->send('<h1 style="text-align: center;">404</h1>');
+			$this->response->send('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>');
 		} else {
 			$this->response->send($node->dispatch(), 200);
 		}
@@ -526,7 +526,7 @@ class Router extends HttpService implements RouterInterface
 	public function pageNotFound()
 	{
 		$this->response->setFormat(Response::HTML);
-		$this->response->send('<h1 style="text-align: center;">404</h1>');
+		$this->response->send('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>');
 	}
 
 
