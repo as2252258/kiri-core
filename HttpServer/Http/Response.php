@@ -159,9 +159,19 @@ class Response extends HttpService
      */
     public function getBuilder(mixed $data, SResponse $response = null): static
     {
-        if ($response === null) {
-            return $this->setContent($data);
+        if ($response != null) {
+            $this->configure($response);
         }
+        return $this->setContent($data);
+    }
+
+
+    /**
+     * @param \Swoole\Http\Response|null $response
+     * @throws \Exception
+     */
+    public function configure(SResponse $response = null): static
+    {
         $response->setStatusCode($this->statusCode);
         if (!isset($response->header['Content-Type'])) {
             $response->header('Content-Type', $this->getResponseFormat());
@@ -177,7 +187,7 @@ class Response extends HttpService
                 $response->setCookie(...$header);
             }
         }
-        return $this->setContent($data);
+        return $this;
     }
 
 
@@ -202,9 +212,11 @@ class Response extends HttpService
     /**
      * @param mixed $content
      */
-    public function setContent(mixed $content): static
+    public function setContent(mixed $content, $statusCode = 200, $format = self::JSON): static
     {
         $this->endData = $content;
+        $this->setStatusCode($statusCode);
+        $this->setFormat($format);
         return $this;
     }
 

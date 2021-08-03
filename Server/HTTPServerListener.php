@@ -36,9 +36,10 @@ class HTTPServerListener extends Abstracts\Server
     #[Inject('router')]
     public Router $router;
 
-    /** @var \HttpServer\Http\Response|mixed */
-    #[Inject(\HttpServer\Http\Response::class)]
-    public \HttpServer\Http\Response $response;
+
+    /** @var \Server\Response|mixed */
+    #[Inject(\Server\Response::class)]
+    public \Server\Response $response;
 
 
     /** @var EventDispatch */
@@ -96,29 +97,17 @@ class HTTPServerListener extends Abstracts\Server
             if (!($node instanceof Node)) {
                 throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
             }
-            $data = $node->dispatch();
+            $responseData = $this->response->setContent($node->dispatch(),200);
         } catch (Error | Throwable $exception) {
-            $response->header('Content-Type','text/html;charset=utf-8');
             $code = $exception->getCode() == 0 ? 500 : $exception->getCode();
             $data = $code ? $exception->getMessage() : jTraceEx($exception);
+
+            $responseData = $this->response->setContent($data, $code, \Server\Response::HTML);
         } finally {
-            $this->requestEnd($data, $response, $code ?? 200);
+            $response->end($responseData->configure($response)->getContent());
+
+            $this->eventDispatch->dispatch(new OnAfterRequest());
         }
-    }
-
-
-    /**
-     * @param mixed $data
-     * @param \Swoole\Http\Response $response
-     */
-    protected function requestEnd(mixed $data, Response $response, $code)
-    {
-        $sResponse = $this->response->getBuilder($data, $response);
-
-        $response->setStatusCode($code);
-        $response->end($sResponse->getContent());
-
-        $this->eventDispatch->dispatch(new OnAfterRequest());
     }
 
 
