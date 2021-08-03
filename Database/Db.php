@@ -242,6 +242,7 @@ class Db implements ISqlBuilder
 	 * @param Connection|null $connection
 	 * @return bool|int
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function delete(?Connection $connection = null): bool|int
 	{
@@ -255,6 +256,7 @@ class Db implements ISqlBuilder
 	 * @param null $connection
 	 * @return bool|int
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public static function drop(string $table, $connection = null): bool|int
 	{
@@ -283,6 +285,7 @@ class Db implements ISqlBuilder
 	 * @param Connection|NULL $connection
 	 * @return mixed
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public static function showCreateSql(string $table, Connection $connection = NULL): mixed
 	{
@@ -297,6 +300,7 @@ class Db implements ISqlBuilder
 	 * @param Connection|NULL $connection
 	 * @return bool|int|null
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public static function desc(string $table, Connection $connection = NULL): bool|int|null
 	{
