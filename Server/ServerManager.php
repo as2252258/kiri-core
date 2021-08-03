@@ -338,7 +338,10 @@ class ServerManager extends Abstracts\Server
 			$this->server->on('handshake', [$reflect, 'onHandshake']);
 			$this->server->on('message', [$reflect, 'onMessage']);
 			$this->server->on('connect', [$reflect, 'onConnect']);
-
+			if (isset($settings['events'][Constant::REQUEST])) {
+				$request = $this->getNewInstance(HTTPServerListener::class);
+				$this->server->on('request', $settings['events'][Constant::REQUEST] ?? [$request, 'onRequest']);
+			}
 			$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
 			$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
