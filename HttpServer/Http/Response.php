@@ -173,9 +173,7 @@ class Response extends HttpService
     public function configure(SResponse $response = null): static
     {
         $response->setStatusCode($this->statusCode);
-        if (!isset($response->header['Content-Type'])) {
-            $response->header('Content-Type', $this->getResponseFormat());
-        }
+        $response->header('Content-Type', $this->getResponseFormat());
         $response->header('Run-Time', $this->getRuntime());
         if (!empty($this->headers)) {
             foreach ($this->headers as $name => $header) {
