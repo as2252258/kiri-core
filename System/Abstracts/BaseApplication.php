@@ -46,7 +46,7 @@ use Swoole\Table;
  * Class BaseApplication
  * @package Snowflake\Snowflake\Base
  */
-abstract class BaseApplication extends Service
+abstract class BaseApplication extends Component
 {
 
 	use TraitApplication;
@@ -246,6 +246,20 @@ abstract class BaseApplication extends Service
 		$this->get('error')->register();
 	}
 
+
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+	public function get($name): mixed
+    {
+        return di(Service::class)->get($name);
+    }
+
+
+
 	/**
 	 * @return mixed
 	 */
@@ -430,6 +444,19 @@ abstract class BaseApplication extends Service
 	{
 		return $this->get('clientsPool');
 	}
+
+
+
+    /**
+     * @param $array
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+	private function setComponents($array): void
+    {
+        di(Service::class)->setComponents($array);
+    }
+
 
 
 	/**
