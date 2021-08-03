@@ -101,7 +101,7 @@ class HTTPServerListener extends Abstracts\Server
             $code = $exception->getCode() == 0 ? 500 : $exception->getCode();
             $data = $code ? $exception->getMessage() : jTraceEx($exception);
         } finally {
-            $this->requestEnd($data, $response);
+            $this->requestEnd($data, $response, $code ?? 200);
         }
     }
 
@@ -110,10 +110,11 @@ class HTTPServerListener extends Abstracts\Server
      * @param mixed $data
      * @param \Swoole\Http\Response $response
      */
-    protected function requestEnd(mixed $data, Response $response)
+    protected function requestEnd(mixed $data, Response $response, $code)
     {
         $sResponse = $this->response->getBuilder($data, $response);
 
+        $response->setStatusCode($code);
         $response->end($sResponse->getContent());
 
         $this->eventDispatch->dispatch(new OnAfterRequest());
