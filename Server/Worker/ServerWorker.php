@@ -48,25 +48,26 @@ class ServerWorker extends \Server\Abstracts\Server
 		}
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
-		$this->interpretDirectory($annotation);
+		$this->interpretDirectory($server, $annotation);
 
 		$store->close();
 	}
 
 
 	/**
+	 * @param Server $server
 	 * @param Annotation $annotation
-	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function interpretDirectory(Annotation $annotation)
+	private function interpretDirectory(Server $server, Annotation $annotation)
 	{
 		$fileLists = $annotation->runtime(APP_PATH . 'app');
 
 		$di = Snowflake::getDi();
 		foreach ($fileLists as $file => $class) {
-			if (!Snowflake::isWorker() && str_contains($file, CONTROLLER_PATH)) {
+			if ($server->worker_id >= $server->setting['worker_num'] && str_contains($file, CONTROLLER_PATH)) {
 				continue;
 			}
 			$instance = $di->get($class);
