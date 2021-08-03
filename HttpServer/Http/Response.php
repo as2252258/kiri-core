@@ -191,24 +191,6 @@ class Response extends HttpService
 
 
     /**
-     * @param $context
-     * @return mixed
-     * @throws Exception
-     */
-    private function parseData($context): mixed
-    {
-        if (!empty($context) && !is_string($context)) {
-            /** @var IFormatter $class */
-            $class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
-
-            $di = Snowflake::getDi()->get($class);
-            $context = $di->send($context)->getData();
-        }
-        return $context;
-    }
-
-
-    /**
      * @param mixed $content
      */
     public function setContent(mixed $content, $statusCode = 200, $format = null): static
@@ -231,11 +213,9 @@ class Response extends HttpService
             return $this->endData;
         }
 
-        /** @var IFormatter $class */
         $class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
 
-        $di = Snowflake::getDi()->get($class);
-        return $di->send($this->endData)->getData();
+        return \di($class)->send($this->endData)->getData();
     }
 
 
