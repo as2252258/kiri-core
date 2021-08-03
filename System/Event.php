@@ -82,7 +82,6 @@ class Event extends BaseObject
 	/**
 	 * @param $name
 	 * @param $callback
-	 * @param array $parameter
 	 * @param bool $isAppend
 	 * @throws Exception
 	 */
@@ -101,9 +100,9 @@ class Event extends BaseObject
 			return;
 		}
 		if (!empty(static::$_events[$name]) && $isAppend === true) {
-			array_unshift(static::$_events[$name], [$callback, $parameter]);
+			array_unshift(static::$_events[$name], [$callback]);
 		} else {
-			static::$_events[$name][] = [$callback, $parameter];
+			static::$_events[$name][] = [$callback];
 		}
 	}
 
@@ -118,7 +117,7 @@ class Event extends BaseObject
 			return;
 		}
 		foreach (static::$_events[$name] as $index => $event) {
-			[$handler, $parameter] = $event;
+			[$handler] = $event;
 			if ($handler !== $callback) {
 				continue;
 			}
@@ -147,7 +146,7 @@ class Event extends BaseObject
 			return false;
 		}
 		foreach (static::$_events[$name] as $event) {
-			[$handler, $parameter] = $event;
+			[$handler] = $event;
 			if ($handler === $callback) {
 				return true;
 			}
@@ -170,7 +169,7 @@ class Event extends BaseObject
 			return static::$_events[$name];
 		}
 		foreach (static::$_events[$name] as $event) {
-			[$callback, $parameter] = $event;
+			[$callback] = $event;
 			if ($callback === $handler) {
 				return [$event];
 			}
