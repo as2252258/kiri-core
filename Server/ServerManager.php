@@ -342,12 +342,6 @@ class ServerManager extends Abstracts\Server
 			$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
 			$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-			if (swoole_version() >= '4.7') {
-				$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-				$this->server->on('disconnect', [$reflect, 'onDisconnect']);
-			}
-
-			var_dump($this->server->getCallback('disconnect'));
 		} else if ($type === Constant::SERVER_TYPE_UDP) {
 			$reflect = $this->getNewInstance(UDPServerListener::class);
 			$this->server->on('packet', [$reflect, 'onPacket']);
@@ -370,6 +364,10 @@ class ServerManager extends Abstracts\Server
 			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 			$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
+		}
+		if ($this->server instanceof WServer && swoole_version() >= '4.7') {
+			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
+			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
 		}
 	}
 
