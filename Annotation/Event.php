@@ -37,7 +37,7 @@ use Snowflake\Event as SEvent;
     public function execute(mixed $class, mixed $method = null): bool
     {
 		// TODO: Implement execute() method.
-		SEvent::on($this->name, [$class, $method], $this->params);
+		SEvent::on($this->name, [$class, $method]);
 		return true;
 	}
 

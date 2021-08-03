@@ -197,22 +197,22 @@ abstract class BaseApplication extends Service
 	private function addEvent($key, $value): void
 	{
 		if ($value instanceof \Closure) {
-			Event::on($key, $value, [], true);
+			Event::on($key, $value, true);
 			return;
 		}
 		if (is_object($value)) {
-			Event::on($key, $value, [], true);
+			Event::on($key, $value, true);
 			return;
 		}
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-				Event::on($key, $value, [], true);
+				Event::on($key, $value, true);
 				return;
 			}
 
 			if (is_string($value[0])) {
 				$value[0] = Snowflake::createObject($value[0]);
-				Event::on($key, $value, [], true);
+				Event::on($key, $value, true);
 				return;
 			}
 
@@ -220,7 +220,7 @@ abstract class BaseApplication extends Service
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				Event::on($key, $item, [], true);
+				Event::on($key, $item, true);
 			}
 		}
 
