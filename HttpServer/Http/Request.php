@@ -9,7 +9,6 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Server\ServerManager;
-use Snowflake\Abstracts\BaseObject;
 use Snowflake\Core\Json;
 use Snowflake\Snowflake;
 

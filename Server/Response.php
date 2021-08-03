@@ -5,6 +5,7 @@ namespace Server;
 
 
 use HttpServer\Http\Context;
+use HttpServer\Http\Response as HttpResponse;
 
 
 /**
@@ -26,7 +27,7 @@ class Response
      */
     public function __call($name, $args)
     {
-        return Context::getContext(\HttpServer\Http\Response::class)->{$name}(...$args);
+        return Context::getContext(HttpResponse::class)->{$name}(...$args);
     }
 
 }

@@ -58,6 +58,9 @@ class Response extends HttpService
      */
     public function setFormat($format): static
     {
+        if (empty($format)){
+            return $this;
+        }
         $this->format = $format;
         return $this;
     }
@@ -141,7 +144,6 @@ class Response extends HttpService
      */
     public function getResponseFormat(): string
     {
-        var_dump($this->format);
         if ($this->format == self::HTML) {
             return 'text/html;charset=utf-8';
         } else if ($this->format == self::XML) {
@@ -173,7 +175,6 @@ class Response extends HttpService
      */
     public function configure(SResponse $response = null): static
     {
-        var_dump($this->format);
         $response->setStatusCode($this->statusCode);
         $response->header('Content-Type', $this->getResponseFormat());
         $response->header('Run-Time', $this->getRuntime());
@@ -212,7 +213,7 @@ class Response extends HttpService
     /**
      * @param mixed $content
      */
-    public function setContent(mixed $content, $statusCode = 200, $format = self::JSON): static
+    public function setContent(mixed $content, $statusCode = 200, $format = null): static
     {
         $this->endData = $content;
         $this->setStatusCode($statusCode);
