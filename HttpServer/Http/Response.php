@@ -27,157 +27,265 @@ use Swoole\Http\Response as SResponse;
 class Response extends HttpService
 {
 
-	const JSON = 'json';
-	const XML = 'xml';
-	const HTML = 'html';
+    const JSON = 'json';
+    const XML = 'xml';
+    const HTML = 'html';
 
-	/** @var ?string */
-	public ?string $format = null;
+    /** @var ?string */
+    public ?string $format = null;
 
-	/** @var int */
-	public int $statusCode = 200;
+    /** @var int */
+    public int $statusCode = 200;
 
-	public array $headers = [];
-	public array $cookies = [];
+    public array $headers = [];
+    public array $cookies = [];
 
-	private float $startTime = 0;
+    private float $startTime = 0;
 
-	private array $_format_maps = [
-		self::JSON => JsonFormatter::class,
-		self::XML  => XmlFormatter::class,
-		self::HTML => HtmlFormatter::class
-	];
+    private mixed $endData;
 
-	public int $fd = 0;
+    private array $_format_maps = [
+        self::JSON => JsonFormatter::class,
+        self::XML  => XmlFormatter::class,
+        self::HTML => HtmlFormatter::class
+    ];
 
-	/**
-	 * @param $format
-	 * @return $this
-	 */
-	public function setFormat($format): static
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
+    public int $fd = 0;
+
+    /**
+     * @param $format
+     * @return $this
+     */
+    public function setFormat($format): static
+    {
+        $this->format = $format;
         return $this;
-	}
+    }
 
 
-	/**
-	 * @param $content
-	 * @return string
-	 */
-	public function toHtml($content): string
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
-		return (string)$content;
-	}
+    /**
+     * @param $content
+     * @return string
+     */
+    public function toHtml($content): string
+    {
+        $this->format = self::HTML;
+        return (string)$content;
+    }
 
 
-	/**
-	 * @param $content
-	 * @return string|bool
-	 */
-	public function toJson($content): string|bool
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
-		return json_encode($content, JSON_UNESCAPED_UNICODE);
-	}
+    /**
+     * @param $content
+     * @return string|bool
+     */
+    public function toJson($content): string|bool
+    {
+        $this->format = self::JSON;
+        return json_encode($content, JSON_UNESCAPED_UNICODE);
+    }
 
 
-	/**
-	 * @param $content
-	 * @return mixed
-	 */
-	public function toXml($content): mixed
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
-		return $content;
-	}
+    /**
+     * @param $content
+     * @return mixed
+     */
+    public function toXml($content): mixed
+    {
+        $this->format = self::XML;
+        return $content;
+    }
 
 
-	/**
-	 * @param $key
-	 * @param $value
-	 * @return Response
-	 */
-	public function addHeader($key, $value): static
-	{
-	    $this->__coroutine__call(__METHOD__, func_get_args());
-		return $this;
-	}
+    /**
+     * @param $key
+     * @param $value
+     * @return Response
+     */
+    public function addHeader($key, $value): static
+    {
+        $this->headers[$key] = $value;
+        return $this;
+    }
 
 
     /**
      * @param $name
-     * @param $value
+     * @param null $value
+     * @param null $expires
+     * @param null $path
+     * @param null $domain
+     * @param null $secure
+     * @param null $httponly
+     * @param null $samesite
+     * @param null $priority
+     * @return Response
      */
-	private function __coroutine__call($name, $value)
+    public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
     {
-        /** @var \HttpServer\Http\CoroutineResponse $handler */
-        $handler = Context::getContext(CoroutineResponse::class);
-        call_user_func([$handler, $name], ...$value);
+        $this->cookies[] = func_get_args();
+        return $this;
     }
-
-
-	/**
-	 * @param $name
-	 * @param null $value
-	 * @param null $expires
-	 * @param null $path
-	 * @param null $domain
-	 * @param null $secure
-	 * @param null $httponly
-	 * @param null $samesite
-	 * @param null $priority
-	 * @return Response
-	 */
-	public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
-		return $this;
-	}
 
 
     /**
      * @param $statusCode
      */
-	public function setStatusCode($statusCode)
+    public function setStatusCode($statusCode)
     {
-        $this->__coroutine__call(__METHOD__, func_get_args());
+        $this->statusCode = $statusCode;
     }
 
 
-	/**
-	 * @param mixed $context
-	 * @param int $statusCode
-	 * @throws Exception
-	 */
-	public function send(mixed $context, SResponse $response): void
-	{
-	    $this->__coroutine__call(__METHOD__, func_get_args());
-	}
-
-
-	/**
-	 * @param $url
-	 * @param array $param
-	 * @return int
-	 */
-	public function redirect($url, array $param = []): void
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
+    /**
+     * @return string
+     */
+    public function getResponseFormat(): string
+    {
+        if ($this->format == self::HTML) {
+            return 'text/html;charset=utf-8';
+        } else if ($this->format == self::XML) {
+            return 'application/xml;charset=utf-8';
+        } else {
+            return 'application/json;charset=utf-8';
+        }
     }
 
 
-	/**
-	 * @param string $path
-	 * @param int $offset
-	 * @param int $limit
-	 * @param int $sleep
-	 * @return string
-	 */
-	public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): void
-	{
-        $this->__coroutine__call(__METHOD__, func_get_args());
+    /**
+     * @param mixed $context
+     * @param int $statusCode
+     * @return bool
+     * @throws Exception
+     */
+    public function getBuilder(mixed $data, SResponse $response): static
+    {
+        $response->setStatusCode($this->statusCode);
+        if (!isset($response->header['Content-Type'])) {
+            $response->header('Content-Type', $this->getResponseFormat());
+        }
+        $response->header('Run-Time', $this->getRuntime());
+        if (!empty($this->headers)) {
+            foreach ($this->headers as $name => $header) {
+                $response->header($name, $header);
+            }
+        }
+        if (!empty($this->cookies)) {
+            foreach ($this->cookies as $header) {
+                $response->setCookie(...$header);
+            }
+        }
+        return $this->setContent($data);
+    }
+
+
+    /**
+     * @param $context
+     * @return mixed
+     * @throws Exception
+     */
+    private function parseData($context): mixed
+    {
+        if (!empty($context) && !is_string($context)) {
+            /** @var IFormatter $class */
+            $class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
+
+            $di = Snowflake::getDi()->get($class);
+            $context = $di->send($context)->getData();
+        }
+        return $context;
+    }
+
+
+    /**
+     * @param mixed $content
+     */
+    public function setContent(mixed $content): static
+    {
+        $this->endData = $content;
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+    public function getContent(): string
+    {
+        if (empty($this->endData) || is_string($this->endData)) {
+            return $this->endData;
+        }
+
+        /** @var IFormatter $class */
+        $class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
+
+        $di = Snowflake::getDi()->get($class);
+        return $di->send($this->endData)->getData();
+    }
+
+
+    /**
+     * @param $url
+     * @param array $param
+     * @return int
+     */
+    public function redirect($url, array $param = []): mixed
+    {
+        if (!empty($param)) {
+            $url .= '?' . http_build_query($param);
+        }
+        $url = ltrim($url, '/');
+        if (!preg_match('/^http/', $url)) {
+            $url = '/' . $url;
+        }
+        /** @var SResponse $response */
+        $response = Context::getContext('response');
+        if (!empty($response)) {
+            return $response->redirect($url);
+        }
+        return false;
+    }
+
+
+    /**
+     * @param string $path
+     * @param int $offset
+     * @param int $limit
+     * @param int $sleep
+     * @return string
+     */
+    public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): string
+    {
+        $open = fopen($path, 'r');
+
+        $stat = fstat($open);
+
+
+        /** @var SResponse $response */
+        $response = Context::getContext('response');
+        $response->header('Content-length', $stat['size']);
+        while ($file = fread($open, $limit)) {
+            $response->write($file);
+            fseek($open, $offset);
+            if ($sleep > 0) sleep($sleep);
+            if ($offset >= $stat['size']) {
+                break;
+            }
+            $offset += $limit;
+        }
+        $response->end();
+        return '';
+    }
+
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getRuntime(): string
+    {
+        return sprintf('%.5f', microtime(TRUE) - request()->getStartTime());
     }
 
 }

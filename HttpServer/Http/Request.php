@@ -427,7 +427,7 @@ class Request extends HttpService
 
 		Context::setContext(\Swoole\Http\Request::class, $request);
 
-		Context::setContext(CoroutineResponse::class, new CoroutineResponse());
+		Context::setContext(Response::class, new Response());
 
 		return Snowflake::getDi()->get(Request::class);
 	}
