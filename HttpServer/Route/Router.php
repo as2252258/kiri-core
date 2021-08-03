@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HttpServer\Route;
 
+use Annotation\Route\Route;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
@@ -640,7 +641,9 @@ class Router extends HttpService implements RouterInterface
 					continue;
 				}
 				foreach ($attribute as $item) {
-					var_dump($class . '::' . get_class($item));
+					if ($item instanceof Route) {
+						var_dump($item->uri . '::' . $item->method);
+					}
 					$item->execute($instance, $method);
 				}
 			}
