@@ -11,7 +11,6 @@ namespace Snowflake\Di;
 
 use Annotation\Inject;
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
@@ -109,22 +108,10 @@ class Container extends BaseObject
 	{
 		$reflect = $this->resolveDependencies($class);
 
-		$object = $this->setConfig($config, $reflect, $constrict);
+		$object = $this->newInstance($reflect, $constrict);
 
-		return $this->propertyInject($reflect, $object);
-	}
+		$this->propertyInject($reflect, $object);
 
-	/**
-	 * @param $config
-	 * @param $reflect
-	 * @param $dependencies
-	 * @return object
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	private function setConfig($config, $reflect, $dependencies): object
-	{
-		$object = $this->newInstance($reflect, $dependencies);
 		return $this->onAfterInit($object, $config);
 	}
 
@@ -213,8 +200,8 @@ class Container extends BaseObject
 	private function onAfterInit($object, $config): mixed
 	{
 		Snowflake::configure($object, $config);
-		if (method_exists($object, 'afterInit')) {
-			call_user_func([$object, 'afterInit']);
+		if (method_exists($object, 'init')) {
+			call_user_func([$object, 'init']);
 		}
 		return $object;
 	}

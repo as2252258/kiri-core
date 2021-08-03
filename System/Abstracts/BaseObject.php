@@ -18,7 +18,6 @@ use Swoole\Coroutine;
 /**
  * Class BaseObject
  * @package Snowflake\Snowflake\Base
- * @method afterInit
  */
 class BaseObject implements Configure
 {
@@ -34,7 +33,6 @@ class BaseObject implements Configure
 		if (!empty($config) && is_array($config)) {
 			Snowflake::configure($this, $config);
 		}
-		$this->init();
 	}
 
 
