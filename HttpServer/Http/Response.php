@@ -192,7 +192,7 @@ class Response extends HttpService
 	 */
 	private function parseData($context): mixed
 	{
-		if (!empty($context)) {
+		if (!empty($context) && !is_string($context)) {
 			/** @var IFormatter $class */
 			$class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
 
