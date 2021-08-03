@@ -22,9 +22,6 @@ class EventProvider implements EventProviders
 		$queue = new \SplPriorityQueue();
 		// TODO: Implement getListenersForEvent() method.
 		foreach ($this->_listeners[get_class($event)] ?? [] as $listener) {
-			if (!($event instanceof $listener->event)) {
-				continue;
-			}
 			$queue->insert($listener, $listener->priority);
 		}
 		return $queue;
