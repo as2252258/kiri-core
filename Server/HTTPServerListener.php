@@ -105,7 +105,7 @@ class HTTPServerListener extends Abstracts\Server
 		    if (Context::hasContext(Response::class)) {
 		        return;
             }
-            Context::getContext(Response::class)->send($data,200, $response);
+            \response()->send($data,200, $response);
 			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}
