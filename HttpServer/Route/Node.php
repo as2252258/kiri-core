@@ -160,7 +160,7 @@ class Node extends HttpService
 	 * @param IAspect|null $reflect
 	 * @return Closure
 	 */
-	private function aopHandler(?IAspect $reflect): Closure
+	#[Pure] private function aopHandler(?IAspect $reflect): Closure
 	{
 	    if (is_null($reflect)) {
 	        return $this->normalHandler($this->handler);
@@ -175,7 +175,7 @@ class Node extends HttpService
 
 
 	/**
-	 * @throws ReflectionException
+	 * @throws ReflectionException|NotFindClassException
 	 */
 	private function getAop(): ?IAspect
 	{
