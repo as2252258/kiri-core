@@ -193,7 +193,7 @@ class Request extends HttpService
 	 */
 	public function getExplode(): array
 	{
-		return $this->explode;
+		return explode('/', $this->getUri());
 	}
 
 	/**
