@@ -344,7 +344,7 @@ class ServerManager extends Abstracts\Server
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 			if (swoole_version() >= '4.7') {
 				$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-				$this->server->on('disconnect', [$reflect, 'onMessage']);
+				$this->server->on('disconnect', [$reflect, 'onDisconnect']);
 			}
 		} else if ($type === Constant::SERVER_TYPE_UDP) {
 			$reflect = $this->getNewInstance(UDPServerListener::class);
