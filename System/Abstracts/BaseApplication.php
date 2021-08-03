@@ -459,13 +459,26 @@ abstract class BaseApplication extends Component
 
 
     /**
-     * @param $array
+     * @param $id
+     * @param $definition
      * @throws \ReflectionException
      * @throws \Snowflake\Exception\NotFindClassException
      */
 	public function set($id, $definition): void
     {
         di(Service::class)->set($id, $definition);
+    }
+
+
+    /**
+     * @param $id
+     * @param $definition
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+	public function has($id): bool
+    {
+        return di(Service::class)->has($id);
     }
 
 
