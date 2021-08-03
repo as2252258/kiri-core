@@ -25,10 +25,10 @@ class TCPServerListener extends Abstracts\Server
 	 * UDPServerListener constructor.
 	 * @param Server|Port $server
 	 * @param array|null $settings
-	 * @return Port
+	 * @return Server|Port
 	 * @throws Exception
 	 */
-	public function bindCallback(Server|Port $server, ?array $settings = []): Port
+	public function bindCallback(Server|Port $server, ?array $settings = []): Server|Port
 	{
 		$this->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
 		$this->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);

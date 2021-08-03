@@ -48,11 +48,10 @@ class HTTPServerListener extends Abstracts\Server
 	 * UDPServerListener constructor.
 	 * @param Server|Port $server
 	 * @param array|null $settings
-	 * @return Server\Port
-	 * @throws ReflectionException
+	 * @return Server|Port
 	 * @throws Exception
 	 */
-	public function bindCallback(Server|Port $server, ?array $settings = []): Server\Port
+	public function bindCallback(Server|Port $server, ?array $settings = []): Server|Port
 	{
 		$this->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 

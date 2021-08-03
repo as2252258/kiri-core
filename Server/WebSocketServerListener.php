@@ -28,12 +28,12 @@ class WebSocketServerListener extends Abstracts\Server
 	/**
 	 * @param mixed $server
 	 * @param array|null $settings
-	 * @return Server\Port
-	 * @throws ReflectionException
+	 * @return Port|Server
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function bindCallback(Server|Port $server, ?array $settings = []): Server\Port
+	public function bindCallback(Server|Port $server, ?array $settings = []): Server|Port
 	{
 		$this->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 		$this->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);

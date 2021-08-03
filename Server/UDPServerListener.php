@@ -24,17 +24,12 @@ class UDPServerListener extends Abstracts\Server
 
 
 	/**
-	 * @param Server $server
-	 * @param string $host
-	 * @param int $port
-	 * @param int $mode
+	 * @param Server|Port $server
 	 * @param array|null $settings
-	 * @return Server\Port
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
+	 * @return Server|Port
 	 * @throws Exception
 	 */
-	public function bindCallback(Server|Port $server, ?array $settings = []): Server\Port
+	public function bindCallback(Server|Port $server, ?array $settings = []): Server|Port
 	{
 		$this->setEvents(Constant::PACKET, $settings['events'][Constant::PACKET] ?? null);
 
