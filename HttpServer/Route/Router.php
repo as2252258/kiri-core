@@ -641,9 +641,6 @@ class Router extends HttpService implements RouterInterface
 					continue;
 				}
 				foreach ($attribute as $item) {
-					if ($item instanceof Route) {
-						var_dump($item->uri . '::' . $item->method);
-					}
 					$item->execute($instance, $method);
 				}
 			}

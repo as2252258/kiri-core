@@ -138,9 +138,7 @@ class Loader extends BaseObject
 				return;
 			}
 			$replace = $this->getReflect($path, $namespace);
-			if (empty($replace) || count($replace->getAttributes(Target::class)) < 1) {
-				return;
-			}
+
 			$this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
 			static::$_classes[] = $replace->getName();
@@ -177,6 +175,7 @@ class Loader extends BaseObject
 				if (!str_starts_with($key, $path)) {
 					continue;
 				}
+				unset(static::$_directory[$key]);
 				foreach ($_path as $item) {
 					$paths[$key] = $item;
 				}
