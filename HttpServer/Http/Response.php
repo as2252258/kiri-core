@@ -70,7 +70,6 @@ class Response extends HttpService
     public function toHtml($content): string
     {
         $this->format = self::HTML;
-        var_dump($this->format);
         return (string)$content;
     }
 
@@ -142,6 +141,7 @@ class Response extends HttpService
      */
     public function getResponseFormat(): string
     {
+        var_dump($this->format);
         if ($this->format == self::HTML) {
             return 'text/html;charset=utf-8';
         } else if ($this->format == self::XML) {
@@ -173,8 +173,8 @@ class Response extends HttpService
      */
     public function configure(SResponse $response = null): static
     {
+        var_dump($this->format);
         $response->setStatusCode($this->statusCode);
-        var_dump($this->getResponseFormat());
         $response->header('Content-Type', $this->getResponseFormat());
         $response->header('Run-Time', $this->getRuntime());
         if (!empty($this->headers)) {
