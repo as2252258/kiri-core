@@ -32,11 +32,11 @@ class HTTPServerListener extends Abstracts\Server
 
 	/** @var Router|mixed  */
 	#[Inject('router')]
-	private Router $router;
+	public Router $router;
 
 	/** @var \HttpServer\Http\Response|mixed  */
 	#[Inject(\HttpServer\Http\Response::class)]
-	private \HttpServer\Http\Response $response;
+	public \HttpServer\Http\Response $response;
 
 
 	/** @var EventDispatch */
