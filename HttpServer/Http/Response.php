@@ -176,10 +176,11 @@ class Response extends HttpService
 	{
 		$sendData = $this->parseData($context);
 		$this->statusCode = $statusCode;
-		if (!Context::hasContext(SResponse::class)) {
+        $response = Context::getContext(SResponse::class);
+		if ($response === null) {
 			$this->printResult($sendData);
 		} else {
-			$this->sendData($sendData);
+			$this->sendData($response, $sendData);
 		}
 		return $sendData;
 	}
@@ -226,11 +227,8 @@ class Response extends HttpService
 	 * @param $sendData
 	 * @throws Exception
 	 */
-	private function sendData($sendData): void
+	private function sendData(SResponse $response, $sendData): void
 	{
-		/** @var SResponse $response */
-		$response = Context::getContext(SResponse::class);
-
 		if (!isset($response->header['Content-Type'])) {
 			$response->header('Content-Type', 'application/json;charset=utf-8');
 		}
