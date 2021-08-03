@@ -458,6 +458,17 @@ abstract class BaseApplication extends Component
     }
 
 
+    /**
+     * @param $array
+     * @throws \ReflectionException
+     * @throws \Snowflake\Exception\NotFindClassException
+     */
+	public function set($id, $definition): void
+    {
+        di(Service::class)->set($id, $definition);
+    }
+
+
 
 	/**
 	 * @throws Exception
