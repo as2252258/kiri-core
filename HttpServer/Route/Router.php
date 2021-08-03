@@ -398,12 +398,7 @@ class Router extends HttpService implements RouterInterface
 	private function loadNamespace($method): array
 	{
 		$name = array_column($this->groupTacks, 'namespace');
-		if ($method == 'package' || $method == 'RECEIVE') {
-			$dir = 'App\\Listener';
-		} else {
-			$dir = $this->dir;
-		}
-		array_unshift($name, $dir);
+		array_unshift($name, $this->dir);
 		return array_filter($name);
 	}
 
