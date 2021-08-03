@@ -120,7 +120,7 @@ class Router extends HttpService implements RouterInterface
 		if ($handler instanceof Closure) {
 			$handler = Closure::bind($handler, di(Controller::class));
 		}
-		return $this->hash($path, $handler, $method);
+		return $this->tree($path, $handler, $method);
 	}
 
 
@@ -278,7 +278,7 @@ class Router extends HttpService implements RouterInterface
 	public function any($route, $handler): Any
 	{
 		$nodes = [];
-		foreach (['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'HEAD'] as $method) {
+		foreach ($this->methods as $method) {
 			$nodes[] = $this->addRoute($route, $handler, $method);
 		}
 		return new Any($nodes);
@@ -515,7 +515,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function dispatch(Request $request): void
 	{
-		$node = $this->find_path($request);
+		$node = $this->Branch_search($request);
 		if (!($node instanceof Node)) {
 			$this->response->setFormat(Response::HTML);
 			$this->response->send('<h1 style="text-align: center;">404</h1>');
