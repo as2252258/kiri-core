@@ -230,15 +230,15 @@ class Response extends HttpService
 	{
 		/** @var SResponse $response */
 		$response = Context::getContext(SResponse::class);
-		if (!$response?->isWritable()) {
-			return;
-		}
+
 		if (!isset($response->header['Content-Type'])) {
 			$response->header('Content-Type', 'application/json;charset=utf-8');
 		}
 		$response->header('Run-Time', $this->getRuntime());
 		$response->status($this->statusCode);
 		$response->end($sendData);
+
+        Context::remove(SResponse::class);
 	}
 
 
