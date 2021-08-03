@@ -60,7 +60,7 @@ class Controller
 	 * @var Response|null
 	 */
 	#[Inject(\Server\Response::class)]
-	public ?Response $response = null;
+	public ?\Server\Response $response = null;
 
 
 }
