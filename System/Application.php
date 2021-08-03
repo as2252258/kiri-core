@@ -144,10 +144,11 @@ class Application extends BaseApplication
             if (!($class instanceof Command)) {
                 scan_directory(directory('app'), 'App');
             }
-            response()->send($manager->execCommand($class));
+            $data = response()->getBuilder($manager->execCommand($class));
         } catch (\Throwable $exception) {
-            response()->send(logger()->exception($exception));
+            $data = response()->getBuilder(logger()->exception($exception));
         } finally {
+            print_r($data);
             Timer::clearAll();
         }
     }

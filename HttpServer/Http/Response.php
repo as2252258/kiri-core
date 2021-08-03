@@ -157,8 +157,11 @@ class Response extends HttpService
      * @return bool
      * @throws Exception
      */
-    public function getBuilder(mixed $data, SResponse $response): static
+    public function getBuilder(mixed $data, SResponse $response = null): static
     {
+        if ($response === null) {
+            return $this->setContent($data);
+        }
         $response->setStatusCode($this->statusCode);
         if (!isset($response->header['Content-Type'])) {
             $response->header('Content-Type', $this->getResponseFormat());

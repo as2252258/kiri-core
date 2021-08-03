@@ -590,10 +590,10 @@ if (!function_exists('name')) {
 if (!function_exists('response')) {
 
 	/**
-	 * @return Response|stdClass
+	 * @return Response
 	 * @throws
 	 */
-	function response(): Response|stdClass
+	function response(): Response
 	{
 	    if (!Context::hasContext(Response::class)){
             return Context::setContext(Response::class, new Response());
