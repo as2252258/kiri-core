@@ -177,7 +177,6 @@ class Loader extends BaseObject
 				if (!str_starts_with($key, $path)) {
 					continue;
 				}
-				unset(static::$_directory[$key]);
 				foreach ($_path as $item) {
 					$paths[$key] = $item;
 				}
