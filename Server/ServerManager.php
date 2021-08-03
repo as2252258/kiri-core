@@ -15,6 +15,7 @@ use Snowflake\Snowflake;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;
+use Swoole\Server\Port;
 use Swoole\WebSocket\Server as WServer;
 
 
@@ -98,7 +99,7 @@ class ServerManager extends Abstracts\Server
 		foreach ($this->sortService($configs['ports']) as $config) {
 			$this->startListenerHandler($context, $config);
 		}
-		$this->addServerEventCallback($this->getSystemEvents($configs));
+		$this->bindCallback($this->server, $this->getSystemEvents($configs));
 	}
 
 
@@ -327,7 +328,6 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function addDefaultListener(string $type, array $settings): void
 	{
-		$this->addServerEventCallback($settings['events']);
 		if (($this->server->setting['task_worker_num'] ?? 0) > 0) {
 			$this->addTaskListener($settings['events']);
 		}
@@ -372,28 +372,6 @@ class ServerManager extends Abstracts\Server
 
 
 	/**
-	 * @param array $events
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	private function addServerEventCallback(array $events): void
-	{
-		if (count($events) < 1) {
-			return;
-		}
-		foreach ($events as $event_type => $callback) {
-			if ($this->server->getCallback($event_type) !== null) {
-				continue;
-			}
-			if (is_array($callback) && !is_object($callback[0])) {
-				$callback[0] = Snowflake::getDi()->get($callback[0]);
-			}
-			$this->server->on($event_type, $callback);
-		}
-	}
-
-
-	/**
 	 * @param TaskExecute|string $handler
 	 * @param array $params
 	 * @param int $workerId
@@ -418,7 +396,6 @@ class ServerManager extends Abstracts\Server
 
 	/**
 	 * @param array $events
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function addTaskListener(array $events = []): void
@@ -431,5 +408,29 @@ class ServerManager extends Abstracts\Server
 			$this->server->on('task', $events[Constant::TASK] ?? [$reflect, 'onTask']);
 		}
 		$this->server->on('finish', $events[Constant::FINISH] ?? [$reflect, 'onFinish']);
+	}
+
+
+	/**
+	 * @param Port|Server $server
+	 * @param array|null $settings
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public function bindCallback(Port|Server $server, ?array $settings = [])
+	{
+		// TODO: Implement bindCallback() method.
+		if (count($settings) < 1) {
+			return;
+		}
+		foreach ($settings as $event_type => $callback) {
+			if ($this->server->getCallback($event_type) !== null) {
+				continue;
+			}
+			if (is_array($callback) && !is_object($callback[0])) {
+				$callback[0] = Snowflake::getDi()->get($callback[0]);
+			}
+			$this->server->on($event_type, $callback);
+		}
 	}
 }
