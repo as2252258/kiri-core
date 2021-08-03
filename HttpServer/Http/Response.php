@@ -219,7 +219,7 @@ class Response extends HttpService
 		} else {
 			$string .= $result . PHP_EOL . PHP_EOL;
 		}
-		print_r($string . 'Command End!') . PHP_EOL;
+		echo $string . 'Command End!' . PHP_EOL;
 	}
 
 	/**
