@@ -342,8 +342,10 @@ class ServerManager extends Abstracts\Server
 			$reflect->setEvents(Constant::HANDSHAKE, $settings['events'][Constant::HANDSHAKE] ?? null);
 			$reflect->setEvents(Constant::MESSAGE, $settings['events'][Constant::MESSAGE] ?? null);
 			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
-
-			$this->addCloseOrDisconnect($reflect, $settings);
+			if (swoole_version() >= '4.7') {
+				$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
+				$this->server->on('disconnect', [$reflect, 'onMessage']);
+			}
 		} else if ($type === Constant::SERVER_TYPE_UDP) {
 			$reflect = $this->getNewInstance(UDPServerListener::class);
 			$this->server->on('packet', [$reflect, 'onPacket']);
@@ -352,12 +354,20 @@ class ServerManager extends Abstracts\Server
 		} else if ($type === Constant::SERVER_TYPE_HTTP) {
 			$reflect = $this->getNewInstance(HTTPServerListener::class);
 			$this->server->on('request', [$reflect, 'onRequest']);
-			$this->addCloseOrDisconnect($reflect, $settings);
+			$this->server->on('connect', [$reflect, 'onConnect']);
+			$this->server->on('close', [$reflect, 'onClose']);
+
+			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
 		} else {
 			$reflect = $this->getNewInstance(TCPServerListener::class);
 			$this->server->on('connect', [$reflect, 'onConnect']);
+			$this->server->on('close', [$reflect, 'onClose']);
 			$this->server->on('receive', [$reflect, 'onReceive']);
-			$this->addCloseOrDisconnect($reflect, $settings);
+
+			$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
+			$reflect->setEvents(Constant::CONNECT, $settings['events'][Constant::CONNECT] ?? null);
+			$reflect->setEvents(Constant::RECEIVE, $settings['events'][Constant::RECEIVE] ?? null);
 		}
 	}
 
@@ -374,7 +384,6 @@ class ServerManager extends Abstracts\Server
 	/**
 	 * @param string $class
 	 * @return object
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function getNewInstance(string $class): object
