@@ -58,7 +58,7 @@ class Response extends HttpService
      */
     public function setFormat($format): static
     {
-        if (empty($format)){
+        if (empty($format)) {
             return $this;
         }
         $this->format = $format;
@@ -144,13 +144,11 @@ class Response extends HttpService
      */
     public function getResponseFormat(): string
     {
-        if ($this->format == self::HTML) {
-            return 'text/html;charset=utf-8';
-        } else if ($this->format == self::XML) {
-            return 'application/xml;charset=utf-8';
-        } else {
-            return 'application/json;charset=utf-8';
-        }
+        return match ($this->format) {
+            Response::HTML => 'text/html;charset=utf-8',
+            Response::XML => 'application/xml;charset=utf-8',
+            default => 'application/json;charset=utf-8',
+        };
     }
 
 
