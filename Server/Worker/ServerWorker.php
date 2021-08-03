@@ -42,11 +42,6 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 
-		putenv('environmental=' . Snowflake::WORKER);
-		if ($workerId >= $server->setting['worker_num']) {
-			putenv('environmental=' . Snowflake::TASK);
-		}
-
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
 
@@ -65,10 +60,7 @@ class ServerWorker extends \Server\Abstracts\Server
 		$fileLists = $annotation->runtime(APP_PATH . 'app');
 
 		$di = Snowflake::getDi();
-		foreach ($fileLists as $file => $class) {
-//			if (Snowflake::isTask() && str_contains($file, CONTROLLER_PATH)) {
-//				continue;
-//			}
+		foreach ($fileLists as $class) {
 			$instance = $di->get($class);
 			$methods = $di->getMethodAttribute($class);
 			foreach ($methods as $method => $attribute) {
@@ -96,9 +88,13 @@ class ServerWorker extends \Server\Abstracts\Server
 			$loader = Snowflake::app()->getRouter();
 			$loader->_loader();
 
+			putenv('environmental=' . Snowflake::WORKER);
+
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
 			$this->setProcessName(sprintf('Worker[%d].%d', $server->worker_pid, $workerId));
 		} else {
+			putenv('environmental=' . Snowflake::TASK);
+
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
 
 			$this->setProcessName(sprintf('Tasker[%d].%d', $server->worker_pid, $workerId));
