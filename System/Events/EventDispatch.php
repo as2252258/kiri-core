@@ -2,31 +2,36 @@
 
 namespace Snowflake\Events;
 
-class EventDispatch
+use Annotation\Inject;
+use Snowflake\Abstracts\BaseObject;
+
+
+/**
+ *
+ */
+class EventDispatch extends BaseObject
 {
 
-	private EventListener $eventListener;
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
 
 
 	/**
-	 * @param $event
-	 * @param array $params
+	 * @param object $triggerEvent
+	 * @return object
 	 */
-	public function emit($event, array $params = [])
+	public function dispatch(object $triggerEvent): object
 	{
-		$events = $this->eventListener->getEventListeners($event);
-		if (empty($events)) {
-			return;
-		}
-		while ($events->valid()) {
-			/** @var EventDispatchInterface $interface */
-			$interface = $events->current();
-			$interface->onHandler();
-			if ($interface->stopPagination()) {
+		$lists = $this->eventProvider->getListenersForEvent($triggerEvent);
+		foreach ($lists as $listener) {
+			/** @var Struct $list */
+			$listener($triggerEvent);
+			if ($triggerEvent instanceof StoppableEventInterface && $triggerEvent->isPropagationStopped()) {
 				break;
 			}
-			$events->next();
 		}
+		return $triggerEvent;
 	}
+
 
 }

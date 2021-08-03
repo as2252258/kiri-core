@@ -182,7 +182,7 @@ class Connection extends Component
 			return;
 		}
 		if ($client->inTransaction()) {
-			$client->commit();
+			return;
 		}
 		$this->getPool()->push($coroutineName, $client);
 		Context::remove($coroutineName);

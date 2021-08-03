@@ -11,7 +11,6 @@ use Snowflake\Channel;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
 use Snowflake\Event;
-use Snowflake\Snowflake;
 use Swoole\Coroutine\Http2\Client as H2Client;
 use Swoole\Http2\Request;
 use Swoole\Http2\Response;
@@ -28,16 +27,11 @@ class Http2 extends Component
 	private array $_clients = [];
 
 
-	private Channel $channel;
-
-
 	/**
 	 * @throws Exception
 	 */
 	public function init()
 	{
-		$this->channel = Snowflake::getApp('channel');
-
 		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'releases']);
 		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'clean']);
 	}
@@ -48,11 +42,6 @@ class Http2 extends Component
 	 */
 	public function releases()
 	{
-		foreach ($this->_clients as $name => $client) {
-			/** @var H2Client $client */
-			$client->close();
-			$this->channel->push($client, 'http2.' . $name);
-		}
 		$this->_clients = [];
 	}
 
@@ -111,7 +100,7 @@ class Http2 extends Component
 	 * @return Result
 	 * @throws Exception
 	 */
-	public function get($domain, $path, $params = [], $timeout = -1): Result
+	public function get($domain, $path, array $params = [], int $timeout = -1): Result
 	{
 		$request = $this->dispatch($domain, $path, 'GET', $params, $timeout);
 
@@ -127,7 +116,7 @@ class Http2 extends Component
 	 * @return Result
 	 * @throws Exception
 	 */
-	public function post($domain, $path, $params = [], $timeout = -1): Result
+	public function post($domain, $path, array $params = [], int $timeout = -1): Result
 	{
 		$request = $this->dispatch($domain, $path, 'POST', $params, $timeout);
 
@@ -143,7 +132,7 @@ class Http2 extends Component
 	 * @return Result
 	 * @throws Exception
 	 */
-	public function upload($domain, $path, $params = [], $timeout = -1): Result
+	public function upload($domain, $path, array $params = [], int $timeout = -1): Result
 	{
 		$request = $this->dispatch($domain, $path, 'POST', $params, $timeout, true);
 
@@ -159,7 +148,7 @@ class Http2 extends Component
 	 * @return Result
 	 * @throws Exception
 	 */
-	public function delete($domain, $path, $params = [], $timeout = -1): Result
+	public function delete($domain, $path, array $params = [], int $timeout = -1): Result
 	{
 		$request = $this->dispatch($domain, $path, 'DELETE', $params, $timeout);
 
@@ -177,7 +166,7 @@ class Http2 extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function dispatch($domain, $path, $method, $params = [], $timeout = -1, $isUpload = false): mixed
+	private function dispatch($domain, $path, $method, array $params = [], int $timeout = -1, bool $isUpload = false): mixed
 	{
 		[$domain, $isSsl] = $this->clear($domain);
 
@@ -185,7 +174,6 @@ class Http2 extends Component
 		$request->headers = array_merge($request->headers, [
 			'Host' => $domain
 		]);
-		defer(fn() => $this->channel->push($request, 'request.' . $method . $path));
 		return $this->doRequest($request, $domain, $isSsl, $timeout);
 	}
 
@@ -215,7 +203,6 @@ class Http2 extends Component
 	private function doRequest(Request $request, $domain, $ssl, $timeout): mixed
 	{
 		$client = $this->getClient($domain, $ssl, $timeout);
-		defer(fn() => $this->channel->push($client, 'http2.' . $domain));
 		$client->send($request);
 		if (Context::getContext('http2isRecv') === false) {
 			return null;
@@ -275,18 +262,15 @@ class Http2 extends Component
 	 * @return Request
 	 * @throws Exception
 	 */
-	public function getRequest($path, $method, $params, $isUpload = false): Request
+	public function getRequest($path, $method, $params, bool $isUpload = false): Request
 	{
 		if (!str_starts_with($path, '/')) {
 			$path = '/' . $path;
 		}
-		$channel = Snowflake::app()->getChannel();
-		$request = $channel->pop('request.' . $method . $path, function () use ($path, $method) {
-			$request = new Request();
-			$request->method = $method;
-			$request->path = $path;
-			return $request;
-		});
+
+		$request = new Request();
+		$request->method = $method;
+		$request->path = $path;
 		if ($method === 'GET') {
 			$request->path .= '?' . http_build_query($params);
 		} else {
@@ -304,16 +288,12 @@ class Http2 extends Component
 	 * @return H2Client
 	 * @throws Exception
 	 */
-	private function getClient($domain, $isSsl = false, $timeout = -1): H2Client
+	private function getClient($domain, bool $isSsl = false, int $timeout = -1): H2Client
 	{
 		if (isset($this->_clients[$domain])) {
 			return $this->_clients[$domain];
 		}
-		$pool = Snowflake::app()->getChannel();
-		/** @var H2Client $client */
-		$client = $pool->pop('http2.' . $domain, function () use ($domain, $isSsl, $timeout) {
-			return $this->newRequest($domain, $isSsl, $timeout);
-		});
+		$client = $this->newRequest($domain, $isSsl, $timeout);
 		if ((!$client->connected || !$client->ping()) && !$client->connect()) {
 			throw new Exception($client->errMsg, $client->errCode);
 		}

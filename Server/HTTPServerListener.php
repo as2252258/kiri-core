@@ -2,10 +2,14 @@
 
 namespace Server;
 
+use Annotation\Inject;
 use Exception;
 use HttpServer\Http\Context;
 use HttpServer\Http\Request as HSRequest;
 use HttpServer\Route\Router;
+use Server\Events\OnAfterRequest;
+use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
 use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
@@ -26,21 +30,19 @@ class HTTPServerListener extends Abstracts\Server
 
 	use ListenerHelper;
 
+	/** @var Router|mixed  */
+	#[Inject('router')]
 	private Router $router;
 
+	/** @var \HttpServer\Http\Response|mixed  */
+	#[Inject(\HttpServer\Http\Response::class)]
 	private \HttpServer\Http\Response $response;
 
 
-	/**
-	 * HTTPServerListener constructor.
-	 * @throws Exception
-	 */
-	public function __construct()
-	{
-		$this->router = Snowflake::getApp('router');
-		$this->response = di(\HttpServer\Http\Response::class);
-		parent::__construct();
-	}
+	/** @var EventDispatch */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
+
 
 	/**
 	 * UDPServerListener constructor.
@@ -93,6 +95,8 @@ class HTTPServerListener extends Abstracts\Server
 			$this->router->dispatch(HSRequest::create($request));
 		} catch (Error | Throwable $exception) {
 			$this->response->send(jTraceEx($exception), 500);
+		} finally {
+			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}
 

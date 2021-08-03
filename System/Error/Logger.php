@@ -9,11 +9,14 @@ declare(strict_types=1);
 
 namespace Snowflake\Error;
 
+use Annotation\Inject;
 use Exception;
+use Server\Events\OnAfterRequest;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
 use Snowflake\Event;
+use Snowflake\Events\EventProvider;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
@@ -29,15 +32,20 @@ class Logger extends Component
 	private array $logs = [];
 
 
+	/** @var EventProvider */
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
+
+
 	private array $sources = [];
 
 
+	/**
+	 *
+	 */
 	public function init()
 	{
-		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'insert']);
-		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'closeSource']);
-		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'closeSource']);
-		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'insert']);
+		$this->eventProvider->on(OnAfterRequest::class, [$this, 'insert']);
 	}
 
 

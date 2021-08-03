@@ -2,11 +2,15 @@
 
 namespace Server\Manager;
 
+use Annotation\Inject;
 use Exception;
 use Server\Abstracts\Server;
 use Server\Constant;
+use Server\Events\OnAfterRequest;
 use Server\SInterface\PipeMessage;
 use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
+use Snowflake\Exception\ConfigException;
 
 
 /**
@@ -17,9 +21,14 @@ class ServerDefaultEvent extends Server
 {
 
 
+	/** @var EventDispatch  */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
+
+
     /**
      * @param \Swoole\Server $server
-     * @throws \Snowflake\Exception\ConfigException
+     * @throws ConfigException
      */
 	public function onStart(\Swoole\Server $server)
 	{
@@ -49,7 +58,7 @@ class ServerDefaultEvent extends Server
 		if (!is_object($message) || !($message instanceof PipeMessage)) {
 			return;
 		}
-		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
 		$this->runEvent(Constant::PIPE_MESSAGE,
 			function (\Swoole\Server $server, $src_worker_id, $message) {
 				call_user_func([$message, 'execute']);

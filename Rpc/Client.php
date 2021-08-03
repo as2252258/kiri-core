@@ -8,7 +8,6 @@ use Exception;
 use Snowflake\Abstracts\Component;
 use Snowflake\Channel;
 use Snowflake\Core\Json;
-use Snowflake\Snowflake;
 use Swoole\Coroutine\Client as CClient;
 
 
@@ -69,10 +68,6 @@ class Client extends Component
 		if ($port < 0) {
 			return $this;
 		}
-
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-		$channel->push($this->client, $host . $port . CClient::class);
 		$this->client = null;
 		return $this;
 	}
@@ -114,26 +109,19 @@ class Client extends Component
 	 */
 	public function getClient(): CClient
 	{
-		/** @var Channel $channel */
-		$channel = Snowflake::app()->get('channel');
-
-		$host = $this->config['host'] ?? '127.0.0.1';
 		$port = $this->config['port'] ?? 0;
 		if ($port < 0) {
 			throw new Exception('Related service not have port(404)');
 		}
-
-		return $channel->pop($host . $port . CClient::class, function () {
-			$client = new CClient($this->config['mode'] ?? SWOOLE_SOCK_TCP);
-			$client->set([
-				'timeout'            => 0.5,
-				'connect_timeout'    => 1.0,
-				'write_timeout'      => 10.0,
-				'read_timeout'       => 0.5,
-				'open_tcp_keepalive' => true,
-			]);
-			return $client;
-		});
+		$client = new CClient($this->config['mode'] ?? SWOOLE_SOCK_TCP);
+		$client->set([
+			'timeout'            => 0.5,
+			'connect_timeout'    => 1.0,
+			'write_timeout'      => 10.0,
+			'read_timeout'       => 0.5,
+			'open_tcp_keepalive' => true,
+		]);
+		return $client;
 	}
 
 

@@ -11,14 +11,21 @@ declare(strict_types=1);
 namespace Database;
 
 
+use Annotation\Inject;
+use Database\Affair\BeginTransaction;
+use Database\Affair\Commit;
+use Database\Affair\Rollback;
 use Database\Mysql\Schema;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use PDO;
 use ReflectionException;
+use Server\Events\OnWorkerExit;
+use Server\Events\OnWorkerStop;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Event;
+use Snowflake\Events\EventProvider;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -28,8 +35,6 @@ use Snowflake\Snowflake;
  */
 class Connection extends Component
 {
-	const TRANSACTION_COMMIT = 'transaction::commit';
-	const TRANSACTION_ROLLBACK = 'transaction::rollback';
 
 	public string $id = 'db';
 	public string $cds = '';
@@ -47,44 +52,45 @@ class Connection extends Component
 	 * enable database cache
 	 */
 	public bool $enableCache = false;
+
+
+	/**
+	 * @var string
+	 */
 	public string $cacheDriver = 'redis';
 
 	/**
 	 * @var array
-	 *
-	 * @example [
-	 *    'cds'      => 'mysql:dbname=dbname;host=127.0.0.1',
-	 *    'username' => 'root',
-	 *    'password' => 'root'
-	 * ]
 	 */
 	public array $slaveConfig = [];
 
-	private ?Schema $_schema = null;
+
+	/**
+	 * @var Schema
+	 */
+	#[Inject(Schema::class)]
+	public Schema $_schema;
 
 
 	/**
-	 * @throws Exception
+	 * @var EventProvider
+	 */
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
+
+
+	/**
+	 * execute by __construct
 	 */
 	public function init()
 	{
-		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'disconnect']);
-		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'clear_connection']);
+		$this->eventProvider->on(OnWorkerStop::class, [$this, 'clear_connection'], 0);
+		$this->eventProvider->on(OnWorkerExit::class, [$this, 'clear_connection'], 0);
+		$this->eventProvider->on(BeginTransaction::class, [$this, 'beginTransaction'], 0);
+		$this->eventProvider->on(Rollback::class, [$this, 'rollback'], 0);
+		$this->eventProvider->on(Commit::class, [$this, 'commit'], 0);
 	}
 
-
-	/**
-	 * @throws Exception
-	 */
-	public function enablingTransactions()
-	{
-		if (!Db::transactionsActive()) {
-			return;
-		}
-		$this->beginTransaction();
-		Event::on(Connection::TRANSACTION_ROLLBACK, [$this, 'rollback'], [], true);
-		Event::on(Connection::TRANSACTION_COMMIT, [$this, 'commit'], [], true);
-	}
 
 	/**
 	 * @param null $sql
@@ -233,6 +239,7 @@ class Connection extends Component
 	public function rollback()
 	{
 		$this->connections()->rollback($this->cds);
+		$this->release();
 	}
 
 	/**
@@ -242,6 +249,7 @@ class Connection extends Component
 	public function commit()
 	{
 		$this->connections()->commit($this->cds);
+		$this->release();
 	}
 
 	/**
@@ -279,8 +287,11 @@ class Connection extends Component
 	 */
 	public function release()
 	{
+		if (!Snowflake::isWorker() && !Snowflake::isProcess()) {
+			$this->clear_connection();
+			return;
+		}
 		$connections = $this->connections();
-
 		$connections->release($this->cds, true);
 		$connections->release($this->slaveConfig['cds'], false);
 	}
@@ -306,8 +317,8 @@ class Connection extends Component
 	{
 		$connections = $this->connections();
 
-		$connections->release($this->cds, true);
-		$connections->release($this->slaveConfig['cds'], false);
+		$connections->disconnect($this->cds, true);
+		$connections->disconnect($this->slaveConfig['cds'], false);
 	}
 
 

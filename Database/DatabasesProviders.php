@@ -4,19 +4,15 @@ declare(strict_types=1);
 namespace Database;
 
 
-use Annotation\IAnnotation;
+use Annotation\Inject;
 use Exception;
-use ReflectionException;
-use Server\Constant;
+use Server\Events\OnWorkerStart;
+use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\Providers;
 use Snowflake\Application;
-use Snowflake\Event;
-use Snowflake\Exception\ComponentException;
+use Snowflake\Events\EventProvider;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Exception\NotFindPropertyException;
 use Snowflake\Snowflake;
-use Snowflake\Abstracts\Config;
 
 /**
  * Class DatabasesProviders
@@ -25,89 +21,96 @@ use Snowflake\Abstracts\Config;
 class DatabasesProviders extends Providers
 {
 
-    private array $_pooLength = ['min' => 0, 'max' => 1];
+	private array $_pooLength = ['min' => 0, 'max' => 1];
 
 
-    /**
-     * @param Application $application
-     * @throws Exception
-     */
-    public function onImport(Application $application)
-    {
-        $application->set('db', $this);
-
-        $this->_pooLength = Config::get('databases.pool', ['min' => 0, 'max' => 1]);
-
-        Event::on(Event::SERVER_TASK_START, [$this, 'createPool']);
-    }
+	/**
+	 * @var EventProvider
+	 */
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
 
 
-    /**
-     * @param $name
-     * @return Connection
-     * @throws ConfigException
-     * @throws Exception
-     */
-    public function get($name): Connection
-    {
-        $application = Snowflake::app();
-        if (!$application->has('databases.' . $name)) {
-            $application->set('databases.' . $name, $this->_settings($this->getConfig($name)));
-        }
-        return $application->get('databases.' . $name);
-    }
+	/**
+	 * @param Application $application
+	 * @throws Exception
+	 */
+	public function onImport(Application $application)
+	{
+		$application->set('db', $this);
+
+		$this->_pooLength = Config::get('databases.pool', ['min' => 0, 'max' => 1]);
+
+		$this->eventProvider->on(OnWorkerStart::class, [$this, 'createPool']);
+	}
 
 
-    /**
-     * @throws ConfigException
-     * @throws Exception
-     */
-    public function createPool()
-    {
-        $databases = Config::get('databases.connections', []);
-        if (empty($databases)) {
-            return;
-        }
-        $application = Snowflake::app();
-        foreach ($databases as $name => $database) {
-            /** @var Connection $connection */
-            $application->set('databases.' . $name, $this->_settings($database));
-            $application->get('databases.' . $name)->fill();
-        }
-    }
+	/**
+	 * @param $name
+	 * @return Connection
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public function get($name): Connection
+	{
+		$application = Snowflake::app();
+		if (!$application->has('databases.' . $name)) {
+			$application->set('databases.' . $name, $this->_settings($this->getConfig($name)));
+		}
+		return $application->get('databases.' . $name);
+	}
 
 
-    /**
-     * @param $database
-     * @return array
-     */
-    private function _settings($database): array
-    {
-        return [
-            'class'       => Connection::class,
-            'id'          => $database['id'],
-            'cds'         => $database['cds'],
-            'username'    => $database['username'],
-            'password'    => $database['password'],
-            'tablePrefix' => $database['tablePrefix'],
-            'database'    => $database['database'],
-            'maxNumber'   => $this->_pooLength['max'],
-            'minNumber'   => $this->_pooLength['min'],
-            'charset'     => $database['charset'] ?? 'utf8mb4',
-            'slaveConfig' => $database['slaveConfig']
-        ];
-    }
+	/**
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public function createPool(OnWorkerStart $onWorkerStart)
+	{
+		$databases = Config::get('databases.connections', []);
+		if (empty($databases)) {
+			return;
+		}
+		$application = Snowflake::app();
+		foreach ($databases as $name => $database) {
+			/** @var Connection $connection */
+			$application->set('databases.' . $name, $this->_settings($database));
+			$application->get('databases.' . $name)->fill();
+		}
+	}
 
 
-    /**
-     * @param $name
-     * @return mixed
-     * @throws ConfigException
-     */
-    public function getConfig($name): mixed
-    {
-        return Config::get('databases.connections.' . $name, null, true);
-    }
+	/**
+	 * @param $database
+	 * @return array
+	 */
+	private function _settings($database): array
+	{
+		return [
+			'class'       => Connection::class,
+			'id'          => $database['id'],
+			'cds'         => $database['cds'],
+			'username'    => $database['username'],
+			'password'    => $database['password'],
+			'tablePrefix' => $database['tablePrefix'],
+			'database'    => $database['database'],
+			'maxNumber'   => $this->_pooLength['max'],
+			'minNumber'   => $this->_pooLength['min'],
+			'charset'     => $database['charset'] ?? 'utf8mb4',
+			'slaveConfig' => $database['slaveConfig']
+		];
+	}
+
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 * @throws ConfigException
+	 */
+	public function getConfig($name): mixed
+	{
+		return Config::get('databases.connections.' . $name, null, true);
+	}
 
 
 }

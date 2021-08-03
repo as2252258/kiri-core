@@ -19,7 +19,6 @@ use Kafka\Producer;
 use Rpc\Producer as RPCProducer;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
-use Snowflake\Channel;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Jwt\Jwt;
@@ -50,7 +49,6 @@ use Snowflake\Pool\Pool;
  * @property \Snowflake\Crontab\Producer $crontab
  * @property HttpFilter $filter
  * @property RPCProducer $rpc
- * @property Channel $channel
  * @property Shutdown $shutdown
  * @property Pool $clientsPool
  */

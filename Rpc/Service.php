@@ -3,14 +3,17 @@
 namespace Rpc;
 
 
+use Annotation\Inject;
 use Exception;
 use HttpServer\Http\Context;
-use HttpServer\Http\Request;
 use HttpServer\Route\Router;
 use Server\Constant;
+use Server\Events\OnAfterRequest;
 use Snowflake\Core\Json;
-use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
+use Snowflake\Events\EventProvider;
 use Snowflake\Snowflake;
+use Swoole\Http\Request;
 use Swoole\Server;
 use function Swoole\Coroutine\defer;
 
@@ -26,6 +29,16 @@ class Service extends \Server\Abstracts\Server
 	const RPC_CLOSE = 'RPC::CLOSE';
 
 	private Router $router;
+
+
+	/** @var EventProvider */
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
+
+
+	/** @var EventDispatch */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
 
 
 	/**
@@ -45,7 +58,7 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onConnect(Server $server, int $fd, int $reactorId)
 	{
-		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
 
 		$this->runEvent(Constant::CONNECT, null, [$server, $fd, $reactorId]);
 	}
@@ -59,7 +72,7 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onClose(Server $server, int $fd)
 	{
-		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
 
 		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
 	}
@@ -73,7 +86,7 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onDisconnect(Server $server, int $fd)
 	{
-		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
 
 		$this->runEvent(Constant::DISCONNECT, null, [$server, $fd]);
 	}
@@ -88,11 +101,11 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onReceive(Server $server, int $fd, int $reID, string $data)
 	{
-		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
 		try {
 			$client = $server->getClientInfo($fd, $reID);
 
-			$request = $this->requestSpl((int)$client['server_port'], $data);
+			$request = $this->requestSpl((int)$client['server_port'], $data, $fd);
 
 			$result = $this->router->find_path($request)?->dispatch();
 
@@ -111,7 +124,7 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onPacket(Server $server, string $data, array $client)
 	{
-		defer(fn() => fire(Event::SYSTEM_RESOURCE_RELEASES));
+		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
 		try {
 			$request = $this->requestSpl((int)$client['server_port'], $data);
 
@@ -127,10 +140,11 @@ class Service extends \Server\Abstracts\Server
 	/**
 	 * @param int $server_port
 	 * @param string $data
+	 * @param int $fd
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function requestSpl(int $server_port, string $data): mixed
+	public function requestSpl(int $server_port, string $data, int $fd = 0): \HttpServer\Http\Request
 	{
 		$sRequest = new Request();
 
@@ -143,11 +157,14 @@ class Service extends \Server\Abstracts\Server
 			throw new Exception('Protocol format error.');
 		}
 
-		$sRequest->params->setPosts($data);
-		$sRequest->headers->setRequestUri('rpc/p' . $server_port . '/' . ltrim($cmd, '/'));
-		$sRequest->headers->setRequestMethod('rpc');
+		$sRequest->fd = $fd;
+		$sRequest->post = $data;
+		$sRequest->header['request_uri'] = 'rpc/p' . $server_port . '/' . ltrim($cmd, '/');
+		$sRequest->header['request_method'] = 'rpc';
 
-		return Context::setContext(Request::class, $sRequest);
+		Context::setContext(Request::class, $sRequest);
+
+		return \request();
 	}
 
 

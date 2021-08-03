@@ -3,13 +3,17 @@
 namespace Server\Worker;
 
 use Annotation\Annotation;
+use Annotation\Inject;
 use Exception;
 use ReflectionException;
-use Server\ApplicationStore;
 use Server\Constant;
+use Server\Events\OnWorkerError;
+use Server\Events\OnWorkerExit;
+use Server\Events\OnWorkerStart;
+use Server\Events\OnWorkerStop;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Help;
-use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Runtime;
@@ -27,6 +31,13 @@ class ServerWorker extends \Server\Abstracts\Server
 
 
 	/**
+	 * @var EventDispatch
+	 */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
+
+
+	/**
 	 * @param Server $server
 	 * @param int $workerId
 	 * @throws Exception
@@ -34,18 +45,15 @@ class ServerWorker extends \Server\Abstracts\Server
 	public function onWorkerStart(Server $server, int $workerId)
 	{
 		$this->_setConfigCache($workerId);
-
-		$store = ApplicationStore::getStore()->instance();
-
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app');
+
+		$this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
 
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
-
-		$store->close();
 	}
 
 
@@ -128,9 +136,7 @@ class ServerWorker extends \Server\Abstracts\Server
 	{
 		$this->runEvent(Constant::WORKER_STOP, null, [$server, $workerId]);
 
-		Event::trigger(Event::SERVER_WORKER_STOP);
-
-		fire(Event::SYSTEM_RESOURCE_CLEAN);
+		$this->eventDispatch->dispatch(new OnWorkerStop($server, $workerId));
 
 		Timer::clearAll();
 	}
@@ -147,7 +153,7 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		putenv('state=exit');
 
-		Event::trigger(Event::SERVER_WORKER_EXIT, [$server, $workerId]);
+		$this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
 
 		Snowflake::getApp('logger')->insert();
 	}
@@ -165,7 +171,7 @@ class ServerWorker extends \Server\Abstracts\Server
 	{
 		$this->runEvent(Constant::WORKER_ERROR, null, [$server, $worker_id, $worker_pid, $exit_code, $signal]);
 
-		Event::trigger(Event::SERVER_WORKER_ERROR);
+		$this->eventDispatch->dispatch(new OnWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal));
 
 		$message = sprintf('Worker#%d::%d error stop. signal %d, exit_code %d, msg %s',
 			$worker_id, $worker_pid, $signal, $exit_code, swoole_strerror(swoole_last_error(), 9)

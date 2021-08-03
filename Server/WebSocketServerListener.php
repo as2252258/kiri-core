@@ -2,9 +2,11 @@
 
 namespace Server;
 
+use Annotation\Inject;
 use Exception;
 use ReflectionException;
-use Snowflake\Event;
+use Server\Events\OnAfterRequest;
+use Snowflake\Events\EventDispatch;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Http\Request;
@@ -24,6 +26,11 @@ class WebSocketServerListener extends Abstracts\Server
 	protected static Server\Port $_http;
 
 	use ListenerHelper;
+
+
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
+
 
 	/**
 	 * @param mixed $server
@@ -88,7 +95,7 @@ class WebSocketServerListener extends Abstracts\Server
 		}
 		$this->runEvent(Constant::HANDSHAKE, fn() => $this->disconnect($request, $response), [$request, $response]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
@@ -112,7 +119,7 @@ class WebSocketServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::CONNECT, fn() => $server->confirm($fd), [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
@@ -125,7 +132,7 @@ class WebSocketServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::MESSAGE, fn() => $server->push($frame->fd, '.'), [$server, $frame]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
@@ -138,7 +145,7 @@ class WebSocketServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::CLOSE, fn() => $server->confirm($fd), [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
@@ -151,7 +158,7 @@ class WebSocketServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::DISCONNECT, fn() => $server->confirm($fd), [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 }

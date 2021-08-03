@@ -538,14 +538,12 @@ if (!function_exists('event')) {
 	/**
 	 * @param $name
 	 * @param $callback
-	 * @param array $params
 	 * @param bool $isAppend
 	 * @throws Exception
-	 * @throws Exception
 	 */
-	function event($name, $callback, array $params = [], bool $isAppend = true)
+	function event($name, $callback, bool $isAppend = true)
 	{
-		Event::on($name, $callback, $params, $isAppend);
+		Event::on($name, $callback, $isAppend);
 	}
 
 }

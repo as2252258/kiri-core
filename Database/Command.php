@@ -133,9 +133,11 @@ class Command extends Component
 				$this->warning('Mysql:' . Json::encode([$this->sql, $this->params]) . (microtime(true) - $time));
 			}
 			$this->prepare?->closeCursor();
-			return $result;
 		} catch (\Throwable $exception) {
-			return $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
+			$result = $this->addError($this->sql . '. error: ' . $exception->getMessage(), 'mysql');
+		} finally {
+			$this->db->release();
+			return $result;
 		}
 	}
 

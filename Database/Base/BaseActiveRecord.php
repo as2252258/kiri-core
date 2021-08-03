@@ -15,6 +15,8 @@ use Annotation\Inject;
 use ArrayAccess;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
+use Database\Affair\BeginTransaction;
+use Database\Affair\Rollback;
 use Database\Connection;
 use Database\HasMany;
 use Database\HasOne;
@@ -30,6 +32,7 @@ use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Application;
+use Snowflake\Events\EventDispatch;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
@@ -90,7 +93,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	protected array $actions = [];
 
 
-	/** @var string  */
+	/** @var string */
 	private static string $connection = 'db';
 
 
@@ -113,6 +116,17 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	#[Pure] private function getContainer(): Application
 	{
 		return Snowflake::app();
+	}
+
+
+	/**
+	 * @param EventDispatch $eventDispatch
+	 * @param array $config
+	 * @throws Exception
+	 */
+	public function __construct(public EventDispatch $eventDispatch, array $config = [])
+	{
+		parent::__construct($config);
 	}
 
 	/**
@@ -324,6 +338,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		return $first[$field];
 	}
 
+
 	/**
 	 * @return ActiveQuery
 	 */
@@ -331,6 +346,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	{
 		return static::query();
 	}
+
 
 	/**
 	 * @return ActiveQuery
@@ -523,7 +539,6 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 			return false;
 		}
 		if ($this->beforeSave($this)) {
-			static::getDb()->enablingTransactions();
 			[$change, $condition, $fields] = $this->filtration_and_separation();
 			if (!$this->isNewExample) {
 				return $this->updateInternal($fields, $condition, $change);

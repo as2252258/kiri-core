@@ -19,25 +19,27 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param $context
+	 * @param null $coroutineId
 	 * @return mixed
 	 */
-	public static function setContext($id, $context): mixed
+	public static function setContext($id, $context, $coroutineId = null): mixed
 	{
 		if (Coroutine::getCid() === -1) {
 			return static::$_contents[$id] = $context;
 		}
-		return Coroutine::getContext()[$id] = $context;
+		return Coroutine::getContext($coroutineId)[$id] = $context;
 	}
 
 	/**
 	 * @param $id
 	 * @param int $value
+	 * @param null $coroutineId
 	 * @return bool|int
 	 */
-	public static function increment($id, int $value = 1): bool|int
+	public static function increment($id, int $value = 1, $coroutineId = null): bool|int
 	{
-		if (!isset(Coroutine::getContext()[$id])) {
-			return Coroutine::getContext()[$id] += $value;
+		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
+			return Coroutine::getContext($coroutineId)[$id] += $value;
 		}
 		return false;
 	}
@@ -45,15 +47,16 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param int $value
+	 * @param null $coroutineId
 	 * @return bool|int
 	 */
-	public static function decrement($id, int $value = 1): bool|int
+	public static function decrement($id, int $value = 1, $coroutineId = null): bool|int
 	{
 		if (!static::hasContext($id)) {
 			return false;
 		}
-		if (isset(Coroutine::getContext()[$id])) {
-			return Coroutine::getContext()[$id] -= $value;
+		if (isset(Coroutine::getContext($coroutineId)[$id])) {
+			return Coroutine::getContext($coroutineId)[$id] -= $value;
 		}
 		return false;
 	}
@@ -61,25 +64,27 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param null $default
+	 * @param null $coroutineId
 	 * @return mixed
 	 */
-	public static function getContext($id, $default = null): mixed
+	public static function getContext($id, $default = null, $coroutineId = null): mixed
 	{
 		if (Coroutine::getCid() === -1) {
 			return static::loadByStatic($id, $default);
 		}
-		return static::loadByContext($id, $default);
+		return static::loadByContext($id, $default, $coroutineId);
 	}
 
 
 	/**
 	 * @param $id
 	 * @param null $default
+	 * @param null $coroutineId
 	 * @return mixed
 	 */
-	private static function loadByContext($id, $default = null): mixed
+	private static function loadByContext($id, $default = null, $coroutineId = null): mixed
 	{
-		$data = Coroutine::getContext()[$id] ?? null;
+		$data = Coroutine::getContext($coroutineId)[$id] ?? null;
 		if ($data === null) {
 			return $default;
 		}
@@ -103,12 +108,13 @@ class Context extends BaseContext
 
 
 	/**
+	 * @param null $coroutineId
 	 * @return mixed
 	 */
-	public static function getAllContext(): mixed
+	public static function getAllContext($coroutineId = null): mixed
 	{
 		if (Coroutine::getCid() === -1) {
-			return Coroutine::getContext() ?? [];
+			return Coroutine::getContext($coroutineId) ?? [];
 		} else {
 			return static::$_contents ?? [];
 		}
@@ -116,16 +122,17 @@ class Context extends BaseContext
 
 	/**
 	 * @param string $id
+	 * @param null $coroutineId
 	 */
-	public static function remove(string $id)
+	public static function remove(string $id, $coroutineId = null)
 	{
-		if (!static::hasContext($id)) {
+		if (!static::hasContext($id, $coroutineId)) {
 			return;
 		}
 		if (Coroutine::getCid() === -1) {
 			unset(static::$_contents[$id]);
 		} else {
-			unset(Coroutine::getContext()[$id]);
+			unset(Coroutine::getContext($coroutineId)[$id]);
 		}
 	}
 
@@ -134,12 +141,12 @@ class Context extends BaseContext
 	 * @param null $key
 	 * @return bool
 	 */
-	public static function hasContext($id, $key = null): bool
+	public static function hasContext($id, $key = null, $coroutineId = null): bool
 	{
 		if (Coroutine::getCid() === -1) {
 			return static::searchByStatic($id, $key);
 		}
-		return static::searchByCoroutine($id, $key);
+		return static::searchByCoroutine($id, $key, $coroutineId);
 	}
 
 
@@ -163,15 +170,16 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param null $key
+	 * @param null $coroutineId
 	 * @return bool
 	 */
-	private static function searchByCoroutine($id, $key = null): bool
+	private static function searchByCoroutine($id, $key = null, $coroutineId = null): bool
 	{
-		if (!isset(Coroutine::getContext()[$id])) {
+		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			return false;
 		}
 		if ($key !== null) {
-			return isset((Coroutine::getContext()[$id] ?? [])[$key]);
+			return isset((Coroutine::getContext($coroutineId)[$id] ?? [])[$key]);
 		}
 		return true;
 	}

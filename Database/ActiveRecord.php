@@ -233,6 +233,7 @@ class ActiveRecord extends BaseActiveRecord
 	 * @return bool
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public static function updateAll(mixed $condition, array $attributes = []): bool
 	{

@@ -9,11 +9,14 @@ declare(strict_types=1);
 
 namespace Snowflake\Cache;
 
+use Annotation\Inject;
 use Exception;
+use Server\Events\OnWorkerExit;
+use Server\Events\OnWorkerStop;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
-use Snowflake\Event;
+use Snowflake\Events\EventProvider;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
 
@@ -21,35 +24,32 @@ use Snowflake\Snowflake;
  * Class Redis
  * @package Snowflake\Snowflake\Cache
  * @see \Redis
- *
+ * @mixin \Redis
  */
 class Redis extends Component
 {
 
-
 	/**
-	 * @throws Exception
+	 * @var EventProvider
 	 */
-	public function init()
-	{
-		Event::on(Event::SYSTEM_RESOURCE_CLEAN, [$this, 'destroy']);
-		Event::on(Event::SYSTEM_RESOURCE_RELEASES, [$this, 'release']);
-		Event::on(Event::SERVER_WORKER_START, [$this, 'createPool']);
-		Event::on(Event::SERVER_TASK_START, [$this, 'createPool']);
-	}
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
 
 
 	/**
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function createPool()
+	public function init()
 	{
 		$connections = Snowflake::app()->getRedisFromPool();
 
 		$config = $this->get_config();
 
-		$length = Config::get('connections.pool.max',10);
+		$length = Config::get('connections.pool.max', 10);
+
+		$this->eventProvider->on(OnWorkerStop::class, [$this, 'destroy'], 0);
+		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
 		$connections->initConnections('Redis:' . $config['host'], true, $length);
 	}
@@ -68,12 +68,11 @@ class Redis extends Component
 			$data = $this->{$name}(...$arguments);
 		} else {
 			$data = $this->proxy()->{$name}(...$arguments);
+			$this->release();
 		}
-
 		if (microtime(true) - $time >= 0.02) {
 			$this->warning('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
 		}
-
 		return $data;
 	}
 
@@ -94,7 +93,7 @@ if (_nx ~= 0) then
 end
 return 0
 SCRIPT;
-		return $this->proxy()->eval($script, ['{lock}:' . $key, $timeout], 1);
+		return $this->eval($script, ['{lock}:' . $key, $timeout], 1);
 	}
 
 
@@ -105,8 +104,7 @@ SCRIPT;
 	 */
 	public function unlock($key): int
 	{
-		$redis = $this->proxy();
-		return $redis->del('{lock}:' . $key);
+		return $this->del('{lock}:' . $key);
 	}
 
 

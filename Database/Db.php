@@ -9,10 +9,13 @@ declare(strict_types=1);
 
 namespace Database;
 
+use Database\Affair\BeginTransaction;
+use Database\Affair\Commit;
+use Database\Affair\Rollback;
 use Database\Traits\QueryTrait;
 use Exception;
 use Snowflake\Abstracts\Config;
-use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
 use Snowflake\Exception\ConfigException;
 
 /**
@@ -39,19 +42,21 @@ class Db implements ISqlBuilder
 	 */
 	public static function beginTransaction()
 	{
+		if (!static::transactionsActive()) {
+			di(EventDispatch::class)->dispatch(new BeginTransaction());
+		}
 		static::$_inTransaction = true;
 	}
+
 
 	/**
 	 * @throws Exception
 	 */
 	public static function commit()
 	{
-		if (!static::transactionsActive()) {
-			return;
+		if (static::transactionsActive()) {
+			di(EventDispatch::class)->dispatch(new Commit());
 		}
-		Event::trigger(Connection::TRANSACTION_COMMIT);
-		Event::offName(Connection::TRANSACTION_COMMIT);
 		static::$_inTransaction = false;
 	}
 
@@ -61,11 +66,9 @@ class Db implements ISqlBuilder
 	 */
 	public static function rollback()
 	{
-		if (!static::transactionsActive()) {
-			return;
+		if (static::transactionsActive()) {
+			di(EventDispatch::class)->dispatch(new Rollback());
 		}
-		Event::trigger(Connection::TRANSACTION_ROLLBACK);
-		Event::offName(Connection::TRANSACTION_ROLLBACK);
 		static::$_inTransaction = false;
 	}
 

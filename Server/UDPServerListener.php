@@ -2,9 +2,12 @@
 
 namespace Server;
 
+use Annotation\Inject;
 use Exception;
 use ReflectionException;
+use Server\Events\OnAfterRequest;
 use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
 use Snowflake\Exception\NotFindClassException;
 use Swoole\Server;
 use Swoole\Server\Port;
@@ -17,7 +20,10 @@ use Swoole\Server\Port;
 class UDPServerListener extends Abstracts\Server
 {
 
-	protected static bool|Port $_udp;
+
+	/** @var EventDispatch  */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
 
 
 	use ListenerHelper;
@@ -50,7 +56,7 @@ class UDPServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::MESSAGE, null, [$server, $data, $clientInfo]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 }

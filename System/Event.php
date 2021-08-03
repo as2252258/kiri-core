@@ -7,6 +7,7 @@ namespace Snowflake;
 
 use Exception;
 use Snowflake\Abstracts\BaseObject;
+use Swoole\Coroutine;
 
 /**
  * Class Event
@@ -85,18 +86,16 @@ class Event extends BaseObject
 	 * @param bool $isAppend
 	 * @throws Exception
 	 */
-	public static function on($name, $callback, array $parameter = [], bool $isAppend = false)
+	public static function on($name, $callback, bool $isAppend = false)
 	{
 		if (!isset(static::$_events[$name])) {
 			static::$_events[$name] = [];
 		}
-		if ($callback instanceof \Closure) {
-			$callback = \Closure::bind($callback, Snowflake::app());
-		} else if (is_array($callback) && is_string($callback[0])) {
+		if (is_array($callback) && is_string($callback[0])) {
 			if (!class_exists($callback[0])) {
 				throw new Exception('Undefined callback class.');
 			}
-			$callback[0] = Snowflake::createObject($callback[0]);
+			$callback[0] = di($callback[0]);
 		}
 		if (static::exists($name, $callback)) {
 			return;
@@ -130,15 +129,10 @@ class Event extends BaseObject
 
 	/**
 	 * @param $name
-	 * @return bool
 	 */
-	public static function offName($name): bool
+	public static function offName($name): void
 	{
-		if (!static::exists($name)) {
-			return true;
-		}
 		unset(static::$_events[$name]);
-		return static::exists($name);
 	}
 
 
@@ -147,13 +141,10 @@ class Event extends BaseObject
 	 * @param null $callback
 	 * @return bool
 	 */
-	public static function exists($name, $callback = null): bool
+	public static function exists($name, $callback): bool
 	{
-		if (!isset(static::$_events[$name])) {
+		if ($callback instanceof \Closure || !isset(static::$_events[$name])) {
 			return false;
-		}
-		if ($callback === null) {
-			return true;
 		}
 		foreach (static::$_events[$name] as $event) {
 			[$handler, $parameter] = $event;
@@ -175,7 +166,6 @@ class Event extends BaseObject
 		if (!static::exists($name, $handler)) {
 			return null;
 		}
-
 		if (empty($handler)) {
 			return static::$_events[$name];
 		}
@@ -216,11 +206,14 @@ class Event extends BaseObject
 	 */
 	public static function trigger($name, $parameter = null, bool $is_remove = false): bool
 	{
-		foreach ((static::$_events[$name] ?? []) as $event) {
+		foreach ((static::$_events[$name] ?? []) as $key => $event) {
 			static::execute($event, $parameter);
+			if ($event instanceof \Closure) {
+				unset(static::$_events[$name][$key]);
+			}
 		}
 		if ($is_remove) {
-			static::offName($name);
+			unset(static::$_events[$name]);
 		}
 		return true;
 	}
@@ -229,45 +222,19 @@ class Event extends BaseObject
 	/**
 	 * @param $event
 	 * @param $parameter
-	 * @return bool
+	 * @return void
 	 * @throws Exception
 	 */
-	private static function execute($event, $parameter): bool
+	private static function execute($event, $parameter): void
 	{
 		try {
-			$meta = static::mergeParams($event[1], $parameter);
-			if (call_user_func($event[0], ...$meta) === false) {
-				return false;
-			}
-			return true;
+			call_user_func($event[0], ...$parameter);
 		} catch (\Throwable $throwable) {
-			return logger()->addError($throwable, 'throwable');
+			logger()->addError($throwable, 'throwable');
+			return;
 		}
 	}
 
-
-	/**
-	 * @param $defaultParameter
-	 * @param array $parameter
-	 * @return array
-	 */
-	private static function mergeParams($defaultParameter, array $parameter = []): array
-	{
-		if (empty($defaultParameter)) {
-			$defaultParameter = $parameter;
-		} else {
-			if (!is_array($parameter)) {
-				$parameter = [];
-			}
-			foreach ($parameter as $key => $value) {
-				$defaultParameter[] = $value;
-			}
-		}
-		if (!is_array($defaultParameter)) {
-			$defaultParameter = [$defaultParameter];
-		}
-		return $defaultParameter;
-	}
 
 
 }

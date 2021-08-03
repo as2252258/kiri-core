@@ -2,9 +2,11 @@
 
 namespace Server;
 
+use Annotation\Inject;
 use Exception;
-use ReflectionException;
+use Server\Events\OnAfterRequest;
 use Snowflake\Event;
+use Snowflake\Events\EventDispatch;
 use Swoole\Server;
 use Swoole\Server\Port;
 
@@ -19,6 +21,11 @@ class TCPServerListener extends Abstracts\Server
 	use ListenerHelper;
 
 	protected static bool|Port $_tcp;
+
+
+	/** @var EventDispatch */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
 
 
 	/**
@@ -51,7 +58,7 @@ class TCPServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::CONNECT, null, [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
@@ -66,7 +73,7 @@ class TCPServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::RECEIVE, null, [$server, $fd, $reactor_id, $data]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
@@ -79,7 +86,8 @@ class TCPServerListener extends Abstracts\Server
 	{
 		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
 
-		$this->_event->dispatch(Event::SYSTEM_RESOURCE_RELEASES);
+
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 }

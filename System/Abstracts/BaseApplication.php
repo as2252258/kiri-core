@@ -29,7 +29,6 @@ use Server\ServerManager;
 use Snowflake\Aop;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
-use Snowflake\Channel;
 use Snowflake\Di\Service;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
@@ -424,16 +423,6 @@ abstract class BaseApplication extends Service
 
 
 	/**
-	 * @return Channel
-	 * @throws Exception
-	 */
-	public function getChannel(): Channel
-	{
-		return $this->get('channel');
-	}
-
-
-	/**
 	 * @return Pool
 	 * @throws Exception
 	 */
@@ -470,7 +459,6 @@ abstract class BaseApplication extends Service
 			'goto'              => ['class' => BaseGoto::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],
-			'channel'           => ['class' => Channel::class],
 			'rpc'               => ['class' => \Rpc\Producer::class],
 			'rpc-service'       => ['class' => \Rpc\Service::class],
 			'http2'             => ['class' => Http2::class],
