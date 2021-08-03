@@ -32,7 +32,6 @@ class WebSocketServerListener extends Abstracts\Server
 	 * @param int $mode
 	 * @param array|null $settings
 	 * @return Server\Port
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */

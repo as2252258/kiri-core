@@ -393,21 +393,6 @@ class ServerManager extends Abstracts\Server
 
 
 	/**
-	 * @param $reflect
-	 * @param $settings
-	 */
-	private function addCloseOrDisconnect($reflect, $settings): void
-	{
-		if (swoole_version() >= '4.7') {
-			$reflect->setEvents(Constant::DISCONNECT, $settings['events'][Constant::DISCONNECT] ?? null);
-			$this->server->on('disconnect', [$reflect, 'onDisconnect']);
-		}
-		$reflect->setEvents(Constant::CLOSE, $settings['events'][Constant::CLOSE] ?? null);
-		$this->server->on('close', [$reflect, 'onClose']);
-	}
-
-
-	/**
 	 * @param array $events
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
