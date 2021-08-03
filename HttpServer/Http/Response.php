@@ -17,6 +17,7 @@ use HttpServer\Http\Formatter\XmlFormatter;
 use HttpServer\IInterface\IFormatter;
 use Snowflake\Core\Help;
 use Snowflake\Snowflake;
+use Swoole\Coroutine;
 use Swoole\Http\Response as SResponse;
 
 /**
@@ -55,7 +56,7 @@ class Response extends HttpService
 	 */
 	public function setFormat($format): static
 	{
-        $this->format = $format;
+        $this->__coroutine__call(__METHOD__, func_get_args());
         return $this;
 	}
 
@@ -66,7 +67,7 @@ class Response extends HttpService
 	 */
 	public function toHtml($content): string
 	{
-		$this->format = self::HTML;
+        $this->__coroutine__call(__METHOD__, func_get_args());
 		return (string)$content;
 	}
 
@@ -77,7 +78,7 @@ class Response extends HttpService
 	 */
 	public function toJson($content): string|bool
 	{
-		$this->format = self::JSON;
+        $this->__coroutine__call(__METHOD__, func_get_args());
 		return json_encode($content, JSON_UNESCAPED_UNICODE);
 	}
 
@@ -88,7 +89,7 @@ class Response extends HttpService
 	 */
 	public function toXml($content): mixed
 	{
-		$this->format = self::XML;
+        $this->__coroutine__call(__METHOD__, func_get_args());
 		return $content;
 	}
 
@@ -100,9 +101,22 @@ class Response extends HttpService
 	 */
 	public function addHeader($key, $value): static
 	{
-	    $this->headers[$key] = $value;
+	    $this->__coroutine__call(__METHOD__, func_get_args());
 		return $this;
 	}
+
+
+    /**
+     * @param $name
+     * @param $value
+     */
+	private function __coroutine__call($name, $value)
+    {
+        /** @var \HttpServer\Http\CoroutineResponse $handler */
+        $handler = Context::getContext(CoroutineResponse::class);
+        call_user_func([$handler, $name], ...$value);
+    }
+
 
 	/**
 	 * @param $name
@@ -118,7 +132,7 @@ class Response extends HttpService
 	 */
 	public function addCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
-	    $this->cookies[] = func_get_args();
+        $this->__coroutine__call(__METHOD__, func_get_args());
 		return $this;
 	}
 
@@ -128,70 +142,19 @@ class Response extends HttpService
      */
 	public function setStatusCode($statusCode)
     {
-	    $this->statusCode = $statusCode;
+        $this->__coroutine__call(__METHOD__, func_get_args());
     }
-
 
 
 	/**
 	 * @param mixed $context
 	 * @param int $statusCode
-	 * @return bool
 	 * @throws Exception
 	 */
-	public function send(mixed $context, int $statusCode, SResponse $response): mixed
+	public function send(mixed $context, SResponse $response): void
 	{
-		$sendData = $this->parseData($context);
-
-        $response->setStatusCode($statusCode);
-        if (!isset($response->header['Content-Type'])) {
-            $response->header('Content-Type', 'application/json;charset=utf-8');
-        }
-        $response->header('Run-Time', $this->getRuntime());
-        $response->end($sendData);
-        Context::remove(SResponse::class);
-		return $sendData;
+	    $this->__coroutine__call(__METHOD__, func_get_args());
 	}
-
-	/**
-	 * @param $context
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function parseData($context): mixed
-	{
-		if (!empty($context) && !is_string($context)) {
-			/** @var IFormatter $class */
-			$class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
-
-			$di = Snowflake::getDi()->get($class);
-			$context = $di->send($context)->getData();
-		}
-		return $context;
-	}
-
-	/**
-	 * @param $result
-	 * @return void
-	 * @throws Exception
-	 */
-	private function printResult($result): mixed
-	{
-		$result = Help::toString($result);
-		fire('CONSOLE_END');
-		if (str_contains((string)$result, 'Event::rshutdown(): Event::wait()')) {
-			return $result;
-		}
-		$string = 'Command Result: ' . PHP_EOL . PHP_EOL;
-		if (empty($result)) {
-			$string .= 'success!' . PHP_EOL . PHP_EOL;
-		} else {
-			$string .= $result . PHP_EOL . PHP_EOL;
-		}
-		echo $string . 'Command End!' . PHP_EOL;
-		return $result;
-	}
-
 
 
 	/**
@@ -199,63 +162,10 @@ class Response extends HttpService
 	 * @param array $param
 	 * @return int
 	 */
-	public function redirect($url, array $param = []): mixed
+	public function redirect($url, array $param = []): void
 	{
-		if (!empty($param)) {
-			$url .= '?' . http_build_query($param);
-		}
-		$url = ltrim($url, '/');
-		if (!preg_match('/^http/', $url)) {
-			$url = '/' . $url;
-		}
-		/** @var SResponse $response */
-		$response = Context::getContext('response');
-		if (!empty($response)) {
-			return $response->redirect($url);
-		}
-		return false;
-	}
-
-
-	/**
-	 * @return static
-	 * @throws Exception
-	 */
-	public static function create(): static
-	{
-		$ciResponse = Snowflake::app()->get('response');
-		$ciResponse->startTime = microtime(true);
-		$ciResponse->format = self::JSON;
-		return $ciResponse;
-	}
-
-
-	/**
-	 * @param int $statusCode
-	 * @param string $message
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function close(int $statusCode = 200, string $message = ''): mixed
-	{
-		return $this->send($message, $statusCode);
-	}
-
-
-	/**
-	 * @param $clientId
-	 * @param int $statusCode
-	 * @param string $message
-	 * @return mixed
-	 */
-	public function closeClient($clientId, int $statusCode = 200, string $message = ''): mixed
-	{
-		$socket = Snowflake::getWebSocket();
-		if (!$socket->exist($clientId)) {
-			return true;
-		}
-		return $socket->close($clientId, true);
-	}
+        $this->__coroutine__call(__METHOD__, func_get_args());
+    }
 
 
 	/**
@@ -265,37 +175,9 @@ class Response extends HttpService
 	 * @param int $sleep
 	 * @return string
 	 */
-	public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): string
+	public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): void
 	{
-		$open = fopen($path, 'r');
-
-		$stat = fstat($open);
-
-
-		/** @var SResponse $response */
-		$response = Context::getContext('response');
-		$response->header('Content-length', $stat['size']);
-		while ($file = fread($open, $limit)) {
-			$response->write($file);
-			fseek($open, $offset);
-			if ($sleep > 0) sleep($sleep);
-			if ($offset >= $stat['size']) {
-				break;
-			}
-			$offset += $limit;
-		}
-		$response->end();
-		return '';
-	}
-
-
-	/**
-	 * @return string
-	 * @throws Exception
-	 */
-	public function getRuntime(): string
-	{
-		return sprintf('%.5f', microtime(TRUE) - request()->getStartTime());
-	}
+        $this->__coroutine__call(__METHOD__, func_get_args());
+    }
 
 }

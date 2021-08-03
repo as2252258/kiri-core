@@ -94,18 +94,18 @@ class HTTPServerListener extends Abstracts\Server
 		try {
             $node = $this->router->find_path(HSRequest::create($request));
             if (!($node instanceof Node)) {
+                $this->response->setStatusCode(404);
                 $this->response->setFormat(\HttpServer\Http\Response::HTML);
                 $data = '<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>';
             } else {
-                $data= $node->dispatch();
+                $this->response->setStatusCode(200);
+                $data = $node->dispatch();
             }
         } catch (Error | Throwable $exception) {
+            $this->response->setStatusCode(500);
             $data = jTraceEx($exception);
 		} finally {
-		    if (Context::hasContext(Response::class)) {
-		        return;
-            }
-            \response()->send($data,200, $response);
+            $this->response->send($data, $response);
 			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}
