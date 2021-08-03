@@ -42,6 +42,11 @@ class ServerWorker extends \Server\Abstracts\Server
 
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 
+		putenv('environmental=' . Snowflake::WORKER);
+		if ($workerId > $server->setting['worker_num']) {
+			putenv('environmental=' . Snowflake::TASK);
+		}
+
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
 
@@ -50,16 +55,20 @@ class ServerWorker extends \Server\Abstracts\Server
 
 
 	/**
-	 * @param $annotation
+	 * @param Annotation $annotation
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
-	private function interpretDirectory($annotation)
+	private function interpretDirectory(Annotation $annotation)
 	{
 		$fileLists = $annotation->runtime(APP_PATH . 'app');
 
 		$di = Snowflake::getDi();
-		foreach ($fileLists as $class) {
+		foreach ($fileLists as $file => $class) {
+			if (!Snowflake::isWorker() && str_contains($file, CONTROLLER_PATH)) {
+				continue;
+			}
 			$instance = $di->get($class);
 			$methods = $di->getMethodAttribute($class);
 			foreach ($methods as $method => $attribute) {
