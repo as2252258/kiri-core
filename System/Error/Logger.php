@@ -222,8 +222,7 @@ class Logger extends Component
 		if (empty($this->logs)) {
 			return;
 		}
-		foreach ($this->logs as $log) {
-			[$method, $message] = $log;
+		foreach ($this->logs as $method => $message) {
 			$this->write($message, $method);
 		}
 		$this->logs = [];
