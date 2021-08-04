@@ -77,8 +77,8 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
+		if ($this->checkPort($port)) $this->stopServer($port);
 		if (!$this->server) {
-			if ($this->checkPort($port)) $this->stopServer($port);
 			$this->createBaseServer($type, $host, $port, $mode, $settings);
 		} else {
 			if (!isset($settings['settings'])) {
@@ -233,6 +233,9 @@ class ServerManager extends Abstracts\Server
 		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
 		/** @var Server\Port $service */
 		$this->ports[$port] = $this->server->addlistener($host, $port, $mode);
+		if ($this->ports[$port] === false) {
+			throw new Exception("The port is already in use[$host::$port]");
+		}
 		$this->ports[$port]->set($settings['settings'] ?? []);
 		$reflect = match ($type) {
 			Constant::SERVER_TYPE_TCP => Snowflake::getDi()->newObject(TCPServerListener::class),
