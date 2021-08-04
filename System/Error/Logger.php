@@ -118,6 +118,8 @@ class Logger extends Component
 		if (!is_array($this->logs)) {
 			$this->logs = [];
 		}
+		var_dump($message, $method);
+
 		$this->logs[$method] = $message;
 	}
 
@@ -223,7 +225,6 @@ class Logger extends Component
 			return;
 		}
 		foreach ($this->logs as $method => $message) {
-			var_dump($message, $method);
 			$this->write($message, $method);
 		}
 		$this->logs = [];
