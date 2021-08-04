@@ -249,7 +249,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param $port
 	 * @param callable $callback
 	 * @return mixed
-	 * @throws Exception
+	 * @throws
 	 */
 	public function addRpcService($port, callable $callback): mixed
 	{
