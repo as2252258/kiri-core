@@ -8,10 +8,10 @@ use Snowflake\Abstracts\BaseObject;
 
 
 /**
- * Class TaskProvider
+ * Class KafkaProvider
  * @package Kafka
  */
-class TaskProvider extends BaseObject
+class KafkaProvider extends BaseObject
 {
 
 
