@@ -118,8 +118,6 @@ class Logger extends Component
 		if (!is_array($this->logs)) {
 			$this->logs = [];
 		}
-		var_dump($message, $method);
-
 		$this->logs[$method] = $message;
 	}
 
