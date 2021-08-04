@@ -20,6 +20,7 @@ use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
 use Server\Constrict\Response;
+use HttpServer\Http\Response as HttpResponse;
 
 if (!function_exists('make')) {
 
@@ -599,10 +600,10 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response
 	{
-	    if (!Context::hasContext(Response::class)){
-            return Context::setContext(Response::class, new Response());
+	    if (!Context::hasContext(HttpResponse::class)){
+	    	Context::setContext(HttpResponse::class, new HttpResponse());
         }
-		return Context::getContext(Response::class);
+		return di(Response::class);
 	}
 
 }
