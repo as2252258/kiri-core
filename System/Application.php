@@ -146,7 +146,7 @@ class Application extends BaseApplication
             }
             $data = response()->getBuilder($manager->execCommand($class));
         } catch (\Throwable $exception) {
-            $data = logger()->exception($exception);
+            $data = response()->getBuilder(logger()->exception($exception));
         } finally {
             print_r($data);
             Timer::clearAll();
