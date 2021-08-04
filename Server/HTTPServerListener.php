@@ -8,9 +8,14 @@ use HttpServer\Exception\RequestException;
 use HttpServer\Http\Request as HSRequest;
 use HttpServer\Route\Node;
 use HttpServer\Route\Router;
+use ReflectionException;
 use Server\Constrict\Response as CResponse;
 use Server\Events\OnAfterRequest;
+use Snowflake\Abstracts\Config;
 use Snowflake\Events\EventDispatch;
+use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -43,6 +48,28 @@ class HTTPServerListener extends Abstracts\Server
 	/** @var EventDispatch */
 	#[Inject(EventDispatch::class)]
 	public EventDispatch $eventDispatch;
+
+
+	/**
+	 * @var ExceptionHandlerInterface
+	 */
+	public ExceptionHandlerInterface $exceptionHandler;
+
+
+
+	/**
+	 * @throws ReflectionException
+	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 */
+	public function init()
+	{
+		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
+		if (!($exceptionHandler instanceof ExceptionHandlerInterface)){
+			$exceptionHandler = Snowflake::getDi()->get(ExceptionHandlerDispatcher::class);
+		}
+		$this->exceptionHandler = $exceptionHandler;
+	}
 
 
 	/**
@@ -97,9 +124,7 @@ class HTTPServerListener extends Abstracts\Server
 			}
 			$responseData = $this->response->setContent($node->dispatch())->setStatusCode(200);
 		} catch (Error | Throwable $exception) {
-			$code = $exception->getCode() == 0 ? 500 : $exception->getCode();
-			$data = $code == 404 ? $exception->getMessage() : jTraceEx($exception,null,true);
-			$responseData = $this->response->setContent($data)->setFormat(CResponse::HTML)->setStatusCode($code);
+			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
 			$response->end($responseData->configure($response)->getContent());
 
