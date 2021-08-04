@@ -194,15 +194,11 @@ class Response extends HttpService
 
 	/**
 	 * @param mixed $content
-	 * @param int $statusCode
-	 * @param null $format
 	 * @return Response
 	 */
-	public function setContent(mixed $content, int $statusCode = 200, $format = null): static
+	public function setContent(mixed $content): static
 	{
 		$this->endData = $content;
-		$this->setStatusCode($statusCode);
-		$this->setFormat($format);
 		return $this;
 	}
 
