@@ -198,10 +198,10 @@ class Response extends HttpService
 	 */
 	public function setContent(mixed $content): Response|\Server\Constrict\Response
 	{
-		if ($content instanceof \Server\Constrict\Response
-			|| $content instanceof Response) {
-			return $content;
-		}
+//		if ($content instanceof \Server\Constrict\Response
+//			|| $content instanceof Response) {
+//			return $content;
+//		}
 		$this->endData = $content;
 		return $this;
 	}
