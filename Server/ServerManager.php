@@ -77,6 +77,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
+	    if ($this->portIsAready($port)) $this->stopServer($port);
 		if (!$this->server) {
 			$this->createBaseServer($type, $host, $port, $mode, $settings);
 		} else {
