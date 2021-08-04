@@ -31,11 +31,11 @@ class TaskContainer extends BaseObject
     }
 
 
-    /**
-     * @param $topic
-     * @return mixed|null
-     */
-    public function getConsumer(string $topic)
+	/**
+	 * @param string $topic
+	 * @return mixed
+	 */
+    public function getConsumer(string $topic): mixed
     {
         return $this->_topics[$topic] ?? null;
     }

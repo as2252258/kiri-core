@@ -45,11 +45,11 @@ class Producer extends Component
 		if (!class_exists(Conf::class)) {
 			return;
 		}
-		$this->conf = new Conf();
-		$this->topicConf = new TopicConf();
+		$this->conf = di(Conf::class);
 		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
+		$this->topicConf = di(TopicConf::class);
 	}
 
 
@@ -93,7 +93,7 @@ class Producer extends Component
 	 */
 	private function getProducer(): \RdKafka\Producer
 	{
-		return Snowflake::createObject(\RdKafka\Producer::class, [$this->conf]);
+		return Snowflake::getDi()->get(\RdKafka\Producer::class, [$this->conf]);
 	}
 
 

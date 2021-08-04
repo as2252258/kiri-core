@@ -20,7 +20,7 @@ class Struct
 	/**
 	 * Struct constructor.
 	 * @param $topic
-	 * @param $message
+	 * @param Message $message
 	 */
 	public function __construct($topic, Message $message)
 	{
