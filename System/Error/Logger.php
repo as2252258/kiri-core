@@ -193,53 +193,6 @@ class Logger extends Component
 		$fileName = storage('server-' . $to_day . '.log', $dirName = 'log/' . ($method ?? 'app'));
 
 		file_put_contents($fileName, '[' . date('Y-m-d H:i:s') . ']:' . PHP_EOL . $messages . PHP_EOL);
-
-		$this->clearHistoryFile($dirName);
-
-		$this->clearPrevLog($to_day);
-	}
-
-
-	/**
-	 * 清理文件资源
-	 */
-	public function closeSource()
-	{
-		foreach ($this->sources as $source) {
-			fclose($source);
-		}
-		$this->sources = [];
-	}
-
-
-	/**
-	 * @param $to_day
-	 */
-	public function clearPrevLog($to_day)
-	{
-		if (count($this->sources) > 1) {
-			foreach ($this->sources as $day => $source) {
-				if ($day == $to_day) {
-					continue;
-				}
-				foreach ($source as $value) {
-					fclose($value);
-				}
-				unset($this->sources[$day]);
-			}
-		}
-	}
-
-
-	/**
-	 * @param string $dirName
-	 * @throws \Exception
-	 */
-	private function clearHistoryFile(string $dirName)
-	{
-		$command = 'find ' . storage(null, $dirName) . '/ -mtime +15 -name "*.log" -exec rm -rf {} \;';
-
-		Coroutine::getCid() !== -1 ? Coroutine\System::exec($command) : \shell_exec($command);
 	}
 
 
