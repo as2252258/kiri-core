@@ -24,9 +24,6 @@ class EventProvider implements EventProviders
 		foreach ($this->_listeners[get_class($event)] ?? [] as $listener) {
 			$queue->insert($listener->listener, $listener->priority);
 		}
-		if ($queue->count() > 10) {
-			var_dump($queue->count());
-		}
 		return $queue;
 	}
 

@@ -15,7 +15,6 @@ use Server\Events\OnAfterRequest;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Core\Json;
-use Snowflake\Event;
 use Snowflake\Events\EventProvider;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
@@ -119,7 +118,7 @@ class Logger extends Component
 		if (!is_array($this->logs)) {
 			$this->logs = [];
 		}
-		$this->logs[] = [$method, $message];
+		$this->logs[$method] = $message;
 	}
 
 
@@ -164,7 +163,8 @@ class Logger extends Component
 	 */
 	public function getLastError(string $application = 'app'): mixed
 	{
-		$filetype = [];
+		return $this->logs[$application] ?? null;
+
 		foreach ($this->logs as $val) {
 			if ($val[0] != $application) {
 				continue;
