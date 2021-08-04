@@ -194,10 +194,13 @@ class Response extends HttpService
 
 	/**
 	 * @param mixed $content
-	 * @return Response
+	 * @return Response|\Server\Constrict\Response
 	 */
-	public function setContent(mixed $content): static
+	public function setContent(mixed $content): Response|\Server\Constrict\Response
 	{
+		if ($content instanceof \Server\Constrict\Response) {
+			return $content;
+		}
 		$this->endData = $content;
 		return $this;
 	}
@@ -213,12 +216,8 @@ class Response extends HttpService
 		if (empty($this->endData) || is_string($this->endData)) {
 			return $this->endData;
 		}
-		var_dump($this->endData);
-		if (!($this->endData instanceof Response)) {
-			$class = Response::FORMAT_MAPS[$this->format] ?? HtmlFormatter::class;
-			return \di($class)->send($this->endData)->getData();
-		}
-		return $this->endData->getContent();
+		$class = Response::FORMAT_MAPS[$this->format] ?? HtmlFormatter::class;
+		return \di($class)->send($this->endData)->getData();
 	}
 
 
