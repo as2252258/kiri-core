@@ -120,7 +120,6 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		write($data, $this->category);
 
-		var_dump($data);
 		return $data;
 	}
 
