@@ -65,23 +65,25 @@ class Response extends HttpService
 
 	/**
 	 * @param $content
-	 * @return string
+	 * @return Response
 	 */
-	public function toHtml($content): string
+	public function toHtml($content): static
 	{
 		$this->format = self::HTML;
-		return (string)$content;
+		$this->endData = (string)$content;
+		return $this;
 	}
 
 
 	/**
 	 * @param $content
-	 * @return string|bool
+	 * @return Response
 	 */
-	public function toJson($content): string|bool
+	public function toJson($content): static
 	{
 		$this->format = self::JSON;
-		return json_encode($content, JSON_UNESCAPED_UNICODE);
+		$this->endData = json_encode($content, JSON_UNESCAPED_UNICODE);
+		return $this;
 	}
 
 
@@ -89,10 +91,11 @@ class Response extends HttpService
 	 * @param $content
 	 * @return mixed
 	 */
-	public function toXml($content): mixed
+	public function toXml($content): static
 	{
 		$this->format = self::XML;
-		return $content;
+		$this->endData = $content;
+		return $this;
 	}
 
 
@@ -129,10 +132,12 @@ class Response extends HttpService
 
 	/**
 	 * @param $statusCode
+	 * @return Response
 	 */
-	public function setStatusCode($statusCode)
+	public function setStatusCode($statusCode): static
 	{
 		$this->statusCode = $statusCode;
+		return $this;
 	}
 
 
@@ -150,9 +155,9 @@ class Response extends HttpService
 
 
 	/**
-	 * @param mixed $context
-	 * @param int $statusCode
-	 * @return bool
+	 * @param mixed $data
+	 * @param SResponse|null $response
+	 * @return Response
 	 * @throws Exception
 	 */
 	public function getBuilder(mixed $data, SResponse $response = null): static
@@ -165,8 +170,8 @@ class Response extends HttpService
 
 
 	/**
-	 * @param \Swoole\Http\Response|null $response
-	 * @throws \Exception
+	 * @param SResponse|null $response
+	 * @throws Exception
 	 */
 	public function configure(SResponse $response = null): static
 	{
@@ -193,7 +198,7 @@ class Response extends HttpService
 	 * @param null $format
 	 * @return Response
 	 */
-	public function setContent(mixed $content,int $statusCode = 200, $format = null): static
+	public function setContent(mixed $content, int $statusCode = 200, $format = null): static
 	{
 		$this->endData = $content;
 		$this->setStatusCode($statusCode);
