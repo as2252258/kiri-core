@@ -9,7 +9,6 @@ use Exception;
 use ReflectionClass;
 use ReflectionException;
 use Snowflake\Abstracts\BaseObject;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Throwable;
 
@@ -48,6 +47,7 @@ class Loader extends BaseObject
 	 * @param string $class
 	 * @param string $property
 	 * @return mixed
+	 * @throws ReflectionException
 	 */
 	public function getProperty(string $class, string $property = ''): mixed
 	{
@@ -67,7 +67,6 @@ class Loader extends BaseObject
 	 * @param string $class
 	 * @param object $handler
 	 * @return $this
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
@@ -138,7 +137,9 @@ class Loader extends BaseObject
 				return;
 			}
 			$replace = $this->getReflect($path, $namespace);
-
+			if (!$replace->getAttributes(Target::class)) {
+				return;
+			}
 			$this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 
 			static::$_classes[] = $replace->getName();
@@ -152,7 +153,6 @@ class Loader extends BaseObject
 	 * @param DirectoryIterator $path
 	 * @param string $namespace
 	 * @return ReflectionClass|null
-	 * @throws ReflectionException
 	 */
 	private function getReflect(DirectoryIterator $path, string $namespace): ?ReflectionClass
 	{

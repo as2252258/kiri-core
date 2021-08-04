@@ -107,7 +107,9 @@ class Container extends BaseObject
 	private function resolve($class, $constrict, $config): object
 	{
 		$reflect = $this->resolveDependencies($class);
-
+		if (!$reflect->isInstantiable()) {
+			throw new ReflectionException('Class ' . $class . ' cannot be instantiated');
+		}
 		$object = $this->newInstance($reflect, $constrict);
 
 		$this->propertyInject($reflect, $object);
@@ -161,7 +163,6 @@ class Container extends BaseObject
 	 * @param $className
 	 * @param $method
 	 * @return array
-	 * @throws ReflectionException
 	 */
 	public function getMethodAttribute($className, $method = null): array
 	{
@@ -177,7 +178,6 @@ class Container extends BaseObject
 	 * @param string $class
 	 * @param string|null $property
 	 * @return ReflectionProperty|ReflectionProperty[]|null
-	 * @throws ReflectionException
 	 */
 	public function getClassReflectionProperty(string $class, string $property = null): ReflectionProperty|null|array
 	{
@@ -210,14 +210,11 @@ class Container extends BaseObject
 	/**
 	 * @param $class
 	 * @return ReflectionClass
-	 * @throws ReflectionException
 	 */
 	private function resolveDependencies($class): ReflectionClass
 	{
 		$reflect = new ReflectionClass($class);
-		if ($reflect->isAbstract() || !$reflect->isInstantiable()) {
-			throw new ReflectionException('Class ' . $class . ' cannot be instantiated');
-		}
+
 		$this->setPropertyNote($reflect);
 		$this->setTargetNote($reflect);
 		$this->setMethodNote($reflect);
@@ -232,7 +229,6 @@ class Container extends BaseObject
 	/**
 	 * @param ReflectionClass|string $class
 	 * @return ReflectionMethod[]
-	 * @throws ReflectionException
 	 */
 	public function getReflectMethods(ReflectionClass|string $class): array
 	{
@@ -247,7 +243,6 @@ class Container extends BaseObject
 	 * @param ReflectionClass|string $class
 	 * @param string $method
 	 * @return ReflectionMethod|null
-	 * @throws ReflectionException
 	 */
 	public function getReflectMethod(ReflectionClass|string $class, string $method): ?ReflectionMethod
 	{
@@ -346,7 +341,6 @@ class Container extends BaseObject
 	/**
 	 * @param $class
 	 * @return ReflectionClass|null
-	 * @throws ReflectionException
 	 */
 	public function getReflect($class): ?ReflectionClass
 	{
