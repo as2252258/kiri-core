@@ -161,7 +161,7 @@ class Response extends HttpService implements ResponseInterface
 	 * @return Response
 	 * @throws Exception
 	 */
-	public function getBuilder(mixed $data, SResponse $response = null): static
+	public function getBuilder(mixed $data, SResponse $response = null): ResponseInterface
 	{
 		if ($response != null) {
 			$this->configure($response);
@@ -195,14 +195,10 @@ class Response extends HttpService implements ResponseInterface
 
 	/**
 	 * @param mixed $content
-	 * @return Response|\Server\Constrict\Response
+	 * @return ResponseInterface
 	 */
-	public function setContent(mixed $content): Response|\Server\Constrict\Response
+	public function setContent(mixed $content): ResponseInterface
 	{
-//		if ($content instanceof \Server\Constrict\Response
-//			|| $content instanceof Response) {
-//			return $content;
-//		}
 		$this->endData = $content;
 		return $this;
 	}

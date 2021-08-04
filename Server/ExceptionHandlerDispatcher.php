@@ -17,9 +17,9 @@ class ExceptionHandlerDispatcher implements ExceptionHandlerInterface
 	/**
 	 * @param Throwable $exception
 	 * @param CResponse $response
-	 * @return CResponse|\HttpServer\Http\Response
+	 * @return ResponseInterface
 	 */
-	public function emit(Throwable $exception, Response $response): Response|\HttpServer\Http\Response
+	public function emit(Throwable $exception, Response $response): ResponseInterface
 	{
 		if ($exception->getCode() == 404) {
 			return $response->setContent($exception->getMessage())
