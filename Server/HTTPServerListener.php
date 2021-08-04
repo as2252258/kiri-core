@@ -64,7 +64,7 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function init()
 	{
-		$exceptionHandler = Config::get('exception.http', null);
+		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
 		}
