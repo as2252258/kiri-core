@@ -7,20 +7,19 @@ use Annotation\Annotation;
 use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
-use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Config;
 use Snowflake\Aop;
 use Snowflake\Application;
 use Snowflake\Core\ArrayAccess;
-use Snowflake\Core\Json;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
+use Server\Constrict\Response;
 
 if (!function_exists('make')) {
 
@@ -55,6 +54,11 @@ if (!function_exists('make')) {
 
 if (!function_exists('workerName')) {
 
+
+	/**
+	 * @param $worker_id
+	 * @return string
+	 */
 	function workerName($worker_id)
 	{
 		return $worker_id >= Snowflake::app()->getSwoole()->setting['worker_num'] ? 'Task' : 'Worker';
