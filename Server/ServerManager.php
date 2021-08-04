@@ -229,7 +229,6 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
-		var_dump(func_get_args());
 		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
 		/** @var Server\Port $service */
 		$this->ports[$port] = $this->server->addlistener($host, $port, $mode);
