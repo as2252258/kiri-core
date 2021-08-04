@@ -64,7 +64,8 @@ class HTTPServerListener extends Abstracts\Server
 	 */
 	public function init()
 	{
-		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
+		$exceptionHandler = Config::get('exception.http', null);
+		var_dump($exceptionHandler);
 		if (!($exceptionHandler instanceof ExceptionHandlerInterface)){
 			$exceptionHandler = Snowflake::getDi()->get(ExceptionHandlerDispatcher::class);
 		}
