@@ -223,6 +223,7 @@ class Logger extends Component
 			return;
 		}
 		foreach ($this->logs as $method => $message) {
+			var_dump($message, $method);
 			$this->write($message, $method);
 		}
 		$this->logs = [];
