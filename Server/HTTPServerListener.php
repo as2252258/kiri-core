@@ -56,7 +56,6 @@ class HTTPServerListener extends Abstracts\Server
 	public ExceptionHandlerInterface $exceptionHandler;
 
 
-
 	/**
 	 * @throws ReflectionException
 	 * @throws ConfigException
@@ -65,12 +64,10 @@ class HTTPServerListener extends Abstracts\Server
 	public function init()
 	{
 		$exceptionHandler = Config::get('exception.http', null);
-		var_dump($exceptionHandler);
-		if (!($exceptionHandler instanceof ExceptionHandlerInterface)){
+		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
 			$exceptionHandler = Snowflake::getDi()->get(ExceptionHandlerDispatcher::class);
 		}
 		$this->exceptionHandler = $exceptionHandler;
-		var_dump($this->exceptionHandler);
 	}
 
 
