@@ -173,6 +173,7 @@ class ServerManager extends Abstracts\Server
 				$array[] = $port;
 			}
 		}
+		var_dump($array);
 		return $array;
 	}
 
