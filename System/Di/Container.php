@@ -107,6 +107,9 @@ class Container extends BaseObject
 	private function resolve($class, $constrict, $config): object
 	{
 		$reflect = $this->resolveDependencies($class);
+		if (!$reflect->isInstantiable()) {
+			throw new ReflectionException('Class ' . $class . ' cannot be instantiated');
+		}
 
 		$object = $this->newInstance($reflect, $constrict);
 
@@ -210,13 +213,12 @@ class Container extends BaseObject
 	/**
 	 * @param $class
 	 * @return ReflectionClass
-	 * @throws ReflectionException
 	 */
 	private function resolveDependencies($class): ReflectionClass
 	{
 		$reflect = new ReflectionClass($class);
-		if ($reflect->isAbstract() || !$reflect->isInstantiable()) {
-			throw new ReflectionException('Class ' . $class . ' cannot be instantiated');
+		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
+			return $this->_reflection[$class] = $reflect;
 		}
 		$this->setPropertyNote($reflect);
 		$this->setTargetNote($reflect);
