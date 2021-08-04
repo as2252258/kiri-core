@@ -83,29 +83,6 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @param $port
-	 * @param Closure|array|string $closure
-	 * @param null $method
-	 * @return Node|bool|null
-	 * @throws
-	 */
-	public function addPortListen($port, Closure|array|string $closure, $method = null): Node|null|bool
-	{
-		if (!is_string($closure)) {
-			return $this->addRoute('add-port-listen/port_' . $port, $closure, 'listen');
-		}
-		if (empty($method)) {
-			return $this->addError($closure . '::' . $method);
-		}
-		$_closure = Snowflake::createObject($closure);
-		if (!method_exists($_closure, $method)) {
-			return $this->addError($closure . '::' . $method);
-		}
-		return $this->addRoute('add-port-listen/port_' . $port, [$_closure, $method], 'listen');
-	}
-
-
-	/**
 	 * @param $path
 	 * @param $handler
 	 * @param string $method
