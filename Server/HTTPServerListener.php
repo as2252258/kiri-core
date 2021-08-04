@@ -9,6 +9,7 @@ use HttpServer\Http\Request as HSRequest;
 use HttpServer\Route\Node;
 use HttpServer\Route\Router;
 use ReflectionException;
+use Server\Abstracts\PageNotFoundException;
 use Server\Constrict\Response as CResponse;
 use Server\Events\OnAfterRequest;
 use Snowflake\Abstracts\Config;
@@ -119,16 +120,11 @@ class HTTPServerListener extends Abstracts\Server
 		try {
 			$node = $this->router->find_path(HSRequest::create($request));
 			if (!($node instanceof Node)) {
-				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+				throw new PageNotFoundException(404);
 			}
 			$responseData = $this->response->setContent($node->dispatch())->setStatusCode(200);
 		} catch (Error | Throwable $exception) {
-			try {
-				$responseData = $this->exceptionHandler->emit($exception, $this->response);
-			} catch (Throwable $throwable) {
-				var_dump($throwable->getMessage());
-				return;
-			}
+			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
 			$response->end($responseData->configure($response)->getContent());
 
