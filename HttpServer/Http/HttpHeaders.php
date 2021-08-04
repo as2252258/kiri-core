@@ -59,7 +59,11 @@ class HttpHeaders
 	 */
 	public function getRequestUri(): ?string
 	{
-		return $this->__handler__('request_uri');
+		$uri = $this->__handler__('request_uri', '/');
+		if (empty($uri)) {
+			return '/';
+		}
+		return $uri;
 	}
 
 

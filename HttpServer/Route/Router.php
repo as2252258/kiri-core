@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace HttpServer\Route;
 
-use Annotation\Route\Route;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
@@ -482,32 +481,6 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @return mixed
-	 * @throws
-	 */
-	public function dispatch(Request $request): void
-	{
-		$node = $this->find_path($request);
-		if (!($node instanceof Node)) {
-			$this->response->setFormat(Response::HTML);
-			$this->response->send('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>');
-		} else {
-			$this->response->send($node->dispatch(), 200);
-		}
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function pageNotFound()
-	{
-		$this->response->setFormat(Response::HTML);
-		$this->response->send('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>');
-	}
-
-
-	/**
 	 * @param $exception
 	 * @return mixed
 	 * @throws Exception
@@ -522,13 +495,13 @@ class Router extends HttpService implements RouterInterface
 	 * @param Request $request
 	 * @return Node|null 树干搜索
 	 * 树干搜索
+	 * @throws Exception
 	 */
 	public function find_path(Request $request): ?Node
 	{
 		$method = $request->getMethod();
-		$uri = $request->headers->get('request_uri', '/');
 
-		$methods = static::$nodes[$method][$uri] ?? null;
+		$methods = static::$nodes[$method][\request()->getUri()] ?? null;
 		if (!is_null($methods)) {
 			return $methods;
 		}
