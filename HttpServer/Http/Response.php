@@ -14,6 +14,7 @@ use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
+use Server\ResponseInterface;
 use Snowflake\Exception\NotFindClassException;
 use Swoole\Http\Response as SResponse;
 
@@ -21,7 +22,7 @@ use Swoole\Http\Response as SResponse;
  * Class Response
  * @package Snowflake\Snowflake\Http
  */
-class Response extends HttpService
+class Response extends HttpService implements ResponseInterface
 {
 
 	const JSON = 'json';

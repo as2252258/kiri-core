@@ -121,7 +121,9 @@ class HTTPServerListener extends Abstracts\Server
 			if (!($node instanceof Node)) {
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 			}
-			$responseData = $this->response->setContent($node->dispatch())->setStatusCode(200);
+			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
+				$responseData = $this->response->setContent($node->dispatch())->setStatusCode(200);
+			}
 		} catch (Error | Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {

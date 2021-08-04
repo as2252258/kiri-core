@@ -6,6 +6,7 @@ namespace Server\Constrict;
 
 use HttpServer\Http\Context;
 use HttpServer\Http\Response as HttpResponse;
+use Server\ResponseInterface;
 
 
 /**
@@ -13,7 +14,7 @@ use HttpServer\Http\Response as HttpResponse;
  * @package Server
  * @mixin HttpResponse
  */
-class Response
+class Response implements ResponseInterface
 {
 
 	const JSON = 'json';
