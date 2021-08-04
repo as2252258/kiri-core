@@ -16,6 +16,7 @@ use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
 use HttpServer\Command;
+use HttpServer\Http\Response;
 use HttpServer\ServerProviders;
 use Snowflake\Abstracts\BaseApplication;
 use Snowflake\Abstracts\Config;
@@ -144,9 +145,9 @@ class Application extends BaseApplication
             if (!($class instanceof Command)) {
                 scan_directory(directory('app'), 'App');
             }
-            $data = response()->getBuilder($manager->execCommand($class));
+            $data = di(Response::class)->getBuilder($manager->execCommand($class));
         } catch (\Throwable $exception) {
-            $data = response()->getBuilder(logger()->exception($exception));
+            $data = di(Response::class)->getBuilder(logger()->exception($exception));
         } finally {
             print_r($data);
             Timer::clearAll();
