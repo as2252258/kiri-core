@@ -23,7 +23,7 @@ use HttpServer\Server;
 use HttpServer\Shutdown;
 use JetBrains\PhpStorm\Pure;
 use Kafka\Producer;
-use Kafka\TaskContainer;
+use Kafka\TaskProvider;
 use ReflectionException;
 use Server\ServerManager;
 use Snowflake\Aop;
@@ -520,7 +520,7 @@ abstract class BaseApplication extends Component
 			'header'            => ['class' => HttpHeaders::class],
 			'jwt'               => ['class' => Jwt::class],
 			'async'             => ['class' => Async::class],
-			'kafka-container'   => ['class' => TaskContainer::class],
+			'kafka-container'   => ['class' => TaskProvider::class],
 			'filter'            => ['class' => HttpFilter::class],
 			'goto'              => ['class' => BaseGoto::class],
 			'response'          => ['class' => Response::class],

@@ -6,7 +6,7 @@ namespace Annotation;
 
 use Exception;
 use Kafka\ConsumerInterface;
-use Kafka\TaskContainer;
+use Kafka\TaskProvider;
 use Snowflake\Snowflake;
 
 /**
@@ -39,7 +39,7 @@ use Snowflake\Snowflake;
             return false;
         }
 
-        /** @var TaskContainer $container */
+        /** @var TaskProvider $container */
         $container = Snowflake::app()->get('kafka-container');
         $container->addConsumer($this->topic, [$class, 'onHandler']);
 

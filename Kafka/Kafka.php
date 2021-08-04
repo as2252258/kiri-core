@@ -127,7 +127,7 @@ class Kafka implements CustomProcess
 
                 $setting = $server->setting['worker_num'];
 
-                /** @var TaskContainer $container */
+                /** @var TaskProvider $container */
                 $container = Snowflake::app()->get('kafka-container');
                 $handler = $container->getConsumer($topic);
 

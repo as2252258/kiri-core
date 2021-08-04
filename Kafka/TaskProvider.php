@@ -8,10 +8,10 @@ use Snowflake\Abstracts\BaseObject;
 
 
 /**
- * Class TaskContainer
+ * Class TaskProvider
  * @package Kafka
  */
-class TaskContainer extends BaseObject
+class TaskProvider extends BaseObject
 {
 
 
@@ -43,7 +43,7 @@ class TaskContainer extends BaseObject
 
     /**
      * @param $topic
-     * @param \Kafka\Struct $struct
+     * @param Struct $struct
      */
     public function process($topic, Struct $struct)
     {

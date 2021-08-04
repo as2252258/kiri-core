@@ -16,7 +16,7 @@ use Snowflake\Application;
  * Class QueueProviders
  * @package Queue
  */
-class KafkaProviders extends Providers
+class KafkaImports extends Providers
 {
 
     /**
