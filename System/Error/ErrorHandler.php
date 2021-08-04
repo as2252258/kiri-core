@@ -118,9 +118,9 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
-		logger()->trance($data, $this->category);
+		write($data, $this->category);
 
-		return response()->send($data);
+		return $data;
 	}
 
 	/**
