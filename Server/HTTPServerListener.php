@@ -98,7 +98,7 @@ class HTTPServerListener extends Abstracts\Server
 			$responseData = $this->response->setContent($node->dispatch())->setStatusCode(200);
 		} catch (Error | Throwable $exception) {
 			$code = $exception->getCode() == 0 ? 500 : $exception->getCode();
-			$data = $code == 404 ? $exception->getMessage() : jTraceEx($exception);
+			$data = $code == 404 ? $exception->getMessage() : jTraceEx($exception,null,true);
 			$responseData = $this->response->setContent($data)->setFormat(CResponse::HTML)->setStatusCode($code);
 		} finally {
 			$response->end($responseData->configure($response)->getContent());
