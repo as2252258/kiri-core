@@ -213,6 +213,7 @@ class Response extends HttpService
 		if (empty($this->endData) || is_string($this->endData)) {
 			return $this->endData;
 		}
+		var_dump($this->endData);
 		if (!($this->endData instanceof Response)) {
 			$class = Response::FORMAT_MAPS[$this->format] ?? HtmlFormatter::class;
 			return \di($class)->send($this->endData)->getData();
