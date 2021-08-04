@@ -95,16 +95,11 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function initBaseServer($configs): void
 	{
-		try {
-			$context = ServerManager::getContext();
-			foreach ($this->sortService($configs['ports']) as $config) {
-				$this->startListenerHandler($context, $config);
-			}
-			$this->bindCallback($this->server, $this->getSystemEvents($configs));
-		}catch (\Throwable $throwable){
-			var_dump($throwable);
-			exit();
+		$context = ServerManager::getContext();
+		foreach ($this->sortService($configs['ports']) as $config) {
+			$this->startListenerHandler($context, $config);
 		}
+		$this->bindCallback($this->server, $this->getSystemEvents($configs));
 	}
 
 
@@ -173,7 +168,6 @@ class ServerManager extends Abstracts\Server
 				$array[] = $port;
 			}
 		}
-		var_dump($array);
 		return $array;
 	}
 
@@ -210,9 +204,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function startListenerHandler(ServerManager $context, array $config)
 	{
-		if ($this->server) {
-			$context->addListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
-		} else {
+		if (!$this->server) {
 			$config['settings'] = $config['settings'] ?? [];
 			if (!isset($config['settings']['log_file'])) {
 				$config['settings']['log_file'] = storage('system.log');
@@ -221,8 +213,8 @@ class ServerManager extends Abstracts\Server
 				$config['settings']['pid_file'] = storage('swoole.pid');
 			}
 			$config['events'] = $config['events'] ?? [];
-			$context->addListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
 		}
+		$context->addListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
 	}
 
 
