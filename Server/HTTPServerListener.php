@@ -5,14 +5,12 @@ namespace Server;
 use Annotation\Inject;
 use Exception;
 use HttpServer\Exception\RequestException;
-use HttpServer\Http\Context;
 use HttpServer\Http\Request as HSRequest;
+use Server\Constrict\Response as CResponse;
 use HttpServer\Route\Node;
 use HttpServer\Route\Router;
 use Server\Events\OnAfterRequest;
-use Snowflake\Event;
 use Snowflake\Events\EventDispatch;
-use Snowflake\Snowflake;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -37,9 +35,9 @@ class HTTPServerListener extends Abstracts\Server
     public Router $router;
 
 
-    /** @var \Server\Response|mixed */
-    #[Inject(\Server\Response::class)]
-    public \Server\Response $response;
+    /** @var CResponse|mixed */
+    #[Inject(CResponse::class)]
+    public CResponse $response;
 
 
     /** @var EventDispatch */
@@ -102,7 +100,7 @@ class HTTPServerListener extends Abstracts\Server
             $code = $exception->getCode() == 0 ? 500 : $exception->getCode();
             $data = $code ? $exception->getMessage() : jTraceEx($exception);
 
-            $responseData = $this->response->setContent($data, $code, \Server\Response::HTML);
+            $responseData = $this->response->setContent($data, $code, CResponse::HTML);
         } finally {
             $response->end($responseData->configure($response)->getContent());
 

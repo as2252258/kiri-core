@@ -8,9 +8,9 @@ use Annotation\Inject;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
-use HttpServer\Http\Response;
 use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Application;
+use Server\Constrict\Response as CrResponse;
 
 /**
  * Class WebController
@@ -57,10 +57,10 @@ class Controller
 	/**
 	 * inject response
 	 *
-	 * @var Response|null
+	 * @var CrResponse|null
 	 */
-	#[Inject(\Server\Response::class)]
-	public ?\Server\Response $response = null;
+	#[Inject(CrResponse::class)]
+	public ?CrResponse $response = null;
 
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Server;
+namespace Server\Constrict;
 
 
 use HttpServer\Http\Context;
