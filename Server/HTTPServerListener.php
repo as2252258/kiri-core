@@ -70,6 +70,7 @@ class HTTPServerListener extends Abstracts\Server
 			$exceptionHandler = Snowflake::getDi()->get(ExceptionHandlerDispatcher::class);
 		}
 		$this->exceptionHandler = $exceptionHandler;
+		var_dump($this->exceptionHandler);
 	}
 
 
