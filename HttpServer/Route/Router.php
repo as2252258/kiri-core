@@ -419,16 +419,10 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function tree_search(?array $explode, $method): ?Node
 	{
-		if (empty($explode)) {
-			return static::$nodes[$method]['/'] ?? null;
-		}
-		$first = array_shift($explode);
-		if (!($parent = static::$nodes[$method][$first] ?? null)) {
+		if (!isset(static::$nodes[$method])) {
 			return null;
 		}
-		if (empty($explode)) {
-			return $parent->findNode('/');
-		}
+		$parent = static::$nodes[$method]['/'];
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			if (!$node) {
