@@ -36,7 +36,7 @@ class Kafka implements CustomProcess
      */
     public function __construct(public array $kafkaConfig)
     {
-
+		scan_directory();
     }
 
 
@@ -124,8 +124,6 @@ class Kafka implements CustomProcess
     {
         go(function () use ($topic, $message) {
             try {
-            	var_dump($topic, $message);
-
                 $server = Snowflake::app()->getSwoole();
 
                 $setting = $server->setting['worker_num'];
@@ -183,10 +181,8 @@ class Kafka implements CustomProcess
             return [$conf, $topicConf, $kafka];
         } catch (Throwable $exception) {
             logger()->addError($exception, 'throwable');
-
             return [null, null, null];
         }
-
     }
 
 

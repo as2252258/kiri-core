@@ -35,7 +35,6 @@ class Command extends \Console\Command
 	{
 		$manager = Snowflake::app()->getServer();
 		$manager->setDaemon($dtl->get('daemon', 0));
-
 		if (!in_array($dtl->get('action'), self::ACTIONS)) {
 			return 'I don\'t know what I want to do.';
 		}
@@ -45,14 +44,12 @@ class Command extends \Console\Command
 		if ($shutdown->isRunning() && $dtl->get('action') == 'start') {
 			return 'Service is running. Please use restart.';
 		}
-
 		$shutdown->shutdown();
 		if ($dtl->get('action') == 'stop') {
 			return 'shutdown success.';
 		}
 
 		$this->generate_runtime_builder();
-
 		return $manager->start();
 	}
 

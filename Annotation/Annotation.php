@@ -169,7 +169,6 @@ class Annotation extends Component
 	/**
 	 * @param object $class
 	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public function injectProperty(object $class)
 	{
@@ -186,19 +185,19 @@ class Annotation extends Component
 	 */
 	public function read(string $path, string $namespace = 'App', string $alias = 'root'): void
 	{
-
 		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
 	}
 
 
 	/**
 	 * @param string $dir
+	 * @param array $exclude
 	 * @return array
 	 * @throws Exception
 	 */
-	public function runtime(string $dir): array
+	public function runtime(string $dir, array $exclude = []): array
 	{
-		return $this->_loader->loadByDirectory($dir);
+		return $this->_loader->loadByDirectory($dir, $exclude);
 	}
 
 

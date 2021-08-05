@@ -41,7 +41,7 @@ use Snowflake\Snowflake;
 
         /** @var KafkaProvider $container */
         $container = Snowflake::app()->get('kafka-container');
-        $container->addConsumer($this->topic, [$class, 'onHandler']);
+        $container->addConsumer($this->topic, $class);
 
         return true;
     }

@@ -140,8 +140,7 @@ class Application extends BaseApplication
             /** @var Console $manager */
             $manager = Snowflake::app()->get('console');
             $manager->register(Runtime::class);
-            $manager->setParameters($argv);
-            $class = $manager->search();
+	        $class = $manager->setParameters($argv)->search();
             if (!($class instanceof Command)) {
                 scan_directory(directory('app'), 'App');
             }

@@ -7,8 +7,10 @@ use Annotation\Annotation;
 use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
+use HttpServer\Http\Response as HttpResponse;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
+use Server\Constrict\Response;
 use Snowflake\Abstracts\Config;
 use Snowflake\Aop;
 use Snowflake\Application;
@@ -19,8 +21,6 @@ use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\WebSocket\Server;
-use Server\Constrict\Response;
-use HttpServer\Http\Response as HttpResponse;
 
 if (!function_exists('make')) {
 
@@ -90,13 +90,48 @@ if (!function_exists('scan_directory')) {
 	/**
 	 * @param $dir
 	 * @param $namespace
+	 * @param array $exclude
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	function scan_directory($dir, $namespace)
+	function scan_directory($dir, $namespace, array $exclude = [])
 	{
 		$annotation = Snowflake::app()->getAnnotation();
 		$annotation->read($dir, $namespace);
-		$annotation->runtime($dir, $namespace);
+
+		injectRuntime($dir, $exclude);
+	}
+
+}
+
+
+if (!function_exists('injectRuntime')) {
+
+
+	/**
+	 * @param string $path
+	 * @param array $exclude
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	function injectRuntime(string $path, array $exclude = [])
+	{
+		$fileLists = Snowflake::getAnnotation()->runtime($path, $exclude);
+		$di = Snowflake::getDi();
+		foreach ($fileLists as $class) {
+			$instance = $di->get($class);
+			$methods = $di->getMethodAttribute($class);
+			foreach ($methods as $method => $attribute) {
+				if (empty($attribute)) {
+					continue;
+				}
+				foreach ($attribute as $item) {
+					$item->execute($instance, $method);
+				}
+			}
+		}
 	}
 
 }
@@ -600,9 +635,9 @@ if (!function_exists('response')) {
 	 */
 	function response(): Response
 	{
-	    if (!Context::hasContext(HttpResponse::class)){
-	    	Context::setContext(HttpResponse::class, new HttpResponse());
-        }
+		if (!Context::hasContext(HttpResponse::class)) {
+			Context::setContext(HttpResponse::class, new HttpResponse());
+		}
 		return di(Response::class);
 	}
 

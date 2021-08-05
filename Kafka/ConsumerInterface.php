@@ -12,11 +12,10 @@ interface ConsumerInterface
 {
 
 
-    /**
-     * @param Struct $struct
-     * @return mixed
-     */
-    public function onHandler(Struct $struct): void;
+	/**
+	 * @return mixed
+	 */
+    public function process(): void;
 
 
 }
