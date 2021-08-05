@@ -33,12 +33,9 @@ class Kafka implements CustomProcess
 
 	/**
 	 * @param array $kafkaConfig
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public function __construct(public array $kafkaConfig)
 	{
-		scan_directory(directory('app'), 'App', [CONTROLLER_PATH]);
 	}
 
 
