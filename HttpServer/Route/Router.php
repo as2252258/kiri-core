@@ -529,7 +529,6 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function Branch_search(Request $request): ?Node
 	{
-		var_dump($request->getUri());
 		$node = $this->tree_search($request->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {
 			return $node;
