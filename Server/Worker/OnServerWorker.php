@@ -71,6 +71,9 @@ class OnServerWorker extends \Server\Abstracts\Server
 		$di = Snowflake::getDi();
 		foreach ($fileLists as $class) {
 			$instance = $di->get($class);
+			foreach ($di->getTargetNote($class) as $value) {
+				$value->execute($instance);
+			}
 			$methods = $di->getMethodAttribute($class);
 			foreach ($methods as $method => $attribute) {
 				if (empty($attribute)) {
