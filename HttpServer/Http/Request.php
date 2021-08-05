@@ -38,16 +38,6 @@ class Request extends HttpService implements RequestInterface
 
 	public int $fd = 0;
 
-
-
-
-	/**
-	 * @var HttpHeaders|null
-	 */
-	#[Inject(HttpHeaders::class)]
-	public ?HttpHeaders $headers = null;
-
-
 	public bool $isCli = FALSE;
 
 	public float $startTime;
