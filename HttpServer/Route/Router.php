@@ -162,6 +162,7 @@ class Router extends HttpService implements RouterInterface
 	private function bindNode(Node $parent, array $explode, $method): Node
 	{
 		$a = 0;
+		var_dump($explode);
 		foreach ($explode as $value) {
 			++$a;
 			$search = $parent->findNode($value);
