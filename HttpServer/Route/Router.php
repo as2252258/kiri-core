@@ -413,7 +413,6 @@ class Router extends HttpService implements RouterInterface
 		$parent = $this->nodes[$method]['/'];
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
-			var_dump($node);
 			if (!$node) {
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 			}
