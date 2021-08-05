@@ -358,7 +358,7 @@ class Request extends HttpService
 	/**
 	 * @return mixed|null
 	 */
-	#[Pure] public function getIp(): string|null
+	public function getIp(): string|null
 	{
 		$headers = $this->headers->getHeaders();
 		if (!empty($headers['remoteip'])) return $headers['remoteip'];

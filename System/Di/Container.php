@@ -212,6 +212,9 @@ class Container extends BaseObject
 	 */
 	private function resolveDependencies($class): ReflectionClass
 	{
+		if (isset($this->_reflection[$class])) {
+			return $this->_reflection[$class];
+		}
 		$reflect = new ReflectionClass($class);
 		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
 			return $this->_reflection[$class] = $reflect;
