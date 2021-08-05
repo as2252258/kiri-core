@@ -40,7 +40,7 @@ trait HttpHeaders
 	 * @param $name
 	 * @return mixed|null
 	 */
-	public function getHeader($name): ?string
+	public function getHeader($name): mixed
 	{
 		return $this->_headers[$name];
 	}
