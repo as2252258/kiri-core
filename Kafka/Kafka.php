@@ -10,12 +10,9 @@ use RdKafka\ConsumerTopic;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
-use ReflectionException;
-use Server\ServerManager;
 use Server\SInterface\CustomProcess;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 use Swoole\Coroutine\Channel;
 use Swoole\Process;
@@ -127,10 +124,10 @@ class Kafka implements CustomProcess
 
 				$setting = $server->setting['worker_num'];
 
-				var_dump($topic, $message);
 				$container = Snowflake::app()->get('kafka-container');
 				$handler = $container->getConsumer($topic);
 
+				var_dump($topic, $message, $handler);
 				if (!empty($handler)) {
 					/** @var ConsumerInterface $data */
 					$data = new $handler();
