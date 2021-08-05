@@ -40,10 +40,11 @@ class Kafka implements CustomProcess
     }
 
 
-    /**
-     * @return string
-     * @throws ConfigException
-     */
+	/**
+	 * @param Process $process
+	 * @return string
+	 * @throws ConfigException
+	 */
     public function getProcessName(Process $process): string
     {
         $name = Config::get('id', 'system') . '[' . $process->pid . ']';
@@ -123,6 +124,8 @@ class Kafka implements CustomProcess
     {
         go(function () use ($topic, $message) {
             try {
+            	var_dump($topic, $message);
+
                 $server = Snowflake::app()->getSwoole();
 
                 $setting = $server->setting['worker_num'];
