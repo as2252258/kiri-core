@@ -423,6 +423,7 @@ class Router extends HttpService implements RouterInterface
 			return null;
 		}
 		$parent = static::$nodes[$method]['/'];
+		var_dump($explode);
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			if (!$node) {
