@@ -4,11 +4,13 @@ namespace Kafka;
 
 
 use Server\SInterface\PipeMessage;
+use Snowflake\Exception\NotFindClassException;
+use Snowflake\Snowflake;
 
 /**
  *
  */
-class Message implements ConsumerInterface, PipeMessage
+class Message implements PipeMessage
 {
 
 
@@ -21,12 +23,15 @@ class Message implements ConsumerInterface, PipeMessage
 
 
 	/**
-	 *
+	 * @throws \ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function process(): void
 	{
-		// TODO: Implement process() method.
-		var_dump($this->struct);
+		/** @var KafkaProvider $container */
+		$container = Snowflake::getDi()->get(KafkaProvider::class);
+		$data = $container->getConsumer($this->struct->topic);
+		var_dump($data);
 	}
 
 }

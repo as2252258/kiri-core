@@ -35,13 +35,12 @@ use Snowflake\Snowflake;
 	 */
     public function execute(mixed $class, mixed $method = null): bool
     {
-    	var_dump(class_implements($class));
         if (!($class instanceof ConsumerInterface)) {
             return false;
         }
 
         /** @var KafkaProvider $container */
-        $container = Snowflake::app()->get('kafka-container');
+        $container = Snowflake::getDi()->get(KafkaProvider::class);
         $container->addConsumer($this->topic, $class);
 
         return true;
