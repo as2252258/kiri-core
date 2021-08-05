@@ -147,7 +147,6 @@ class Router extends HttpService implements RouterInterface
 		if (!empty($explode)) {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
-		$parent->path = $path;
 		return $parent->bindHandler($handler);
 	}
 
