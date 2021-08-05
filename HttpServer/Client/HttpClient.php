@@ -5,11 +5,12 @@ namespace HttpServer\Client;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use Snowflake\Abstracts\Component;
 use Snowflake\Snowflake;
 use Swoole\Coroutine;
-
+use HttpServer\Client\Help\IClient;
+use HttpServer\Client\Help\Client;
+use HttpServer\Client\Help\Curl;
 
 /**
  * Class ClientDriver

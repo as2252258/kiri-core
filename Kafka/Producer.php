@@ -7,9 +7,12 @@ use Exception;
 use RdKafka\Conf;
 use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
+use ReflectionException;
+use Snowflake\Abstracts\BaseObject;
 use Snowflake\Abstracts\Component;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
+use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
 /**
@@ -23,7 +26,7 @@ use Snowflake\Snowflake;
  * @author $_SWANBR_AUTHOR_$
  * +------------------------------------------------------------------------------
  */
-class Producer extends Component
+class Producer extends BaseObject
 {
 
 
@@ -36,55 +39,33 @@ class Producer extends Component
 
 	/**
 	 * Producer constructor.
-	 * @param array $config
+	 * @param string $topic
+	 * @param string $groupId
+	 * @param string $brokers
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function __construct(array $config = [])
+	public function __construct(public string $topic, string $groupId, string $brokers)
 	{
-		parent::__construct($config);
-		if (!class_exists(Conf::class)) {
-			return;
-		}
+		parent::__construct([]);
 		$this->conf = di(Conf::class);
+		$this->conf->set('metadata.broker.list', $brokers);
+		$this->conf->set('group.id', $groupId);
 		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
 			$this->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
 		$this->topicConf = di(TopicConf::class);
 	}
 
-
 	/**
-	 * @param string $servers
-	 * @return Producer
-	 */
-	public function setBrokers(string $servers): static
-	{
-		$this->conf->set('metadata.broker.list', $servers);
-		return $this;
-	}
-
-
-	/**
-	 * @param string $groupId
-	 * @return Producer
-	 */
-	public function setGroupId(string $groupId): static
-	{
-		$this->conf->set('group.id', $groupId);
-		return $this;
-	}
-
-
-	/**
-	 * @param string $topic
 	 * @param array $params
 	 * @param string|null $groupId
 	 * @throws Exception
 	 */
-	public function dispatch(string $topic, array $params = [], string $groupId = null)
+	public function dispatch(array $params = [], string $groupId = null)
 	{
-		$this->beforePushMessage($topic, $groupId);
-		$this->sendMessage($topic, [$params]);
+		$this->sendMessage([$params]);
 	}
 
 	/**
@@ -110,56 +91,27 @@ class Producer extends Component
 
 
 	/**
-	 * @param string $toPic
 	 * @param string|null $key
 	 * @param array $data
 	 * @param string|null $groupId
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function batch(string $toPic, ?string $key, array $data, ?string $groupId = null)
+	public function batch(?string $key, array $data, ?string $groupId = null)
 	{
-		$this->beforePushMessage($toPic, $groupId);
-
-		$this->sendMessage($toPic, $data, $key);
+		$this->sendMessage($data, $key);
 	}
 
 
 	/**
-	 * @param $topic
-	 * @param $groupId
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	private function beforePushMessage($topic, $groupId): void
-	{
-		$consumers = Config::get('kafka.producers.' . $topic);
-		if (empty($consumers) || !is_array($consumers)) {
-			throw new Exception('You need set kafka.producers config');
-		}
-		if (!isset($consumers['brokers'])) {
-			throw new Exception('You need set brokers config.');
-		}
-		if (!empty($groupId)) {
-			$consumers['groupId'] = $groupId;
-		} else if (!isset($consumers['groupId'])) {
-			$consumers['groupId'] = $topic . ':' . Snowflake::localhost();
-		}
-		$this->setGroupId($consumers['groupId']);
-		$this->setBrokers($consumers['brokers']);
-	}
-
-
-	/**
-	 * @param string $topic
 	 * @param array $message
 	 * @param string $key
 	 * @throws Exception
 	 */
-	private function sendMessage(string $topic, array $message, string $key = '')
+	private function sendMessage(array $message, string $key = '')
 	{
 		$producer = $this->getProducer();
-		$producerTopic = $this->getProducerTopic($producer, $topic);
+		$producerTopic = $this->getProducerTopic($producer, $this->topic);
 		if ($this->isAck) {
 			$this->flush($producer);
 		}

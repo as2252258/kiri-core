@@ -6,11 +6,14 @@ namespace HttpServer\Client;
 
 use Exception;
 use HttpServer\Http\Context;
+use Server\Events\OnAfterRequest;
 use Snowflake\Abstracts\Component;
 use Snowflake\Channel;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
 use Snowflake\Event;
+use Snowflake\Events\EventProvider;
+use Snowflake\Snowflake;
 use Swoole\Coroutine\Http2\Client as H2Client;
 use Swoole\Http2\Request;
 use Swoole\Http2\Response;
@@ -60,12 +63,12 @@ class Http2 extends Component
 
 
 	/**
-	 * @param bool $isRecv
+	 * @param bool $isRev
 	 * @return Http2
 	 */
-	public function setIsRecv(bool $isRecv): static
+	public function setIsRev(bool $isRev): static
 	{
-		Context::setContext('http2isRecv', $isRecv);
+		Context::setContext('http2isRev', $isRev);
 		return $this;
 	}
 
@@ -204,10 +207,10 @@ class Http2 extends Component
 	{
 		$client = $this->getClient($domain, $ssl, $timeout);
 		$client->send($request);
-		if (Context::getContext('http2isRecv') === false) {
+		if (Context::getContext('http2isRev') === false) {
 			return null;
 		}
-		return $this->recv($client);
+		return $this->rev($client);
 	}
 
 
@@ -216,7 +219,7 @@ class Http2 extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function recv($client): mixed
+	private function rev($client): mixed
 	{
 		/** @var Response $response */
 		if (!Context::hasContext('http2timeout')) {
@@ -246,7 +249,7 @@ class Http2 extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function put($domain, $path, $params = [], $timeout = -1): Result
+	public function put($domain, $path, array $params = [], int $timeout = -1): Result
 	{
 		$request = $this->dispatch($domain, $path, 'PUT', $params, $timeout);
 

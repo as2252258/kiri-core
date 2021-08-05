@@ -19,29 +19,28 @@ use Snowflake\Application;
 class KafkaImports extends Providers
 {
 
-    /**
-     * @param Application $application
-     * @throws Exception
-     */
-    public function onImport(Application $application)
-    {
-        /** @var Server $server */
-        $server = $application->get('server');
-        $application->set('kafka', ['class' => Producer::class]);
-        $kafka = SConfig::get('kafka');
-        if (empty($kafka) || !($kafka['enable'] ?? false)) {
-            return;
-        }
-        if (!extension_loaded('rdkafka')) {
-            return;
-        }
-        $kafkaServers = Config::get('kafka.consumers', []);
-        if (empty($kafkaServers)) {
-            return;
-        }
-        foreach ($kafkaServers as $kafkaServer) {
-            $server->addProcess(new Kafka($kafkaServer));
-        }
-    }
+	/**
+	 * @param Application $application
+	 * @throws Exception
+	 */
+	public function onImport(Application $application)
+	{
+		if (!extension_loaded('rdkafka')) {
+			return;
+		}
+		$kafka = SConfig::get('kafka', ['enable' => false]);
+		if (($kafka['enable'] ?? false) == false) {
+			return;
+		}
+		$kafkaServers = Config::get('kafka.consumers', []);
+		if (empty($kafkaServers)) {
+			return;
+		}
+		/** @var Server $server */
+		$server = $application->get('server');
+		foreach ($kafkaServers as $kafkaServer) {
+			$server->addProcess(new Kafka($kafkaServer));
+		}
+	}
 
 }

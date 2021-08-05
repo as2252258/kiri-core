@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace HttpServer\Client;
+namespace HttpServer\Client\Help;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
@@ -27,7 +27,7 @@ class Client extends ClientAbstracts
 	 * @return array|string|Result
 	 * @throws Exception
 	 */
-	public function request(string $method, $path, $params = []): array|string|Result
+	public function request(string $method, $path, array $params = []): array|string|Result
 	{
 		return $this->setMethod($method)
 			->coroutine(
@@ -44,7 +44,7 @@ class Client extends ClientAbstracts
 	 * @throws Exception
 	 * 使用swoole协程方式请求
 	 */
-	private function coroutine($url, $data = []): array|string|Result
+	private function coroutine($url, array $data = []): array|string|Result
 	{
 		try {
 			$client = $this->generate_client($data, ...$url);
@@ -99,7 +99,7 @@ class Client extends ClientAbstracts
 
 
 	/**
-	 * @param $client
+	 * @param SClient $client
 	 * @param $path
 	 * @param $data
 	 * @return string

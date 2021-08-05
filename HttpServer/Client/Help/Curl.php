@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace HttpServer\Client;
+namespace HttpServer\Client\Help;
 
 
 use Exception;
@@ -22,7 +22,7 @@ class Curl extends ClientAbstracts
 	 * @return Result|array|string
 	 * @throws Exception
 	 */
-	public function request($method, $path, $params = []): Result|array|string
+	public function request($method, $path, array $params = []): Result|array|string
 	{
 		if ($method == self::GET) {
 			$path = $this->joinGetParams($path, $params);

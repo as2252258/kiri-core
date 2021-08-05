@@ -6,8 +6,8 @@ namespace Snowflake\Abstracts;
 
 use Annotation\Annotation as SAnnotation;
 use Database\DatabasesProviders;
-use HttpServer\Client\Client;
-use HttpServer\Client\Curl;
+use HttpServer\Client\Help\Client;
+use HttpServer\Client\Help\Curl;
 use HttpServer\Client\Http2;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
@@ -15,7 +15,6 @@ use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 use HttpServer\Shutdown;
-use Kafka\Producer;
 use Rpc\Producer as RPCProducer;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
@@ -42,7 +41,6 @@ use Snowflake\Pool\Pool;
  * @property SAnnotation $annotation
  * @property Http2 $http2
  * @property BaseGoto $goto
- * @property Producer $kafka
  * @property Client $client
  * @property \Database\Connection $databases
  * @property Curl $curl
