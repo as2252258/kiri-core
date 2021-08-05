@@ -47,7 +47,7 @@ class Request implements RequestInterface
         Context::setContext(Response::class, new Response());
 
         try {
-            $sRequest = new \Snowflake\Abstracts\BaseObject();
+            $sRequest = new HttpResponse();
 
             $sRequest->headers = new HttpHeaders();
             $sRequest->headers->setHeaders(array_merge($request->header, $request->server));
