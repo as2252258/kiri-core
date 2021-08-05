@@ -18,8 +18,6 @@ use Snowflake\Snowflake;
  * Class WebController
  * @package Snowflake\Snowflake\Web
  * @property Application $container
- * @property HttpParams $input
- * @property HttpHeaders $header
  */
 class Controller
 {
@@ -53,46 +51,6 @@ class Controller
     #[Inject(CrResponse::class)]
     public ?CrResponse $response = null;
 
-
-    /**
-     * @return \Snowflake\Application|null
-     */
-    protected function getContainer()
-    {
-        return Snowflake::app();
-    }
-
-
-    /**
-     * @return \HttpServer\Http\HttpParams|null
-     */
-    private function getInput()
-    {
-        return $this->request->params;
-    }
-
-
-    /**
-     * @return \HttpServer\Http\HttpHeaders|null
-     */
-    private function getHeader()
-    {
-        return $this->request->headers;
-    }
-
-
-    /**
-     * @param $name
-     * @return \Snowflake\Application|null
-     */
-    public function __get($name)
-    {
-        $method = 'get' . ucfirst($name);
-        if (method_exists($this, $method)) {
-            return $this->{$method}();
-        }
-        return $this->{$name} ?? null;
-    }
 
 
 }
