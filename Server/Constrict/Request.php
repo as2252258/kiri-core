@@ -9,6 +9,7 @@ use HttpServer\Http\Request as HttpResponse;
 use HttpServer\Http\Response;
 use ReflectionException;
 use Server\RequestInterface;
+use Snowflake\Abstracts\BaseObject;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Snowflake;
 
@@ -43,7 +44,9 @@ class Request implements RequestInterface
 	 */
 	public static function create(\Swoole\Http\Request $request): RequestInterface
 	{
-		$sRequest = new HttpResponse();
+        Context::setContext(Response::class, new Response());
+
+        $sRequest = new HttpResponse();
 
 		$sRequest->headers = new HttpHeaders();
 		$sRequest->headers->setHeaders(array_merge($request->header, $request->server));
@@ -58,8 +61,6 @@ class Request implements RequestInterface
 		$sRequest->params->setGets($request->get);
 
 		Context::setContext(Request::class, $sRequest);
-
-		Context::setContext(Response::class, new Response());
 
 		return Snowflake::getDi()->get(Request::class);
 	}
