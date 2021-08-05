@@ -171,7 +171,6 @@ class Router extends HttpService implements RouterInterface
 			} else {
 				$parent = $search;
 			}
-			var_dump($parent);
 		}
 		return $parent;
 	}
