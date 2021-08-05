@@ -144,13 +144,12 @@ class Router extends HttpService implements RouterInterface
 	private function tree($path, $handler, string $method = 'any'): Node
 	{
 		[$first, $explode] = $this->split($path);
-
-		$parent = static::$nodes[$method][$first] ?? null;
-		if (empty($parent)) {
-			static::$nodes[$method][$first] = $parent = $this->NodeInstance('/', 0, $method);
+		if (!isset(static::$nodes[$method]['/'])) {
+			static::$nodes[$method][$first] = $this->NodeInstance('/', 0, $method);
 		}
 
-		if ($first !== '/') {
+		$parent = static::$nodes[$method]['/'];
+		if (!empty($first) && !empty($explode)) {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
 		$parent->path = $path;
@@ -168,15 +167,11 @@ class Router extends HttpService implements RouterInterface
 	private function bindNode(Node $parent, array $explode, $method): Node
 	{
 		$a = 0;
-		if (empty($explode)) {
-			return $parent->addChild($this->NodeInstance('/', $a, $method), '/');
-		}
 		foreach ($explode as $value) {
 			if (empty($value)) {
 				continue;
 			}
 			++$a;
-
 			$search = $parent->findNode($value);
 			if ($search === null) {
 				$parent = $parent->addChild($this->NodeInstance($value, $a, $method), $value);
@@ -425,7 +420,6 @@ class Router extends HttpService implements RouterInterface
 			return null;
 		}
 		$parent = static::$nodes[$method]['/'];
-		var_dump($parent);
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			if (!$node) {
@@ -438,19 +432,19 @@ class Router extends HttpService implements RouterInterface
 
 	/**
 	 * @param $path
-	 * @return array
+	 * @return array|null
 	 */
-	public function split($path): array
+	public function split($path): ?array
 	{
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
 		if ($path === '/') {
-			return ['/', []];
+			return ['', null];
 		}
 		$filter = array_filter(explode('/', $path));
-		if (empty($filter)) {
-			return ['/', []];
+		if (!empty($filter)) {
+			return [array_shift($filter), $filter];
 		}
-		return [array_shift($filter), $filter];
+		return ['', null];
 	}
 
 	/**
@@ -540,6 +534,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param Request $request
 	 * @return Node|null
 	 * 树杈搜索
+	 * @throws RequestException
 	 */
 	public function Branch_search(Request $request): ?Node
 	{

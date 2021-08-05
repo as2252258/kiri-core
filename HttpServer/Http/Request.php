@@ -194,7 +194,6 @@ class Request extends HttpService
 	public function getExplode(): array
 	{
 		return Context::getContext(\Swoole\Http\Request::class)->explode;
-		return explode('/', $this->getUri());
 	}
 
 	/**
