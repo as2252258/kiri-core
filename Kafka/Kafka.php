@@ -124,17 +124,7 @@ class Kafka implements CustomProcess
 
 				$setting = $server->setting['worker_num'];
 
-				$container = Snowflake::app()->get('kafka-container');
-				$handler = $container->getConsumer($topic);
-
-				var_dump($container);
-				if (!empty($handler)) {
-					/** @var ConsumerInterface $data */
-					$data = new $handler();
-					$data->setParams(new Struct($topic, $message));
-
-					$server->sendMessage($data, random_int(0, $setting - 1));
-				}
+				$server->sendMessage(new Message(new Struct($topic, $message)), random_int(0, $setting - 1));
 			} catch (Throwable $exception) {
 				logger()->addError($exception, 'throwable');
 			}

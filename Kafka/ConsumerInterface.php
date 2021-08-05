@@ -13,13 +13,6 @@ interface ConsumerInterface
 
 
 	/**
-	 * @param Struct $struct
-	 */
-	public function setParams(Struct $struct): void;
-
-
-
-	/**
 	 * @return mixed
 	 */
     public function process(): void;
