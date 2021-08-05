@@ -195,7 +195,7 @@ class Loader extends BaseObject
 			return false;
 		}
 		foreach ($exclude as $value) {
-			if (str_starts_with($value, $path)) {
+			if (str_starts_with($path, $value)) {
 				return true;
 			}
 		}
