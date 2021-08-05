@@ -9,13 +9,13 @@ use RdKafka\Message;
 class Struct
 {
 
-	public int $offset;
+	public ?int $offset;
 
-	public Message $message;
-	public string $topic;
+	public ?Message $message;
+	public ?string $topic;
 
 	public mixed $value;
-	public int $part;
+	public ?int $part;
 
 	/**
 	 * Struct constructor.
