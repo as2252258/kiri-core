@@ -261,8 +261,13 @@ class Node extends HttpService
 	 */
 	public function addChild(Node $node, string $field): Node
 	{
-		$this->childes[] = $node;
-		return $node;
+		/** @var Node $oLod */
+		$oLod = $this->childes[$field] ?? null;
+		if (!empty($oLod)) {
+			$node = $oLod;
+		}
+		$this->childes[$field] = $node;
+		return $this->childes[$field];
 	}
 
 

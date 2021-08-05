@@ -145,7 +145,7 @@ class Router extends HttpService implements RouterInterface
 	{
 		[$first, $explode] = $this->split($path);
 		if (!isset(static::$nodes[$method]['/'])) {
-			static::$nodes[$method][$first] = $this->NodeInstance('/', 0, $method);
+			static::$nodes[$method]['/'] = $this->NodeInstance('/', 0, $method);
 		}
 
 		$parent = static::$nodes[$method]['/'];
