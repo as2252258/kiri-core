@@ -33,14 +33,12 @@ defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
 class Request extends HttpService implements RequestInterface
 {
 
+
+    use HttpHeaders, HttpParams;
+
 	public int $fd = 0;
 
 
-	/**
-	 * @var HttpParams|null
-	 */
-	#[Inject(HttpParams::class)]
-	public ?HttpParams $params = null;
 
 
 	/**

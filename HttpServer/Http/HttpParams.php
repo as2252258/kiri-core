@@ -21,7 +21,7 @@ use Snowflake\Snowflake;
  * Class HttpParams
  * @package Snowflake\Snowflake\Http
  */
-class HttpParams
+trait HttpParams
 {
 
     /** @var array|null */
@@ -109,7 +109,7 @@ class HttpParams
      */
     private function page(): int
     {
-        return (int)$this->get('page', 1);
+        return (int)$this->query('page', 1);
     }
 
 
@@ -129,19 +129,10 @@ class HttpParams
      */
     public function size(): int
     {
-        return (int)$this->get('size', 20);
+        return (int)$this->query('size', 20);
     }
 
 
-    /**
-     * @param $name
-     * @param null $defaultValue
-     * @return mixed
-     */
-    public function get($name, $defaultValue = null): mixed
-    {
-        return $this->_gets[$name] ?? $defaultValue;
-    }
 
     /**
      * @param $name

@@ -13,7 +13,7 @@ namespace HttpServer\Http;
  * Class HttpHeaders
  * @package Snowflake\Snowflake\Http
  */
-class HttpHeaders
+trait HttpHeaders
 {
 
 	private array $_headers = [];
@@ -43,17 +43,6 @@ class HttpHeaders
 	public function getHeader($name): ?string
 	{
 		return $this->_headers[$name];
-	}
-
-
-	/**
-	 * @param $name
-	 * @param null $default
-	 * @return mixed
-	 */
-	public function get($name, $default = null): mixed
-	{
-		return $this->_headers[$name] ?? $default;
 	}
 
 
