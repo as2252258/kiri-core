@@ -127,7 +127,6 @@ class Kafka implements CustomProcess
 				/** @var KafkaProvider $container */
 				$container = Snowflake::getDi()->get(KafkaProvider::class);
 				$data = $container->getConsumer($topic);
-				var_dump($data);
 				if (!empty($data)) {
 					$server->sendMessage(new $data(new Struct($topic, $message)), random_int(0, $setting - 1));
 				}
