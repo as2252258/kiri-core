@@ -51,6 +51,8 @@ class Request implements RequestInterface
             $sRequest->headers = new HttpHeaders();
             $sRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
+            var_dump($sRequest->headers->toArray());
+
             $sRequest->setUri($sRequest->headers->getRequestUri());
             $sRequest->setClientId($request->fd);
 
