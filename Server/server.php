@@ -3,12 +3,12 @@
 
 use Server\Constant;
 use Server\HTTPServerListener;
-use Server\Manager\ServerDefaultEvent;
-use Server\Manager\ServerManager;
+use Server\Manager\OnServerDefault;
+use Server\Manager\OnServerManager;
 use Server\TCPServerListener;
 use Server\UDPServerListener;
 use Server\WebSocketServerListener;
-use Server\Worker\ServerWorker;
+use Server\Worker\OnServerWorker;
 
 return [
 	'server' => [
@@ -33,17 +33,17 @@ return [
 			'tcp_defer_accept'         => 1
 		],
 		'events'   => [
-			Constant::PIPE_MESSAGE  => [ServerDefaultEvent::class, 'onPipeMessage'],
-			Constant::SHUTDOWN      => [ServerDefaultEvent::class, 'onShutdown'],
-			Constant::WORKER_START  => [ServerWorker::class, 'onWorkerStart'],
-			Constant::WORKER_ERROR  => [ServerWorker::class, 'onWorkerError'],
-			Constant::WORKER_EXIT   => [ServerWorker::class, 'onWorkerExit'],
-			Constant::WORKER_STOP   => [ServerWorker::class, 'onWorkerStop'],
-			Constant::MANAGER_START => [ServerManager::class, 'onManagerStart'],
-			Constant::MANAGER_STOP  => [ServerManager::class, 'onManagerStop'],
-			Constant::BEFORE_RELOAD => [ServerDefaultEvent::class, 'onBeforeReload'],
-			Constant::AFTER_RELOAD  => [ServerDefaultEvent::class, 'onAfterReload'],
-			Constant::START         => [ServerDefaultEvent::class, 'onStart'],
+			Constant::PIPE_MESSAGE  => [OnServerDefault::class, 'onPipeMessage'],
+			Constant::SHUTDOWN      => [OnServerDefault::class, 'onShutdown'],
+			Constant::WORKER_START  => [OnServerWorker::class, 'onWorkerStart'],
+			Constant::WORKER_ERROR  => [OnServerWorker::class, 'onWorkerError'],
+			Constant::WORKER_EXIT   => [OnServerWorker::class, 'onWorkerExit'],
+			Constant::WORKER_STOP   => [OnServerWorker::class, 'onWorkerStop'],
+			Constant::MANAGER_START => [OnServerManager::class, 'onManagerStart'],
+			Constant::MANAGER_STOP  => [OnServerManager::class, 'onManagerStop'],
+			Constant::BEFORE_RELOAD => [OnServerDefault::class, 'onBeforeReload'],
+			Constant::AFTER_RELOAD  => [OnServerDefault::class, 'onAfterReload'],
+			Constant::START         => [OnServerDefault::class, 'onStart'],
 		],
 		'ports'    => [
 			[

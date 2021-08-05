@@ -7,10 +7,10 @@ use Server\Constant;
 
 
 /**
- * Class ServerManager
+ * Class OnServerManager
  * @package Server\Manager
  */
-class ServerManager extends Server
+class OnServerManager extends Server
 {
 
 

@@ -23,10 +23,10 @@ use Swoole\Timer;
 
 
 /**
- * Class ServerWorker
+ * Class OnServerWorker
  * @package Server\Worker
  */
-class ServerWorker extends \Server\Abstracts\Server
+class OnServerWorker extends \Server\Abstracts\Server
 {
 
 

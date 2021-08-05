@@ -7,7 +7,7 @@ use Exception;
 use ReflectionException;
 use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
-use Server\Task\ServerTask;
+use Server\Task\OnServerTask;
 use Snowflake\Abstracts\Config;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Exception\NotFindClassException;
@@ -20,7 +20,7 @@ use Swoole\WebSocket\Server as WServer;
 
 
 /**
- * Class ServerManager
+ * Class OnServerManager
  * @package HttpServer\Service
  */
 class ServerManager extends Abstracts\Server
@@ -403,7 +403,7 @@ class ServerManager extends Abstracts\Server
 	private function addTaskListener(array $events = []): void
 	{
 		$task_use_object = $this->server->setting['task_object'] ?? $this->server->setting['task_use_object'] ?? false;
-		$reflect = Snowflake::getDi()->getReflect(ServerTask::class)?->newInstance();
+		$reflect = Snowflake::getDi()->getReflect(OnServerTask::class)?->newInstance();
 		if ($task_use_object || $this->server->setting['task_enable_coroutine']) {
 			$this->server->on('task', $events[Constant::TASK] ?? [$reflect, 'onCoroutineTask']);
 		} else {

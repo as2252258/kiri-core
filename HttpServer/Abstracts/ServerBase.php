@@ -12,7 +12,7 @@ namespace HttpServer\Abstracts;
 use Swoole\WebSocket\Server;
 
 /**
- * Class ServerDefaultEvent
+ * Class OnServerDefault
  * @package Snowflake\Snowflake\Server
  */
 abstract class ServerBase extends HttpService

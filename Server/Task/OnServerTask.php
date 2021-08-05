@@ -12,10 +12,10 @@ use Swoole\Server;
 
 
 /**
- * Class ServerTask
+ * Class OnServerTask
  * @package Server\Task
  */
-class ServerTask
+class OnServerTask
 {
 
 

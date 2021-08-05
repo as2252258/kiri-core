@@ -14,16 +14,11 @@ use Snowflake\Exception\ConfigException;
 
 
 /**
- * Class ServerDefaultEvent
+ * Class OnServerDefault
  * @package Server\Manager
  */
-class ServerDefaultEvent extends Server
+class OnServerDefault extends Server
 {
-
-
-	/** @var EventDispatch  */
-	#[Inject(EventDispatch::class)]
-	public EventDispatch $eventDispatch;
 
 
     /**
@@ -46,27 +41,6 @@ class ServerDefaultEvent extends Server
 		$this->runEvent(Constant::SHUTDOWN, null, [$server]);
 	}
 
-
-	/**
-	 * @param \Swoole\Server $server
-	 * @param int $src_worker_id
-	 * @param mixed $message
-	 * @throws Exception
-	 */
-	public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
-	{
-		if (!is_object($message) || !($message instanceof PipeMessage)) {
-			return;
-		}
-		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
-		$this->runEvent(Constant::PIPE_MESSAGE,
-			function (\Swoole\Server $server, $src_worker_id, $message) {
-				call_user_func([$message, 'execute']);
-			}, [
-				$server, $src_worker_id, $message
-			]
-		);
-	}
 
 
 	/**
