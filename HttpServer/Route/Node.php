@@ -10,7 +10,6 @@ use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
-use HttpServer\Exception\RequestException;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
@@ -123,9 +122,19 @@ class Node extends HttpService
 		} else {
 			$callback = $this->injectClosureMiddleware($manager, $handler);
 		}
-		$handlerProviders = di(HandlerProviders::class);
-		$handlerProviders->add($this->method, $this->sourcePath, $callback);
+		$this->getHandlerProviders()->add($this->method, $this->sourcePath, $callback);
 		return $this;
+	}
+
+
+	/**
+	 * @return HandlerProviders
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function getHandlerProviders(): HandlerProviders
+	{
+		return Snowflake::getDi()->get(HandlerProviders::class);
 	}
 
 
@@ -363,9 +372,9 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		$handlerProviders = di(HandlerProviders::class)->get($this->sourcePath, $this->method);
+		$handlerProviders = $this->getHandlerProviders()->get($this->sourcePath, $this->method);
 		if (empty($handlerProviders)) {
-			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+			return '<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>';
 		}
 		return call_user_func($handlerProviders, \request());
 	}
