@@ -117,13 +117,12 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			var_dump($request);
 			$node = $this->router->Branch_search(HSRequest::create($request));
 			if (!($node instanceof Node)) {
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 			}
 			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
-				$responseData = $this->response->setContent($node->dispatch())->setStatusCode(200);
+				$responseData = $this->response->setContent($responseData)->setStatusCode(200);
 			}
 		} catch (Error | Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);
