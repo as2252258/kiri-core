@@ -23,7 +23,6 @@ use Snowflake\Snowflake;
      */
     public function __construct(public string $topic)
     {
-		var_dump($this->topic);
     }
 
 
