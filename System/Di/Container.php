@@ -135,12 +135,11 @@ class Container extends BaseObject
 		if ($construct->getNumberOfParameters() < 1) {
 			return $reflect->newInstance();
 		}
-		if (empty($dependencies)) {
-			return $reflect->newInstanceWithoutConstructor();
+		if (!empty($dependencies)) {
+			$parameters = $this->mergeParam($this->resolveMethodParameters($construct), $dependencies);
+			return $reflect->newInstanceArgs($parameters);
 		}
-		$parameters = $this->resolveMethodParameters($construct);
-		$parameters = $this->mergeParam($parameters, $dependencies);
-		return $reflect->newInstanceArgs($parameters);
+		return $reflect->newInstanceWithoutConstructor();
 	}
 
 
