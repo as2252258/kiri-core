@@ -44,13 +44,14 @@ class Request implements RequestInterface
 	public static function create(\Swoole\Http\Request $request): RequestInterface
 	{
 		$sRequest = new HttpResponse();
-		$sRequest->setUri($request->header['request_uri']);
-		$sRequest->setClientId($request->fd);
 
 		$sRequest->headers = new HttpHeaders();
 		$sRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
-		$sRequest->params = new HttpParams();
+        $sRequest->setUri($sRequest->headers->getRequestUri());
+        $sRequest->setClientId($request->fd);
+
+        $sRequest->params = new HttpParams();
 		$sRequest->params->setRawContent($request->rawContent(), $sRequest->headers->getContentType());
 		$sRequest->params->setFiles($request->files);
 		$sRequest->params->setPosts($request->post);
