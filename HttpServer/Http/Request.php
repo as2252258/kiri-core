@@ -193,6 +193,7 @@ class Request extends HttpService
 	 */
 	public function getExplode(): array
 	{
+		return Context::getContext(\Swoole\Http\Request::class)->explode;
 		return explode('/', $this->getUri());
 	}
 
@@ -424,8 +425,9 @@ class Request extends HttpService
 	{
 		$request->header = array_merge($request->header, $request->server);
 
-		$request_uri = explode('/', $request->header['request_uri']);
-		$request->header['request_uri'] = '/' . implode('/', array_filter($request_uri));
+		$request_uri = array_filter(explode('/', $request->header['request_uri']));
+		$request->header['request_uri'] = '/' . implode('/', $request_uri);
+		$request->explode = $request_uri;
 
 		Context::setContext(\Swoole\Http\Request::class, $request);
 
