@@ -124,7 +124,6 @@ class HTTPServerListener extends Abstracts\Server
 			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
 				$responseData = $this->response->setContent($responseData)->setStatusCode(200);
 			}
-			var_dump($responseData);
 		} catch (Error | Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {

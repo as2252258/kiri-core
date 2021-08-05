@@ -60,7 +60,7 @@ class Request implements RequestInterface
 		$sRequest->params->setPosts($request->post);
 		$sRequest->params->setGets($request->get);
 
-		Context::setContext(Request::class, $sRequest);
+		Context::setContext(HttpResponse::class, $sRequest);
 
 		return Snowflake::getDi()->get(Request::class);
 	}
