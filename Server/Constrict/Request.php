@@ -46,22 +46,26 @@ class Request implements RequestInterface
 	{
         Context::setContext(Response::class, new Response());
 
-        $sRequest = new HttpResponse();
+        try {
+            $sRequest = new \Snowflake\Abstracts\BaseObject();
 
-		$sRequest->headers = new HttpHeaders();
-		$sRequest->headers->setHeaders(array_merge($request->header, $request->server));
+            $sRequest->headers = new HttpHeaders();
+            $sRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
-        $sRequest->setUri($sRequest->headers->getRequestUri());
-        $sRequest->setClientId($request->fd);
+            $sRequest->setUri($sRequest->headers->getRequestUri());
+            $sRequest->setClientId($request->fd);
 
-        $sRequest->params = new HttpParams();
-		$sRequest->params->setRawContent($request->rawContent(), $sRequest->headers->getContentType());
-		$sRequest->params->setFiles($request->files);
-		$sRequest->params->setPosts($request->post);
-		$sRequest->params->setGets($request->get);
+            $sRequest->params = new HttpParams();
+            $sRequest->params->setRawContent($request->rawContent(), $sRequest->headers->getContentType());
+            $sRequest->params->setFiles($request->files);
+            $sRequest->params->setPosts($request->post);
+            $sRequest->params->setGets($request->get);
+        }catch (\Throwable $exception){
+            var_dump($exception);
+        }
+        Context::setContext(HttpResponse::class, $sRequest);
 
-		Context::setContext(HttpResponse::class, $sRequest);
 
-		return Snowflake::getDi()->get(Request::class);
+        return Snowflake::getDi()->get(Request::class);
 	}
 }
