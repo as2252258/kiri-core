@@ -5,6 +5,7 @@ namespace Server;
 use Closure;
 use Exception;
 use ReflectionException;
+use Server\Manager\OnPipeMessage;
 use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
 use Server\Task\OnServerTask;
@@ -77,7 +78,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
-	    if ($this->portIsAready($port)) $this->stopServer($port);
+		if ($this->portIsAready($port)) $this->stopServer($port);
 		if (!$this->server) {
 			$this->createBaseServer($type, $host, $port, $mode, $settings);
 		} else {
@@ -99,6 +100,7 @@ class ServerManager extends Abstracts\Server
 		foreach ($this->sortService($configs['ports']) as $config) {
 			$this->startListenerHandler($context, $config);
 		}
+		$this->bindCallback($this->server, [Constant::PIPE_MESSAGE => [OnPipeMessage::class, 'onPipeMessage']]);
 		$this->bindCallback($this->server, $this->getSystemEvents($configs));
 	}
 
@@ -182,7 +184,6 @@ class ServerManager extends Abstracts\Server
 	private function getSystemEvents(array $configs): array
 	{
 		return array_intersect_key($configs['events'] ?? [], [
-			Constant::PIPE_MESSAGE  => '',
 			Constant::SHUTDOWN      => '',
 			Constant::WORKER_START  => '',
 			Constant::WORKER_ERROR  => '',

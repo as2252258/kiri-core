@@ -3,6 +3,7 @@
 namespace Server\Manager;
 
 use Annotation\Inject;
+use Kafka\Message;
 use Server\Abstracts\Server;
 use Server\Constant;
 use Exception;
@@ -33,14 +34,9 @@ class OnPipeMessage extends Server
 		if (!is_object($message) || !($message instanceof PipeMessage)) {
 			return;
 		}
-		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
-		$this->runEvent(Constant::PIPE_MESSAGE,
-			function (\Swoole\Server $server, $src_worker_id, $message) {
-				call_user_func([$message, 'execute']);
-			}, [
-				$server, $src_worker_id, $message
-			]
-		);
+
+		call_user_func([$message, 'process'], $server, $src_worker_id);
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
