@@ -166,7 +166,7 @@ class Router extends HttpService implements RouterInterface
 			++$a;
 			$search = $parent->findNode($value);
 			if ($search === null) {
-				$parent = $parent->addChild($this->NodeInstance($value, $a, $method), $value);
+				$parent = $parent->addChild($this->NodeInstance($value, $a, $method));
 			} else {
 				$parent = $search;
 			}
