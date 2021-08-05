@@ -8,7 +8,6 @@ use DirectoryIterator;
 use Exception;
 use ReflectionException;
 use Snowflake\Abstracts\Component;
-use Snowflake\Exception\NotFindClassException;
 
 /**
  * Class Annotation
@@ -179,13 +178,13 @@ class Annotation extends Component
 	/**
 	 * @param string $path
 	 * @param string $namespace
-	 * @param string $alias
+	 * @param array $exclude
 	 * @return void
 	 * @throws Exception
 	 */
-	public function read(string $path, string $namespace = 'App', string $alias = 'root'): void
+	public function read(string $path, string $namespace = 'App', array $exclude = []): void
 	{
-		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace);
+		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace, $exclude);
 	}
 
 

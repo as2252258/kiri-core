@@ -98,7 +98,7 @@ if (!function_exists('scan_directory')) {
 	function scan_directory($dir, $namespace, array $exclude = [])
 	{
 		$annotation = Snowflake::app()->getAnnotation();
-		$annotation->read($dir, $namespace);
+		$annotation->read($dir, $namespace, $exclude);
 
 		injectRuntime($dir, $exclude);
 	}

@@ -95,12 +95,16 @@ class Loader extends BaseObject
 	/**
 	 * @param DirectoryIterator $paths
 	 * @param $namespace
+	 * @param array $exclude
 	 * @throws Exception
 	 */
-	public function _scanDir(DirectoryIterator $paths, $namespace)
+	public function _scanDir(DirectoryIterator $paths, $namespace, array $exclude = [])
 	{
 		foreach ($paths as $path) {
 			if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
+				continue;
+			}
+			if ($this->inExclude($exclude, $path->getRealPath())) {
 				continue;
 			}
 			if ($path->isDir()) {
