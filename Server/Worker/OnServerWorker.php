@@ -46,31 +46,28 @@ class OnServerWorker extends \Server\Abstracts\Server
 	{
 		$this->_setConfigCache($workerId);
 		$annotation = Snowflake::app()->getAnnotation();
-		$annotation->read(APP_PATH . 'app');
+		$annotation->read(APP_PATH . 'app', 'App',
+			$workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
+		);
 
 		$this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
 
 		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
-		$this->interpretDirectory($server, $annotation, $workerId);
+		$this->interpretDirectory($annotation);
 	}
 
 
 	/**
-	 * @param Server $server
 	 * @param Annotation $annotation
-	 * @param $workerId
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function interpretDirectory(Server $server, Annotation $annotation, $workerId)
+	private function interpretDirectory(Annotation $annotation)
 	{
-		$fileLists = $annotation->runtime(APP_PATH . 'app',
-			$workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
-		);
-
+		$fileLists = $annotation->runtime(APP_PATH . 'app');
 		$di = Snowflake::getDi();
 		foreach ($fileLists as $class) {
 			$instance = $di->get($class);
