@@ -10,10 +10,10 @@ use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
 use HttpServer\Abstracts\HttpService;
+use HttpServer\Exception\RequestException;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Snowflake\Core\Json;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\IAspect;
 use Snowflake\Snowflake;
@@ -38,12 +38,12 @@ class Node extends HttpService
 
 	private string $_dataType = '';
 
-	/** @var ?Closure|?array */
-	public Closure|array|null $handler;
 	public string $htmlSuffix = '.html';
 	public bool $enableHtmlSuffix = false;
 	public array $namespace = [];
 	public array $middleware = [];
+
+	public string $sourcePath = '';
 
 	/** @var array|Closure */
 	public Closure|array $callback = [];
@@ -78,20 +78,20 @@ class Node extends HttpService
 
 	/**
 	 * @param $handler
+	 * @param $path
 	 * @return Node
-	 * @throws
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function bindHandler($handler): static
+	public function setHandler($handler, $path): static
 	{
+		$this->sourcePath = $path;
 		if (is_string($handler) && str_contains($handler, '@')) {
-			$this->handler = $this->splitHandler($handler);
+			$handler = $this->splitHandler($handler);
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
-		} else {
-			$this->handler = $handler;
 		}
-		$this->setParameters($this->handler);
-		return $this->injectMiddleware();
+		return $this->setParameters($handler);
 	}
 
 
@@ -115,22 +115,47 @@ class Node extends HttpService
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function injectMiddleware(): static
+	private function injectMiddleware($handler): static
 	{
 		$manager = di(MiddlewareManager::class);
-		if ($this->handler instanceof Closure) {
-			if (!empty($this->middleware)) {
-				$this->callback = $manager->closureMiddlewares($this->middleware, $this->normalHandler($this->handler));
-			} else {
-				$this->callback = $this->normalHandler($this->handler);
-			}
+		if (!($handler instanceof Closure)) {
+			$callback = $this->injectControllerMiddleware($manager, $handler);
 		} else {
-			$manager->addMiddlewares($this->handler[0], $this->handler[1], $this->middleware);
-			$this->callback = $manager->callerMiddlewares(
-				$this->handler[0], $this->handler[1], $this->aopHandler($this->getAop())
-			);
+			$callback = $this->injectClosureMiddleware($manager, $handler);
 		}
-		return $this;
+		$handlerProviders = di(HandlerProviders::class);
+		return $handlerProviders->add($this->sourcePath, $this->method, $callback);
+	}
+
+
+	/**
+	 * @param $manager
+	 * @param $handler
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function injectControllerMiddleware($manager, $handler): mixed
+	{
+		$manager->addMiddlewares($handler[0], $handler[1], $this->middleware);
+		return $manager->callerMiddlewares(
+			$handler[0], $handler[1], $this->aopHandler($this->getAop($handler), $handler)
+		);
+	}
+
+
+	/**
+	 * @param $manager
+	 * @param $handler
+	 * @return mixed
+	 */
+	private function injectClosureMiddleware($manager, $handler): mixed
+	{
+		if (!empty($this->middleware)) {
+			return $manager->closureMiddlewares($this->middleware, $this->normalHandler($handler));
+		} else {
+			return $this->normalHandler($handler);
+		}
 	}
 
 
@@ -141,33 +166,34 @@ class Node extends HttpService
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	public function setParameters($handler)
+	public function setParameters($handler): static
 	{
 		$container = Snowflake::getDi();
 		if ($handler instanceof Closure) {
 			$this->_injectParameters = $container->resolveFunctionParameters($handler);
 		} else {
-			[$controller, $action] = $this->handler;
+			[$controller, $action] = $handler;
 			if (is_object($controller)) {
 				$controller = get_class($controller);
 			}
 			$this->_injectParameters = $container->getMethodParameters($controller, $action);
 		}
+		return $this->injectMiddleware($handler);
 	}
 
 
 	/**
 	 * @param IAspect|null $reflect
+	 * @param $handler
 	 * @return Closure
 	 */
-	#[Pure] private function aopHandler(?IAspect $reflect): Closure
+	#[Pure] private function aopHandler(?IAspect $reflect, $handler): Closure
 	{
-	    if (is_null($reflect)) {
-	        return $this->normalHandler($this->handler);
-        }
+		if (is_null($reflect)) {
+			return $this->normalHandler($handler);
+		}
 
 		$params = $this->_injectParameters;
-		$handler = $this->handler;
 		return static function () use ($reflect, $handler, $params) {
 			return $reflect->invoke($handler, $params);
 		};
@@ -177,16 +203,15 @@ class Node extends HttpService
 	/**
 	 * @throws ReflectionException|NotFindClassException
 	 */
-	private function getAop(): ?IAspect
+	private function getAop($handler): ?IAspect
 	{
-		[$controller, $action] = $this->handler;
-
+		[$controller, $action] = $handler;
 		$aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
 		if (empty($aspect)) {
 			return null;
 		}
 		foreach ($aspect as $value) {
-            if ($value instanceof Aspect) {
+			if ($value instanceof Aspect) {
 				return di($value->aspect);
 			}
 		}
@@ -337,19 +362,11 @@ class Node extends HttpService
 	 */
 	public function dispatch(): mixed
 	{
-		if (empty($this->callback)) {
-			return Json::to(404, $this->errorMsg());
+		$handlerProviders = di(HandlerProviders::class)->get($this->sourcePath, $this->method);
+		if (empty($handlerProviders)) {
+			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}
-		return call_user_func($this->callback, \request());
-	}
-
-
-	/**
-	 * @return string
-	 */
-	private function errorMsg(): string
-	{
-		return $this->_error ?? 'Page not found.';
+		return call_user_func($handlerProviders, \request());
 	}
 
 }

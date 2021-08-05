@@ -108,7 +108,7 @@ class Router extends HttpService implements RouterInterface
 		$path = $this->resolve($path);
 		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
 
-		return $this->nodes[$method][$path]->bindHandler($handler);
+		return $this->nodes[$method][$path]->setHandler($handler);
 	}
 
 
@@ -147,7 +147,7 @@ class Router extends HttpService implements RouterInterface
 		if (!empty($explode)) {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
-		return $parent->bindHandler($handler);
+		return $parent->setHandler($handler, $path);
 	}
 
 
