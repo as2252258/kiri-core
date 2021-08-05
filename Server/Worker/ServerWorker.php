@@ -68,7 +68,7 @@ class ServerWorker extends \Server\Abstracts\Server
 	private function interpretDirectory(Server $server, Annotation $annotation, $workerId)
 	{
 		$fileLists = $annotation->runtime(APP_PATH . 'app',
-			$workerId < $server->setting['worker_num'] ? [CONTROLLER_PATH] : []
+			$workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
 		);
 
 		$di = Snowflake::getDi();
