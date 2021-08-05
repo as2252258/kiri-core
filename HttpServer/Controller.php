@@ -11,6 +11,7 @@ use HttpServer\Http\Request;
 use Snowflake\Abstracts\TraitApplication;
 use Snowflake\Application;
 use Server\Constrict\Response as CrResponse;
+use Server\Constrict\Request as CrRequest;
 
 /**
  * Class WebController
@@ -34,10 +35,10 @@ class Controller
 	/**
 	 * inject request
 	 *
-	 * @var Request|null
+	 * @var CrRequest|null
 	 */
-	#[Inject('request')]
-	public ?Request $request = null;
+	#[Inject(CrRequest::class)]
+	public ?CrRequest $request = null;
 
 
 	/**

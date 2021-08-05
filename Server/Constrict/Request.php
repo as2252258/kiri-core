@@ -14,7 +14,7 @@ use Snowflake\Snowflake;
 
 
 /**
- *
+ * @mixin HttpResponse
  */
 class Request implements RequestInterface
 {
