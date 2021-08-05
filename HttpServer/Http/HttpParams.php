@@ -11,7 +11,6 @@ namespace HttpServer\Http;
 
 use Exception;
 use HttpServer\Exception\RequestException;
-use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Snowflake\Core\Json;
 use Snowflake\Core\Xml;
@@ -35,6 +34,47 @@ class HttpParams
 
 	/** @var array|null */
 	private ?array $_files = [];
+
+
+	private mixed $_rawContent = '';
+
+	/**
+	 * @param array|null $gets
+	 */
+	public function setGets(?array $gets): void
+	{
+		$this->_gets = $gets;
+	}
+
+	/**
+	 * @param mixed $posts
+	 */
+	public function setPosts(mixed $posts): void
+	{
+		$this->_posts = $posts;
+	}
+
+	/**
+	 * @param array|null $files
+	 */
+	public function setFiles(?array $files): void
+	{
+		$this->_files = $files;
+	}
+
+	/**
+	 * @param mixed|string $rawContent
+	 */
+	public function setRawContent(mixed $rawContent, string $context_type): void
+	{
+		if (str_contains($context_type, 'json')) {
+			$this->_rawContent = json_decode($rawContent, true);
+		} else if (str_contains($context_type, 'xml')) {
+			$this->_rawContent = Xml::toArray($rawContent);
+		} else {
+			$this->_rawContent = $rawContent;
+		}
+	}
 
 	/**
 	 * @return mixed
@@ -414,10 +454,10 @@ class HttpParams
 	 */
 	private function __files__($name = null): mixed
 	{
-		/** @var \Swoole\Http\Request $content */
-		$content = Context::getContext(\Swoole\Http\Request::class);
+		/** @var Request $content */
+		$content = Context::getContext(Request::class);
 		if (!empty($name)) {
-			return $content->files[$name] ?? null;
+			return $content->_f[$name] ?? null;
 		}
 		return $content->files ?? [];
 	}

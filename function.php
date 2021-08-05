@@ -6,7 +6,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 use Annotation\Annotation;
 use HttpServer\Http\Context;
 use HttpServer\Http\HttpParams;
-use HttpServer\Http\Request;
+use Server\Constrict\Request;
 use HttpServer\Http\Response as HttpResponse;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
@@ -818,8 +818,10 @@ if (!function_exists('isService')) {
 	/**
 	 * @param string $name
 	 * @return bool
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	#[Pure] function isService(string $name): bool
+	function isService(string $name): bool
 	{
 		return Snowflake::app()->has($name);
 	}

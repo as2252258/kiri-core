@@ -6,6 +6,7 @@ namespace PHPSTORM_META {
 	use Snowflake\Di\Container;
 
 	override(Container::get(0), map('@'));
+	override(Container::newObject(0), map('@'));
 //    override(\Hyperf\Utils\Context::get(0), map('@'));
 //    override(\make(0), map('@'));
     override(\di(0), map('@'));

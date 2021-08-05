@@ -117,7 +117,7 @@ class HTTPServerListener extends Abstracts\Server
 	public function onRequest(Request $request, Response $response)
 	{
 		try {
-			$node = $this->router->Branch_search(HSRequest::create($request));
+			$node = $this->router->Branch_search(Constrict\Request::create($request));
 			if (!($node instanceof Node)) {
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 			}

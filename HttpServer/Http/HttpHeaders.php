@@ -16,6 +16,18 @@ namespace HttpServer\Http;
 class HttpHeaders
 {
 
+	private array $_headers = [];
+
+
+	/**
+	 * @param array $headers
+	 */
+	public function setHeaders(array $headers): void
+	{
+		$this->_headers = $headers;
+	}
+
+
 	/**
 	 * @return array
 	 */
@@ -111,12 +123,11 @@ class HttpHeaders
 	 */
 	private function __handler__($name = null, $default = null): mixed
 	{
-		/** @var \Swoole\Http\Request $context */
-		$context = Context::getContext(\Swoole\Http\Request::class);
+		$headers = Context::getContext(Request::class);
 		if (!empty($name)) {
-			return $context->header[$name] ?? $default;
+			return $headers->_headers[$name] ?? $default;
 		}
-		return $context->header;
+		return $headers->_headers;
 	}
 
 }

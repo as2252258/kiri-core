@@ -8,9 +8,9 @@ use Exception;
 use HttpServer\Abstracts\HttpService;
 use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
+use Server\RequestInterface;
 use Server\ServerManager;
 use Snowflake\Core\Json;
-use Snowflake\Snowflake;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
 defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
@@ -30,7 +30,7 @@ defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
  * @property-read $isPackage
  * @property-read $isReceive
  */
-class Request extends HttpService
+class Request extends HttpService implements RequestInterface
 {
 
 	public int $fd = 0;
@@ -56,6 +56,8 @@ class Request extends HttpService
 
 	public int $statusCode = 200;
 
+	private int $_clientId = 0;
+
 	/** @var string[] */
 	private array $explode = [];
 
@@ -73,6 +75,26 @@ class Request extends HttpService
 	 */
 	private ?AuthIdentity $_grant = null;
 
+
+	/**
+	 * @param $id
+	 */
+	public function setClientId($id)
+	{
+		$this->_clientId = $id;
+	}
+
+
+	/**
+	 * @param string $request_uri
+	 */
+	public function setUri(string $request_uri)
+	{
+		$request_uri = array_filter(explode('/', $request_uri));
+
+		$this->_explode = $request_uri;
+		$this->_uri = '/' . implode('/', $request_uri);
+	}
 
 	/**
 	 * @return array|null
@@ -100,9 +122,7 @@ class Request extends HttpService
 	 */
 	public function getClientId(): int
 	{
-		$request = Context::getContext(\Swoole\Http\Request::class);
-
-		return $request->fd ?? 0;
+		return $this->_clientId ?? 0;
 	}
 
 
@@ -119,8 +139,7 @@ class Request extends HttpService
 	 */
 	public function getIdentity(): ?AuthIdentity
 	{
-		$request = Context::getContext(\Swoole\Http\Request::class);
-		return $request->grant;
+		return $this->_grant;
 	}
 
 	/**
@@ -176,8 +195,7 @@ class Request extends HttpService
 	 */
 	public function setGrantAuthorization($value)
 	{
-		$request = Context::getContext(\Swoole\Http\Request::class);
-		return $request->grant = $value;
+		return $this->_grant = $value;
 	}
 
 
@@ -195,7 +213,7 @@ class Request extends HttpService
 	 */
 	public function getExplode(): array
 	{
-		return Context::getContext(\Swoole\Http\Request::class)->explode;
+		return $this->_explode;
 	}
 
 	/**
@@ -212,7 +230,7 @@ class Request extends HttpService
 	 */
 	public function getUri(): string
 	{
-		return $this->headers->getRequestUri();
+		return $this->_uri;
 	}
 
 	/**
@@ -417,25 +435,8 @@ class Request extends HttpService
 	}
 
 
-	/**
-	 * @param \Swoole\Http\Request $request
-	 * @return Request
-	 * @throws Exception
-	 */
-	public static function create(\Swoole\Http\Request $request): Request
-	{
-		$request->header = array_merge($request->header, $request->server);
-
-		$request_uri = array_filter(explode('/', $request->header['request_uri']));
-		$request->header['request_uri'] = '/' . implode('/', $request_uri);
-		$request->explode = $request_uri;
-
-		Context::setContext(\Swoole\Http\Request::class, $request);
-
-		Context::setContext(Response::class, new Response());
-
-		return Snowflake::getDi()->get(Request::class);
-	}
+	private array $_explode = [];
+	private string $_uri = '';
 
 
 }
