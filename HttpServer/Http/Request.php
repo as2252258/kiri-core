@@ -36,13 +36,15 @@ class Request extends HttpService implements RequestInterface
 
     use HttpHeaders, HttpParams;
 
-	public int $fd = 0;
+    private array $_explode = [];
+    private string $_uri = '';
+	private int $fd = 0;
 
-	public bool $isCli = FALSE;
+    private bool $isCli = FALSE;
 
-	public float $startTime;
+    private float $startTime;
 
-	public int $statusCode = 200;
+    private int $statusCode = 200;
 
 	private int $_clientId = 0;
 
@@ -101,7 +103,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getStartTime(): mixed
 	{
-		return $this->headers->get('request_time_float');
+		return $this->getHeader('request_time_float');
 	}
 
 
@@ -119,7 +121,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function isFavicon(): bool
 	{
-		return $this->headers->getRequestUri() === 'favicon.ico';
+		return $this->getRequestUri() === 'favicon.ico';
 	}
 
 	/**
@@ -135,7 +137,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function isHead(): bool
 	{
-		$result = $this->headers->getRequestMethod() == 'HEAD';
+		$result = $this->getRequestMethod() == 'HEAD';
 		if ($result) {
 			$this->setStatus(101);
 		} else {
@@ -166,7 +168,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIsPackage(): bool
 	{
-		return $this->headers->getRequestMethod() == 'package';
+		return $this->getRequestMethod() == 'package';
 	}
 
 	/**
@@ -174,7 +176,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIsReceive(): bool
 	{
-		return $this->headers->getRequestMethod() == 'receive';
+		return $this->getRequestMethod() == 'receive';
 	}
 
 
@@ -230,7 +232,7 @@ class Request extends HttpService implements RequestInterface
 			return $this->_platform;
 		}
 
-		$user = $this->headers->getAgent();
+		$user = $this->getAgent();
 		$match = preg_match('/\(.*\)?/', $user, $output);
 		if (!$match || count($output) < 1) {
 			return $this->_platform = 'unknown';
@@ -286,7 +288,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIsPost(): bool
 	{
-		return $this->headers->getRequestMethod() == 'POST';
+		return $this->getRequestMethod() == 'POST';
 	}
 
 	/**
@@ -303,7 +305,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIsOption(): bool
 	{
-		return $this->headers->getRequestMethod() == 'OPTIONS';
+		return $this->getRequestMethod() == 'OPTIONS';
 	}
 
 	/**
@@ -311,7 +313,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIsGet(): bool
 	{
-		return $this->headers->getRequestMethod() == 'GET';
+		return $this->getRequestMethod() == 'GET';
 	}
 
 	/**
@@ -319,7 +321,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIsDelete(): bool
 	{
-		return $this->headers->getRequestMethod() == 'DELETE';
+		return $this->getRequestMethod() == 'DELETE';
 	}
 
 	/**
@@ -329,7 +331,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getMethod(): string
 	{
-		$method = $this->headers->getRequestMethod();
+		$method = $this->getRequestMethod();
 		if (empty($method)) {
 			return 'GET';
 		}
@@ -366,7 +368,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getIp(): string|null
 	{
-		$headers = $this->headers->getHeaders();
+		$headers = $this->getHeaders();
 		if (!empty($headers['remoteip'])) return $headers['remoteip'];
 		if (!empty($headers['x-forwarded-for'])) return $headers['x-forwarded-for'];
 		if (!empty($headers['request-ip'])) return $headers['request-ip'];
@@ -398,7 +400,7 @@ class Request extends HttpService implements RequestInterface
 			'[Debug ' . $datetime . '] ',
 			$this->getIp(),
 			$this->getUri(),
-			'`' . $this->headers->getAgent() . '`',
+			'`' . $this->getAgent() . '`',
 			$this->getRuntime()
 		];
 		return implode(' ', $tmp);
@@ -411,7 +413,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function is($router): bool
 	{
-		return $this->headers->getRequestUri() == $router;
+		return $this->getRequestUri() == $router;
 	}
 
 	/**
@@ -419,12 +421,10 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function isNotFound(): bool
 	{
-		return Json::to(404, 'Page ' . $this->headers->getRequestUri() . ' not found.');
+		return Json::to(404, 'Page ' . $this->getRequestUri() . ' not found.');
 	}
 
 
-	private array $_explode = [];
-	private string $_uri = '';
 
 
 }

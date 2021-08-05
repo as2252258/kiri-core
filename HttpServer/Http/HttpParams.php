@@ -133,7 +133,6 @@ trait HttpParams
     }
 
 
-
     /**
      * @param $name
      * @param null $defaultValue
@@ -383,15 +382,5 @@ trait HttpParams
     }
 
 
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function __get($name): mixed
-    {
-        $load = $this->load();
-
-        return $load[$name] ?? null;
-    }
 
 }
