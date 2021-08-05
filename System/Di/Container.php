@@ -327,6 +327,8 @@ class Container extends BaseObject
 		foreach ($reflectionMethod->getParameters() as $key => $parameter) {
 			if ($parameter->isDefaultValueAvailable()) {
 				$params[$key] = $parameter->getDefaultValue();
+			} else if ($parameter->getType() === null) {
+				$params[$key] = $parameter->getType();
 			} else {
 				$type = $parameter->getType()->getName();
 				if (is_string($type) && class_exists($type)) {
