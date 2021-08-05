@@ -124,7 +124,8 @@ class Node extends HttpService
 			$callback = $this->injectClosureMiddleware($manager, $handler);
 		}
 		$handlerProviders = di(HandlerProviders::class);
-		return $handlerProviders->add($this->sourcePath, $this->method, $callback);
+		$handlerProviders->add($this->sourcePath, $this->method, $callback);
+		return $this;
 	}
 
 
