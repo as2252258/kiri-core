@@ -30,7 +30,7 @@ defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
 class Router extends HttpService implements RouterInterface
 {
 	/** @var Node[] $nodes */
-	public static array $nodes = [];
+	public array $nodes = [];
 	public array $groupTacks = [];
 	public ?string $dir = 'App\\Http\\Controllers';
 
@@ -43,10 +43,6 @@ class Router extends HttpService implements RouterInterface
 	public ?Closure $middleware = null;
 
 	public int $useTree = ROUTER_TREE;
-
-
-	private static array $controllers = [];
-
 
 	public ?Response $response = null;
 
@@ -91,8 +87,8 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function addRoute($path, $handler, string $method = 'any'): ?Node
 	{
-		if (!isset(static::$nodes[$method])) {
-			static::$nodes[$method] = [];
+		if (!isset($this->nodes[$method])) {
+			$this->nodes[$method] = [];
 		}
 		if ($handler instanceof Closure) {
 			$handler = Closure::bind($handler, di(Controller::class));
@@ -110,9 +106,9 @@ class Router extends HttpService implements RouterInterface
 	private function hash($path, $handler, string $method = 'any'): ?Node
 	{
 		$path = $this->resolve($path);
-		static::$nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
+		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
 
-		return static::$nodes[$method][$path]->bindHandler($handler);
+		return $this->nodes[$method][$path]->bindHandler($handler);
 	}
 
 
@@ -144,11 +140,10 @@ class Router extends HttpService implements RouterInterface
 	private function tree($path, $handler, string $method = 'any'): Node
 	{
 		[$first, $explode] = $this->split($path);
-		if (!isset(static::$nodes[$method]['/'])) {
-			static::$nodes[$method]['/'] = $this->NodeInstance('/', 0, $method);
+		if (!isset($this->nodes[$method]['/'])) {
+			$this->nodes[$method]['/'] = $this->NodeInstance('/', 0, $method);
 		}
-
-		$parent = static::$nodes[$method]['/'];
+		$parent = $this->nodes[$method]['/'];
 		if (!empty($first) && !empty($explode)) {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
@@ -168,9 +163,6 @@ class Router extends HttpService implements RouterInterface
 	{
 		$a = 0;
 		foreach ($explode as $value) {
-			if (empty($value)) {
-				continue;
-			}
 			++$a;
 			$search = $parent->findNode($value);
 			if ($search === null) {
@@ -416,10 +408,10 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function tree_search(?array $explode, $method): ?Node
 	{
-		if (!isset(static::$nodes[$method])) {
+		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		$parent = static::$nodes[$method]['/'];
+		$parent = $this->nodes[$method]['/'];
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			var_dump($node);
@@ -454,7 +446,7 @@ class Router extends HttpService implements RouterInterface
 	public function each(): array
 	{
 		$paths = [];
-		foreach (static::$nodes as $node) {
+		foreach ($this->nodes as $node) {
 			/** @var Node[] $node */
 			foreach ($node as $path => $_node) {
 				$paths[] = strtoupper($_node->method) . ' : ' . $path;
@@ -485,12 +477,12 @@ class Router extends HttpService implements RouterInterface
 	{
 		$method = $request->getMethod();
 
-		$methods = static::$nodes[$method][\request()->getUri()] ?? null;
+		$methods = $this->nodes[$method][\request()->getUri()] ?? null;
 		if (!is_null($methods)) {
 			return $methods;
 		}
 		if ($request->isOption) {
-			return static::$nodes[$method]['*'] ?? null;
+			return $this->nodes[$method]['*'] ?? null;
 		}
 		return null;
 	}
@@ -503,10 +495,10 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function search($uri, $method): Node|null
 	{
-		if (!isset(static::$nodes[$method])) {
+		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		$methods = static::$nodes[$method];
+		$methods = $this->nodes[$method];
 		if (isset($methods[$uri])) {
 			return $methods[$uri];
 		}
@@ -521,13 +513,13 @@ class Router extends HttpService implements RouterInterface
 	private function search_options($request): ?Node
 	{
 		$method = $request->getMethod();
-		if (!isset(static::$nodes[$method])) {
+		if (!isset($this->nodes[$method])) {
 			return null;
 		}
-		if (!isset(static::$nodes[$method]['*'])) {
+		if (!isset($this->nodes[$method]['*'])) {
 			return null;
 		}
-		return static::$nodes[$method]['*'];
+		return $this->nodes[$method]['*'];
 	}
 
 
