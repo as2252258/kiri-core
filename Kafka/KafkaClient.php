@@ -45,7 +45,7 @@ class KafkaClient
 	 */
 	private function setConfig(Conf $kafkaConfig)
 	{
-		$config = Config::get('producers.' . $this->topic, null, true);
+		$config = Config::get('kafka.producers.' . $this->topic, null, true);
 		if (!isset($config['brokers']) || !isset($config['groupId'])) {
 			throw new ConfigException('Please configure relevant information.');
 		}
