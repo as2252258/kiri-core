@@ -19,10 +19,10 @@ class Struct
 
 	/**
 	 * Struct constructor.
-	 * @param $topic
+	 * @param string $topic
 	 * @param Message $message
 	 */
-	public function __construct($topic, Message $message)
+	public function __construct(string $topic, Message $message)
 	{
 		$message->payload = swoole_unserialize($message->payload);
 
