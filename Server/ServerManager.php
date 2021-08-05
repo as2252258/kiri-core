@@ -27,6 +27,7 @@ use Swoole\WebSocket\Server as WServer;
 class ServerManager extends Abstracts\Server
 {
 
+    /** @var string  */
 	public string $host = '';
 
 	public int $port = 0;
