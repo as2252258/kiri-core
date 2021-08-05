@@ -285,9 +285,9 @@ class Node extends HttpService
 		if (isset($this->childes[$search])) {
 			return $this->childes[$search];
 		}
-		foreach ($this->childes as $key => $val) {
-			if ($search == $key) {
-				return $this->childes[$key];
+		foreach ($this->childes as $val) {
+			if ($search == $val->path) {
+				return $this->childes[$val->path];
 			}
 		}
 		return null;

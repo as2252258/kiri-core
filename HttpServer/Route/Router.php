@@ -96,7 +96,7 @@ class Router extends HttpService implements RouterInterface
 		if ($handler instanceof Closure) {
 			$handler = Closure::bind($handler, di(Controller::class));
 		}
-		return $this->hash($path, $handler, $method);
+		return $this->tree($path, $handler, $method);
 	}
 
 
@@ -142,7 +142,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	private function tree($path, $handler, string $method = 'any'): Node
 	{
-		list($first, $explode) = $this->split($path);
+		[$first, $explode] = $this->split($path);
 
 		$parent = static::$nodes[$method][$first] ?? null;
 		if (empty($parent)) {
@@ -442,26 +442,18 @@ class Router extends HttpService implements RouterInterface
 	/**
 	 * @param $path
 	 * @return array
-	 * '*'
 	 */
 	public function split($path): array
 	{
-		$prefix = $this->addPrefix();
-		$path = ltrim($path, '/');
-		if (!empty($prefix)) {
-			$path = $prefix . '/' . $path;
-		}
-
-		$explode = array_filter(explode('/', $path));
-		if (empty($explode)) {
+		$path = $this->addPrefix() . '/' . ltrim($path, '/');
+		if ($path === '/') {
 			return ['/', []];
 		}
-
-		$first = array_shift($explode);
-		if (empty($explode)) {
-			$explode = [];
+		$filter = array_filter(explode('/', $path));
+		if (empty($filter)) {
+			return ['/', []];
 		}
-		return [$first, $explode];
+		return [array_shift($filter), $filter];
 	}
 
 	/**
@@ -552,7 +544,7 @@ class Router extends HttpService implements RouterInterface
 	 * @return Node|null
 	 * 树杈搜索
 	 */
-	private function Branch_search(Request $request): ?Node
+	public function Branch_search(Request $request): ?Node
 	{
 		$node = $this->tree_search($request->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {
