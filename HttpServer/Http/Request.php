@@ -119,7 +119,8 @@ class Request extends HttpService
 	 */
 	public function getIdentity(): ?AuthIdentity
 	{
-		return $this->_grant;
+		$request = Context::getContext(\Swoole\Http\Request::class);
+		return $request->grant;
 	}
 
 	/**
@@ -175,7 +176,8 @@ class Request extends HttpService
 	 */
 	public function setGrantAuthorization($value)
 	{
-		$this->_grant = $value;
+		$request = Context::getContext(\Swoole\Http\Request::class);
+		return $request->grant = $value;
 	}
 
 
