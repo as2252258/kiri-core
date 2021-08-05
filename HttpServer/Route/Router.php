@@ -139,12 +139,12 @@ class Router extends HttpService implements RouterInterface
 	 */
 	private function tree($path, $handler, string $method = 'any'): Node
 	{
-		[$first, $explode] = $this->split($path);
+		$explode = $this->split($path);
 		if (!isset($this->nodes[$method]['/'])) {
 			$this->nodes[$method]['/'] = $this->NodeInstance('/', 0, $method);
 		}
 		$parent = $this->nodes[$method]['/'];
-		if (!empty($first) && !empty($explode)) {
+		if (!empty($explode)) {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
 		$parent->path = $path;
@@ -162,7 +162,6 @@ class Router extends HttpService implements RouterInterface
 	private function bindNode(Node $parent, array $explode, $method): Node
 	{
 		$a = 0;
-		var_dump($explode);
 		foreach ($explode as $value) {
 			++$a;
 			$search = $parent->findNode($value);
@@ -432,13 +431,13 @@ class Router extends HttpService implements RouterInterface
 	{
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
 		if ($path === '/') {
-			return ['', null];
+			return [];
 		}
 		$filter = array_filter(explode('/', $path));
 		if (!empty($filter)) {
-			return [array_shift($filter), $filter];
+			return $filter;
 		}
-		return ['', null];
+		return [];
 	}
 
 	/**
