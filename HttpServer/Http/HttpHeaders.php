@@ -62,7 +62,7 @@ class HttpHeaders
 	 */
 	public function getContentType(): string
 	{
-        return $this->_headers['content-type'];
+        return $this->_headers['content-type'] ?? '';
 	}
 
 
