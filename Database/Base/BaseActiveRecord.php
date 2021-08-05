@@ -15,8 +15,6 @@ use Annotation\Inject;
 use ArrayAccess;
 use Database\ActiveQuery;
 use Database\ActiveRecord;
-use Database\Affair\BeginTransaction;
-use Database\Affair\Rollback;
 use Database\Connection;
 use Database\HasMany;
 use Database\HasOne;
@@ -47,6 +45,7 @@ use validator\Validator;
  * @method rules()
  * @method static tableName()
  * @property Application $container
+ * @property EventDispatch $eventDispatch
  */
 abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 {
@@ -113,21 +112,22 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	/**
 	 * @return Application
 	 */
-	#[Pure] private function getContainer(): Application
+	#[Pure] protected function getContainer(): Application
 	{
 		return Snowflake::app();
 	}
 
 
 	/**
-	 * @param EventDispatch $eventDispatch
-	 * @param array $config
-	 * @throws Exception
+	 * @return EventDispatch
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function __construct(public EventDispatch $eventDispatch, array $config = [])
+	protected function getEventDispatch(): EventDispatch
 	{
-		parent::__construct($config);
+		return Snowflake::getDi()->get(EventDispatch::class);
 	}
+
 
 	/**
 	 * @param $data
@@ -756,7 +756,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @param $model
 	 * @return bool
 	 */
-	#[Event(ActiveRecord::BEFORE_SAVE)]
+	#[Event(self::BEFORE_SAVE)]
 	public function beforeSave($model): bool
 	{
 		return true;
@@ -829,28 +829,46 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function __get($name): mixed
 	{
-		$value = $this->_attributes[$name] ?? null;
-		$method = $this->_get_annotation($name, static::GET);
-		if (!empty($method)) {
-			return $this->{$method}($value);
+		$method = 'get' . ucfirst($name);
+		if (!method_exists($this, $method)) {
+			return $this->{$method}();
 		}
-		return $this->runRelation($name, $value);
+		if (isset($this->_attributes[$name])) {
+			return $this->runGetter($name, $this->_attributes[$name]);
+		} else {
+			return $this->runRelation($name);
+		}
 	}
 
 
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return mixed
+	 * @return void|null
 	 * @throws Exception
 	 */
-	private function runRelation($name, $value): mixed
+	private function runGetter($name, $value)
 	{
-		$relation = $this->_get_annotation($name, static::RELATE);
+		$relation = $this->_get_annotation($name, static::GET);
 		if (empty($relation)) {
 			return $this->_decode($name, $value);
 		}
-		if (($value = $this->{$relation}(...[$value])) instanceof HasBase) {
+		return $this->{$relation}($value);
+	}
+
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function runRelation($name): mixed
+	{
+		$relation = $this->_get_annotation($name, static::RELATE);
+		if (empty($relation)) {
+			return null;
+		}
+		if (($value = $this->{$relation}()) instanceof HasBase) {
 			return $value->get();
 		}
 		return $value;

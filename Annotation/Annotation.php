@@ -92,6 +92,14 @@ class Annotation extends Component
 	}
 
 
+	public function runGet($name, $value)
+	{
+
+
+
+	}
+
+
 	/**
 	 * @param string $class
 	 * @param string|null $method
