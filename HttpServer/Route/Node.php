@@ -376,6 +376,7 @@ class Node extends HttpService
 		if (empty($handlerProviders)) {
 			return '<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>';
 		}
+		var_dump($handlerProviders);
 		return call_user_func($handlerProviders, \request());
 	}
 
