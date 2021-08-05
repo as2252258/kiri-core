@@ -26,6 +26,7 @@ class Message implements ConsumerInterface, PipeMessage
 	public function process(): void
 	{
 		// TODO: Implement process() method.
+		var_dump($this->struct);
 	}
 
 }
