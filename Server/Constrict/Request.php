@@ -46,23 +46,20 @@ class Request implements RequestInterface
 	{
         Context::setContext(Response::class, new Response());
 
-        try {
-            $sRequest = new HttpResponse();
+        $sRequest = new HttpResponse();
 
-            $sRequest->headers = new HttpHeaders();
-            $sRequest->headers->setHeaders(array_merge($request->header, $request->server));
+        $sRequest->headers = new HttpHeaders();
+        $sRequest->headers->setHeaders(array_merge($request->header, $request->server));
 
-            $sRequest->setUri($sRequest->headers->getRequestUri());
-            $sRequest->setClientId($request->fd);
+        $sRequest->setUri($sRequest->headers->getRequestUri());
+        $sRequest->setClientId($request->fd);
 
-            $sRequest->params = new HttpParams();
-            $sRequest->params->setRawContent($request->rawContent(), $sRequest->headers->getContentType());
-            $sRequest->params->setFiles($request->files);
-            $sRequest->params->setPosts($request->post);
-            $sRequest->params->setGets($request->get);
-        }catch (\Throwable $exception){
-            var_dump($exception);
-        }
+        $sRequest->params = new HttpParams();
+        $sRequest->params->setRawContent($request->rawContent(), $sRequest->headers->getContentType());
+        $sRequest->params->setFiles($request->files);
+        $sRequest->params->setPosts($request->post);
+        $sRequest->params->setGets($request->get);
+
         Context::setContext(HttpResponse::class, $sRequest);
 
 

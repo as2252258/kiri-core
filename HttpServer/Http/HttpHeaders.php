@@ -33,7 +33,7 @@ class HttpHeaders
 	 */
 	public function toArray(): array
 	{
-		return $this->__handler__();
+		return $this->_headers;
 	}
 
 	/**
@@ -42,7 +42,7 @@ class HttpHeaders
 	 */
 	public function getHeader($name): ?string
 	{
-		return $this->__handler__($name);
+		return $this->_headers[$name];
 	}
 
 
@@ -53,7 +53,7 @@ class HttpHeaders
 	 */
 	public function get($name, $default = null): mixed
 	{
-		return $this->__handler__($name, $default);
+		return $this->_headers[$name] ?? $default;
 	}
 
 
@@ -62,7 +62,7 @@ class HttpHeaders
 	 */
 	public function getContentType(): string
 	{
-		return $this->__handler__('content-type');
+        return $this->_headers['content-type'];
 	}
 
 
@@ -71,11 +71,7 @@ class HttpHeaders
 	 */
 	public function getRequestUri(): ?string
 	{
-		$uri = $this->__handler__('request_uri', '/');
-		if (empty($uri)) {
-			return '/';
-		}
-		return $uri;
+        return $this->_headers['request_uri'];
 	}
 
 
@@ -84,7 +80,7 @@ class HttpHeaders
 	 */
 	public function getRequestMethod(): ?string
 	{
-		return $this->__handler__('request_method');
+        return $this->_headers['request_method'];
 	}
 
 
@@ -93,7 +89,7 @@ class HttpHeaders
 	 */
 	public function getAgent(): mixed
 	{
-		return $this->__handler__('user-agent');
+        return $this->_headers['user-agent'];
 	}
 
 
@@ -103,7 +99,7 @@ class HttpHeaders
 	 */
 	public function exists($name): bool
 	{
-		return $this->__handler__($name) === null;
+        return $this->_headers[$name] ??  null === null;
 	}
 
 
@@ -112,22 +108,7 @@ class HttpHeaders
 	 */
 	public function getHeaders(): array
 	{
-		return $this->__handler__();
-	}
-
-
-	/**
-	 * @param null $name
-	 * @param null $default
-	 * @return mixed
-	 */
-	private function __handler__($name = null, $default = null): mixed
-	{
-		$headers = Context::getContext(Request::class);
-		if (!empty($name)) {
-			return $headers->_headers[$name] ?? $default;
-		}
-		return $headers->_headers;
+		return $this->_headers;
 	}
 
 }
