@@ -830,7 +830,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	public function __get($name): mixed
 	{
 		$method = 'get' . ucfirst($name);
-		if (!method_exists($this, $method)) {
+		if (method_exists($this, $method)) {
 			return $this->{$method}();
 		}
 		if (isset($this->_attributes[$name])) {
