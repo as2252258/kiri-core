@@ -127,7 +127,7 @@ class Kafka implements CustomProcess
 				$container = Snowflake::app()->get('kafka-container');
 				$handler = $container->getConsumer($topic);
 
-				var_dump($topic, $message, $handler);
+				var_dump($container);
 				if (!empty($handler)) {
 					/** @var ConsumerInterface $data */
 					$data = new $handler();
