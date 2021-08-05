@@ -58,13 +58,14 @@ class KafkaClient
 
 
 	/**
-	 * @param array $params
+	 * @param string $key
+	 * @param string|array $params
 	 * @param bool $isAck
 	 * @throws Exception
 	 */
-	public function dispatch(array $params = [], bool $isAck = false)
+	public function dispatch(string $key, string|array $params, bool $isAck = false)
 	{
-		$this->sendMessage([$params], $isAck);
+		$this->sendMessage([$params], $key, $isAck);
 	}
 
 
