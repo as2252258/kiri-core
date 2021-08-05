@@ -33,7 +33,7 @@ class DefaultCrontab extends Crontab
 	/**
 	 *
 	 */
-	public function max_execute(): void
+	public function onMaxExecute(): void
 	{
 		// TODO: Implement max_execute() method.
 	}

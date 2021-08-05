@@ -16,7 +16,7 @@ use Swoole\Timer;
  * @package Snowflake
  * @property Application $application
  */
-abstract class Crontab implements PipeMessage
+abstract class Crontab implements PipeMessage, CrontabInterface
 {
 
 	const WAIT_END = 'crontab:wait:execute';
@@ -247,7 +247,7 @@ abstract class Crontab implements PipeMessage
 			if (!$this->isMaxExecute()) {
 				return 999;
 			}
-			call_user_func([$this, 'max_execute']);
+			call_user_func([$this, 'onMaxExecute']);
 			return $redis->del('crontab:' . $crontab_name);
 		} catch (\Throwable $throwable) {
 			return $this->application->addError($throwable, 'throwable');
