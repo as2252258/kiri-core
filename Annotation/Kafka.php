@@ -23,7 +23,7 @@ use Snowflake\Snowflake;
      */
     public function __construct(public string $topic)
     {
-
+		var_dump($this->topic);
     }
 
 
@@ -35,7 +35,6 @@ use Snowflake\Snowflake;
 	 */
     public function execute(mixed $class, mixed $method = null): bool
     {
-    	var_dump($class);
         if (!($class instanceof ConsumerInterface)) {
             return false;
         }
