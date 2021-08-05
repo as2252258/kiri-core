@@ -12,7 +12,7 @@ class Struct
 	public int $offset;
 
 	public Message $message;
-	public string $topic;
+	public ?string $topic;
 
 	public mixed $value;
 	public int $part;
