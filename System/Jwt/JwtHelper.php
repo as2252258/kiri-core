@@ -23,7 +23,7 @@ trait JwtHelper
 	private string $secret = '';
 
 
-	private string $encrypt = 'sha384';
+	private string $encrypt = 'sha256';
 
 
 	private ?string $public = '-----BEGIN PUBLIC KEY-----
