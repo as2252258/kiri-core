@@ -9,10 +9,11 @@ use Annotation\Aspect;
 use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
-use HttpServer\Abstracts\HttpService;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
+use Server\Events\OnAfterWorkerStart;
+use Snowflake\Events\EventProvider;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\IAspect;
 use Snowflake\Snowflake;
@@ -21,7 +22,7 @@ use Snowflake\Snowflake;
  * Class Node
  * @package Snowflake\Snowflake\Route
  */
-class Node extends HttpService
+class Node
 {
 
 	public string $path = '';
@@ -36,6 +37,8 @@ class Node extends HttpService
 	private string $_error = '';
 
 	private string $_dataType = '';
+
+	private array|Closure|null $_handler = null;
 
 	public string $htmlSuffix = '.html';
 	public bool $enableHtmlSuffix = false;
@@ -56,6 +59,17 @@ class Node extends HttpService
 	public function setDataType(string $dataType)
 	{
 		$this->_dataType = $dataType;
+	}
+
+
+	/**
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	public function __construct()
+	{
+		$eventDispatcher = di(EventProvider::class);
+		$eventDispatcher->on(OnAfterWorkerStart::class, [$this, 'setParameters']);
 	}
 
 
@@ -90,7 +104,8 @@ class Node extends HttpService
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
 		}
-		return $this->setParameters($handler);
+		$this->_handler = $handler;
+		return $this;
 	}
 
 
@@ -176,19 +191,22 @@ class Node extends HttpService
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
 	 */
-	public function setParameters($handler): static
+	public function setParameters(): static
 	{
 		$container = Snowflake::getDi();
-		if ($handler instanceof Closure) {
-			$this->_injectParameters = $container->resolveFunctionParameters($handler);
+
+		$dispatcher = $this->_handler;
+		unset($this->_handler);
+		if ($dispatcher instanceof Closure) {
+			$this->_injectParameters = $container->resolveFunctionParameters($dispatcher);
 		} else {
-			[$controller, $action] = $handler;
+			[$controller, $action] = $dispatcher;
 			if (is_object($controller)) {
 				$controller = get_class($controller);
 			}
 			$this->_injectParameters = $container->getMethodParameters($controller, $action);
 		}
-		return $this->injectMiddleware($handler);
+		return $this->injectMiddleware($dispatcher);
 	}
 
 

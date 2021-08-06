@@ -7,6 +7,7 @@ use Annotation\Inject;
 use Exception;
 use ReflectionException;
 use Server\Constant;
+use Server\Events\OnAfterWorkerStart;
 use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStart;
@@ -56,6 +57,8 @@ class OnServerWorker extends \Server\Abstracts\Server
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
+
+		$this->eventDispatch->dispatch(new OnAfterWorkerStart());
 	}
 
 

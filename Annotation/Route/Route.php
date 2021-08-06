@@ -37,13 +37,6 @@ use Snowflake\Snowflake;
 	{
 		// TODO: Implement setHandler() method.
 		$router = Snowflake::app()->getRouter();
-		$attribute = Snowflake::getDi()->getMethodAttribute($class::class, $method);
-		foreach ($attribute as $item) {
-			if ($item instanceof Route) {
-				continue;
-			}
-			$item->execute($class, $method);
-		}
 		$router->addRoute($this->uri, [$class, $method], $this->method);
 		return $router;
 	}
