@@ -22,8 +22,6 @@ class Jwt extends Component
 	use JwtHelper;
 
 
-	/** @var Request */
-	#[Inject(Request::class)]
 	private Request $request;
 
 
@@ -33,6 +31,7 @@ class Jwt extends Component
 	 */
 	public function init()
 	{
+		$this->request = di(Request::class);
 		if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
 			return;
 		}
