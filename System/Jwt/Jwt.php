@@ -101,7 +101,11 @@ class Jwt extends Component
 	 */
 	public function getUnionId($token): string|int
 	{
-		return $this->unpack($token)['unionId'];
+		$unpack = $this->unpack($token);
+		if (!$this->_validator($unpack)) {
+			throw new JWTAuthTokenException('JWT certificate has expired.');
+		}
+		return $unpack['unionId'];
 	}
 
 
@@ -112,7 +116,16 @@ class Jwt extends Component
 	 */
 	public function validator($token): bool
 	{
-		$unpack = $this->unpack($token);
+		return $this->_validator($this->unpack($token));
+	}
+
+
+	/**
+	 * @param $unpack
+	 * @return bool
+	 */
+	private function _validator($unpack): bool
+	{
 		if ($unpack['expire_at'] < time()) {
 			return false;
 		}
