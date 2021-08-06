@@ -302,11 +302,9 @@ class ServerManager extends Abstracts\Server
 		if (!($pid = $this->portIsAlready($port))) {
 			return;
 		}
-
-		exec('kill -15 ' . $pid, $execResult);
 		while ($this->portIsAlready($port)) {
-			usleep(100);
-			exec('kill -15 ' . $pid, $execResult);
+			exec('kill ' . $pid, $execResult);
+			usleep(300);
 		}
 	}
 
