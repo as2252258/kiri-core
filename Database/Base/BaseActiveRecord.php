@@ -511,6 +511,9 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	private function updateInternal($fields, $condition, $param): bool|static
 	{
+		if (empty($param)) {
+			return true;
+		}
 		if ($this->hasPrimary()) {
 			$condition = [$this->getPrimary() => $this->getPrimaryValue()];
 		}
