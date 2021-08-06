@@ -194,7 +194,6 @@ class ServerManager extends Abstracts\Server
 			Constant::MANAGER_STOP  => '',
 			Constant::BEFORE_RELOAD => '',
 			Constant::AFTER_RELOAD  => '',
-			Constant::DISCONNECT    => '',
 			Constant::START         => '',
 		]);
 	}
