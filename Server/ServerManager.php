@@ -27,7 +27,7 @@ use Swoole\WebSocket\Server as WServer;
 class ServerManager extends Abstracts\Server
 {
 
-    /** @var string  */
+	/** @var string */
 	public string $host = '';
 
 	public int $port = 0;
@@ -79,7 +79,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
-		if ($this->portIsAready($port)) $this->stopServer($port);
+		if ($this->portIsAlready($port)) $this->stopServer($port);
 		if (!$this->server) {
 			$this->createBaseServer($type, $host, $port, $mode, $settings);
 		} else {
@@ -300,12 +300,12 @@ class ServerManager extends Abstracts\Server
 	 */
 	public function stopServer(int $port)
 	{
-		if (!($pid = $this->portIsAready($port))) {
+		if (!($pid = $this->portIsAlready($port))) {
 			return;
 		}
 
-		exec('kill ' . $pid, $execResult);
-		while ($this->portIsAready($port)) {
+		exec('kill -15 ' . $pid, $execResult);
+		while ($this->portIsAlready($port)) {
 			usleep(100);
 		}
 	}
@@ -315,7 +315,7 @@ class ServerManager extends Abstracts\Server
 	 * @param $port
 	 * @return bool|string
 	 */
-	private function portIsAready($port): bool|string
+	private function portIsAlready($port): bool|string
 	{
 		exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
 		if (empty($output)) {
