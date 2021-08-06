@@ -194,9 +194,10 @@ class Node
 	public function setParameters(): static
 	{
 		$container = Snowflake::getDi();
-
+		if (empty($this->_handler)){
+			return $this;
+		}
 		$dispatcher = $this->_handler;
-		unset($this->_handler);
 		if ($dispatcher instanceof Closure) {
 			$this->_injectParameters = $container->resolveFunctionParameters($dispatcher);
 		} else {
