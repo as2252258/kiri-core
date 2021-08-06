@@ -9,6 +9,7 @@ use Annotation\Aspect;
 use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
+use HttpServer\Exception\RequestException;
 use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
@@ -194,7 +195,7 @@ class Node
 	public function setParameters(): static
 	{
 		$container = Snowflake::getDi();
-		if (empty($this->_handler)){
+		if (empty($this->_handler)) {
 			return $this;
 		}
 		$dispatcher = $this->_handler;
@@ -393,7 +394,7 @@ class Node
 	{
 		$handlerProviders = $this->getHandlerProviders()->get($this->sourcePath, $this->method);
 		if (empty($handlerProviders)) {
-			return '<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>';
+			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}
 		return call_user_func($handlerProviders, \request());
 	}
