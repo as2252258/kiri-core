@@ -11,6 +11,7 @@ use HttpServer\Http\Context;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\IInterface\Middleware;
+use Server\RequestInterface;
 use Snowflake\Snowflake;
 
 /**
@@ -32,15 +33,13 @@ class CoreMiddleware implements Middleware
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function onHandler(Request $request, Closure $next): mixed
+	public function onHandler(RequestInterface $request, Closure $next): mixed
 	{
-		$headers = $request->headers;
-
 		/** @var Response $response */
 		$response = Snowflake::getApp('response');
 		$response->addHeader('Access-Control-Allow-Origin', '*');
-		$response->addHeader('Access-Control-Allow-Headers', $headers->get('access-control-request-headers'));
-		$response->addHeader('Access-Control-Request-Method', $headers->get('access-control-request-method'));
+		$response->addHeader('Access-Control-Allow-Headers', $request->header('access-control-request-headers'));
+		$response->addHeader('Access-Control-Request-Method', $request->header('access-control-request-method'));
 
 		return $next($request);
 	}
