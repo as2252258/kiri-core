@@ -306,6 +306,7 @@ class ServerManager extends Abstracts\Server
 		exec('kill -15 ' . $pid, $execResult);
 		while ($this->portIsAlready($port)) {
 			usleep(100);
+			exec('kill -15 ' . $pid, $execResult);
 		}
 	}
 
