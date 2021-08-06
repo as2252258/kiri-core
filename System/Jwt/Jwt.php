@@ -138,7 +138,7 @@ class Jwt extends Component
 	 * @return mixed
 	 * @throws JWTAuthTokenException
 	 */
-	private function unpack(string $token): string
+	private function unpack(string $token): array
 	{
 		if (count($explode = explode('.', $token)) != 3) {
 			throw new JWTAuthTokenException('JWT Voucher Format Error.');
