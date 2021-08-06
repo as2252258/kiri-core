@@ -538,17 +538,14 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 		if (!is_null($data)) {
 			$this->_attributes = merge($this->_attributes, $data);
 		}
-		if (!$this->validator($this->rules())) {
+		if (!$this->validator($this->rules()) || !$this->beforeSave($this)) {
 			return false;
 		}
-		if ($this->beforeSave($this)) {
-			[$change, $condition, $fields] = $this->filtration_and_separation();
-			if (!$this->isNewExample) {
-				return $this->updateInternal($fields, $condition, $change);
-			}
-			return $this->insert($change, $fields);
+		[$change, $condition, $fields] = $this->separation();
+		if (!$this->isNewExample) {
+			return $this->updateInternal($fields, $condition, $change);
 		}
-		return false;
+		return $this->insert($change, $fields);
 	}
 
 
@@ -618,7 +615,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 * @return array
 	 * @throws Exception
 	 */
-	private function filtration_and_separation(): array
+	private function separation(): array
 	{
 		$_tmp = [];
 		$condition = [];
