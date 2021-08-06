@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Snowflake\Jwt;
 
-use Annotation\Inject;
 use Exception;
 use Server\Constrict\Request;
 use Snowflake\Abstracts\Component;
@@ -97,10 +96,10 @@ class Jwt extends Component
 
 	/**
 	 * @param $token
-	 * @return string
+	 * @return string|int
 	 * @throws JWTAuthTokenException
 	 */
-	public function getUnionId($token): string
+	public function getUnionId($token): string|int
 	{
 		return $this->unpack($token)['unionId'];
 	}
