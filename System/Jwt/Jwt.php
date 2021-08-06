@@ -134,7 +134,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 		$this->user = $unionId;
 		$this->config['time'] = time();
 		if (empty($headers)) {
-			$headers = request()->headers->getHeaders();
+			$headers = request()->getHeaders();
 		} else if ($headers instanceof HttpHeaders) {
 			$headers = $headers->getHeaders();
 		}
@@ -397,7 +397,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	 */
 	public function getCurrentOnlineUser(): int
 	{
-		$this->data = request()->headers->getHeaders();
+		$this->data = request()->getHeaders();
 
 		return $this->loadByCache();
 	}
@@ -452,7 +452,7 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	{
 		$instance = Snowflake::app()->getJwt();
 		if (empty($header)) {
-			$header = request()->headers->getHeaders();
+			$header = request()->getHeaders();
 		}
 
 		$instance->data = $header;
