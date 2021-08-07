@@ -48,7 +48,6 @@ use Snowflake\Pool\Pool;
  * @property HttpFilter $filter
  * @property RPCProducer $rpc
  * @property Shutdown $shutdown
- * @property Pool $clientsPool
  */
 trait TraitApplication
 {

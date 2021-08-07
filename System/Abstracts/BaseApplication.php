@@ -440,16 +440,6 @@ abstract class BaseApplication extends Component
 
 
 	/**
-	 * @return Pool
-	 * @throws Exception
-	 */
-	public function getClientsPool(): Pool
-	{
-		return $this->get('clientsPool');
-	}
-
-
-	/**
 	 * @param $array
 	 * @throws \ReflectionException
 	 * @throws \Snowflake\Exception\NotFindClassException
@@ -493,7 +483,6 @@ abstract class BaseApplication extends Component
 			'error'             => ['class' => ErrorHandler::class],
 			'connections'       => ['class' => Connection::class],
 			'redis_connections' => ['class' => SRedis::class],
-			'clientsPool'       => ['class' => Pool::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
 			'annotation'        => ['class' => SAnnotation::class],
