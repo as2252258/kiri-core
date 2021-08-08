@@ -70,7 +70,7 @@ class LocalService extends Component
      */
     public function has($id): bool
     {
-        return isset($this->_components[$id], $this->_definition[$id]);
+        return isset($this->_components[$id]) || isset($this->_definition[$id]);
     }
 
 
