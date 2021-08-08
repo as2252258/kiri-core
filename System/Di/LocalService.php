@@ -29,9 +29,6 @@ class LocalService extends Component
         unset($this->_components[$name]);
 
         $this->_definition[$name] = $define;
-        if (is_array($define)) {
-            $this->_components[$name] = Snowflake::createObject($define);
-        }
     }
 
 
