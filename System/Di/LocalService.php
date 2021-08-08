@@ -40,8 +40,8 @@ class LocalService extends Component
         if (isset($this->_components[$name])) {
             return $this->_components[$name];
         }
-        if (isset($this->_definitions[$name])) {
-            $definition = $this->_definitions[$name];
+        if (isset($this->_definition[$name])) {
+            $definition = $this->_definition[$name];
             if (is_object($definition) && !$definition instanceof \Closure) {
                 return $this->_components[$name] = $definition;
             }
