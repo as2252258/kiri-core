@@ -188,16 +188,12 @@ class Snowflake
      */
     public static function createObject($className, array $construct = []): mixed
     {
-        if (is_callable($className, TRUE)) {
-            return call_user_func($className, $construct);
-        } else if (is_string($className) && class_exists($className)) {
+        if (is_string($className) && class_exists($className)) {
             return static::$container->get($className, $construct);
         } else if (is_array($className) && isset($class['class'])) {
             $class = $className['class'];
             unset($className['class']);
             return static::$container->newObject($class, $construct, $className);
-        } else if (is_callable($className, TRUE)) {
-            return call_user_func($className, $construct);
         } else if (is_callable($className, TRUE)) {
             return call_user_func($className, $construct);
         } else {
