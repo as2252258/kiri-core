@@ -23,7 +23,7 @@ class Config extends Component
 
 	const ERROR_MESSAGE = 'The not find %s in app configs.';
 
-	protected mixed $data = null;
+	protected mixed $data = [];
 
 
 	/**
