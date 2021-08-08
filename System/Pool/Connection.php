@@ -50,7 +50,7 @@ class Connection extends Component
             return;
         }
         $connection = Context::getContext($coroutineName);
-        if (!$connection?->inTransaction()) {
+        if ($connection instanceof PDO && !$connection->inTransaction()) {
             $connection->beginTransaction();
         }
     }
@@ -66,7 +66,7 @@ class Connection extends Component
             return;
         }
         $connection = Context::getContext($coroutineName);
-        if ($connection?->inTransaction()) {
+        if ($connection instanceof PDO && $connection->inTransaction()) {
             $connection->commit();
         }
     }
@@ -83,7 +83,7 @@ class Connection extends Component
             return;
         }
         if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
-            if ($connection?->inTransaction()) {
+            if ($connection->inTransaction()) {
                 $connection->rollBack();
             }
         }
