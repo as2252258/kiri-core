@@ -46,7 +46,9 @@ use Snowflake\Snowflake;
 		if ($method->isPrivate() || $method->isProtected()) {
 			$this->setter($class, $method, $injectValue);
 		} else {
-		    var_dump($injectValue);
+		    if (is_string($injectValue)){
+		        var_dump($injectValue);
+            }
 			$class->{$method->getName()} = $injectValue;
 		}
 		return true;
