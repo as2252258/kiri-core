@@ -35,7 +35,6 @@ use Snowflake\Pool\Pool;
  * @property Request $request
  * @property DatabasesProviders $db
  * @property Async $async
- * @property Connection $connections
  * @property Logger $logger
  * @property Jwt $jwt
  * @property SAnnotation $annotation

@@ -211,7 +211,7 @@ class Connection extends Component
 	 */
 	private function connections(): \Snowflake\Pool\Connection
 	{
-		return Snowflake::app()->getMysqlFromPool();
+		return Snowflake::getDi()->get(\Snowflake\Pool\Connection::class);
 	}
 
 

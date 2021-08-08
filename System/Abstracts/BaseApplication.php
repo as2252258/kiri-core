@@ -11,6 +11,7 @@ namespace Snowflake\Abstracts;
 
 
 use Annotation\Annotation as SAnnotation;
+use Database\Connection;
 use Exception;
 use HttpServer\Client\Http2;
 use HttpServer\Http\HttpHeaders;
@@ -24,20 +25,19 @@ use HttpServer\Shutdown;
 use JetBrains\PhpStorm\Pure;
 use Kafka\KafkaProvider;
 use ReflectionException;
+use Rpc\Producer;
+use Rpc\Service;
 use Server\ServerManager;
 use Snowflake\Aop;
 use Snowflake\Async;
 use Snowflake\Cache\Redis;
-use Snowflake\Di\Service;
+use Snowflake\Di\LocalService;
 use Snowflake\Error\ErrorHandler;
 use Snowflake\Error\Logger;
 use Snowflake\Event;
 use Snowflake\Exception\InitException;
 use Snowflake\Exception\NotFindClassException;
 use Snowflake\Jwt\Jwt;
-use Snowflake\Pool\Connection;
-use Snowflake\Pool\Pool;
-use Snowflake\Pool\Redis as SRedis;
 use Snowflake\Snowflake;
 use Swoole\Table;
 
@@ -269,7 +269,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function get($name): mixed
 	{
-		return di(Service::class)->get($name);
+		return di(LocalService::class)->get($name);
 	}
 
 
@@ -326,26 +326,6 @@ abstract class BaseApplication extends Component
 	public function getError(): ErrorHandler
 	{
 		return $this->get('error');
-	}
-
-
-	/**
-	 * @return Connection
-	 * @throws Exception
-	 */
-	public function getMysqlFromPool(): Connection
-	{
-		return $this->get('connections');
-	}
-
-
-	/**
-	 * @return SRedis
-	 * @throws Exception
-	 */
-	public function getRedisFromPool(): SRedis
-	{
-		return $this->get('redis_connections');
 	}
 
 
@@ -433,7 +413,7 @@ abstract class BaseApplication extends Component
 	 * @return \Rpc\Producer
 	 * @throws Exception
 	 */
-	public function getRpc(): \Rpc\Producer
+	public function getRpc(): Producer
 	{
 		return $this->get('rpc');
 	}
@@ -446,7 +426,7 @@ abstract class BaseApplication extends Component
 	 */
 	private function setComponents($array): void
 	{
-		di(Service::class)->setComponents($array);
+		di(LocalService::class)->setComponents($array);
 	}
 
 
@@ -458,7 +438,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function set($id, $definition): void
 	{
-		di(Service::class)->set($id, $definition);
+		di(LocalService::class)->set($id, $definition);
 	}
 
 
@@ -470,7 +450,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function has($id): bool
 	{
-		return di(Service::class)->has($id);
+		return di(LocalService::class)->has($id);
 	}
 
 
@@ -481,27 +461,23 @@ abstract class BaseApplication extends Component
 	{
 		$this->setComponents([
 			'error'             => ['class' => ErrorHandler::class],
-			'connections'       => ['class' => Connection::class],
-			'redis_connections' => ['class' => SRedis::class],
 			'config'            => ['class' => Config::class],
 			'logger'            => ['class' => Logger::class],
 			'annotation'        => ['class' => SAnnotation::class],
 			'router'            => ['class' => Router::class],
 			'event'             => ['class' => Event::class],
 			'redis'             => ['class' => Redis::class],
-			'databases'         => ['class' => \Database\Connection::class],
+			'databases'         => ['class' => Connection::class],
 			'aop'               => ['class' => Aop::class],
 			'input'             => ['class' => HttpParams::class],
 			'header'            => ['class' => HttpHeaders::class],
 			'jwt'               => ['class' => Jwt::class],
 			'async'             => ['class' => Async::class],
 			'kafka-container'   => ['class' => KafkaProvider::class],
-			'filter'            => ['class' => HttpFilter::class],
-			'goto'              => ['class' => BaseGoto::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],
-			'rpc'               => ['class' => \Rpc\Producer::class],
-			'rpc-service'       => ['class' => \Rpc\Service::class],
+			'rpc'               => ['class' => Producer::class],
+			'rpc-service'       => ['class' => Service::class],
 			'http2'             => ['class' => Http2::class],
 			'shutdown'          => ['class' => Shutdown::class],
 		]);

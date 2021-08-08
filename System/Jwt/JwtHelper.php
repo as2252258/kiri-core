@@ -23,6 +23,9 @@ trait JwtHelper
 	private string $secret = '';
 
 
+	private string $scene = 'default';
+
+
 	private string $encrypt = 'sha256';
 
 
@@ -80,6 +83,13 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	{
 		$this->timeout = $timeout;
 	}
+
+
+	public function setScene(string $scene)
+    {
+	    $this->scene = $scene;
+    }
+
 
 	/**
 	 * @param string $timeout

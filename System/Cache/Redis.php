@@ -19,11 +19,11 @@ use Snowflake\Core\Json;
 use Snowflake\Events\EventProvider;
 use Snowflake\Exception\ConfigException;
 use Snowflake\Snowflake;
+use Snowflake\Pool\Redis as PoolRedis;
 
 /**
  * Class Redis
  * @package Snowflake\Snowflake\Cache
- * @see \Redis
  * @mixin \Redis
  */
 class Redis extends Component
@@ -42,7 +42,7 @@ class Redis extends Component
 	 */
 	public function init()
 	{
-		$connections = Snowflake::app()->getRedisFromPool();
+        $connections = Snowflake::getDi()->get(PoolRedis::class);
 
 		$config = $this->get_config();
 
@@ -114,7 +114,7 @@ SCRIPT;
 	 */
 	public function release()
 	{
-		$connections = Snowflake::app()->getRedisFromPool();
+        $connections = Snowflake::getDi()->get(PoolRedis::class);
 		$connections->release($this->get_config(), true);
 	}
 
@@ -125,7 +125,7 @@ SCRIPT;
 	 */
 	public function destroy()
 	{
-		$connections = Snowflake::app()->getRedisFromPool();
+		$connections = Snowflake::getDi()->get(PoolRedis::class);
 		$connections->destroy($this->get_config(), true);
 	}
 
@@ -135,7 +135,7 @@ SCRIPT;
 	 */
 	public function proxy(): \Redis
 	{
-		$connections = Snowflake::app()->getRedisFromPool();
+        $connections = Snowflake::getDi()->get(PoolRedis::class);
 
 		$config = $this->get_config();
 
