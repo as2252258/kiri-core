@@ -190,7 +190,7 @@ class Snowflake
     {
         if (is_string($className) && class_exists($className)) {
             return static::$container->get($className, $construct);
-        } else if (is_array($className) && isset($class['class'])) {
+        } else if (is_array($className) && isset($className['class'])) {
             $class = $className['class'];
             unset($className['class']);
             return static::$container->newObject($class, $construct, $className);
