@@ -90,6 +90,10 @@ class Connection extends Component
 		$this->eventProvider->on(Rollback::class, [$this, 'rollback'], 0);
 		$this->eventProvider->on(Commit::class, [$this, 'commit'], 0);
 
+		if (Db::transactionsActive()) {
+		    $this->beginTransaction();
+        }
+
 		$this->_schema->db = $this;
 	}
 
