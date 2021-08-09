@@ -46,9 +46,6 @@ class Connection extends Component
         if (!Context::hasContext('begin_' . $coroutineName)) {
             Context::setContext('begin_' . $coroutineName, 0);
         }
-        if (Context::increment('begin_' . $coroutineName) != 0) {
-            return;
-        }
         $connection = Context::getContext($coroutineName);
         if ($connection instanceof PDO && !$connection->inTransaction()) {
             $connection->beginTransaction();
@@ -104,8 +101,8 @@ class Connection extends Component
         }
         /** @var PDO $connections */
         $connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config));
-        if ($number = Context::getContext('begin_' . $coroutineName)) {
-            $number > 0 && $connections->beginTransaction();
+        if (Context::hasContext('begin_' . $coroutineName)) {
+            $connections->beginTransaction();
         }
         return Context::setContext($coroutineName, $connections);
     }
