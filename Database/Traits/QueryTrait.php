@@ -67,7 +67,7 @@ trait QueryTrait
 	 * @param callable $callable
 	 * @return $this
 	 */
-	public function case(string $column, callable $callable): static
+	public function when(string $column, callable $callable): static
 	{
 		$caseWhen = new When($column, $this);
 
@@ -80,6 +80,17 @@ trait QueryTrait
 
 
 	/**
+	 * @param string $whereRaw
+	 * @return QueryTrait
+	 */
+	public function whereRaw(string $whereRaw): static
+	{
+		$this->where[] = $whereRaw;
+		return $this;
+	}
+
+
+	/**
 	 * @param string|array $condition
 	 * @param string|array|Closure $condition1
 	 * @param string|array|Closure $condition2
@@ -87,7 +98,7 @@ trait QueryTrait
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function if(string|array $condition, string|array|Closure $condition1, string|array|Closure $condition2): static
+	public function whereIf(string|array $condition, string|array|Closure $condition1, string|array|Closure $condition2): static
 	{
 		if (!is_string($condition)) {
 			$condition = $this->makeClosureFunction($condition, true);
@@ -147,7 +158,7 @@ trait QueryTrait
 	 * @param string $value
 	 * @return $this
 	 */
-	public function locate(string $column, string $value): static
+	public function whereLocate(string $column, string $value): static
 	{
 		$this->where[] = 'LOCATE(' . $column . ',\'' . addslashes($value) . '\') > 0';
 		return $this;
@@ -155,10 +166,10 @@ trait QueryTrait
 
 
 	/**
-	 * @param $column
+	 * @param string $column
 	 * @return $this
 	 */
-	public function isNull($column): static
+	public function whereNull(string $column): static
 	{
 		$this->where[] = $column . ' IS NULL';
 		return $this;
@@ -166,41 +177,40 @@ trait QueryTrait
 
 
 	/**
-	 * @param $column
+	 * @param string $column
 	 * @return $this
 	 */
-	public function isEmpty($column): static
+	public function whereEmpty(string $column): static
 	{
 		$this->where[] = $column . ' = \'\'';
 		return $this;
 	}
 
 	/**
-	 * @param $column
+	 * @param string $column
 	 * @return $this
 	 */
-	public function isNotEmpty($column): static
+	public function whereNotEmpty(string $column): static
 	{
 		$this->where[] = $column . ' <> \'\'';
 		return $this;
 	}
 
 	/**
-	 * @param $column
+	 * @param string $column
 	 * @return $this
 	 */
-	public function isNotNull($column): static
+	public function whereNotNull(string $column): static
 	{
 		$this->where[] = $column . ' IS NOT NULL';
 		return $this;
 	}
 
 	/**
-	 * @param $columns
+	 * @param array|Closure|string $columns
 	 * @return $this
-	 * @throws Exception
 	 */
-	public function filter($columns): static
+	public function filter(array|Closure|string $columns): static
 	{
 		if (!$columns) {
 			return $this;
@@ -374,21 +384,21 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param $field
+	 * @param string $field
 	 *
 	 * @return $this
 	 */
-	public function sum($field): static
+	public function sum(string $field): static
 	{
 		$this->select[] = 'SUM(' . $field . ') AS ' . $field;
 		return $this;
 	}
 
 	/**
-	 * @param $field
+	 * @param string $field
 	 * @return $this
 	 */
-	public function max($field): static
+	public function max(string $field): static
 	{
 		$this->select[] = 'MAX(' . $field . ') AS ' . $field;
 		return $this;
@@ -410,7 +420,7 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param        $column
+	 * @param string|array $column
 	 * @param string $sort
 	 *
 	 * @return $this
@@ -420,7 +430,7 @@ trait QueryTrait
 	 *     'descTime desc'
 	 * ]
 	 */
-	public function orderBy($column, string $sort = 'DESC'): static
+	public function orderBy(string|array $column, string $sort = 'DESC'): static
 	{
 		if (empty($column)) {
 			return $this;
@@ -437,13 +447,13 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param        $column
+	 * @param string $column
 	 * @param string $sort
 	 *
 	 * @return $this
 	 *
 	 */
-	private function addOrder($column, string $sort = 'DESC'): static
+	private function addOrder(string $column, string $sort = 'DESC'): static
 	{
 		$column = trim($column);
 
@@ -489,7 +499,7 @@ trait QueryTrait
 	 *
 	 * @return QueryTrait
 	 */
-	public function or(array $conditionArray = []): static
+	public function whereOr(array $conditionArray = []): static
 	{
 		$this->where = ['or', $conditionArray];
 		return $this;
@@ -502,7 +512,7 @@ trait QueryTrait
 	 * @param string $opera
 	 * @return QueryTrait
 	 */
-	public function and(string $columns, string|int|null|bool $value = NULL, string $opera = '='): static
+	public function whereAnd(string $columns, string|int|null|bool $value = NULL, string $opera = '='): static
 	{
 		if (!is_numeric($value) && !is_bool($value)) {
 			$value = '\'' . $value . '\'';
@@ -513,12 +523,12 @@ trait QueryTrait
 
 
 	/**
-	 * @param $columns
+	 * @param string $columns
 	 * @param string $value
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function like($columns, string $value): static
+	public function whereLike(string $columns, string $value): static
 	{
 		if (empty($columns) || empty($value)) {
 			return $this;
@@ -534,12 +544,12 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param $columns
+	 * @param string $columns
 	 * @param string $value
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function lLike($columns, string $value): static
+	public function whereLeftLike(string $columns, string $value): static
 	{
 		if (empty($columns) || empty($value)) {
 			return $this;
@@ -555,12 +565,12 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param $columns
+	 * @param string $columns
 	 * @param string $value
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function rLike($columns, string $value): static
+	public function whereRightLike(string $columns, string $value): static
 	{
 		if (empty($columns) || empty($value)) {
 			return $this;
@@ -577,12 +587,12 @@ trait QueryTrait
 
 
 	/**
-	 * @param $columns
+	 * @param string $columns
 	 * @param string $value
 	 * @return $this
 	 * @throws Exception
 	 */
-	public function notLike($columns, string $value): static
+	public function whereNotLike(string $columns, string $value): static
 	{
 		if (empty($columns) || empty($value)) {
 			return $this;
@@ -604,7 +614,7 @@ trait QueryTrait
 	 * @throws Exception
 	 * @see MathematicsCondition
 	 */
-	public function eq(string $column, int $value): static
+	public function whereEq(string $column, int $value): static
 	{
 		$this->where[] = ['EQ', $column, $value];
 
@@ -619,7 +629,7 @@ trait QueryTrait
 	 * @throws Exception
 	 * @see MathematicsCondition
 	 */
-	public function neq(string $column, int $value): static
+	public function whereNeq(string $column, int $value): static
 	{
 		$this->where[] = ['NEQ', $column, $value];
 
@@ -634,7 +644,7 @@ trait QueryTrait
 	 * @throws Exception
 	 * @see MathematicsCondition
 	 */
-	public function gt(string $column, int $value): static
+	public function whereGt(string $column, int $value): static
 	{
 		$this->where[] = ['GT', $column, $value];
 
@@ -648,7 +658,7 @@ trait QueryTrait
 	 * @throws Exception
 	 * @see MathematicsCondition
 	 */
-	public function egt(string $column, int $value): static
+	public function whereEgt(string $column, int $value): static
 	{
 		$this->where[] = ['EGT', $column, $value];
 
@@ -663,7 +673,7 @@ trait QueryTrait
 	 * @throws Exception
 	 * @see MathematicsCondition
 	 */
-	public function lt(string $column, int $value): static
+	public function whereLt(string $column, int $value): static
 	{
 		$this->where[] = ['LT', $column, $value];
 
@@ -677,7 +687,7 @@ trait QueryTrait
 	 * @throws Exception
 	 * @see MathematicsCondition
 	 */
-	public function elt(string $column, int $value): static
+	public function whereElt(string $column, int $value): static
 	{
 		$this->where[] = ['ELT', $column, $value];
 
@@ -685,12 +695,13 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param $columns
-	 * @param $value
+	 * @param string $columns
+	 * @param array|Closure $value
 	 * @return $this
-	 * @throws Exception
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function in($columns, $value): static
+	public function whereIn(string $columns, array|Closure $value): static
 	{
 		if ($value instanceof Closure) {
 			$value = $this->makeClosureFunction($value);
@@ -731,12 +742,11 @@ trait QueryTrait
 
 
 	/**
-	 * @param $columns
-	 * @param $value
+	 * @param string $columns
+	 * @param array $value
 	 * @return $this
-	 * @throws Exception
 	 */
-	public function notIn($columns, $value): static
+	public function whereNotIn(string $columns, array $value): static
 	{
 		if (empty($value) || !is_array($value)) {
 			$value = [-1];
@@ -751,7 +761,7 @@ trait QueryTrait
 	 * @param int $end
 	 * @return $this
 	 */
-	public function between(string $column, int $start, int $end): static
+	public function whereBetween(string $column, int $start, int $end): static
 	{
 		if (empty($column) || empty($start) || empty($end)) {
 			return $this;
@@ -768,7 +778,7 @@ trait QueryTrait
 	 * @param int $end
 	 * @return $this
 	 */
-	public function notBetween(string $column, int $start, int $end): static
+	public function whereNotBetween(string $column, int $start, int $end): static
 	{
 		if (empty($column) || empty($start) || empty($end)) {
 			return $this;
@@ -794,13 +804,12 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param callable|array|string $conditions
+	 * @param callable|array $conditions
 	 * @return $this
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws Exception
 	 */
-	public function where(callable|array|string $conditions): static
+	public function where(callable|array $conditions): static
 	{
 		if ($conditions instanceof Closure) {
 			$conditions = $this->makeClosureFunction($conditions);
