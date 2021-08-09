@@ -45,6 +45,17 @@ class SqlBuilder extends Component
 
 
 	/**
+	 * @param array $compiler
+	 * @return string
+	 * @throws Exception
+	 */
+	public function hashCompiler(array $compiler): string
+	{
+		return $this->where($compiler);
+	}
+
+
+	/**
 	 * @param array $attributes
 	 * @return bool|array
 	 * @throws Exception
@@ -95,7 +106,6 @@ class SqlBuilder extends Component
 
 		return [$update, $params];
 	}
-
 
 
 	/**

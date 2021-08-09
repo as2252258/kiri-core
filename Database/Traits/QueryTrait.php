@@ -816,11 +816,15 @@ trait QueryTrait
 	 * @return $this
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function where(Closure|array $conditions): static
 	{
 		if ($conditions instanceof Closure) {
 			$conditions = $this->makeClosureFunction($conditions);
+		}
+		if (is_array($conditions)) {
+			$conditions = $this->builder->hashCompiler($conditions);
 		}
 		$this->where[] = $conditions;
 		return $this;
