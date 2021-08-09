@@ -45,7 +45,7 @@ class Connection extends Component
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
 		if (!Context::hasContext('begin_' . $coroutineName)) {
-			Context::setContext('begin_' . $coroutineName, 0);
+			Context::setContext('begin_' . $coroutineName, 1);
 		}
 		Context::increment('begin_' . $coroutineName);
 
