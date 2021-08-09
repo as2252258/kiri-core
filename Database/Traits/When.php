@@ -5,9 +5,11 @@ namespace Database\Traits;
 
 
 use Database\ActiveQuery;
+use Database\ISqlBuilder;
 use Database\Query;
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Snowflake\Exception\NotFindClassException;
 
 
 /**
@@ -17,7 +19,7 @@ use JetBrains\PhpStorm\Pure;
 class When
 {
 
-	public ActiveQuery|QueryTrait $query;
+	public ActiveQuery|ISqlBuilder $query;
 
 
 	private array $_condition = [];
@@ -28,21 +30,23 @@ class When
 	/**
 	 * CaseWhen constructor.
 	 * @param string $column
-	 * @param ActiveQuery|QueryTrait $activeQuery
+	 * @param ActiveQuery|ISqlBuilder $activeQuery
 	 */
-	public function __construct(public string $column, public ActiveQuery|QueryTrait $activeQuery)
+	public function __construct(public string $column, public ActiveQuery|ISqlBuilder $activeQuery)
 	{
 		$this->_condition[] = 'CASE ' . $column;
 	}
 
 
 	/**
-	 * @param array|string $condition
+	 * @param array|\Closure $condition
 	 * @param string $then
 	 * @return $this
+	 * @throws \ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function when(array|string $condition, string $then): static
+	public function when(array|\Closure $condition, string $then): static
 	{
 		$this->_condition[] = sprintf('WHEN %s THEN %s', $this->activeQuery->makeNewSqlGenerate()
 			->where($condition)

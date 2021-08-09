@@ -24,7 +24,7 @@ class SqlBuilder extends Component
 
 
 	/**
-	 * @param $query
+	 * @param ISqlBuilder|null $query
 	 * @return $this
 	 * @throws Exception
 	 */
