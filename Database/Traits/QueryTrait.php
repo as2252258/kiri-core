@@ -495,12 +495,16 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param array $conditionArray
+	 * @param array|Closure|string $conditionArray
 	 *
 	 * @return QueryTrait
+	 * @throws
 	 */
-	public function whereOr(array $conditionArray = []): static
+	public function whereOr(array|Closure|string $conditionArray = []): static
 	{
+		if ($conditionArray instanceof Closure) {
+			$conditionArray = $this->makeClosureFunction($conditionArray);
+		}
 		$this->where = ['or', $conditionArray];
 		return $this;
 	}
