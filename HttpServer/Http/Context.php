@@ -136,6 +136,7 @@ class Context extends BaseContext
 	/**
 	 * @param $id
 	 * @param null $key
+	 * @param null $coroutineId
 	 * @return bool
 	 */
 	public static function hasContext($id, $key = null, $coroutineId = null): bool
