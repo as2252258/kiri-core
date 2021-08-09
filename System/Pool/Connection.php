@@ -47,7 +47,7 @@ class Connection extends Component
 		if (!Context::hasContext('begin_' . $coroutineName)) {
 			Context::setContext('begin_' . $coroutineName, 0);
 		}
-		Context::increment('begin_' . $coroutineName, 1);
+		Context::increment('begin_' . $coroutineName);
 
 		$connection = Context::getContext($coroutineName);
 		if ($connection instanceof PDO && !$connection->inTransaction()) {
@@ -62,12 +62,11 @@ class Connection extends Component
 	public function commit($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (Context::decrement('begin_' . $coroutineName) > 0) {
-			return;
-		}
-		$connection = Context::getContext($coroutineName);
-		if ($connection instanceof PDO && $connection->inTransaction()) {
-			$connection->commit();
+		if (Context::decrement('begin_' . $coroutineName) == 1) {
+			$connection = Context::getContext($coroutineName);
+			if ($connection instanceof PDO && $connection->inTransaction()) {
+				$connection->commit();
+			}
 		}
 	}
 
@@ -79,12 +78,11 @@ class Connection extends Component
 	public function rollback($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (Context::decrement('begin_' . $coroutineName) > 0) {
-			return;
-		}
-		if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
-			if ($connection->inTransaction()) {
-				$connection->rollBack();
+		if (Context::decrement('begin_' . $coroutineName) == 1) {
+			if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
+				if ($connection->inTransaction()) {
+					$connection->rollBack();
+				}
 			}
 		}
 	}
