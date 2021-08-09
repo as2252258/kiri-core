@@ -39,18 +39,14 @@ class When
 
 
 	/**
-	 * @param array|\Closure $condition
+	 * @param string|int $condition
 	 * @param string $then
 	 * @return $this
-	 * @throws \ReflectionException
-	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function when(array|\Closure $condition, string $then): static
+	public function when(string|int $condition, string $then): static
 	{
-		$this->_condition[] = sprintf('WHEN %s THEN %s', $this->activeQuery->makeNewSqlGenerate()
-			->where($condition)
-			->getCondition(), $then);
+		$this->_condition[] = sprintf('WHEN %s THEN %s', $condition, $then);
 
 		return $this;
 	}

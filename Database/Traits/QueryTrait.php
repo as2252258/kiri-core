@@ -737,7 +737,7 @@ trait QueryTrait
 	 */
 	public function makeNewSqlGenerate(): Query
 	{
-		return Snowflake::createObject(Query::class);
+		return Snowflake::createObject(['class' => Query::class]);
 	}
 
 
@@ -804,12 +804,12 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param callable|array $conditions
+	 * @param Closure|array $conditions
 	 * @return $this
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function where(callable|array $conditions): static
+	public function where(Closure|array $conditions): static
 	{
 		if ($conditions instanceof Closure) {
 			$conditions = $this->makeClosureFunction($conditions);
