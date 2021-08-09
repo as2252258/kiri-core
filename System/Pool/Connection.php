@@ -62,7 +62,7 @@ class Connection extends Component
 	public function commit($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (Context::decrement('begin_' . $coroutineName) != 0) {
+		if (Context::decrement('begin_' . $coroutineName) > 0) {
 			return;
 		}
 		$connection = Context::getContext($coroutineName);
@@ -79,7 +79,7 @@ class Connection extends Component
 	public function rollback($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (Context::decrement('begin_' . $coroutineName) != 0) {
+		if (Context::decrement('begin_' . $coroutineName) > 0) {
 			return;
 		}
 		if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
