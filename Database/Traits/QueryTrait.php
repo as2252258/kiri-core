@@ -40,6 +40,9 @@ trait QueryTrait
 
 	public bool $ifNotWhere = false;
 
+
+	private SqlBuilder $builder;
+
 	/**
 	 * @var ActiveRecord|string|null
 	 */

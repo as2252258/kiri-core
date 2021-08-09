@@ -22,13 +22,22 @@ class Query implements ISqlBuilder
 
 	use QueryTrait;
 
+
+	/**
+	 * @throws Exception
+	 */
+	public function __construct()
+	{
+		$this->builder = SqlBuilder::builder($this);
+	}
+
 	/**
 	 * @return string
 	 * @throws Exception
 	 */
 	public function getSql(): string
 	{
-		return SqlBuilder::builder($this)->get();
+		return $this->builder->get();
 	}
 
 
@@ -38,7 +47,7 @@ class Query implements ISqlBuilder
 	 */
 	public function getCondition(): string
 	{
-		return SqlBuilder::builder($this)->getCondition();
+		return $this->builder->getCondition();
 	}
 
 

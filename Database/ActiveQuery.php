@@ -43,8 +43,6 @@ class ActiveQuery extends Component implements ISqlBuilder
 	public array $attributes = [];
 
 
-	private SqlBuilder $builder;
-
 
 	/**
 	 * Comply constructor.
