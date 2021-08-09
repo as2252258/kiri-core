@@ -15,6 +15,7 @@ use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Database\Condition\MathematicsCondition;
 use Database\Query;
+use Database\SqlBuilder;
 use Exception;
 use ReflectionException;
 use Snowflake\Exception\NotFindClassException;
@@ -505,7 +506,10 @@ trait QueryTrait
 		if ($conditionArray instanceof Closure) {
 			$conditionArray = $this->makeClosureFunction($conditionArray);
 		}
-		$this->where = ['or', $conditionArray];
+
+		$oldWhere = SqlBuilder::builder((new Query())->where($this->where))->getCondition();
+
+		$this->where = ['or', $conditionArray, $oldWhere];
 		return $this;
 	}
 
