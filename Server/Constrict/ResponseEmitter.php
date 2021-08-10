@@ -47,7 +47,7 @@ class ResponseEmitter
 //		$response->header('Content-Type', 'application/download');
 		$response->header('Content-Disposition', 'attachment;filename=' . end($explode));
 		$response->header('Content-Transfer-Encoding', 'binary');
-
+		$response->setStatusCode(200);
 		if ($content['isChunk'] === false) {
 			$response->sendfile($content['path']);
 			return;
