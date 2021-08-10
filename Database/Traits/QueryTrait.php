@@ -95,45 +95,12 @@ trait QueryTrait
 
 
 	/**
-	 * @param string|array $condition
-	 * @param string|array|Closure $condition1
-	 * @param string|array|Closure $condition2
 	 * @return $this
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
-	public function whereIf(string|array $condition, string|array|Closure $condition1, string|array|Closure $condition2): static
+	public function whereIf(string $condition, string $condition1, string $condition2): static
 	{
-		if (!is_string($condition)) {
-			$condition = $this->makeClosureFunction($condition, true);
-		}
-		if (!is_string($condition1)) {
-			$condition1 = $this->makeClosureFunction($condition1, true);
-		}
-		if (!is_string($condition2)) {
-			$condition2 = $this->makeClosureFunction($condition2, true);
-		}
 		$this->where[] = 'IF(' . $condition . ', ' . $condition1 . ', ' . $condition2 . ')';
 		return $this;
-	}
-
-
-	/**
-	 * @param $condition
-	 * @return string
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	private function conditionToString($condition): string
-	{
-		$newSql = $this->makeNewSqlGenerate();
-		if ($condition instanceof Closure) {
-			call_user_func($condition, $newSql);
-		} else {
-			$newSql->where($condition);
-		}
-		return $newSql->getCondition();
 	}
 
 
@@ -510,9 +477,9 @@ trait QueryTrait
 			$conditionArray = $this->makeClosureFunction($conditionArray);
 		}
 
-		$oldWhere = SqlBuilder::builder((new Query())->where($this->where))->getCondition();
+		$oldWhere = '(' . implode(') AND (', $this->where) . ')';
 
-		$this->where = ['or', $conditionArray, $oldWhere];
+		$this->where = [$oldWhere . ' OR ' . $conditionArray];
 		return $this;
 	}
 
@@ -815,42 +782,40 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param Closure|array $conditions
+	 * @param Closure|array $column
+	 * @param string $opera
+	 * @param null $value
 	 * @return $this
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
-	 * @throws Exception
 	 */
-	public function where(Closure|array $conditions): static
+	public function where(Closure|array $column, string $opera = '=', $value = null): static
 	{
-		if ($conditions instanceof Closure) {
-			$conditions = $this->makeClosureFunction($conditions);
+		if (is_array($column)) {
+			return $this->addArray($column);
 		}
-		if (is_array($conditions)) {
-			$conditions = $this->builder->hashCompiler($conditions);
+		[$column, $opera] = $this->opera($column, $opera);
+		if ($column instanceof Closure) {
+			$this->where[] = $this->makeClosureFunction($column);
+		} else {
+			$this->where[] = "$column $opera $value";
 		}
-		$this->where[] = $conditions;
 		return $this;
 	}
 
 
 	/**
-	 * @param Closure|array $closure
-	 * @param bool $onlyWhere
+	 * @param Closure $closure
 	 * @return string
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function makeClosureFunction(Closure|array $closure, bool $onlyWhere = false): string
+	public function makeClosureFunction(Closure $closure): string
 	{
 		$generate = $this->makeNewSqlGenerate();
-		if ($closure instanceof Closure) {
-			call_user_func($closure, $generate);
-		} else {
-			$generate->where($closure);
-		}
-		return $onlyWhere ? $generate->getCondition() : $generate->getSql();
+		call_user_func($closure, $generate);
+		return $generate->getSql();
 	}
 
 
@@ -881,6 +846,55 @@ trait QueryTrait
 		$this->offset = $offset;
 		$this->limit = $limit;
 		return $this;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	private function opera(): array
+	{
+		if (func_num_args() == 3) {
+			[$column, $opera, $value] = func_get_args();
+		} else {
+			[$column, $value] = func_get_args();
+		}
+		if (!isset($opera)) {
+			$opera = '=';
+		}
+		return [$column, $opera, $value];
+	}
+
+
+	/**
+	 * @param array $array
+	 * @return $this
+	 */
+	private function addArray(array $array): static
+	{
+		foreach ($array as $key => $value) {
+			if (is_numeric($key)) {
+				[$column, $opera, $value] = $this->opera(...$value);
+
+				$this->where[] = $this->sprintf($column, $value, $opera);
+			} else {
+				$this->where[] = $this->sprintf($key, $value);
+			}
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param $column
+	 * @param $value
+	 * @param string $opera
+	 * @return string
+	 */
+	private function sprintf($column, $value, string $opera = '='): string
+	{
+		$value = trim($value, '\'"');
+		return "$column $opera '$value'";
 	}
 
 
