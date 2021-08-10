@@ -5,7 +5,6 @@ namespace Server\Constrict;
 use Exception;
 use HttpServer\Http\Formatter\FileFormatter;
 use Server\ResponseInterface;
-use validator\EnumValidator;
 
 
 /**
@@ -31,6 +30,17 @@ class ResponseEmitter
 	}
 
 
+	const IMAGES = [
+		'png'  => 'image/png',
+		'jpeg' => 'image/jpeg',
+		'gif'  => 'image/gif',
+		'bmp'  => 'image/bmp',
+		'ico'  => 'image/vnd.microsoft.icon',
+		'tiff' => 'image/tiff',
+		'svg'  => 'image/svg+xml',
+	];
+
+
 	/**
 	 * @param array $content
 	 * @param \Swoole\Http\Response $response
@@ -42,13 +52,14 @@ class ResponseEmitter
 		$response->header('Pragma', 'public');
 		$response->header('Expires', '0');
 		$response->header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
-//		$response->header('Content-Type', 'application/force-download');
-		$response->header('Content-Type', 'application/octet-stream');
-//		$response->header('Content-Type', 'application/vnd.ms-excel');
-//		$response->header('Content-Type', 'application/download');
 		$response->header('Content-Disposition', 'attachment;filename=' . end($explode));
-		$response->header('Content-Transfer-Encoding', 'binary');
-
+		$response->header('Content-Type', $type = get_file_extension($content['path']));
+		if (!in_array($type, self::IMAGES)) {
+			$response->header('Content-Transfer-Encoding', 'binary');
+		} else {
+			$response->end(file_get_contents($content['path']));
+			return;
+		}
 		if ($content['isChunk'] === false) {
 			$response->sendfile($content['path']);
 		} else {
@@ -67,7 +78,7 @@ class ResponseEmitter
 
 		$state = fstat($resource);
 
-		$offset = 0;
+		$offset = $content['offset'];
 
 		$response->header('Content-length', $state['size']);
 		while ($file = fread($resource, $content['limit'])) {

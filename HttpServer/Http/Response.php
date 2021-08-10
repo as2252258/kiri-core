@@ -121,13 +121,13 @@ class Response extends HttpService implements ResponseInterface
 	 * @return $this|Response
 	 * @throws Exception
 	 */
-	public function sendFile(string $path, bool $isChunk = false, int $limit = 10240): static
+	public function sendFile(string $path, bool $isChunk = false, int $offset = 0, int $limit = 10240): static
 	{
 		$this->format = self::FILE;
 		if (!file_exists($path)) {
 			throw new Exception('File `' . $path . '` not exists.');
 		}
-		$this->endData = ['path' => $path, 'isChunk' => $isChunk, 'limit' => $limit];
+		$this->endData = ['path' => $path, 'isChunk' => $isChunk, 'limit' => $limit, 'offset' => $offset];
 		return $this;
 	}
 
