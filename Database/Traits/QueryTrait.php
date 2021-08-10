@@ -484,15 +484,24 @@ trait QueryTrait
 
 	/**
 	 * @param array|Closure|string $conditionArray
-	 *
+	 * @param string $opera
+	 * @param null $value
 	 * @return QueryTrait
-	 * @throws
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function whereOr(array|Closure|string $conditionArray = []): static
+	public function whereOr(array|Closure|string $conditionArray = [], string $opera = '=', $value = null): static
 	{
 		if ($conditionArray instanceof Closure) {
 			$conditionArray = $this->makeClosureFunction($conditionArray);
 		}
+
+		if (func_num_args() == 3) {
+			[$conditionArray, $opera, $value] = $this->opera(...func_get_args());
+
+			$conditionArray = $this->sprintf($conditionArray, $opera, $value);
+		}
+
 		$this->where = ['(' . implode(' AND ', $this->where) . ') OR (' . $conditionArray . ')'];
 		return $this;
 	}
@@ -808,12 +817,12 @@ trait QueryTrait
 		if (is_array($column)) {
 			return $this->addArray($column);
 		}
-		[$column, $opera] = $this->opera($column, $opera);
 		if ($column instanceof Closure) {
 			$this->where[] = $this->makeClosureFunction($column);
-		} else {
-			$this->where[] = "$column $opera $value";
+			return $this;
 		}
+		[$column, $opera, $value] = $this->opera(...func_get_args());
+		$this->where[] = "$column $opera $value";
 		return $this;
 	}
 
