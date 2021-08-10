@@ -804,14 +804,14 @@ trait QueryTrait
 	}
 
 	/**
-	 * @param Closure|array $column
+	 * @param Closure|array|string $column
 	 * @param string $opera
 	 * @param null $value
 	 * @return $this
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function where(Closure|array $column, string $opera = '=', $value = null): static
+	public function where(Closure|array|string $column, string $opera = '=', $value = null): static
 	{
 		if (is_array($column)) {
 			return $this->addArray($column);
