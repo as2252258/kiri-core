@@ -476,10 +476,7 @@ trait QueryTrait
 		if ($conditionArray instanceof Closure) {
 			$conditionArray = $this->makeClosureFunction($conditionArray);
 		}
-
-		$oldWhere = '(' . implode(') AND (', $this->where) . ')';
-
-		$this->where = ['(' . $oldWhere . ') OR ' . $conditionArray];
+		$this->where = ['(' . implode(' AND ', $this->where) . ') OR (' . $conditionArray . ')'];
 		return $this;
 	}
 
