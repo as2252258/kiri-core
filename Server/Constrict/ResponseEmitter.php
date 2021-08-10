@@ -4,7 +4,9 @@ namespace Server\Constrict;
 
 use Exception;
 use HttpServer\Http\Formatter\FileFormatter;
+use ReflectionException;
 use Server\ResponseInterface;
+use Snowflake\Exception\NotFindClassException;
 
 
 /**
@@ -15,11 +17,13 @@ class ResponseEmitter
 
 
 	/**
-	 * @param \Swoole\Http\Response $response
+	 * @param \Swoole\Http\Response|\Swoole\Http2\Response $response
 	 * @param ResponseInterface $emitter
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 * @throws Exception
 	 */
-	public function sender(\Swoole\Http\Response $response, ResponseInterface $emitter)
+	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response $response, ResponseInterface $emitter)
 	{
 		$content = $emitter->configure($response)->getContent();
 		if ($content instanceof FileFormatter) {
