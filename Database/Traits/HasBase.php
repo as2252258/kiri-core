@@ -56,7 +56,7 @@ abstract class HasBase
 		}
 		if (is_array($value)) {
 			if (empty($value)) $value = [];
-			$_model = $model::find()->in($primaryId, $value);
+			$_model = $model::find()->whereIn($primaryId, $value);
 		} else {
 			$_model = $model::find()->where(['t1.' . $primaryId => $value]);
 		}

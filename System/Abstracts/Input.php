@@ -38,7 +38,7 @@ class Input
 	/**
 	 * @param $key
 	 * @param null $default
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function get($key, $default = null): mixed
 	{

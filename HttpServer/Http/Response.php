@@ -11,9 +11,11 @@ namespace HttpServer\Http;
 
 use Exception;
 use HttpServer\Abstracts\HttpService;
+use HttpServer\Http\Formatter\FileFormatter;
 use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
+use HttpServer\IInterface\IFormatter;
 use Server\ResponseInterface;
 use Snowflake\Exception\NotFindClassException;
 use Swoole\Http\Response as SResponse;
@@ -28,9 +30,10 @@ class Response extends HttpService implements ResponseInterface
 	const JSON = 'json';
 	const XML = 'xml';
 	const HTML = 'html';
+	const FILE = 'file';
 
 	/** @var ?string */
-	public ?string $format = null;
+	private ?string $format = null;
 
 	/** @var int */
 	public int $statusCode = 200;
@@ -45,10 +48,21 @@ class Response extends HttpService implements ResponseInterface
 	const FORMAT_MAPS = [
 		self::JSON => JsonFormatter::class,
 		self::XML  => XmlFormatter::class,
-		self::HTML => HtmlFormatter::class
+		self::HTML => HtmlFormatter::class,
+		self::FILE => FileFormatter::class,
 	];
 
 	public int $fd = 0;
+
+
+	/**
+	 * @return string
+	 */
+	public function getFormat(): string
+	{
+		return $this->format;
+	}
+
 
 	/**
 	 * @param $format
@@ -101,6 +115,20 @@ class Response extends HttpService implements ResponseInterface
 
 
 	/**
+	 * @param string $path
+	 * @param bool $isChunk
+	 * @param int $limit
+	 * @return $this|Response
+	 */
+	public function sendFile(string $path, bool $isChunk = false, int $limit = 10240): static
+	{
+		$this->format = self::FILE;
+		$this->endData = ['path' => $path, 'isChunk' => $isChunk, 'limit' => $limit];
+		return $this;
+	}
+
+
+	/**
 	 * @param $key
 	 * @param $value
 	 * @return Response
@@ -148,7 +176,7 @@ class Response extends HttpService implements ResponseInterface
 	public function getResponseFormat(): string
 	{
 		return match ($this->format) {
-			Response::HTML => 'text/html;charset=utf-8',
+			Response::HTML, Response::FILE => 'text/html;charset=utf-8',
 			Response::XML => 'application/xml;charset=utf-8',
 			default => 'application/json;charset=utf-8',
 		};
@@ -171,10 +199,11 @@ class Response extends HttpService implements ResponseInterface
 
 
 	/**
-	 * @param SResponse|null $response
+	 * @param SResponse $response
+	 * @return Response
 	 * @throws Exception
 	 */
-	public function configure(SResponse $response = null): static
+	public function configure(SResponse $response): static
 	{
 		$response->setStatusCode($this->statusCode);
 		$response->header('Content-Type', $this->getResponseFormat());
@@ -205,17 +234,14 @@ class Response extends HttpService implements ResponseInterface
 
 
 	/**
-	 * @return string
-	 * @throws \ReflectionException
+	 * @return IFormatter
 	 * @throws NotFindClassException
+	 * @throws \ReflectionException
 	 */
-	public function getContent(): string
+	public function getContent(): IFormatter
 	{
-		if (empty($this->endData) || is_string($this->endData)) {
-			return $this->endData;
-		}
 		$class = Response::FORMAT_MAPS[$this->format] ?? HtmlFormatter::class;
-		return \di($class)->send($this->endData)->getData();
+		return \di($class)->send($this->endData);
 	}
 
 
@@ -236,40 +262,9 @@ class Response extends HttpService implements ResponseInterface
 		/** @var SResponse $response */
 		$response = Context::getContext('response');
 		if (!empty($response)) {
-			return $response->redirect($url);
+			return $response->redirect($url,302);
 		}
 		return false;
-	}
-
-
-	/**
-	 * @param string $path
-	 * @param int $offset
-	 * @param int $limit
-	 * @param int $sleep
-	 * @return string
-	 */
-	public function sendFile(string $path, int $offset = 0, int $limit = 1024000, int $sleep = 0): string
-	{
-		$open = fopen($path, 'r');
-
-		$stat = fstat($open);
-
-
-		/** @var SResponse $response */
-		$response = Context::getContext('response');
-		$response->header('Content-length', $stat['size']);
-		while ($file = fread($open, $limit)) {
-			$response->write($file);
-			fseek($open, $offset);
-			if ($sleep > 0) sleep($sleep);
-			if ($offset >= $stat['size']) {
-				break;
-			}
-			$offset += $limit;
-		}
-		$response->end();
-		return '';
 	}
 
 

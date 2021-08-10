@@ -80,7 +80,7 @@ class Collection extends AbstractCollection
 	 *
 	 * @return array
 	 */
-	#[Pure] public function slice($start = 0, $length = 20): array
+	#[Pure] public function slice(int $start = 0, int $length = 20): array
 	{
 		if (empty($this->_item) || !is_array($this->_item)) {
 			return [];
@@ -98,7 +98,7 @@ class Collection extends AbstractCollection
 	 *
 	 * @return array|null
 	 */
-	public function column($field, $setKey = ''): ?array
+	public function column(string $field, string $setKey = ''): ?array
 	{
 		$data = $this->toArray();
 		if (empty($data)) {
@@ -112,11 +112,11 @@ class Collection extends AbstractCollection
 	}
 
 	/**
-	 * @param $field
+	 * @param string $field
 	 *
 	 * @return float|int|null
 	 */
-	public function sum($field): float|int|null
+	public function sum(string $field): float|int|null
 	{
 		$array = $this->column($field);
 		if (empty($array)) {
@@ -173,7 +173,7 @@ class Collection extends AbstractCollection
 				$ids[] = $id;
 			}
 		}
-		return $model::find()->in($model->getPrimary(), $ids)->delete();
+		return $model::find()->whereIn($model->getPrimary(), $ids)->delete();
 	}
 
 	/**

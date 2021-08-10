@@ -241,7 +241,7 @@ use {$model_namespace}\\{$managerName};
 	#[Middleware(middleware: [])]
 	public function actionUpdate(): string
 	{
-		$model = ' . $className . '::findOne($this->input->post(\'id\', 0));
+		$model = ' . $className . '::findOne($this->request->post(\'id\', 0));
 		if (empty($model)) {
 			return JSON::to(500, SELECT_IS_NULL);
 		}
@@ -278,12 +278,12 @@ use {$model_namespace}\\{$managerName};
 	#[Middleware(middleware: [])]
 	public function actionBatchDelete(): string
 	{
-		$_key = $this->input->array(\'ids\');		
+		$_key = $this->request->array(\'ids\');		
 		if (empty($_key)) {
 			return JSON::to(500, PARAMS_IS_NULL);
 		}
 		
-		$model = ' . $className . '::find()->in(\'id\', $_key);
+		$model = ' . $className . '::find()->whereIn(\'id\', $_key);
 		if (!$model->delete()) {
 			return JSON::to(500, DB_ERROR_BUSY);
         }
@@ -315,7 +315,7 @@ use {$model_namespace}\\{$managerName};
 	#[Middleware(middleware: [])]
     public function actionDetail(): string
     {
-        $model = ' . $managerName . '::findOne($this->input->get(\'id\'));
+        $model = ' . $managerName . '::findOne($this->request->query(\'id\'));
         if (empty($model)) {
             return JSON::to(404, SELECT_IS_NULL);
         }
@@ -347,7 +347,7 @@ use {$model_namespace}\\{$managerName};
 	#[Middleware(middleware: [])]
     public function actionDelete(): string
     {
-		$_key = $this->input->int(\'id\', true);
+		$_key = $this->request->int(\'id\', true);
 		
 		$model = ' . $managerName . '::findOne($_key);
 		if (empty($model)) {
@@ -386,18 +386,18 @@ use {$model_namespace}\\{$managerName};
     public function actionList(): string
     {        
         //分页处理
-	    $count   = $this->input->get(\'count\', -1);
-	    $order   = $this->input->get(\'order\', \'id\');
+	    $count   = $this->request->query(\'count\', -1);
+	    $order   = $this->request->query(\'order\', \'id\');
 	    if (!empty($order)) {
-	        $order .= !$this->input->get(\'isDesc\', 0) ? \' asc\' : \' desc\';
+	        $order .= !$this->request->query(\'isDesc\', 0) ? \' asc\' : \' desc\';
 	    } else {
 	        $order = \'id desc\';
 	    }
 	    	    
 	    //列表输出
-	    $model = ' . $managerName . '::find()->where($this->input->gets())->orderBy($order);
+	    $model = ' . $managerName . '::find()->where($this->request->gets())->orderBy($order);
 
-	   	$keyword = $this->input->get(\'keyword\', null); 
+	   	$keyword = $this->request->query(\'keyword\', null); 
 	    if (!empty($keyword)) {
 	        $model->like(\'keyword\', $keyword);
 	    }
@@ -406,7 +406,7 @@ use {$model_namespace}\\{$managerName};
 		    $count = $model->count();
 	    }
 	    if ($count != -100) {
-		    $model->limit($this->input->offset() ,$this->input->size());
+		    $model->limit($this->request->offset() ,$this->request->size());
 	    }
 	    
 		$data = $model->all()->toArray();
@@ -439,9 +439,9 @@ use {$model_namespace}\\{$managerName};
 
 				if ($type == 'date' || $type == 'datetime' || $type == 'time') {
 					$_tps = match ($type) {
-						'date' => '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d\'))',
-						'time' => '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'H:i:s\'))',
-						default => '$this->input->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d H:i:s\'))',
+						'date' => '$this->request->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d\'))',
+						'time' => '$this->request->' . $_key . '(\'' . $val['Field'] . '\', date(\'H:i:s\'))',
+						default => '$this->request->' . $_key . '(\'' . $val['Field'] . '\', date(\'Y-m-d H:i:s\'))',
 					};
 					$html .= '
             \'' . str_pad($val['Field'] . '\'', $length, ' ', STR_PAD_RIGHT) . ' => ' . str_pad($_tps . ',', 60, ' ', STR_PAD_RIGHT) . $comment;
@@ -459,21 +459,21 @@ use {$model_namespace}\\{$managerName};
 						}
 					}
 					if ($key == 'string') {
-						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . $tmp . ')';
+						$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . $tmp . ')';
 					} else if ($type == 'int') {
 						if ($number[0] == 10) {
-							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', time())';
+							$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', time())';
 						} else {
-							$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
+							$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
 						}
 					} else if ($type == 'float') {
-						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . ($number[3] ?? '2') . ')';
+						$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ', ' . ($number[3] ?? '2') . ')';
 					} else if ($key == 'email') {
-						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
+						$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
 					} else if ($key == 'timestamp') {
-						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', time())';
+						$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', time())';
 					} else {
-						$_tps = '$this->input->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
+						$_tps = '$this->request->' . $_key . '(\'' . $val['Field'] . '\', ' . $_field['required'] . ')';
 					}
 					$html .= '
             \'' . str_pad($val['Field'] . '\'', $length, ' ', STR_PAD_RIGHT) . ' => ' . str_pad($_tps . ',', 60, ' ', STR_PAD_RIGHT) . $comment;
@@ -521,14 +521,14 @@ use {$model_namespace}\\{$managerName};
 				if (!in_array(strtolower($first), $value)) continue;
 				$comment = '//' . $val['Comment'];
 				if ($type == 'date' || $type == 'datetime' || $type == 'time') {
-					$_tps = '$this->input->get(\'' . $val['Field'] . '\', null)';
+					$_tps = '$this->request->query(\'' . $val['Field'] . '\', null)';
 					$html .= '
         $pWhere[\'' . str_pad($val['Field'] . ' <=\']', $length, ' ', STR_PAD_RIGHT) . ' = ' . str_pad($_tps . ';', 60, ' ', STR_PAD_RIGHT) . $comment;
 					$html .= '
         $pWhere[\'' . str_pad($val['Field'] . ' >=\']', $length, ' ', STR_PAD_RIGHT) . ' = ' . str_pad($_tps . ';', 60, ' ', STR_PAD_RIGHT) . $comment;
 				} else {
 
-					$_tps = '$this->input->get(\'' . $val['Field'] . '\', null)';
+					$_tps = '$this->request->query(\'' . $val['Field'] . '\', null)';
 					$html .= '
         $pWhere[\'' . str_pad($val['Field'] . '\']', $length, ' ', STR_PAD_RIGHT) . ' = ' . str_pad($_tps . ';', 60, ' ', STR_PAD_RIGHT) . $comment;
 				}

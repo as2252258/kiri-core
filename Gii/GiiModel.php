@@ -335,7 +335,7 @@ use Database\ActiveRecord;
 	public function getUnique($fields): string
 	{
 		$data = [];
-		foreach ($fields as $_key => $_val) {
+		foreach ($fields as $_val) {
 			if ($_val['Extra'] == 'auto_increment') continue;
 			if (str_contains($_val['Type'], 'unique')) {
 				$data[] = $_val['Field'];

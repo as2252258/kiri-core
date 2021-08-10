@@ -26,8 +26,6 @@ class GiiRpcService extends GiiBase
 			throw new Exception('文件名称不能为空~');
 		}
 
-		$service = $this->input->get('service', strtolower($managerName));
-
 		$port = $this->input->get('port', 443);
 
 		$html = '<?php

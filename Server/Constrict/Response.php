@@ -20,6 +20,7 @@ class Response implements ResponseInterface
 	const JSON = 'json';
 	const XML = 'xml';
 	const HTML = 'html';
+	const FILE = 'file';
 
 	/**
 	 * @param $name

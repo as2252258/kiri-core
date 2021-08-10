@@ -10,6 +10,7 @@ use HttpServer\Route\Node;
 use HttpServer\Route\Router;
 use ReflectionException;
 use Server\Constrict\Response as CResponse;
+use Server\Constrict\ResponseEmitter;
 use Server\Events\OnAfterRequest;
 use Snowflake\Abstracts\Config;
 use Snowflake\Events\EventDispatch;
@@ -48,6 +49,11 @@ class HTTPServerListener extends Abstracts\Server
 	/** @var EventDispatch */
 	#[Inject(EventDispatch::class)]
 	public EventDispatch $eventDispatch;
+
+
+
+	#[Inject(ResponseEmitter::class)]
+	public ResponseEmitter $responseEmitter;
 
 
 	/**
@@ -127,8 +133,7 @@ class HTTPServerListener extends Abstracts\Server
 		} catch (Error | Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
-			$response->end($responseData->configure($response)->getContent());
-
+			$this->responseEmitter->sender($response, $responseData);
 			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}
