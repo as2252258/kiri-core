@@ -5,6 +5,7 @@ namespace Server\Constrict;
 use Exception;
 use HttpServer\Http\Formatter\FileFormatter;
 use Server\ResponseInterface;
+use validator\EnumValidator;
 
 
 /**
@@ -47,12 +48,21 @@ class ResponseEmitter
 //		$response->header('Content-Type', 'application/download');
 		$response->header('Content-Disposition', 'attachment;filename=' . end($explode));
 		$response->header('Content-Transfer-Encoding', 'binary');
-		$response->setStatusCode(200);
+
 		if ($content['isChunk'] === false) {
 			$response->sendfile($content['path']);
-			return;
+		} else {
+			$this->chunk($content, $response);
 		}
+	}
 
+
+	/**
+	 * @param $content
+	 * @param $response
+	 */
+	private function chunk($content, $response): void
+	{
 		$resource = fopen($content['path'], 'r');
 
 		$state = fstat($resource);
