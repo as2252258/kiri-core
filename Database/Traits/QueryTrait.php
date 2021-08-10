@@ -496,10 +496,10 @@ trait QueryTrait
 			$conditionArray = $this->makeClosureFunction($conditionArray);
 		}
 
-		if (func_num_args() == 3) {
+		if (func_num_args() > 1) {
 			[$conditionArray, $opera, $value] = $this->opera(...func_get_args());
 
-			$conditionArray = $this->sprintf($conditionArray, $opera, $value);
+			$conditionArray = $this->sprintf($conditionArray, $value, $opera);
 		}
 
 		$this->where = ['(' . implode(' AND ', $this->where) . ') OR (' . $conditionArray . ')'];

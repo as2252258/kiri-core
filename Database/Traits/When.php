@@ -6,10 +6,8 @@ namespace Database\Traits;
 
 use Database\ActiveQuery;
 use Database\ISqlBuilder;
-use Database\Query;
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Exception\NotFindClassException;
 
 
 /**
@@ -73,7 +71,7 @@ class When
 		if (!empty($this->else)) {
 			$prefix .= ' ELSE ' . $this->else;
 		}
-		return $prefix . ' END';
+		return '(' . $prefix . ' END)';
 	}
 
 }
