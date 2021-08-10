@@ -95,10 +95,27 @@ trait QueryTrait
 
 
 	/**
+	 * @param string|array|Closure $condition
+	 * @param string|array|Closure $condition1
+	 * @param string|array|Closure $condition2
 	 * @return $this
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	public function whereIf(string $condition, string $condition1, string $condition2): static
+	public function whereIf(string|array|Closure $condition, string|array|Closure $condition1, string|array|Closure $condition2): static
 	{
+		if (!is_string($condition)) {
+			$condition = $this->makeClosureFunction($condition);
+		}
+
+		if (!is_string($condition1)) {
+			$condition1 = $this->makeClosureFunction($condition1);
+		}
+
+		if (!is_string($condition2)) {
+			$condition2 = $this->makeClosureFunction($condition2);
+		}
+
 		$this->where[] = 'IF(' . $condition . ', ' . $condition1 . ', ' . $condition2 . ')';
 		return $this;
 	}
@@ -802,16 +819,20 @@ trait QueryTrait
 
 
 	/**
-	 * @param Closure $closure
+	 * @param Closure|array $closure
 	 * @return string
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function makeClosureFunction(Closure $closure): string
+	public function makeClosureFunction(Closure|array $closure): string
 	{
 		$generate = $this->makeNewSqlGenerate();
-		call_user_func($closure, $generate);
+		if ($closure instanceof Closure) {
+			call_user_func($closure, $generate);
+		} else {
+			$generate->where($closure);
+		}
 		return $generate->getSql();
 	}
 
