@@ -5,8 +5,6 @@ namespace Server\Constrict;
 use Exception;
 use HttpServer\Http\Formatter\FileFormatter;
 use Server\ResponseInterface;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
 
 
 /**
@@ -38,6 +36,18 @@ class ResponseEmitter
 	 */
 	private function download(array $content, \Swoole\Http\Response $response)
 	{
+		$explode = explode('/', $content['path']);
+
+		$response->header('Pragma', 'public');
+		$response->header('Expires', '0');
+		$response->header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+//		$response->header('Content-Type', 'application/force-download');
+		$response->header('Content-Type', 'application/octet-stream');
+//		$response->header('Content-Type', 'application/vnd.ms-excel');
+//		$response->header('Content-Type', 'application/download');
+		$response->header('Content-Disposition', 'attachment;filename=' . end($explode));
+		$response->header('Content-Transfer-Encoding', 'binary');
+
 		if ($content['isChunk'] === false) {
 			$response->sendfile($content['path']);
 			return;

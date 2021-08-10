@@ -119,10 +119,14 @@ class Response extends HttpService implements ResponseInterface
 	 * @param bool $isChunk
 	 * @param int $limit
 	 * @return $this|Response
+	 * @throws Exception
 	 */
 	public function sendFile(string $path, bool $isChunk = false, int $limit = 10240): static
 	{
 		$this->format = self::FILE;
+		if (!file_exists($path)) {
+			throw new Exception('File `' . $path . '` not exists.');
+		}
 		$this->endData = ['path' => $path, 'isChunk' => $isChunk, 'limit' => $limit];
 		return $this;
 	}
@@ -262,7 +266,7 @@ class Response extends HttpService implements ResponseInterface
 		/** @var SResponse $response */
 		$response = Context::getContext('response');
 		if (!empty($response)) {
-			return $response->redirect($url,302);
+			return $response->redirect($url, 302);
 		}
 		return false;
 	}
