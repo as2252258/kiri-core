@@ -466,7 +466,7 @@ trait QueryTrait
 			if (!is_array($column)) {
 				$column = explode(',', $column);
 			}
-			foreach ($column as $key => $val) {
+			foreach ($column as $val) {
 				$this->select[] = $val;
 			}
 		}
@@ -513,12 +513,11 @@ trait QueryTrait
 	 * @param string $opera
 	 * @return QueryTrait
 	 */
-	public function whereAnd(string $columns, string|int|null|bool $value = NULL, string $opera = '='): static
+	public function whereAnd(string $columns, string $opera = '=', string|int|null|bool $value = NULL): static
 	{
-		if (!is_numeric($value) && !is_bool($value)) {
-			$value = '\'' . $value . '\'';
-		}
-		$this->where[] = $columns . $opera . $value;
+		[$columns, $opera, $value] = $this->opera(...func_get_args());
+
+		$this->where[] = $this->sprintf($columns, $value, $opera);
 		return $this;
 	}
 
