@@ -6,7 +6,7 @@ namespace Annotation\Model;
 
 use Attribute;
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 
 /**
@@ -34,7 +34,7 @@ use Snowflake\Snowflake;
 	 */
     public function execute(mixed $class, mixed $method = null): bool
     {
-        $annotation = Snowflake::getAnnotation();
+        $annotation = Kiri::getAnnotation();
         $annotation->addGets($class::class, $this->name, $method);
         return true;
     }

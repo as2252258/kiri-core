@@ -12,11 +12,11 @@ use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\IInterface\Middleware;
 use Server\RequestInterface;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class CoreMiddleware
- * @package Snowflake\Snowflake\Route
+ * @package Kiri\Kiri\Route
  * 跨域中间件
  */
 class CoreMiddleware implements Middleware
@@ -36,7 +36,7 @@ class CoreMiddleware implements Middleware
 	public function onHandler(RequestInterface $request, Closure $next): mixed
 	{
 		/** @var Response $response */
-		$response = Snowflake::getApp('response');
+		$response = Kiri::getApp('response');
 		$response->addHeader('Access-Control-Allow-Origin', '*');
 		$response->addHeader('Access-Control-Allow-Headers', $request->header('access-control-request-headers'));
 		$response->addHeader('Access-Control-Request-Method', $request->header('access-control-request-method'));

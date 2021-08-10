@@ -2,16 +2,16 @@
 declare(strict_types=1);
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use Exception;
-use Snowflake\Abstracts\BaseObject;
+use Kiri\Abstracts\BaseObject;
 use Swoole\Coroutine;
 
 /**
  * Class Event
- * @package Snowflake
+ * @package Kiri
  */
 class Event extends BaseObject
 {

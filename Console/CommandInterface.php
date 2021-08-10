@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Console;
 
-use Snowflake\Abstracts\Input;
+use Kiri\Abstracts\Input;
 
 /**
  * Interface CommandInterface

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Database\Condition;
 
-use Snowflake\Core\Str;
+use Kiri\Core\Str;
 
 /**
  * Class LLikeCondition

@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake\Events;
+namespace Kiri\Events;
 
 /**
  * 

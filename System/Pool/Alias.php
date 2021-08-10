@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake\Pool;
+namespace Kiri\Pool;
 
 use JetBrains\PhpStorm\Pure;
 

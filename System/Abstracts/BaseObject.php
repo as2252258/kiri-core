@@ -7,17 +7,17 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Error\Logger;
-use Snowflake\Snowflake;
+use Kiri\Error\Logger;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 
 /**
  * Class BaseObject
- * @package Snowflake\Snowflake\Base
+ * @package Kiri\Kiri\Base
  */
 class BaseObject implements Configure
 {
@@ -31,7 +31,7 @@ class BaseObject implements Configure
 	public function __construct(array $config = [])
 	{
 		if (!empty($config) && is_array($config)) {
-			Snowflake::configure($this, $config);
+			Kiri::configure($this, $config);
 		}
 	}
 
@@ -128,7 +128,7 @@ class BaseObject implements Configure
 	 */
 	private function logger(): Logger
 	{
-		return Snowflake::app()->getLogger();
+		return Kiri::app()->getLogger();
 	}
 
 

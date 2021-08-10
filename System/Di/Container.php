@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Di;
+namespace Kiri\Di;
 
 use Annotation\Inject;
 use Exception;
@@ -16,13 +16,13 @@ use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
-use Snowflake\Abstracts\BaseObject;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\BaseObject;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 /**
  * Class Container
- * @package Snowflake\Di
+ * @package Kiri\Di
  */
 class Container extends BaseObject
 {
@@ -198,7 +198,7 @@ class Container extends BaseObject
 	 */
 	private function onAfterInit($object, $config): mixed
 	{
-		Snowflake::configure($object, $config);
+		Kiri::configure($object, $config);
 		if (method_exists($object, 'init')) {
 			call_user_func([$object, 'init']);
 		}
@@ -331,7 +331,7 @@ class Container extends BaseObject
 			} else {
 				$type = $parameter->getType()->getName();
 				if (is_string($type) && class_exists($type)) {
-					$type = Snowflake::getDi()->get($type);
+					$type = Kiri::getDi()->get($type);
 				}
 				$params[$key] = match ($parameter->getType()) {
 					'string' => '',

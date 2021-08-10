@@ -5,11 +5,11 @@ namespace Database;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 /**
  * Class Relation
- * @package Snowflake\db
+ * @package Kiri\db
  */
 class Relation extends Component
 {

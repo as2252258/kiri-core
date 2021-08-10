@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 
-namespace Snowflake\Process;
+namespace Kiri\Process;
 
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Event;
+use Kiri\Kiri;
 
 /**
  * Class Process
- * @package Snowflake\Snowflake\Service
+ * @package Kiri\Kiri\Service
  */
 abstract class Process extends \Swoole\Process implements SProcess
 {
@@ -36,12 +36,12 @@ abstract class Process extends \Swoole\Process implements SProcess
 	 */
 	public function _load(Process $process)
 	{
-		Snowflake::setProcessId($this->pid);
+		Kiri::setProcessId($this->pid);
 
-		putenv('environmental=' . Snowflake::PROCESS);
+		putenv('environmental=' . Kiri::PROCESS);
 
 		fire(Event::SERVER_WORKER_START);
-		if (Snowflake::getPlatform()->isLinux())  {
+		if (Kiri::getPlatform()->isLinux())  {
 			name($this->pid, $this->getProcessName());
 		}
 		if (method_exists($this, 'before')) {

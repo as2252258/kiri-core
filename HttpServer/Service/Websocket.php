@@ -5,7 +5,7 @@ namespace HttpServer\Service;
 
 
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Exception\NotFindClassException;
 use HttpServer\Service\Abstracts\Websocket as HAWebsocket;
 
 

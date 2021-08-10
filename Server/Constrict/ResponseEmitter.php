@@ -6,7 +6,7 @@ use Exception;
 use HttpServer\Http\Formatter\FileFormatter;
 use ReflectionException;
 use Server\ResponseInterface;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Exception\NotFindClassException;
 
 
 /**

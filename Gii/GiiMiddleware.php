@@ -6,7 +6,7 @@ namespace Gii;
 
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiMiddleware
@@ -65,7 +65,7 @@ class ' . $managerName . 'Middleware implements Middleware
 			throw new Exception('File exists.');
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return [$managerName . 'Middleware.php'];
 	}
 

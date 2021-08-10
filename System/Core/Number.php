@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Core;
+namespace Kiri\Core;
 
 
 class Number

@@ -1,10 +1,10 @@
 <?php
 
-namespace Snowflake\Di;
+namespace Kiri\Di;
 
 use Annotation\Inject;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 
 
 /**
@@ -45,7 +45,7 @@ class LocalService extends Component
             if (is_object($definition) && !$definition instanceof \Closure) {
                 return $this->_components[$name] = $definition;
             }
-            return $this->_components[$name] = Snowflake::createObject($definition);
+            return $this->_components[$name] = Kiri::createObject($definition);
         } else if ($throwException) {
             throw new \Exception("Unknown component ID: $name");
         }

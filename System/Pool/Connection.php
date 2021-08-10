@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Pool;
+namespace Kiri\Pool;
 
 use Closure;
 use Exception;
 use HttpServer\Http\Context;
 use PDO;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Runtime;
@@ -16,7 +16,7 @@ use Throwable;
 
 /**
  * Class Connection
- * @package Snowflake\Pool
+ * @package Kiri\Pool
  */
 class Connection extends Component
 {
@@ -229,7 +229,7 @@ class Connection extends Component
 	 */
 	public function getPool(): Pool
 	{
-		return Snowflake::getDi()->get(Pool::class);
+		return Kiri::getDi()->get(Pool::class);
 	}
 
 }

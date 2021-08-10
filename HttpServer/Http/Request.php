@@ -10,7 +10,7 @@ use HttpServer\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Server\RequestInterface;
 use Server\ServerManager;
-use Snowflake\Core\Json;
+use Kiri\Core\Json;
 
 defined('REQUEST_OK') or define('REQUEST_OK', 0);
 defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
@@ -18,7 +18,7 @@ defined('REQUEST_FAIL') or define('REQUEST_FAIL', 500);
 /**
  * Class HttpRequest
  *
- * @package Snowflake\Snowflake\HttpRequest
+ * @package Kiri\Kiri\HttpRequest
  *
  * @property-read $isPost
  * @property-read $isGet

@@ -1,17 +1,17 @@
 <?php
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use Exception;
 use HttpServer\IInterface\Task;
 use ReflectionException;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 /**
  * Class Async
- * @package Snowflake
+ * @package Kiri
  */
 class Async extends Component
 {
@@ -37,7 +37,7 @@ class Async extends Component
      */
     public function dispatch(string $name, array $params = [])
     {
-        $server = Snowflake::app()->getSwoole();
+        $server = Kiri::app()->getSwoole();
         if (!isset($server->setting['task_worker_num'])) {
             return;
         }
@@ -47,7 +47,7 @@ class Async extends Component
         }
 
         /** @var Task $class */
-        $class = Snowflake::createObject(static::$_absences[$name]);
+        $class = Kiri::createObject(static::$_absences[$name]);
         $class->setParams($params);
 
         $randWorkerId = random_int(0, $server->setting['task_worker_num'] - 1);

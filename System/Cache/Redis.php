@@ -7,23 +7,23 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Cache;
+namespace Kiri\Cache;
 
 use Annotation\Inject;
 use Exception;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStop;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Config;
-use Snowflake\Core\Json;
-use Snowflake\Events\EventProvider;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
-use Snowflake\Pool\Redis as PoolRedis;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Core\Json;
+use Kiri\Events\EventProvider;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
+use Kiri\Pool\Redis as PoolRedis;
 
 /**
  * Class Redis
- * @package Snowflake\Snowflake\Cache
+ * @package Kiri\Kiri\Cache
  * @mixin \Redis
  */
 class Redis extends Component
@@ -42,7 +42,7 @@ class Redis extends Component
 	 */
 	public function init()
 	{
-        $connections = Snowflake::getDi()->get(PoolRedis::class);
+        $connections = Kiri::getDi()->get(PoolRedis::class);
 
 		$config = $this->get_config();
 
@@ -114,7 +114,7 @@ SCRIPT;
 	 */
 	public function release()
 	{
-        $connections = Snowflake::getDi()->get(PoolRedis::class);
+        $connections = Kiri::getDi()->get(PoolRedis::class);
 		$connections->release($this->get_config(), true);
 	}
 
@@ -125,7 +125,7 @@ SCRIPT;
 	 */
 	public function destroy()
 	{
-		$connections = Snowflake::getDi()->get(PoolRedis::class);
+		$connections = Kiri::getDi()->get(PoolRedis::class);
 		$connections->destroy($this->get_config(), true);
 	}
 
@@ -135,7 +135,7 @@ SCRIPT;
 	 */
 	public function proxy(): \Redis
 	{
-        $connections = Snowflake::getDi()->get(PoolRedis::class);
+        $connections = Kiri::getDi()->get(PoolRedis::class);
 
 		$config = $this->get_config();
 

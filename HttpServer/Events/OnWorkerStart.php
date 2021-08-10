@@ -6,11 +6,11 @@ namespace HttpServer\Events;
 use Annotation\Annotation;
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Runtime;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Exception\ConfigException;
+use Kiri\Runtime;
+use Kiri\Kiri;
 use Swoole\Server;
 
 /**
@@ -32,7 +32,7 @@ class OnWorkerStart extends Callback
 	{
 		$this->setConfigs($worker_id);
 
-		$annotation = Snowflake::app()->getAnnotation();
+		$annotation = Kiri::app()->getAnnotation();
 		$annotation->setLoader(unserialize(file_get_contents(storage(Runtime::CACHE_NAME))));
 		if ($worker_id >= $server->setting['worker_num']) {
 			$this->onTask($server, $annotation);
@@ -78,13 +78,13 @@ class OnWorkerStart extends Callback
 	 */
 	public function onTask(Server $server, Annotation $annotation)
 	{
-		putenv('environmental=' . Snowflake::TASK);
+		putenv('environmental=' . Kiri::TASK);
 
 		$annotation->runtime(APP_PATH, [CONTROLLER_PATH, TASK_PATH, LISTENER_PATH]);
 
 		name($server->worker_pid, 'Task#' . $server->worker_id);
 
-		Snowflake::setTaskId($server->worker_pid);
+		Kiri::setTaskId($server->worker_pid);
 
 		fire(Event::SERVER_TASK_START);
 	}
@@ -106,8 +106,8 @@ class OnWorkerStart extends Callback
 		$this->debug('use time.' . (microtime(true) - $time));
 		$annotation->runtime(directory('app'), [CONTROLLER_PATH]);
 
-		Snowflake::setWorkerId($server->worker_pid);
-		putenv('environmental=' . Snowflake::WORKER);
+		Kiri::setWorkerId($server->worker_pid);
+		putenv('environmental=' . Kiri::WORKER);
 
 		fire(Event::SERVER_WORKER_START, [getenv('worker')]);
 	}

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use JetBrains\PhpStorm\Pure;
@@ -9,7 +9,7 @@ use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Environmental
- * @package Snowflake
+ * @package Kiri
  */
 class Environmental
 {

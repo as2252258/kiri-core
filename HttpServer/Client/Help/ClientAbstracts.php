@@ -6,8 +6,8 @@ namespace HttpServer\Client\Help;
 
 use Closure;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\Component;
-use Snowflake\Core\Help;
+use Kiri\Abstracts\Component;
+use Kiri\Core\Help;
 use Swoole\Coroutine\System;
 
 defined('SPLIT_URL') or define('SPLIT_URL', '/(http[s]?:\/\/)?(([\w\-_]+\.)+\w+(:\d+)?)((\/[a-zA-Z0-9\-]+)+[\/]?(\?[a-zA-Z]+=.*)?)?/');

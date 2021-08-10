@@ -6,8 +6,8 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Event;
+use Kiri\Kiri;
 use Swoole\Server;
 use Swoole\Timer;
 
@@ -26,8 +26,8 @@ class OnBeforeReload extends Callback
 	{
 		Event::trigger(Event::SERVER_BEFORE_RELOAD, [$server]);
 
-        Snowflake::clearWorkerPid();
-        Snowflake::clearTaskPid();
+        Kiri::clearWorkerPid();
+        Kiri::clearTaskPid();
 	}
 
 }

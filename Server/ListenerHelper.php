@@ -5,8 +5,8 @@ namespace Server;
 
 use Closure;
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 
 /**
@@ -35,7 +35,7 @@ trait ListenerHelper
         if ($callback instanceof Closure) {
             return $callback;
         }
-        $object = Snowflake::getDi()->getReflect($callback[0]);
+        $object = Kiri::getDi()->getReflect($callback[0]);
         if ($object->getMethod($callback[1])->isStatic()) {
             return $callback;
         }

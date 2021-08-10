@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Console;
 
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class Console
@@ -21,7 +21,7 @@ class Console extends AbstractConsole
 	public function register($class)
 	{
 		if (is_string($class) || is_callable($class, true)) {
-			$class = Snowflake::createObject($class);
+			$class = Kiri::createObject($class);
 		}
 		$this->signCommand($class);
 	}

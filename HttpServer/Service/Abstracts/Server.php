@@ -6,9 +6,9 @@ namespace HttpServer\Service\Abstracts;
 
 use Exception;
 use ReflectionException;
-use Snowflake\Application;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Application;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 
 /**
@@ -114,7 +114,7 @@ trait Server
             throw new Exception('class not found.');
         }
 
-        $class = Snowflake::createObject($classPrefix, [Snowflake::app()]);
+        $class = Kiri::createObject($classPrefix, [Kiri::app()]);
         return [$class, 'onHandler'];
     }
 

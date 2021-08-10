@@ -5,8 +5,8 @@ namespace HttpServer\Client;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use HttpServer\Client\Help\IClient;
 use HttpServer\Client\Help\Client;
@@ -34,7 +34,7 @@ class HttpClient extends Component
 	 */
 	public static function http2(): Http2
 	{
-		return Snowflake::app()->get('http2');
+		return Kiri::app()->get('http2');
 	}
 
 }

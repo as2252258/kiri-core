@@ -13,7 +13,7 @@ use Swoole\WebSocket\Server;
 
 /**
  * Class OnServerDefault
- * @package Snowflake\Snowflake\Server
+ * @package Kiri\Kiri\Server
  */
 abstract class ServerBase extends HttpService
 {

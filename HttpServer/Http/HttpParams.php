@@ -12,14 +12,14 @@ namespace HttpServer\Http;
 use Exception;
 use HttpServer\Exception\RequestException;
 use ReflectionException;
-use Snowflake\Core\Json;
-use Snowflake\Core\Xml;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Core\Json;
+use Kiri\Core\Xml;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 /**
  * Class HttpParams
- * @package Snowflake\Snowflake\Http
+ * @package Kiri\Kiri\Http
  */
 trait HttpParams
 {
@@ -204,7 +204,7 @@ trait HttpParams
         $param = $this->_files[$name] ?? null;
         if (!empty($param)) {
             $param['class'] = File::class;
-            return Snowflake::createObject($param);
+            return Kiri::createObject($param);
         }
         return null;
     }

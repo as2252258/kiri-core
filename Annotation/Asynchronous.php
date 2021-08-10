@@ -6,7 +6,7 @@ namespace Annotation;
 
 use Exception;
 use HttpServer\IInterface\Task;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 
 /**
@@ -36,7 +36,7 @@ use Snowflake\Snowflake;
 	 */
     public function execute(mixed $class, mixed $method = null): bool
     {
-		$async = Snowflake::app()->getAsync();
+		$async = Kiri::app()->getAsync();
 		$async->addAsync($this->name, $class);
 		return true;
 	}

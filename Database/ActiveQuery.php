@@ -11,7 +11,7 @@ namespace Database;
 
 use Database\Traits\QueryTrait;
 use Exception;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 /**
  * Class ActiveQuery

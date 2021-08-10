@@ -6,10 +6,10 @@ namespace Server\Abstracts;
 
 use Closure;
 use Exception;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Swoole\Server\Port;
 
 
@@ -34,7 +34,7 @@ abstract class Server
 	 */
 	protected function setProcessName($prefix)
 	{
-		if (Snowflake::getPlatform()->isMac()) {
+		if (Kiri::getPlatform()->isMac()) {
 			return;
 		}
 		$name = Config::get('id', 'system-service');
@@ -51,7 +51,7 @@ abstract class Server
 	 */
 	public function __construct()
 	{
-		$this->_event = Snowflake::getApp('event');
+		$this->_event = Kiri::getApp('event');
 	}
 
 
@@ -63,7 +63,7 @@ abstract class Server
 	public function setEvents(string $name, ?array $events): void
 	{
 		if (is_array($events) && is_string($events[0])) {
-			$events[0] = Snowflake::getDi()->get($events[0]);
+			$events[0] = Kiri::getDi()->get($events[0]);
 		}
 		if (!is_callable($events)) {
 			return;

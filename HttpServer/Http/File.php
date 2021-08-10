@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace HttpServer\Http;
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class File

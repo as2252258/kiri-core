@@ -16,17 +16,17 @@ use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Rpc\Actuator;
 use Server\RequestInterface;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 defined('ROUTER_TREE') or define('ROUTER_TREE', 1);
 defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
 
 /**
  * Class Router
- * @package Snowflake\Snowflake\Route
+ * @package Kiri\Kiri\Route
  */
 class Router extends HttpService implements RouterInterface
 {
@@ -66,7 +66,7 @@ class Router extends HttpService implements RouterInterface
 	{
 		$this->dir = Config::get('http.namespace', $this->dir);
 
-		$this->response = Snowflake::app()->get('response');
+		$this->response = Kiri::app()->get('response');
 	}
 
 
@@ -347,7 +347,7 @@ class Router extends HttpService implements RouterInterface
 		if (!is_string($value)) {
 			return $value;
 		}
-		$value = Snowflake::createObject($value);
+		$value = Kiri::createObject($value);
 		if (!($value instanceof Middleware)) {
 			return null;
 		}
@@ -462,7 +462,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function exception($exception): mixed
 	{
-		return Snowflake::app()->getLogger()->exception($exception);
+		return Kiri::app()->getLogger()->exception($exception);
 	}
 
 
@@ -551,9 +551,9 @@ class Router extends HttpService implements RouterInterface
 	public function _loader()
 	{
 		$this->loadRouteDir(APP_PATH . 'routes');
-		$classes = Snowflake::getAnnotation()->runtime(CONTROLLER_PATH);
+		$classes = Kiri::getAnnotation()->runtime(CONTROLLER_PATH);
 
-		$di = Snowflake::getDi();
+		$di = Kiri::getDi();
 		foreach ($classes as $class) {
 			$instance = $di->get($class);
 			$methods = $di->getMethodAttribute($class);

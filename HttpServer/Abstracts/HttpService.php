@@ -5,8 +5,8 @@ namespace HttpServer\Abstracts;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 
 
 /**
@@ -24,7 +24,7 @@ abstract class HttpService extends Component
 	 */
 	protected function write($message, string $category = 'app')
 	{
-		$logger = Snowflake::app()->getLogger();
+		$logger = Kiri::app()->getLogger();
 		$logger->write($message, $category);
 		$logger->insert();
 	}

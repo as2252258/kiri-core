@@ -7,18 +7,18 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 use Exception;
 
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Snowflake;
+use Kiri\Exception\ComponentException;
+use Kiri\Kiri;
 
 /**
  * Class Component
- * @package Snowflake\Snowflake\Base
+ * @package Kiri\Kiri\Base
  */
 class Component extends BaseObject
 {

@@ -14,9 +14,9 @@ use Database\Affair\Commit;
 use Database\Affair\Rollback;
 use Database\Traits\QueryTrait;
 use Exception;
-use Snowflake\Abstracts\Config;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\ConfigException;
+use Kiri\Abstracts\Config;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\ConfigException;
 
 /**
  * Class Db

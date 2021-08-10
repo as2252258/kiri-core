@@ -7,12 +7,12 @@ namespace Database;
 use Annotation\Inject;
 use Exception;
 use Server\Events\OnWorkerStart;
-use Snowflake\Abstracts\Config;
-use Snowflake\Abstracts\Providers;
-use Snowflake\Application;
-use Snowflake\Events\EventProvider;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Providers;
+use Kiri\Application;
+use Kiri\Events\EventProvider;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 /**
  * Class DatabasesProviders
@@ -53,7 +53,7 @@ class DatabasesProviders extends Providers
 	 */
 	public function get($name): Connection
 	{
-		$application = Snowflake::app();
+		$application = Kiri::app();
 		if (!$application->has('databases.' . $name)) {
 			$application->set('databases.' . $name, $this->_settings($this->getConfig($name)));
 		}
@@ -71,7 +71,7 @@ class DatabasesProviders extends Providers
 		if (empty($databases)) {
 			return;
 		}
-		$application = Snowflake::app();
+		$application = Kiri::app();
 		foreach ($databases as $name => $database) {
 			/** @var Connection $connection */
 			$application->set('databases.' . $name, $this->_settings($database));

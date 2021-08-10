@@ -6,11 +6,11 @@
  * Time: 14:11
  */
 declare(strict_types=1);
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 /**
  * Interface Configure
- * @package Snowflake\Snowflake\Base
+ * @package Kiri\Kiri\Base
  */
 interface Configure
 {

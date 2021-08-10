@@ -5,10 +5,10 @@ namespace Console;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Input;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Input;
+use Kiri\Event;
+use Kiri\Kiri;
 
 /**
  * Class AbstractConsole
@@ -36,7 +36,7 @@ abstract class AbstractConsole extends Component
     public function __construct(array $config = [])
     {
         $this->_config = $config;
-        $this->signCommand(Snowflake::createObject(DefaultCommand::class));
+        $this->signCommand(Kiri::createObject(DefaultCommand::class));
 
         parent::__construct($config);
     }
@@ -117,7 +117,7 @@ abstract class AbstractConsole extends Component
             return;
         }
         foreach ($kernel as $command) {
-            $this->signCommand(Snowflake::createObject($command));
+            $this->signCommand(Kiri::createObject($command));
         }
     }
 

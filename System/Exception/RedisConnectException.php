@@ -2,12 +2,12 @@
 declare(strict_types=1);
 
 
-namespace Snowflake\Exception;
+namespace Kiri\Exception;
 
 
 /**
  * Class RedisConnectException
- * @package Snowflake\Exception
+ * @package Kiri\Exception
  */
 class RedisConnectException extends \Exception
 {

@@ -6,8 +6,8 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Event;
+use Kiri\Kiri;
 use Swoole\Timer;
 
 /**
@@ -28,7 +28,7 @@ class OnWorkerExit extends Callback
 
         Event::trigger(Event::SERVER_WORKER_EXIT, [$server, $worker_id]);
 
-        Snowflake::getApp('logger')->insert();
+        Kiri::getApp('logger')->insert();
     }
 
 }

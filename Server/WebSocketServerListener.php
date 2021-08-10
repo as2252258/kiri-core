@@ -6,9 +6,9 @@ use Annotation\Inject;
 use Exception;
 use ReflectionException;
 use Server\Events\OnAfterRequest;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
@@ -60,7 +60,7 @@ class WebSocketServerListener extends Abstracts\Server
 
 		$events = $settings['events'][Constant::REQUEST] ?? [];
 		if (!empty($events) && is_array($events)) {
-			$events[0] = Snowflake::getDi()->get($events[0]);
+			$events[0] = Kiri::getDi()->get($events[0]);
 			$server->on('request', $events);
 		}
 		return $server;

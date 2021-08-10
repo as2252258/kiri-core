@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Jwt;
+namespace Kiri\Jwt;
 
 use Exception;
 use Server\Constrict\Request;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Config;
-use Snowflake\Core\Json;
-use Snowflake\Exception\ConfigException;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Core\Json;
+use Kiri\Exception\ConfigException;
 
 
 /**
  * Class Jwt
- * @package Snowflake\Jwt
+ * @package Kiri\Jwt
  */
 class Jwt extends Component
 {

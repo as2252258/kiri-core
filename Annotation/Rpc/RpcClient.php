@@ -6,7 +6,7 @@ namespace Annotation\Rpc;
 
 use Annotation\Attribute;
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 
 /**
@@ -45,7 +45,7 @@ use Snowflake\Snowflake;
 	 */
     public function execute(mixed $class, mixed $method = ''): bool
     {
-        $rpc = Snowflake::app()->getRpc();
+        $rpc = Kiri::app()->getRpc();
         $rpc->addProducer($this->cmd, [$class, $method], $this->config);
 
         return true;

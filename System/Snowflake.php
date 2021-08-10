@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use Annotation\Annotation;
@@ -13,11 +13,11 @@ use HttpServer\IInterface\Task;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use ReflectionProperty;
-use Snowflake\Abstracts\Config;
-use Snowflake\Core\Json;
-use Snowflake\Di\Container;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Process\Process;
+use Kiri\Abstracts\Config;
+use Kiri\Core\Json;
+use Kiri\Di\Container;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Process\Process;
 use Swoole\Coroutine;
 use Swoole\WebSocket\Server;
 
@@ -37,10 +37,10 @@ defined('SOCKET_PATH') or define('SOCKET_PATH', APP_PATH . 'app/Websocket/');
 
 
 /**
- * Class Snowflake
- * @package Snowflake
+ * Class Kiri
+ * @package Kiri
  */
-class Snowflake
+class Kiri
 {
 
     /** @var Container */
@@ -149,7 +149,7 @@ class Snowflake
         if (empty($port)) {
             return false;
         }
-        if (Snowflake::getPlatform()->isLinux()) {
+        if (Kiri::getPlatform()->isLinux()) {
             exec('netstat -tunlp | grep ' . $port, $output);
         } else {
             exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
@@ -411,7 +411,7 @@ class Snowflake
      */
     public static function getMasterPid(): bool|string
     {
-        $pid = Snowflake::app()->getSwoole()->setting['pid_file'];
+        $pid = Kiri::app()->getSwoole()->setting['pid_file'];
 
         return file_get_contents($pid);
     }
@@ -527,7 +527,7 @@ class Snowflake
      */
     public static function getPlatform(): Environmental
     {
-        return Snowflake::createObject(Environmental::class);
+        return Kiri::createObject(Environmental::class);
     }
 
 
@@ -537,7 +537,7 @@ class Snowflake
      */
     public static function reload(): mixed
     {
-        return Snowflake::app()->getSwoole()->reload();
+        return Kiri::app()->getSwoole()->reload();
     }
 
 
@@ -634,5 +634,5 @@ class Snowflake
 
 }
 
-//spl_autoload_register([Snowflake::class, 'autoload'], true, true);
-Snowflake::$container = new Container();
+//spl_autoload_register([Kiri::class, 'autoload'], true, true);
+Kiri::$container = new Container();

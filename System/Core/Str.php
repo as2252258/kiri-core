@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Core;
+namespace Kiri\Core;
 
 
 use Exception;
@@ -9,7 +9,7 @@ use Exception;
 
 /**
  * Class Str
- * @package Snowflake\Snowflake\Core
+ * @package Kiri\Kiri\Core
  */
 class Str
 {

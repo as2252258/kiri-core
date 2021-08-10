@@ -14,8 +14,8 @@ use Database\Base\BaseActiveRecord;
 use Database\Traits\HasBase;
 use Exception;
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 defined('SAVE_FAIL') or define('SAVE_FAIL', 3227);
 defined('FIND_OR_CREATE_MESSAGE') or define('FIND_OR_CREATE_MESSAGE', 'Create a new model, but the data cannot be empty.');
@@ -115,7 +115,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public static function findOrCreate(array $condition, array $attributes = []): bool|static
 	{
-		$logger = Snowflake::app()->getLogger();
+		$logger = Kiri::app()->getLogger();
 
 		/** @var static $select */
 		$select = static::find()->where($condition)->first();
@@ -142,7 +142,7 @@ class ActiveRecord extends BaseActiveRecord
 	 */
 	public static function createOrUpdate(array $condition, array $attributes = []): bool|static
 	{
-		$logger = Snowflake::app()->getLogger();
+		$logger = Kiri::app()->getLogger();
 		if (empty($attributes)) {
 			return $logger->addError(FIND_OR_CREATE_MESSAGE, 'mysql');
 		}
@@ -200,7 +200,7 @@ class ActiveRecord extends BaseActiveRecord
 	public static function inserts(array $data): bool
 	{
 		/** @var static $class */
-		$class = Snowflake::createObject(['class' => static::class]);
+		$class = Kiri::createObject(['class' => static::class]);
 		if (empty($data)) {
 			return $class->addError('Insert data empty.', 'mysql');
 		}
@@ -288,7 +288,7 @@ class ActiveRecord extends BaseActiveRecord
 	{
 		$data = $this->_attributes;
 
-		$lists = Snowflake::getAnnotation()->getGets(static::class);
+		$lists = Kiri::getAnnotation()->getGets(static::class);
 		foreach ($lists as $key => $item) {
 			$data[$key] = $this->{$item}($data[$key] ?? null);
 		}

@@ -6,9 +6,9 @@ use Annotation\Inject;
 use Exception;
 use ReflectionException;
 use Server\Events\OnAfterRequest;
-use Snowflake\Event;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Event;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\NotFindClassException;
 use Swoole\Server;
 use Swoole\Server\Port;
 

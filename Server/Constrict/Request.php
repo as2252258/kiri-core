@@ -9,9 +9,9 @@ use HttpServer\Http\Request as HttpResponse;
 use HttpServer\Http\Response;
 use ReflectionException;
 use Server\RequestInterface;
-use Snowflake\Abstracts\BaseObject;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\BaseObject;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 
 /**
@@ -72,6 +72,6 @@ class Request implements RequestInterface
         Context::setContext(HttpResponse::class, $sRequest);
 
 
-        return Snowflake::getDi()->get(Request::class);
+        return Kiri::getDi()->get(Request::class);
     }
 }

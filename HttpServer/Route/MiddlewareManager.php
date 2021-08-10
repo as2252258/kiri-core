@@ -6,7 +6,7 @@ namespace HttpServer\Route;
 
 use Closure;
 use HttpServer\IInterface\Middleware;
-use Snowflake\Abstracts\BaseObject;
+use Kiri\Abstracts\BaseObject;
 
 
 /**

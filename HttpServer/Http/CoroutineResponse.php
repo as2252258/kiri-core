@@ -10,8 +10,8 @@ use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use HttpServer\IInterface\IFormatter;
-use Snowflake\Core\Help;
-use Snowflake\Snowflake;
+use Kiri\Core\Help;
+use Kiri\Kiri;
 use Swoole\Http\Response as SResponse;
 
 
@@ -178,7 +178,7 @@ class CoroutineResponse extends HttpService
             /** @var IFormatter $class */
             $class = $this->_format_maps[$this->format] ?? HtmlFormatter::class;
 
-            $di = Snowflake::getDi()->get($class);
+            $di = Kiri::getDi()->get($class);
             $context = $di->send($context)->getData();
         }
         return $context;

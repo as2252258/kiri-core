@@ -6,9 +6,9 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Kiri;
 use Swoole\Server;
 
 /**
@@ -24,7 +24,7 @@ class OnStart extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
-		if (Snowflake::getPlatform()->isLinux()) {
+		if (Kiri::getPlatform()->isLinux()) {
 			name($server->master_pid, 'master');
 		}
 		fire(Event::SERVER_EVENT_START, [$server]);

@@ -9,10 +9,10 @@ use Server\Manager\OnPipeMessage;
 use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
 use Server\Task\OnServerTask;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;
@@ -113,7 +113,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function checkPort($port): bool
 	{
-		if (Snowflake::getPlatform()->isLinux()) {
+		if (Kiri::getPlatform()->isLinux()) {
 			exec('netstat -tunlp | grep ' . $port, $output);
 		} else {
 			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
@@ -141,7 +141,7 @@ class ServerManager extends Abstracts\Server
 		/** @var Process $process */
 		$this->server->addProcess(new Process(function (Process $soloProcess) use ($customProcess) {
 			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
-			if (Snowflake::getPlatform()->isLinux()) {
+			if (Kiri::getPlatform()->isLinux()) {
 				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
 			}
 
@@ -241,10 +241,10 @@ class ServerManager extends Abstracts\Server
 		}
 		$this->ports[$port]->set($settings['settings'] ?? []);
 		$reflect = match ($type) {
-			Constant::SERVER_TYPE_TCP => Snowflake::getDi()->newObject(TCPServerListener::class),
-			Constant::SERVER_TYPE_UDP => Snowflake::getDi()->newObject(UDPServerListener::class),
-			Constant::SERVER_TYPE_HTTP => Snowflake::getDi()->newObject(HTTPServerListener::class),
-			Constant::SERVER_TYPE_WEBSOCKET => Snowflake::getDi()->newObject(WebSocketServerListener::class),
+			Constant::SERVER_TYPE_TCP => Kiri::getDi()->newObject(TCPServerListener::class),
+			Constant::SERVER_TYPE_UDP => Kiri::getDi()->newObject(UDPServerListener::class),
+			Constant::SERVER_TYPE_HTTP => Kiri::getDi()->newObject(HTTPServerListener::class),
+			Constant::SERVER_TYPE_WEBSOCKET => Kiri::getDi()->newObject(WebSocketServerListener::class),
 			default => throw new Exception(''),
 		};
 		$reflect->bindCallback($this->ports[$port], $settings['events'] ?? []);
@@ -372,7 +372,7 @@ class ServerManager extends Abstracts\Server
 	 */
 	private function getNewInstance(string $class): object
 	{
-		return Snowflake::getDi()->newObject($class);
+		return Kiri::getDi()->newObject($class);
 	}
 
 
@@ -389,7 +389,7 @@ class ServerManager extends Abstracts\Server
 				$this->server->setting['worker_num'] + 1 + $this->server->setting['task_worker_num']);
 		}
 		if (is_string($handler)) {
-			$implements = Snowflake::getDi()->getReflect($handler);
+			$implements = Kiri::getDi()->getReflect($handler);
 			if (!in_array(TaskExecute::class, $implements->getInterfaceNames())) {
 				throw new Exception('Task must instance ' . TaskExecute::class);
 			}
@@ -406,7 +406,7 @@ class ServerManager extends Abstracts\Server
 	private function addTaskListener(array $events = []): void
 	{
 		$task_use_object = $this->server->setting['task_object'] ?? $this->server->setting['task_use_object'] ?? false;
-		$reflect = Snowflake::getDi()->getReflect(OnServerTask::class)?->newInstance();
+		$reflect = Kiri::getDi()->getReflect(OnServerTask::class)?->newInstance();
 		if ($task_use_object || $this->server->setting['task_enable_coroutine']) {
 			$this->server->on('task', $events[Constant::TASK] ?? [$reflect, 'onCoroutineTask']);
 		} else {
@@ -433,7 +433,7 @@ class ServerManager extends Abstracts\Server
 				continue;
 			}
 			if (is_array($callback) && !is_object($callback[0])) {
-				$callback[0] = Snowflake::getDi()->get($callback[0]);
+				$callback[0] = Kiri::getDi()->get($callback[0]);
 			}
 			$this->server->on($event_type, $callback);
 		}

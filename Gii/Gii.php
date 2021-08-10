@@ -12,10 +12,10 @@ namespace Gii;
 use Database\Connection;
 use Database\Db;
 use Exception;
-use Snowflake\Abstracts\Input;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Input;
+use Kiri\Exception\ComponentException;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 /**
  * Class gii
@@ -123,7 +123,7 @@ class Gii
 			return $this->makeByDatabases($make, $input);
 		}
 		$db = $this->input->get('databases', 'db');
-		$this->db = Snowflake::app()->db->get($db);
+		$this->db = Kiri::app()->db->get($db);
 
 		return $this->makeByDatabases($make, $input);
 	}
@@ -138,7 +138,7 @@ class Gii
 	 */
 	private function makeByDatabases($make, $input): array
 	{
-		$redis = Snowflake::app()->getRedis();
+		$redis = Kiri::app()->getRedis();
 		if (!empty($input->get('name'))) {
 			$this->tableName = $input->get('name');
 			$redis->del('column:' . $this->tableName);

@@ -13,8 +13,8 @@ namespace Database;
 use Exception;
 use PDO;
 use PDOStatement;
-use Snowflake\Abstracts\Component;
-use Snowflake\Core\Json;
+use Kiri\Abstracts\Component;
+use Kiri\Core\Json;
 
 /**
  * Class Command

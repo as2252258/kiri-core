@@ -7,7 +7,7 @@ namespace validator;
 
 use Closure;
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class Validator
@@ -172,7 +172,7 @@ class Validator extends BaseValidator
 			$constr = array_merge($this->classMap[$type], $define);
 
 			/** @var BaseValidator $class */
-			$class = Snowflake::createObject($constr);
+			$class = Kiri::createObject($constr);
 			$class->setParams($param);
 			$class->setModel($model);
 

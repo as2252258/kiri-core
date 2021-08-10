@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 interface IAspect

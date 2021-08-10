@@ -19,7 +19,7 @@ use HttpServer\IInterface\IFormatter;
 
 /**
  * Class XmlFormatter
- * @package Snowflake\Snowflake\Http\Formatter
+ * @package Kiri\Kiri\Http\Formatter
  */
 class XmlFormatter extends HttpService implements IFormatter
 {

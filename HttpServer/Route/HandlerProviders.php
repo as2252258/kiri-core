@@ -2,7 +2,7 @@
 
 namespace HttpServer\Route;
 
-use Snowflake\Abstracts\BaseObject;
+use Kiri\Abstracts\BaseObject;
 
 
 /**

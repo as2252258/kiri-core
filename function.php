@@ -11,15 +11,15 @@ use HttpServer\Http\Response as HttpResponse;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Server\Constrict\Response;
-use Snowflake\Abstracts\Config;
-use Snowflake\Aop;
-use Snowflake\Application;
-use Snowflake\Core\ArrayAccess;
-use Snowflake\Error\Logger;
-use Snowflake\Event;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Aop;
+use Kiri\Application;
+use Kiri\Core\ArrayAccess;
+use Kiri\Error\Logger;
+use Kiri\Event;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Swoole\WebSocket\Server;
 
 if (!function_exists('make')) {
@@ -34,18 +34,18 @@ if (!function_exists('make')) {
 	function make($name, $default = null): mixed
 	{
 		if (class_exists($name)) {
-			return Snowflake::createObject($name);
+			return Kiri::createObject($name);
 		}
-		if (Snowflake::has($name)) {
-			return Snowflake::app()->get($name);
+		if (Kiri::has($name)) {
+			return Kiri::app()->get($name);
 		}
 		if (empty($default)) {
 			throw new Exception("Unknown component ID: $name");
 		}
-		if (Snowflake::has($default)) {
-			return Snowflake::app()->get($default);
+		if (Kiri::has($default)) {
+			return Kiri::app()->get($default);
 		}
-		$class = Snowflake::createObject($default);
+		$class = Kiri::createObject($default);
 		class_alias($name, $default, true);
 		return $class;
 	}
@@ -62,7 +62,7 @@ if (!function_exists('workerName')) {
 	 */
 	function workerName($worker_id)
 	{
-		return $worker_id >= Snowflake::app()->getSwoole()->setting['worker_num'] ? 'Task' : 'Worker';
+		return $worker_id >= Kiri::app()->getSwoole()->setting['worker_num'] ? 'Task' : 'Worker';
 	}
 
 }
@@ -77,7 +77,7 @@ if (!function_exists('annotation')) {
 	 */
 	function annotation(): Annotation
 	{
-		return Snowflake::getAnnotation();
+		return Kiri::getAnnotation();
 	}
 
 
@@ -97,7 +97,7 @@ if (!function_exists('scan_directory')) {
 	 */
 	function scan_directory($dir, $namespace, array $exclude = [])
 	{
-		$annotation = Snowflake::app()->getAnnotation();
+		$annotation = Kiri::app()->getAnnotation();
 		$annotation->read($dir, $namespace, $exclude);
 
 		injectRuntime($dir, $exclude);
@@ -118,8 +118,8 @@ if (!function_exists('injectRuntime')) {
 	 */
 	function injectRuntime(string $path, array $exclude = [])
 	{
-		$fileLists = Snowflake::getAnnotation()->runtime($path, $exclude);
-		$di = Snowflake::getDi();
+		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
+		$di = Kiri::getDi();
 		foreach ($fileLists as $class) {
 			$instance = $di->get($class);
 			foreach ($di->getTargetNote($class) as $value) {
@@ -149,7 +149,7 @@ if (!function_exists('swoole')) {
 	 */
 	function swoole(): ?Server
 	{
-		return Snowflake::getWebSocket();
+		return Kiri::getWebSocket();
 	}
 
 
@@ -293,7 +293,7 @@ if (!function_exists('loadByDir')) {
 				$first = explode(DIRECTORY_SEPARATOR, $replace);
 				array_shift($first);
 
-				Snowflake::setAutoload($namespace . '\\' . implode('\\', $first), $value);
+				Kiri::setAutoload($namespace . '\\' . implode('\\', $first), $value);
 			}
 		}
 	}
@@ -312,7 +312,7 @@ if (!function_exists('write')) {
 	 */
 	function write(string $messages, string $category = 'app')
 	{
-		$logger = Snowflake::app()->getLogger();
+		$logger = Kiri::app()->getLogger();
 		$logger->write($messages, $category);
 	}
 }
@@ -322,12 +322,12 @@ if (!function_exists('redis')) {
 
 
 	/**
-	 * @return \Snowflake\Cache\Redis|Redis
+	 * @return \Kiri\Cache\Redis|Redis
 	 * @throws Exception
 	 */
-	function redis(): \Snowflake\Cache\Redis|Redis
+	function redis(): \Kiri\Cache\Redis|Redis
 	{
-		return Snowflake::app()->getRedis();
+		return Kiri::app()->getRedis();
 	}
 }
 
@@ -357,7 +357,7 @@ if (!function_exists('aop')) {
 	 */
 	function aop(mixed $handler, array $params = []): mixed
 	{
-		return Snowflake::getDi()->get(Aop::class)->dispatch($handler, $params);
+		return Kiri::getDi()->get(Aop::class)->dispatch($handler, $params);
 	}
 }
 
@@ -370,7 +370,7 @@ if (!function_exists('app')) {
 	 */
 	#[Pure] function app(): ?Application
 	{
-		return Snowflake::app();
+		return Kiri::app();
 	}
 
 }
@@ -413,7 +413,7 @@ if (!function_exists('logger')) {
 	 */
 	function logger(): Logger
 	{
-		return Snowflake::app()->getLogger();
+		return Kiri::app()->getLogger();
 	}
 }
 
@@ -528,7 +528,7 @@ if (!function_exists('request')) {
 	 */
 	function request(): Request
 	{
-		return Snowflake::getDi()->get(Request::class);
+		return Kiri::getDi()->get(Request::class);
 	}
 
 }
@@ -557,7 +557,7 @@ if (!function_exists('storage')) {
 	function storage(?string $fileName = '', ?string $path = ''): string
 	{
 
-		$basePath = rtrim(Snowflake::getStoragePath(), '/');
+		$basePath = rtrim(Kiri::getStoragePath(), '/');
 		if (!empty($path)) {
 			$path = ltrim($path, '/');
 			if (!is_dir($basePath . '/' . $path)) {
@@ -601,7 +601,7 @@ if (!function_exists('alias')) {
 	 */
 	function alias($class, $name)
 	{
-		Snowflake::setAlias($class, $name);
+		Kiri::setAlias($class, $name);
 	}
 
 }
@@ -617,7 +617,7 @@ if (!function_exists('name')) {
 	 */
 	function name(int $pid, string $prefix = null)
 	{
-		if (Snowflake::getPlatform()->isMac()) {
+		if (Kiri::getPlatform()->isMac()) {
 			return;
 		}
 
@@ -700,7 +700,7 @@ if (!function_exists('di')) {
 	 */
 	function di(string $className): mixed
 	{
-		return Snowflake::getDi()->get($className);
+		return Kiri::getDi()->get($className);
 	}
 
 }
@@ -806,7 +806,7 @@ if (!function_exists('router')) {
 	 */
 	function router(): Router
 	{
-		return Snowflake::app()->getRouter();
+		return Kiri::app()->getRouter();
 	}
 
 }
@@ -823,7 +823,7 @@ if (!function_exists('isService')) {
 	 */
 	function isService(string $name): bool
 	{
-		return Snowflake::app()->has($name);
+		return Kiri::app()->has($name);
 	}
 
 }
@@ -838,7 +838,7 @@ if (!function_exists('getService')) {
 	 */
 	function getService(string $name): mixed
 	{
-		return Snowflake::app()->get($name);
+		return Kiri::app()->get($name);
 	}
 
 }
@@ -927,7 +927,7 @@ if (!function_exists('debug')) {
 	 */
 	function debug(mixed $message, string $method = 'app')
 	{
-		Snowflake::app()->debug($message, $method);
+		Kiri::app()->debug($message, $method);
 	}
 
 }
@@ -941,7 +941,7 @@ if (!function_exists('error')) {
 	 */
 	function error(mixed $message, string $method = 'error')
 	{
-		Snowflake::app()->error($message, $method);
+		Kiri::app()->error($message, $method);
 	}
 }
 
@@ -954,7 +954,7 @@ if (!function_exists('success')) {
 	 */
 	function success(mixed $message, string $method = 'app')
 	{
-		Snowflake::app()->success($message, $method);
+		Kiri::app()->success($message, $method);
 	}
 }
 

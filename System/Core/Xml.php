@@ -7,11 +7,11 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Core;
+namespace Kiri\Core;
 
 /**
  * Class Xml
- * @package Snowflake\Snowflake\Core
+ * @package Kiri\Kiri\Core
  */
 class Xml
 {

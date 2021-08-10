@@ -12,11 +12,11 @@ use ReflectionException;
 use Server\Constrict\Response as CResponse;
 use Server\Constrict\ResponseEmitter;
 use Server\Events\OnAfterRequest;
-use Snowflake\Abstracts\Config;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -73,7 +73,7 @@ class HTTPServerListener extends Abstracts\Server
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
 		}
-		$this->exceptionHandler = Snowflake::getDi()->get($exceptionHandler);
+		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
 	}
 
 

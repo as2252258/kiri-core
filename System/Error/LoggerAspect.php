@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Snowflake\Error;
+namespace Kiri\Error;
 
 
-use Snowflake\IAspect;
+use Kiri\IAspect;
 
 
 /**
  * Class LoggerAspect
- * @package Snowflake\Error
+ * @package Kiri\Error
  */
 class LoggerAspect implements IAspect
 {

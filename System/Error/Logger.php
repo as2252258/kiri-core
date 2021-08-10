@@ -7,23 +7,23 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Error;
+namespace Kiri\Error;
 
 use Annotation\Inject;
 use Exception;
 use Server\Events\OnAfterRequest;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Config;
-use Snowflake\Core\Json;
-use Snowflake\Events\EventProvider;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Core\Json;
+use Kiri\Events\EventProvider;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use Throwable;
 
 /**
  * Class Logger
- * @package Snowflake\Snowflake\Error
+ * @package Kiri\Kiri\Error
  */
 class Logger extends Component
 {
@@ -263,7 +263,7 @@ class Logger extends Component
 	{
 		$code = $exception->getCode() == 0 ? 500 : $exception->getCode();
 
-		$logger = Snowflake::app()->getLogger();
+		$logger = Kiri::app()->getLogger();
 		$logger->write(jTraceEx($exception), 'exception');
 
 		return Json::to($code, $exception->getMessage(), [

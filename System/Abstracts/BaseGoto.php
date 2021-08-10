@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 use Exception;
 use HttpServer\Exception\ExitException;
-use Snowflake\Core\Json;
+use Kiri\Core\Json;
 
 /**
  * Class BaseGoto
- * @package Snowflake\Abstracts
+ * @package Kiri\Abstracts
  */
 class BaseGoto extends Component
 {

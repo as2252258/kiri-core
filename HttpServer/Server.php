@@ -14,12 +14,12 @@ use ReflectionException;
 use Rpc\Service;
 use Server\Constant;
 use Server\ServerManager;
-use Snowflake\Abstracts\Config;
-use Snowflake\Error\LoggerProcess;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Process\Biomonitoring;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Error\LoggerProcess;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Process\Biomonitoring;
+use Kiri\Kiri;
 use Swoole\Runtime;
 
 
@@ -163,7 +163,7 @@ class Server extends HttpService
 	 */
 	private function checkPort($port): bool
 	{
-		if (Snowflake::getPlatform()->isLinux()) {
+		if (Kiri::getPlatform()->isLinux()) {
 			exec('netstat -tunlp | grep ' . $port, $output);
 		} else {
 			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
@@ -181,7 +181,7 @@ class Server extends HttpService
 	public function shutdown()
 	{
 		/** @var Shutdown $shutdown */
-		$shutdown = Snowflake::app()->get('shutdown');
+		$shutdown = Kiri::app()->get('shutdown');
 		$shutdown->shutdown();
 	}
 

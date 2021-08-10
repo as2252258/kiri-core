@@ -6,7 +6,7 @@ namespace Database;
 
 use Closure;
 use Exception;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 /**
  * Class Pagination

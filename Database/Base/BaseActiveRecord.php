@@ -26,20 +26,20 @@ use Database\Traits\HasBase;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Config;
-use Snowflake\Abstracts\TraitApplication;
-use Snowflake\Application;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Abstracts\TraitApplication;
+use Kiri\Application;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use validator\Validator;
 
 /**
  * Class BOrm
  *
- * @package Snowflake\Abstracts
+ * @package Kiri\Abstracts
  *
  * @property bool $isCreate
  * @method rules()
@@ -114,7 +114,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	#[Pure] protected function getContainer(): Application
 	{
-		return Snowflake::app();
+		return Kiri::app();
 	}
 
 
@@ -125,7 +125,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	protected function getEventDispatch(): EventDispatch
 	{
-		return Snowflake::getDi()->get(EventDispatch::class);
+		return Kiri::getDi()->get(EventDispatch::class);
 	}
 
 
@@ -176,7 +176,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function init()
 	{
-		$an = Snowflake::app()->getAnnotation();
+		$an = Kiri::app()->getAnnotation();
 		$an->injectProperty($this);
 	}
 
@@ -216,7 +216,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function getLastError(): mixed
 	{
-		return Snowflake::app()->getLogger()->getLastError('mysql');
+		return Kiri::app()->getLogger()->getLastError('mysql');
 	}
 
 
@@ -705,7 +705,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public function getRelate($name): null|array|string
 	{
-		return Snowflake::getAnnotation()->getRelateMethods(static::class, $name);
+		return Kiri::getAnnotation()->getRelateMethods(static::class, $name);
 	}
 
 
@@ -811,7 +811,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	protected function _get_annotation(string $name = null, string $method = self::GET): ?string
 	{
-		$annotation = Snowflake::app()->getAnnotation();
+		$annotation = Kiri::app()->getAnnotation();
 		if ($method == static::SET) {
 			return $annotation->getSetMethodName(static::class, $name);
 		}
@@ -1032,7 +1032,7 @@ abstract class BaseActiveRecord extends Component implements IOrm, ArrayAccess
 	 */
 	public static function setDatabaseConnect($dbName): Connection
 	{
-		return Snowflake::app()->db->get(static::$connection = $dbName);
+		return Kiri::app()->db->get(static::$connection = $dbName);
 	}
 
 

@@ -8,15 +8,15 @@ use Annotation\Inject;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
-use Snowflake\Abstracts\TraitApplication;
-use Snowflake\Application;
+use Kiri\Abstracts\TraitApplication;
+use Kiri\Application;
 use Server\Constrict\Response as CrResponse;
 use Server\Constrict\Request as CrRequest;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class WebController
- * @package Snowflake\Snowflake\Web
+ * @package Kiri\Kiri\Web
  * @property Application $container
  */
 class Controller

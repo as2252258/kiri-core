@@ -14,14 +14,14 @@ use HttpServer\Http\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Server\Events\OnAfterWorkerStart;
-use Snowflake\Events\EventProvider;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\IAspect;
-use Snowflake\Snowflake;
+use Kiri\Events\EventProvider;
+use Kiri\Exception\NotFindClassException;
+use Kiri\IAspect;
+use Kiri\Kiri;
 
 /**
  * Class Node
- * @package Snowflake\Snowflake\Route
+ * @package Kiri\Kiri\Route
  */
 class Node
 {
@@ -122,7 +122,7 @@ class Node
 		if (!class_exists($controller) && !empty($this->namespace)) {
 			$controller = implode('\\', $this->namespace) . '\\' . $controller;
 		}
-		return [Snowflake::getDi()->get($controller), $action];
+		return [Kiri::getDi()->get($controller), $action];
 	}
 
 
@@ -150,7 +150,7 @@ class Node
 	 */
 	private function getHandlerProviders(): HandlerProviders
 	{
-		return Snowflake::getDi()->get(HandlerProviders::class);
+		return Kiri::getDi()->get(HandlerProviders::class);
 	}
 
 
@@ -194,7 +194,7 @@ class Node
 	 */
 	public function setParameters(): static
 	{
-		$container = Snowflake::getDi();
+		$container = Kiri::getDi();
 		if (empty($this->_handler)) {
 			return $this;
 		}
@@ -236,7 +236,7 @@ class Node
 	private function getAop($handler): ?IAspect
 	{
 		[$controller, $action] = $handler;
-		$aspect = Snowflake::getDi()->getMethodAttribute($controller::class, $action);
+		$aspect = Kiri::getDi()->getMethodAttribute($controller::class, $action);
 		if (empty($aspect)) {
 			return null;
 		}

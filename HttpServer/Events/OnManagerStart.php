@@ -6,9 +6,9 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Kiri;
 use Swoole\Server;
 
 
@@ -26,7 +26,7 @@ class OnManagerStart extends Callback
 	 */
 	public function onHandler(Server $server)
 	{
-		Snowflake::setWorkerId($server->manager_pid);
+		Kiri::setWorkerId($server->manager_pid);
 
 		fire(Event::SERVER_MANAGER_START, [$server]);
 

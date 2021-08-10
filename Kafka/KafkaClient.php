@@ -7,10 +7,10 @@ use RdKafka\Conf;
 use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
 use ReflectionException;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 
 /**
@@ -87,7 +87,7 @@ class KafkaClient
 	 */
 	private function getProducer(): \RdKafka\Producer
 	{
-		return Snowflake::getDi()->get(\RdKafka\Producer::class, [$this->conf]);
+		return Kiri::getDi()->get(\RdKafka\Producer::class, [$this->conf]);
 	}
 
 

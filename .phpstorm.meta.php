@@ -3,7 +3,7 @@
 namespace PHPSTORM_META {
 
     // Reflect
-	use Snowflake\Di\Container;
+	use Kiri\Di\Container;
 
 	override(Container::get(0), map('@'));
 	override(Container::newObject(0), map('@'));

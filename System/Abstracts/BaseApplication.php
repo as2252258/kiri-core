@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 use Annotation\Annotation as SAnnotation;
@@ -28,22 +28,22 @@ use ReflectionException;
 use Rpc\Producer;
 use Rpc\Service;
 use Server\ServerManager;
-use Snowflake\Aop;
-use Snowflake\Async;
-use Snowflake\Cache\Redis;
-use Snowflake\Di\LocalService;
-use Snowflake\Error\ErrorHandler;
-use Snowflake\Error\Logger;
-use Snowflake\Event;
-use Snowflake\Exception\InitException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Jwt\Jwt;
-use Snowflake\Snowflake;
+use Kiri\Aop;
+use Kiri\Async;
+use Kiri\Cache\Redis;
+use Kiri\Di\LocalService;
+use Kiri\Error\ErrorHandler;
+use Kiri\Error\Logger;
+use Kiri\Event;
+use Kiri\Exception\InitException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Jwt\Jwt;
+use Kiri\Kiri;
 use Swoole\Table;
 
 /**
  * Class BaseApplication
- * @package Snowflake\Snowflake\Base
+ * @package Kiri\Kiri\Base
  */
 abstract class BaseApplication extends Component
 {
@@ -66,7 +66,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function __construct()
 	{
-		Snowflake::init($this);
+		Kiri::init($this);
 
 		$config = sweep(APP_PATH . '/config');
 
@@ -170,7 +170,7 @@ abstract class BaseApplication extends Component
 	 * @param $name
 	 * @return mixed
 	 * @throws \ReflectionException
-	 * @throws \Snowflake\Exception\NotFindClassException
+	 * @throws \Kiri\Exception\NotFindClassException
 	 */
 	public function __get($name): mixed
 	{
@@ -193,7 +193,7 @@ abstract class BaseApplication extends Component
 		}
 		foreach ($config['events'] as $key => $value) {
 			if (is_string($value)) {
-				$value = Snowflake::createObject($value);
+				$value = Kiri::createObject($value);
 			}
 			$this->addEvent($key, $value);
 		}
@@ -225,7 +225,7 @@ abstract class BaseApplication extends Component
 			}
 
 			if (is_string($value[0])) {
-				$value[0] = Snowflake::createObject($value[0]);
+				$value[0] = Kiri::createObject($value[0]);
 				Event::on($key, $value, true);
 				return;
 			}
@@ -265,7 +265,7 @@ abstract class BaseApplication extends Component
 	 * @param $name
 	 * @return mixed
 	 * @throws \ReflectionException
-	 * @throws \Snowflake\Exception\NotFindClassException
+	 * @throws \Kiri\Exception\NotFindClassException
 	 */
 	public function get($name): mixed
 	{
@@ -422,7 +422,7 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $array
 	 * @throws \ReflectionException
-	 * @throws \Snowflake\Exception\NotFindClassException
+	 * @throws \Kiri\Exception\NotFindClassException
 	 */
 	private function setComponents($array): void
 	{
@@ -434,7 +434,7 @@ abstract class BaseApplication extends Component
 	 * @param $id
 	 * @param $definition
 	 * @throws \ReflectionException
-	 * @throws \Snowflake\Exception\NotFindClassException
+	 * @throws \Kiri\Exception\NotFindClassException
 	 */
 	public function set($id, $definition): void
 	{
@@ -446,7 +446,7 @@ abstract class BaseApplication extends Component
 	 * @param $id
 	 * @param $definition
 	 * @throws \ReflectionException
-	 * @throws \Snowflake\Exception\NotFindClassException
+	 * @throws \Kiri\Exception\NotFindClassException
 	 */
 	public function has($id): bool
 	{

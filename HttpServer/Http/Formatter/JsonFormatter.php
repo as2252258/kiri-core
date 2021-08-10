@@ -14,7 +14,7 @@ use HttpServer\IInterface\IFormatter;
 
 /**
  * Class JsonFormatter
- * @package Snowflake\Snowflake\Http\Formatter
+ * @package Kiri\Kiri\Http\Formatter
  */
 class JsonFormatter extends HttpService implements IFormatter
 {

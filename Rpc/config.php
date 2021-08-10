@@ -2,10 +2,10 @@
 
 
 use HttpServer\Server;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /** @var \HttpServer\Route\Router $router */
-$router = Snowflake::getApp('router');
+$router = Kiri::getApp('router');
 $router->addRpcService(9527, function (\Rpc\Actuator $actuator) {
     $actuator->addListener('', '');
     $actuator->addListener('', '');

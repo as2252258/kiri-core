@@ -8,7 +8,7 @@ use Annotation\Attribute;
 use Database\ActiveRecord;
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 
 /**
@@ -36,7 +36,7 @@ use Snowflake\Snowflake;
 	 */
     public function execute(mixed $class, mixed $method = null): bool
 	{
-        $annotation = Snowflake::getAnnotation();
+        $annotation = Kiri::getAnnotation();
         $annotation->addRelate($class::class, $this->name, $method);
         return true;
 	}

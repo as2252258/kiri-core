@@ -5,8 +5,8 @@ namespace Database\Condition;
 
 
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\BaseObject;
-use Snowflake\Core\Str;
+use Kiri\Abstracts\BaseObject;
+use Kiri\Core\Str;
 
 /**
  * Class Condition

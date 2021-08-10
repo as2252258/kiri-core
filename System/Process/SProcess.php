@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Process;
+namespace Kiri\Process;
 
 
 interface SProcess

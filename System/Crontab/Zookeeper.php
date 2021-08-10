@@ -1,23 +1,23 @@
 <?php
 
 
-namespace Snowflake\Crontab;
+namespace Kiri\Crontab;
 
 
 use Exception;
 use Server\ServerManager;
 use Server\SInterface\CustomProcess;
-use Snowflake\Abstracts\Config;
-use Snowflake\Cache\Redis;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Cache\Redis;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Swoole\Process;
 use Swoole\Timer;
 use Throwable;
 
 /**
  * Class Zookeeper
- * @package Snowflake\Process
+ * @package Kiri\Process
  */
 class Zookeeper implements CustomProcess
 {
@@ -57,7 +57,7 @@ class Zookeeper implements CustomProcess
 	 */
 	public function loop()
 	{
-		$redis = Snowflake::app()->getRedis();
+		$redis = Kiri::app()->getRedis();
 		defer(fn() => $redis->release());
 		$range = $this->loadCarobTask($redis);
 		foreach ($range as $value) {

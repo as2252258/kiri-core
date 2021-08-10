@@ -6,7 +6,7 @@ namespace HttpServer;
 
 use Exception;
 use Server\ServerManager;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 
 /**

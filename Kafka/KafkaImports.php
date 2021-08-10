@@ -6,10 +6,10 @@ namespace Kafka;
 
 use Exception;
 use HttpServer\Server;
-use Snowflake\Abstracts\Config;
-use Snowflake\Abstracts\Config as SConfig;
-use Snowflake\Abstracts\Providers;
-use Snowflake\Application;
+use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Config as SConfig;
+use Kiri\Abstracts\Providers;
+use Kiri\Application;
 
 
 /**

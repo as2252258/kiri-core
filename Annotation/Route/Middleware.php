@@ -7,8 +7,8 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use HttpServer\Route\MiddlewareManager;
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use HttpServer\IInterface\Middleware as IMiddleware;
 
 /**
@@ -51,7 +51,7 @@ use HttpServer\IInterface\Middleware as IMiddleware;
 	 */
     public function execute(mixed $class, mixed $method = null): static
     {
-        $middleware = Snowflake::getDi()->get(MiddlewareManager::class);
+        $middleware = Kiri::getDi()->get(MiddlewareManager::class);
         $middleware->addMiddlewares($class, $method, $this->middleware);
         return $this;
     }

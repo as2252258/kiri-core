@@ -6,7 +6,7 @@ namespace Rpc;
 
 use Annotation\Inject;
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class Consumer
@@ -46,7 +46,7 @@ abstract class Consumer implements IProducer
 		if (method_exists($this, $method)) {
 			return $this->{$method}();
 		}
-		return Snowflake::app()->get($name);
+		return Kiri::app()->get($name);
 	}
 
 

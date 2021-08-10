@@ -5,7 +5,7 @@ namespace Gii;
 
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiRpcClient
@@ -38,7 +38,7 @@ use Annotation\Target;
 use Exception;
 use HttpServer\Controller;
 use HttpServer\Exception\RequestException;
-use Snowflake\Core\Json;
+use Kiri\Core\Json;
 
 ';
 
@@ -73,7 +73,7 @@ class ' . $managerName . 'Producer extends Controller
 			throw new Exception('File exists.');
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return [$managerName . 'Producer.php'];
 	}
 }

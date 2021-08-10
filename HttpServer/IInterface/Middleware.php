@@ -10,7 +10,7 @@ use HttpServer\Http\Request;
 
 /**
  * Interface IMiddleware
- * @package Snowflake\Snowflake\Route
+ * @package Kiri\Kiri\Route
  */
 interface Middleware
 {

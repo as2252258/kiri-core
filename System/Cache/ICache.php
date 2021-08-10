@@ -7,11 +7,11 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Cache;
+namespace Kiri\Cache;
 
 /**
  * Interface ICache
- * @package Snowflake\Snowflake\Cache
+ * @package Kiri\Kiri\Cache
  */
 interface ICache
 {

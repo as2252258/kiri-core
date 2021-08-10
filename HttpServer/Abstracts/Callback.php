@@ -6,10 +6,10 @@ namespace HttpServer\Abstracts;
 
 use Database\Connection;
 use Exception;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 
 /**
@@ -72,7 +72,7 @@ abstract class Callback extends HttpService
 		if (empty($databases)) {
 			return;
 		}
-		$application = Snowflake::app();
+		$application = Kiri::app();
 		foreach ($databases as $name => $database) {
 			/** @var Connection $connection */
 			$connection = $application->get('databases.' . $name, false);
@@ -101,7 +101,7 @@ abstract class Callback extends HttpService
 	 */
 	protected function clearRedisClient()
 	{
-		$redis = Snowflake::app()->getRedis();
+		$redis = Kiri::app()->getRedis();
 		$redis->destroy();
 	}
 

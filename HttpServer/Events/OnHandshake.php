@@ -13,10 +13,10 @@ use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Route\Router;
 use ReflectionException;
-use Snowflake\Core\ArrayAccess;
-use Snowflake\Event;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Core\ArrayAccess;
+use Kiri\Event;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Swoole\Http\Request as SRequest;
 use Swoole\Http\Response as SResponse;
 use Swoole\WebSocket\Server;
@@ -57,7 +57,7 @@ class OnHandshake extends Callback
 		foreach ($headers as $key => $val) {
 			$response->header($key, $val);
 		}
-		return Snowflake::app()->getRouter();
+		return Kiri::app()->getRouter();
 	}
 
 
@@ -68,7 +68,7 @@ class OnHandshake extends Callback
 	 */
 	private function disconnect(SResponse $response, int $code = 500): void
 	{
-		$server = Snowflake::getWebSocket();
+		$server = Kiri::getWebSocket();
 		if (!$server->isEstablished($response->fd)) {
 			return;
 		}

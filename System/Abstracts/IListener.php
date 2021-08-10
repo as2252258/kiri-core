@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
-use Snowflake\Core\Dtl;
+use Kiri\Core\Dtl;
 
 
 /**
  * Interface IListener
- * @package Snowflake\Abstracts
+ * @package Kiri\Abstracts
  */
 interface IListener
 {

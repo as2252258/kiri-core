@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Snowflake\Core;
+namespace Kiri\Core;
 
 use Error;
 use Exception;
@@ -16,7 +16,7 @@ use Throwable;
 
 /**
  * Class JSON
- * @package Snowflake\Snowflake\Core
+ * @package Kiri\Kiri\Core
  */
 class Json
 {

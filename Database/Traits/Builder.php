@@ -13,8 +13,8 @@ use Database\SqlBuilder;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 
 /**
@@ -181,13 +181,13 @@ trait Builder
 			if (!is_string($condition[2])) {
 				$condition[2] = $this->_hashMap($condition[2]);
 			}
-			$builder = Snowflake::createObject(['class' => OrCondition::class, 'value' => $condition[2], 'column' => $condition[1], 'oldParams' => $array]);
+			$builder = Kiri::createObject(['class' => OrCondition::class, 'value' => $condition[2], 'column' => $condition[1], 'oldParams' => $array]);
 		} else if (isset(ConditionClassMap::$conditionMap[$stroppier])) {
 			$defaultConfig = ConditionClassMap::$conditionMap[$stroppier];
 			$create = array_merge($defaultConfig, ['column' => $condition[1], 'value' => $condition[2]]);
-			$builder = Snowflake::createObject($create);
+			$builder = Kiri::createObject($create);
 		} else {
-			$builder = Snowflake::createObject(['class' => HashCondition::class, 'value' => $condition]);
+			$builder = Kiri::createObject(['class' => HashCondition::class, 'value' => $condition]);
 		}
 
 		$array[] = $builder->builder();

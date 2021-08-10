@@ -6,7 +6,7 @@ namespace Kafka;
 
 use Exception;
 use Psr\Log\LoggerInterface;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class Logger
@@ -33,7 +33,7 @@ class Logger implements LoggerInterface
 	 */
     public function alert(mixed $message, array $context = array())
     {
-	    $logger = Snowflake::app()->getLogger();
+	    $logger = Kiri::app()->getLogger();
 	    $logger->debug($message);
     }
 
@@ -50,7 +50,7 @@ class Logger implements LoggerInterface
 	 */
     public function error(mixed $message, array $context = array())
     {
-	    $logger = Snowflake::app()->getLogger();
+	    $logger = Kiri::app()->getLogger();
 	    $logger->error($message);
     }
 
@@ -61,7 +61,7 @@ class Logger implements LoggerInterface
 	 */
     public function warning(mixed $message, array $context = array())
     {
-	    $logger = Snowflake::app()->getLogger();
+	    $logger = Kiri::app()->getLogger();
 	    $logger->warning($message);
     }
 
@@ -72,7 +72,7 @@ class Logger implements LoggerInterface
 	 */
     public function notice(mixed $message, array $context = array())
     {
-	    $logger = Snowflake::app()->getLogger();
+	    $logger = Kiri::app()->getLogger();
 	    $logger->info($message);
     }
 
@@ -83,7 +83,7 @@ class Logger implements LoggerInterface
 	 */
     public function info(mixed $message, array $context = array())
     {
-	    $logger = Snowflake::app()->getLogger();
+	    $logger = Kiri::app()->getLogger();
 	    $logger->info($message);
     }
 
@@ -95,7 +95,7 @@ class Logger implements LoggerInterface
 	 */
     public function debug(mixed $message, array $context = array())
     {
-	    $logger = Snowflake::app()->getLogger();
+	    $logger = Kiri::app()->getLogger();
 	    $logger->debug($message);
     }
 
@@ -107,7 +107,7 @@ class Logger implements LoggerInterface
 	 */
     public function log($level, mixed $message, array $context = array())
     {
-        $logger = Snowflake::app()->getLogger();
+        $logger = Kiri::app()->getLogger();
         $logger->debug($message);
     }
 

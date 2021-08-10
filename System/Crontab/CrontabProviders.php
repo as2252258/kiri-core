@@ -1,22 +1,22 @@
 <?php
 
 
-namespace Snowflake\Crontab;
+namespace Kiri\Crontab;
 
 
 use Exception;
 use ReflectionException;
-use Snowflake\Abstracts\Config;
-use Snowflake\Abstracts\Providers;
-use Snowflake\Application;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Providers;
+use Kiri\Application;
+use Kiri\Exception\ComponentException;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
 
 
 /**
  * Class CrontabProviders
- * @package Snowflake\Crontab
+ * @package Kiri\Crontab
  */
 class CrontabProviders extends Providers
 {

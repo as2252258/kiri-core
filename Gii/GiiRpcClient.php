@@ -5,7 +5,7 @@ namespace Gii;
 
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiRpcClient
@@ -41,8 +41,8 @@ use Annotation\Rpc\RpcClient;
 use Annotation\Target;
 use Exception;
 use Rpc\Client;
-use Snowflake\Core\Json;
-use Snowflake\Snowflake;
+use Kiri\Core\Json;
+use Kiri\Kiri;
 
 ';
 
@@ -93,7 +93,7 @@ class ' . $managerName . 'Consumer extends \Rpc\Consumer
 			throw new Exception('File exists.');
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return [$managerName . 'Middleware.php'];
 	}
 }

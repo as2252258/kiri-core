@@ -4,7 +4,7 @@ namespace Server\Manager;
 
 use Server\Abstracts\Server;
 use Server\Constant;
-use Snowflake\Exception\ConfigException;
+use Kiri\Exception\ConfigException;
 
 
 /**

@@ -1,19 +1,19 @@
 <?php
 
 
-namespace Snowflake\Crontab;
+namespace Kiri\Crontab;
 
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Server\SInterface\PipeMessage;
-use Snowflake\Application;
-use Snowflake\Snowflake;
+use Kiri\Application;
+use Kiri\Kiri;
 use Swoole\Timer;
 
 /**
  * Class Async
- * @package Snowflake
+ * @package Kiri
  * @property Application $application
  */
 abstract class Crontab implements PipeMessage, CrontabInterface
@@ -62,7 +62,7 @@ abstract class Crontab implements PipeMessage, CrontabInterface
 	 */
 	#[Pure] private function getApplication(): Application
 	{
-		return Snowflake::app();
+		return Kiri::app();
 	}
 
 

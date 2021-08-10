@@ -15,7 +15,7 @@ use Swoole\Coroutine\Http\Client as SClient;
 
 /**
  * Class Client
- * @package Snowflake\Snowflake\Http
+ * @package Kiri\Kiri\Http
  */
 class Client extends ClientAbstracts
 {

@@ -11,7 +11,7 @@ namespace HttpServer\Http;
 
 /**
  * Class HttpHeaders
- * @package Snowflake\Snowflake\Http
+ * @package Kiri\Kiri\Http
  */
 trait HttpHeaders
 {

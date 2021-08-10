@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 interface Kernel

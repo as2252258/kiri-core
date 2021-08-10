@@ -4,7 +4,7 @@
 namespace Kafka;
 
 
-use Snowflake\Abstracts\BaseObject;
+use Kiri\Abstracts\BaseObject;
 
 
 /**

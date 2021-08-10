@@ -10,7 +10,6 @@
   "license": "MIT",
   "require": {
     "php": ">=8.0",
-    "swoole/ide-helper": "@dev",
     "ext-json": "*",
     "ext-fileinfo": "*",
     "ext-pdo": "*",
@@ -34,7 +33,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Snowflake\\": "System/",
+      "Kiri\\": "System/",
       "HttpServer\\": "HttpServer/",
       "Server\\": "Server/",
       "validator\\": "Validator/",

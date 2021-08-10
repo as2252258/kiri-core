@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace Snowflake\Process;
+namespace Kiri\Process;
 
 
 interface ISystem

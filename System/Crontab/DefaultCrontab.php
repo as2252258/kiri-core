@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Snowflake\Crontab;
+namespace Kiri\Crontab;
 
 
 /**
  * Class DefaultCrontab
- * @package Snowflake\Crontab
+ * @package Kiri\Crontab
  */
 class DefaultCrontab extends Crontab
 {

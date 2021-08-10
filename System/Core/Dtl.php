@@ -2,15 +2,15 @@
 declare(strict_types=1);
 
 
-namespace Snowflake\Core;
+namespace Kiri\Core;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 /**
  * Class Dtl
- * @package Snowflake\Core
+ * @package Kiri\Core
  */
 class Dtl extends Component
 {

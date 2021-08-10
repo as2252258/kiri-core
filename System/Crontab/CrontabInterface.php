@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake\Crontab;
+namespace Kiri\Crontab;
 
 interface CrontabInterface
 {

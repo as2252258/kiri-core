@@ -1,19 +1,19 @@
 <?php
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use Exception;
 use ReflectionException;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implement ');
 
 
 /**
  * Class Aop
- * @package Snowflake
+ * @package Kiri
  */
 class Aop extends Component
 {
@@ -61,7 +61,7 @@ class Aop extends Component
 	{
 		$aopName = $handler[0]::class . '::' . $handler[1];
 
-		$reflect = Snowflake::getDi()->getReflect(current(static::$_aop[$aopName]));
+		$reflect = Kiri::getDi()->getReflect(current(static::$_aop[$aopName]));
 		if (!$reflect->isInstantiable() || !$reflect->hasMethod('invoke')) {
 			throw new Exception(ASPECT_ERROR . IAspect::class);
 		}
@@ -81,7 +81,7 @@ class Aop extends Component
 	{
 		$aopName = $handler[0]::class . '::' . $handler[1];
 
-		$reflect = Snowflake::getDi()->get(current(static::$_aop[$aopName]));
+		$reflect = Kiri::getDi()->get(current(static::$_aop[$aopName]));
 		if (!method_exists($reflect, 'invoke')) {
 			throw new Exception(ASPECT_ERROR . IAspect::class);
 		}

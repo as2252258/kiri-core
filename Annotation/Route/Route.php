@@ -7,7 +7,7 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use Exception;
 use HttpServer\Route\Router;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 #[\Attribute(\Attribute::TARGET_METHOD)] class Route extends Attribute
 {
@@ -36,7 +36,7 @@ use Snowflake\Snowflake;
 	public function execute(mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
-		$router = Snowflake::app()->getRouter();
+		$router = Kiri::app()->getRouter();
 		$router->addRoute($this->uri, [$class, $method], $this->method);
 		return $router;
 	}

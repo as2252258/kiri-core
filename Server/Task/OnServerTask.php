@@ -6,8 +6,8 @@ namespace Server\Task;
 
 use ReflectionException;
 use Server\SInterface\TaskExecute;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Swoole\Server;
 
 
@@ -63,7 +63,7 @@ class OnServerTask
     {
         [$class, $params] = json_encode($data, true);
 
-        $reflect = Snowflake::getDi()->getReflect($class);
+        $reflect = Kiri::getDi()->getReflect($class);
 
         if (!$reflect->isInstantiable()) {
             return null;

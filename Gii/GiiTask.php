@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Gii;
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiModel
@@ -83,7 +83,7 @@ class ' . $managerName . ' implements Task
 			throw new Exception('File exists.');
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return [$managerName . '.php'];
 	}
 

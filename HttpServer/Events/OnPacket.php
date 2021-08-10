@@ -6,8 +6,8 @@ namespace HttpServer\Events;
 
 use Exception;
 use HttpServer\Abstracts\Callback;
-use Snowflake\Core\Json;
-use Snowflake\Event;
+use Kiri\Core\Json;
+use Kiri\Event;
 use Swoole\Server;
 
 /**

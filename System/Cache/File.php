@@ -7,18 +7,18 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Cache;
+namespace Kiri\Cache;
 
 
 use Exception;
 
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 use Swoole\Coroutine\System;
 
 /**
  * Class File
- * @package Snowflake\Snowflake\Cache
+ * @package Kiri\Kiri\Cache
  */
 class File extends Component implements ICache
 {

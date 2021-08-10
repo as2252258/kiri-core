@@ -7,7 +7,7 @@ namespace Annotation;
 use DirectoryIterator;
 use Exception;
 use ReflectionException;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 /**
  * Class Annotation

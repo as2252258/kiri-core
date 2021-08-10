@@ -4,7 +4,7 @@ namespace Database\Mysql;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 use Database\Connection;
 
 /**

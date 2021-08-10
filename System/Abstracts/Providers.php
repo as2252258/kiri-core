@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 /**
  * Class Providers
- * @package Snowflake\Abstracts
+ * @package Kiri\Abstracts
  */
 abstract class Providers extends Component implements Provider
 {

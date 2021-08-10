@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Snowflake\Exception;
+namespace Kiri\Exception;
 
 /**
  * Class InitException
- * @package Snowflake\Exception
+ * @package Kiri\Exception
  */
 class InitException extends \Exception
 {

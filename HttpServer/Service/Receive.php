@@ -6,7 +6,7 @@ namespace HttpServer\Service;
 
 use HttpServer\Service\Abstracts\Tcp;
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Exception\NotFindClassException;
 
 /**
  * Class Receive

@@ -10,9 +10,9 @@ use HttpServer\Exception\ExitException;
 use HttpServer\Http\Request as HRequest;
 use HttpServer\Http\Response as HResponse;
 use HttpServer\Route\Router;
-use Snowflake\Error\Logger;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Error\Logger;
+use Kiri\Event;
+use Kiri\Kiri;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -38,7 +38,7 @@ class OnRequest extends Callback
 	 */
 	public function init()
 	{
-		$this->router = Snowflake::app()->getRouter();
+		$this->router = Kiri::app()->getRouter();
 	}
 
 

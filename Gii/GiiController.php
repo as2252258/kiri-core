@@ -6,7 +6,7 @@ namespace Gii;
 
 use Exception;
 use ReflectionException;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiController
@@ -66,13 +66,13 @@ namespace {$namespace};
 				exit(logger()->addError($Exception, 'throwable'));
 			}
 		} else {
-			$import = "use Snowflake;
+			$import = "use Kiri;
 use Exception;
 use Annotation\Target;
 use Annotation\Route\Middleware;
 use Annotation\Route\Route;
-use Snowflake\Core\Str;
-use Snowflake\Core\Json;
+use Kiri\Core\Str;
+use Kiri\Core\Json;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
 use HttpServer\Controller;
@@ -127,7 +127,7 @@ use {$model_namespace}\\{$managerName};
 			unlink($file);
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return $controllerName . 'Controller.php';
 	}
 

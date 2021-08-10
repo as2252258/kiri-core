@@ -6,7 +6,7 @@ namespace Gii;
 
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiLimits
@@ -68,7 +68,7 @@ class ' . $managerName . 'Limits implements Limits
 			throw new Exception('File exists.');
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return [$managerName . 'Limits.php'];
 	}
 

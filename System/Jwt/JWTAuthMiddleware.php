@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace Snowflake\Jwt;
+namespace Kiri\Jwt;
 
 
 use Closure;
@@ -10,11 +10,11 @@ use Exception;
 use HttpServer\Http\Request;
 use HttpServer\IInterface\Middleware;
 use Server\RequestInterface;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class CoreMiddleware
- * @package Snowflake\Snowflake\Route
+ * @package Kiri\Kiri\Route
  * 跨域中间件
  */
 class JWTAuthMiddleware implements Middleware
@@ -41,7 +41,7 @@ class JWTAuthMiddleware implements Middleware
 			throw new JWTAuthTokenException('JWT Voucher Format Error.');
 		}
 		$authorization = str_replace('Bearer ', '', $authorization);
-		$jwt = Snowflake::app()->getJwt();
+		$jwt = Kiri::app()->getJwt();
 		if (!$jwt->validator($authorization)) {
 			throw new JWTAuthTokenException('JWT Validator fail.');
 		}

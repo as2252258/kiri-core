@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Exception;
+namespace Kiri\Exception;
 
 
 
@@ -16,7 +16,7 @@ use Throwable;
 
 /**
  * Class NotFindClassException
- * @package Snowflake\Snowflake\Exception
+ * @package Kiri\Kiri\Exception
  */
 class NotFindClassException extends \Exception
 {

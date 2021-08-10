@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Console;
 
 use ReflectionException;
-use Snowflake\Abstracts\BaseObject;
-use Snowflake\Abstracts\TraitApplication;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\BaseObject;
+use Kiri\Abstracts\TraitApplication;
+use Kiri\Exception\ComponentException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 /**
  * Class Command
@@ -66,7 +66,7 @@ abstract class Command extends BaseObject implements CommandInterface
      */
     private function has($name): bool
     {
-        return Snowflake::app()->has($name);
+        return Kiri::app()->has($name);
     }
 
 
@@ -79,7 +79,7 @@ abstract class Command extends BaseObject implements CommandInterface
      */
     private function get($name): mixed
     {
-        return Snowflake::app()->get($name);
+        return Kiri::app()->get($name);
     }
 
 

@@ -8,8 +8,8 @@ use DirectoryIterator;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use Snowflake\Abstracts\BaseObject;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\BaseObject;
+use Kiri\Kiri;
 use Throwable;
 
 
@@ -51,7 +51,7 @@ class Loader extends BaseObject
 	 */
 	public function getProperty(string $class, string $property = ''): \ReflectionProperty|array|null
 	{
-		return Snowflake::getDi()->getClassReflectionProperty($class, $property);
+		return Kiri::getDi()->getClassReflectionProperty($class, $property);
 	}
 
 
@@ -64,7 +64,7 @@ class Loader extends BaseObject
 	 */
 	public function injectProperty(string $class, object $handler): static
 	{
-		$di = Snowflake::getDi();
+		$di = Kiri::getDi();
 
 		$reflect = $di->getReflect($class);
 
@@ -151,7 +151,7 @@ class Loader extends BaseObject
 	 */
 	private function getReflect(DirectoryIterator $path, string $namespace): ?ReflectionClass
 	{
-		return Snowflake::getDi()->getReflect($this->explodeFileName($path, $namespace));
+		return Kiri::getDi()->getReflect($this->explodeFileName($path, $namespace));
 	}
 
 

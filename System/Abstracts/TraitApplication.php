@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 use Annotation\Annotation as SAnnotation;
@@ -16,17 +16,17 @@ use HttpServer\Route\Router;
 use HttpServer\Server;
 use HttpServer\Shutdown;
 use Rpc\Producer as RPCProducer;
-use Snowflake\Async;
-use Snowflake\Cache\Redis;
-use Snowflake\Error\Logger;
-use Snowflake\Event;
-use Snowflake\Jwt\Jwt;
-use Snowflake\Pool\Connection;
-use Snowflake\Pool\Pool;
+use Kiri\Async;
+use Kiri\Cache\Redis;
+use Kiri\Error\Logger;
+use Kiri\Event;
+use Kiri\Jwt\Jwt;
+use Kiri\Pool\Connection;
+use Kiri\Pool\Pool;
 
 /**
  * Trait TraitApplication
- * @package Snowflake\Abstracts
+ * @package Kiri\Abstracts
  * @property Event $event
  * @property Router $router
  * @property \Redis|Redis $redis
@@ -43,7 +43,7 @@ use Snowflake\Pool\Pool;
  * @property Client $client
  * @property \Database\Connection $databases
  * @property Curl $curl
- * @property \Snowflake\Crontab\Producer $crontab
+ * @property \Kiri\Crontab\Producer $crontab
  * @property HttpFilter $filter
  * @property RPCProducer $rpc
  * @property Shutdown $shutdown

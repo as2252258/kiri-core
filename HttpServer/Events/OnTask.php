@@ -8,9 +8,9 @@ namespace HttpServer\Events;
 use HttpServer\Abstracts\Callback;
 use HttpServer\IInterface\Task;
 use HttpServer\IInterface\Task as ITask;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\Server;
@@ -29,7 +29,7 @@ class OnTask extends Callback
 	 */
 	public function onHandler()
 	{
-		$setting = Snowflake::app()->getSwoole();
+		$setting = Kiri::app()->getSwoole();
 
 		$isCoroutineTask = $setting->setting['task_enable_coroutine'] ?? false;
 		if ($isCoroutineTask === true) {

@@ -9,10 +9,10 @@ use HttpServer\Http\Context;
 use HttpServer\Route\Router;
 use Server\Constant;
 use Server\Events\OnAfterRequest;
-use Snowflake\Core\Json;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Events\EventProvider;
-use Snowflake\Snowflake;
+use Kiri\Core\Json;
+use Kiri\Events\EventDispatch;
+use Kiri\Events\EventProvider;
+use Kiri\Kiri;
 use Swoole\Http\Request;
 use Swoole\Server;
 use function Swoole\Coroutine\defer;
@@ -46,7 +46,7 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function init()
 	{
-		$this->router = Snowflake::getApp('router');
+		$this->router = Kiri::getApp('router');
 	}
 
 

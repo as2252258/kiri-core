@@ -1,17 +1,17 @@
 <?php
 
 
-namespace Snowflake\Crontab;
+namespace Kiri\Crontab;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 
 
 /**
  * Class Producer
- * @package Snowflake\Abstracts
+ * @package Kiri\Abstracts
  */
 class Producer extends Component
 {
@@ -25,7 +25,7 @@ class Producer extends Component
      */
     public function dispatch(Crontab $crontab)
     {
-        $redis = Snowflake::app()->getRedis();
+        $redis = Kiri::app()->getRedis();
 
         $name = $crontab->getName();
         if ($redis->exists(self::CRONTAB_KEY) && $redis->type(self::CRONTAB_KEY) !== \Redis::REDIS_ZSET) {
@@ -48,7 +48,7 @@ class Producer extends Component
      */
     public function clear(string $name)
     {
-        $redis = Snowflake::app()->getRedis();
+        $redis = Kiri::app()->getRedis();
 
         $redis->del('crontab:' . md5($name));
         $redis->zRem(static::CRONTAB_KEY, md5($name));
@@ -64,7 +64,7 @@ class Producer extends Component
 	 */
     public function exists(string $name): bool
     {
-        $redis = Snowflake::app()->getRedis();
+        $redis = Kiri::app()->getRedis();
         if ($redis->exists('crontab:' . md5($name))) {
             return true;
         }
@@ -83,7 +83,7 @@ class Producer extends Component
      */
     public function clearAll()
     {
-        $redis = Snowflake::app()->getRedis();
+        $redis = Kiri::app()->getRedis();
         $data = $redis->zRange(self::CRONTAB_KEY, 0, -1);
         foreach ($data as $datum) {
             $redis->setex('stop:crontab:' . $datum, 120, 1);

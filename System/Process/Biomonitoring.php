@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Snowflake\Process;
+namespace Kiri\Process;
 
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Server\SInterface\CustomProcess;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 use Swoole\Timer;
 
 /**
@@ -35,7 +35,7 @@ class Biomonitoring implements CustomProcess
 	 */
 	public function onHandler(\Swoole\Process $process): void
 	{
-		$server = Snowflake::app()->getSwoole();
+		$server = Kiri::app()->getSwoole();
 		Timer::tick(1000, function () use ($server) {
 			clearstatcache();
 			if (filesize($server->setting['log_file']) > 1024000000) {

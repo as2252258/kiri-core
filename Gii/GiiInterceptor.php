@@ -6,7 +6,7 @@ namespace Gii;
 
 
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiInterceptor
@@ -91,7 +91,7 @@ class ' . $managerName . 'Interceptor implements Interceptor
 			throw new Exception('File exists.');
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return [$managerName . 'Interceptor.php'];
 	}
 

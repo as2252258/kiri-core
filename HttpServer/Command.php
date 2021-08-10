@@ -5,9 +5,9 @@ namespace HttpServer;
 
 
 use Exception;
-use Snowflake\Abstracts\Input;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Input;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 /**
  * Class Command
@@ -33,14 +33,14 @@ class Command extends \Console\Command
 	 */
 	public function onHandler(Input $dtl): string
 	{
-		$manager = Snowflake::app()->getServer();
+		$manager = Kiri::app()->getServer();
 		$manager->setDaemon($dtl->get('daemon', 0));
 		if (!in_array($dtl->get('action'), self::ACTIONS)) {
 			return 'I don\'t know what I want to do.';
 		}
 
 		/** @var Shutdown $shutdown */
-		$shutdown = Snowflake::app()->get('shutdown');
+		$shutdown = Kiri::app()->get('shutdown');
 		if ($shutdown->isRunning() && $dtl->get('action') == 'start') {
 			return 'Service is running. Please use restart.';
 		}

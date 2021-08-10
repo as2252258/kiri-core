@@ -7,11 +7,11 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Error;
+namespace Kiri\Error;
 
 /**
  * Interface ErrorInterface
- * @package Snowflake\Snowflake\Error
+ * @package Kiri\Kiri\Error
  */
 interface ErrorInterface
 {

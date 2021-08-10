@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use Closure;
@@ -18,19 +18,19 @@ use Exception;
 use HttpServer\Command;
 use HttpServer\Http\Response;
 use HttpServer\ServerProviders;
-use Snowflake\Abstracts\BaseApplication;
-use Snowflake\Abstracts\Config;
-use Snowflake\Abstracts\Input;
-use Snowflake\Abstracts\Kernel;
-use Snowflake\Crontab\CrontabProviders;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Abstracts\BaseApplication;
+use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Input;
+use Kiri\Abstracts\Kernel;
+use Kiri\Crontab\CrontabProviders;
+use Kiri\Exception\NotFindClassException;
 use stdClass;
 use Swoole\Timer;
 
 /**
  * Class Init
  *
- * @package Snowflake
+ * @package Kiri
  *
  * @property-read Config $config
  */
@@ -96,7 +96,7 @@ class Application extends BaseApplication
         if (!class_exists($service)) {
             throw new NotFindClassException($service);
         }
-        $class = Snowflake::getDi()->get($service);
+        $class = Kiri::getDi()->get($service);
         if (method_exists($class, 'onImport')) {
             $class->onImport($this);
         }
@@ -138,7 +138,7 @@ class Application extends BaseApplication
     {
         try {
             /** @var Console $manager */
-            $manager = Snowflake::app()->get('console');
+            $manager = Kiri::app()->get('console');
             $manager->register(Runtime::class);
 	        $class = $manager->setParameters($argv)->search();
             if (!($class instanceof Command)) {

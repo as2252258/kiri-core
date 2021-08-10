@@ -7,16 +7,16 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 use Exception;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 
 /**
  * Class Config
- * @package Snowflake\Snowflake\Base
+ * @package Kiri\Kiri\Base
  */
 class Config extends Component
 {
@@ -52,7 +52,7 @@ class Config extends Component
 	 */
 	public static function sets(array $configs)
 	{
-		$config = Snowflake::app()->getConfig();
+		$config = Kiri::app()->getConfig();
 		if (empty($configs)) {
 			return;
 		}
@@ -68,7 +68,7 @@ class Config extends Component
 	 */
 	public static function get($key, mixed $default = null, bool $try = FALSE): mixed
 	{
-		$instance = Snowflake::app()->getConfig()->getData();
+		$instance = Kiri::app()->getConfig()->getData();
 		if (!str_contains($key, '.')) {
 			return $instance[$key] ?? $default;
 		}
@@ -98,7 +98,7 @@ class Config extends Component
 	 */
 	public static function set($key, $value): mixed
 	{
-		$config = Snowflake::app()->getConfig();
+		$config = Kiri::app()->getConfig();
 		return $config->setData($key, $value);
 	}
 
@@ -110,7 +110,7 @@ class Config extends Component
 	 */
 	public static function has($key, bool $must_not_null = false): bool
 	{
-		$config = Snowflake::app()->getConfig();
+		$config = Kiri::app()->getConfig();
 		if (!isset($config->data[$key])) {
 			return false;
 		}

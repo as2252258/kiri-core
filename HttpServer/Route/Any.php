@@ -7,7 +7,7 @@ namespace HttpServer\Route;
 
 /**
  * Class Any
- * @package Snowflake\Snowflake\Route
+ * @package Kiri\Kiri\Route
  */
 class Any
 {

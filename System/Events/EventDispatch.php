@@ -1,9 +1,9 @@
 <?php
 
-namespace Snowflake\Events;
+namespace Kiri\Events;
 
 use Annotation\Inject;
-use Snowflake\Abstracts\BaseObject;
+use Kiri\Abstracts\BaseObject;
 
 
 /**

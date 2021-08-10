@@ -6,8 +6,8 @@ namespace Rpc;
 
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 
 
 /**
@@ -126,11 +126,11 @@ class Producer extends Component
 		if (!empty($host)) {
 			$producer['host'] = $host;
 		} else if (!isset($producer['host'])) {
-			$producer['host'] = Snowflake::localhost();
+			$producer['host'] = Kiri::localhost();
 		}
 		$producerName = $this->getName($name, $producer);
 
-		$snowflake = Snowflake::app();
+		$snowflake = Kiri::app();
 		if (!$snowflake->has($producerName)) {
 			return $snowflake->set($producerName, $this->definer($name, $producer));
 		} else {

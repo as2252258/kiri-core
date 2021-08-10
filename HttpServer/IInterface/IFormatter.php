@@ -12,7 +12,7 @@ namespace HttpServer\IInterface;
 
 /**
  * Interface IFormatter
- * @package Snowflake\Snowflake\Http\Formatter
+ * @package Kiri\Kiri\Http\Formatter
  */
 interface IFormatter
 {

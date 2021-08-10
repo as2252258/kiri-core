@@ -12,13 +12,13 @@ use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStart;
 use Server\Events\OnWorkerStop;
-use Snowflake\Abstracts\Config;
-use Snowflake\Core\Help;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Runtime;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Core\Help;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Runtime;
+use Kiri\Kiri;
 use Swoole\Server;
 use Swoole\Timer;
 
@@ -46,7 +46,7 @@ class OnServerWorker extends \Server\Abstracts\Server
 	public function onWorkerStart(Server $server, int $workerId)
 	{
 		$this->_setConfigCache($workerId);
-		$annotation = Snowflake::app()->getAnnotation();
+		$annotation = Kiri::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app', 'App',
 			$workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
 		);
@@ -71,7 +71,7 @@ class OnServerWorker extends \Server\Abstracts\Server
 	private function interpretDirectory(Annotation $annotation)
 	{
 		$fileLists = $annotation->runtime(APP_PATH . 'app');
-		$di = Snowflake::getDi();
+		$di = Kiri::getDi();
 		foreach ($fileLists as $class) {
 			$instance = $di->get($class);
 			foreach ($di->getTargetNote($class) as $value) {
@@ -100,15 +100,15 @@ class OnServerWorker extends \Server\Abstracts\Server
 	private function workerInitExecutor(Server $server, Annotation $annotation, int $workerId)
 	{
 		if ($workerId < $server->setting['worker_num']) {
-			$loader = Snowflake::app()->getRouter();
+			$loader = Kiri::app()->getRouter();
 			$loader->_loader();
 
-			putenv('environmental=' . Snowflake::WORKER);
+			putenv('environmental=' . Kiri::WORKER);
 
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
 			$this->setProcessName(sprintf('Worker[%d].%d', $server->worker_pid, $workerId));
 		} else {
-			putenv('environmental=' . Snowflake::TASK);
+			putenv('environmental=' . Kiri::TASK);
 
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
 
@@ -162,7 +162,7 @@ class OnServerWorker extends \Server\Abstracts\Server
 
 		$this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
 
-		Snowflake::getApp('logger')->insert();
+		Kiri::getApp('logger')->insert();
 	}
 
 

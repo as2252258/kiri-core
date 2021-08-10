@@ -8,9 +8,9 @@ use Server\Abstracts\Server;
 use Server\Constant;
 use Server\Events\OnAfterRequest;
 use Server\SInterface\PipeMessage;
-use Snowflake\Event;
-use Snowflake\Events\EventDispatch;
-use Snowflake\Exception\ConfigException;
+use Kiri\Event;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\ConfigException;
 
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake\Jwt;
+namespace Kiri\Jwt;
 
 
 use JetBrains\PhpStorm\Pure;

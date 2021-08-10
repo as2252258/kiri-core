@@ -6,7 +6,7 @@ namespace Rpc;
 
 use Exception;
 use HttpServer\Route\Router;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 
 /**
@@ -27,7 +27,7 @@ class Actuator
      */
     public function __construct(public int $port)
     {
-        $this->router = Snowflake::getApp('router');
+        $this->router = Kiri::getApp('router');
     }
 
 

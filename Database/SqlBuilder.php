@@ -7,7 +7,7 @@ namespace Database;
 use Database\Traits\Builder;
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\Component;
+use Kiri\Abstracts\Component;
 
 
 /**

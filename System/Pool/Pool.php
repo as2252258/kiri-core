@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Snowflake\Pool;
+namespace Kiri\Pool;
 
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Timer;
@@ -17,7 +17,7 @@ use Swoole\Timer;
 
 /**
  * Class Pool
- * @package Snowflake\Pool
+ * @package Kiri\Pool
  */
 class Pool extends Component
 {
@@ -101,7 +101,7 @@ class Pool extends Component
             return;
         }
         Timer::clear($this->creates);
-        if (Snowflake::isWorker() || Snowflake::isTask()) {
+        if (Kiri::isWorker() || Kiri::isTask()) {
             $this->debug('Worker #' . env('worker') . ' clear time tick.');
         }
         $this->creates = -1;
@@ -206,7 +206,7 @@ class Pool extends Component
     /**
      * @param $name
      * @return bool
-     * @throws \Snowflake\Exception\ConfigException
+     * @throws \Kiri\Exception\ConfigException
      */
     public function isNull($name): bool
     {

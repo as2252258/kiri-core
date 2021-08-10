@@ -1,22 +1,22 @@
 <?php
 
 
-namespace Snowflake\Error;
+namespace Kiri\Error;
 
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Server\SInterface\CustomProcess;
-use Snowflake\Core\Json;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Process\Process;
-use Snowflake\Snowflake;
+use Kiri\Core\Json;
+use Kiri\Exception\ComponentException;
+use Kiri\Process\Process;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 
 
 /**
  * Class LoggerProcess
- * @package Snowflake\Error
+ * @package Kiri\Error
  */
 class LoggerProcess implements CustomProcess
 {
@@ -51,7 +51,7 @@ class LoggerProcess implements CustomProcess
 	{
 		$message = Json::decode($process->read());
 		if (!empty($message)) {
-			Snowflake::writeFile($this->getDirName($message), $message[0], FILE_APPEND);
+			Kiri::writeFile($this->getDirName($message), $message[0], FILE_APPEND);
 
 			$this->checkLogFile($message[1]);
 		}

@@ -15,8 +15,8 @@ use Database\Connection;
 use Database\SqlBuilder;
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\Component;
-use Snowflake\Core\Json;
+use Kiri\Abstracts\Component;
+use Kiri\Core\Json;
 
 /**
  * Class Columns

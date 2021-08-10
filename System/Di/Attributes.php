@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake\Di;
+namespace Kiri\Di;
 
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass;

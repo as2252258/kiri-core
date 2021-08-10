@@ -2,22 +2,22 @@
 declare(strict_types=1);
 
 
-namespace Snowflake\Pool;
+namespace Kiri\Pool;
 
 
 use Exception;
 use HttpServer\Http\Context;
 use Redis as SRedis;
-use Snowflake\Abstracts\Component;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Exception\RedisConnectException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\RedisConnectException;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Runtime;
 
 /**
  * Class RedisClient
- * @package Snowflake\Snowflake\Pool
+ * @package Kiri\Kiri\Pool
  */
 class Redis extends Component
 {
@@ -112,7 +112,7 @@ class Redis extends Component
      */
     public function getPool(): Pool
     {
-        return Snowflake::getDi()->get(Pool::class);
+        return Kiri::getDi()->get(Pool::class);
     }
 
 

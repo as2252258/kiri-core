@@ -5,7 +5,7 @@ namespace HttpServer;
 
 
 use Exception;
-use Snowflake\Abstracts\BaseObject;
+use Kiri\Abstracts\BaseObject;
 use validator\Validator;
 
 /**

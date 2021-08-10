@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Exception;
+namespace Kiri\Exception;
 
 
 
@@ -15,7 +15,7 @@ use Throwable;
 
 /**
  * Class ComponentException
- * @package Snowflake\Snowflake\Exception
+ * @package Kiri\Kiri\Exception
  */
 class ComponentException extends \Exception
 {

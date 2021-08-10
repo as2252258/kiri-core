@@ -22,12 +22,12 @@ use PDO;
 use ReflectionException;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStop;
-use Snowflake\Abstracts\Component;
-use Snowflake\Abstracts\Config;
-use Snowflake\Event;
-use Snowflake\Events\EventProvider;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Event;
+use Kiri\Events\EventProvider;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 /**
  * Class Connection
@@ -146,7 +146,7 @@ class Connection extends Component
 	public function getSchema(): Schema
 	{
 		if ($this->_schema === null) {
-			$this->_schema = Snowflake::createObject([
+			$this->_schema = Kiri::createObject([
 				'class' => Schema::class,
 				'db'    => $this
 			]);
@@ -176,7 +176,7 @@ class Connection extends Component
 		if (!$this->enableCache) {
 			return null;
 		}
-		return Snowflake::app()->get($this->cacheDriver);
+		return Kiri::app()->get($this->cacheDriver);
 	}
 
 	/**
@@ -210,12 +210,12 @@ class Connection extends Component
 
 
 	/**
-	 * @return \Snowflake\Pool\Connection
+	 * @return \Kiri\Pool\Connection
 	 * @throws Exception
 	 */
-	private function connections(): \Snowflake\Pool\Connection
+	private function connections(): \Kiri\Pool\Connection
 	{
-		return Snowflake::getDi()->get(\Snowflake\Pool\Connection::class);
+		return Kiri::getDi()->get(\Kiri\Pool\Connection::class);
 	}
 
 
@@ -293,7 +293,7 @@ class Connection extends Component
 	 */
 	public function release()
 	{
-		if (!Snowflake::isWorker() && !Snowflake::isProcess()) {
+		if (!Kiri::isWorker() && !Kiri::isProcess()) {
 			$this->clear_connection();
 			return;
 		}

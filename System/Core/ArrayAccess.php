@@ -7,14 +7,14 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Core;
+namespace Kiri\Core;
 
 
 use Exception;
 
 /**
  * Class ArrayAccess
- * @package Snowflake\Core
+ * @package Kiri\Core
  */
 class ArrayAccess
 {

@@ -7,7 +7,7 @@ namespace HttpServer\IInterface;
 
 /**
  * Interface AuthIdentity
- * @package Snowflake\Snowflake\Http
+ * @package Kiri\Kiri\Http
  */
 interface AuthIdentity
 {

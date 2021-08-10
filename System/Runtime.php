@@ -1,17 +1,17 @@
 <?php
 
 
-namespace Snowflake;
+namespace Kiri;
 
 
 use Console\Command;
 use Exception;
-use Snowflake\Abstracts\Input;
+use Kiri\Abstracts\Input;
 
 
 /**
  * Class Runtime
- * @package Snowflake
+ * @package Kiri
  */
 class Runtime extends Command
 {
@@ -34,13 +34,13 @@ class Runtime extends Command
 	public function onHandler(Input $dtl): string
 	{
 		// TODO: Implement onHandler() method.
-		$annotation = Snowflake::app()->getAnnotation();
+		$annotation = Kiri::app()->getAnnotation();
 
 		$runtime = storage(static::CACHE_NAME);
 		$config = storage(static::CONFIG_NAME);
 
-		Snowflake::writeFile($config, $this->configEach());
-		Snowflake::writeFile($runtime, serialize($annotation->getLoader()));
+		Kiri::writeFile($config, $this->configEach());
+		Kiri::writeFile($runtime, serialize($annotation->getLoader()));
 
 		return 'ok';
 	}
@@ -53,7 +53,7 @@ class Runtime extends Command
 	public function configEach(): string
 	{
 		$array = [];
-		$configs = Snowflake::app()->getConfig();
+		$configs = Kiri::app()->getConfig();
 		foreach ($configs->getData() as $key => $datum) {
 			if ($datum instanceof \Closure) {
 				continue;

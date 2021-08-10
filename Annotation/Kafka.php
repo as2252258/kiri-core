@@ -7,7 +7,7 @@ namespace Annotation;
 use Exception;
 use Kafka\ConsumerInterface;
 use Kafka\KafkaProvider;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class Kafka
@@ -39,7 +39,7 @@ use Snowflake\Snowflake;
         }
 
         /** @var KafkaProvider $container */
-        $container = Snowflake::getDi()->get(KafkaProvider::class);
+        $container = Kiri::getDi()->get(KafkaProvider::class);
         $container->addConsumer($this->topic, $class);
 
         return true;

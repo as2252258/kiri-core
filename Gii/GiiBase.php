@@ -11,8 +11,8 @@ use JetBrains\PhpStorm\ArrayShape;
 
 use ReflectionClass;
 use ReflectionException;
-use Snowflake\Abstracts\Input;
-use Snowflake\Core\Json;
+use Kiri\Abstracts\Input;
+use Kiri\Core\Json;
 
 /**
  * Class GiiBase

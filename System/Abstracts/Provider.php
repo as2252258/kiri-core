@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
-use Snowflake\Application;
+use Kiri\Application;
 
 interface Provider
 {

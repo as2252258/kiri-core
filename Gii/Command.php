@@ -5,10 +5,10 @@ namespace Gii;
 
 
 use Exception;
-use Snowflake\Abstracts\Config;
-use Snowflake\Abstracts\Input;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Input;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 /**
  * Class Command
@@ -31,9 +31,9 @@ class Command extends \Console\Command
 	public function onHandler(Input $dtl): array
 	{
 		/** @var Gii $gii */
-		$gii = Snowflake::app()->get('gii');
+		$gii = Kiri::app()->get('gii');
 
-		$connections = Snowflake::app()->db;
+		$connections = Kiri::app()->db;
 		if ($dtl->exists('databases')) {
 			return $gii->run($connections->get($dtl->get('databases')), $dtl);
 		}

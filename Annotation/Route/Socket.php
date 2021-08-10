@@ -7,7 +7,7 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use Exception;
 use HttpServer\Route\Router;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class Socket
@@ -40,7 +40,7 @@ use Snowflake\Snowflake;
 	public function execute(mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
-		$router = Snowflake::app()->getRouter();
+		$router = Kiri::app()->getRouter();
 
 		$path = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 

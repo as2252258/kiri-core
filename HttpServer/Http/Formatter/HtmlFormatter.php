@@ -12,13 +12,13 @@ namespace HttpServer\Http\Formatter;
 
 use Exception;
 use HttpServer\Abstracts\HttpService;
-use Snowflake\Core\Json;
+use Kiri\Core\Json;
 use Swoole\Http\Response;
 use HttpServer\IInterface\IFormatter;
 
 /**
  * Class HtmlFormatter
- * @package Snowflake\Snowflake\Http\Formatter
+ * @package Kiri\Kiri\Http\Formatter
  */
 class HtmlFormatter extends HttpService implements IFormatter
 {

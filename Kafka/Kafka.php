@@ -11,9 +11,9 @@ use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Server\SInterface\CustomProcess;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Swoole\Coroutine\Channel;
 use Swoole\Process;
 use Throwable;
@@ -120,12 +120,12 @@ class Kafka implements CustomProcess
 	{
 		go(function () use ($topic, $message) {
 			try {
-				$server = Snowflake::app()->getSwoole();
+				$server = Kiri::app()->getSwoole();
 
 				$setting = $server->setting['worker_num'];
 
 				/** @var KafkaProvider $container */
-				$container = Snowflake::getDi()->get(KafkaProvider::class);
+				$container = Kiri::getDi()->get(KafkaProvider::class);
 				$data = $container->getConsumer($topic);
 				if (!empty($data)) {
 					$server->sendMessage(new $data(new Struct($topic, $message)), random_int(0, $setting - 1));

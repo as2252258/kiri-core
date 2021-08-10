@@ -17,12 +17,12 @@ use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use HttpServer\IInterface\IFormatter;
 use Server\ResponseInterface;
-use Snowflake\Exception\NotFindClassException;
+use Kiri\Exception\NotFindClassException;
 use Swoole\Http\Response as SResponse;
 
 /**
  * Class Response
- * @package Snowflake\Snowflake\Http
+ * @package Kiri\Kiri\Http
  */
 class Response extends HttpService implements ResponseInterface
 {

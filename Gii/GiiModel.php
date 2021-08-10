@@ -7,7 +7,7 @@ namespace Gii;
 use Database\Db;
 use Exception;
 use ReflectionException;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 /**
  * Class GiiModel
@@ -57,7 +57,7 @@ class GiiModel extends GiiBase
 			try {
 				$className = str_replace('\\\\', '\\', "{$modelPath['namespace']}\\{$managerName}");
 
-				$class = Snowflake::getDi()->getReflect($className);
+				$class = Kiri::getDi()->getReflect($className);
 
 				$html = '<?php
 namespace ' . $namespace . ';
@@ -87,7 +87,7 @@ namespace ' . $namespace . ';
 
 use Exception;
 use Annotation\Target;
-use Snowflake\Core\Json;
+use Kiri\Core\Json;
 use Database\Connection;
 use Annotation\Model\Get;
 use Annotation\Model\Set;
@@ -147,7 +147,7 @@ use Database\ActiveRecord;
 			unlink($file);
 		}
 
-		Snowflake::writeFile($file, $html);
+		Kiri::writeFile($file, $html);
 		return $managerName . '.php';
 	}
 

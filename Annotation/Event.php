@@ -5,9 +5,9 @@ namespace Annotation;
 
 
 use Exception;
-use Snowflake\Exception\ComponentException;
-use Snowflake\Snowflake;
-use Snowflake\Event as SEvent;
+use Kiri\Exception\ComponentException;
+use Kiri\Kiri;
+use Kiri\Event as SEvent;
 
 
 /**

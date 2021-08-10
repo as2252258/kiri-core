@@ -5,9 +5,9 @@ namespace Annotation;
 
 
 use Exception;
-use Snowflake\Aop;
-use Snowflake\IAspect;
-use Snowflake\Snowflake;
+use Kiri\Aop;
+use Kiri\IAspect;
+use Kiri\Kiri;
 
 defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implement ');
 

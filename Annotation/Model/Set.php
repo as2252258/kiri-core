@@ -7,7 +7,7 @@ namespace Annotation\Model;
 use Annotation\Attribute;
 use Database\ActiveRecord;
 use Exception;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 #[\Attribute(\Attribute::TARGET_METHOD)] class Set extends Attribute
 {
@@ -30,7 +30,7 @@ use Snowflake\Snowflake;
      */
     public function execute(mixed $class, mixed $method = null): bool
 	{
-        $annotation = Snowflake::getAnnotation();
+        $annotation = Kiri::getAnnotation();
         $annotation->addSets($class::class, $this->name, $method);
 		return true;
 	}

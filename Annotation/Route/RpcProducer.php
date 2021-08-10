@@ -10,7 +10,7 @@ use HttpServer\Http\Request;
 use HttpServer\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Rpc\Actuator;
-use Snowflake\Snowflake;
+use Kiri\Kiri;
 
 
 /**
@@ -44,7 +44,7 @@ use Snowflake\Snowflake;
     public function execute(mixed $class, mixed $method = null): Router
     {
         // TODO: Implement setHandler() method.
-        $router = Snowflake::app()->getRouter();
+        $router = Kiri::app()->getRouter();
         $cmd = $this->cmd;
         $callback = function (Actuator $actuator) use ($cmd, $class, $method) {
             $actuator->addListener($cmd, $class::class . '@' . $method);

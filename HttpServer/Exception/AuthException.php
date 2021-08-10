@@ -14,7 +14,7 @@ use Throwable;
 
 /**
  * Class AuthException
- * @package Snowflake\Snowflake\Exception
+ * @package Kiri\Kiri\Exception
  */
 class AuthException extends \Exception
 {

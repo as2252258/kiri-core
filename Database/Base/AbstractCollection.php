@@ -15,8 +15,8 @@ use Database\ActiveQuery;
 use Database\ActiveRecord;
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Snowflake\Abstracts\Component;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Kiri;
 use Traversable;
 
 /**

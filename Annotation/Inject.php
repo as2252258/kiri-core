@@ -8,8 +8,8 @@ use Exception;
 use HttpServer\Http\Context;
 use ReflectionException;
 use ReflectionProperty;
-use Snowflake\Core\Str;
-use Snowflake\Snowflake;
+use Kiri\Core\Str;
+use Kiri\Kiri;
 
 /**
  * Class Inject
@@ -81,7 +81,7 @@ use Snowflake\Snowflake;
 			return $method;
 		}
 		if (is_object($class)) $class = $class::class;
-		$method = Snowflake::getDi()->getClassReflectionProperty($class, $method);
+		$method = Kiri::getDi()->getClassReflectionProperty($class, $method);
 		if (!$method || $method->isStatic()) {
 			return false;
 		}
@@ -99,9 +99,9 @@ use Snowflake\Snowflake;
 			return Context::getContext($this->value);
 		}
 		if (class_exists($this->value)) {
-			return Snowflake::getDi()->get($this->value, $this->args);
-		} else if (Snowflake::app()->has($this->value)) {
-			return Snowflake::app()->get($this->value);
+			return Kiri::getDi()->get($this->value, $this->args);
+		} else if (Kiri::app()->has($this->value)) {
+			return Kiri::app()->get($this->value);
 		} else {
 			return $this->value;
 		}

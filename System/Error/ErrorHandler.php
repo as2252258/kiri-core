@@ -7,19 +7,19 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Error;
+namespace Kiri\Error;
 
 use Exception;
 use HttpServer\IInterface\IFormatter;
-use Snowflake\Abstracts\Component;
-use Snowflake\Core\Json;
-use Snowflake\Event;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Component;
+use Kiri\Core\Json;
+use Kiri\Event;
+use Kiri\Kiri;
 
 /**
  * Class ErrorHandler
  *
- * @package Snowflake\Snowflake\Base
+ * @package Kiri\Kiri\Base
  * @property-read $asError
  */
 class ErrorHandler extends Component implements ErrorInterface
@@ -97,7 +97,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$data = Json::to(500, $error[1], $path);
 
-		Snowflake::app()->error($data, 'error');
+		Kiri::app()->error($data, 'error');
 
 		Event::trigger(Event::SYSTEM_RESOURCE_CLEAN);
 
@@ -149,6 +149,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function writer($message, string $category = 'app')
 	{
-		Snowflake::app()->debug($message, $category);
+		Kiri::app()->debug($message, $category);
 	}
 }

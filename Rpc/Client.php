@@ -5,9 +5,9 @@ namespace Rpc;
 
 
 use Exception;
-use Snowflake\Abstracts\Component;
-use Snowflake\Channel;
-use Snowflake\Core\Json;
+use Kiri\Abstracts\Component;
+use Kiri\Channel;
+use Kiri\Core\Json;
 use Swoole\Coroutine\Client as CClient;
 
 

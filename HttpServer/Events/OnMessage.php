@@ -5,7 +5,7 @@ namespace HttpServer\Events;
 
 
 use HttpServer\Abstracts\Callback;
-use Snowflake\Event;
+use Kiri\Event;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 

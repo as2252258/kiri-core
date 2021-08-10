@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Snowflake\Abstracts;
+namespace Kiri\Abstracts;
 
 
 use Exception;

@@ -18,8 +18,8 @@ use Database\Query;
 use Database\SqlBuilder;
 use Exception;
 use ReflectionException;
-use Snowflake\Exception\NotFindClassException;
-use Snowflake\Snowflake;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 
 /**
  * Trait QueryTrait
@@ -737,7 +737,7 @@ trait QueryTrait
 	 */
 	public function makeNewSqlGenerate(): Query
 	{
-		return Snowflake::createObject(['class' => Query::class]);
+		return Kiri::createObject(['class' => Query::class]);
 	}
 
 

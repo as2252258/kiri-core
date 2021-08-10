@@ -9,7 +9,7 @@ use Server\Constant;
 use Exception;
 use Server\Events\OnAfterRequest;
 use Server\SInterface\PipeMessage;
-use Snowflake\Events\EventDispatch;
+use Kiri\Events\EventDispatch;
 
 /**
  *

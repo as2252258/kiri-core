@@ -5,8 +5,8 @@ namespace Server;
 use Annotation\Inject;
 use Exception;
 use Server\Events\OnAfterRequest;
-use Snowflake\Event;
-use Snowflake\Events\EventDispatch;
+use Kiri\Event;
+use Kiri\Events\EventDispatch;
 use Swoole\Server;
 use Swoole\Server\Port;
 

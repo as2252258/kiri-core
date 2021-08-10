@@ -7,20 +7,20 @@
  */
 declare(strict_types=1);
 
-namespace Snowflake\Process;
+namespace Kiri\Process;
 
 
 use Exception;
 use Server\SInterface\CustomProcess;
-use Snowflake\Abstracts\Config;
-use Snowflake\Exception\ConfigException;
-use Snowflake\Snowflake;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Swoole\Event;
 use Swoole\Timer;
 
 /**
  * Class ServerInotify
- * @package Snowflake\Snowflake\Server
+ * @package Kiri\Kiri\Server
  */
 class ServerInotify implements CustomProcess
 {
@@ -238,7 +238,7 @@ class ServerInotify implements CustomProcess
 
         print_r(implode(PHP_EOL, $output));
 
-        Snowflake::reload();
+        Kiri::reload();
     }
 
 

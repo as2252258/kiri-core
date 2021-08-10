@@ -7,8 +7,8 @@ namespace Gii;
 
 use Console\Console;
 use Exception;
-use Snowflake\Abstracts\Providers;
-use Snowflake\Application;
+use Kiri\Abstracts\Providers;
+use Kiri\Application;
 
 /**
  * Class DatabasesProviders
