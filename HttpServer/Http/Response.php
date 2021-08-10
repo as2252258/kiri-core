@@ -180,7 +180,8 @@ class Response extends HttpService implements ResponseInterface
 	public function getResponseFormat(): string
 	{
 		return match ($this->format) {
-			Response::HTML, Response::FILE => 'text/html;charset=utf-8',
+			Response::HTML => 'text/html;charset=utf-8',
+			Response::FILE => 'application/octet-stream',
 			Response::XML => 'application/xml;charset=utf-8',
 			default => 'application/json;charset=utf-8',
 		};
