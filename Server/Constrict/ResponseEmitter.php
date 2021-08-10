@@ -29,6 +29,7 @@ class ResponseEmitter
 		if ($content instanceof FileFormatter) {
 			$this->download($content->getData(), $response);
 		} else {
+			$response->header('Content-Type', $emitter->getResponseFormat());
 			$response->end($content->getData());
 		}
 	}

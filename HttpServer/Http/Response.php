@@ -211,7 +211,6 @@ class Response extends HttpService implements ResponseInterface
 	public function configure(SResponse $response): static
 	{
 		$response->setStatusCode($this->statusCode);
-		$response->header('Content-Type', $this->getResponseFormat());
 		$response->header('Run-Time', $this->getRuntime());
 		if (!empty($this->headers)) {
 			foreach ($this->headers as $name => $header) {
