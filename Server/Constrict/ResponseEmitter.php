@@ -22,11 +22,11 @@ class ResponseEmitter
 	public function sender(\Swoole\Http\Response $response, ResponseInterface $emitter)
 	{
 		$content = $emitter->configure($response)->getContent();
-		if (!($content instanceof FileFormatter)) {
+		if ($content instanceof FileFormatter) {
+			$this->download($content->getData(), $response);
+		} else {
 			$response->end($content->getData());
-			return;
 		}
-		$this->download($content->getData(), $response);
 	}
 
 
