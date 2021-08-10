@@ -479,7 +479,7 @@ trait QueryTrait
 
 		$oldWhere = '(' . implode(') AND (', $this->where) . ')';
 
-		$this->where = [$oldWhere . ' OR ' . $conditionArray];
+		$this->where = ['(' . $oldWhere . ') OR ' . $conditionArray];
 		return $this;
 	}
 
