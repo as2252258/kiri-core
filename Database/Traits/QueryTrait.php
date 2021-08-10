@@ -893,7 +893,9 @@ trait QueryTrait
 	 */
 	private function sprintf($column, $value, string $opera = '='): string
 	{
-		$value = trim($value, '\'"');
+		if (is_string($value)) {
+			$value = trim($value, '\'"');
+		}
 		return "$column $opera '$value'";
 	}
 
