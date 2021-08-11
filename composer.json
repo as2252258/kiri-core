@@ -31,7 +31,8 @@
     "ext-gd": "*",
     "swiftmailer/swiftmailer": "^6.0",
     "ext-spltype": "*",
-    "game-worker/db-connection": "dev-master"
+    "game-worker/db-connection": "dev-master",
+    "game-worker/validator": "dev-master"
   },
   "autoload": {
     "psr-4": {
