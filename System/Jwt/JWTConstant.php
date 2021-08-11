@@ -2,7 +2,7 @@
 
 namespace Kiri\Jwt;
 
-class ASE
+class JWTConstant
 {
 
 	const AES_128_ECB              = 'aes-128-ecb';
