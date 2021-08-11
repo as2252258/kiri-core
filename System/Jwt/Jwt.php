@@ -49,6 +49,8 @@ class Jwt extends Component
 			$this->setEncrypt($jwt['encrypt'] ?? JWTConstant::AES_128_ECB);
 			$this->setKey($jwt['key'] ?? get_called_class());
 
+			var_dump($this->encrypt);
+
 			$defaultIv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($this->encrypt));
 			$this->setIv($jwt['iv'] ?? $defaultIv);
 		}
