@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Kiri\Jwt;
 
 use Exception;
-use Server\Constrict\Request;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Exception\ConfigException;
+use Server\Constrict\Request;
 
 
 /**
@@ -62,7 +62,9 @@ class Jwt extends Component
 	 */
 	private function jwtHeader(): string
 	{
-		return base64_encode(json_encode(['type' => 'openssl', 'encrypt' => $this->encrypt]));
+		$string = openssl_encrypt(json_encode(['type' => 'openssl', 'encrypt' => $this->encrypt]),
+			"seed-ecb", $this->key);
+		return urlencode(str_replace('=', '', $string));
 	}
 
 
