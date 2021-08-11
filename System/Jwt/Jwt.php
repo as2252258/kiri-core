@@ -112,7 +112,7 @@ class Jwt extends Component
 		$params[] = $this->jwtHeader();
 		$params[] = $this->jwtBody($unionId);
 
-		$params[] = hash($this->encrypt, $params[0] . $params[1]);
+		$params[] = hash('sha256', $params[0] . $params[1]);
 		return implode('.', $params);
 	}
 
@@ -178,7 +178,7 @@ class Jwt extends Component
 		if (count($explode = explode('.', $token)) != 3) {
 			throw new JWTAuthTokenException('JWT Voucher Format Error.');
 		}
-		if (hash($this->encrypt, $explode[0] . $explode[1]) != $explode[2]) {
+		if (hash('sha256', $explode[0] . $explode[1]) != $explode[2]) {
 			throw new JWTAuthTokenException('JWT Sign Validator Fail.');
 		}
 		if (!openssl_public_decrypt(base64_decode($explode[1]), $decode, $this->public)) {
