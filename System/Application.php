@@ -53,8 +53,6 @@ class Application extends BaseApplication
 	{
 		$this->import(ConsoleProviders::class);
 		$this->import(ServerProviders::class);
-
-		$this->import(CrontabProviders::class);
 	}
 
 
@@ -64,6 +62,15 @@ class Application extends BaseApplication
 	public function withDatabase()
 	{
 		$this->import(DatabasesProviders::class);
+	}
+
+
+	/**
+	 * @throws NotFindClassException
+	 */
+	public function withCrontab()
+	{
+		$this->import(CrontabProviders::class);
 	}
 
 
