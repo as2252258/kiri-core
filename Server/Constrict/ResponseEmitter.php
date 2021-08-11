@@ -31,6 +31,8 @@ class ResponseEmitter
 		} else {
 			$response->header('Content-Type', $emitter->getResponseFormat());
 			$response->end($content->getData());
+
+			var_dump($response->isWritable());
 		}
 	}
 
