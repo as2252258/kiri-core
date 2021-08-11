@@ -16,8 +16,9 @@ use HttpServer\Http\Formatter\HtmlFormatter;
 use HttpServer\Http\Formatter\JsonFormatter;
 use HttpServer\Http\Formatter\XmlFormatter;
 use HttpServer\IInterface\IFormatter;
-use Server\ResponseInterface;
 use Kiri\Exception\NotFindClassException;
+use Server\ResponseInterface;
+use Server\ServerManager;
 use Swoole\Http\Response as SResponse;
 
 /**
@@ -53,6 +54,29 @@ class Response extends HttpService implements ResponseInterface
 	];
 
 	public int $fd = 0;
+	private int $clientId = 0;
+	private int $reactorId = 0;
+
+
+	/**
+	 * @param int $int
+	 * @param int $reID
+	 */
+	public function setClientId(int $int, int $reID)
+	{
+		$this->clientId = $int;
+		$this->reactorId = $reID;
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getClientInfo(): mixed
+	{
+		$server = ServerManager::getContext()->getServer();
+		return $server->getClientInfo($this->clientId, $this->reactorId);
+	}
 
 
 	/**
@@ -61,6 +85,15 @@ class Response extends HttpService implements ResponseInterface
 	public function getFormat(): string
 	{
 		return $this->format;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getClientId(): int
+	{
+		return $this->clientId;
 	}
 
 
@@ -117,6 +150,7 @@ class Response extends HttpService implements ResponseInterface
 	/**
 	 * @param string $path
 	 * @param bool $isChunk
+	 * @param int $offset
 	 * @param int $limit
 	 * @return $this|Response
 	 * @throws Exception

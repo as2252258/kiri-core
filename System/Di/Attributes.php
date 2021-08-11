@@ -112,11 +112,15 @@ trait Attributes
 
 
 	/**
-	 * @param ReflectionClass $class
+	 * @param ReflectionClass|string $class
 	 * @return array
+	 * @throws \ReflectionException
 	 */
-	#[Pure] public function getMethods(ReflectionClass $class): array
+	public function getMethods(ReflectionClass|string $class): array
 	{
+		if (is_string($class)) {
+			$class = $this->getReflect($class);
+		}
 		return $this->_classMethod[$class->getName()] ?? [];
 	}
 

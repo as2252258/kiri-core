@@ -14,7 +14,6 @@ use HttpServer\IInterface\Middleware;
 use HttpServer\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
-use Rpc\Actuator;
 use Server\RequestInterface;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;

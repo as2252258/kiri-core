@@ -4,9 +4,11 @@ namespace Server\Constrict;
 
 use Exception;
 use HttpServer\Http\Formatter\FileFormatter;
+use HttpServer\IInterface\IFormatter;
+use Kiri\Exception\NotFindClassException;
 use ReflectionException;
 use Server\ResponseInterface;
-use Kiri\Exception\NotFindClassException;
+use Swoole\Server;
 
 
 /**
@@ -17,20 +19,39 @@ class ResponseEmitter
 
 
 	/**
-	 * @param \Swoole\Http\Response|\Swoole\Http2\Response $response
+	 * @param \Swoole\Http\Response|\Swoole\Http2\Response|Server $response
 	 * @param ResponseInterface $emitter
-	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response $response, ResponseInterface $emitter)
+	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response|Server $response, ResponseInterface $emitter)
 	{
 		$content = $emitter->configure($response)->getContent();
+		if ($response instanceof Server) {
+			$this->sendTcpData($response, $emitter, $content);
+			return;
+		}
 		if ($content instanceof FileFormatter) {
 			$this->download($content->getData(), $response);
 		} else {
 			$response->header('Content-Type', $emitter->getResponseFormat());
 			$response->end($content->getData());
+		}
+	}
+
+
+	/**
+	 * @param Server $response
+	 * @param ResponseInterface $emitter
+	 * @param IFormatter $formatter
+	 */
+	private function sendTcpData(Server $response, ResponseInterface $emitter, IFormatter $formatter)
+	{
+		if ($formatter instanceof FileFormatter) {
+			$response->sendfile($emitter->getClientId(), $formatter->getData());
+		} else {
+			$response->send($emitter->getClientId(), $formatter->getData());
 		}
 	}
 

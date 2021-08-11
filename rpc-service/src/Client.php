@@ -6,7 +6,6 @@ namespace Rpc;
 
 use Exception;
 use Kiri\Abstracts\Component;
-use Kiri\Channel;
 use Kiri\Core\Json;
 use Swoole\Coroutine\Client as CClient;
 
@@ -28,12 +27,13 @@ class Client extends Component
 
 
 	/**
-	 * @param string $cmd
+	 * @param string $package
+	 * @param string $method
 	 * @param array $param
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function dispatch(string $cmd, array $param): mixed
+	public function dispatch(string $package, string $method, array $param): mixed
 	{
 		if (empty($this->config)) {
 			return $this->addError('Related service not found(404)');
@@ -44,32 +44,15 @@ class Client extends Component
 		if (!$this->client->isConnected() && !$this->connect()) {
 			return false;
 		}
-
-		$isSend = $this->client->send(implode("\n", [$cmd, '', serialize($param)]));
+		$isSend = $this->client->send(Protocol::encode($package, $method, $param));
 		if ($isSend === false) {
 			return $this->addError($this->client->errMsg . '(' . $this->client->errCode . ')');
 		}
-		defer(fn() => $this->clientRecover());
+		defer(fn() => $this->client->close());
 		if (is_bool($unpack = Json::decode($this->client->recv()))) {
 			$unpack = $this->addError('Service return data format error(500)');
 		}
 		return $unpack;
-	}
-
-
-	/**
-	 * @return Client
-	 * @throws Exception
-	 */
-	public function clientRecover(): static
-	{
-		$host = $this->config['host'] ?? '127.0.0.1';
-		$port = $this->config['port'] ?? 0;
-		if ($port < 0) {
-			return $this;
-		}
-		$this->client = null;
-		return $this;
 	}
 
 
@@ -113,7 +96,7 @@ class Client extends Component
 		if ($port < 0) {
 			throw new Exception('Related service not have port(404)');
 		}
-		$client = new CClient($this->config['mode'] ?? SWOOLE_SOCK_TCP);
+		$client = new CClient(SWOOLE_SOCK_TCP);
 		$client->set([
 			'timeout'            => 0.5,
 			'connect_timeout'    => 1.0,

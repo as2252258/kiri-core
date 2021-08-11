@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Console;
 
+use Exception;
 use ReflectionException;
 use Kiri\Abstracts\BaseObject;
 use Kiri\Abstracts\TraitApplication;
@@ -44,13 +45,13 @@ abstract class Command extends BaseObject implements CommandInterface
     }
 
 
-    /**
-     * @param $name
-     * @return mixed
-     * @throws ComponentException
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     */
+	/**
+	 * @param $name
+	 * @return mixed
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
     public function __get($name): mixed
     {
         if ($this->has($name)) {
@@ -63,6 +64,7 @@ abstract class Command extends BaseObject implements CommandInterface
     /**
      * @param $name
      * @return bool
+     * @throws
      */
     private function has($name): bool
     {
@@ -74,7 +76,6 @@ abstract class Command extends BaseObject implements CommandInterface
      * @param $name
      * @return mixed
      * @throws ReflectionException
-     * @throws ComponentException
      * @throws NotFindClassException
      */
     private function get($name): mixed
