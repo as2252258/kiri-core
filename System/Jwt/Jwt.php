@@ -112,7 +112,7 @@ class Jwt extends Component
 		$params[] = $this->jwtHeader();
 		$params[] = $this->jwtBody($unionId);
 
-		$params[] = hash('ripemd128', $params[0] . $params[1]);
+		$params[] = hash($this->encrypt, $params[0] . $params[1]);
 		return implode('.', $params);
 	}
 
