@@ -41,7 +41,7 @@ class Jwt extends Component
 
 		$this->public = Config::get('ssl.public', $this->public);
 		$this->private = Config::get('ssl.private', $this->private);
-		$this->timeout = Config::get('ssl.timeout', 7200);
+		$this->timeout = Config::get('jwt.timeout', 7200);
 
 		$jwt = Config::get('jwt', []);
 		if ($jwt) {
