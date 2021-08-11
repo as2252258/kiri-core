@@ -25,6 +25,9 @@ class ResponseEmitter
 	 */
 	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response $response, ResponseInterface $emitter)
 	{
+		$response->header('Content-Type', $emitter->getResponseFormat());
+		$response->end('$content->getData()');
+		return;
 		$content = $emitter->configure($response)->getContent();
 		if ($content instanceof FileFormatter) {
 			$this->download($content->getData(), $response);
