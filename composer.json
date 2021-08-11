@@ -29,7 +29,9 @@
     "ext-posix": "*",
     "ext-rdkafka": "*",
     "ext-gd": "*",
-    "swiftmailer/swiftmailer": "^6.0"
+    "swiftmailer/swiftmailer": "^6.0",
+    "ext-spltype": "*",
+    "game-worker/db-connection": "dev-master"
   },
   "autoload": {
     "psr-4": {
