@@ -26,7 +26,7 @@ trait JwtHelper
 	private string $scene = 'default';
 
 
-	private string $encrypt = '';
+	private string $encrypt = 'aes-128-ecb';
 
 
 	private string $iv = '';
