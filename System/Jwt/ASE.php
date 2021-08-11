@@ -2,7 +2,7 @@
 
 namespace Kiri\Jwt;
 
-class ASE extends \SplEnum
+class ASE
 {
 
 	const AES_128_ECB              = 'aes-128-ecb';
