@@ -29,6 +29,9 @@ trait JwtHelper
 	private string $encrypt = 'sha256';
 
 
+	private string $iv = '';
+
+
 	private ?string $public = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6BuML3gtLGde7QKNuNST
 UCB9gdHC7XIpOc7Wx2I64Esj3UxWHTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6Xad
@@ -68,6 +71,8 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 -----END RSA PRIVATE KEY-----';
 
 
+
+
 	/**
 	 * @param string $publicKey
 	 */
@@ -86,9 +91,9 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 
 
 	public function setScene(string $scene)
-    {
-	    $this->scene = $scene;
-    }
+	{
+		$this->scene = $scene;
+	}
 
 
 	/**
@@ -105,6 +110,24 @@ mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 	public function setPrivate(string $privateKey)
 	{
 		$this->private = $privateKey;
+	}
+
+
+	/**
+	 * @param string $privateKey
+	 */
+	public function setIv(string $privateKey)
+	{
+		$this->iv = $privateKey;
+	}
+
+
+	/**
+	 * @param string $privateKey
+	 */
+	public function setEncrypt(string $privateKey)
+	{
+		$this->encrypt = $privateKey;
 	}
 
 

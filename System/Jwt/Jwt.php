@@ -27,16 +27,31 @@ class Jwt extends Component
 	/**
 	 * @throws ConfigException
 	 * @throws Exception
+	 * 'jwt' => [
+	 * 'scene' => 'application',
+	 * 'timeout' => 7200,
+	 * 'encrypt' => '',
+	 * 'iv'      => '',
+	 * 'key'     => '',
+	 * ]
 	 */
 	public function init()
 	{
 		$this->request = di(Request::class);
-		if (!Config::has('ssl.public') || !Config::has('ssl.private')) {
-			return;
-		}
+
 		$this->public = Config::get('ssl.public', $this->public);
 		$this->private = Config::get('ssl.private', $this->private);
 		$this->timeout = Config::get('ssl.timeout', 7200);
+
+		$jwt = Config::get('jwt', []);
+		if ($jwt) {
+			$this->setScene($jwt['scene'] ?? 'application');
+			$this->setEncrypt($jwt['encrypt'] ?? ASE::AES_128_ECB);
+			$this->setKey($jwt['key'] ?? get_called_class());
+
+			$defaultIv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($this->encrypt));
+			$this->setIv($jwt['iv'] ?? $defaultIv);
+		}
 	}
 
 	/**
@@ -62,9 +77,14 @@ class Jwt extends Component
 	 */
 	private function jwtHeader(): string
 	{
-		$string = openssl_encrypt(json_encode(['type' => 'openssl', 'encrypt' => $this->encrypt]),
-			"seed-ecb", $this->key);
-		return urlencode(str_replace('=', '', $string));
+		$string = openssl_encrypt(
+			json_encode(['type' => 'openssl', 'encrypt' => $this->encrypt]),
+			$this->encrypt,
+			$this->key,
+			0,
+			$this->iv
+		);
+		return str_replace('=', '', $string);
 	}
 
 
@@ -91,7 +111,7 @@ class Jwt extends Component
 		$params[] = $this->jwtHeader();
 		$params[] = $this->jwtBody($unionId);
 
-		$params[] = hash($this->encrypt, $params[0] . $params[1]);
+		$params[] = hash('ripemd128', $params[0] . $params[1]);
 		return implode('.', $params);
 	}
 
