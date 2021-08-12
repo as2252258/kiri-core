@@ -165,18 +165,7 @@ class Logger extends Component
 	 */
 	public function getLastError(string $application = 'app'): mixed
 	{
-		return $this->logs[$application] ?? null;
-
-		foreach ($this->logs as $val) {
-			if ($val[0] != $application) {
-				continue;
-			}
-			$filetype[] = $val[1];
-		}
-		if (empty($filetype)) {
-			return 'Unknown error.';
-		}
-		return end($filetype);
+		return $this->logs[$application] ?? 'Unknown error.';
 	}
 
 	/**
