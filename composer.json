@@ -40,7 +40,6 @@
       "Console\\": "Console/",
       "Gii\\": "Gii/",
       "Kafka\\": "Kafka/",
-      "Rpc\\": "Rpc/",
       "Annotation\\": "Annotation/"
     },
     "files": [
