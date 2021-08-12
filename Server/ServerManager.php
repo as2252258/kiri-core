@@ -33,7 +33,7 @@ class ServerManager extends Abstracts\Server
 	public int $port = 0;
 
 
-	/** @var Server\Port[] */
+	/** @var array<string,Port> */
 	public array $ports = [];
 
 	public int $mode = SWOOLE_TCP;
