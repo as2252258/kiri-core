@@ -11,6 +11,7 @@ use ReflectionException;
 use Server\Events\OnAfterRequest;
 use Server\ResponseInterface;
 use Server\SInterface\OnClose;
+use Server\SInterface\OnConnect;
 use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -19,8 +20,18 @@ use Swoole\Server;
 /**
  *
  */
-class Http extends \Server\Abstracts\Http implements OnClose
+class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
+
+
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 */
+	public function onConnect(Server $server, int $fd): void
+	{
+		// TODO: Implement onConnect() method.
+	}
 
 
 	/**
