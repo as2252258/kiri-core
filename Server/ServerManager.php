@@ -11,6 +11,8 @@ use Kiri\Kiri;
 use ReflectionException;
 use Server\Manager\OnPipeMessage;
 use Server\SInterface\CustomProcess;
+use Server\SInterface\OnClose;
+use Server\SInterface\OnConnect;
 use Server\SInterface\TaskExecute;
 use Server\Task\OnServerTask;
 use Swoole\Http\Server as HServer;
@@ -343,6 +345,17 @@ class ServerManager extends Abstracts\Server
 		foreach ($events as $name => $event) {
 			if (is_array($event) && is_string($event[0])) {
 				$event[0] = Kiri::getDi()->get($event[0], [$server]);
+//				if ($event[0] instanceof OnConnect && $server->getCallback('connect') != null) {
+//					$server->on('connect', [$event[0], 'onConnect']);
+//				}
+//				if ($event[0] instanceof OnClose) {
+//					if ($server->getCallback('disconnect') != null) {
+//						$server->on('disconnect', [$event[0], 'onDisconnect']);
+//					}
+//					if ($server->getCallback('close') != null) {
+//						$server->on('close', [$event[0], 'onClose']);
+//					}
+//				}
 			}
 			$server->on($name, $event);
 		}
