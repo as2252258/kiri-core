@@ -5,10 +5,6 @@ namespace HttpServer;
 
 use Exception;
 use HttpServer\Abstracts\HttpService;
-use HttpServer\Service\Http;
-use HttpServer\Service\Packet;
-use HttpServer\Service\Receive;
-use HttpServer\Service\Websocket;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Rpc\Service;
@@ -39,6 +35,7 @@ class Server extends HttpService
 
 
 	private ServerManager $manager;
+	private mixed $daemon = 0;
 
 
 	/**
@@ -119,60 +116,6 @@ class Server extends HttpService
 
 
 	/**
-	 * @param $host
-	 * @param $Port
-	 * @return Packet|Websocket|Receive|Http|null
-	 * @throws Exception
-	 */
-	public function error_stop($host, $Port): Packet|Websocket|Receive|Http|null
-	{
-		$this->error(sprintf('Port %s::%d is already.', $host, $Port));
-		if ($this->swoole) {
-			$this->swoole->shutdown();
-		} else {
-			$this->shutdown();
-		}
-		return $this->swoole;
-	}
-
-
-	/**
-	 * @return bool
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	public function isRunner(): bool
-	{
-		$port = Config::get('servers');
-		if (empty($port)) {
-			return false;
-		}
-		foreach ($port as $value) {
-			if ($this->checkPort($value['port'])) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-	/**
-	 * @param $port
-	 * @return bool
-	 * @throws Exception
-	 */
-	private function checkPort($port): bool
-	{
-		if (Kiri::getPlatform()->isLinux()) {
-			exec('netstat -tunlp | grep ' . $port, $output);
-		} else {
-			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
-		}
-		return !empty($output);
-	}
-
-
-	/**
 	 * @return void
 	 *
 	 * start server
@@ -180,9 +123,7 @@ class Server extends HttpService
 	 */
 	public function shutdown()
 	{
-		/** @var Shutdown $shutdown */
-		$shutdown = Kiri::app()->get('shutdown');
-		$shutdown->shutdown();
+		$this->manager->stopServer(0);
 	}
 
 

@@ -308,6 +308,12 @@ class ServerManager
 	 */
 	private function portIsAlready($port): bool|string
 	{
+		if (!Kiri::getPlatform()->isLinux()) {
+			exec('lsof -i :' . $port . ' | grep -i "LISTEN" | awk "{print $2}"', $output);
+			if (empty($output)) return false;
+			$output = explode(PHP_EOL, $output[0]);
+			return $output[0];
+		}
 		exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
 		if (empty($output)) {
 			return false;
