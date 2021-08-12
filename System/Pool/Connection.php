@@ -100,17 +100,11 @@ class Connection extends Component
 		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
 			return $pdo;
 		}
-
-		debug('mysql connect startTime ' . microtime(true));
-
 		/** @var PDO $connections */
 		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config));
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
-
-		debug('mysql connect endTime ' . microtime(true));
-
 		return Context::setContext($coroutineName, $connections);
 	}
 
@@ -126,6 +120,8 @@ class Connection extends Component
 			if (Coroutine::getCid() === -1) {
 				Runtime::enableCoroutine(false);
 			}
+			debug('mysql connect startTime ' . microtime(true));
+
 			$cds = 'mysql:dbname=' . $config['database'] . ';host=' . $config['cds'];
 			$link = new PDO($cds, $config['username'], $config['password'], [
 				PDO::ATTR_EMULATE_PREPARES         => false,
@@ -137,6 +133,8 @@ class Connection extends Component
 			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
+
+			debug('mysql connect endTime ' . microtime(true));
 			return $link;
 		};
 	}
