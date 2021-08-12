@@ -334,11 +334,11 @@ class ServerManager extends Abstracts\Server
 
 	/**
 	 * @param array $events
-	 * @param Server $server
+	 * @param Server|Port $server
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function addServiceEvents(array $events, Server $server)
+	private function addServiceEvents(array $events, Server|Port $server)
 	{
 		foreach ($events as $name => $event) {
 			if (is_array($event) && is_string($event[0])) {
