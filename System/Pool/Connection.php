@@ -6,9 +6,9 @@ namespace Kiri\Pool;
 use Closure;
 use Exception;
 use HttpServer\Http\Context;
-use PDO;
 use Kiri\Abstracts\Component;
 use Kiri\Kiri;
+use PDO;
 use Swoole\Coroutine;
 use Swoole\Error;
 use Swoole\Runtime;
@@ -100,11 +100,17 @@ class Connection extends Component
 		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
 			return $pdo;
 		}
+
+		debug('mysql connect startTime ' . microtime(true));
+
 		/** @var PDO $connections */
 		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config));
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
+
+		debug('mysql connect endTime ' . microtime(true));
+
 		return Context::setContext($coroutineName, $connections);
 	}
 
