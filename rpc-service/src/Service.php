@@ -92,9 +92,6 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onConnect(Server $server, int $fd, int $reactorId)
 	{
-		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
-
-		$this->runEvent(Constant::CONNECT, null, [$server, $fd, $reactorId]);
 	}
 
 
@@ -106,9 +103,6 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onClose(Server $server, int $fd)
 	{
-		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
-
-		$this->runEvent(Constant::CLOSE, null, [$server, $fd]);
 	}
 
 
@@ -120,9 +114,6 @@ class Service extends \Server\Abstracts\Server
 	 */
 	public function onDisconnect(Server $server, int $fd)
 	{
-		defer(fn() => $this->eventDispatch->dispatch(new OnAfterRequest()));
-
-		$this->runEvent(Constant::DISCONNECT, null, [$server, $fd]);
 	}
 
 
