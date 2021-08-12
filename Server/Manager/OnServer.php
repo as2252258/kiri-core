@@ -3,16 +3,9 @@
 namespace Server\Manager;
 
 use Annotation\Inject;
-use Exception;
 use Server\Abstracts\Server;
-use Server\Constant;
-use Server\Events\OnAfterReload;
-use Server\Events\OnAfterRequest;
-use Server\Events\OnBeforeReload;
 use Server\Events\OnShutdown;
 use Server\Events\OnStart;
-use Server\SInterface\PipeMessage;
-use Kiri\Event;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
 
@@ -21,7 +14,7 @@ use Kiri\Exception\ConfigException;
  * Class OnServerDefault
  * @package Server\Manager
  */
-class OnServerDefault extends Server
+class OnServer extends Server
 {
 
 	/**
@@ -43,6 +36,7 @@ class OnServerDefault extends Server
 	}
 
 
+	
 	/**
 	 * @param \Swoole\Server $server
 	 */
@@ -52,22 +46,5 @@ class OnServerDefault extends Server
 	}
 
 
-
-	/**
-	 * @param \Swoole\Server $server
-	 */
-	public function onBeforeReload(\Swoole\Server $server)
-	{
-		$this->eventDispatch->dispatch(new OnBeforeReload($server));
-	}
-
-
-	/**
-	 * @param \Swoole\Server $server
-	 */
-	public function onAfterReload(\Swoole\Server $server)
-	{
-		$this->eventDispatch->dispatch(new OnAfterReload($server));
-	}
 
 }
