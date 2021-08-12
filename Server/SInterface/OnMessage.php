@@ -14,6 +14,6 @@ interface OnMessage
 	 * @param Frame $frame
 	 * @return void
 	 */
-	public function OnMessage(Server $server, Frame $frame): void;
+	public function onMessage(Server $server, Frame $frame): void;
 
 }
