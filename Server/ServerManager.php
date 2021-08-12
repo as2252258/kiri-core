@@ -341,7 +341,7 @@ class ServerManager extends Abstracts\Server
 	private function addServiceEvents(array $events, Server $server)
 	{
 		foreach ($events as $name => $event) {
-			if (is_array($event) && is_string($event)) {
+			if (is_array($event) && is_string($event[0])) {
 				$callback[0] = $this->getNewInstance($event[0]);
 			}
 			$server->on($name, $event);
