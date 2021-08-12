@@ -146,8 +146,7 @@ class Logger extends Component
 	 */
 	public function output($message, string $method = 'default')
 	{
-		var_dump(Config::get('environment', 'pro'));
-		if (Config::get('environment', 'pro') == 'pro') {
+		if (Config::get('environment', 'dev') == 'pro') {
 			if ($method === 'error') {
 				echo $message;
 			}
