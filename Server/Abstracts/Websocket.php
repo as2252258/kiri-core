@@ -73,7 +73,8 @@ abstract class Websocket extends Server implements OnHandshake, OnMessage, OnClo
 			'Sec-websocket-Version' => '13',
 		];
 		if (isset($request->header['sec-websocket-protocol'])) {
-			$headers['Sec-websocket-Protocol'] = $request->header['sec-websocket-protocol'];
+			$explode = explode(',',$request->header['sec-websocket-protocol']);
+			$headers['Sec-websocket-Protocol'] = $explode[0];
 		}
 		foreach ($headers as $key => $val) {
 			$response->setHeader($key, $val);
