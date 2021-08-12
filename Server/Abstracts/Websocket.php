@@ -15,13 +15,12 @@ use Server\SInterface\OnHandshake;
 use Server\SInterface\OnMessage;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\Server;
 
 
 /**
  *
  */
-abstract class Websocket implements OnHandshake, OnMessage, OnClose
+abstract class Websocket extends Server implements OnHandshake, OnMessage, OnClose
 {
 
 	use EventDispatchHelper;
@@ -58,7 +57,6 @@ abstract class Websocket implements OnHandshake, OnMessage, OnClose
 	public function onHandshake(Request $request, Response $response): void
 	{
 		// TODO: Implement OnHandshake() method.
-		/** @var \Swoole\WebSocket\Server $server */
 		$secWebSocketKey = $request->header['sec-websocket-key'];
 		$patten = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
 		if (0 === preg_match($patten, $secWebSocketKey) || 16 !== strlen(base64_decode($secWebSocketKey))) {

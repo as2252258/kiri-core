@@ -11,7 +11,7 @@ use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnReceive;
 
-abstract class Tcp implements OnReceive
+abstract class Tcp extends Server implements OnReceive
 {
 
 	use EventDispatchHelper;

@@ -12,7 +12,11 @@ use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnPacket;
 use Server\SInterface\OnReceive;
 
-abstract class Udp implements OnPacket
+
+/**
+ *
+ */
+abstract class Udp extends Server implements OnPacket
 {
 
 	use EventDispatchHelper;
