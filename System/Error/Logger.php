@@ -11,13 +11,13 @@ namespace Kiri\Error;
 
 use Annotation\Inject;
 use Exception;
-use Server\Events\OnAfterRequest;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Server\Events\OnAfterRequest;
 use Swoole\Coroutine;
 use Throwable;
 
@@ -142,16 +142,19 @@ class Logger extends Component
 	/**
 	 * @param $message
 	 * @param string $method
+	 * @throws ConfigException
 	 */
 	public function output($message, string $method = 'default')
 	{
-//		if ($method !== 'error' &&
-//			Config::get('environment', 'pro') == 'pro') {
-//			return;
-//		}
-//		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
-//			return;
-//		}
+		if (Config::get('environment', 'pro') == 'pro') {
+			if ($method === 'error') {
+				echo $message;
+			}
+			return;
+		}
+		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
+			return;
+		}
 		echo $message;
 	}
 
