@@ -2,9 +2,12 @@
 
 namespace Server\Manager;
 
+use Annotation\Inject;
+use Kiri\Events\EventDispatch;
 use Server\Abstracts\Server;
-use Server\Constant;
 use Kiri\Exception\ConfigException;
+use Server\Events\OnManagerStart;
+use Server\Events\OnManagerStop;
 
 
 /**
@@ -14,8 +17,14 @@ use Kiri\Exception\ConfigException;
 class OnServerManager extends Server
 {
 
+	/**
+	 * @var EventDispatch
+	 */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
 
-    /**
+
+	/**
      * @param \Swoole\Server $server
      * @throws ConfigException
      */
@@ -23,7 +32,7 @@ class OnServerManager extends Server
 	{
         $this->setProcessName(sprintf('manger[%d].0', $server->manager_pid));
 
-        $this->runEvent(Constant::MANAGER_START, null, [$server]);
+		$this->eventDispatch->dispatch(new OnManagerStart($server));
 	}
 
 
@@ -32,7 +41,7 @@ class OnServerManager extends Server
 	 */
 	public function onManagerStop(\Swoole\Server $server)
 	{
-		$this->runEvent(Constant::MANAGER_STOP, null, [$server]);
+		$this->eventDispatch->dispatch(new OnManagerStop($server));
 	}
 
 

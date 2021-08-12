@@ -53,8 +53,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 
 		$this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
 
-		$this->runEvent(Constant::WORKER_START, null, [$server, $workerId]);
-
 		$this->workerInitExecutor($server, $annotation, $workerId);
 		$this->interpretDirectory($annotation);
 
@@ -141,8 +139,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 	 */
 	public function onWorkerStop(Server $server, int $workerId)
 	{
-		$this->runEvent(Constant::WORKER_STOP, null, [$server, $workerId]);
-
 		$this->eventDispatch->dispatch(new OnWorkerStop($server, $workerId));
 
 		Timer::clearAll();
@@ -156,8 +152,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 	 */
 	public function onWorkerExit(Server $server, int $workerId)
 	{
-		$this->runEvent(Constant::WORKER_EXIT, null, [$server, $workerId]);
-
 		putenv('state=exit');
 
 		$this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
@@ -176,8 +170,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 	 */
 	public function onWorkerError(Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
 	{
-		$this->runEvent(Constant::WORKER_ERROR, null, [$server, $worker_id, $worker_pid, $exit_code, $signal]);
-
 		$this->eventDispatch->dispatch(new OnWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal));
 
 		$message = sprintf('Worker#%d::%d error stop. signal %d, exit_code %d, msg %s',

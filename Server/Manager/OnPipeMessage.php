@@ -3,9 +3,7 @@
 namespace Server\Manager;
 
 use Annotation\Inject;
-use Kafka\Message;
 use Server\Abstracts\Server;
-use Server\Constant;
 use Exception;
 use Server\Events\OnAfterRequest;
 use Server\SInterface\PipeMessage;

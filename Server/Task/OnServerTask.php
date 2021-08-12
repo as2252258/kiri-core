@@ -57,7 +57,6 @@ class OnServerTask
      * @param $data
      * @return null
      * @throws ReflectionException
-     * @throws NotFindClassException
      */
     private function resolve($data)
     {
