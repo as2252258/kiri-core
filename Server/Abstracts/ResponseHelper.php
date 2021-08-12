@@ -3,6 +3,7 @@
 namespace Server\Abstracts;
 
 use Annotation\Inject;
+use Server\Constrict\Emitter;
 use Server\Constrict\Response as CResponse;
 use Server\Constrict\ResponseEmitter;
 
@@ -18,9 +19,7 @@ trait ResponseHelper
 	public CResponse $response;
 
 
-	/** @var ResponseEmitter  */
-	#[Inject(ResponseEmitter::class)]
-	public ResponseEmitter $responseEmitter;
+	public Emitter $responseEmitter;
 
 
 }

@@ -28,10 +28,6 @@ class ResponseEmitter
 	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response|Server $response, ResponseInterface $emitter)
 	{
 		$content = $emitter->configure($response)->getContent();
-		if ($response instanceof Server) {
-			$this->sendTcpData($response, $emitter, $content);
-			return;
-		}
 		if ($content instanceof FileFormatter) {
 			$this->download($content->getData(), $response);
 		} else {
@@ -39,22 +35,6 @@ class ResponseEmitter
 			$response->end($content->getData());
 		}
 	}
-
-
-	/**
-	 * @param Server $response
-	 * @param ResponseInterface $emitter
-	 * @param IFormatter $formatter
-	 */
-	private function sendTcpData(Server $response, ResponseInterface $emitter, IFormatter $formatter)
-	{
-		if ($formatter instanceof FileFormatter) {
-			$response->sendfile($emitter->getClientId(), $formatter->getData());
-		} else {
-			$response->send($emitter->getClientId(), $formatter->getData());
-		}
-	}
-
 
 	const IMAGES = [
 		'png'  => 'image/png',

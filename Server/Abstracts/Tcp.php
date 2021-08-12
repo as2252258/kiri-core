@@ -7,6 +7,8 @@ use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
+use Server\Constrict\TcpEmitter;
+use Server\Constrict\UdpEmitter;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnReceive;
@@ -37,6 +39,7 @@ abstract class Tcp extends Server implements OnReceive
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
 		}
 		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
+		$this->responseEmitter = Kiri::getDi()->get(TcpEmitter::class);
 	}
 
 }

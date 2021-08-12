@@ -37,8 +37,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	/**
 	 * @param Request $request
 	 * @param Response $response
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public function onRequest(Request $request, Response $response): void
 	{

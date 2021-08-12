@@ -8,6 +8,8 @@ use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
+use Server\Constrict\ResponseEmitter;
+use Server\Constrict\WebSocketEmitter;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnClose;
@@ -45,6 +47,7 @@ abstract class Websocket extends Server implements OnHandshake, OnMessage, OnClo
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
 		}
 		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
+		$this->responseEmitter = Kiri::getDi()->get(WebSocketEmitter::class);
 	}
 
 

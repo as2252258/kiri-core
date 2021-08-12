@@ -46,6 +46,8 @@ class Response extends HttpService implements ResponseInterface
 
 	private mixed $endData;
 
+	private array $_clientInfo = [];
+
 	const FORMAT_MAPS = [
 		self::JSON => JsonFormatter::class,
 		self::XML  => XmlFormatter::class,
@@ -70,10 +72,22 @@ class Response extends HttpService implements ResponseInterface
 
 
 	/**
+	 * @param array $clientInfo
+	 */
+	public function setClientInfo(array $clientInfo)
+	{
+		$this->_clientInfo = $clientInfo;
+	}
+
+
+	/**
 	 * @return mixed
 	 */
 	public function getClientInfo(): mixed
 	{
+		if (!empty($this->_clientInfo)) {
+			return $this->_clientInfo;
+		}
 		$server = ServerManager::getContext()->getServer();
 		return $server->getClientInfo($this->clientId, $this->reactorId);
 	}
@@ -152,17 +166,17 @@ class Response extends HttpService implements ResponseInterface
 	 * @param bool $isChunk
 	 * @param int $offset
 	 * @param int $limit
-	 * @return $this|Response
+	 * @return FileResponse
 	 * @throws Exception
 	 */
-	public function sendFile(string $path, bool $isChunk = false, int $offset = 0, int $limit = 10240): static
+	public function sendFile(string $path, bool $isChunk = false, int $offset = 0, int $limit = 10240): FileResponse
 	{
 		$this->format = self::FILE;
 		if (!file_exists($path)) {
 			throw new Exception('File `' . $path . '` not exists.');
 		}
 		$this->endData = ['path' => $path, 'isChunk' => $isChunk, 'limit' => $limit, 'offset' => $offset];
-		return $this;
+		return new FileResponse($this);
 	}
 
 
