@@ -3,13 +3,10 @@
 namespace Server\Constrict;
 
 use HttpServer\Http\Context;
-use HttpServer\Http\HttpHeaders;
-use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request as HttpResponse;
 use HttpServer\Http\Response;
 use ReflectionException;
 use Server\RequestInterface;
-use Kiri\Abstracts\BaseObject;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 
@@ -70,7 +67,6 @@ class Request implements RequestInterface
         $sRequest->setGets($request->get ?? []);
 
         Context::setContext(HttpResponse::class, $sRequest);
-
 
         return Kiri::getDi()->get(Request::class);
     }
