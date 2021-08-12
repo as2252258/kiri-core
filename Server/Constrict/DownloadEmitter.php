@@ -32,7 +32,7 @@ class DownloadEmitter implements Emitter
 	 */
 	public function sender(mixed $response, ResponseInterface $emitter): void
 	{
-		$content = $emitter->getContent();
+		$content = $emitter->getContent()->getData();
 
 		$explode = explode('/', $content['path']);
 
