@@ -342,7 +342,7 @@ class ServerManager extends Abstracts\Server
 	{
 		foreach ($events as $name => $event) {
 			if (is_array($event) && is_string($event[0])) {
-				$callback[0] = Kiri::getDi()->get($event[0], [$server]);
+				$event[0] = Kiri::getDi()->get($event[0], [$server]);
 			}
 			$server->on($name, $event);
 		}
