@@ -19,13 +19,13 @@ class ResponseEmitter
 
 
 	/**
-	 * @param \Swoole\Http\Response|\Swoole\Http2\Response|Server $response
+	 * @param \Swoole\Http\Response|\Swoole\Http2\Response $response
 	 * @param ResponseInterface $emitter
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response|Server $response, ResponseInterface $emitter)
+	public function sender(\Swoole\Http\Response|\Swoole\Http2\Response $response, ResponseInterface $emitter): void
 	{
 		$content = $emitter->configure($response)->getContent();
 		if ($content instanceof FileFormatter) {

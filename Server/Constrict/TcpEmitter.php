@@ -22,7 +22,7 @@ class TcpEmitter implements Emitter
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function sender(Server $response, ResponseInterface $emitter)
+	public function sender(mixed $response, ResponseInterface $emitter): void
 	{
 		$formatter = $emitter->getContent();
 		if ($formatter instanceof FileFormatter) {

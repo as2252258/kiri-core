@@ -21,7 +21,7 @@ class UdpEmitter implements Emitter
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function sender(Server $response, ResponseInterface $emitter)
+	public function sender(mixed $response, ResponseInterface $emitter): void
 	{
 		$clientInfo = $emitter->getClientInfo();
 		$response->sendto($clientInfo['host'], $clientInfo['port'],
