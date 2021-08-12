@@ -142,17 +142,16 @@ class Logger extends Component
 	/**
 	 * @param $message
 	 * @param string $method
-	 * @throws ConfigException
 	 */
 	public function output($message, string $method = 'default')
 	{
-		if ($method !== 'error' &&
-			Config::get('environment', 'pro') == 'pro') {
-			return;
-		}
-		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
-			return;
-		}
+//		if ($method !== 'error' &&
+//			Config::get('environment', 'pro') == 'pro') {
+//			return;
+//		}
+//		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
+//			return;
+//		}
 		echo $message;
 	}
 
