@@ -157,7 +157,6 @@ class ServerInotify implements CustomProcess
     }
 
 
-    const LISTEN_TYPE = [IN_CREATE, IN_DELETE, IN_MODIFY, IN_MOVED_TO, IN_MOVED_FROM];
 
 
     /**
@@ -175,8 +174,9 @@ class ServerInotify implements CustomProcess
             return;
         }
 
+	    $LISTEN_TYPE = [IN_CREATE, IN_DELETE, IN_MODIFY, IN_MOVED_TO, IN_MOVED_FROM];
         foreach ($events as $ev) {
-            if (!in_array($ev['mask'], static::LISTEN_TYPE)) {
+            if (!in_array($ev['mask'], $LISTEN_TYPE)) {
                 continue;
             }
             //非重启类型
