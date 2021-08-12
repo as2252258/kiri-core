@@ -4,15 +4,15 @@ namespace Server;
 
 use Closure;
 use Exception;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use ReflectionException;
 use Server\Manager\OnPipeMessage;
 use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
 use Server\Task\OnServerTask;
-use Kiri\Abstracts\Config;
-use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
-use Kiri\Kiri;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;
@@ -240,14 +240,7 @@ class ServerManager extends Abstracts\Server
 			throw new Exception("The port is already in use[$host::$port]");
 		}
 		$this->ports[$port]->set($settings['settings'] ?? []);
-		$reflect = match ($type) {
-			Constant::SERVER_TYPE_TCP => Kiri::getDi()->newObject(TCPServerListener::class),
-			Constant::SERVER_TYPE_UDP => Kiri::getDi()->newObject(UDPServerListener::class),
-			Constant::SERVER_TYPE_HTTP => Kiri::getDi()->newObject(HTTPServerListener::class),
-			Constant::SERVER_TYPE_WEBSOCKET => Kiri::getDi()->newObject(WebSocketServerListener::class),
-			default => throw new Exception(''),
-		};
-		$reflect->bindCallback($this->ports[$port], $settings['events'] ?? []);
+		$this->addServiceEvents($settings['events'] ?? [], $this->ports[$port]);
 	}
 
 
@@ -335,22 +328,23 @@ class ServerManager extends Abstracts\Server
 		if (($this->server->setting['task_worker_num'] ?? 0) > 0) {
 			$this->addTaskListener($settings['events']);
 		}
-		if ($type === Constant::SERVER_TYPE_WEBSOCKET) {
-			/** @var WebSocketServerListener $reflect */
-			$reflect = $this->getNewInstance(WebSocketServerListener::class);
-			$reflect->bindCallback($this->server, $settings);
-		} else if ($type === Constant::SERVER_TYPE_UDP) {
-			/** @var UDPServerListener $reflect */
-			$reflect = $this->getNewInstance(UDPServerListener::class);
-			$reflect->bindCallback($this->server, $settings);
-		} else if ($type === Constant::SERVER_TYPE_HTTP) {
-			/** @var HTTPServerListener $reflect */
-			$reflect = $this->getNewInstance(HTTPServerListener::class);
-			$reflect->bindCallback($this->server, $settings);
-		} else {
-			/** @var TCPServerListener $reflect */
-			$reflect = $this->getNewInstance(TCPServerListener::class);
-			$reflect->bindCallback($this->server, $settings);
+		$this->addServiceEvents($settings['events'] ?? [], $this->server);
+	}
+
+
+	/**
+	 * @param array $events
+	 * @param Server $server
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function addServiceEvents(array $events, Server $server)
+	{
+		foreach ($events as $name => $event) {
+			if (is_array($event) && is_string($event)) {
+				$callback[0] = $this->getNewInstance($event[0]);
+			}
+			$server->on($name, $event);
 		}
 	}
 

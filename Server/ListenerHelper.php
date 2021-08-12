@@ -22,7 +22,6 @@ trait ListenerHelper
 	 * @param array $events
 	 * @param array|Closure $default
 	 * @return mixed
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
     protected static function callback(string $name, array $events, array|Closure $default): mixed
