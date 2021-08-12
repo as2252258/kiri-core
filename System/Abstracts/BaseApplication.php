@@ -169,8 +169,9 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $name
 	 * @return mixed
-	 * @throws \ReflectionException
-	 * @throws \Kiri\Exception\NotFindClassException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function __get($name): mixed
 	{
@@ -264,8 +265,8 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $name
 	 * @return mixed
-	 * @throws \ReflectionException
-	 * @throws \Kiri\Exception\NotFindClassException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function get($name): mixed
 	{
@@ -421,8 +422,8 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @param $array
-	 * @throws \ReflectionException
-	 * @throws \Kiri\Exception\NotFindClassException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	private function setComponents($array): void
 	{
@@ -433,8 +434,8 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $id
 	 * @param $definition
-	 * @throws \ReflectionException
-	 * @throws \Kiri\Exception\NotFindClassException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function set($id, $definition): void
 	{
@@ -445,8 +446,8 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $id
 	 * @param $definition
-	 * @throws \ReflectionException
-	 * @throws \Kiri\Exception\NotFindClassException
+	 * @throws ReflectionException
+	 * @throws NotFindClassException
 	 */
 	public function has($id): bool
 	{

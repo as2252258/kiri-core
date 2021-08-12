@@ -234,7 +234,7 @@ class ServerInotify implements CustomProcess
      */
     public function trigger_reload()
     {
-        exec(PHP_BINARY . ' ' . APP_PATH . 'snowflake runtime:builder', $output);
+        exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder', $output);
 
         print_r(implode(PHP_EOL, $output));
 
