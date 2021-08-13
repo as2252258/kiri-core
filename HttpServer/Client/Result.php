@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace HttpServer\Client\Help;
+namespace HttpServer\Client;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 
 /**
@@ -18,12 +19,11 @@ use Exception;
  */
 class Result
 {
-	public $code;
-	public $message;
+	public int|string $code;
+	public string $message;
 	public int $count = 0;
 
-	/** @var mixed $data */
-	public $data;
+	public mixed $data;
 	public ?array $header;
 	public int $httpStatus = 200;
 
@@ -133,7 +133,7 @@ class Result
 	 * @param int $status
 	 * @return bool
 	 */
-	public function isResultsOK($status = 0): bool
+	#[Pure] public function isResultsOK(int $status = 0): bool
 	{
 		if (!$this->httpIsOk()) {
 			return false;
@@ -158,17 +158,17 @@ class Result
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
-	public function getMessage(): mixed
+	public function getMessage(): string
 	{
 		return $this->message;
 	}
 
 	/**
-	 * @return mixed
+	 * @return string|int
 	 */
-	public function getCode(): mixed
+	public function getCode(): string|int
 	{
 		return $this->code;
 	}

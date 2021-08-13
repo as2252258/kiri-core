@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace HttpServer\Client\Help;
+namespace HttpServer\Client;
 
 
+use CurlHandle;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 
@@ -35,10 +36,10 @@ class Curl extends ClientAbstracts
 	 * @param $path
 	 * @param $method
 	 * @param $params
-	 * @return mixed
+	 * @return CurlHandle
 	 * @throws Exception
 	 */
-	private function getCurlHandler($path, $method, $params): mixed
+	private function getCurlHandler($path, $method, $params): CurlHandle
 	{
 		[$host, $isHttps, $path] = $this->matchHost($path);
 
@@ -68,10 +69,10 @@ class Curl extends ClientAbstracts
 
 	/**
 	 * @param $resource
-	 * @return bool
+	 * @return void
 	 * @throws Exception
 	 */
-	private function curlHandlerSslSet($resource): mixed
+	private function curlHandlerSslSet($resource): void
 	{
 		if (!empty($this->ssl_key)) {
 			if (!file_exists($this->ssl_key)) {
@@ -85,7 +86,6 @@ class Curl extends ClientAbstracts
 			}
 			curl_setopt($resource, CURLOPT_SSLCERT, $this->getSslCertFile());
 		}
-		return $resource;
 	}
 
 
@@ -93,10 +93,10 @@ class Curl extends ClientAbstracts
 	 * @param $resource
 	 * @param $path
 	 * @param $method
-	 * @return resource
+	 * @return CurlHandle
 	 * @throws Exception
 	 */
-	private function do($resource, $path, $method)
+	private function do($resource, $path, $method): CurlHandle
 	{
 		curl_setopt($resource, CURLOPT_URL, $path);
 		curl_setopt($resource, CURLOPT_TIMEOUT, $this->getTimeout());                     // 超时设置
@@ -152,7 +152,7 @@ class Curl extends ClientAbstracts
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function parseResponse($curl, $output, $params = []): mixed
+	private function parseResponse($curl, $output, array $params = []): mixed
 	{
 		curl_close($curl);
 		if ($output === FALSE) {
@@ -199,7 +199,7 @@ class Curl extends ClientAbstracts
 	private function headerFormat($headers): array
 	{
 		$_tmp = [];
-		foreach ($headers as $key => $val) {
+		foreach ($headers as $val) {
 			$trim = explode(': ', trim($val));
 
 			$_tmp[strtolower($trim[0])] = $trim[1] ?? '';

@@ -4,13 +4,12 @@
 namespace HttpServer\Client;
 
 
-use Exception;
+use HttpServer\Client\Client;
+use HttpServer\Client\Curl;
+use HttpServer\Client\IClient;
+use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Component;
-use Kiri\Kiri;
 use Swoole\Coroutine;
-use HttpServer\Client\Help\IClient;
-use HttpServer\Client\Help\Client;
-use HttpServer\Client\Help\Curl;
 
 /**
  * Class ClientDriver
@@ -24,17 +23,29 @@ class HttpClient extends Component
 	 */
 	public static function NewRequest(): IClient
 	{
-		return Coroutine::getCid() > -1 ? Client::NewRequest() : Curl::NewRequest();
+		if (Coroutine::getCid() > -1) {
+			return Client::NewRequest();
+		}
+		return Curl::NewRequest();
 	}
 
 
 	/**
-	 * @return Http2
-	 * @throws Exception
+	 * @return Curl
 	 */
-	public static function http2(): Http2
+	#[Pure] public function getCurl(): Curl
 	{
-		return Kiri::app()->get('http2');
+		return Curl::NewRequest();
 	}
+
+
+	/**
+	 * @return Client
+	 */
+	#[Pure] public function getCoroutine(): Client
+	{
+		return Client::NewRequest();
+	}
+
 
 }

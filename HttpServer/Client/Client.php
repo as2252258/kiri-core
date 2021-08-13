@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace HttpServer\Client\Help;
+namespace HttpServer\Client;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;

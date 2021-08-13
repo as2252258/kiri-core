@@ -13,12 +13,10 @@ namespace Kiri\Abstracts;
 use Annotation\Annotation as SAnnotation;
 use Database\Connection;
 use Exception;
-use HttpServer\Client\Http2;
 use HttpServer\Http\HttpHeaders;
 use HttpServer\Http\HttpParams;
 use HttpServer\Http\Request;
 use HttpServer\Http\Response;
-use HttpServer\HttpFilter;
 use HttpServer\Route\Router;
 use HttpServer\Server;
 use HttpServer\Shutdown;
@@ -477,9 +475,6 @@ abstract class BaseApplication extends Component
 			'kafka-container'   => ['class' => KafkaProvider::class],
 			'response'          => ['class' => Response::class],
 			'request'           => ['class' => Request::class],
-			'rpc'               => ['class' => Producer::class],
-			'rpc-service'       => ['class' => Service::class],
-			'http2'             => ['class' => Http2::class],
 			'shutdown'          => ['class' => Shutdown::class],
 		]);
 	}
