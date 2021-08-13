@@ -75,7 +75,7 @@ abstract class BaseApplication extends Component
 		$this->parseEvents($config);
 		$this->initErrorHandler();
 		$this->enableEnvConfig();
-		$this->mapping($config['mapping']);
+		$this->mapping($config['mapping'] ?? []);
 
 		parent::__construct();
 	}
