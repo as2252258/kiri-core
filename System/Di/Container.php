@@ -11,14 +11,18 @@ namespace Kiri\Di;
 
 use Annotation\Inject;
 use Exception;
+use Kiri\Abstracts\BaseObject;
+use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
-use Kiri\Abstracts\BaseObject;
-use Kiri\Exception\NotFindClassException;
-use Kiri\Kiri;
+use Server\Constrict\Request;
+use Server\Constrict\Response;
+use Server\RequestInterface;
+use Server\ResponseInterface;
 
 /**
  * Class Container
@@ -55,6 +59,13 @@ class Container extends BaseObject
 	private array $_parameters = [];
 
 
+	/** @var array|string[] */
+	private array $_interfaces = [
+		RequestInterface::class  => Request::class,
+		ResponseInterface::class => Response::class
+	];
+
+
 	/**
 	 * @var array
 	 *
@@ -68,16 +79,33 @@ class Container extends BaseObject
 	 * @param array $config
 	 *
 	 * @return mixed
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function get($class, array $constrict = [], array $config = []): mixed
 	{
+		if ($this->_isInterface($class)) {
+			$class = $this->_interfaces[$class];
+		}
 		if (!isset($this->_singletons[$class])) {
 			$this->_singletons[$class] = $this->resolve($class, $constrict, $config);
 		}
 		return $this->_singletons[$class];
+	}
+
+
+	/**
+	 * @param $class
+	 * @return bool
+	 * @throws ReflectionException
+	 */
+	private function _isInterface($class): bool
+	{
+		$reflect = $this->getReflect($class);
+		if ($reflect->isInterface()) {
+			return true;
+		}
+		return false;
 	}
 
 
