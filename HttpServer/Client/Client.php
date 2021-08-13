@@ -39,12 +39,11 @@ class Client extends ClientAbstracts
 
 	/**
 	 * @param $url
-	 * @param array $data
+	 * @param array|string $data
 	 * @return array|string|Result
-	 * @throws Exception
-	 * 使用swoole协程方式请求
+	 * @throws Exception 使用swoole协程方式请求
 	 */
-	private function coroutine($url, array $data = []): array|string|Result
+	private function coroutine($url, array|string $data = []): array|string|Result
 	{
 		try {
 			$client = $this->generate_client($data, ...$url);
