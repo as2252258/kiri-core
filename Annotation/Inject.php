@@ -5,12 +5,10 @@ namespace Annotation;
 
 
 use Exception;
-use HttpServer\Http\Context;
 use Kiri\Core\Str;
 use Kiri\Kiri;
 use ReflectionException;
 use ReflectionProperty;
-use Server\ResponseInterface;
 
 /**
  * Class Inject
@@ -94,12 +92,10 @@ use Server\ResponseInterface;
 	 */
 	private function parseInjectValue(): mixed
 	{
-		if (class_exists($this->value)) {
+		if (!Kiri::app()->has($this->value)) {
 			return Kiri::getDi()->get($this->value, $this->args);
-		} else if (Kiri::app()->has($this->value)) {
-			return Kiri::app()->get($this->value);
 		} else {
-			return $this->value;
+			return Kiri::app()->get($this->value);
 		}
 	}
 

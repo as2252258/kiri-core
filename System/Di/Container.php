@@ -84,7 +84,7 @@ class Container extends BaseObject
 	 */
 	public function get($class, array $constrict = [], array $config = []): mixed
 	{
-		if ($this->_isInterface($class)) {
+		if ($this->isInterface($class)) {
 			$class = $this->_interfaces[$class];
 		}
 		if (!isset($this->_singletons[$class])) {
@@ -99,7 +99,7 @@ class Container extends BaseObject
 	 * @return bool
 	 * @throws ReflectionException
 	 */
-	private function _isInterface($class): bool
+	public function isInterface($class): bool
 	{
 		$reflect = $this->getReflect($class);
 		if ($reflect->isInterface()) {
