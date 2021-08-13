@@ -95,6 +95,16 @@ class Container extends BaseObject
 
 
 	/**
+	 * @param $interface
+	 * @param $class
+	 */
+	public function mapping($interface, $class)
+	{
+		$this->_interfaces[$interface] = $class;
+	}
+
+
+	/**
 	 * @param $class
 	 * @return bool
 	 * @throws ReflectionException

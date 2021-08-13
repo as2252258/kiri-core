@@ -75,8 +75,21 @@ abstract class BaseApplication extends Component
 		$this->parseEvents($config);
 		$this->initErrorHandler();
 		$this->enableEnvConfig();
+		$this->mapping($config['mapping']);
 
 		parent::__construct();
+	}
+
+
+	/**
+	 * @param array $mapping
+	 */
+	public function mapping(array $mapping)
+	{
+		$di = Kiri::getDi();
+		foreach ($mapping as $interface => $class) {
+			$di->mapping($interface, $class);
+		}
 	}
 
 
@@ -223,18 +236,18 @@ abstract class BaseApplication extends Component
 	{
 		$eventProvider = di(EventProvider::class);
 		if ($value instanceof \Closure || is_object($value)) {
-			$eventProvider->on($key, $value,0);
+			$eventProvider->on($key, $value, 0);
 			return;
 		}
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-				$eventProvider->on($key, $value,0);
+				$eventProvider->on($key, $value, 0);
 				return;
 			}
 
 			if (is_string($value[0])) {
 				$value[0] = Kiri::createObject($value[0]);
-				$eventProvider->on($key, $value,0);
+				$eventProvider->on($key, $value, 0);
 				return;
 			}
 
@@ -242,7 +255,7 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				$eventProvider->on($key, $item,0);
+				$eventProvider->on($key, $item, 0);
 			}
 		}
 
