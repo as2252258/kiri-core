@@ -35,7 +35,7 @@ use Kiri\Kiri;
     public function execute(mixed $class, mixed $method = null): bool
     {
         $annotation = Kiri::getAnnotation();
-        $annotation->addGets($class::class, $this->name, $method);
+        $annotation->addGets($class, $this->name, $method);
         return true;
     }
 

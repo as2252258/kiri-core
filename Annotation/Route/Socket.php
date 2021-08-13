@@ -44,7 +44,7 @@ use Kiri\Kiri;
 
 		$path = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
 
-		$router->addRoute($path, [$class, $method], 'sw::socket');
+		$router->addRoute($path, [di($class), $method], 'sw::socket');
 
 		return $router;
 	}

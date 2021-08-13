@@ -27,7 +27,7 @@ class KafkaProvider extends BaseObject
         if (isset($this->_topics[$topic])) {
             return;
         }
-        $this->_topics[$topic] = $handler::class;
+        $this->_topics[$topic] = $handler;
     }
 
 

@@ -71,9 +71,8 @@ class OnServerWorker extends \Server\Abstracts\Server
 		$fileLists = $annotation->runtime(APP_PATH . 'app');
 		$di = Kiri::getDi();
 		foreach ($fileLists as $class) {
-			$instance = $di->get($class);
 			foreach ($di->getTargetNote($class) as $value) {
-				$value->execute($instance);
+				$value->execute($class);
 			}
 			$methods = $di->getMethodAttribute($class);
 			foreach ($methods as $method => $attribute) {
@@ -81,7 +80,7 @@ class OnServerWorker extends \Server\Abstracts\Server
 					continue;
 				}
 				foreach ($attribute as $item) {
-					$item->execute($instance, $method);
+					$item->execute($class, $method);
 				}
 			}
 		}

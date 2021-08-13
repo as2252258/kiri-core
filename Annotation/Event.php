@@ -35,7 +35,7 @@ use Kiri\Events\EventProvider;
 	public function execute(mixed $class, mixed $method = null): bool
 	{
 		$pro = di(EventProvider::class);
-		$pro->on($this->name, [$class, $method]);
+		$pro->on($this->name, [di($class), $method]);
 		return true;
 	}
 

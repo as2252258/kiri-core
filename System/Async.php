@@ -24,9 +24,9 @@ class Async extends Component
 
 	/**
 	 * @param string $name
-	 * @param TaskExecute $handler
+	 * @param TaskExecute|string $handler
 	 */
-    public function addAsync(string $name, TaskExecute $handler)
+    public function addAsync(string $name, TaskExecute|string $handler)
     {
         static::$_absences[$name] = $handler::class;
     }

@@ -74,6 +74,7 @@ use Kiri\Kiri;
 	 * @param $class
 	 * @param $method
 	 * @return ReflectionProperty|bool
+	 * @throws ReflectionException
 	 */
 	private function getProperty($class, $method): ReflectionProperty|bool
 	{
