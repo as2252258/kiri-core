@@ -14,7 +14,9 @@ use HttpServer\IInterface\IFormatter;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Event;
+use Kiri\Events\EventDispatch;
 use Kiri\Kiri;
+use Server\Events\OnAfterRequest;
 
 /**
  * Class ErrorHandler
@@ -74,7 +76,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		$this->category = 'exception';
 
-		Event::trigger(Event::SYSTEM_RESOURCE_CLEAN);
+		di(EventDispatch::class)->dispatch(new OnAfterRequest());
 
         $this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
@@ -99,7 +101,8 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		Kiri::app()->error($data, 'error');
 
-		Event::trigger(Event::SYSTEM_RESOURCE_CLEAN);
+		di(EventDispatch::class)->dispatch(new OnAfterRequest());
+
 
 		throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
 	}

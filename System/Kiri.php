@@ -17,8 +17,9 @@ use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
 use Kiri\Exception\NotFindClassException;
-use Kiri\Process\Process;
+use Server\ServerManager;
 use Swoole\Coroutine;
+use Swoole\Process;
 use Swoole\WebSocket\Server;
 
 
@@ -119,23 +120,15 @@ class Kiri
         return static::$service;
     }
 
-    /**
-     * @param $name
-     * @return bool
-     */
-    #[Pure] public static function has($name): bool
+	/**
+	 * @param $name
+	 * @return bool
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+    public static function has($name): bool
     {
         return static::$service->has($name);
-    }
-
-
-    /**
-     * @param $className
-     * @param $id
-     */
-    public static function setAlias($className, $id)
-    {
-        static::$service->setAlias($className, $id);
     }
 
 
@@ -448,30 +441,21 @@ class Kiri
     /**
      * @param string $class
      * @param array $params
-     * @throws NotFindClassException
      * @throws ReflectionException
      * @throws Exception
      */
     public static function async(string $class, array $params = [])
     {
-        $server = static::app()->getSwoole();
-        if (!isset($server->setting['task_worker_num']) || !class_exists($class)) {
-            return;
-        }
-
-        /** @var Task $class */
-        $class = static::createObject($class);
-        $class->setParams($params);
-
-        $server->task(swoole_serialize($class));
+    	$manager = ServerManager::getContext();
+    	$manager->task(new $class(...$params));
     }
 
 
-    /**
-     * @param $v1
-     * @param $v2
-     * @return float
-     */
+	/**
+	 * @param array $v1
+	 * @param array $v2
+	 * @return float
+	 */
     #[Pure] public static function distance(array $v1, array $v2): float
     {
         $maxX = max($v1['x'], $v2['x']);

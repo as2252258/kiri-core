@@ -9,6 +9,7 @@ use JetBrains\PhpStorm\Pure;
 use Server\SInterface\CustomProcess;
 use Kiri\Kiri;
 use Swoole\Timer;
+use Swoole\Process;
 
 /**
  * Class Biomonitoring
@@ -19,10 +20,10 @@ class Biomonitoring implements CustomProcess
 
 
 	/**
-	 * @param \Swoole\Process $process
+	 * @param Process $process
 	 * @return string
 	 */
-	#[Pure] public function getProcessName(\Swoole\Process $process): string
+	#[Pure] public function getProcessName(Process $process): string
 	{
 		// TODO: Implement getProcessName() method.
 		return get_called_class();
@@ -30,10 +31,10 @@ class Biomonitoring implements CustomProcess
 
 
 	/**
-	 * @param \Swoole\Process $process
+	 * @param Process $process
 	 * @throws Exception
 	 */
-	public function onHandler(\Swoole\Process $process): void
+	public function onHandler(Process $process): void
 	{
 		$server = Kiri::app()->getSwoole();
 		Timer::tick(1000, function () use ($server) {

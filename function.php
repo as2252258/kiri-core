@@ -15,6 +15,8 @@ use Kiri\Application;
 use Kiri\Core\ArrayAccess;
 use Kiri\Error\Logger;
 use Kiri\Event;
+use Kiri\Events\EventDispatch;
+use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
@@ -335,14 +337,13 @@ if (!function_exists('fire')) {
 
 
 	/**
-	 * @param string $event
-	 * @param array $params
-	 * @throws Exception
-	 * @throws Exception
+	 * @param object $event
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
-	function fire(string $event, array $params = [])
+	function fire(object $event)
 	{
-		Event::trigger($event, $params);
+		di(EventDispatch::class)->dispatch($event);
 	}
 }
 
@@ -751,7 +752,8 @@ if (!function_exists('event')) {
 	 */
 	function event($name, $callback, bool $isAppend = true)
 	{
-		Event::on($name, $callback, $isAppend);
+		$pro = di(EventProvider::class);
+		$pro->on($name, $callback,0);
 	}
 
 }

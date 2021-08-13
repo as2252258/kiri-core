@@ -29,6 +29,7 @@ use Kiri\Di\LocalService;
 use Kiri\Error\ErrorHandler;
 use Kiri\Error\Logger;
 use Kiri\Event;
+use Kiri\Events\EventProvider;
 use Kiri\Exception\InitException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Jwt\Jwt;
@@ -220,23 +221,20 @@ abstract class BaseApplication extends Component
 	 */
 	private function addEvent($key, $value): void
 	{
-		if ($value instanceof \Closure) {
-			Event::on($key, $value, true);
-			return;
-		}
-		if (is_object($value)) {
-			Event::on($key, $value, true);
+		$eventProvider = di(EventProvider::class);
+		if ($value instanceof \Closure || is_object($value)) {
+			$eventProvider->on($key, $value,0);
 			return;
 		}
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-				Event::on($key, $value, true);
+				$eventProvider->on($key, $value,0);
 				return;
 			}
 
 			if (is_string($value[0])) {
 				$value[0] = Kiri::createObject($value[0]);
-				Event::on($key, $value, true);
+				$eventProvider->on($key, $value,0);
 				return;
 			}
 
@@ -244,7 +242,7 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				Event::on($key, $item, true);
+				$eventProvider->on($key, $item,0);
 			}
 		}
 

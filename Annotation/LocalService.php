@@ -6,7 +6,9 @@ namespace Annotation;
 
 use Exception;
 use Kiri\Event;
+use Kiri\Events\EventProvider;
 use Kiri\Kiri;
+use Server\Events\OnWorkerExit;
 
 /**
  * Class LocalService
@@ -28,9 +30,10 @@ use Kiri\Kiri;
 		if ($this->async_reload !== true) {
 			return;
 		}
-		Event::on(Event::SERVER_WORKER_EXIT, function () {
-			Kiri::app()->remove($this->service);
-		});
+		$pro = di(EventProvider::class);
+		$pro->on(OnWorkerExit::class, function () {
+			di(\Kiri\Di\LocalService::class)->remove($this->service);
+		},0);
 	}
 
 

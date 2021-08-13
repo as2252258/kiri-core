@@ -9,6 +9,8 @@ use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Input;
 use Kiri\Event;
 use Kiri\Kiri;
+use Server\Events\OnAfterCommandExecute;
+use Server\Events\OnBeforeCommandExecute;
 
 /**
  * Class AbstractConsole
@@ -58,11 +60,11 @@ abstract class AbstractConsole extends Component
 	 */
     public function execCommand(Command $command): mixed
     {
-        fire(Event::BEFORE_COMMAND_EXECUTE);
+        fire(new OnBeforeCommandExecute());
 
         $data = $command->onHandler($this->parameters);
 
-        fire(Event::AFTER_COMMAND_EXECUTE, [$data]);
+        fire(new OnAfterCommandExecute($data));
 
         return $data;
     }

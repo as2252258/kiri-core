@@ -8,6 +8,7 @@ use Exception;
 use HttpServer\IInterface\Task;
 use ReflectionException;
 use Kiri\Abstracts\Component;
+use Server\ServerManager;
 
 /**
  * Class Async
@@ -37,22 +38,8 @@ class Async extends Component
      */
     public function dispatch(string $name, array $params = [])
     {
-        $server = Kiri::app()->getSwoole();
-        if (!isset($server->setting['task_worker_num'])) {
-            return;
-        }
-
-        if (!isset(static::$_absences[$name])) {
-            return;
-        }
-
-        /** @var Task $class */
-        $class = Kiri::createObject(static::$_absences[$name]);
-        $class->setParams($params);
-
-        $randWorkerId = random_int(0, $server->setting['task_worker_num'] - 1);
-
-        $server->task(serialize($class), $randWorkerId);
+    	$context  = ServerManager::getContext();
+    	$context->task(static::$_absences[$name], $params);
     }
 
 }

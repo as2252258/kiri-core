@@ -5,9 +5,7 @@ namespace Annotation;
 
 
 use Exception;
-use Kiri\Exception\ComponentException;
-use Kiri\Kiri;
-use Kiri\Event as SEvent;
+use Kiri\Events\EventProvider;
 
 
 /**
@@ -34,10 +32,10 @@ use Kiri\Event as SEvent;
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function execute(mixed $class, mixed $method = null): bool
-    {
-		// TODO: Implement execute() method.
-		SEvent::on($this->name, [$class, $method]);
+	public function execute(mixed $class, mixed $method = null): bool
+	{
+		$pro = di(EventProvider::class);
+		$pro->on($this->name, [$class, $method]);
 		return true;
 	}
 

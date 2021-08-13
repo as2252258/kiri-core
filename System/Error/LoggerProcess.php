@@ -9,9 +9,9 @@ use JetBrains\PhpStorm\Pure;
 use Server\SInterface\CustomProcess;
 use Kiri\Core\Json;
 use Kiri\Exception\ComponentException;
-use Kiri\Process\Process;
 use Kiri\Kiri;
 use Swoole\Coroutine;
+use Swoole\Process;
 
 
 /**
@@ -24,7 +24,7 @@ class LoggerProcess implements CustomProcess
 	/**
 	 * @return string
 	 */
-	#[Pure] public function getProcessName(\Swoole\Process $process): string
+	#[Pure] public function getProcessName(Process $process): string
 	{
 		// TODO: Implement getProcessName() method.
 		return get_called_class();
@@ -32,10 +32,10 @@ class LoggerProcess implements CustomProcess
 
 
 	/**
-	 * @param \Swoole\Process $process
+	 * @param Process $process
 	 * @throws ComponentException
 	 */
-	public function onHandler(\Swoole\Process $process): void
+	public function onHandler(Process $process): void
 	{
 		// TODO: Implement onHandler() method.
 		$this->message($process);
@@ -43,11 +43,11 @@ class LoggerProcess implements CustomProcess
 
 
 	/**
-	 * @param \Swoole\Process $process
+	 * @param Process $process
 	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	public function message(\Swoole\Process $process)
+	public function message(Process $process)
 	{
 		$message = Json::decode($process->read());
 		if (!empty($message)) {
