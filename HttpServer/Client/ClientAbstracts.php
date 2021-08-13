@@ -71,10 +71,9 @@ abstract class ClientAbstracts extends Component implements IClient
 
 
 	/**
-	 * @param $path
+	 * @param string $path
 	 * @param array $params
 	 * @return array|int|string|Result
-	 * @throws
 	 */
 	public function post(string $path, array $params = []): array|int|string|Result
 	{

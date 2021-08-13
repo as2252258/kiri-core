@@ -4,16 +4,15 @@
 namespace HttpServer\Client;
 
 
-use HttpServer\Client\Client;
-use HttpServer\Client\Curl;
-use HttpServer\Client\IClient;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Component;
+use ReflectionException;
 use Swoole\Coroutine;
 
 /**
  * Class ClientDriver
  * @package HttpServer\Client
+ * @mixin Client
  */
 class HttpClient extends Component
 {
@@ -45,6 +44,20 @@ class HttpClient extends Component
 	#[Pure] public function getCoroutine(): Client
 	{
 		return Client::NewRequest();
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return void
+	 */
+	public function __call(string $name, array $arguments)
+	{
+		if (!method_exists($this, $name)) {
+			return static::NewRequest()->{$name}(...$arguments);
+		}
+		return $this->{$name}(...$arguments);
 	}
 
 
