@@ -5,14 +5,10 @@ namespace HttpServer;
 
 
 use Annotation\Inject;
-use HttpServer\Http\HttpHeaders;
-use HttpServer\Http\HttpParams;
-use HttpServer\Http\Request;
 use Kiri\Abstracts\TraitApplication;
 use Kiri\Application;
-use Server\Constrict\Response as CrResponse;
-use Server\Constrict\Request as CrRequest;
-use Kiri\Kiri;
+use Server\RequestInterface;
+use Server\ResponseInterface;
 
 /**
  * Class WebController
@@ -37,19 +33,19 @@ class Controller
     /**
      * inject request
      *
-     * @var CrRequest|null
+     * @var RequestInterface|null
      */
-    #[Inject(CrRequest::class)]
-    public ?CrRequest $request = null;
+    #[Inject(RequestInterface::class)]
+    public ?RequestInterface $request = null;
 
 
     /**
      * inject response
      *
-     * @var CrResponse|null
+     * @var ResponseInterface|null
      */
-    #[Inject(CrResponse::class)]
-    public ?CrResponse $response = null;
+    #[Inject(ResponseInterface::class)]
+    public ?ResponseInterface $response = null;
 
 
 
