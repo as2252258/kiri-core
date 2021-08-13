@@ -6,7 +6,6 @@ namespace HttpServer\Route;
 
 
 use Annotation\Aspect;
-use Annotation\Route\RpcProducer;
 use Closure;
 use Exception;
 use HttpServer\Exception\RequestException;
@@ -80,12 +79,12 @@ class Node
 	 */
 	public function unpack(string $data): mixed
 	{
-		if ($this->_dataType == RpcProducer::PROTOCOL_JSON) {
-			return json_decode($data, true);
-		}
-		if ($this->_dataType == RpcProducer::PROTOCOL_SERIALIZE) {
-			return unserialize($data);
-		}
+//		if ($this->_dataType == RpcProducer::PROTOCOL_JSON) {
+//			return json_decode($data, true);
+//		}
+//		if ($this->_dataType == RpcProducer::PROTOCOL_SERIALIZE) {
+//			return unserialize($data);
+//		}
 		return $data;
 	}
 
