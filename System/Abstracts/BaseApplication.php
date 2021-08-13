@@ -22,10 +22,6 @@ use HttpServer\Server;
 use HttpServer\Shutdown;
 use JetBrains\PhpStorm\Pure;
 use Kafka\KafkaProvider;
-use ReflectionException;
-use Rpc\Producer;
-use Rpc\Service;
-use Server\ServerManager;
 use Kiri\Aop;
 use Kiri\Async;
 use Kiri\Cache\Redis;
@@ -37,6 +33,11 @@ use Kiri\Exception\InitException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Jwt\Jwt;
 use Kiri\Kiri;
+use ReflectionException;
+use Rpc\Producer;
+use Rpc\Service;
+use Server\ServerManager;
+use Server\SInterface\TaskExecute;
 use Swoole\Table;
 
 /**
@@ -196,6 +197,16 @@ abstract class BaseApplication extends Component
 			}
 			$this->addEvent($key, $value);
 		}
+	}
+
+
+	/**
+	 * @param TaskExecute $execute
+	 * @throws ReflectionException
+	 */
+	public function task(TaskExecute $execute): void
+	{
+		ServerManager::getContext()->task($execute);
 	}
 
 
@@ -459,23 +470,23 @@ abstract class BaseApplication extends Component
 	protected function moreComponents(): void
 	{
 		$this->setComponents([
-			'error'             => ['class' => ErrorHandler::class],
-			'config'            => ['class' => Config::class],
-			'logger'            => ['class' => Logger::class],
-			'annotation'        => ['class' => SAnnotation::class],
-			'router'            => ['class' => Router::class],
-			'event'             => ['class' => Event::class],
-			'redis'             => ['class' => Redis::class],
-			'databases'         => ['class' => Connection::class],
-			'aop'               => ['class' => Aop::class],
-			'input'             => ['class' => HttpParams::class],
-			'header'            => ['class' => HttpHeaders::class],
-			'jwt'               => ['class' => Jwt::class],
-			'async'             => ['class' => Async::class],
-			'kafka-container'   => ['class' => KafkaProvider::class],
-			'response'          => ['class' => Response::class],
-			'request'           => ['class' => Request::class],
-			'shutdown'          => ['class' => Shutdown::class],
+			'error'           => ['class' => ErrorHandler::class],
+			'config'          => ['class' => Config::class],
+			'logger'          => ['class' => Logger::class],
+			'annotation'      => ['class' => SAnnotation::class],
+			'router'          => ['class' => Router::class],
+			'event'           => ['class' => Event::class],
+			'redis'           => ['class' => Redis::class],
+			'databases'       => ['class' => Connection::class],
+			'aop'             => ['class' => Aop::class],
+			'input'           => ['class' => HttpParams::class],
+			'header'          => ['class' => HttpHeaders::class],
+			'jwt'             => ['class' => Jwt::class],
+			'async'           => ['class' => Async::class],
+			'kafka-container' => ['class' => KafkaProvider::class],
+			'response'        => ['class' => Response::class],
+			'request'         => ['class' => Request::class],
+			'shutdown'        => ['class' => Shutdown::class],
 		]);
 	}
 }

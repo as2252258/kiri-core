@@ -379,10 +379,11 @@ class ServerManager
 	/**
 	 * @param TaskExecute|string $handler
 	 * @param array $params
-	 * @param int $workerId
+	 * @param int|null $workerId
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function task(TaskExecute|string $handler, array $params = [], int $workerId = 0)
+	public function task(TaskExecute|string $handler, array $params = [], int $workerId = null)
 	{
 		if ($workerId === null || $workerId <= $this->server->setting['worker_num']) {
 			$workerId = random_int($this->server->setting['worker_num'] + 1,
