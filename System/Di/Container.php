@@ -86,6 +86,7 @@ class Container extends BaseObject
 	{
 		if ($this->_isInterface($class)) {
 			$class = $this->_interfaces[$class];
+			var_dump($class);
 		}
 		if (!isset($this->_singletons[$class])) {
 			$this->_singletons[$class] = $this->resolve($class, $constrict, $config);
