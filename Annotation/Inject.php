@@ -98,7 +98,7 @@ use Server\ResponseInterface;
 			return Context::getContext($this->value);
 		}
 		if ($this->value == ResponseInterface::class) {
-			var_dump($this->value);
+			var_dump($this->value, class_exists($this->value));
 		}
 		if (class_exists($this->value)) {
 			return Kiri::getDi()->get($this->value, $this->args);
