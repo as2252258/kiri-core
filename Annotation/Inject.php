@@ -94,12 +94,6 @@ use Server\ResponseInterface;
 	 */
 	private function parseInjectValue(): mixed
 	{
-		if (Context::hasContext($this->value)) {
-			return Context::getContext($this->value);
-		}
-		if ($this->value == ResponseInterface::class) {
-			var_dump($this->value, class_exists($this->value));
-		}
 		if (class_exists($this->value)) {
 			return Kiri::getDi()->get($this->value, $this->args);
 		} else if (Kiri::app()->has($this->value)) {
