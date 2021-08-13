@@ -9,6 +9,7 @@ use HttpServer\IInterface\Task;
 use ReflectionException;
 use Kiri\Abstracts\Component;
 use Server\ServerManager;
+use Server\SInterface\TaskExecute;
 
 /**
  * Class Async
@@ -21,11 +22,11 @@ class Async extends Component
     private static array $_absences = [];
 
 
-    /**
-     * @param string $name
-     * @param Task $handler
-     */
-    public function addAsync(string $name, Task $handler)
+	/**
+	 * @param string $name
+	 * @param TaskExecute $handler
+	 */
+    public function addAsync(string $name, TaskExecute $handler)
     {
         static::$_absences[$name] = $handler::class;
     }
