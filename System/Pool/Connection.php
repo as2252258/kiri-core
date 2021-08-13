@@ -117,11 +117,6 @@ class Connection extends Component
 	public function create($coroutineName, $config): Closure
 	{
 		return static function () use ($coroutineName, $config) {
-			if (Coroutine::getCid() === -1) {
-				Runtime::enableCoroutine(false);
-			}
-			debug('mysql connect startTime ' . microtime(true));
-
 			$cds = 'mysql:dbname=' . $config['database'] . ';host=' . $config['cds'];
 			$link = new PDO($cds, $config['username'], $config['password'], [
 				PDO::ATTR_EMULATE_PREPARES         => false,
@@ -133,8 +128,6 @@ class Connection extends Component
 			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
-
-			debug('mysql connect endTime ' . microtime(true));
 			return $link;
 		};
 	}
