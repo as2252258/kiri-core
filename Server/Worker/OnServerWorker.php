@@ -62,7 +62,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 
 	/**
 	 * @param Annotation $annotation
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */

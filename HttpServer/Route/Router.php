@@ -554,14 +554,13 @@ class Router extends HttpService implements RouterInterface
 
 		$di = Kiri::getDi();
 		foreach ($classes as $class) {
-			$instance = $di->get($class);
 			$methods = $di->getMethodAttribute($class);
 			foreach ($methods as $method => $attribute) {
 				if (empty($attribute)) {
 					continue;
 				}
 				foreach ($attribute as $item) {
-					$item->execute($instance, $method);
+					$item->execute($class, $method);
 				}
 			}
 		}
