@@ -25,8 +25,12 @@ class Request implements RequestInterface
      */
     public function __call($name, $args)
     {
-        $request = Context::getContext(HttpResponse::class);
-        if (property_exists($request, $name)) {
+	    if (!Context::hasContext(HttpResponse::class)) {
+		    $request = Context::setContext(HttpResponse::class, new HttpResponse());
+	    } else {
+		    $request = Context::getContext(HttpResponse::class);
+	    }
+	    if (property_exists($request, $name)) {
             return $request->{$name};
         }
         return $request->{$name}(...$args);

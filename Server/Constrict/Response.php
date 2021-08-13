@@ -29,7 +29,12 @@ class Response implements ResponseInterface
 	 */
 	public function __call($name, $args)
 	{
-		return Context::getContext(HttpResponse::class)->{$name}(...$args);
+		if (!Context::hasContext(HttpResponse::class)) {
+			$context = Context::setContext(HttpResponse::class, new HttpResponse());
+		} else {
+			$context = Context::getContext(HttpResponse::class);
+		}
+		return $context->{$name}(...$args);
 	}
 
 }
