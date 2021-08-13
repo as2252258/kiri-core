@@ -36,7 +36,7 @@ class CoreMiddleware implements Middleware
 	public function onHandler(RequestInterface $request, Closure $next): mixed
 	{
 		/** @var Response $response */
-		$response = Kiri::getApp('response');
+		$response = \response();
 		$response->addHeader('Access-Control-Allow-Origin', '*');
 		$response->addHeader('Access-Control-Allow-Headers', $request->header('access-control-request-headers'));
 		$response->addHeader('Access-Control-Request-Method', $request->header('access-control-request-method'));
