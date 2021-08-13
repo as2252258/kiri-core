@@ -739,7 +739,7 @@ abstract class ClientAbstracts extends Component implements IClient
 			$this->host = $domain;
 		}
 		$this->header['Host'] = $domain;
-		if (strpos($path, '/') !== 0) {
+		if (!str_starts_with($path, '/')) {
 			$path = '/' . $path;
 		}
 		return [$this->host, $isHttps, $path];
