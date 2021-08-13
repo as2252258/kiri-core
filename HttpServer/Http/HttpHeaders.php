@@ -100,7 +100,7 @@ trait HttpHeaders
 	 */
 	public function exists($name): bool
 	{
-		return $this->_headers[$name] ?? null === null;
+		return ($this->_headers[$name] ?? null) === null;
 	}
 
 

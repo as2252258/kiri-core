@@ -524,7 +524,6 @@ class Router extends HttpService implements RouterInterface
 	 * @param RequestInterface $request
 	 * @return Node|null
 	 * 树杈搜索
-	 * @throws RequestException
 	 */
 	public function Branch_search(RequestInterface $request): ?Node
 	{
