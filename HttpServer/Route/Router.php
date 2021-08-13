@@ -403,7 +403,6 @@ class Router extends HttpService implements RouterInterface
 	 * @param $method
 	 * @return Node|null
 	 * 查找指定路由
-	 * @throws RequestException
 	 */
 	public function tree_search(?array $explode, $method): ?Node
 	{
@@ -414,7 +413,7 @@ class Router extends HttpService implements RouterInterface
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			if (!$node) {
-				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+				return null;
 			}
 			$parent = $node;
 		}
@@ -534,7 +533,6 @@ class Router extends HttpService implements RouterInterface
 			return $node;
 		}
 		if (!$request->isOption) {
-			var_dump($request);
 			return null;
 		}
 		$node = $this->tree_search(['*'], $request->getMethod());
