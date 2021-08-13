@@ -95,10 +95,10 @@ class Container extends BaseObject
 
 
 	/**
-	 * @param $interface
-	 * @param $class
+	 * @param string $interface
+	 * @param string $class
 	 */
-	public function mapping($interface, $class)
+	public function mapping(string $interface, string $class)
 	{
 		$this->_interfaces[$interface] = $class;
 	}
