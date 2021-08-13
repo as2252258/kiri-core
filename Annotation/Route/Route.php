@@ -37,7 +37,11 @@ use Kiri\Kiri;
 	{
 		// TODO: Implement setHandler() method.
 		$router = Kiri::app()->getRouter();
-		$router->addRoute($this->uri, [di($class), $method], $this->method);
+
+		if (is_string($class)) {
+			$class = di($class);
+		}
+		$router->addRoute($this->uri, [$class, $method], $this->method);
 		return $router;
 	}
 
