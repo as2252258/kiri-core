@@ -6,10 +6,11 @@ namespace Annotation;
 
 use Exception;
 use HttpServer\Http\Context;
-use ReflectionException;
-use ReflectionProperty;
 use Kiri\Core\Str;
 use Kiri\Kiri;
+use ReflectionException;
+use ReflectionProperty;
+use Server\ResponseInterface;
 
 /**
  * Class Inject
@@ -46,9 +47,6 @@ use Kiri\Kiri;
 		if ($method->isPrivate() || $method->isProtected()) {
 			$this->setter($class, $method, $injectValue);
 		} else {
-		    if (is_string($injectValue)){
-		        var_dump($injectValue);
-            }
 			$class->{$method->getName()} = $injectValue;
 		}
 		return true;
@@ -98,6 +96,9 @@ use Kiri\Kiri;
 	{
 		if (Context::hasContext($this->value)) {
 			return Context::getContext($this->value);
+		}
+		if ($this->value == ResponseInterface::class) {
+			var_dump($this->value);
 		}
 		if (class_exists($this->value)) {
 			return Kiri::getDi()->get($this->value, $this->args);
