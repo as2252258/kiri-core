@@ -27,85 +27,9 @@ class Pool extends Component
 
     public int $max = 60;
 
-    public int $creates = -1;
-
     private array $_times = [];
 
     use Alias;
-
-
-    /**
-     * @return array
-     * @throws ConfigException
-     */
-    private function getClearTime(): array
-    {
-        $firstClear = Config::get('pool.clear.start', 600);
-        $lastClear = Config::get('pool.clear.end', 300);
-        return [$firstClear, $lastClear];
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    public function Heartbeat_detection($ticker)
-    {
-        if (env('state') == 'exit') {
-            Timer::clear($this->creates);
-            foreach (static::$_connections as $channel) {
-                $this->flush($channel, 0);
-                $channel->close();
-            }
-            static::$_connections = [];
-            $this->creates = -1;
-        } else {
-            $this->heartbeat_flush();
-        }
-    }
-
-
-    /**
-     * @throws ConfigException
-     * @throws Exception
-     */
-    private function heartbeat_flush()
-    {
-        $num = [];
-        $total = 0;
-        $min = Config::get('databases.pool.min', 1);
-        foreach (static::$_connections as $key => $channel) {
-            if (!isset($num[$key])) {
-                $num[$key] = 0;
-            }
-            if (time() - ($this->_times[$key] ?? time()) > 120) {
-                $this->flush($channel, 0);
-            } else if ($channel->length() > $min) {
-                $this->flush($channel, $min);
-            }
-            $num[$key] += ($length = $channel->length());
-            $total += $length;
-        }
-        $this->clear($total, $num);
-    }
-
-
-    /**
-     * @param $total
-     * @throws \Exception
-     */
-    private function clear($total, $num)
-    {
-        write(var_export($num, true), 'connections');
-        if ($total >= 1) {
-            return;
-        }
-        Timer::clear($this->creates);
-        if (Kiri::isWorker() || Kiri::isTask()) {
-            $this->debug('Worker #' . env('worker') . ' clear time tick.');
-        }
-        $this->creates = -1;
-    }
 
 
     /**
@@ -152,9 +76,6 @@ class Pool extends Component
         if (Coroutine::getCid() === -1) {
             return;
         }
-        if ($this->creates === -1) {
-            $this->creates = Timer::tick(60000, [$this, 'Heartbeat_detection']);
-        }
         static::$_connections[$name] = new Channel($max);
         $this->max = $max;
     }
@@ -174,18 +95,16 @@ class Pool extends Component
         if (static::$_connections[$name]->errCode == SWOOLE_CHANNEL_CLOSED) {
             throw new Exception('Channel is Close.');
         }
-        if ($this->creates === -1) {
-            $this->creates = Timer::tick(60000, [$this, 'Heartbeat_detection']);
-        }
         return static::$_connections[$name];
     }
 
 
-    /**
-     * @param $name
-     * @return array
-     * @throws Exception
-     */
+	/**
+	 * @param $name
+	 * @param $callback
+	 * @return array
+	 * @throws ConfigException
+	 */
     public function get($name, $callback): mixed
     {
         if (Coroutine::getCid() === -1) {
@@ -206,7 +125,7 @@ class Pool extends Component
     /**
      * @param $name
      * @return bool
-     * @throws \Kiri\Exception\ConfigException
+     * @throws ConfigException
      */
     public function isNull($name): bool
     {

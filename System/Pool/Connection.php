@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Kiri\Pool;
 
 use Closure;
+use Database\Mysql\PDO;
 use Exception;
 use HttpServer\Http\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Kiri;
 use Swoole\Error;
 use Throwable;
-use Database\Mysql\PDO;
 
 /**
  * Class Connection
@@ -105,7 +105,9 @@ class Connection extends Component
 	public function create($coroutineName, $config): Closure
 	{
 		return static function () use ($coroutineName, $config) {
-			return new PDO($config['database'], $config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4');
+			return Kiri::getDi()->newObject(PDO::class, [
+				$config['database'], $config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4'
+			]);
 		};
 	}
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kiri\Pool;
 
 
+use Closure;
 use Exception;
 use HttpServer\Http\Context;
 use Redis as SRedis;
@@ -42,14 +43,12 @@ class Redis extends Component
     }
 
 
-    /**
-     * @param string $name
-     * @param mixed $config
-     * @return SRedis
-     * @throws RedisConnectException
-     * @throws Exception
-     */
-    public function create(string $name, mixed $config): \Closure
+	/**
+	 * @param string $name
+	 * @param mixed $config
+	 * @return Closure
+	 */
+    public function create(string $name, mixed $config): Closure
     {
         return static function () use ($name, $config) {
             if (Coroutine::getCid() === -1) {
