@@ -54,7 +54,7 @@ class OnServerWorker extends \Server\Abstracts\Server
 		$this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
 
 		$this->workerInitExecutor($server, $annotation, $workerId);
-		$this->interpretDirectory($annotation);
+//		$this->interpretDirectory($annotation);
 
 		$this->eventDispatch->dispatch(new OnAfterWorkerStart());
 	}
