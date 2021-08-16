@@ -27,8 +27,6 @@ class Pool extends Component
 
     public int $max = 60;
 
-    private array $_times = [];
-
     use Alias;
 
 
@@ -110,7 +108,6 @@ class Pool extends Component
         if (Coroutine::getCid() === -1) {
             return $callback();
         }
-        $this->_times[$name] = time();
         $channel = $this->getChannel($name);
         if (!$channel->isEmpty()) {
             $connection = $channel->pop();
