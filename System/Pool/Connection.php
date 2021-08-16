@@ -8,11 +8,9 @@ use Exception;
 use HttpServer\Http\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Kiri;
-use PDO;
-use Swoole\Coroutine;
 use Swoole\Error;
-use Swoole\Runtime;
 use Throwable;
+use Database\Mysql\PDO;
 
 /**
  * Class Connection
@@ -44,13 +42,8 @@ class Connection extends Component
 	public function beginTransaction($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (!Context::hasContext('begin_' . $coroutineName)) {
-			Context::setContext('begin_' . $coroutineName, 1);
-		}
-		Context::increment('begin_' . $coroutineName);
-
 		$connection = Context::getContext($coroutineName);
-		if ($connection instanceof PDO && !$connection->inTransaction()) {
+		if ($connection instanceof PDO) {
 			$connection->beginTransaction();
 		}
 	}
@@ -62,11 +55,9 @@ class Connection extends Component
 	public function commit($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (Context::decrement('begin_' . $coroutineName) == 1) {
-			$connection = Context::getContext($coroutineName);
-			if ($connection instanceof PDO && $connection->inTransaction()) {
-				$connection->commit();
-			}
+		$connection = Context::getContext($coroutineName);
+		if ($connection instanceof PDO) {
+			$connection->commit();
 		}
 	}
 
@@ -78,12 +69,9 @@ class Connection extends Component
 	public function rollback($coroutineName)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
-		if (Context::decrement('begin_' . $coroutineName) == 1) {
-			if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
-				if ($connection->inTransaction()) {
-					$connection->rollBack();
-				}
-			}
+		$connection = Context::getContext($coroutineName);
+		if ($connection instanceof PDO) {
+			$connection->rollBack();
 		}
 	}
 
@@ -117,18 +105,7 @@ class Connection extends Component
 	public function create($coroutineName, $config): Closure
 	{
 		return static function () use ($coroutineName, $config) {
-			$cds = 'mysql:dbname=' . $config['database'] . ';host=' . $config['cds'];
-			$link = new PDO($cds, $config['username'], $config['password'], [
-				PDO::ATTR_EMULATE_PREPARES         => false,
-				PDO::ATTR_CASE                     => PDO::CASE_NATURAL,
-				PDO::ATTR_TIMEOUT                  => 60,
-				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-				PDO::MYSQL_ATTR_INIT_COMMAND       => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
-			]);
-			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
-			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
-			return $link;
+			return new PDO($config['database'], $config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4');
 		};
 	}
 
