@@ -7,7 +7,6 @@ namespace Console;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Input;
-use Kiri\Event;
 use Kiri\Kiri;
 use Server\Events\OnAfterCommandExecute;
 use Server\Events\OnBeforeCommandExecute;

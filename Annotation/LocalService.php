@@ -5,7 +5,6 @@ namespace Annotation;
 
 
 use Exception;
-use Kiri\Event;
 use Kiri\Events\EventProvider;
 use Kiri\Kiri;
 use Server\Events\OnWorkerExit;

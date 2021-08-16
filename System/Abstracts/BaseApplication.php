@@ -28,15 +28,12 @@ use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
 use Kiri\Error\ErrorHandler;
 use Kiri\Error\Logger;
-use Kiri\Event;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\InitException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Jwt\Jwt;
 use Kiri\Kiri;
 use ReflectionException;
-use Rpc\Producer;
-use Rpc\Service;
 use Server\ServerManager;
 use Server\SInterface\TaskExecute;
 use Swoole\Table;
@@ -486,7 +483,6 @@ abstract class BaseApplication extends Component
 			'logger'          => ['class' => Logger::class],
 			'annotation'      => ['class' => SAnnotation::class],
 			'router'          => ['class' => Router::class],
-			'event'           => ['class' => Event::class],
 			'redis'           => ['class' => Redis::class],
 			'databases'       => ['class' => Connection::class],
 			'aop'             => ['class' => Aop::class],

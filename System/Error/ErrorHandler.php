@@ -13,7 +13,6 @@ use Exception;
 use HttpServer\IInterface\IFormatter;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
-use Kiri\Event;
 use Kiri\Events\EventDispatch;
 use Kiri\Kiri;
 use Server\Events\OnAfterRequest;

@@ -18,13 +18,11 @@ use Kiri\Crontab\Producer;
 use Kiri\Async;
 use Kiri\Cache\Redis;
 use Kiri\Error\Logger;
-use Kiri\Event;
 use Kiri\Jwt\Jwt;
 
 /**
  * Trait TraitApplication
  * @package Kiri\Abstracts
- * @property Event $event
  * @property Router $router
  * @property \Redis|Redis $redis
  * @property Server $server

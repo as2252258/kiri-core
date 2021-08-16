@@ -14,7 +14,6 @@ use Kiri\Aop;
 use Kiri\Application;
 use Kiri\Core\ArrayAccess;
 use Kiri\Error\Logger;
-use Kiri\Event;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
