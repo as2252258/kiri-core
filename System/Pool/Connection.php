@@ -32,7 +32,11 @@ class Connection extends Component
 	public function inTransaction($cds): bool
 	{
 		$name = $this->name('Mysql:' . $cds, true);
-		return Context::getContext('begin_' . $name) == 0;
+		$connection = Context::getContext($name);
+		if ($connection instanceof PDO) {
+			$connection->inTransaction();
+		}
+		return false;
 	}
 
 	/**
