@@ -157,7 +157,7 @@ class ServerManager
 	 * @param array $ports
 	 * @return array
 	 */
-	private function sortService(array $ports): array
+	public function sortService(array $ports): array
 	{
 		$array = [];
 		foreach ($ports as $port) {
@@ -315,7 +315,8 @@ class ServerManager
 			return;
 		}
 		while ($this->checkPortIsAlready($port)) {
-			exec('kill ' . $pid, $execResult);
+			exec('kill -15 ' . $pid, $execResult);
+			Process::kill($pid,);
 			usleep(300);
 		}
 	}

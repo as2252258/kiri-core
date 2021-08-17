@@ -131,7 +131,7 @@ class Server extends HttpService
 	public function shutdown()
 	{
 		$configs = Config::get('server', [], true);
-		foreach ($configs['ports'] ?? [] as $config) {
+		foreach ($this->manager->sortService($configs) as $config) {
 			$this->manager->stopServer($config['port']);
 		}
 		$this->eventDispatch->dispatch(new OnShutdown());
