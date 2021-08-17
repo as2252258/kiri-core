@@ -9,9 +9,9 @@ class OnShutdown
 
 
 	/**
-	 * @param Server $server
+	 * @param Server|null $server
 	 */
-	public function __construct(Server $server)
+	public function __construct(?Server $server = null)
 	{
 	}
 

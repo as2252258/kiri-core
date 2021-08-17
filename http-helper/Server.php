@@ -3,17 +3,20 @@
 
 namespace Http;
 
+use Annotation\Inject;
 use Exception;
 use Http\Abstracts\HttpService;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Error\LoggerProcess;
+use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Process\Biomonitoring;
 use ReflectionException;
 use Rpc\Service;
 use Server\Constant;
+use Server\Events\OnShutdown;
 use Server\ServerManager;
 use Swoole\Runtime;
 
@@ -35,6 +38,11 @@ class Server extends HttpService
 
 	private ServerManager $manager;
 	private mixed $daemon = 0;
+
+
+	/** @var EventDispatch  */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $eventDispatch;
 
 
 	/**
@@ -126,6 +134,7 @@ class Server extends HttpService
 		foreach ($configs['ports'] ?? [] as $config) {
 			$this->manager->stopServer($config['port']);
 		}
+		$this->eventDispatch->dispatch(new OnShutdown());
 	}
 
 
