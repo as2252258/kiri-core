@@ -40,7 +40,7 @@ class Server extends HttpService
 	private mixed $daemon = 0;
 
 
-	/** @var EventDispatch  */
+	/** @var EventDispatch */
 	#[Inject(EventDispatch::class)]
 	public EventDispatch $eventDispatch;
 
@@ -131,7 +131,7 @@ class Server extends HttpService
 	public function shutdown()
 	{
 		$configs = Config::get('server', [], true);
-		foreach ($this->manager->sortService($configs) as $config) {
+		foreach ($this->manager->sortService($configs['ports'] ?? []) as $config) {
 			$this->manager->stopServer($config['port']);
 		}
 		$this->eventDispatch->dispatch(new OnShutdown());
