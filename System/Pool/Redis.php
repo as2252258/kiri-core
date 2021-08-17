@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Kiri\Pool;
 
 
+use Annotation\Inject;
 use Closure;
 use Exception;
 use Http\Context\Context;
 use Kiri\Abstracts\Component;
+use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
-use Kiri\Exception\RedisConnectException;
 use Kiri\Kiri;
-use Redis as SRedis;
-use Swoole\Coroutine;
-use Swoole\Runtime;
+use Server\Events\OnWorkerExit;
 
 /**
  * Class RedisClient
@@ -87,6 +86,18 @@ class Redis extends Component
 		$coroutineName = $this->name('Redis:' . $config['host'], $isMaster);
 		$this->getPool()->clean($coroutineName);
 		Context::remove($coroutineName);
+	}
+
+
+	/**
+	 * @param array $config
+	 * @param bool $isMaster
+	 * @throws Exception
+	 */
+	public function connection_clear(array $config, bool $isMaster = false)
+	{
+		$coroutineName = $this->name('Redis:' . $config['host'], $isMaster);
+		$this->getPool()->clean($coroutineName);
 	}
 
 

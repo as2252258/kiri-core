@@ -126,7 +126,7 @@ SCRIPT;
 	public function destroy()
 	{
 		$connections = Kiri::getDi()->get(PoolRedis::class);
-		$connections->destroy($this->get_config(), true);
+		$connections->connection_clear($this->get_config(), true);
 	}
 
 	/**
