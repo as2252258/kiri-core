@@ -3,7 +3,7 @@
 namespace Server\Abstracts;
 
 use Annotation\Inject;
-use HttpServer\Route\Router;
+use Http\Route\Router;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;

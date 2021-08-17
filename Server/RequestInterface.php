@@ -3,7 +3,7 @@
 namespace Server;
 
 
-use HttpServer\Http\Request;
+use Http\Http\Request;
 
 /**
  *

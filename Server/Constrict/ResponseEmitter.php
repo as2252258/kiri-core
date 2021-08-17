@@ -3,7 +3,7 @@
 namespace Server\Constrict;
 
 use Exception;
-use HttpServer\Http\Formatter\FileFormatter;
+use Http\Http\Formatter\FileFormatter;
 use Kiri\Exception\NotFindClassException;
 use ReflectionException;
 use Server\ResponseInterface;

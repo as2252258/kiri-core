@@ -2,7 +2,7 @@
 
 namespace Server\Constrict;
 
-use HttpServer\Http\Formatter\FileFormatter;
+use Http\Http\Formatter\FileFormatter;
 use Kiri\Exception\NotFindClassException;
 use Server\ResponseInterface;
 use Swoole\Server;

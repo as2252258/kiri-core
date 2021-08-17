@@ -5,7 +5,7 @@ namespace Kafka;
 
 
 use Exception;
-use HttpServer\Server;
+use Http\Server;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Config as SConfig;
 use Kiri\Abstracts\Providers;

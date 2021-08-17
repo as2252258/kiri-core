@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Exception;
-use HttpServer\IInterface\IFormatter;
+use Http\IInterface\IFormatter;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Events\EventDispatch;

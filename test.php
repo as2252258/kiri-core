@@ -1,6 +1,8 @@
 <?php
 
 
+$str = '{"datacenter":"tencent-datacenter","data_dir":"/root/consul/data","log_file":"/root/consul/log/","log_level":"INFO","bind_addr":"0.0.0.0","client_addr":"0.0.0.0","node_name":"tencent-node","ui":true,"bootstrap_expect":1,"server":true,"acl":{"enabled":true,"default_policy":"deny","enable_token_persistence":true,"enable_key_list_policy":true}}';
+
 //ini_set('memory_limit','3096M');
 //
 //use Snowflake\Application;
@@ -8,7 +10,7 @@
 //require_once __DIR__ . '/vendor/autoload.php';
 //$config = array_merge(
 //	require_once __DIR__ . '/System/Process/config.php',
-//	require_once __DIR__ . '/HttpServer/config.php'
+//	require_once __DIR__ . '/Http/config.php'
 //);
 //
 //$application = new Application($config);
@@ -25,12 +27,12 @@
 
 
 //require_once __DIR__ . '/function.php';
-//require_once __DIR__ . '/HttpServer/Client/Result.php';
-//require_once __DIR__ . '/HttpServer/Client/HttpParse.php';
-//require_once __DIR__ . '/HttpServer/Client/Curl.php';
+//require_once __DIR__ . '/Http/Client/Result.php';
+//require_once __DIR__ . '/Http/Client/HttpParse.php';
+//require_once __DIR__ . '/Http/Client/Curl.php';
 //
 //\Swoole\Coroutine::create(function () {
-//	$curl = \HttpServer\Client\Curl::NewRequest();
+//	$curl = \Http\Client\Curl::NewRequest();
 ////	$curl->setCallback(function ($body) {
 ////		return $body;
 ////	});
@@ -121,18 +123,49 @@
 //		unset($class);
 //	}
 //);
+////
+////
 //
 //
+//error_reporting(E_ALL);
+//
+//$a['hello'] = base64_encode(random_bytes(1000));
+//$a['world'] = 'hello';
+//$a['int'] = rand(1, 999999);
+//$a['list'] = ['a,', 'b', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'];
+//
+//$val = serialize($a);
+//$str = pack('N', strlen($val)) . $val . "\r\n";
+//
+//var_dump(swoole_substr_unserialize($val, strlen($val)));
+//
+//var_dump($str, unpack('N', pack('N', strlen($val))));
+
+//var_dump( openssl_get_cipher_methods());
+foreach (openssl_get_cipher_methods() as $openssl_get_cipher_method) {
+
+	$iv = '';
+
+	if (openssl_cipher_iv_length($openssl_get_cipher_method) > 0) {
+		continue;
+		$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($openssl_get_cipher_method));
+	}
+
+	$tag = '';
+
+	$result = openssl_encrypt(json_encode([
+		'time'  => microtime(),
+		'scene' => 'application',
+		'ot'    => 1
+	]), $openssl_get_cipher_method, "xl.zhuangb123.com", 0, $iv, $tag);
 
 
-error_reporting(E_ALL);
+	echo $openssl_get_cipher_method . ',';
 
-$a['hello'] = base64_encode(random_bytes(1000));
-$a['world'] = 'hello';
-$a['int'] = rand(1, 999999);
-$a['list'] = ['a,', 'b', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'];
+//	if ($result != false) {
+//		echo str_pad($openssl_get_cipher_method, 30, ' ', STR_PAD_RIGHT) . '=> ' . str_replace('=', '', $result) . PHP_EOL;
+//		echo str_pad($openssl_get_cipher_method, 30, ' ', STR_PAD_RIGHT) . '=> ' . openssl_decrypt(str_replace('=', '', $result),
+//				$openssl_get_cipher_method, "xl.zhuangb123.com", 0, $iv, $tag) . PHP_EOL;
+//	}
+}
 
-$val = serialize($a);
-$str = pack('N', strlen($val)) . $val . "\r\n";
-
-var_dump($str, pack('N', strlen($val)));

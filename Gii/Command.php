@@ -12,7 +12,7 @@ use Kiri\Kiri;
 
 /**
  * Class Command
- * @package HttpServer
+ * @package Http
  */
 class Command extends \Console\Command
 {

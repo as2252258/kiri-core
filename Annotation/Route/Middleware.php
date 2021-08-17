@@ -5,11 +5,11 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
-use HttpServer\Route\MiddlewareManager;
+use Http\Route\MiddlewareManager;
 use ReflectionException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
-use HttpServer\IInterface\Middleware as IMiddleware;
+use Http\IInterface\Middleware as IMiddleware;
 
 /**
  * Class Middleware

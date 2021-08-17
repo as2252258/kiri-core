@@ -39,13 +39,15 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://47.92.194.207:9530?token=de5cfdf897-e2f-65de-b5686aca2-5575fe&access_token='+encodeURIComponent('ZgHcxCzVuV7kKQsf/j07N5J7BnC1VE5sS32/07utoibiLHLBXLa9htX3LMsik2DY2w0n+MUibQayG0diedcD8g==')+'&iv=iv340f0be2Fx0VvP');
+        sock = new WebSocket('ws://47.92.194.207:9528/socket?auth='+encodeURIComponent('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhcHBsaWNhdGlvbjFfNjEwMzc2ZTU2MTRhMTkuNTk0ODM5NzEiLCJpYXQiOjE2Mjc2MTY5OTcsIm5iZiI6MTYyNzYxNjk5NywiZXhwIjoxODg2ODE2OTk3LCJ1aWQiOjUxMCwibmlja25hbWUiOiJvcGVuaWQiLCJqd3Rfc2NlbmUiOiJhcHBsaWNhdGlvbjEifQ.B7zqH0WJklZVN0acER3tmc9S08WoK-aucJ1MghnunuE'),
+        ['test', 'asdasdkjfgghdfgjdfgdfg12343', 'm-chat']);
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
             }
             tick = setInterval(function () {
                 sock.send(JSON.stringify({'route': 'getUserPosition', 'tick': new Date().getTime()}));
+                // sock.close(4000);
             }, 3000)
         }
     }

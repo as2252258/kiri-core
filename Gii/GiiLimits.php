@@ -35,8 +35,8 @@ class GiiLimits extends GiiBase
 namespace App\Http\Limits;
 
 use Closure;
-use HttpServer\Http\Request;
-use HttpServer\IInterface\Limits;
+use Http\Http\Request;
+use Http\IInterface\Limits;
 
 
 ';

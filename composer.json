@@ -35,7 +35,7 @@
   "autoload": {
     "psr-4": {
       "Kiri\\": "System/",
-      "HttpServer\\": "HttpServer/",
+      "Http\\": "http-helper/",
       "Server\\": "Server/",
       "Console\\": "Console/",
       "Gii\\": "Gii/",

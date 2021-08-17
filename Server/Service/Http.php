@@ -4,8 +4,8 @@ namespace Server\Service;
 
 
 use Exception;
-use HttpServer\Exception\RequestException;
-use HttpServer\Route\Node;
+use Http\Exception\RequestException;
+use Http\Route\Node;
 use Server\Events\OnAfterRequest;
 use Server\ResponseInterface;
 use Server\SInterface\OnClose;

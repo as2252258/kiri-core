@@ -4,10 +4,10 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
-use HttpServer\Http\Context;
-use HttpServer\Http\HttpParams;
-use HttpServer\Http\Response as HttpResponse;
-use HttpServer\Route\Router;
+use Http\Http\Context;
+use Http\Http\HttpParams;
+use Http\Http\Response as HttpResponse;
+use Http\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Aop;

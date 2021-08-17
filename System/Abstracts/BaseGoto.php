@@ -5,7 +5,7 @@ namespace Kiri\Abstracts;
 
 
 use Exception;
-use HttpServer\Exception\ExitException;
+use Http\Exception\ExitException;
 use Kiri\Core\Json;
 
 /**

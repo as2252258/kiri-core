@@ -4,8 +4,8 @@
 namespace Server\Constrict;
 
 
-use HttpServer\Http\Context;
-use HttpServer\Http\Response as HttpResponse;
+use Http\Http\Context;
+use Http\Http\Response as HttpResponse;
 use Server\ResponseInterface;
 
 

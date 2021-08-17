@@ -22,7 +22,7 @@ use Swoole\WebSocket\Server as WServer;
 
 /**
  * Class OnServerManager
- * @package HttpServer\Service
+ * @package Http\Service
  */
 class ServerManager
 {

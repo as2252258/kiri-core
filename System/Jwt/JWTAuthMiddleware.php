@@ -7,8 +7,8 @@ namespace Kiri\Jwt;
 
 use Closure;
 use Exception;
-use HttpServer\Http\Request;
-use HttpServer\IInterface\Middleware;
+use Http\Http\Request;
+use Http\IInterface\Middleware;
 use Server\RequestInterface;
 use Kiri\Kiri;
 

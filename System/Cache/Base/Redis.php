@@ -2,7 +2,7 @@
 
 namespace Kiri\Cache\Base;
 
-use HttpServer\Http\Context;
+use Http\Http\Context;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Kiri;

@@ -5,7 +5,7 @@ namespace Kiri;
 
 
 use Exception;
-use HttpServer\IInterface\Task;
+use Http\IInterface\Task;
 use ReflectionException;
 use Kiri\Abstracts\Component;
 use Server\ServerManager;

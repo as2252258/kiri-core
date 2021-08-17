@@ -47,8 +47,8 @@ namespace App\Http\Interceptor;
 		} else {
 			$html .= '
 use Closure;
-use HttpServer\Http\Request;
-use HttpServer\IInterface\Interceptor;
+use Http\Http\Request;
+use Http\IInterface\Interceptor;
 ';
 		}
 
