@@ -65,7 +65,7 @@ class Redis
 			return;
 		}
 		if ($this->_timer === -1 && Context::inCoroutine()) {
-			$this->_timer = Timer::tick(3000, function () {
+			$this->_timer = Timer::tick(1000, function () {
 				try {
 					if (env('state') == 'exit') {
 						$this->stopHeartbeatCheck();
