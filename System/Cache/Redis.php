@@ -130,10 +130,10 @@ SCRIPT;
 	}
 
 	/**
-	 * @return \Redis
+	 * @return Base\Redis
 	 * @throws Exception
 	 */
-	public function proxy(): \Redis
+	public function proxy(): Base\Redis
 	{
         $connections = Kiri::getDi()->get(PoolRedis::class);
 
