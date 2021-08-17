@@ -145,8 +145,6 @@ class ServerManager
 				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
 			}
 
-			scan_directory(directory('app'), 'App', [CONTROLLER_PATH]);
-
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
 			$customProcess->onHandler($soloProcess);
 		},
