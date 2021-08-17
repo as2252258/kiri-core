@@ -6,16 +6,15 @@ namespace Http;
 use Exception;
 use Http\Abstracts\HttpService;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Rpc\Service;
-use Server\Constant;
-use Server\ServerManager;
 use Kiri\Abstracts\Config;
 use Kiri\Error\LoggerProcess;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Process\Biomonitoring;
-use Kiri\Kiri;
+use ReflectionException;
+use Rpc\Service;
+use Server\Constant;
+use Server\ServerManager;
 use Swoole\Runtime;
 
 
@@ -123,7 +122,20 @@ class Server extends HttpService
 	 */
 	public function shutdown()
 	{
-		$this->manager->stopServer(0);
+		$configs = Config::get('server', [], true);
+		foreach ($configs['ports'] ?? [] as $config) {
+			$this->manager->stopServer($config['port']);
+		}
+	}
+
+
+	/**
+	 * @return bool
+	 * @throws ConfigException
+	 */
+	public function isRunner(): bool
+	{
+		return $this->manager->isRunner();
 	}
 
 

@@ -79,7 +79,7 @@ class ServerManager
 	 */
 	public function addListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
-		if ($this->portIsAlready($port)) $this->stopServer($port);
+		if ($this->checkPortIsAlready($port)) $this->stopServer($port);
 		if (!$this->server) {
 			$this->createBaseServer($type, $host, $port, $mode, $settings);
 		} else {
@@ -94,6 +94,7 @@ class ServerManager
 	/**
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws ConfigException
 	 */
 	public function initBaseServer($configs, int $daemon = 0): void
 	{
@@ -107,18 +108,18 @@ class ServerManager
 
 
 	/**
-	 * @param $port
 	 * @return bool
-	 * @throws Exception
+	 * @throws ConfigException
 	 */
-	private function checkPort($port): bool
+	public function isRunner(): bool
 	{
-		if (Kiri::getPlatform()->isLinux()) {
-			exec('netstat -tunlp | grep ' . $port, $output);
-		} else {
-			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
+		$configs = Config::get('server', [], true);
+		foreach ($this->sortService($configs['ports']) as $config) {
+			if ($this->checkPortIsAlready($config['port'])) {
+				return true;
+			}
 		}
-		return !empty($output);
+		return false;
 	}
 
 
@@ -310,10 +311,10 @@ class ServerManager
 	 */
 	public function stopServer(int $port)
 	{
-		if (!($pid = $this->portIsAlready($port))) {
+		if (!($pid = $this->checkPortIsAlready($port))) {
 			return;
 		}
-		while ($this->portIsAlready($port)) {
+		while ($this->checkPortIsAlready($port)) {
 			exec('kill ' . $pid, $execResult);
 			usleep(300);
 		}
@@ -324,7 +325,7 @@ class ServerManager
 	 * @param $port
 	 * @return bool|string
 	 */
-	private function portIsAlready($port): bool|string
+	private function checkPortIsAlready($port): bool|string
 	{
 		if (!Kiri::getPlatform()->isLinux()) {
 			exec("lsof -i :" . $port . " | grep -i 'LISTEN' | awk '{print $2}'", $output);

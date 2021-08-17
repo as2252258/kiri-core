@@ -38,13 +38,11 @@ class Command extends \Console\Command
 		if (!in_array($dtl->get('action'), self::ACTIONS)) {
 			return 'I don\'t know what I want to do.';
 		}
-
-		/** @var Shutdown $shutdown */
-		$shutdown = Kiri::app()->get('shutdown');
-		if ($shutdown->isRunning() && $dtl->get('action') == 'start') {
+		if ($manager->isRunner() && $dtl->get('action') == 'start') {
 			return 'Service is running. Please use restart.';
 		}
-		$shutdown->shutdown();
+
+		$manager->shutdown();
 		if ($dtl->get('action') == 'stop') {
 			return 'shutdown success.';
 		}
