@@ -140,7 +140,7 @@ SCRIPT;
 		$config = $this->get_config();
 
 		$client = $connections->get($config, true);
-		if (!($client instanceof \Redis)) {
+		if (!($client instanceof Base\Redis)) {
 			throw new Exception('Redis connections more.');
 		}
 		return $client;
