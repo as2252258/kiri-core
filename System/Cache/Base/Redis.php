@@ -140,7 +140,7 @@ class Redis implements StopHeartbeatCheck
 		if (!$redis->pconnect($this->host, $this->port, $this->timeout)) {
 			throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $this->host, $this->port));
 		}
-		if (!empty($config['auth']) && !$redis->auth($config['auth'])) {
+		if (!empty($this->auth) && !$redis->auth($this->auth)) {
 			throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $this->host, $this->auth));
 		}
 		if ($this->read_timeout < 0) {
