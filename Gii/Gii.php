@@ -123,7 +123,7 @@ class Gii
 			return $this->makeByDatabases($make, $input);
 		}
 		$db = $this->input->get('databases', 'db');
-		$this->db = Kiri::app()->db->get($db);
+		$this->db = Kiri::app()->get('db')->get($db);
 
 		return $this->makeByDatabases($make, $input);
 	}

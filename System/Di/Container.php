@@ -28,7 +28,7 @@ use Server\ResponseInterface;
  * Class Container
  * @package Kiri\Di
  */
-class Container extends BaseObject
+class Container extends BaseObject implements ContainerInterface
 {
 
 	use Attributes;
@@ -116,6 +116,17 @@ class Container extends BaseObject
 			return true;
 		}
 		return false;
+	}
+
+
+	/**
+	 * @param string $interface
+	 * @param $object
+	 */
+	public function setBindings(string $interface, $object)
+	{
+		$this->_singletons[$interface] = $object;
+		$this->_interfaces[$interface] = get_class($object);
 	}
 
 

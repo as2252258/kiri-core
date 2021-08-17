@@ -6,7 +6,6 @@ namespace Server;
 
 use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine\Channel;
-use const Grpc\CHANNEL_SHUTDOWN;
 
 class ApplicationStore
 {

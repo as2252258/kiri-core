@@ -5,8 +5,12 @@ namespace HttpServer;
 
 
 use Annotation\Inject;
+use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\TraitApplication;
 use Kiri\Application;
+use Kiri\Di\Container;
+use Kiri\Di\ContainerInterface;
+use Kiri\Kiri;
 use Server\RequestInterface;
 use Server\ResponseInterface;
 
@@ -22,12 +26,20 @@ class Controller
 
 
     /**
-     * @param Application $container
+     * @param Application $application
      */
-    public function __construct(protected Application $container)
+    #[Pure] public function __construct(protected Application $application)
     {
-
     }
+
+
+	/**
+	 * inject di container
+	 *
+	 * @var ContainerInterface|null
+	 */
+    #[Inject(ContainerInterface::class)]
+    public ?ContainerInterface $container = null;
 
 
     /**

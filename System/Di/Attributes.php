@@ -3,8 +3,10 @@
 namespace Kiri\Di;
 
 use JetBrains\PhpStorm\Pure;
+use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 
 trait Attributes
 {
@@ -15,6 +17,20 @@ trait Attributes
 	private array $_classMethod = [];
 	private array $_classPropertyNote = [];
 	private array $_classProperty = [];
+
+
+	private array $_mapping = [
+		'attributeClass' => [
+			'className' => [
+				'property' => [
+					''
+				],
+				'method'   => [
+
+				]
+			]
+		]
+	];
 
 
 	/**
@@ -31,7 +47,62 @@ trait Attributes
 				continue;
 			}
 			$this->_classTarget[$className][] = $attribute->newInstance();
+
+			$this->setMappingClass($attribute, $className);
 		}
+	}
+
+
+	/**
+	 * @param ReflectionAttribute $attribute
+	 * @param string $class
+	 */
+	private function setMappingClass(ReflectionAttribute $attribute, string $class)
+	{
+		if (!isset($this->_mapping[$attribute->getName()])) {
+			$this->_mapping[$attribute->getName()] = [];
+		}
+		$this->_mapping[$attribute->getName()][$class] = [];
+	}
+
+
+	/**
+	 * @param ReflectionAttribute $attribute
+	 * @param string $class
+	 * @param string $method
+	 */
+	private function setMappingMethod(ReflectionAttribute $attribute, string $class, string $method)
+	{
+		$this->setMappingClass($attribute, $class);
+
+		$mapping = $this->_mapping[$attribute->getName()][$class];
+		if (!isset($mapping['method'])) {
+			$mapping['method'] = [];
+		}
+		if (!in_array($method, $mapping['method'])) {
+			$mapping['method'][] = $method;
+		}
+		$this->_mapping[$attribute->getName()][$class] = $mapping;
+	}
+
+
+	/**
+	 * @param ReflectionAttribute $attribute
+	 * @param string $class
+	 * @param string $property
+	 */
+	private function setMappingProperty(ReflectionAttribute $attribute, string $class, string $property)
+	{
+		$this->setMappingClass($attribute, $class);
+
+		$mapping = $this->_mapping[$attribute->getName()][$class];
+		if (!isset($mapping['property'])) {
+			$mapping['property'] = [];
+		}
+		if (!in_array($property, $mapping['property'])) {
+			$mapping['property'][] = $property;
+		}
+		$this->_mapping[$attribute->getName()][$class] = $mapping;
 	}
 
 
@@ -65,6 +136,8 @@ trait Attributes
 					continue;
 				}
 				$this->_classMethodNote[$className][$ReflectionMethod->getName()][] = $attribute->newInstance();
+
+				$this->setMappingMethod($attribute, $className, $ReflectionMethod->getName());
 			}
 		}
 	}
@@ -98,16 +171,65 @@ trait Attributes
 	{
 		$className = $class->getName();
 		$this->_classProperty[$className] = $this->_classPropertyNote[$className] = [];
-		foreach ($class->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PUBLIC |
-			\ReflectionProperty::IS_PROTECTED) as $ReflectionMethod) {
+		foreach ($class->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PUBLIC |
+			ReflectionProperty::IS_PROTECTED) as $ReflectionMethod) {
 			$this->_classProperty[$className][$ReflectionMethod->getName()] = $ReflectionMethod;
 			foreach ($ReflectionMethod->getAttributes() as $attribute) {
 				if (!class_exists($attribute->getName())) {
 					continue;
 				}
 				$this->_classPropertyNote[$className][$ReflectionMethod->getName()] = $attribute->newInstance();
+
+				$this->setMappingProperty($attribute, $className, $ReflectionMethod->getName());
 			}
 		}
+	}
+
+
+	/**
+	 * @param string $attribute
+	 * @param string|null $class
+	 * @return array[]
+	 */
+	public function getAttributeTrees(string $attribute, string $class = null): array
+	{
+		$mapping = $this->_mapping[$attribute] ?? [];
+		if (empty($mapping) || empty($class)) {
+			return $mapping;
+		}
+		return $mapping[$class] ?? [];
+	}
+
+
+	/**
+	 * @param string $attribute
+	 * @param string $class
+	 * @param string|null $method
+	 * @return array
+	 */
+	public function getMethodByAnnotation(string $attribute, string $class, string $method = null): array
+	{
+		$class = $this->getAttributeTrees($attribute, $class);
+		if (empty($class) || !isset($class['method']) || empty($method)) {
+			return $class['method'] ?? [];
+		}
+		return $class['method'][$method] ?? [];
+	}
+
+
+	/**
+	 * @param string $attribute
+	 * @param string $class
+	 * @param string $method
+	 * @return array
+	 */
+	public function getPropertyByAnnotation(string $attribute, string $class, string $method): array
+	{
+		$class = $this->getAttributeTrees($attribute, $class);
+		if (empty($class) || !isset($class['property'])) {
+			return [];
+		}
+		return $class['property'][$method] ?? [];
 	}
 
 
@@ -127,7 +249,7 @@ trait Attributes
 
 	/**
 	 * @param ReflectionClass $class
-	 * @return \ReflectionProperty[]
+	 * @return ReflectionProperty[]
 	 */
 	#[Pure] public function getProperty(ReflectionClass $class): array
 	{

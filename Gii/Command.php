@@ -33,7 +33,7 @@ class Command extends \Console\Command
 		/** @var Gii $gii */
 		$gii = Kiri::app()->get('gii');
 
-		$connections = Kiri::app()->db;
+		$connections = Kiri::app()->get('db');
 		if ($dtl->exists('databases')) {
 			return $gii->run($connections->get($dtl->get('databases')), $dtl);
 		}
