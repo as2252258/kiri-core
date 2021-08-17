@@ -61,9 +61,15 @@ class Redis
 	 */
 	public function heartbeat_check(): void
 	{
+		if (env('state') == 'exit') {
+			return;
+		}
 		if ($this->_timer === -1 && Context::inCoroutine()) {
 			$this->_timer = Timer::tick(3000, function () {
 				try {
+					if (env('state') == 'exit') {
+						$this->stopHeartbeatCheck();
+					}
 					if (time() - $this->_last > 10 * 60) {
 						$this->stopHeartbeatCheck();
 						$this->pdo = null;
