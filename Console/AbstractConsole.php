@@ -57,7 +57,7 @@ abstract class AbstractConsole extends Component
 	 * @return mixed
 	 * @throws Exception
 	 */
-    public function execCommand(Command $command): mixed
+    public function exec(Command $command): mixed
     {
         fire(new OnBeforeCommandExecute());
 

@@ -15,7 +15,6 @@ use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
-use Http\Command;
 use Http\Context\Response;
 use Http\ServerProviders;
 use Kiri\Abstracts\BaseApplication;
@@ -24,6 +23,7 @@ use Kiri\Abstracts\Input;
 use Kiri\Abstracts\Kernel;
 use Kiri\Crontab\CrontabProviders;
 use Kiri\Exception\NotFindClassException;
+use Server\ResponseInterface;
 use stdClass;
 use Swoole\Timer;
 
@@ -156,14 +156,28 @@ class Application extends BaseApplication
 //			if (!($class instanceof Command)) {
 			scan_directory(directory('app'), 'App');
 //			}
-			$data = di(Response::class)->getBuilder($manager->execCommand($class));
+			$data = $this->getBuilder($manager->exec($class));
 		} catch (\Throwable $exception) {
-			$data = di(Response::class)->getBuilder(logger()->exception($exception));
+			$data = $this->getBuilder(logger()->exception($exception));
 		} finally {
 			print_r($data);
 			Timer::clearAll();
 		}
 	}
+
+
+	/**
+	 * @param $data
+	 * @return Response|ResponseInterface
+	 * @throws NotFindClassException
+	 * @throws \ReflectionException
+	 * @throws Exception
+	 */
+	private function getBuilder($data): Response|ResponseInterface
+	{
+		return di(Response::class)->getBuilder($data);
+	}
+
 
 	/**
 	 * @param $className
