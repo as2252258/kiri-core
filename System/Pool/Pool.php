@@ -53,8 +53,8 @@ class Pool extends Component
         }
         while ($channel->length() > $retain_number) {
             $connection = $channel->pop();
-            if ($connection) {
-                unset($connection);
+            if ($connection instanceof StopHeartbeatCheck) {
+                $connection->stopHeartbeatCheck();
             }
         }
     }

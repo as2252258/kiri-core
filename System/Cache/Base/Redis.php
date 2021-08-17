@@ -6,10 +6,15 @@ use Http\Context\Context;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Kiri;
+use Kiri\Pool\StopHeartbeatCheck;
 use Server\Events\OnWorkerExit;
 use Swoole\Timer;
 
-class Redis
+
+/**
+ *
+ */
+class Redis implements StopHeartbeatCheck
 {
 
 	const DB_ERROR_MESSAGE = 'The system is busy, please try again later.';
@@ -69,7 +74,6 @@ class Redis
 				try {
 					if (env('state') == 'exit') {
 						echo 'timer end.' . PHP_EOL;
-						$this->stopHeartbeatCheck();
 					}
 					if (time() - $this->_last > 10 * 60) {
 						$this->stopHeartbeatCheck();
