@@ -6,7 +6,7 @@ namespace Http\IInterface;
 
 
 use Closure;
-use Http\Http\Request;
+use Http\Context\Request;
 
 interface After
 {

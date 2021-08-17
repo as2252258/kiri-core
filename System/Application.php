@@ -16,7 +16,7 @@ use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
 use Http\Command;
-use Http\Http\Response;
+use Http\Context\Response;
 use Http\ServerProviders;
 use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Config;

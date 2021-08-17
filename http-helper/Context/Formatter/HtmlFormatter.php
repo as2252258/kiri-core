@@ -1,17 +1,26 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: whwyy
+ * Date: 2018/4/8 0008
+ * Time: 17:51
+ */
+declare(strict_types=1);
 
-namespace Http\Http\Formatter;
+namespace Http\Context\Formatter;
+
 
 use Exception;
 use Http\Abstracts\HttpService;
-use Http\IInterface\IFormatter;
+use Kiri\Core\Json;
 use Swoole\Http\Response;
-
+use Http\IInterface\IFormatter;
 
 /**
- *
+ * Class HtmlFormatter
+ * @package Kiri\Kiri\Http\Formatter
  */
-class FileFormatter extends HttpService implements IFormatter
+class HtmlFormatter extends HttpService implements IFormatter
 {
 
 	public mixed $data;
@@ -28,6 +37,9 @@ class FileFormatter extends HttpService implements IFormatter
 	 */
 	public function send($context): static
 	{
+		if (!is_string($context)) {
+			$context = Json::encode($context);
+		}
 		$this->data = $context;
 		return $this;
 	}
@@ -41,7 +53,6 @@ class FileFormatter extends HttpService implements IFormatter
 		$this->clear();
 		return $data;
 	}
-
 
 	public function clear(): void
 	{

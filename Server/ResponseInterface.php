@@ -3,7 +3,7 @@
 namespace Server;
 
 
-use Http\Http\Response;
+use Http\Context\Response;
 
 /**
  * @mixin Response

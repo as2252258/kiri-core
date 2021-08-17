@@ -1,38 +1,33 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: whwyy
- * Date: 2018/4/8 0008
- * Time: 17:18
- */
-declare(strict_types=1);
 
-namespace Http\Http\Formatter;
+namespace Http\Context\Formatter;
 
+use Exception;
 use Http\Abstracts\HttpService;
 use Http\IInterface\IFormatter;
+use Swoole\Http\Response;
+
 
 /**
- * Class JsonFormatter
- * @package Kiri\Kiri\Http\Formatter
+ *
  */
-class JsonFormatter extends HttpService implements IFormatter
+class FileFormatter extends HttpService implements IFormatter
 {
+
 	public mixed $data;
 
-	public int $status = 200;
+	/** @var Response */
+	public Response $status;
 
 	public array $header = [];
 
 	/**
 	 * @param $context
-	 * @return JsonFormatter
+	 * @return $this
+	 * @throws Exception
 	 */
 	public function send($context): static
 	{
-		if (!is_string($context)) {
-			$context = json_encode($context);
-		}
 		$this->data = $context;
 		return $this;
 	}

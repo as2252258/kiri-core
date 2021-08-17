@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Http\Http;
+namespace Http\Context;
 
 /**
  * Class HttpHeaders

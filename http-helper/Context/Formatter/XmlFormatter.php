@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace Http\Http\Formatter;
+namespace Http\Context\Formatter;
 
 
 use Exception;

@@ -7,14 +7,14 @@
  */
 declare(strict_types=1);
 
-namespace Http\Http;
+namespace Http\Context;
 
 use Exception;
 use Http\Abstracts\HttpService;
-use Http\Http\Formatter\FileFormatter;
-use Http\Http\Formatter\HtmlFormatter;
-use Http\Http\Formatter\JsonFormatter;
-use Http\Http\Formatter\XmlFormatter;
+use Http\Context\Formatter\FileFormatter;
+use Http\Context\Formatter\HtmlFormatter;
+use Http\Context\Formatter\JsonFormatter;
+use Http\Context\Formatter\XmlFormatter;
 use Http\IInterface\IFormatter;
 use Kiri\Exception\NotFindClassException;
 use Server\ResponseInterface;

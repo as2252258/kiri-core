@@ -2,9 +2,9 @@
 
 namespace Server\Constrict;
 
-use Http\Http\Context;
-use Http\Http\Request as HttpResponse;
-use Http\Http\Response;
+use Http\Context\Context;
+use Http\Context\Request as HttpResponse;
+use Http\Context\Response;
 use ReflectionException;
 use Server\RequestInterface;
 use Kiri\Exception\NotFindClassException;

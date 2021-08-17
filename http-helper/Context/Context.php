@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Http\Http;
+namespace Http\Context;
 
 use Http\Abstracts\BaseContext;
 use Swoole\Coroutine;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Http\IInterface;
 
 
-use Http\Http\Request;
+use Http\Context\Request;
 use Closure;
 
 interface Limits

@@ -9,7 +9,7 @@ use Annotation\Aspect;
 use Closure;
 use Exception;
 use Http\Exception\RequestException;
-use Http\Http\Request;
+use Http\Context\Request;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Server\Events\OnAfterWorkerStart;

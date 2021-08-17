@@ -7,7 +7,7 @@ namespace Kiri\Pool;
 
 use Closure;
 use Exception;
-use Http\Http\Context;
+use Http\Context\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\RedisConnectException;

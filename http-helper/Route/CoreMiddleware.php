@@ -7,9 +7,9 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
-use Http\Http\Context;
-use Http\Http\Request;
-use Http\Http\Response;
+use Http\Context\Context;
+use Http\Context\Request;
+use Http\Context\Response;
 use Http\IInterface\Middleware;
 use Server\RequestInterface;
 use Kiri\Kiri;
