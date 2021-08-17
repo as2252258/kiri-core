@@ -315,6 +315,7 @@ class ServerManager
 			return;
 		}
 		while ($this->checkPortIsAlready($port)) {
+			var_dump($port);
 			exec('kill ' . $pid, $execResult);
 			usleep(300);
 		}
