@@ -65,7 +65,7 @@ class Server extends HttpService
 	 */
 	public function start(): string
 	{
-		$this->manager->initBaseServer(Config::get('server', [], true));
+		$this->manager->initBaseServer(Config::get('server', [], true), $this->daemon);
 
 		$rpcService = Config::get('rpc', []);
 		if (!empty($rpcService)) {

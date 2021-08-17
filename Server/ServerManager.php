@@ -95,11 +95,11 @@ class ServerManager
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function initBaseServer($configs): void
+	public function initBaseServer($configs, int $daemon = 0): void
 	{
 		$context = ServerManager::getContext();
 		foreach ($this->sortService($configs['ports']) as $config) {
-			$this->startListenerHandler($context, $config);
+			$this->startListenerHandler($context, $config, $daemon);
 		}
 		$this->bindCallback($this->server, [Constant::PIPE_MESSAGE => [OnPipeMessage::class, 'onPipeMessage']]);
 		$this->bindCallback($this->server, $this->getSystemEvents($configs));
@@ -202,23 +202,43 @@ class ServerManager
 	/**
 	 * @param ServerManager $context
 	 * @param array $config
+	 * @param int $daemon
+	 * @throws ConfigException
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function startListenerHandler(ServerManager $context, array $config)
+	private function startListenerHandler(ServerManager $context, array $config, int $daemon = 0)
 	{
 		if (!$this->server) {
-			$config['settings'] = $config['settings'] ?? [];
-			if (!isset($config['settings']['log_file'])) {
-				$config['settings']['log_file'] = storage('system.log');
-			}
-			if (!isset($config['settings']['pid_file'])) {
-				$config['settings']['pid_file'] = storage('swoole.pid');
-			}
-			$config['events'] = $config['events'] ?? [];
+			$config = $this->mergeConfig($config, $daemon);
 		}
-		$context->addListener($config['type'], $config['host'], $config['port'], $config['mode'], $config);
+		$context->addListener(
+			$config['type'], $config['host'], $config['port'], $config['mode'],
+			$config);
+	}
+
+
+	/**
+	 * @param $config
+	 * @param $daemon
+	 * @return array
+	 * @throws Exception
+	 */
+	private function mergeConfig($config, $daemon): array
+	{
+		$config['settings'] = $config['settings'] ?? [];
+		if (!isset($config['settings']['daemonize']) || !$config['settings']['daemonize'] != $daemon) {
+			$config['settings']['daemonize'] = $daemon;
+		}
+		if (!isset($config['settings']['log_file'])) {
+			$config['settings']['log_file'] = storage('system.log');
+		}
+		if (!isset($config['settings']['pid_file'])) {
+			$config['settings']['pid_file'] = storage('swoole.pid');
+		}
+		$config['events'] = $config['events'] ?? [];
+		return $config;
 	}
 
 
