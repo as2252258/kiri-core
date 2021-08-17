@@ -153,9 +153,7 @@ class Application extends BaseApplication
 			$manager = Kiri::app()->get('console');
 			$manager->register(Runtime::class);
 			$class = $manager->setParameters($argv)->search();
-//			if (!($class instanceof Command)) {
-			scan_directory(directory('app'), 'App');
-//			}
+
 			$data = $this->getBuilder($manager->exec($class));
 		} catch (\Throwable $exception) {
 			$data = $this->getBuilder(logger()->exception($exception));
