@@ -428,15 +428,6 @@ abstract class BaseApplication extends Component
 	}
 
 
-	/**
-	 * @return \Rpc\Producer
-	 * @throws Exception
-	 */
-	public function getRpc(): Producer
-	{
-		return $this->get('rpc');
-	}
-
 
 	/**
 	 * @param $array
@@ -463,9 +454,9 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @param $id
-	 * @param $definition
-	 * @throws ReflectionException
+	 * @return bool
 	 * @throws NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function has($id): bool
 	{

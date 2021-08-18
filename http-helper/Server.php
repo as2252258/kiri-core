@@ -14,7 +14,6 @@ use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Process\Biomonitoring;
 use ReflectionException;
-use Rpc\Service;
 use Server\Constant;
 use Server\Events\OnShutdown;
 use Server\ServerManager;
