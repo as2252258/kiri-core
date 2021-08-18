@@ -40,7 +40,7 @@ class Server extends HttpService
 	 * @var null|ServerManager
 	 */
 	#[Inject(ServerManager::class)]
-	private ?ServerManager $manager = null;
+	public ?ServerManager $manager = null;
 
 	private mixed $daemon = 0;
 
