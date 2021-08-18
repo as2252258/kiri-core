@@ -308,6 +308,7 @@ class ServerManager
 	/**
 	 * @param $port
 	 * @return bool|string
+	 * @throws Exception
 	 */
 	private function checkPortIsAlready($port): bool|string
 	{
@@ -317,6 +318,12 @@ class ServerManager
 			$output = explode(PHP_EOL, $output[0]);
 			return $output[0];
 		}
+
+		$serverPid = file_get_contents(storage('server.pid'));
+		if (!empty($serverPid)) {
+			Process::kill($serverPid, SIGTERM);
+		}
+
 		exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
 		if (empty($output)) {
 			return false;
@@ -423,7 +430,6 @@ class ServerManager
 	/**
 	 * @param Port|Server $server
 	 * @param array|null $settings
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	public function bindCallback(Port|Server $server, ?array $settings = [])
