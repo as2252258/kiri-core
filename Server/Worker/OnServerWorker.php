@@ -5,20 +5,18 @@ namespace Server\Worker;
 use Annotation\Annotation;
 use Annotation\Inject;
 use Exception;
+use Kiri\Abstracts\Config;
+use Kiri\Core\Help;
+use Kiri\Events\EventDispatch;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
+use Kiri\Runtime;
 use ReflectionException;
-use Server\Constant;
 use Server\Events\OnAfterWorkerStart;
 use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStart;
 use Server\Events\OnWorkerStop;
-use Kiri\Abstracts\Config;
-use Kiri\Core\Help;
-use Kiri\Events\EventDispatch;
-use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
-use Kiri\Runtime;
-use Kiri\Kiri;
 use Swoole\Server;
 use Swoole\Timer;
 
@@ -45,18 +43,37 @@ class OnServerWorker extends \Server\Abstracts\Server
 	 */
 	public function onWorkerStart(Server $server, int $workerId)
 	{
-		$this->_setConfigCache($workerId);
+		$this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
+
+		$this->onWorkerStartInit($server, $workerId);
+
+		$this->eventDispatch->dispatch(new OnAfterWorkerStart());
+	}
+
+
+	/**
+	 * @param Server $server
+	 * @param int $workerId
+	 * @throws ConfigException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	private function onWorkerStartInit(Server $server, int $workerId)
+	{
+		putenv('state=start');
+		putenv('worker=' . $workerId);
+
+		$serialize = file_get_contents(storage(Runtime::CONFIG_NAME));
+		if (!empty($serialize)) {
+			Config::sets(unserialize($serialize));
+		}
+
 		$annotation = Kiri::app()->getAnnotation();
 		$annotation->read(APP_PATH . 'app', 'App',
 			$workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
 		);
-
-		$this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
-
 		$this->workerInitExecutor($server, $annotation, $workerId);
-//		$this->interpretDirectory($annotation);
-
-		$this->eventDispatch->dispatch(new OnAfterWorkerStart());
+		$this->interpretDirectory($annotation);
 	}
 
 
@@ -110,23 +127,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 
 			$this->setProcessName(sprintf('Tasker[%d].%d', $server->worker_pid, $workerId));
 		}
-	}
-
-
-	/**
-	 * @param $worker_id
-	 * @throws Exception
-	 */
-	private function _setConfigCache($worker_id)
-	{
-		putenv('state=start');
-		putenv('worker=' . $worker_id);
-
-		$serialize = file_get_contents(storage(Runtime::CONFIG_NAME));
-		if (empty($serialize)) {
-			return;
-		}
-		Config::sets(unserialize($serialize));
 	}
 
 
