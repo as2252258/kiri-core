@@ -64,7 +64,7 @@ class KafkaClient
 	 * @param bool $isAck
 	 * @throws Exception
 	 */
-	public function dispatch(string $key, string|array $params, bool $isAck = false)
+	public function push(string $key, string|array $params, bool $isAck = false)
 	{
 		$this->sendMessage([$params], $key, $isAck);
 	}
