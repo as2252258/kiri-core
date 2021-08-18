@@ -270,7 +270,6 @@ class ServerManager
 	 * @param int $port
 	 * @param int $mode
 	 * @param array $settings
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws ConfigException
 	 */
@@ -300,7 +299,7 @@ class ServerManager
 			return;
 		}
 		while ($this->checkPortIsAlready($port)) {
-			Process::kill($pid,SIGTERM);
+			Process::kill($pid, SIGTERM);
 			usleep(300);
 		}
 	}
@@ -329,7 +328,6 @@ class ServerManager
 	/**
 	 * @param string $type
 	 * @param array $settings
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
@@ -339,13 +337,14 @@ class ServerManager
 			$this->addTaskListener($settings['events']);
 		}
 		$this->addServiceEvents($settings['events'] ?? [], $this->server);
+		Kiri::getDi()->setBindings(SwooleServerInterface::class,
+			$this->server);
 	}
 
 
 	/**
 	 * @param array $events
 	 * @param Server|Port $server
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function addServiceEvents(array $events, Server|Port $server)

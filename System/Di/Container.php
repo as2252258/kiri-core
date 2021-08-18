@@ -201,10 +201,6 @@ class Container extends BaseObject implements ContainerInterface
 		foreach ($this->getPropertyNote($reflect) as $property => $inject) {
 			/** @var Inject $inject */
 			$inject->execute($object, $property);
-
-			if ($object::class == Server::class){
-				var_dump($object, $property);
-			}
 		}
 		return $object;
 	}
