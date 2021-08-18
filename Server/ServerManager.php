@@ -218,9 +218,7 @@ class ServerManager
 		if (!isset($config['settings']['log_file'])) {
 			$config['settings']['log_file'] = storage('system.log');
 		}
-		if (!isset($config['settings']['pid_file'])) {
-			$config['settings']['pid_file'] = storage('swoole.pid');
-		}
+		$config['settings']['pid_file'] = storage('.swoole.pid');
 		$config['events'] = $config['events'] ?? [];
 		return $config;
 	}
@@ -292,6 +290,7 @@ class ServerManager
 
 	/**
 	 * @param int $port
+	 * @throws Exception
 	 */
 	public function stopServer(int $port)
 	{
@@ -319,7 +318,7 @@ class ServerManager
 			return $output[0];
 		}
 
-		$serverPid = file_get_contents(storage('server.pid'));
+		$serverPid = file_get_contents(storage('.swoole.pid'));
 		if (!empty($serverPid)) {
 			Process::kill($serverPid, SIGTERM);
 		}
