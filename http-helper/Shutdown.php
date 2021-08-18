@@ -49,7 +49,7 @@ class Shutdown extends Component
 			return;
 		}
 
-		$server = ServerManager::getContext()->getServer();
+		$server = di(ServerManager::class)->getServer();
 		$master_pid = $server->setting['pid_file'] ?? PID_PATH;
 		if (file_exists($master_pid)) {
 			$this->close(file_get_contents($master_pid));
@@ -77,7 +77,7 @@ class Shutdown extends Component
 	 */
 	public function isRunning(): bool
 	{
-		$server = ServerManager::getContext()->getServer();
+		$server = di(ServerManager::class)->getServer();
 		$master_pid = $server->setting['pid_file'] ?? PID_PATH;
 
 		if (!file_exists($master_pid)) {

@@ -82,13 +82,14 @@ class Response extends HttpService implements ResponseInterface
 
 	/**
 	 * @return mixed
+	 * @throws
 	 */
 	public function getClientInfo(): mixed
 	{
 		if (!empty($this->_clientInfo)) {
 			return $this->_clientInfo;
 		}
-		$server = ServerManager::getContext()->getServer();
+		$server = di(ServerManager::class)->getServer();
 		return $server->getClientInfo($this->clientId, $this->reactorId);
 	}
 

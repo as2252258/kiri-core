@@ -213,11 +213,11 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @param TaskExecute $execute
-	 * @throws ReflectionException
+	 * @throws ReflectionException|NotFindClassException
 	 */
 	public function task(TaskExecute $execute): void
 	{
-		ServerManager::getContext()->task($execute);
+		di(ServerManager::class)->task($execute);
 	}
 
 
@@ -400,10 +400,11 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
+	 * @throws
 	 */
 	public function getSwoole(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
 	{
-		return ServerManager::getContext()->getServer();
+		return di(ServerManager::class)->getServer();
 	}
 
 

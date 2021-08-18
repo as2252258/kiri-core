@@ -77,7 +77,7 @@ class Zookeeper implements CustomProcess
 			if (empty($handler = $redis->get('crontab:' . $value))) {
 				return;
 			}
-			$server = ServerManager::getContext()->getServer();
+			$server = di(ServerManager::class)->getServer();
 			$server->sendMessage(swoole_unserialize($handler), $this->getWorker());
 		} catch (Throwable $exception) {
 			logger()->addError($exception);
@@ -92,7 +92,7 @@ class Zookeeper implements CustomProcess
 	private function getWorker(): int
 	{
 		if ($this->workerNum == 0) {
-			$server = ServerManager::getContext()->getServer();
+			$server = di(ServerManager::class)->getServer();
 
 			$this->workerNum = $server->setting['worker_num'] + ($server->setting['task_worker_num'] ?? 0);
 		}

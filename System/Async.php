@@ -39,7 +39,7 @@ class Async extends Component
      */
     public function dispatch(string $name, array $params = [])
     {
-    	$context  = ServerManager::getContext();
+    	$context  = di(ServerManager::class);
     	$context->task(static::$_absences[$name], $params);
     }
 

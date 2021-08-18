@@ -92,7 +92,7 @@ class Request extends HttpService implements RequestInterface
 	 */
 	public function getConnectInfo(): array|null
 	{
-		$server = ServerManager::getContext()->getServer();
+		$server = di(ServerManager::class)->getServer();
 
 		return $server->getClientInfo($this->getClientId());
 	}

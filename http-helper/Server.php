@@ -36,7 +36,13 @@ class Server extends HttpService
 	];
 
 
-	private ServerManager $manager;
+	/**
+	 * @Inject ServerManager
+	 * @var null|ServerManager
+	 */
+	#[Inject(ServerManager::class)]
+	private ?ServerManager $manager = null;
+
 	private mixed $daemon = 0;
 
 
@@ -50,7 +56,6 @@ class Server extends HttpService
 	 */
 	public function init()
 	{
-		$this->manager = ServerManager::getContext();
 	}
 
 

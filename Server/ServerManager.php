@@ -98,7 +98,7 @@ class ServerManager
 	 */
 	public function initBaseServer($configs, int $daemon = 0): void
 	{
-		$context = ServerManager::getContext();
+		$context = di(ServerManager::class);
 		foreach ($this->sortService($configs['ports']) as $config) {
 			$this->startListenerHandler($context, $config, $daemon);
 		}

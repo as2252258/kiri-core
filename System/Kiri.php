@@ -446,7 +446,7 @@ class Kiri
 	 */
 	public static function async(string $class, array $params = [])
 	{
-		$manager = ServerManager::getContext();
+		$manager = di(ServerManager::class);
 		$manager->task(new $class(...$params));
 	}
 
