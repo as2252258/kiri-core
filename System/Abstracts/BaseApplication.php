@@ -284,6 +284,7 @@ abstract class BaseApplication extends Component
 	 * @return mixed
 	 * @throws ReflectionException
 	 * @throws NotFindClassException
+	 * @throws Exception
 	 */
 	public function get($name): mixed
 	{

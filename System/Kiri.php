@@ -54,6 +54,7 @@ class Kiri
 
 	/**
 	 * @param object $class
+	 * @throws ReflectionException
 	 */
 	public static function injectProperty(object $class)
 	{
