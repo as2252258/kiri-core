@@ -6,23 +6,17 @@ namespace Http;
 
 use Annotation\Inject;
 use JetBrains\PhpStorm\Pure;
-use Kiri\Abstracts\TraitApplication;
 use Kiri\Application;
-use Kiri\Di\Container;
 use Kiri\Di\ContainerInterface;
-use Kiri\Kiri;
 use Server\RequestInterface;
 use Server\ResponseInterface;
 
 /**
  * Class WebController
  * @package Kiri\Kiri\Web
- * @property Application $container
  */
 class Controller
 {
-
-    use TraitApplication;
 
 
     /**
