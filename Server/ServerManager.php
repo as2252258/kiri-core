@@ -42,21 +42,6 @@ class ServerManager
 	private mixed $server = null;
 
 
-	private static ?ServerManager $BASEServerListener = null;
-
-
-	/**
-	 * @return static
-	 */
-	public static function getContext(): static
-	{
-		if (!(static::$BASEServerListener)) {
-			static::$BASEServerListener = new ServerManager();
-		}
-		return static::$BASEServerListener;
-	}
-
-
 	/**
 	 * @return Server|WServer|HServer|null
 	 */
