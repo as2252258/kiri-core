@@ -21,9 +21,9 @@ use ReflectionProperty;
 	/**
 	 * Inject constructor.
 	 * @param string $value
-	 * @param array $args
+	 * @param array $construct
 	 */
-	public function __construct(private string $value, private array $args = [])
+	public function __construct(private string $value, private array $construct = [])
 	{
 	}
 
@@ -93,7 +93,10 @@ use ReflectionProperty;
 	private function parseInjectValue(): mixed
 	{
 		if (!Kiri::app()->has($this->value)) {
-			return Kiri::getDi()->get($this->value, $this->args);
+			if (!empty($this->construct)) {
+				return Kiri::getDi()->newObject($this->value, $this->construct);
+			}
+			return Kiri::getDi()->get($this->value);
 		} else {
 			return Kiri::app()->get($this->value);
 		}
