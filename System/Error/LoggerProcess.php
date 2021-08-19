@@ -49,6 +49,10 @@ class LoggerProcess extends CustomProcess
 	 */
 	public function message(Process $process)
 	{
+		if ($this->isExit()) {
+			$this->exit();
+			return;
+		}
 		$message = Json::decode($process->read());
 		if (!empty($message)) {
 			Kiri::writeFile($this->getDirName($message), $message[0], FILE_APPEND);

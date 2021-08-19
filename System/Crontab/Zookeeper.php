@@ -5,12 +5,12 @@ namespace Kiri\Crontab;
 
 
 use Exception;
-use Server\ServerManager;
-use Server\Abstracts\CustomProcess;
 use Kiri\Abstracts\Config;
 use Kiri\Cache\Redis;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Server\Abstracts\CustomProcess;
+use Server\ServerManager;
 use Swoole\Process;
 use Swoole\Timer;
 use Throwable;
@@ -24,6 +24,9 @@ class Zookeeper extends CustomProcess
 
 
 	private int $workerNum = 0;
+
+
+	private int $_timer = -1;
 
 
 	/**
@@ -47,7 +50,7 @@ class Zookeeper extends CustomProcess
 	 */
 	public function onHandler(Process $process): void
 	{
-		Timer::tick(300, [$this, 'loop']);
+		$this->_timer = Timer::tick(300, [$this, 'loop']);
 	}
 
 
@@ -57,6 +60,11 @@ class Zookeeper extends CustomProcess
 	 */
 	public function loop()
 	{
+		if ($this->isExit()) {
+			Timer::clear($this->_timer);
+			$this->exit();
+			return;
+		}
 		$redis = Kiri::app()->getRedis();
 		defer(fn() => $redis->release());
 		$range = $this->loadCarobTask($redis);

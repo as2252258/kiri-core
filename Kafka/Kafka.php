@@ -4,19 +4,18 @@ declare(strict_types=1);
 namespace Kafka;
 
 
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use RdKafka\Conf;
 use RdKafka\Consumer;
 use RdKafka\ConsumerTopic;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
-use Kiri\Abstracts\Config;
-use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
-use Swoole\Coroutine\Channel;
+use Server\Abstracts\CustomProcess;
 use Swoole\Process;
 use Throwable;
-use Server\Abstracts\CustomProcess;
 
 /**
  * Class Queue
@@ -74,6 +73,10 @@ class Kafka extends CustomProcess
 
 			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 			do {
+				if ($this->isExit()) {
+					$this->exit();
+					break;
+				}
 				$this->resolve($topic, $conf['interval'] ?? 1000);
 			} while (true);
 		} catch (Throwable $exception) {

@@ -55,6 +55,15 @@ class FileChangeCustomProcess extends CustomProcess
 
 
 	/**
+	 * @param Process $process
+	 */
+	public function signListen(Process $process): void
+	{
+
+	}
+
+
+	/**
 	 * @param $code
 	 * @param $message
 	 * @param $file
