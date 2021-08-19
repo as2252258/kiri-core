@@ -74,7 +74,7 @@ class Kafka extends CustomProcess
 
 			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 			do {
-				if ($this->isStop) {
+				if ($this->checkProcessIsStop()) {
 					$this->exit();
 					break;
 				}
@@ -106,7 +106,6 @@ class Kafka extends CustomProcess
 					logger()->error($message->errstr());
 				}
 			}
-			Coroutine::sleep(0.01);
 		} catch (Throwable $exception) {
 			logger()->addError($exception, 'throwable');
 		}
