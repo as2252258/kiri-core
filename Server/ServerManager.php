@@ -119,7 +119,11 @@ class ServerManager
 	{
 		$process = $this->initProcess($customProcess, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine);
 		$this->server->addProcess($process);
-		Kiri::app()->addProcess($customProcess::class, $process);
+		if ($customProcess instanceof CustomProcess) {
+			Kiri::app()->addProcess($customProcess::class, $process);
+		} else {
+			Kiri::app()->addProcess($customProcess, $process);
+		}
 	}
 
 
