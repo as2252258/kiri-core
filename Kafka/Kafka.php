@@ -10,22 +10,20 @@ use RdKafka\ConsumerTopic;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
-use Server\SInterface\CustomProcess;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine\Channel;
 use Swoole\Process;
 use Throwable;
+use Server\Abstracts\CustomProcess;
 
 /**
  * Class Queue
  * @package Queue
  */
-class Kafka implements CustomProcess
+class Kafka extends CustomProcess
 {
-
-	protected Channel $channel;
 
 
 	/**
