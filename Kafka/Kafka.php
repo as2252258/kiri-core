@@ -75,6 +75,7 @@ class Kafka extends CustomProcess
 			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 			do {
 				if ($this->isStop) {
+					$this->exit();
 					break;
 				}
 				$this->resolve($topic, $conf['interval'] ?? 1000);
