@@ -25,8 +25,13 @@ interface CustomProcess
 	/**
 	 * @param Process $process
 	 */
-	public function onHandler(Process $process): void;
+	public function signListen(Process $process): void;
 
+
+	/**
+	 * @param Process $process
+	 */
+	public function onHandler(Process $process): void;
 
 
 }

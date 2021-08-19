@@ -23,7 +23,10 @@ use Kiri\Abstracts\Input;
 use Kiri\Abstracts\Kernel;
 use Kiri\Crontab\CrontabProviders;
 use Kiri\Exception\NotFindClassException;
+use Kiri\FileListen\FileChangeCustomProcess;
+use ReflectionException;
 use Server\ResponseInterface;
+use Server\ServerManager;
 use stdClass;
 use Swoole\Timer;
 
@@ -71,6 +74,18 @@ class Application extends BaseApplication
 	public function withCrontab()
 	{
 		$this->import(CrontabProviders::class);
+	}
+
+
+	/**
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	public function withFileChangeListen()
+	{
+		$manager = di(ServerManager::class);
+		$manager->addProcess(FileChangeCustomProcess::class);
 	}
 
 
@@ -168,7 +183,7 @@ class Application extends BaseApplication
 	 * @param $data
 	 * @return Response|ResponseInterface
 	 * @throws NotFindClassException
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function getBuilder($data): Response|ResponseInterface

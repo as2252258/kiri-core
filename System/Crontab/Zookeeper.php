@@ -6,7 +6,7 @@ namespace Kiri\Crontab;
 
 use Exception;
 use Server\ServerManager;
-use Server\SInterface\CustomProcess;
+use Server\Abstracts\CustomProcess;
 use Kiri\Abstracts\Config;
 use Kiri\Cache\Redis;
 use Kiri\Exception\ConfigException;
@@ -19,7 +19,7 @@ use Throwable;
  * Class Zookeeper
  * @package Kiri\Process
  */
-class Zookeeper implements CustomProcess
+class Zookeeper extends CustomProcess
 {
 
 

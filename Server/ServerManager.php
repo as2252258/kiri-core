@@ -131,6 +131,8 @@ class ServerManager
 				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
 			}
 
+			$customProcess->signListen($soloProcess);
+
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
 			$customProcess->onHandler($soloProcess);
 		},
