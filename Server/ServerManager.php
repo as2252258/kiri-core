@@ -127,8 +127,8 @@ class ServerManager
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
 			$customProcess->onHandler($soloProcess);
 		}, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine);
-		Kiri::app()->addProcess($customProcess, $process);
 		$this->server->addProcess($process);
+		Kiri::app()->addProcess($customProcess::class, $process);
 	}
 
 
