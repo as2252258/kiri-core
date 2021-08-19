@@ -6,22 +6,22 @@ namespace Kiri\Error;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Server\SInterface\CustomProcess;
 use Kiri\Core\Json;
 use Kiri\Exception\ComponentException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Process;
-
+use Server\Abstracts\CustomProcess;
 
 /**
  * Class LoggerProcess
  * @package Kiri\Error
  */
-class LoggerProcess implements CustomProcess
+class LoggerProcess extends CustomProcess
 {
 
 	/**
+	 * @param Process $process
 	 * @return string
 	 */
 	#[Pure] public function getProcessName(Process $process): string
