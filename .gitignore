@@ -17,6 +17,7 @@ out
 gen
 
 db/
+async-queue/
 
 composer.lock
 
