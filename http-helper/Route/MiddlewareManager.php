@@ -5,7 +5,7 @@ namespace Http\Route;
 
 
 use Closure;
-use Http\IInterface\Middleware;
+use Http\IInterface\MiddlewareInterface;
 use Kiri\Abstracts\BaseObject;
 
 
@@ -77,7 +77,7 @@ class MiddlewareManager extends BaseObject
 		}
 		return array_reduce(array_reverse($middlewares), function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {
-				if ($pipe instanceof Middleware) {
+				if ($pipe instanceof MiddlewareInterface) {
 					return $pipe->onHandler($passable, $stack);
 				}
 				return call_user_func($pipe, $passable, $stack);
@@ -95,7 +95,7 @@ class MiddlewareManager extends BaseObject
 	{
 		return array_reduce(array_reverse($middlewares), function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {
-				if ($pipe instanceof Middleware) {
+				if ($pipe instanceof MiddlewareInterface) {
 					return $pipe->onHandler($passable, $stack);
 				}
 				return call_user_func($pipe, $passable, $stack);

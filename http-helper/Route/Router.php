@@ -10,7 +10,7 @@ use Http\Controller;
 use Http\Exception\RequestException;
 use Http\Context\Request;
 use Http\Context\Response;
-use Http\IInterface\Middleware;
+use Http\IInterface\MiddlewareInterface;
 use Http\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
@@ -347,7 +347,7 @@ class Router extends HttpService implements RouterInterface
 			return $value;
 		}
 		$value = Kiri::createObject($value);
-		if (!($value instanceof Middleware)) {
+		if (!($value instanceof MiddlewareInterface)) {
 			return null;
 		}
 		return [$value, 'onHandler'];

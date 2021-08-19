@@ -6,21 +6,21 @@ namespace Http\IInterface;
 
 
 use Closure;
-use Http\Context\Request;
+use Server\RequestInterface;
 
 /**
  * Interface IMiddleware
  * @package Kiri\Kiri\Route
  */
-interface Middleware
+interface MiddlewareInterface
 {
 
 
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 * @param Closure $next
 	 * @return mixed
 	 */
-	public function onHandler(Request $request, Closure $next): mixed;
+	public function onHandler(RequestInterface $request, Closure $next): mixed;
 
 }

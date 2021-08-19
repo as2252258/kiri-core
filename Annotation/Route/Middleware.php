@@ -9,7 +9,7 @@ use Http\Route\MiddlewareManager;
 use ReflectionException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
-use Http\IInterface\Middleware as IMiddleware;
+use Http\IInterface\MiddlewareInterface as IMiddleware;
 
 /**
  * Class Middleware

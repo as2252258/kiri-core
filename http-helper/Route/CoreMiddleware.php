@@ -10,7 +10,7 @@ use Exception;
 use Http\Context\Context;
 use Http\Context\Request;
 use Http\Context\Response;
-use Http\IInterface\Middleware;
+use Http\IInterface\MiddlewareInterface;
 use Server\RequestInterface;
 use Kiri\Kiri;
 
@@ -19,12 +19,10 @@ use Kiri\Kiri;
  * @package Kiri\Kiri\Route
  * 跨域中间件
  */
-class CoreMiddleware implements Middleware
+class CoreMiddleware extends MiddlewareAbstracts
 {
 
 
-	/** @var int  */
-	public int $zOrder = 0;
 
 
 	/**
