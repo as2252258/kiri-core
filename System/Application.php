@@ -168,6 +168,8 @@ class Application extends BaseApplication
 	public function execute(Input $argv): void
 	{
 		try {
+			$this->register(Runtime::class);
+
 			$manager = Kiri::app()->get('console');
 			$class = $manager->setParameters($argv)->search();
 
@@ -189,7 +191,6 @@ class Application extends BaseApplication
 	 */
 	private function enableFileChange($class): void
 	{
-		$this->register(Runtime::class);
 		if (env('enableFileChange', 'off') == 'off' || !($class instanceof Server)) {
 			scan_directory(directory('app'), 'App');
 		}

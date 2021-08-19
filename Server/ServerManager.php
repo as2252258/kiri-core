@@ -57,7 +57,6 @@ class ServerManager
 	 * @param int $port
 	 * @param int $mode
 	 * @param array $settings
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws ConfigException
 	 * @throws Exception
