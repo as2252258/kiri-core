@@ -94,6 +94,7 @@ class ServerManager
 	/**
 	 * @return bool
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function isRunner(): bool
 	{
@@ -116,6 +117,26 @@ class ServerManager
 	 */
 	public function addProcess(string|CustomProcess $customProcess, $redirect_stdin_and_stdout = null, ?int $pipe_type = SOCK_DGRAM, bool $enable_coroutine = true)
 	{
+		$customProcess = $this->resolveProcess($customProcess);
+		Kiri::app()->addProcess($customProcess, $process = new Process(function (Process $soloProcess) use ($customProcess) {
+			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
+			if (Kiri::getPlatform()->isLinux()) {
+				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
+			}
+			$customProcess->signListen($soloProcess);
+			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
+			$customProcess->onHandler($soloProcess);
+		}, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine));
+		$this->server->addProcess($process);
+	}
+
+
+	/**
+	 * @param $customProcess
+	 * @return mixed
+	 */
+	private function resolveProcess($customProcess): CustomProcess
+	{
 		if (is_string($customProcess)) {
 			$implements = class_implements($customProcess);
 			if (!in_array(CustomProcess::class, $implements)) {
@@ -123,19 +144,7 @@ class ServerManager
 			}
 			$customProcess = new $customProcess($this->server);
 		}
-		/** @var Process $process */
-		$this->server->addProcess(new Process(function (Process $soloProcess) use ($customProcess) {
-			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
-			if (Kiri::getPlatform()->isLinux()) {
-				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
-			}
-
-			$customProcess->signListen($soloProcess);
-
-			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
-			$customProcess->onHandler($soloProcess);
-		},
-			$redirect_stdin_and_stdout, $pipe_type, $enable_coroutine));
+		return $customProcess;
 	}
 
 

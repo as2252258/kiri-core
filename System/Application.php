@@ -11,7 +11,6 @@ namespace Kiri;
 
 
 use Closure;
-use Console\CommandInterface;
 use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
@@ -28,8 +27,8 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\FileListen\FileChangeCustomProcess;
 use ReflectionException;
 use Server\ResponseInterface;
-use Server\ServerManager;
 use stdClass;
+use Swoole\Process;
 use Swoole\Timer;
 
 /**
@@ -49,6 +48,10 @@ class Application extends BaseApplication
 
 
 	public string $state = '';
+
+
+	/** @var array<Process> */
+	private array $_process = [];
 
 
 	/**
@@ -76,6 +79,35 @@ class Application extends BaseApplication
 	public function withCrontab()
 	{
 		$this->import(CrontabProviders::class);
+	}
+
+
+	/**
+	 * @param string $class
+	 * @param Process $process
+	 */
+	public function addProcess(string $class, Process $process)
+	{
+		$this->_process[$class] = $process;
+	}
+
+
+	/**
+	 * @return Process[]
+	 */
+	public function getProcess(): array
+	{
+		return $this->_process;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @return Process|null
+	 */
+	public function getProcessName(string $class): ?Process
+	{
+		return $this->_process[$class] ?? null;
 	}
 
 

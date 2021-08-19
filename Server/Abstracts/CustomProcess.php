@@ -4,6 +4,7 @@ namespace Server\Abstracts;
 
 
 use JetBrains\PhpStorm\Pure;
+use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Process;
 
@@ -43,18 +44,23 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 	 */
 	public function signListen(Process $process): void
 	{
-		if (!$this->enableSwooleCoroutine) {
-			Process::signal(SIGTERM | SIGKILL, function ($signo)
-			use ($process) {
-				$this->onProcessStop();
-				$this->waiteExit($process);
+		if (Coroutine::getCid() === -1) {
+			Process::signal(SIGTERM | SIGKILL, function ($signo) use ($process) {
+				if ($signo) {
+					$lists = Kiri::app()->getProcess();
+					foreach ($lists as $process) {
+						$process->exit(0);
+					}
+				}
 			});
 		} else {
 			go(function () use ($process) {
 				$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
 				if ($data) {
-					$this->onProcessStop();
-					$this->waiteExit($process);
+					$lists = Kiri::app()->getProcess();
+					foreach ($lists as $process) {
+						$process->exit(0);
+					}
 				}
 			});
 		}
