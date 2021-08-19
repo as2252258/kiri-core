@@ -34,4 +34,10 @@ interface CustomProcess
 	public function onHandler(Process $process): void;
 
 
+	/**
+	 *
+	 */
+	public function onProcessStop(): void;
+
+
 }

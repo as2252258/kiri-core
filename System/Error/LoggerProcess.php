@@ -49,7 +49,7 @@ class LoggerProcess extends CustomProcess
 	 */
 	public function message(Process $process)
 	{
-		if ($this->isExit()) {
+		if ($this->checkProcessIsStop()) {
 			$this->exit();
 			return;
 		}

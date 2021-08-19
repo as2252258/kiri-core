@@ -17,8 +17,25 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 	protected bool $enableSwooleCoroutine = true;
 
 
-	/** @var Coroutine\Channel */
-	protected Coroutine\Channel $channel;
+	protected bool $isStop = false;
+
+
+	/**
+	 *
+	 */
+	public function onProcessStop(): void
+	{
+		$this->isStop = true;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function checkProcessIsStop(): bool
+	{
+		return $this->isStop === true;
+	}
 
 
 	/**
@@ -26,22 +43,17 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 	 */
 	public function signListen(Process $process): void
 	{
-		$this->channel = new Coroutine\Channel(1);
-		$this->channel->push(1);
-
 		if (!$this->enableSwooleCoroutine) {
 			Process::signal(SIGTERM | SIGKILL, function ($signo)
 			use ($process) {
-				putenv('processStatus=exit');
-
+				$this->onProcessStop();
 				$this->waiteExit($process);
 			});
 		} else {
 			go(function () use ($process) {
 				$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
 				if ($data) {
-					putenv('processStatus=exit');
-
+					$this->onProcessStop();
 					$this->waiteExit($process);
 				}
 			});
@@ -50,39 +62,20 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 
 
 	/**
-	 * @return string
-	 */
-	#[Pure] protected function getStatus(): string
-	{
-		return env('processStatus', 'working');
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	#[Pure] protected function isExit(): bool
-	{
-		return $this->getStatus() == 'exit';
-	}
-
-
-	/**
 	 *
 	 */
-	protected function exit()
+	protected function exit(): void
 	{
-		$this->channel->pop();
-		$this->channel->close();
+		putenv('process.status=idle');
 	}
 
 
 	/**
 	 * @return bool
 	 */
-	public function isWorking(): bool
+	#[Pure] public function isWorking(): bool
 	{
-		return $this->channel->isEmpty();
+		return env('process.status', 'working') == 'working';
 	}
 
 

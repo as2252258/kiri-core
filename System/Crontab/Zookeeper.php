@@ -60,9 +60,9 @@ class Zookeeper extends CustomProcess
 	 */
 	public function loop()
 	{
-		if ($this->isExit()) {
-			Timer::clear($this->_timer);
+		if ($this->checkProcessIsStop()) {
 			$this->exit();
+			Timer::clear($this->_timer);
 			return;
 		}
 		$redis = Kiri::app()->getRedis();
