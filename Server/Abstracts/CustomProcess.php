@@ -39,6 +39,7 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 	}
 
 
+
 	/**
 	 * @param Process $process
 	 */
