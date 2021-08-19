@@ -45,37 +45,37 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 	 */
 	public function signListen(Process $process): void
 	{
-		if (Coroutine::getCid() === -1) {
-			Process::signal(SIGTERM | SIGKILL, function ($signo) use ($process) {
-				if ($signo) {
-					$lists = Kiri::app()->getProcess();
-					foreach ($lists as $process) {
-						$process->exit(0);
-					}
-				}
-			});
-		} else {
-			Coroutine::create(function () use ($process) {
-				/** @var Coroutine\Socket $message */
-				$message = $process->exportSocket();
-				if ($message->recv() == 0x03455343213212) {
-					$this->waiteExit($process);
-				}
-			});
-			Coroutine::create(function () use ($process) {
-				$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
-				if ($data) {
-					$lists = Kiri::app()->getProcess();
-					foreach ($lists as $name => $process) {
-						foreach ($process as $item) {
-							/** @var Coroutine\Socket $export */
-							$export = $item->exportSocket();
-							$export->send(0x03455343213212);
-						}
-					}
-				}
-			});
-		}
+//		if (Coroutine::getCid() === -1) {
+//			Process::signal(SIGTERM | SIGKILL, function ($signo) use ($process) {
+//				if ($signo) {
+//					$lists = Kiri::app()->getProcess();
+//					foreach ($lists as $process) {
+//						$process->exit(0);
+//					}
+//				}
+//			});
+//		} else {
+//			Coroutine::create(function () use ($process) {
+//				/** @var Coroutine\Socket $message */
+//				$message = $process->exportSocket();
+//				if ($message->recv() == 0x03455343213212) {
+//					$this->waiteExit($process);
+//				}
+//			});
+//			Coroutine::create(function () use ($process) {
+//				$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
+//				if ($data) {
+//					$lists = Kiri::app()->getProcess();
+//					foreach ($lists as $name => $process) {
+//						foreach ($process as $item) {
+//							/** @var Coroutine\Socket $export */
+//							$export = $item->exportSocket();
+//							$export->send(0x03455343213212);
+//						}
+//					}
+//				}
+//			});
+//		}
 	}
 
 
