@@ -14,6 +14,7 @@ use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Server\Abstracts\CustomProcess;
+use Swoole\Coroutine;
 use Swoole\Process;
 use Throwable;
 
@@ -73,8 +74,7 @@ class Kafka extends CustomProcess
 
 			$topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
 			do {
-				if ($this->checkProcessIsStop()) {
-					$this->exit();
+				if ($this->isStop) {
 					break;
 				}
 				$this->resolve($topic, $conf['interval'] ?? 1000);
@@ -94,18 +94,18 @@ class Kafka extends CustomProcess
 	{
 		try {
 			$message = $topic->consume(0, $interval);
-			if (empty($message)) {
-				return;
+			if (!empty($message)) {
+				if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
+					$this->handlerExecute($message->topic_name, $message);
+				} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
+					logger()->warning('No more messages; will wait for more');
+				} else if ($message->err == RD_KAFKA_RESP_ERR__TIMED_OUT) {
+					logger()->error('Kafka Timed out');
+				} else {
+					logger()->error($message->errstr());
+				}
 			}
-			if ($message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
-				$this->handlerExecute($message->topic_name, $message);
-			} else if ($message->err == RD_KAFKA_RESP_ERR__PARTITION_EOF) {
-				logger()->warning('No more messages; will wait for more');
-			} else if ($message->err == RD_KAFKA_RESP_ERR__TIMED_OUT) {
-				logger()->error('Kafka Timed out');
-			} else {
-				logger()->error($message->errstr());
-			}
+			Coroutine::sleep(0.01);
 		} catch (Throwable $exception) {
 			logger()->addError($exception, 'throwable');
 		}

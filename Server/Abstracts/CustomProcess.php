@@ -57,8 +57,9 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 			Coroutine::create(function () use ($process) {
 				/** @var Coroutine\Socket $message */
 				$message = $process->exportSocket();
-				error($message->recv());
-				$process->exit(0);
+				if ($message->recv() == 0x03455343213212) {
+					$this->waiteExit($process);
+				}
 			});
 			Coroutine::create(function () use ($process) {
 				$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
@@ -68,7 +69,7 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 						foreach ($process as $item) {
 							/** @var Coroutine\Socket $export */
 							$export = $item->exportSocket();
-							$export->send([$name => 'exit']);
+							$export->send(0x03455343213212);
 						}
 					}
 				}
@@ -100,6 +101,7 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 	 */
 	private function waiteExit(Process $process): void
 	{
+		$this->onProcessStop();
 		while ($this->isWorking()) {
 			$this->sleep();
 		}
