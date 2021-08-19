@@ -86,7 +86,7 @@ class Application extends BaseApplication
 	 */
 	public function withFileChangeListen()
 	{
-		$manager = di(ServerManager::class);
+		$manager = $this->getServer();
 		$manager->addProcess(FileChangeCustomProcess::class);
 
 		putenv('enableFileChange=on');
