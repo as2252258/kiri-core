@@ -11,11 +11,13 @@ namespace Kiri;
 
 
 use Closure;
+use Console\CommandInterface;
 use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
 use Http\Context\Response;
+use Http\Server;
 use Http\ServerProviders;
 use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Config;
@@ -86,6 +88,8 @@ class Application extends BaseApplication
 	{
 		$manager = di(ServerManager::class);
 		$manager->addProcess(FileChangeCustomProcess::class);
+
+		putenv('enableFileChange=on');
 	}
 
 
@@ -161,13 +165,13 @@ class Application extends BaseApplication
 	 * @return void
 	 * @throws Exception
 	 */
-	public function start(Input $argv): void
+	public function execute(Input $argv): void
 	{
 		try {
-			/** @var Console $manager */
 			$manager = Kiri::app()->get('console');
-			$manager->register(Runtime::class);
 			$class = $manager->setParameters($argv)->search();
+
+			$this->enableFileChange($class);
 
 			$data = $this->getBuilder($manager->exec($class));
 		} catch (\Throwable $exception) {
@@ -175,6 +179,19 @@ class Application extends BaseApplication
 		} finally {
 			print_r($data);
 			Timer::clearAll();
+		}
+	}
+
+
+	/**
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 */
+	private function enableFileChange($class): void
+	{
+		$this->register(Runtime::class);
+		if (env('enableFileChange', 'off') == 'off' || !($class instanceof Server)) {
+			scan_directory(directory('app'), 'App');
 		}
 	}
 

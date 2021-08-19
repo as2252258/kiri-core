@@ -30,7 +30,6 @@ class Server extends HttpService
 {
 
 	private array $process = [
-		Biomonitoring::class,
 		LoggerProcess::class
 	];
 
