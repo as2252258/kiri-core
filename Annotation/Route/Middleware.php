@@ -7,9 +7,8 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use Http\Route\MiddlewareManager;
 use ReflectionException;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
-use Http\IInterface\MiddlewareInterface as IMiddleware;
+use Http\IInterface\MiddlewareInterface ;
 
 /**
  * Class Middleware
@@ -33,7 +32,7 @@ use Http\IInterface\MiddlewareInterface as IMiddleware;
         $array = [];
         foreach ($this->middleware as $value) {
             $sn = di($value);
-            if (!($sn instanceof IMiddleware)) {
+            if (!($sn instanceof MiddlewareInterface)) {
                 continue;
             }
             $array[] = [$sn, 'onHandler'];
@@ -47,7 +46,6 @@ use Http\IInterface\MiddlewareInterface as IMiddleware;
 	 * @param mixed|null $method
 	 * @return $this
 	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
     public function execute(mixed $class, mixed $method = null): static
     {

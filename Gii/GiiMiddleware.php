@@ -35,6 +35,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Http\Context\Request;
 use Http\IInterface\MiddlewareInterface;
+use Server\RequestInterface;
 
 ';
 
@@ -52,7 +53,7 @@ class ' . $managerName . 'Middleware implements Middleware
 	 * @param Closure $closure
 	 * @return mixed
 	 */
-	public function handler(Request $request, Closure $closure)
+	public function handler(RequestInterface $request, Closure $closure)
 	{
 		return $closure($request);
 	}

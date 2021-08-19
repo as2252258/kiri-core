@@ -8,7 +8,7 @@ namespace Kiri\Jwt;
 use Closure;
 use Exception;
 use Http\Context\Request;
-use Http\IInterface\MiddlewareInterface;
+use Http\Route\MiddlewareAbstracts;
 use Server\RequestInterface;
 use Kiri\Kiri;
 
@@ -17,7 +17,7 @@ use Kiri\Kiri;
  * @package Kiri\Kiri\Route
  * 跨域中间件
  */
-class JWTAuthMiddleware implements MiddlewareInterface
+class JWTAuthMiddleware extends MiddlewareAbstracts
 {
 
 
