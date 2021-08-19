@@ -50,7 +50,7 @@ class Application extends BaseApplication
 	public string $state = '';
 
 
-	/** @var array<Process> */
+	/** @var array<array<Process>> */
 	private array $_process = [];
 
 
@@ -88,7 +88,10 @@ class Application extends BaseApplication
 	 */
 	public function addProcess(string $class, Process $process)
 	{
-		$this->_process[$class] = $process;
+		if (isset($this->_process[$class])) {
+			$this->_process[$class] = [];
+		}
+		$this->_process[$class][] = $process;
 	}
 
 

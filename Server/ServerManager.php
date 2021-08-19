@@ -203,7 +203,6 @@ class ServerManager
 	 * @param array $config
 	 * @param int $daemon
 	 * @throws ConfigException
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */

@@ -54,12 +54,22 @@ abstract class CustomProcess implements \Server\SInterface\CustomProcess
 				}
 			});
 		} else {
-			go(function () use ($process) {
+			Coroutine::create(function () use ($process) {
+				/** @var Coroutine\Socket $message */
+				$message = $process->exportSocket();
+				error($message->recv());
+				$process->exit(0);
+			});
+			Coroutine::create(function () use ($process) {
 				$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
 				if ($data) {
 					$lists = Kiri::app()->getProcess();
-					foreach ($lists as $process) {
-						$process->exit(0);
+					foreach ($lists as $name => $process) {
+						foreach ($process as $item) {
+							/** @var Coroutine\Socket $export */
+							$export = $item->exportSocket();
+							$export->send([$name => 'exit']);
+						}
 					}
 				}
 			});
