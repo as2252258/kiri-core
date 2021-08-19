@@ -118,7 +118,7 @@ class ServerManager
 	public function addProcess(string|CustomProcess $customProcess, $redirect_stdin_and_stdout = null, ?int $pipe_type = SOCK_DGRAM, bool $enable_coroutine = true)
 	{
 		$customProcess = $this->resolveProcess($customProcess);
-		Kiri::app()->addProcess($customProcess, $process = new Process(function (Process $soloProcess) use ($customProcess) {
+		$process = new Process(function (Process $soloProcess) use ($customProcess) {
 			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
 			if (Kiri::getPlatform()->isLinux()) {
 				$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
@@ -126,7 +126,8 @@ class ServerManager
 			$customProcess->signListen($soloProcess);
 			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
 			$customProcess->onHandler($soloProcess);
-		}, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine));
+		}, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine);
+		Kiri::app()->addProcess($customProcess, $process);
 		$this->server->addProcess($process);
 	}
 
