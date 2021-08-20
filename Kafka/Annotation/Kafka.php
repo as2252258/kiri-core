@@ -18,13 +18,13 @@ use Kiri\Kiri;
 {
 
 
-    /**
-     * Kafka constructor.
-     * @param string $topic
-     */
-    public function __construct(public string $topic)
-    {
-    }
+	/**
+	 * Kafka constructor.
+	 * @param string $topic
+	 */
+	public function __construct(public string $topic)
+	{
+	}
 
 
 	/**
@@ -33,21 +33,17 @@ use Kiri\Kiri;
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function execute(mixed $class, mixed $method = null): bool
-    {
-        if (!($class instanceof ConsumerInterface)) {
-            return false;
-        }
+	public function execute(mixed $class, mixed $method = null): bool
+	{
+		if (!in_array(ConsumerInterface::class, class_implements($class))) {
+    		return false;
+		}
+		/** @var KafkaProvider $container */
+		$container = Kiri::getDi()->get(KafkaProvider::class);
+		$container->addConsumer($this->topic, $class);
 
-
-        var_dump($class);
-
-        /** @var KafkaProvider $container */
-        $container = Kiri::getDi()->get(KafkaProvider::class);
-        $container->addConsumer($this->topic, $class);
-
-        return true;
-    }
+		return true;
+	}
 
 
 }
