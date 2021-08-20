@@ -127,6 +127,7 @@ class Kafka extends CustomProcess
 				/** @var KafkaProvider $container */
 				$container = Kiri::getDi()->get(KafkaProvider::class);
 				$data = $container->getConsumer($topic);
+				var_dump($data, $container);
 				if (!empty($data)) {
 					$server->sendMessage(new $data(new Struct($topic, $message)), random_int(0, $setting - 1));
 				}
