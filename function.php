@@ -1096,6 +1096,20 @@ if (!function_exists('debug')) {
 
 }
 
+if (!function_exists('info')) {
+
+	/**
+	 * @param mixed $message
+	 * @param string $method
+	 * @throws Exception
+	 */
+	function info(mixed $message, string $method = 'app')
+	{
+		Kiri::app()->info($message, $method);
+	}
+
+}
+
 if (!function_exists('error')) {
 
 	/**
