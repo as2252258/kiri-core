@@ -145,6 +145,8 @@ class ServerManager
 			$name = $customProcess->getProcessName($soloProcess);
 			info(sprintf("Process %s start.", $name));
 
+			scan_directory(directory('app'), 'App');
+
 			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
 			if (Kiri::getPlatform()->isLinux()) {
 				$soloProcess->name($system . '.' . $name . ' start.');
