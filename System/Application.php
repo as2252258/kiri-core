@@ -15,6 +15,7 @@ use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
+use Http\Command;
 use Http\Context\Response;
 use Http\Server;
 use Http\ServerProviders;
@@ -226,7 +227,7 @@ class Application extends BaseApplication
 	 */
 	private function enableFileChange($class): void
 	{
-		if (env('enableFileChange', 'off') == 'off' || !($class instanceof Server)) {
+		if (env('enableFileChange', 'off') == 'off' || !($class instanceof Command)) {
 			scan_directory(directory('app'), 'App');
 		}
 	}
