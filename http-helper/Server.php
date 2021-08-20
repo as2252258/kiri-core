@@ -12,7 +12,6 @@ use Kiri\Error\LoggerProcess;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
-use Kiri\Process\Biomonitoring;
 use ReflectionException;
 use Server\Constant;
 use Server\Events\OnShutdown;
