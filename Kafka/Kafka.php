@@ -14,7 +14,6 @@ use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicConf;
 use Server\Abstracts\CustomProcess;
-use Swoole\Coroutine;
 use Swoole\Process;
 use Throwable;
 
@@ -152,8 +151,7 @@ class Kafka extends CustomProcess
 			$conf->set('metadata.broker.list', $kafka['brokers']);
 			$conf->set('socket.timeout.ms', '30000');
 
-			debug('kafka listen groupId ' . $kafka['groupId']);
-			debug('kafka listen brokers ' . $kafka['brokers']);
+			info('kafka listen groupId ' . $kafka['groupId'] . ', brokers ' . $kafka['brokers']);
 
 			if (function_exists('pcntl_sigprocmask')) {
 				pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
