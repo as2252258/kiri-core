@@ -137,19 +137,21 @@ class ServerManager
 	private function initProcess($customProcess, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine): Process
 	{
 		$server = $this->server;
-		return new Process(
-			function (Process $soloProcess) use ($customProcess, $server) {
-				if (is_string($customProcess)) {
-					$customProcess = Kiri::createObject($customProcess, [$server]);
-				}
-				$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
-				if (Kiri::getPlatform()->isLinux()) {
-					$soloProcess->name($system . '.' . $customProcess->getProcessName($soloProcess) . ' start.');
-				}
-				$customProcess->signListen($soloProcess);
-				echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Process %s start.", $customProcess->getProcessName($soloProcess)) . PHP_EOL;
-				$customProcess->onHandler($soloProcess);
-			},
+		return new Process(function (Process $soloProcess) use ($customProcess, $server) {
+			if (is_string($customProcess)) {
+				$customProcess = Kiri::createObject($customProcess, [$server]);
+			}
+
+			$name = $customProcess->getProcessName($soloProcess);
+			debug(sprintf("Process %s start.", $name));
+
+			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
+			if (Kiri::getPlatform()->isLinux()) {
+				$soloProcess->name($system . '.' . $name . ' start.');
+			}
+			$customProcess->signListen($soloProcess);
+			$customProcess->onHandler($soloProcess);
+		},
 			$redirect_stdin_and_stdout,
 			$pipe_type,
 			$enable_coroutine
