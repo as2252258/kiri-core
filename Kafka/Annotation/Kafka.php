@@ -1,9 +1,10 @@
 <?php
 
 
-namespace Annotation;
+namespace Kafka\Annotation;
 
 
+use Annotation\Attribute;
 use Exception;
 use Kafka\ConsumerInterface;
 use Kafka\KafkaProvider;
@@ -37,6 +38,9 @@ use Kiri\Kiri;
         if (!($class instanceof ConsumerInterface)) {
             return false;
         }
+
+
+        var_dump($class);
 
         /** @var KafkaProvider $container */
         $container = Kiri::getDi()->get(KafkaProvider::class);
