@@ -339,7 +339,7 @@ class ServerManager
 		}
 
 		$serverPid = file_get_contents(storage('.swoole.pid'));
-		if (!empty($serverPid)) {
+		if (!empty($serverPid) && shell_exec('ps -ef | grep ' . $serverPid . ' | grep -v grep')) {
 			Process::kill($serverPid, SIGTERM);
 		}
 
