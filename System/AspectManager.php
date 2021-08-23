@@ -15,7 +15,7 @@ defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implem
  * Class Aop
  * @package Kiri
  */
-class Aop extends Component
+class AspectManager extends Component
 {
 
 

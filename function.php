@@ -10,7 +10,7 @@ use Http\Context\Response as HttpResponse;
 use Http\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
-use Kiri\Aop;
+use Kiri\AspectManager;
 use Kiri\Application;
 use Kiri\Core\ArrayAccess;
 use Kiri\Error\Logger;
@@ -356,7 +356,7 @@ if (!function_exists('aop')) {
 	 */
 	function aop(mixed $handler, array $params = []): mixed
 	{
-		return Kiri::getDi()->get(Aop::class)->dispatch($handler, $params);
+		return Kiri::getDi()->get(AspectManager::class)->dispatch($handler, $params);
 	}
 }
 

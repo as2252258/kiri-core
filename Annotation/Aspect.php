@@ -5,7 +5,7 @@ namespace Annotation;
 
 
 use Exception;
-use Kiri\Aop;
+use Kiri\AspectManager;
 use Kiri\IAspect;
 use Kiri\Kiri;
 

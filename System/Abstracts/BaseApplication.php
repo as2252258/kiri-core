@@ -22,7 +22,7 @@ use Http\Server;
 use Http\Shutdown;
 use JetBrains\PhpStorm\Pure;
 use Kafka\KafkaProvider;
-use Kiri\Aop;
+use Kiri\AspectManager;
 use Kiri\Async;
 use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
@@ -478,7 +478,7 @@ abstract class BaseApplication extends Component
 			'router'          => ['class' => Router::class],
 			'redis'           => ['class' => Redis::class],
 			'databases'       => ['class' => Connection::class],
-			'aop'             => ['class' => Aop::class],
+			'aop'             => ['class' => AspectManager::class],
 			'input'           => ['class' => HttpParams::class],
 			'header'          => ['class' => HttpHeaders::class],
 			'jwt'             => ['class' => Jwt::class],
