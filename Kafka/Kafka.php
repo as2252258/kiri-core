@@ -7,12 +7,10 @@ namespace Kafka;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
-use RdKafka\Conf;
 use RdKafka\Consumer;
 use RdKafka\ConsumerTopic;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
-use RdKafka\TopicConf;
 use Server\Abstracts\CustomProcess;
 use Swoole\Process;
 use Throwable;
@@ -145,28 +143,26 @@ class Kafka extends CustomProcess
 	private function kafkaConfig($kafka): array
 	{
 		try {
-			$conf = new Conf();
+			$conf = new Configuration();
 			$conf->setRebalanceCb([$this, 'rebalanced_cb']);
-			$conf->set('group.id', $kafka['groupId']);
-			$conf->set('metadata.broker.list', $kafka['brokers']);
-			$conf->set('socket.timeout.ms', '30000');
-
-			info('kafka listen groupId ' . $kafka['groupId'] . ', brokers ' . $kafka['brokers']);
+			$conf->setGroupId($kafka['groupId']);
+			$conf->setMetadataBrokerList($kafka['brokers']);
+			$conf->setSocketTimeoutMs(30000);
 
 			if (function_exists('pcntl_sigprocmask')) {
 				pcntl_sigprocmask(SIG_BLOCK, array(SIGIO));
-				$conf->set('internal.termination.signal', (string)SIGIO);
+				$conf->setInternalTerminationSignal((string)SIGIO);
 			}
 
-			$topicConf = new TopicConf();
-			$topicConf->set('auto.commit.enable', '1');
-			$topicConf->set('auto.commit.interval.ms', '100');
+			$topicConf = new TopicConfig();
+			$topicConf->setAutoCommitEnable(true);
+			$topicConf->setAutoCommitIntervalMs(100);
 
 			//smallest：简单理解为从头开始消费，
 			//largest：简单理解为从最新的开始消费
-			$topicConf->set('auto.offset.reset', 'smallest');
-			$topicConf->set('offset.store.path', 'kafka_offset.log');
-			$topicConf->set('offset.store.method', 'broker');
+			$topicConf->setAutoOffsetReset('smallest');
+			$topicConf->setOffsetStorePath('kafka_offset.log');
+			$topicConf->setOffsetStoreMethod('broker');
 
 			return [$conf, $topicConf, $kafka];
 		} catch (Throwable $exception) {

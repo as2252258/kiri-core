@@ -3,15 +3,13 @@
 namespace Kafka;
 
 use Exception;
-use RdKafka\Conf;
-use RdKafka\Producer;
-use RdKafka\ProducerTopic;
-use RdKafka\TopicConf;
-use ReflectionException;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
+use RdKafka\Producer;
+use RdKafka\ProducerTopic;
+use ReflectionException;
 
 
 /**
@@ -21,8 +19,8 @@ class KafkaClient
 {
 
 
-	private Conf $conf;
-	private TopicConf $topicConf;
+	private Configuration $conf;
+	private TopicConfig $topicConf;
 
 	private bool $isAck = true;
 
@@ -36,24 +34,43 @@ class KafkaClient
 	 */
 	public function __construct(public string $topic, public string $groupId)
 	{
-		$this->conf = di(Conf::class);
-		$this->topicConf = di(TopicConf::class);
-		$this->setConfig($this->conf);
+		$this->conf = di(Configuration::class);
+		$this->topicConf = di(TopicConfig::class);
+		$this->setConfig();
+	}
+
+
+	/**
+	 * @return TopicConfig
+	 */
+	public function getTopicConfig(): TopicConfig
+	{
+		return $this->topicConf;
+	}
+
+
+	/**
+	 * @return Configuration
+	 */
+	public function getConfiguration(): Configuration
+	{
+		return $this->conf;
 	}
 
 
 	/**
 	 * @throws ConfigException
 	 */
-	private function setConfig(Conf $kafkaConfig)
+	private function setConfig()
 	{
 		$config = Config::get('kafka.producers.' . $this->topic, null, true);
-		if (!isset($config['brokers']) || !isset($config['groupId'])) {
+		if (!isset($config['brokers'])) {
 			throw new ConfigException('Please configure relevant information.');
 		}
-		$kafkaConfig->set('metadata.broker.list', $config['brokers']);
-		$kafkaConfig->set('group.id', $this->groupId);
-		$kafkaConfig->setErrorCb(function ($kafka, $err, $reason) {
+		$this->conf->setMetadataBrokerList($config['brokers']);
+		$this->conf->setGroupId($this->groupId);
+		$this->conf->setClientId(current(swoole_get_local_ip()));
+		$this->conf->setErrorCb(function ($kafka, $err, $reason) {
 			logger()->error(sprintf("Kafka error: %s (reason: %s)", rd_kafka_err2str($err), $reason));
 		});
 	}
@@ -101,7 +118,7 @@ class KafkaClient
 	 */
 	private function getProducerTopic(Producer $producer, $topic, $isAck): ProducerTopic
 	{
-		$this->topicConf->set('request.required.acks', $isAck ? '1' : '0');
+		$this->topicConf->setRequestRequiredAcks($isAck ? '1' : '0');
 		return $producer->newTopic($topic, $this->topicConf);
 	}
 

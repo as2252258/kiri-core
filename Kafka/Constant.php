@@ -36,10 +36,7 @@ class Constant
 	const CONFIG_RECONNECT_BACKOFF_MAX_MS = 'reconnect.backoff.max.ms';
 	const CONFIG_STATISTICS_INTERVAL_MS = 'statistics.interval.ms';
 	const CONFIG_ENABLED_EVENTS = 'enabled_events';
-	const CONFIG_ERROR_CB = 'error_cb';
 	const CONFIG_THROTTLE_CB = 'throttle_cb';
-	const CONFIG_STATS_CB = 'stats_cb';
-	const CONFIG_LOG_CB = 'log_cb';
 	const CONFIG_LOG_LEVEL = 'log_level';
 	const CONFIG_LOG_QUEUE = 'log.queue';
 	const CONFIG_LOG_THREAD_NAME = 'log.thread.name';
@@ -115,9 +112,6 @@ class Constant
 	const CONFIG_FETCH_ERROR_BACKOFF_MS = 'fetch.error.backoff.ms';
 	const CONFIG_OFFSET_STORE_METHOD = 'offset.store.method';
 	const CONFIG_ISOLATION_LEVEL = 'isolation.level';
-	const CONFIG_CONSUME_CB = 'consume_cb';
-	const CONFIG_REBALANCE_CB = 'rebalance_cb';
-	const CONFIG_OFFSET_COMMIT_CB = 'offset_commit_cb';
 	const CONFIG_ENABLE_PARTITION_EOF = 'enable.partition.eof';
 	const CONFIG_CHECK_CRCS = 'check.crcs';
 	const CONFIG_ALLOW_AUTO_CREATE_TOPICS = 'allow.auto.create.topics';
@@ -140,7 +134,6 @@ class Constant
 	const CONFIG_BATCH_SIZE = 'batch.size';
 	const CONFIG_DELIVERY_REPORT_ONLY_ERROR = 'delivery.report.only.error';
 	const CONFIG_DR_CB = 'dr_cb';
-	const CONFIG_DR_MSG_CB = 'dr_msg_cb';
 	const CONFIG_STICKY_PARTITIONING_LINGER_MS = 'sticky.partitioning.linger.ms';
 
 
