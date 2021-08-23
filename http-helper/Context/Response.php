@@ -17,6 +17,7 @@ use Http\Context\Formatter\JsonFormatter;
 use Http\Context\Formatter\XmlFormatter;
 use Http\IInterface\IFormatter;
 use Kiri\Exception\NotFindClassException;
+use Kiri\Kiri;
 use Server\ResponseInterface;
 use Server\ServerManager;
 use Swoole\Http\Response as SResponse;
@@ -64,10 +65,15 @@ class Response extends HttpService implements ResponseInterface
 	 * @param int $int
 	 * @param int $reID
 	 */
-	public function setClientId(int $int, int $reID)
+	public function setClientId(int $int, int $reID = null)
 	{
 		$this->clientId = $int;
-		$this->reactorId = $reID;
+		$manager = Kiri::getDi()->get(ServerManager::class);
+		$this->_clientInfo = $manager->getServer()->getClientInfo($int);
+		if (!empty($this->reactorId))
+		{
+            $this->reactorId = $reID;
+        };
 	}
 
 
