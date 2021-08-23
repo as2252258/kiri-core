@@ -234,8 +234,12 @@ class Node
 	{
 		[$controller, $action] = $handler;
 
+		if (is_object($controller)) {
+			$controller = get_class($controller);
+		}
+
 		/** @var Aspect $aspect */
-		$aspect = Kiri::getDi()->getMethodByAnnotation(Aspect::class, $controller::class, $action);
+		$aspect = Kiri::getDi()->getMethodByAnnotation(Aspect::class, $controller, $action);
 		if (empty($aspect)) {
 			return null;
 		}
