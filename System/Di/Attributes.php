@@ -70,8 +70,9 @@ trait Attributes
 	 * @param ReflectionAttribute $attribute
 	 * @param string $class
 	 * @param string $method
+	 * @param mixed $instance
 	 */
-	private function setMappingMethod(ReflectionAttribute $attribute, string $class, string $method)
+	private function setMappingMethod(ReflectionAttribute $attribute, string $class, string $method, mixed $instance)
 	{
 		$this->setMappingClass($attribute, $class);
 
@@ -80,7 +81,7 @@ trait Attributes
 			$mapping['method'] = [];
 		}
 		if (!in_array($method, $mapping['method'])) {
-			$mapping['method'][] = $method;
+			$mapping['method'][] = [$method => $instance];
 		}
 		$this->_mapping[$attribute->getName()][$class] = $mapping;
 	}
@@ -135,9 +136,11 @@ trait Attributes
 				if (!class_exists($attribute->getName())) {
 					continue;
 				}
-				$this->_classMethodNote[$className][$ReflectionMethod->getName()][] = $attribute->newInstance();
+				$instance = $attribute->newInstance();
 
-				$this->setMappingMethod($attribute, $className, $ReflectionMethod->getName());
+				$this->_classMethodNote[$className][$ReflectionMethod->getName()][] = $instance;
+
+				$this->setMappingMethod($attribute, $className, $ReflectionMethod->getName(), $instance);
 			}
 		}
 	}
@@ -207,13 +210,19 @@ trait Attributes
 	 * @param string|null $method
 	 * @return array
 	 */
-	public function getMethodByAnnotation(string $attribute, string $class, string $method = null): array
+	public function getMethodByAnnotation(string $attribute, string $class, string $method = null): mixed
 	{
 		$class = $this->getAttributeTrees($attribute, $class);
 		if (empty($class) || !isset($class['method']) || empty($method)) {
 			return $class['method'] ?? [];
 		}
-		return $class['method'][$method] ?? [];
+		foreach ($class['method'] as $value) {
+			$key = key($value);
+			if ($method == $value[$key]) {
+				return $value[$key];
+			}
+		}
+		return null;
 	}
 
 

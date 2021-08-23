@@ -8,15 +8,15 @@ namespace Http\Route;
 use Annotation\Aspect;
 use Closure;
 use Exception;
-use Http\Exception\RequestException;
 use Http\Context\Request;
+use Http\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Server\Events\OnAfterWorkerStart;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\NotFindClassException;
 use Kiri\IAspect;
 use Kiri\Kiri;
+use ReflectionException;
+use Server\Events\OnAfterWorkerStart;
 
 /**
  * Class Node
@@ -112,7 +112,6 @@ class Node
 	/**
 	 * @param string $handler
 	 * @return array
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function splitHandler(string $handler): array
@@ -144,7 +143,6 @@ class Node
 
 	/**
 	 * @return HandlerProviders
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function getHandlerProviders(): HandlerProviders
@@ -235,16 +233,13 @@ class Node
 	private function getAop($handler): ?IAspect
 	{
 		[$controller, $action] = $handler;
-		$aspect = Kiri::getDi()->getMethodAttribute($controller::class, $action);
+
+		/** @var Aspect $aspect */
+		$aspect = Kiri::getDi()->getMethodByAnnotation(Aspect::class, $controller, $action);
 		if (empty($aspect)) {
 			return null;
 		}
-		foreach ($aspect as $value) {
-			if ($value instanceof Aspect) {
-				return di($value->aspect);
-			}
-		}
-		return null;
+		return di($aspect->aspect);
 	}
 
 

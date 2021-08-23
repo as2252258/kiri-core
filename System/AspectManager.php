@@ -5,8 +5,8 @@ namespace Kiri;
 
 
 use Exception;
-use ReflectionException;
 use Kiri\Abstracts\Component;
+use ReflectionException;
 
 defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implement ');
 
@@ -30,6 +30,24 @@ class AspectManager extends Component
 	{
 		[$class, $method] = $handler;
 		$alias = $class::class . '::' . $method;
+		if (!isset(static::$_aop[$alias])) {
+			static::$_aop[$alias] = [];
+		}
+		if (in_array($aspect, static::$_aop[$alias])) {
+			return;
+		}
+		static::$_aop[$alias][] = $aspect;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @param string $method
+	 * @param string $aspect
+	 */
+	public function addAspect(string $class, string $method, string $aspect)
+	{
+		$alias = $class . '::' . $method;
 		if (!isset(static::$_aop[$alias])) {
 			static::$_aop[$alias] = [];
 		}
