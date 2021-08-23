@@ -65,7 +65,7 @@ class Response extends HttpService implements ResponseInterface
 	 * @param int $int
 	 * @param int $reID
 	 */
-	public function setClientId(int $int, int $reID = null)
+	public function setClientId(int $int, int $reID = null): static
 	{
 		$this->clientId = $int;
 		$manager = Kiri::getDi()->get(ServerManager::class);
@@ -73,7 +73,8 @@ class Response extends HttpService implements ResponseInterface
 		if (!empty($this->reactorId))
 		{
             $this->reactorId = $reID;
-        };
+        }
+		return $this;
 	}
 
 
