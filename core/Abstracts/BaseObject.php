@@ -103,19 +103,13 @@ class BaseObject implements Configure
     public function addError($message, string $model = 'app'): bool
     {
         if ($message instanceof \Throwable) {
-            $Throwable = $message;
             $this->error(jTraceEx($message));
-
-            $message = 'Error: ' . $Throwable->getMessage() . PHP_EOL;
-            $message .= 'File: ' . $Throwable->getFile() . PHP_EOL;
-            $message .= 'Line: ' . $Throwable->getLine();
         } else {
             if (!is_string($message)) {
                 $message = json_encode($message, JSON_UNESCAPED_UNICODE);
             }
             $this->error($message);
         }
-        $this->logger()->error($model, [$message]);
         return FALSE;
     }
 
@@ -144,7 +138,7 @@ class BaseObject implements Configure
         $message = "\033[35m[" . date('Y-m-d H:i:s') . '][DEBUG]: ' . $message . "\033[0m";
         $message .= PHP_EOL;
 
-        $this->logger()->debug(Logger::DEBUG, [$message]);
+        $this->logger()->debug(Logger::DEBUG, [$message, $method, $file]);
     }
 
 
@@ -162,7 +156,7 @@ class BaseObject implements Configure
         $message = "\033[34m[" . date('Y-m-d H:i:s') . '][INFO]: ' . $message . "\033[0m";
         $message .= PHP_EOL;
 
-        $this->logger()->info(Logger::NOTICE, [$message]);
+        $this->logger()->info(Logger::NOTICE, [$message, $method, $file]);
     }
 
 
@@ -181,7 +175,7 @@ class BaseObject implements Configure
         $message = "\033[36m[" . date('Y-m-d H:i:s') . '][SUCCESS]: ' . $message . "\033[0m";
         $message .= PHP_EOL;
 
-        $this->logger()->notice(Logger::NOTICE, [$message]);
+        $this->logger()->notice(Logger::NOTICE, [$message, $method, $file]);
     }
 
 
@@ -200,7 +194,7 @@ class BaseObject implements Configure
         $message = "\033[33m[" . date('Y-m-d H:i:s') . '][WARNING]: ' . $message . "\033[0m";
         $message .= PHP_EOL;
 
-        $this->logger()->critical(Logger::NOTICE, [$message]);
+        $this->logger()->critical(Logger::NOTICE, [$message, $method, $file]);
     }
 
 
@@ -223,7 +217,7 @@ class BaseObject implements Configure
             $message .= PHP_EOL . "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . "\033[0m";
         }
 
-        $this->logger()->error(Logger::ERROR, [$message]);
+        $this->logger()->error(Logger::ERROR, [$message, $method, $file]);
     }
 
 }
