@@ -223,7 +223,7 @@ class BaseObject implements Configure
             $message .= PHP_EOL . "\033[41;37m[" . date('Y-m-d H:i:s') . '][ERROR]: ' . $file . "\033[0m";
         }
 
-        $this->logger()->critical(Logger::ERROR, [$message]);
+        $this->logger()->error(Logger::ERROR, [$message]);
     }
 
 }

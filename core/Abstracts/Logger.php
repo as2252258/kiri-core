@@ -164,6 +164,8 @@ class Logger implements LoggerInterface
 
 		$_string = '[' . now() . '] production.' . $level . ': ' . $this->_string($message, $context);
 
+		echo $_string;
+
 		$this->_loggers[] = $_string;
 	}
 
