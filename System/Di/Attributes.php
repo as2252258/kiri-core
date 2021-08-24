@@ -5,7 +5,6 @@ namespace Kiri\Di;
 use JetBrains\PhpStorm\Pure;
 use ReflectionAttribute;
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionProperty;
 
 trait Attributes
@@ -62,7 +61,9 @@ trait Attributes
 		if (!isset($this->_mapping[$attribute->getName()])) {
 			$this->_mapping[$attribute->getName()] = [];
 		}
-		$this->_mapping[$attribute->getName()][$class] = [];
+		if (!isset($this->_mapping[$attribute->getName()][$class])) {
+			$this->_mapping[$attribute->getName()][$class] = [];
+		}
 	}
 
 
@@ -76,14 +77,10 @@ trait Attributes
 	{
 		$this->setMappingClass($attribute, $class);
 
-		$mapping = $this->_mapping[$attribute->getName()][$class];
-		if (!isset($mapping['method'])) {
-			$mapping['method'] = [];
+		if (!isset($this->_mapping[$attribute->getName()][$class]['method'])) {
+			$this->_mapping[$attribute->getName()][$class]['method'] = [];
 		}
-		if (!in_array($method, $mapping['method'])) {
-			$mapping['method'][] = [$method => $instance];
-		}
-		$this->_mapping[$attribute->getName()][$class] = $mapping;
+		$this->_mapping[$attribute->getName()][$class]['method'][] = [$method => $instance];
 	}
 
 
@@ -91,8 +88,9 @@ trait Attributes
 	 * @param ReflectionAttribute $attribute
 	 * @param string $class
 	 * @param string $property
+	 * @param $instance
 	 */
-	private function setMappingProperty(ReflectionAttribute $attribute, string $class, string $property)
+	private function setMappingProperty(ReflectionAttribute $attribute, string $class, string $property, $instance)
 	{
 		$this->setMappingClass($attribute, $class);
 
@@ -100,9 +98,7 @@ trait Attributes
 		if (!isset($mapping['property'])) {
 			$mapping['property'] = [];
 		}
-		if (!in_array($property, $mapping['property'])) {
-			$mapping['property'][] = $property;
-		}
+		$mapping['property'][] = [$property => $instance];
 		$this->_mapping[$attribute->getName()][$class] = $mapping;
 	}
 
@@ -127,9 +123,7 @@ trait Attributes
 	{
 		$className = $class->getName();
 		$this->_classMethodNote[$className] = $this->_classMethod[$className] = [];
-		foreach ($class->getMethods(ReflectionMethod::IS_FINAL | ReflectionMethod::IS_PRIVATE
-			| ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_ABSTRACT
-		) as $ReflectionMethod) {
+		foreach ($class->getMethods() as $ReflectionMethod) {
 			$this->_classMethod[$className][$ReflectionMethod->getName()] = $ReflectionMethod;
 			$this->_classMethodNote[$className][$ReflectionMethod->getName()] = [];
 			foreach ($ReflectionMethod->getAttributes() as $attribute) {
@@ -181,9 +175,11 @@ trait Attributes
 				if (!class_exists($attribute->getName())) {
 					continue;
 				}
-				$this->_classPropertyNote[$className][$ReflectionMethod->getName()] = $attribute->newInstance();
+				$instance = $attribute->newInstance();
 
-				$this->setMappingProperty($attribute, $className, $ReflectionMethod->getName());
+				$this->_classPropertyNote[$className][$ReflectionMethod->getName()] = $instance;
+
+				$this->setMappingProperty($attribute, $className, $ReflectionMethod->getName(), $instance);
 			}
 		}
 	}
@@ -218,7 +214,7 @@ trait Attributes
 		}
 		foreach ($class['method'] as $value) {
 			$key = key($value);
-			if ($method == $value[$key]) {
+			if ($method == $key) {
 				return $value[$key];
 			}
 		}
@@ -230,15 +226,21 @@ trait Attributes
 	 * @param string $attribute
 	 * @param string $class
 	 * @param string $method
-	 * @return array
+	 * @return mixed
 	 */
-	public function getPropertyByAnnotation(string $attribute, string $class, string $method): array
+	public function getPropertyByAnnotation(string $attribute, string $class, string $method): mixed
 	{
 		$class = $this->getAttributeTrees($attribute, $class);
 		if (empty($class) || !isset($class['property'])) {
 			return [];
 		}
-		return $class['property'][$method] ?? [];
+		foreach ($class['property'] as $value) {
+			$key = key($value);
+			if ($method == $key) {
+				return $value[$key];
+			}
+		}
+		return null;
 	}
 
 
