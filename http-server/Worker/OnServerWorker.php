@@ -12,6 +12,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Kiri\Runtime;
 use ReflectionException;
+use Server\Events\OnAfterRequest;
 use Server\Events\OnAfterWorkerStart;
 use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
@@ -153,8 +154,7 @@ class OnServerWorker extends \Server\Abstracts\Server
 		putenv('state=exit');
 
 		$this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
-
-		Kiri::getApp('logger')->insert();
+		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
