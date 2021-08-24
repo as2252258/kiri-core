@@ -213,7 +213,7 @@ class Application extends BaseApplication
 
 			$data = $this->getBuilder($manager->exec($class));
 		} catch (\Throwable $exception) {
-			$data = $this->getBuilder(logger()->exception($exception));
+			$data = $this->getBuilder(jTraceEx($exception));
 		} finally {
 			print_r($data);
 			Timer::clearAll();

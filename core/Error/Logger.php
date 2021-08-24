@@ -17,13 +17,14 @@ use Kiri\Core\Json;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
-use Server\Events\OnAfterRequest;
+use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Throwable;
 
 /**
  * Class Logger
  * @package Kiri\Kiri\Error
+ * @mixin \Kiri\Abstracts\Logger
  */
 class Logger extends Component
 {
@@ -36,136 +37,25 @@ class Logger extends Component
 	public EventProvider $eventProvider;
 
 
+	/**
+	 * inject logger
+	 *
+	 * @var LoggerInterface
+	 */
+	#[Inject(LoggerInterface::class)]
+	public LoggerInterface $logger;
+
+
 	private array $sources = [];
 
 
 	/**
-	 *
-	 */
-	public function init()
-	{
-		$this->eventProvider->on(OnAfterRequest::class, [$this, 'insert']);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param null $file
-	 * @throws Exception
-	 */
-	public function debug(mixed $message, string $method = 'app', $file = null)
-	{
-		if (Config::get('environment', 'pro') == 'pro') {
-			return;
-		}
-		$this->output($message);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @throws Exception
-	 */
-	public function trance(mixed $message, string $method = 'app')
-	{
-		if (Config::get('environment', 'pro') == 'pro') {
-			return;
-		}
-		$this->output($message);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param null $file
-	 * @throws Exception
-	 */
-	public function error(mixed $message, $method = 'error', $file = null)
-	{
-		$this->writer($message, $method);
-	}
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param null $file
-	 * @throws Exception
-	 */
-	public function success(mixed $message, string $method = 'app', $file = null)
-	{
-		if (Config::get('environment', 'pro') == 'pro') {
-			return;
-		}
-		$this->output($message);
-	}
-
-	/**
-	 * @param $message
-	 * @param string $method
-	 * @return void
-	 * @throws Exception
-	 */
-	private function writer($message, string $method = 'app'): void
-	{
-		if (empty($message)) {
-			return;
-		}
-		$message = print_r($message, true);
-		$this->print_r($message, $method);
-		if (!is_array($this->logs)) {
-			$this->logs = [];
-		}
-		$this->logs[$method] = $message;
-	}
-
-
-	/**
-	 * @param $message
-	 * @param string $method
-	 * @throws Exception
-	 */
-	public function print_r($message, string $method = '')
-	{
-		$debug = Config::get('debug', ['enable' => false]);
-		if ((bool)$debug['enable'] === true) {
-			if (!is_callable($debug['callback'] ?? null, true)) {
-				return;
-			}
-			call_user_func($debug['callback'], $message, $method);
-		}
-	}
-
-
-	/**
-	 * @param $message
-	 * @param string $method
-	 * @throws ConfigException
-	 */
-	public function output($message, string $method = 'default')
-	{
-		if (Config::get('environment', 'dev') == 'pro') {
-			if ($method === 'error') {
-				echo $message;
-			}
-			return;
-		}
-		if (str_contains($message, 'Event::rshutdown(): Event::wait()')) {
-			return;
-		}
-		echo $message;
-	}
-
-
-	/**
 	 * @param string $application
-	 * @return mixed
+	 * @return string
 	 */
-	public function getLastError(string $application = 'app'): mixed
+	public function getLastError(string $application = 'app'): string
 	{
-		return $this->logs[$application] ?? 'Unknown error.';
+		return 'Unknown error.';
 	}
 
 	/**
@@ -187,21 +77,6 @@ class Logger extends Component
 	}
 
 
-	/**
-	 * @param $logFile
-	 * @return string
-	 */
-	private function getSource($logFile): string
-	{
-		if (!file_exists($logFile)) {
-			Coroutine\System::exec('echo 3 > /proc/sys/vm/drop_caches');
-			touch($logFile);
-		}
-		if (is_writeable($logFile)) {
-			$logFile = realpath($logFile);
-		}
-		return $logFile;
-	}
 
 
 	/**
@@ -217,31 +92,6 @@ class Logger extends Component
 			$this->write($message, $method);
 		}
 		$this->logs = [];
-	}
-
-	/**
-	 * @return array
-	 */
-	public function clear(): array
-	{
-		return $this->logs = [];
-	}
-
-	/**
-	 * @param $data
-	 * @return string
-	 */
-	private function arrayFormat($data): string
-	{
-		if (is_string($data)) {
-			return $data;
-		}
-		if ($data instanceof Throwable) {
-			$data = $this->getException($data);
-		} else if (is_object($data)) {
-			$data = get_object_vars($data);
-		}
-		return Json::encode($data);
 	}
 
 
@@ -264,16 +114,5 @@ class Logger extends Component
 	}
 
 
-	/**
-	 * @param Throwable $exception
-	 * @return array
-	 */
-	private function getException(Throwable $exception): array
-	{
-		$filetype = [$exception->getMessage()];
-		$filetype[] = $exception->getFile() . ' on line ' . $exception->getLine();
-		$filetype[] = $exception->getTrace();
-		return $filetype;
-	}
 
 }

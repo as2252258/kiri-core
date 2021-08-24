@@ -40,7 +40,6 @@ abstract class Http extends Server implements OnRequest
 	/**
 	 * @throws ReflectionException
 	 * @throws ConfigException
-	 * @throws NotFindClassException
 	 */
 	public function init()
 	{

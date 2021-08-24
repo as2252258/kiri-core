@@ -4,10 +4,13 @@
 namespace Server\Abstracts;
 
 
+use Annotation\Inject;
 use Exception;
 use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -16,6 +19,13 @@ use Kiri\Kiri;
  */
 abstract class Server
 {
+
+
+	/**
+	 * @var LoggerInterface 
+	 */
+	#[Inject(LoggerInterface::class)]
+	public LoggerInterface $logger;
 
 
 	/**

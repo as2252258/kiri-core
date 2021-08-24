@@ -11,10 +11,12 @@ namespace Kiri\Di;
 
 use Annotation\Inject;
 use Exception;
-use Http\Server;
 use Kiri\Abstracts\BaseObject;
+use Kiri\Abstracts\Logger;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
+use Psr\Log\LoggerInterface;
+use Psr\Log\Test\TestLogger;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
@@ -63,7 +65,8 @@ class Container extends BaseObject implements ContainerInterface
 	/** @var array|string[] */
 	private array $_interfaces = [
 		RequestInterface::class  => Request::class,
-		ResponseInterface::class => Response::class
+		ResponseInterface::class => Response::class,
+		LoggerInterface::class   => Logger::class
 	];
 
 

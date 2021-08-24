@@ -8,6 +8,7 @@ use Annotation\Inject;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Application;
 use Kiri\Di\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Server\RequestInterface;
 use Server\ResponseInterface;
 
@@ -52,6 +53,16 @@ class Controller
      */
     #[Inject(ResponseInterface::class)]
     public ?ResponseInterface $response = null;
+
+
+
+	/**
+	 * inject logger
+	 *
+	 * @var LoggerInterface
+	 */
+	#[Inject(LoggerInterface::class)]
+	public LoggerInterface $logger;
 
 
 

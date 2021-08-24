@@ -74,7 +74,6 @@ class BaseObject implements Configure
 		if (method_exists($this, $method)) {
 			$this->{$method}($value);
 		} else {
-			$this->error('set ' . $name . ' not exists ' . static::class);
 			throw new Exception('The set name ' . $name . ' not find in class ' . static::class);
 		}
 	}

@@ -10,8 +10,8 @@ use Http\Context\Response as HttpResponse;
 use Http\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
-use Kiri\AspectManager;
 use Kiri\Application;
+use Kiri\AspectManager;
 use Kiri\Core\ArrayAccess;
 use Kiri\Error\Logger;
 use Kiri\Events\EventDispatch;
@@ -19,6 +19,7 @@ use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
+use Psr\Log\LoggerInterface;
 use Server\Constrict\Request;
 use Server\Constrict\Response;
 use Swoole\WebSocket\Server;
@@ -53,6 +54,19 @@ if (!function_exists('make')) {
 
 
 }
+
+
+if (!function_exists('now')) {
+
+	/**
+	 * @return string
+	 */
+	function now(): string
+	{
+		return date('Y-m-d H:i:s') . '.' . str_replace('0.', '', (string)microtime(true));
+	}
+}
+
 
 if (!function_exists('workerName')) {
 
@@ -751,7 +765,7 @@ if (!function_exists('event')) {
 	function event($name, $callback, bool $isAppend = true)
 	{
 		$pro = di(EventProvider::class);
-		$pro->on($name, $callback,0);
+		$pro->on($name, $callback, 0);
 	}
 
 }
@@ -1119,7 +1133,7 @@ if (!function_exists('error')) {
 	 */
 	function error(mixed $message, string $method = 'error')
 	{
-		Kiri::app()->error($message, $method);
+		Kiri::getDi()->get(LoggerInterface::class)->error($method, [$message]);
 	}
 }
 
