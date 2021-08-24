@@ -19,7 +19,6 @@ class Annotation extends Component
 
 	private Loader $_loader;
 
-
 	private array $_model_sets = [];
 	private array $_model_gets = [];
 	private array $_model_relate = [];

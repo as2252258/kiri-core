@@ -36,11 +36,11 @@
     "psr-4": {
       "Kiri\\": "core/",
       "Http\\": "http-helper/",
-      "Server\\": "server/",
-      "Console\\": "console/",
-      "Gii\\": "gii/",
-      "Kafka\\": "kafka/",
-      "Annotation\\": "annotation/"
+      "Server\\": "http-server/",
+      "Console\\": "kiri-console/",
+      "Gii\\": "kiri-gii/",
+      "Kafka\\": "kiri-kafka/",
+      "Annotation\\": "note/"
     },
     "files": [
       "error.php",
