@@ -26,7 +26,6 @@ abstract class HttpService extends Component
 	{
 		$logger = Kiri::app()->getLogger();
 		$logger->write($message, $category);
-		$logger->insert();
 	}
 
 	/**

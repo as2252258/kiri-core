@@ -12,13 +12,10 @@ namespace Kiri\Error;
 use Annotation\Inject;
 use Exception;
 use Kiri\Abstracts\Component;
-use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Events\EventProvider;
-use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine;
 use Throwable;
 
 /**
@@ -77,24 +74,6 @@ class Logger extends Component
 	}
 
 
-
-
-	/**
-	 * @throws Exception
-	 * 写入日志
-	 */
-	public function insert()
-	{
-		if (empty($this->logs)) {
-			return;
-		}
-		foreach ($this->logs as $method => $message) {
-			$this->write($message, $method);
-		}
-		$this->logs = [];
-	}
-
-
 	/**
 	 * @param Throwable $exception
 	 * @return mixed
@@ -113,6 +92,20 @@ class Logger extends Component
 		]);
 	}
 
+
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 */
+	public function __call(string $name, array $arguments): mixed
+	{
+		if (!method_exists($this, $name)) {
+			return $this->logger->{$name}(...$arguments);
+		} else {
+			return $this->{$name}(...$arguments);
+		}
+	}
 
 
 }

@@ -154,7 +154,7 @@ class Logger implements LoggerInterface
 	 * @param array $context
 	 * @throws ConfigException
 	 */
-	private function log($level, $message, array $context = array())
+	public function log($level, $message, array $context = array())
 	{
 		// TODO: Implement log() method.
 		$levels = Config::get('log.level', Logger::LOGGER_LEVELS);
