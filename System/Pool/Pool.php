@@ -65,11 +65,10 @@ class Pool extends Component
 	{
 		$name = $this->name($name, $isMaster);
 		if (isset(static::$_connections[$name])) {
-			return;
-		}
-		$value = static::$_connections[$name];
-		if ($value instanceof Channel || $value instanceof SplQueue) {
-			return;
+			$value = static::$_connections[$name];
+			if ($value instanceof Channel || $value instanceof SplQueue) {
+				return;
+			}
 		}
 		$this->newChannel($name, $max);
 		$this->max = $max;
