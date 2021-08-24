@@ -34,13 +34,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Kiri\\": "System/",
+      "Kiri\\": "core/",
       "Http\\": "http-helper/",
-      "Server\\": "Server/",
-      "Console\\": "Console/",
-      "Gii\\": "Gii/",
-      "Kafka\\": "Kafka/",
-      "Annotation\\": "Annotation/"
+      "Server\\": "server/",
+      "Console\\": "console/",
+      "Gii\\": "gii/",
+      "Kafka\\": "kafka/",
+      "Annotation\\": "annotation/"
     },
     "files": [
       "error.php",
