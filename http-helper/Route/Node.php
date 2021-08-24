@@ -79,12 +79,12 @@ class Node
 	 */
 	public function unpack(string $data): mixed
 	{
-//		if ($this->_dataType == RpcProducer::PROTOCOL_JSON) {
-//			return json_decode($data, true);
-//		}
-//		if ($this->_dataType == RpcProducer::PROTOCOL_SERIALIZE) {
-//			return unserialize($data);
-//		}
+		if ($this->_dataType == 'json') {
+			return json_decode($data, true);
+		}
+		if ($this->_dataType == 'serializes') {
+			return unserialize($data);
+		}
 		return $data;
 	}
 
@@ -93,7 +93,6 @@ class Node
 	 * @param $handler
 	 * @param $path
 	 * @return Node
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	public function setHandler($handler, $path): static
