@@ -19,7 +19,6 @@
     "ext-iconv": "*",
     "ext-mbstring": "*",
     "ext-xml": "*",
-    "ext-inotify": "*",
     "ext-curl": "*",
     "ext-openssl": "*",
     "amphp/amp": "v1.2.2",
@@ -30,7 +29,13 @@
     "ext-rdkafka": "*",
     "ext-gd": "*",
     "swiftmailer/swiftmailer": "^6.0",
-    "ext-spltype": "*"
+    "psr/container": "^2.0",
+    "psr/http-server-middleware": "^1.0",
+    "psr/link": "^2.0",
+    "psr/cache": "^3.0",
+    "psr/http-client": "^1.0",
+    "psr/simple-cache": "^1.0",
+    "game-worker/kiri-event": "dev-master"
   },
   "autoload": {
     "psr-4": {

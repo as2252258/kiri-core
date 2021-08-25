@@ -39,7 +39,7 @@ class ServerManager
 	public int $mode = SWOOLE_TCP;
 
 
-	private mixed $server = null;
+	private Server|null $server = null;
 
 
 	/**
@@ -158,6 +158,15 @@ class ServerManager
 			$pipe_type,
 			$enable_coroutine
 		);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getSetting(): array
+	{
+		return $this->server->setting;
 	}
 
 
@@ -428,6 +437,17 @@ class ServerManager
 			$handler = $implements->newInstanceArgs($params);
 		}
 		$this->server->task(serialize($handler), $workerId);
+	}
+
+
+	/**
+	 * @param mixed $message
+	 * @param int $workerId
+	 * @return mixed
+	 */
+	public function sendMessage(mixed $message, int $workerId): mixed
+	{
+		return $this->server?->sendMessage($message, $workerId);
 	}
 
 
