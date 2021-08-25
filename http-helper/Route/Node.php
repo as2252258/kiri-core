@@ -97,7 +97,7 @@ class Node
 	 */
 	public function setHandler($handler, $path): static
 	{
-		$this->sourcePath = $path;
+		$this->sourcePath = '/' . ltrim($path, '/');
 		if (is_string($handler) && str_contains($handler, '@')) {
 			$handler = $this->splitHandler($handler);
 		} else if ($handler != null && !is_callable($handler, true)) {
