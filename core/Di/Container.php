@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Kiri\Di;
 
 use Annotation\Inject;
+use Closure;
 use Exception;
 use Kiri\Abstracts\BaseObject;
 use Kiri\Abstracts\Logger;
@@ -177,7 +178,6 @@ class Container extends BaseObject implements ContainerInterface
 	 * @param $dependencies
 	 * @return object
 	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	private function newInstance(ReflectionClass $reflect, $dependencies): object
 	{
@@ -262,6 +262,7 @@ class Container extends BaseObject implements ContainerInterface
 	/**
 	 * @param $class
 	 * @return ReflectionClass
+	 * @throws ReflectionException
 	 */
 	private function resolveDependencies($class): ReflectionClass
 	{
@@ -313,7 +314,6 @@ class Container extends BaseObject implements ContainerInterface
 	 * @param ReflectionClass|string $class
 	 * @param string $method
 	 * @return array|null
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	public function getMethodParameters(ReflectionClass|string $class, string $method): ?array
@@ -339,8 +339,9 @@ class Container extends BaseObject implements ContainerInterface
 	 * @param $class
 	 * @param $method
 	 * @param $parameters
+	 * @return mixed
 	 */
-	private function setParameters($class, $method, $parameters)
+	private function setParameters($class, $method, $parameters): mixed
 	{
 		if (!isset($this->_parameters[$class])) {
 			$this->_parameters[$class] = [];
@@ -353,12 +354,11 @@ class Container extends BaseObject implements ContainerInterface
 
 
 	/**
-	 * @param \Closure $reflectionMethod
+	 * @param Closure $reflectionMethod
 	 * @return array
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function resolveFunctionParameters(\Closure $reflectionMethod): array
+	public function resolveFunctionParameters(Closure $reflectionMethod): array
 	{
 		return $this->resolveMethodParameters(new ReflectionFunction($reflectionMethod));
 	}
@@ -367,7 +367,6 @@ class Container extends BaseObject implements ContainerInterface
 	/**
 	 * @param ReflectionMethod|ReflectionFunction $reflectionMethod
 	 * @return array
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
 	private function resolveMethodParameters(ReflectionMethod|ReflectionFunction $reflectionMethod): array
@@ -383,7 +382,7 @@ class Container extends BaseObject implements ContainerInterface
 				$params[$key] = $parameter->getType();
 			} else {
 				$type = $parameter->getType()->getName();
-				if (is_string($type) && class_exists($type)) {
+				if (is_string($type) && class_exists($type) || isset($this->_interfaces[$type])) {
 					$type = Kiri::getDi()->get($type);
 				}
 				$params[$key] = match ($parameter->getType()) {
