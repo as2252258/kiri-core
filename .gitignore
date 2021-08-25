@@ -18,6 +18,8 @@ gen
 
 db/
 async-queue/
+http-message/
+kiri-event/
 
 composer.lock
 
