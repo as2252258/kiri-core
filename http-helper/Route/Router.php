@@ -6,19 +6,18 @@ namespace Http\Route;
 use Closure;
 use Exception;
 use Http\Abstracts\HttpService;
-use Http\Controller;
-use Http\Exception\RequestException;
 use Http\Context\Request;
 use Http\Context\Response;
+use Http\Controller;
 use Http\IInterface\MiddlewareInterface;
 use Http\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
-use ReflectionException;
-use Server\RequestInterface;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
+use ReflectionException;
+use Server\RequestInterface;
 
 defined('ROUTER_TREE') or define('ROUTER_TREE', 1);
 defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
@@ -445,11 +444,29 @@ class Router extends HttpService implements RouterInterface
 		$paths = [];
 		foreach ($this->nodes as $node) {
 			/** @var Node[] $node */
-			foreach ($node as $path => $_node) {
-				$paths[] = strtoupper($_node->method) . ' : ' . $path;
+			foreach ($node as $_node) {
+				$path[] = ['method' => $node->method, 'path' => $node->sourcePath];
+				$paths = $this->getChildes($_node, $paths);
 			}
 		}
 		return $paths;
+	}
+
+
+	/**
+	 * @param Node $node
+	 * @param array $path
+	 * @return array
+	 */
+	private function getChildes(Node $node, array $path): array
+	{
+		foreach ($node->childes as $item) {
+			$path[] = ['method' => $item->method, 'path' => $item->sourcePath];
+			if (!empty($item->childes)) {
+				$path = $this->getChildes($item, $path);
+			}
+		}
+		return $path;
 	}
 
 
