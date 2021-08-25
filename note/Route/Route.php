@@ -24,6 +24,7 @@ use Kiri\Kiri;
 		public string $version = 'v.1.0'
 	)
 	{
+		$this->method = strtoupper($this->method);
 	}
 
 
