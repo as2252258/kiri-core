@@ -173,10 +173,10 @@ class Logger implements LoggerInterface
 
 
 	/**
-	 * @param OnAfterRequest $afterRequest
+	 * @param OnAfterRequest|OnWorkerStop $param
 	 * @throws Exception
 	 */
-	public function onAfterRequest(OnAfterRequest $afterRequest)
+	public function onAfterRequest(OnAfterRequest|OnWorkerStop $param)
 	{
 		$loggers = implode(PHP_EOL, $this->_loggers);
 		$this->_loggers = [];
