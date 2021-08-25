@@ -8,6 +8,7 @@ use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Psr\Log\LoggerInterface;
 use Server\Events\OnAfterRequest;
+use Server\Events\OnWorkerStop;
 
 
 /**
@@ -44,6 +45,7 @@ class Logger implements LoggerInterface
 	public function init()
 	{
 		$this->eventProvider->on(OnAfterRequest::class, [$this, 'onAfterRequest']);
+		$this->eventProvider->on(OnWorkerStop::class, [$this, 'onAfterRequest']);
 	}
 
 
@@ -178,10 +180,11 @@ class Logger implements LoggerInterface
 	{
 		$loggers = implode(PHP_EOL, $this->_loggers);
 		$this->_loggers = [];
+		if (!empty($loggers)) {
+			$filename = storage('log-' . date('Y-m-d') . '.log', 'logs/');
 
-		$filename = storage('log-' . date('Y-m-d') . '.log', 'logs/');
-
-		file_put_contents($filename, $loggers);
+			file_put_contents($filename, $loggers);
+		}
 	}
 
 

@@ -154,7 +154,6 @@ class OnServerWorker extends \Server\Abstracts\Server
 		putenv('state=exit');
 
 		$this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
-		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 
