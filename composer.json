@@ -26,7 +26,6 @@
     "ext-sockets": "*",
     "ext-pcntl": "*",
     "ext-posix": "*",
-    "ext-rdkafka": "*",
     "ext-gd": "*",
     "swiftmailer/swiftmailer": "^6.0",
     "psr/container": "^2.0",
@@ -44,7 +43,6 @@
       "Server\\": "http-server/",
       "Console\\": "kiri-console/",
       "Gii\\": "kiri-gii/",
-      "Kafka\\": "kiri-kafka/",
       "Annotation\\": "note/"
     },
     "files": [
@@ -53,6 +51,5 @@
     ]
   },
   "require-dev": {
-    "kwn/php-rdkafka-stubs": "^2.0"
   }
 }
