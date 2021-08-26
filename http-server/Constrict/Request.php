@@ -52,13 +52,14 @@ class Request implements RequestInterface
      * @param \Swoole\Http\Request $request
      * @return Request
      * @throws ReflectionException
-     * @throws NotFindClassException
      */
     public static function create(\Swoole\Http\Request $request): RequestInterface
     {
         Context::setContext(Response::class, new Response());
 
         $sRequest = new HttpResponse();
+
+        var_dump($request->getData());
 
         $sRequest->setHeaders(array_merge($request->header, $request->server));
 
