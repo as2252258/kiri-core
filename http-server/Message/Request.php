@@ -59,8 +59,42 @@ class Request implements RequestInterface
 		$message->serverRequest = $request;
 		$message->version = $request->server['server_protocol'];
 		$message->stream = new Stream($request->getContent());
-		$message->headers = $request->header;
-		return $message;
+		return $message->parseHeaders($request);
+	}
+
+
+	/**
+	 * @param \Swoole\Http\Request $request
+	 * @return $this
+	 */
+	private function parseHeaders(\Swoole\Http\Request $request): static
+	{
+		foreach ($request->header as $key => $value) {
+			$this->addHeader($key, $value);
+		}
+
+		$index = strpos("\r\n\r\n", $request->getData());
+		$headers = explode("\r\n", substr($request->getData(), 0, $index));
+
+		array_shift($headers);
+		foreach ($headers as $header) {
+			[$key, $value] = explode(': ', $header);
+			$this->addHeader($key, $value);
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param $key
+	 * @param $value
+	 */
+	private function addHeader($key, $value)
+	{
+		$this->headers[$key] = [];
+		foreach (explode(';', $value) as $item) {
+			$this->headers[$key][] = $item;
+		}
 	}
 
 
