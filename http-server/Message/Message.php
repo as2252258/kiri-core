@@ -4,7 +4,9 @@ namespace Server\Message;
 
 use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Xml;
+use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
+use ReflectionException;
 
 
 /**
@@ -73,6 +75,40 @@ trait Message
 			return null;
 		}
 		return $this->headers[$name];
+	}
+
+
+	/**
+	 * @param \Swoole\Http\Request $request
+	 * @return $this
+	 * @throws ReflectionException
+	 */
+	private function parseRequestHeaders(\Swoole\Http\Request $request): static
+	{
+		$index = strpos($request->getData(), "\r\n\r\n");
+		$headers = explode("\r\n", substr($request->getData(), 0, $index));
+
+		array_shift($headers);
+		foreach ($headers as $header) {
+			[$key, $value] = explode(': ', $header);
+			$this->addRequestHeader($key, $value);
+		}
+		$class = Kiri::getDi()->get(Headers::class);
+		$this->header = $class->withHeader($this->headers);
+		return $this;
+	}
+
+
+	/**
+	 * @param $key
+	 * @param $value
+	 */
+	private function addRequestHeader($key, $value)
+	{
+		$this->headers[$key] = [];
+		foreach (explode(';', $value) as $item) {
+			$this->headers[$key][] = $item;
+		}
 	}
 
 

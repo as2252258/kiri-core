@@ -2,10 +2,12 @@
 
 namespace Server\Message;
 
+use Annotation\Inject;
 use BadMethodCallException;
 use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
+use ReflectionException;
 
 
 /**
@@ -21,6 +23,9 @@ class Request implements RequestInterface
 
 
 	public string $method;
+
+
+	public Headers $header;
 
 
 	/**
@@ -49,6 +54,7 @@ class Request implements RequestInterface
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return RequestInterface
+	 * @throws ReflectionException
 	 */
 	public static function parseRequest(\Swoole\Http\Request $request): RequestInterface
 	{
@@ -60,38 +66,7 @@ class Request implements RequestInterface
 		$message->version = $request->server['server_protocol'];
 		$message->stream = new Stream($request->getContent());
 		$message->servers = $request->server;
-		return $message->parseHeaders($request);
-	}
-
-
-	/**
-	 * @param \Swoole\Http\Request $request
-	 * @return $this
-	 */
-	private function parseHeaders(\Swoole\Http\Request $request): static
-	{
-		$index = strpos($request->getData(), "\r\n\r\n");
-		$headers = explode("\r\n", substr($request->getData(), 0, $index));
-
-		array_shift($headers);
-		foreach ($headers as $header) {
-			[$key, $value] = explode(': ', $header);
-			$this->addHeader($key, $value);
-		}
-		return $this;
-	}
-
-
-	/**
-	 * @param $key
-	 * @param $value
-	 */
-	private function addHeader($key, $value)
-	{
-		$this->headers[$key] = [];
-		foreach (explode(';', $value) as $item) {
-			$this->headers[$key][] = $item;
-		}
+		return $message->parseRequestHeaders($request);
 	}
 
 
