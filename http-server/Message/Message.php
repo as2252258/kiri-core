@@ -22,6 +22,9 @@ trait Message
 	public array $headers = [];
 
 
+	public array $servers = [];
+
+
 	/**
 	 * @return string
 	 */

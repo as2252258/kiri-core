@@ -59,6 +59,7 @@ class Request implements RequestInterface
 		$message->serverRequest = $request;
 		$message->version = $request->server['server_protocol'];
 		$message->stream = new Stream($request->getContent());
+		$message->servers = $request->server;
 		return $message->parseHeaders($request);
 	}
 
@@ -95,11 +96,11 @@ class Request implements RequestInterface
 
 
 	/**
-	 * @return string|array|null
+	 * @return float
 	 */
-	#[Pure] public function getStartTime(): string|array|null
+	#[Pure] public function getStartTime(): float
 	{
-		return $this->getHeaderLine('request_time_float');
+		return $this->servers['request_time_float'];
 	}
 
 
