@@ -7,7 +7,6 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use Http\Route\MiddlewareManager;
 use ReflectionException;
-use Kiri\Kiri;
 use Http\IInterface\MiddlewareInterface ;
 
 /**
@@ -49,8 +48,7 @@ use Http\IInterface\MiddlewareInterface ;
 	 */
     public function execute(mixed $class, mixed $method = null): static
     {
-        $middleware = Kiri::getDi()->get(MiddlewareManager::class);
-        $middleware->addMiddlewares($class, $method, $this->middleware);
+        MiddlewareManager::addMiddlewares($class, $method, $this->middleware);
         return $this;
     }
 

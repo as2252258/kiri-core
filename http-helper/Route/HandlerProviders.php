@@ -11,7 +11,7 @@ use Kiri\Abstracts\BaseObject;
 class HandlerProviders extends BaseObject
 {
 
-	private array $handlers = [];
+	private static array $handlers = [];
 
 
 	/**
@@ -19,9 +19,9 @@ class HandlerProviders extends BaseObject
 	 * @param $method
 	 * @return mixed
 	 */
-	public function get($path, $method): mixed
+	public static function get($path, $method): mixed
 	{
-		return $this->handlers[$method][$path] ?? null;
+		return static::$handlers[$method][$path] ?? null;
 	}
 
 
@@ -30,9 +30,9 @@ class HandlerProviders extends BaseObject
 	 * @param $path
 	 * @param $handler
 	 */
-	public function add($method, $path, $handler)
+	public static function add($method, $path, $handler)
 	{
-		$this->handlers[$method][$path] = $handler;
+        static::$handlers[$method][$path] = $handler;
 	}
 
 }

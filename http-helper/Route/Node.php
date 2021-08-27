@@ -129,24 +129,13 @@ class Node
 	 */
 	private function injectMiddleware($handler): static
 	{
-		$manager = di(MiddlewareManager::class);
 		if (!($handler instanceof Closure)) {
-			$callback = $this->injectControllerMiddleware($manager, $handler);
+			$callback = $this->injectControllerMiddleware($handler);
 		} else {
-			$callback = $this->injectClosureMiddleware($manager, $handler);
+			$callback = $this->injectClosureMiddleware($handler);
 		}
-		$this->getHandlerProviders()->add($this->method, $this->sourcePath, $callback);
+		HandlerProviders::add($this->method, $this->sourcePath, $callback);
 		return $this;
-	}
-
-
-	/**
-	 * @return HandlerProviders
-	 * @throws ReflectionException
-	 */
-	private function getHandlerProviders(): HandlerProviders
-	{
-		return Kiri::getDi()->get(HandlerProviders::class);
 	}
 
 
@@ -157,10 +146,10 @@ class Node
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function injectControllerMiddleware($manager, $handler): mixed
+	private function injectControllerMiddleware($handler): mixed
 	{
-		$manager->addMiddlewares($handler[0], $handler[1], $this->middleware);
-		return $manager->callerMiddlewares(
+		MiddlewareManager::addMiddlewares($handler[0], $handler[1], $this->middleware);
+		return MiddlewareManager::callerMiddlewares(
 			$handler[0], $handler[1], $this->aopHandler($this->getAop($handler), $handler)
 		);
 	}
@@ -171,10 +160,10 @@ class Node
 	 * @param $handler
 	 * @return mixed
 	 */
-	private function injectClosureMiddleware($manager, $handler): mixed
+	private function injectClosureMiddleware($handler): mixed
 	{
 		if (!empty($this->middleware)) {
-			return $manager->closureMiddlewares($this->middleware, $this->normalHandler($handler));
+			return MiddlewareManager::closureMiddlewares($this->middleware, $this->normalHandler($handler));
 		} else {
 			return $this->normalHandler($handler);
 		}
@@ -389,7 +378,7 @@ class Node
 	 */
 	public function dispatch(): mixed
 	{
-		$handlerProviders = $this->getHandlerProviders()->get($this->sourcePath, $this->method);
+		$handlerProviders = HandlerProviders::get($this->sourcePath, $this->method);
 		if (empty($handlerProviders)) {
 			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}

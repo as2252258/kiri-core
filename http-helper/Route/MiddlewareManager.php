@@ -24,7 +24,7 @@ class MiddlewareManager extends BaseObject
 	 * @param $method
 	 * @param array|string $middlewares
 	 */
-	public function addMiddlewares($class, $method, array|string $middlewares)
+	public static function addMiddlewares($class, $method, array|string $middlewares)
 	{
 		if (is_object($class)) {
 			$class = $class::class;
@@ -51,7 +51,7 @@ class MiddlewareManager extends BaseObject
 	 * @param $method
 	 * @return bool
 	 */
-	public function hasMiddleware($class, $method): bool
+	public static function hasMiddleware($class, $method): bool
 	{
 		if (is_object($class)) {
 			$class = $class::class;
@@ -66,7 +66,7 @@ class MiddlewareManager extends BaseObject
 	 * @param $caller
 	 * @return mixed
 	 */
-	public function callerMiddlewares($class, $method, $caller): mixed
+	public static function callerMiddlewares($class, $method, $caller): mixed
 	{
 		if (is_object($class)) {
 			$class = $class::class;
@@ -91,7 +91,7 @@ class MiddlewareManager extends BaseObject
 	 * @param Closure $caller
 	 * @return Closure
 	 */
-	public function closureMiddlewares($middlewares, Closure $caller): Closure
+	public static function closureMiddlewares($middlewares, Closure $caller): Closure
 	{
 		return array_reduce(array_reverse($middlewares), function ($stack, $pipe) {
 			return function ($passable) use ($stack, $pipe) {

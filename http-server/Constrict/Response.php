@@ -37,6 +37,7 @@ class Response implements ResponseInterface
 
     /**
      * @param string $name
+     * @return mixed
      */
     public function __get(string $name)
     {
