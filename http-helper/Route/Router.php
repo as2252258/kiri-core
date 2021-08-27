@@ -7,7 +7,6 @@ use Annotation\Inject;
 use Closure;
 use Exception;
 use Http\Abstracts\HttpService;
-use Http\Context\Request;
 use Http\Context\Response;
 use Http\Controller;
 use Http\IInterface\MiddlewareInterface;
@@ -494,12 +493,12 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 * @return Node|null 树干搜索
 	 * 树干搜索
 	 * @throws Exception
 	 */
-	public function find_path(Request $request): ?Node
+	public function find_path(RequestInterface $request): ?Node
 	{
 		$method = $request->getMethod();
 

@@ -18,7 +18,6 @@ gen
 
 db/
 async-queue/
-http-message/
 
 composer.lock
 

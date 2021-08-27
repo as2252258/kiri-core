@@ -8,7 +8,6 @@ namespace Http\Route;
 use Annotation\Aspect;
 use Closure;
 use Exception;
-use Http\Context\Request;
 use Http\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Events\EventProvider;
@@ -17,6 +16,7 @@ use Kiri\IAspect;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\Events\OnAfterWorkerStart;
+use Server\RequestInterface;
 
 /**
  * Class Node
@@ -269,10 +269,10 @@ class Node
 
 
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 * @return bool
 	 */
-	public function methodAllow(Request $request): bool
+	public function methodAllow(RequestInterface $request): bool
 	{
 		if ($this->method == $request->getMethod()) {
 			return true;

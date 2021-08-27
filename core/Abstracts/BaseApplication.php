@@ -15,7 +15,6 @@ use Database\Connection;
 use Exception;
 use Http\Context\HttpHeaders;
 use Http\Context\HttpParams;
-use Http\Context\Request;
 use Http\Context\Response;
 use Http\Route\Router;
 use Http\Server;
@@ -485,7 +484,6 @@ abstract class BaseApplication extends Component
 			'async'           => ['class' => Async::class],
 			'kafka-container' => ['class' => KafkaProvider::class],
 			'response'        => ['class' => Response::class],
-			'request'         => ['class' => Request::class],
 			'shutdown'        => ['class' => Shutdown::class],
 		]);
 	}

@@ -8,7 +8,6 @@ use Annotation\Annotation as SAnnotation;
 use Database\DatabasesProviders;
 use Http\Client\Client;
 use Http\Client\Curl;
-use Http\Context\Request;
 use Http\Context\Response;
 use Http\HttpFilter;
 use Http\Route\Router;
@@ -27,7 +26,6 @@ use Kiri\Jwt\Jwt;
  * @property \Redis|Redis $redis
  * @property Server $server
  * @property Response $response
- * @property Request $request
  * @property DatabasesProviders $db
  * @property Async $async
  * @property Logger $logger
