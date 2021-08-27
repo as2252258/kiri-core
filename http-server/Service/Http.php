@@ -23,57 +23,71 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
 
 
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 */
-	public function onConnect(Server $server, int $fd): void
-	{
-		// TODO: Implement onConnect() method.
-	}
+    /**
+     * @param Server $server
+     * @param int $fd
+     */
+    public function onConnect(Server $server, int $fd): void
+    {
+        // TODO: Implement onConnect() method.
+    }
 
 
-	/**
-	 * @param Request $request
-	 * @param Response $response
-	 */
-	public function onRequest(Request $request, Response $response): void
-	{
-		// TODO: Implement onRequest() method.
-		try {
-			$node = $this->router->Branch_search(\Server\Constrict\Request::create($request));
-			if (!($node instanceof Node)) {
-				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
-			}
-			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
-				$responseData = $this->response->withStatus(200)->withBody(new Stream($responseData));
-			}
-		} catch (Error | \Throwable $exception) {
-			$responseData = $this->exceptionHandler->emit($exception, $this->response);
-		} finally {
-			$this->responseEmitter->sender($response, $responseData);
-			$this->eventDispatch->dispatch(new OnAfterRequest());
-		}
-	}
+    /**
+     * @param Request $request
+     * @param Response $response
+     */
+    public function onRequest(Request $request, Response $response): void
+    {
+        // TODO: Implement onRequest() method.
+        try {
+            $node = $this->router->Branch_search(\Server\Constrict\Request::create($request));
+            if (!($node instanceof Node)) {
+                throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+            }
+            if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
+                $responseData = $this->transferToResponse($responseData);
+            }
+        } catch (Error | \Throwable $exception) {
+            $responseData = $this->exceptionHandler->emit($exception, $this->response);
+        } finally {
+            $this->responseEmitter->sender($response, $responseData);
+            $this->eventDispatch->dispatch(new OnAfterRequest());
+        }
+    }
 
 
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 * @throws Exception
-	 */
-	public function onDisconnect(Server $server, int $fd): void
-	{
-	}
+    /**
+     * @param $responseData
+     * @return \Server\ResponseInterface
+     */
+    private function transferToResponse($responseData): ResponseInterface
+    {
+        $this->response->withStatus(200);
+        if (is_array($responseData)) {
+            return $this->response->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)));
+        }
+        return $this->response->withBody(new Stream((string)$responseData));
+    }
 
 
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 * @throws Exception
-	 */
-	public function onClose(Server $server, int $fd): void
-	{
-	}
+    /**
+     * @param Server $server
+     * @param int $fd
+     * @throws Exception
+     */
+    public function onDisconnect(Server $server, int $fd): void
+    {
+    }
+
+
+    /**
+     * @param Server $server
+     * @param int $fd
+     * @throws Exception
+     */
+    public function onClose(Server $server, int $fd): void
+    {
+    }
 
 }
