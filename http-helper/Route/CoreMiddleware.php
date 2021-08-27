@@ -7,7 +7,6 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
-use Http\Context\Request;
 use Http\Context\Response;
 use Server\RequestInterface;
 

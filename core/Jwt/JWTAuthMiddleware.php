@@ -7,7 +7,6 @@ namespace Kiri\Jwt;
 
 use Closure;
 use Exception;
-use Http\Context\Request;
 use Http\Route\MiddlewareAbstracts;
 use Server\RequestInterface;
 use Kiri\Kiri;
@@ -26,14 +25,14 @@ class JWTAuthMiddleware extends MiddlewareAbstracts
 
 
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 * @param Closure $next
 	 * @return mixed
 	 * @throws Exception
 	 */
 	public function onHandler(RequestInterface $request, Closure $next): mixed
 	{
-		$authorization = $request->header('Authorization');
+		$authorization = $request->getHeaderLine('Authorization');
 		if (empty($authorization)) {
 			throw new JWTAuthTokenException('JWT voucher cannot be empty.');
 		}
