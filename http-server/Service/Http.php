@@ -3,6 +3,7 @@
 namespace Server\Service;
 
 
+use Database\ObjectToArray;
 use Exception;
 use Http\Exception\RequestException;
 use Http\Route\Node;
@@ -64,6 +65,13 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
     private function transferToResponse($responseData): ResponseInterface
     {
         $this->response->withStatus(200);
+        if (is_object($responseData)) {
+            if (!($responseData instanceof ObjectToArray)) {
+                $responseData = get_object_vars($responseData);
+            } else {
+                $responseData = $responseData->toArray();
+            }
+        }
         if (is_array($responseData)) {
             return $this->response->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)))
                 ->withContentType(\Server\Message\Response::CONTENT_TYPE_JSON);
