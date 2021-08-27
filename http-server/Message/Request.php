@@ -69,11 +69,7 @@ class Request implements RequestInterface
 	 */
 	private function parseHeaders(\Swoole\Http\Request $request): static
 	{
-//		foreach ($request->header as $key => $value) {
-//			$this->addHeader($key, $value);
-//		}
-
-		$index = strpos("\r\n\r\n", $request->getData());
+		$index = strpos($request->getData(), "\r\n\r\n");
 		$headers = explode("\r\n", substr($request->getData(), 0, $index));
 
 		array_shift($headers);
