@@ -51,7 +51,6 @@ class Request implements RequestInterface
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return RequestInterface
-	 * @throws ReflectionException
 	 */
 	public static function parseRequest(\Swoole\Http\Request $request): RequestInterface
 	{
@@ -63,7 +62,8 @@ class Request implements RequestInterface
 		$message->version = $request->server['server_protocol'];
 		$message->stream = new Stream($request->getContent());
 		$message->servers = $request->server;
-		return $message->parseRequestHeaders($request);
+		$message->parseRequestHeaders($request);
+		return $message;
 	}
 
 

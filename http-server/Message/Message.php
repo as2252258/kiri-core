@@ -81,7 +81,6 @@ trait Message
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return $this
-	 * @throws ReflectionException
 	 */
 	private function parseRequestHeaders(\Swoole\Http\Request $request): static
 	{
@@ -89,7 +88,7 @@ trait Message
 		$headers = explode("\r\n", substr($request->getData(), 0, $index));
 
 		array_shift($headers);
-		foreach ($request->header as $header) {
+		foreach ($headers as $header) {
 			[$key, $value] = explode(': ', $header);
 			$this->addRequestHeader($key, $value);
 		}
