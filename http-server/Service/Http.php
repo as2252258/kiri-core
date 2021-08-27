@@ -64,7 +64,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
      */
     private function transferToResponse($responseData): ResponseInterface
     {
-        $this->response->withStatus(200);
+        $interface = $this->response->withStatus(200);
         if (is_object($responseData)) {
             if (!($responseData instanceof ToArray)) {
                 $responseData = get_object_vars($responseData);
@@ -73,11 +73,10 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
             }
         }
         if (is_array($responseData)) {
-            return $this->response->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)))
+            return $interface->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)))
                 ->withContentType(\Server\Message\Response::CONTENT_TYPE_JSON);
         }
-        return $this->response->withBody(new Stream((string)$responseData))
-            ->withContentType(\Server\Message\Response::CONTENT_TYPE_HTML);
+        return $interface->withBody(new Stream((string)$responseData));
     }
 
 
