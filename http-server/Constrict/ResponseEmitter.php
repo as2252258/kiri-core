@@ -26,7 +26,7 @@ class ResponseEmitter implements Emitter
 
     /**
      * @param \Swoole\Http\Response|\Swoole\Http2\Response $response
-     * @param ResponseInterface $emitter
+     * @param ResponseInterface|\Server\Message\Response $emitter
      * @throws NotFindClassException
      * @throws ReflectionException
      * @throws Exception
