@@ -7,7 +7,6 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
-use Http\Context\Request;
 use Http\Context\Response;
 use Server\RequestInterface;
 
@@ -20,8 +19,6 @@ class CoreMiddleware extends MiddlewareAbstracts
 {
 
 
-
-
 	/**
 	 * @param RequestInterface $request
 	 * @param Closure $next
@@ -32,9 +29,9 @@ class CoreMiddleware extends MiddlewareAbstracts
 	{
 		/** @var Response $response */
 		$response = \response();
-		$response->addHeader('Access-Control-Allow-Origin', '*');
-		$response->addHeader('Access-Control-Allow-Headers', $request->getHeaderLine('Access-Control-Request-Headers'));
-		$response->addHeader('Access-Control-Request-Method', $request->getHeaderLine('Access-Control-Request-Method'));
+		$response->withAccessControlAllowOrigin($request->getUri()->getHost());
+		$response->withAccessControlRequestMethod($request->getAccessControlRequestMethod());
+		$response->withAccessControlAllowHeaders($request->getAccessControlRequestMethod());
 
 		return $next($request);
 	}

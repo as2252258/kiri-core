@@ -70,10 +70,42 @@ class Response extends HttpService implements ResponseInterface
 		$this->clientId = $int;
 		$manager = Kiri::getDi()->get(ServerManager::class);
 		$this->_clientInfo = $manager->getServer()->getClientInfo($int);
-		if (!empty($this->reactorId))
-		{
-            $this->reactorId = $reID;
-        }
+		if (!empty($this->reactorId)) {
+			$this->reactorId = $reID;
+		}
+		return $this;
+	}
+
+
+	/**
+	 * @param $value
+	 * @return $this
+	 */
+	public function withAccessControlAllowHeaders($value): static
+	{
+		$this->headers['Access-Control-Allow-Headers'] = $value;
+		return $this;
+	}
+
+
+	/**
+	 * @param $value
+	 * @return $this
+	 */
+	public function withAccessControlRequestMethod($value): static
+	{
+		$this->headers['Access-Control-Request-Method'] = $value;
+		return $this;
+	}
+
+
+	/**
+	 * @param $value
+	 * @return $this
+	 */
+	public function withAccessControlAllowOrigin($value): static
+	{
+		$this->headers['Access-Control-Allow-Origin'] = $value;
 		return $this;
 	}
 

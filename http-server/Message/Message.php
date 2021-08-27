@@ -4,9 +4,7 @@ namespace Server\Message;
 
 use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Xml;
-use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
-use ReflectionException;
 
 
 /**
@@ -27,12 +25,71 @@ trait Message
 	public array $servers = [];
 
 
+	public array $cookies = [];
+
+
 	/**
 	 * @return string
 	 */
 	public function getProtocolVersion(): string
 	{
 		return $this->version;
+	}
+
+
+	/**
+	 * @param $name
+	 * @param null $value
+	 * @param null $expires
+	 * @param null $path
+	 * @param null $domain
+	 * @param null $secure
+	 * @param null $httponly
+	 * @param null $samesite
+	 * @param null $priority
+	 * @return static
+	 */
+	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
+	{
+		$class = clone $this;
+		$class->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
+		return $class;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getCookie(): array
+	{
+		return $this->cookies;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	#[Pure] public function getAccessControlAllowOrigin(): string
+	{
+		return $this->getHeaderLine('Access-Control-Allow-Origin');
+	}
+
+
+	/**
+	 * @return string
+	 */
+	#[Pure] public function getAccessControlRequestHeaders(): string
+	{
+		return $this->getHeaderLine('Access-Control-Request-Headers');
+	}
+
+
+	/**
+	 * @return string
+	 */
+	#[Pure] public function getAccessControlRequestMethod(): string
+	{
+		return $this->getHeaderLine('Access-Control-Request-Method');
 	}
 
 
@@ -216,5 +273,33 @@ trait Message
 		}
 		return $content;
 	}
+
+
+	public function redirectTo($host)
+	{
+		return $this->withHeader('Location', $host)
+			->withStatus(302);
+	}
+
+
+	public function getStreamData()
+	{
+		$response = new \Swoole\Http\Response();
+		$response->setStatusCode($this->statusCode);
+		$response->setHeader('Run-Time', time());
+		if (!empty($this->headers) && is_array($this->headers)) {
+			foreach ($this->headers as $name => $values) {
+				$response->setHeader($name, implode(';', $values));
+			}
+			$this->headers = [];
+		}
+		if (!empty($this->cookies) && is_array($this->cookies)) {
+			foreach ($this->cookies as $name => $cookie) {
+				$response->cookie($name, ...$cookie);
+			}
+			$this->cookies = [];
+		}
+	}
+
 
 }

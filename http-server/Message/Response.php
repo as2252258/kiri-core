@@ -50,4 +50,35 @@ class Response implements ResponseInterface
 		// TODO: Implement getReasonPhrase() method.
 		return $this->reasonPhrase;
 	}
+
+
+	/**
+	 * @param $value
+	 * @return ResponseInterface
+	 */
+	public function withAccessControlAllowHeaders($value): ResponseInterface
+	{
+		return $this->withHeader('Access-Control-Allow-Headers', $value);
+	}
+
+
+	/**
+	 * @param $value
+	 * @return ResponseInterface
+	 */
+	public function withAccessControlRequestMethod($value): ResponseInterface
+	{
+		return $this->withHeader('Access-Control-Request-Method', $value);
+	}
+
+
+	/**
+	 * @param $value
+	 * @return ResponseInterface
+	 */
+	public function withAccessControlAllowOrigin($value): ResponseInterface
+	{
+		return $this->withHeader('Access-Control-Allow-Origin', $value);
+	}
+
 }
