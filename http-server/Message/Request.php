@@ -3,6 +3,7 @@
 namespace Server\Message;
 
 use BadMethodCallException;
+use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -57,6 +58,15 @@ class Request implements RequestInterface
 		$message->stream = new Stream($request->getContent());
 		$message->headers = $request->header;
 		return $message;
+	}
+
+
+	/**
+	 * @return string|array|null
+	 */
+	#[Pure] public function getStartTime(): string|array|null
+	{
+		return $this->getHeaderLine('request_time_float');
 	}
 
 
