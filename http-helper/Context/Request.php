@@ -181,10 +181,10 @@ class Request extends HttpService implements RequestInterface
 
 
 	/**
-	 * @param $value
-	 * @return mixed
+	 * @param AuthIdentity $value
+	 * @return AuthIdentity
 	 */
-	public function setGrantAuthorization($value): mixed
+	public function setGrantAuthorization(AuthIdentity $value): AuthIdentity
 	{
 		return $this->_grant = $value;
 	}

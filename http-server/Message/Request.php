@@ -23,7 +23,10 @@ class Request implements RequestInterface
 	public string $method;
 
 
-	public UriInterface $uri;
+	/**
+	 * @var Uri
+	 */
+	private Uri $uri;
 
 
 	private \Swoole\Http\Request $serverRequest;
@@ -149,6 +152,16 @@ class Request implements RequestInterface
 	public function getMethod(): string
 	{
 		return $this->method;
+	}
+
+
+	/**
+	 * @param string $method
+	 * @return bool
+	 */
+	public function isMethod(string $method): bool
+	{
+		return $this->method === $method;
 	}
 
 

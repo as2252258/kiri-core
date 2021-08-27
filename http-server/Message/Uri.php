@@ -33,6 +33,24 @@ class Uri implements UriInterface
 	public string $password = '';
 
 
+	private array $_explode = [];
+
+
+	/**
+	 * @return string[]
+	 */
+	public function getExplode(): array
+	{
+		if ($this->path == '/' || $this->path == '') {
+			return [''];
+		}
+		if (empty($this->_explode)) {
+			$this->_explode = array_filter(explode('/', $this->path));
+		}
+		return $this->_explode;
+	}
+
+
 	/**
 	 * @return string
 	 */

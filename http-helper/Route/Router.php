@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Http\Route;
 
+use Annotation\Inject;
 use Closure;
 use Exception;
 use Http\Abstracts\HttpService;
@@ -44,6 +45,13 @@ class Router extends HttpService implements RouterInterface
 	public int $useTree = ROUTER_TREE;
 
 	public ?Response $response = null;
+
+
+	/**
+	 * @var RequestInterface
+	 */
+	#[Inject(RequestInterface::class)]
+	public RequestInterface $request;
 
 
 	/**
@@ -495,7 +503,7 @@ class Router extends HttpService implements RouterInterface
 	{
 		$method = $request->getMethod();
 
-		$methods = $this->nodes[$method][\request()->getUri()] ?? null;
+		$methods = $this->nodes[$method][\request()->getUri()->getPath()] ?? null;
 		if (!is_null($methods)) {
 			return $methods;
 		}
@@ -548,11 +556,12 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function Branch_search(RequestInterface $request): ?Node
 	{
-		$node = $this->tree_search($request->getExplode(), $request->getMethod());
+		$uri = $request->getUri();
+		$node = $this->tree_search($uri->getExplode(), $request->getMethod());
 		if ($node instanceof Node) {
 			return $node;
 		}
-		if (!$request->isOption) {
+		if (!$request->isMethod('OPTIONS')) {
 			return null;
 		}
 		$node = $this->tree_search(['*'], $request->getMethod());
