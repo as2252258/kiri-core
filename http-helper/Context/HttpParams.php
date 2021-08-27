@@ -91,12 +91,12 @@ trait HttpParams
 
 
 	/**
-	 * @return mixed
+	 * @return string
 	 * @throws Exception
 	 */
-	public function getRawContent(): mixed
+	public function getContent(): string
 	{
-		return $this->_rawContent;
+		return $this->_body;
 	}
 
 
