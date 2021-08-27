@@ -85,15 +85,16 @@ trait Message
 	 */
 	private function parseRequestHeaders(\Swoole\Http\Request $request): static
 	{
-//		$index = strpos($request->getData(), "\r\n\r\n");
-//		$headers = explode("\r\n", substr($request->getData(), 0, $index));
-//
-//		array_shift($headers);
-		foreach ($request->header as $key => $value) {
+		$index = strpos($request->getData(), "\r\n\r\n");
+		$headers = explode("\r\n", substr($request->getData(), 0, $index));
+
+		array_shift($headers);
+		foreach ($request->header as $header) {
+			[$key, $value] = explode(': ', $header);
 			$this->addRequestHeader($key, $value);
 		}
-		$class = Kiri::getDi()->get(Headers::class);
-		$this->header = $class->withHeader($this->headers);
+//		$class = Kiri::getDi()->get(Headers::class);
+//		$this->header = $class->withHeader($this->headers);
 		return $this;
 	}
 

@@ -25,9 +25,6 @@ class Request implements RequestInterface
 	public string $method;
 
 
-	public Headers $header;
-
-
 	/**
 	 * @var Uri
 	 */
@@ -54,6 +51,7 @@ class Request implements RequestInterface
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return RequestInterface
+	 * @throws ReflectionException
 	 */
 	public static function parseRequest(\Swoole\Http\Request $request): RequestInterface
 	{
