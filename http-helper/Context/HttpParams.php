@@ -36,6 +36,10 @@ trait HttpParams
 	private ?array $_files = [];
 
 
+	/** @var string */
+	private string $_body = '';
+
+
 	private mixed $_rawContent = '';
 
 	/**
@@ -63,26 +67,36 @@ trait HttpParams
 	}
 
 	/**
-	 * @param mixed|string $rawContent
+	 * @param \Swoole\Http\Request $request
 	 */
-	public function setRawContent(mixed $rawContent, string $context_type): void
+	public function setParseBody(\Swoole\Http\Request $request): void
 	{
-		if (str_contains($context_type, 'json')) {
-			$this->_rawContent = json_decode($rawContent, true);
-		} else if (str_contains($context_type, 'xml')) {
-			$this->_rawContent = Xml::toArray($rawContent);
+		$content = $request->getContent();
+		if (empty($content)) {
+			return;
+		}
+		$contentType = $request->header['content-type'];
+		if (str_contains($contentType, 'json')) {
+			$this->_posts = json_decode($contentType, true);
+		} else if (str_contains($contentType, 'xml')) {
+			$this->_posts = Xml::toArray($contentType);
+		} else if (str_contains($contentType, 'x-www-form-urlencoded')) {
+			$this->_posts = $request->post;
+		} else if (str_contains($contentType, 'serialize')) {
+			$this->_posts = unserialize($content);
 		} else {
-			$this->_rawContent = $rawContent;
+			$this->_body = $content;
 		}
 	}
 
+
 	/**
-	 * @return mixed
+	 * @return string
 	 * @throws Exception
 	 */
-	public function getRawContent(): mixed
+	public function getContent(): string
 	{
-		return $this->_rawContent;
+		return $this->_body;
 	}
 
 

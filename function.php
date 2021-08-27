@@ -710,19 +710,6 @@ if (!function_exists('request')) {
 
 }
 
-if (!function_exists('Input')) {
-
-	/**
-	 * @return HttpParams
-	 * @throws Exception
-	 */
-	function Input(): HttpParams
-	{
-		return request()->params;
-	}
-
-}
-
 if (!function_exists('storage')) {
 
 	/**
@@ -766,20 +753,6 @@ if (!function_exists('event')) {
 	{
 		$pro = di(EventProvider::class);
 		$pro->on($name, $callback, 0);
-	}
-
-}
-
-
-if (!function_exists('alias')) {
-
-	/**
-	 * @param $class
-	 * @param $name
-	 */
-	function alias($class, $name)
-	{
-		Kiri::setAlias($class, $name);
 	}
 
 }

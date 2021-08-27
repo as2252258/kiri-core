@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kiri\Jwt;
 
+use Annotation\Inject;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
@@ -21,7 +22,17 @@ class Jwt extends Component
 	use JwtHelper;
 
 
+	#[Inject(Request::class)]
 	private Request $request;
+
+
+	/**
+	 * @param Request $request
+	 */
+	public function setRequest(Request $request): void
+	{
+		$this->request = $request;
+	}
 
 
 	/**
@@ -96,7 +107,7 @@ class Jwt extends Component
 	 */
 	private function jwtBody($unionId): string
 	{
-		$json = json_encode(['unionId' => $unionId, 'createTime' => time(), 'loginIp' => request()->getIp(), 'expire_at' => time() + $this->timeout]);
+		$json = json_encode(['unionId' => $unionId, 'createTime' => time(), 'expire_at' => time() + $this->timeout]);
 		openssl_private_encrypt($json, $encode, $this->private);
 		return base64_encode($encode);
 	}

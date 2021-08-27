@@ -287,7 +287,7 @@ class Node
 	public function checkSuffix(): bool
 	{
 		if ($this->enableHtmlSuffix) {
-			$url = request()->getUri();
+			$url = request()->getUri()->getPath();
 			$nowLength = strlen($this->htmlSuffix);
 			if (strpos($url, $this->htmlSuffix) !== strlen($url) - $nowLength) {
 				return false;
