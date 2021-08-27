@@ -110,6 +110,15 @@ trait Message
 		return $this->headers;
 	}
 
+
+	/**
+	 * @return array
+	 */
+	public function getCookies(): array
+	{
+		return $this->cookies;
+	}
+
 	/**
 	 * @param $name
 	 * @return bool

@@ -4,7 +4,6 @@ namespace Server\Constrict;
 
 use Annotation\Inject;
 use Exception;
-use Http\Context\Formatter\FileFormatter;
 use Kiri\Exception\NotFindClassException;
 use ReflectionException;
 use Psr\Http\Message\ResponseInterface;
@@ -34,17 +33,15 @@ class ResponseEmitter implements Emitter
      */
     public function sender(mixed $response, ResponseInterface $emitter): void
     {
-        if (!empty($this->headers) && is_array($this->headers)) {
-            foreach ($this->headers as $name => $values) {
+        if (!empty($emitter->getHeaders()) && is_array($emitter->getHeaders())) {
+            foreach ($emitter->getHeaders() as $name => $values) {
                 $response->header($name, implode(';', $values));
             }
-            $this->headers = [];
         }
-        if (!empty($this->cookies) && is_array($this->cookies)) {
-            foreach ($this->cookies as $name => $cookie) {
+        if (!empty($emitter->getCookies()) && is_array($emitter->getCookies())) {
+            foreach ($emitter->getCookies() as $name => $cookie) {
                 $response->cookie($name, ...$cookie);
             }
-            $this->cookies = [];
         }
         $response->setStatusCode($emitter->getStatusCode());
         $response->header('Run-Time', time());
