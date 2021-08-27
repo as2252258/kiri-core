@@ -3,10 +3,10 @@
 namespace Server\Service;
 
 
-use Database\ObjectToArray;
 use Exception;
 use Http\Exception\RequestException;
 use Http\Route\Node;
+use Kiri\ToArray;
 use Server\Events\OnAfterRequest;
 use Server\Message\Stream;
 use Server\ResponseInterface;
@@ -66,7 +66,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
     {
         $this->response->withStatus(200);
         if (is_object($responseData)) {
-            if (!($responseData instanceof ObjectToArray)) {
+            if (!($responseData instanceof ToArray)) {
                 $responseData = get_object_vars($responseData);
             } else {
                 $responseData = $responseData->toArray();
