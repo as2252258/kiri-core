@@ -7,12 +7,9 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
-use Http\Context\Context;
 use Http\Context\Request;
 use Http\Context\Response;
-use Http\IInterface\MiddlewareInterface;
 use Server\RequestInterface;
-use Kiri\Kiri;
 
 /**
  * Class CoreMiddleware
@@ -26,7 +23,7 @@ class CoreMiddleware extends MiddlewareAbstracts
 
 
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 * @param Closure $next
 	 * @return mixed
 	 * @throws Exception
@@ -36,8 +33,8 @@ class CoreMiddleware extends MiddlewareAbstracts
 		/** @var Response $response */
 		$response = \response();
 		$response->addHeader('Access-Control-Allow-Origin', '*');
-		$response->addHeader('Access-Control-Allow-Headers', $request->header('access-control-request-headers'));
-		$response->addHeader('Access-Control-Request-Method', $request->header('access-control-request-method'));
+		$response->addHeader('Access-Control-Allow-Headers', $request->getHeaderLine('Access-Control-Request-Headers'));
+		$response->addHeader('Access-Control-Request-Method', $request->getHeaderLine('Access-Control-Request-Method'));
 
 		return $next($request);
 	}
