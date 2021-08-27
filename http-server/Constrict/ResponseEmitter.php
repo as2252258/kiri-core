@@ -7,6 +7,7 @@ use Exception;
 use Kiri\Exception\NotFindClassException;
 use ReflectionException;
 use Psr\Http\Message\ResponseInterface;
+use Server\RequestInterface;
 use Swoole\Server;
 
 
@@ -22,6 +23,13 @@ class ResponseEmitter implements Emitter
      */
     #[Inject(DownloadEmitter::class)]
     public DownloadEmitter $downloadEmitter;
+
+
+    /**
+     * @var \Server\RequestInterface
+     */
+    #[Inject(RequestInterface::class)]
+    public RequestInterface $request;
 
 
     /**
@@ -44,9 +52,17 @@ class ResponseEmitter implements Emitter
             }
         }
         $response->setStatusCode($emitter->getStatusCode());
-        $response->header('Run-Time', (time() + microtime(true)) - request()->getStartTime());
+        $response->header('Run-Time', sprintf('%.5f', $this->getRunTime()));
         $response->end($emitter->getBody());
+    }
 
+
+    /**
+     * @return float
+     */
+    private function getRunTime(): float
+    {
+        return microtime(true) - $this->request->getStartTime();
     }
 
 }
