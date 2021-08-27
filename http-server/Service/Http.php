@@ -73,10 +73,14 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
             }
         }
         if (is_array($responseData)) {
-            return $interface->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)))
-                ->withContentType(\Server\Message\Response::CONTENT_TYPE_JSON);
+            $responseData = new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE));
+        } else {
+            $responseData = new Stream((string)$responseData);
         }
-        return $interface->withBody(new Stream((string)$responseData));
+        if (!$interface->hasHeader('Content-Type')) {
+            $interface->withContentType(\Server\Message\Response::CONTENT_TYPE_JSON);
+        }
+        return $interface->withBody($responseData);
     }
 
 
