@@ -44,7 +44,7 @@ class ResponseEmitter implements Emitter
             }
         }
         $response->setStatusCode($emitter->getStatusCode());
-        $response->header('Run-Time', time());
+        $response->header('Run-Time', (time() + microtime(true)) - request()->getStartTime());
         $response->end($emitter->getBody());
 
     }
