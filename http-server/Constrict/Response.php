@@ -22,19 +22,38 @@ class Response implements ResponseInterface
 	const HTML = 'html';
 	const FILE = 'file';
 
-	/**
-	 * @param $name
-	 * @param $args
-	 * @return mixed
-	 */
-	public function __call($name, $args)
-	{
-		if (!Context::hasContext(Psr7Response::class)) {
-			$context = Context::setContext(Psr7Response::class, new Psr7Response());
-		} else {
-			$context = Context::getContext(Psr7Response::class);
-		}
-		return $context->{$name}(...$args);
-	}
+    /**
+     * @param $name
+     * @param $args
+     * @return mixed
+     */
+    public function __call($name, $args)
+    {
+        if (!method_exists($this, $name)) {
+            return $this->__call__()->{$name}(...$args);
+        }
+        return $this->{$name}(...$args);
+    }
 
+    /**
+     * @param string $name
+     */
+    public function __get(string $name)
+    {
+        return $this->__call__()->{$name};
+    }
+
+
+    /**
+     * @return Psr7Response
+     */
+    public function __call__(): Psr7Response
+    {
+        if (!Context::hasContext(Psr7Response::class)) {
+            $context = Context::setContext(Psr7Response::class, new Psr7Response());
+        } else {
+            $context = Context::getContext(Psr7Response::class);
+        }
+        return $context;
+    }
 }
