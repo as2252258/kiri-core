@@ -57,17 +57,13 @@ class Request implements RequestInterface
 		Context::setContext(Response::class, new Response());
 
 		$sRequest = new HttpResponse();
-
-		var_dump($request->getData(), $request->header);
-
 		$sRequest->setHeaders(array_merge($request->header, $request->server));
 
 		$sRequest->setUri($sRequest->getRequestUri());
 		$sRequest->setClientId($request->fd);
 
-		$sRequest->setRawContent($request->rawContent(), $sRequest->getContentType());
+		$sRequest->setParseBody($request);
 		$sRequest->setFiles($request->files ?? []);
-		$sRequest->setPosts($request->post ?? []);
 		$sRequest->setGets($request->get ?? []);
 
 		Context::setContext(HttpResponse::class, $sRequest);

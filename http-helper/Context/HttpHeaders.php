@@ -19,6 +19,10 @@ trait HttpHeaders
 	private array $_headers = [];
 
 
+
+	private array $_server = [];
+
+
 	/**
 	 * @param array $headers
 	 */
