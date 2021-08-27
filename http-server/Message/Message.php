@@ -65,28 +65,28 @@ trait Message
 	}
 
 
-	/**
-	 * @return string
-	 */
-	#[Pure] public function getAccessControlAllowOrigin(): string
+    /**
+     * @return string|null
+     */
+	#[Pure] public function getAccessControlAllowOrigin(): ?string
 	{
 		return $this->getHeaderLine('Access-Control-Allow-Origin');
 	}
 
 
-	/**
-	 * @return string
-	 */
-	#[Pure] public function getAccessControlRequestHeaders(): string
+    /**
+     * @return string|null
+     */
+	#[Pure] public function getAccessControlRequestHeaders(): ?string
 	{
 		return $this->getHeaderLine('Access-Control-Request-Headers');
 	}
 
 
-	/**
-	 * @return string
-	 */
-	#[Pure] public function getAccessControlRequestMethod(): string
+    /**
+     * @return string|null
+     */
+	#[Pure] public function getAccessControlRequestMethod(): ?string
 	{
 		return $this->getHeaderLine('Access-Control-Request-Method');
 	}
