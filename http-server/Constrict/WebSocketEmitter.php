@@ -4,7 +4,7 @@ namespace Server\Constrict;
 
 
 use Kiri\Exception\NotFindClassException;
-use Server\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  *
@@ -22,6 +22,6 @@ class WebSocketEmitter implements Emitter
 	 */
 	public function sender(mixed $response, ResponseInterface $emitter): void
 	{
-		$response->push($emitter->getClientId(), $emitter->getContent()->getData());
+//		$response->push($emitter->getClientId(), $emitter->getContent()->getData());
 	}
 }

@@ -4,7 +4,7 @@ namespace Server\Constrict;
 
 use Http\Context\Formatter\FileFormatter;
 use Kiri\Exception\NotFindClassException;
-use Server\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 use Swoole\Server;
 
 
