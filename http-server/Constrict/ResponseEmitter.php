@@ -52,17 +52,9 @@ class ResponseEmitter implements Emitter
             }
         }
         $response->setStatusCode($emitter->getStatusCode());
-        $response->header('Run-Time', sprintf('%.5f', $this->getRunTime()));
+        $response->header('Server', 'swoole');
+        $response->header('Swoole-Version', swoole_version());
         $response->end($emitter->getBody());
-    }
-
-
-    /**
-     * @return float
-     */
-    private function getRunTime(): float
-    {
-        return microtime(true) - $this->request->getStartTime();
     }
 
 }
