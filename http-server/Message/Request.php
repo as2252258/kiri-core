@@ -54,7 +54,6 @@ class Request implements RequestInterface
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return RequestInterface
-	 * @throws ReflectionException
 	 */
 	public static function parseRequest(\Swoole\Http\Request $request): RequestInterface
 	{
