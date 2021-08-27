@@ -65,7 +65,8 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
     {
         $this->response->withStatus(200);
         if (is_array($responseData)) {
-            return $this->response->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)));
+            return $this->response->withBody(new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE)))
+                ->withContentType(\Server\Message\Response::CONTENT_TYPE_JSON);
         }
         return $this->response->withBody(new Stream((string)$responseData));
     }
