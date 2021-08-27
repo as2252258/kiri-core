@@ -24,6 +24,15 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 
     /**
+     *
+     */
+    public function __construct()
+    {
+        $this->stream = new Stream('');
+    }
+
+
+    /**
      * @param string $type
      * @return $this
      */

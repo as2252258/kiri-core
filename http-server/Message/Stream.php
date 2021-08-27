@@ -133,11 +133,23 @@ class Stream implements StreamInterface
 	 */
 	public function write($string): int
 	{
-		// TODO: Implement write() method.
+		$this->body = $string;
+		$this->size = strlen($this->body);
+		return $this->size;
+	}
+
+
+	/**
+	 * @param string $string
+	 * @return int
+	 */
+	public function append($string): int
+	{
 		$this->body .= $string;
 		$this->size = strlen($this->body);
 		return $this->size;
 	}
+
 
 
 	/**
@@ -155,7 +167,6 @@ class Stream implements StreamInterface
 	 */
 	public function read($length): string
 	{
-		// TODO: Implement read() method.
 		return substr($this->body, 0, $length);
 	}
 
