@@ -5,7 +5,7 @@ namespace Server\Constrict;
 
 use Kiri\Exception\NotFindClassException;
 use ReflectionException;
-use Server\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  *
