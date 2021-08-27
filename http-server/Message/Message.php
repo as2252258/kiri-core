@@ -181,7 +181,6 @@ trait Message
 	 */
 	#[Pure] public function getHeaderLine($name): string|null
 	{
-	    var_dump($this->headers);
 		if ($this->hasHeader($name)) {
 			return implode(';', $this->headers[$name]);
 		}
