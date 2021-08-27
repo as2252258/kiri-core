@@ -7,6 +7,7 @@ use Exception;
 use Http\Exception\RequestException;
 use Http\Route\Node;
 use Server\Events\OnAfterRequest;
+use Server\Message\Stream;
 use Server\ResponseInterface;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
@@ -45,7 +46,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 			}
 			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
-				$responseData = $this->response->setContent($responseData)->setStatusCode(200);
+				$responseData = $this->response->withStatus(200)->withBody(new Stream($responseData));
 			}
 		} catch (Error | \Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);

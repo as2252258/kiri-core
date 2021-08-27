@@ -5,14 +5,14 @@ namespace Server\Constrict;
 
 
 use Http\Context\Context;
-use Http\Context\Response as HttpResponse;
 use Server\ResponseInterface;
+use Server\Message\Response as Psr7Response;
 
 
 /**
  * Class Response
  * @package Server
- * @mixin HttpResponse
+ * @mixin Psr7Response
  */
 class Response implements ResponseInterface
 {
@@ -29,10 +29,10 @@ class Response implements ResponseInterface
 	 */
 	public function __call($name, $args)
 	{
-		if (!Context::hasContext(HttpResponse::class)) {
-			$context = Context::setContext(HttpResponse::class, new HttpResponse());
+		if (!Context::hasContext(Psr7Response::class)) {
+			$context = Context::setContext(Psr7Response::class, new Psr7Response());
 		} else {
-			$context = Context::getContext(HttpResponse::class);
+			$context = Context::getContext(Psr7Response::class);
 		}
 		return $context->{$name}(...$args);
 	}

@@ -51,9 +51,8 @@ trait Message
 	 */
 	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
-		$class = clone $this;
-		$class->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
-		return $class;
+        $this->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
+		return $this;
 	}
 
 
@@ -99,9 +98,8 @@ trait Message
 	 */
 	public function withProtocolVersion($version): static
 	{
-		$class = clone $this;
-		$class->version = $version;
-		return $class;
+        $this->version = $version;
+		return $this;
 	}
 
 	/**
@@ -188,12 +186,11 @@ trait Message
 	 */
 	public function withHeader($name, $value): static
 	{
-		$class = clone $this;
 		if (!is_array($value)) {
 			$value = [$value];
 		}
-		$class->headers[$name] = $value;
-		return $class;
+        $this->headers[$name] = $value;
+		return $this;
 	}
 
 
@@ -205,12 +202,11 @@ trait Message
 	 */
 	public function withAddedHeader($name, $value): static
 	{
-		$class = clone $this;
-		if (!array_key_exists($name, $class->headers)) {
+		if (!array_key_exists($name, $this->headers)) {
 			throw new \Exception('Headers `' . $name . '` not exists.');
 		}
-		$class->headers[$name][] = $value;
-		return $class;
+        $this->headers[$name][] = $value;
+		return $this;
 	}
 
 
@@ -220,9 +216,8 @@ trait Message
 	 */
 	public function withoutHeader($name): static
 	{
-		$class = clone $this;
-		unset($class->headers[$name]);
-		return $class;
+		unset($this->headers[$name]);
+		return $this;
 	}
 
 
@@ -231,7 +226,7 @@ trait Message
 	 */
 	public function getBody(): string
 	{
-		return $this->stream;
+		return $this->stream->getContents();
 	}
 
 
@@ -241,9 +236,8 @@ trait Message
 	 */
 	public function withBody(StreamInterface $body): static
 	{
-		$class = clone $this;
-		$class->stream = $body;
-		return $class;
+        $this->stream = $body;
+		return $this;
 	}
 
 
@@ -275,31 +269,13 @@ trait Message
 	}
 
 
+    /**
+     * @param $host
+     * @return \Server\Message\Request|\Server\Message\Response
+     */
 	public function redirectTo($host)
 	{
 		return $this->withHeader('Location', $host)
 			->withStatus(302);
 	}
-
-
-	public function getStreamData()
-	{
-		$response = new \Swoole\Http\Response();
-		$response->setStatusCode($this->statusCode);
-		$response->setHeader('Run-Time', time());
-		if (!empty($this->headers) && is_array($this->headers)) {
-			foreach ($this->headers as $name => $values) {
-				$response->setHeader($name, implode(';', $values));
-			}
-			$this->headers = [];
-		}
-		if (!empty($this->cookies) && is_array($this->cookies)) {
-			foreach ($this->cookies as $name => $cookie) {
-				$response->cookie($name, ...$cookie);
-			}
-			$this->cookies = [];
-		}
-	}
-
-
 }

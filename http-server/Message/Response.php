@@ -30,15 +30,13 @@ class Response implements ResponseInterface
 	/**
 	 * @param int $code
 	 * @param string $reasonPhrase
-	 * @return ResponseInterface
+	 * @return static
 	 */
-	public function withStatus($code, $reasonPhrase = ''): ResponseInterface
+	public function withStatus($code, $reasonPhrase = ''): static
 	{
-		// TODO: Implement withStatus() method.
-		$class = clone $this;
-		$class->statusCode = $code;
-		$class->reasonPhrase = $reasonPhrase;
-		return $class;
+        $this->statusCode = $code;
+        $this->reasonPhrase = $reasonPhrase;
+		return $this;
 	}
 
 
