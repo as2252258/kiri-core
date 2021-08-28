@@ -231,7 +231,7 @@ class Node
 		if (empty($aspect)) {
 			return null;
 		}
-		return di($aspect['params']['aspect']);
+		return di($aspect->aspect);
 	}
 
 

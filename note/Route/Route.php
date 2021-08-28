@@ -18,7 +18,7 @@ use Kiri\Kiri;
      * @param string $method
      * @param string $version
      */
-    public function __construct(string $uri, string $method, string $version = 'v.1.0')
+    public function __construct(public string $uri,public string $method,public string $version = 'v.1.0')
     {
     }
 
@@ -31,14 +31,14 @@ use Kiri\Kiri;
      * @throws \Kiri\Exception\NotFindClassException
      * @throws \ReflectionException
      */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): Router
+    public function execute(mixed $class, mixed $method = null): Router
     {
         // TODO: Implement setHandler() method.
         $router = Kiri::app()->getRouter();
         if (is_string($class)) {
             $class = di($class);
         }
-        $router->addRoute($params->uri, [$class, $method], strtoupper($params->method));
+        $router->addRoute($this->uri, [$class, $method], strtoupper($this->method));
         return $router;
     }
 

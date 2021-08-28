@@ -16,30 +16,30 @@ use Kiri\Events\EventProvider;
 {
 
 
-	/**
-	 * Event constructor.
-	 * @param string $name
-	 * @param array $params
-	 */
-	public function __construct(string $name, array $params = [])
-	{
-	}
+    /**
+     * Event constructor.
+     * @param string $name
+     * @param array $params
+     */
+    public function __construct(public string $name, public array $params = [])
+    {
+    }
 
 
-	/**
-	 * @param mixed $class
-	 * @param mixed|null $method
-	 * @return bool
-	 * @throws Exception
-	 */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): bool
-	{
-		$pro = di(EventProvider::class);
-		if (is_string($class)) {
-			$class = di($class);
-		}
-		$pro->on($params->name, [$class, $method]);
-		return true;
-	}
+    /**
+     * @param mixed $class
+     * @param mixed|null $method
+     * @return bool
+     * @throws Exception
+     */
+    public function execute(mixed $class, mixed $method = null): bool
+    {
+        $pro = di(EventProvider::class);
+        if (is_string($class)) {
+            $class = di($class);
+        }
+        $pro->on($this->name, [$class, $method]);
+        return true;
+    }
 
 }

@@ -81,7 +81,7 @@ class OnWorkerStart implements EventDispatcherInterface
         $di = Kiri::getDi();
         foreach ($fileLists as $class) {
             foreach ($di->getTargetNote($class) as $value) {
-                $value['class']::execute((object)$value['params'], $class);
+                $value->execute($class);
             }
             $methods = $di->getMethodAttribute($class);
             foreach ($methods as $method => $attribute) {
@@ -89,7 +89,7 @@ class OnWorkerStart implements EventDispatcherInterface
                     continue;
                 }
                 foreach ($attribute as $item) {
-                    $item['class']::execute((object)$item['params'], $class, $method);
+                    $item->execute($class, $method);
                 }
             }
         }

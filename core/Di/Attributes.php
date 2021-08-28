@@ -33,7 +33,7 @@ trait Attributes
                 continue;
             }
 
-            $instance = $this->format_annotation($attribute);
+            $instance = $attribute->newInstance();
 
             $this->_classTarget[$className][] = $instance;
 
@@ -120,7 +120,7 @@ trait Attributes
                 if (!class_exists($attribute->getName())) {
                     continue;
                 }
-                $instance = $this->format_annotation($attribute);
+                $instance = $attribute->newInstance();
 
                 $this->_classMethodNote[$className][$ReflectionMethod->getName()][] = $instance;
 
@@ -166,43 +166,13 @@ trait Attributes
                     continue;
                 }
 
-                $instance = $this->format_annotation($attribute);
+                $instance = $attribute->newInstance();
 
                 $this->_classPropertyNote[$className][$ReflectionMethod->getName()] = $instance;
 
                 $this->setMappingProperty($attribute, $className, $ReflectionMethod->getName(), $instance);
             }
         }
-    }
-
-
-    /**
-     * @param \ReflectionAttribute $attribute
-     * @return array
-     * @throws \ReflectionException
-     */
-    private function format_annotation(ReflectionAttribute $attribute)
-    {
-        $reflection_class = new ReflectionClass($attribute->getName());
-
-        $argument = $attribute->getArguments();
-
-        $array = ['class' => $attribute->getName(), 'params' => []];
-        foreach ($reflection_class->getConstructor()->getParameters() as $key => $parameter) {
-            if (isset($argument[$parameter->getName()])) {
-                $array['params'][$parameter->getName()] = $argument[$parameter->getName()];
-            } else {
-                if (!isset($argument[$key])) {
-                    $array['params'][$parameter->getName()] = $parameter->getDefaultValue();
-                } else {
-                    $array['params'][$parameter->getName()] = $argument[$key];
-                }
-            }
-        }
-
-        unset($reflection_class);
-
-        return $array;
     }
 
 

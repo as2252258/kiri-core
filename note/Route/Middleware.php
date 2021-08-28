@@ -22,8 +22,19 @@ use Http\IInterface\MiddlewareInterface;
      * @param string|array $middleware
      * @throws
      */
-    public function __construct(string|array $middleware)
+    public function __construct(public string|array $middleware)
     {
+        if (is_string($this->middleware)) {
+            $this->middleware = [$this->middleware];
+        }
+        $array = [];
+        foreach ($this->middleware as $value) {
+            $sn = di($value);
+            if (!($sn instanceof MiddlewareInterface)) {
+                continue;
+            }
+            $array[] = [$sn, 'onHandler'];
+        }
     }
 
 
@@ -34,22 +45,10 @@ use Http\IInterface\MiddlewareInterface;
      * @return $this
      * @throws ReflectionException
      */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): mixed
+    public function execute(mixed $class, mixed $method = null): mixed
     {
-        if (is_string($params->middleware)) {
-            $params->middleware = [$params->middleware];
-        }
-        $array = [];
-        foreach ($params->middleware as $value) {
-            $sn = di($value);
-            if (!($sn instanceof MiddlewareInterface)) {
-                continue;
-            }
-            $array[] = [$sn, 'onHandler'];
-        }
-        MiddlewareManager::addMiddlewares($class, $method, $array);
-
-        return parent::execute($params, $class, $method);
+        MiddlewareManager::addMiddlewares($class, $method, $this->middleware);
+        return parent::execute($class, $method);
     }
 
 

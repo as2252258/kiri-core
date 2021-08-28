@@ -31,16 +31,4 @@ use Annotation\Attribute;
 	}
 
 
-	/**
-     * @param static $params
-     * @param mixed $class
-	 * @param mixed|null $method
-	 * @return array
-	 */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): array
-	{
-		// TODO: Implement execute() method.
-		return [$params->request, $params->response];
-	}
-
 }

@@ -17,16 +17,22 @@ use Server\Events\OnWorkerExit;
 {
 
 
-	/**
-	 * LocalService constructor.
-	 * @param string $service
-	 * @param array|null $args
-	 * @param bool $async_reload
-	 * @throws Exception
-	 */
-	public function __construct(string $service, ?array $args = [], bool $async_reload = true)
-	{
-	}
+    /**
+     * LocalService constructor.
+     * @param string $service
+     * @param array|null $args
+     * @param bool $async_reload
+     * @throws Exception
+     */
+    public function __construct(public string $service, public ?array $args = [], public bool $async_reload = true)
+    {
+        if ($this->async_reload !== true) {
+            $pro = di(EventProvider::class);
+            $pro->on(OnWorkerExit::class, function () {
+                di(\Kiri\Di\LocalService::class)->remove($this->service);
+            }, 0);
+        }
+    }
 
 
     /**
@@ -35,19 +41,13 @@ use Server\Events\OnWorkerExit;
      * @return bool
      * @throws Exception
      */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): bool
+    public function execute(mixed $class, mixed $method = null): bool
     {
         $class = ['class' => $class];
-        if (!empty($params->args)) {
-            $class = array_merge($class, $params->args);
+        if (!empty($this->args)) {
+            $class = array_merge($class, $this->args);
         }
-        if ($params->async_reload !== true) {
-            $pro = di(EventProvider::class);
-            $pro->on(OnWorkerExit::class, function () use ($params) {
-                di(\Kiri\Di\LocalService::class)->remove($params->service);
-            },0);
-        }
-        Kiri::set($params->service, $class);
+        Kiri::set($this->service, $class);
         return true;
     }
 

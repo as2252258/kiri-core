@@ -28,15 +28,5 @@ use Kiri\Kiri;
 	}
 
 
-	/**
-	 * @param mixed $class
-	 * @param mixed|null $method
-	 * @return bool
-	 */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): bool
-	{
-		return true;
-	}
-
 
 }

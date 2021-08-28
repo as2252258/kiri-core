@@ -23,7 +23,7 @@ defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implem
      * Aspect constructor.
      * @param string $aspect
      */
-    public function __construct(string $aspect)
+    public function __construct(public string $aspect)
     {
     }
 
@@ -31,7 +31,7 @@ defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implem
 	/**
 	 * @throws Exception
 	 */
-    public static function execute(mixed $params, mixed $class, mixed $method = ''): bool
+    public function execute(mixed $class, mixed $method = ''): bool
     {
         return true;
     }

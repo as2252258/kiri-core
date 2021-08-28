@@ -15,7 +15,7 @@ interface IAnnotation
      * @param mixed $method
      * @return mixed
      */
-    public static function execute(mixed $params, mixed $class, mixed $method = ''): mixed;
+    public function execute(mixed $class, mixed $method = ''): mixed;
 
 
 }
