@@ -28,6 +28,7 @@ use Http\IInterface\MiddlewareInterface;
 
 
     /**
+     * @param static $params
      * @param mixed $class
      * @param mixed|null $method
      * @return $this

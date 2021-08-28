@@ -24,10 +24,12 @@ use Kiri\Kiri;
 
 
     /**
+     * @param static $params
      * @param mixed $class
      * @param mixed|null $method
      * @return Router
-     * @throws Exception
+     * @throws \Kiri\Exception\NotFindClassException
+     * @throws \ReflectionException
      */
     public static function execute(mixed $params, mixed $class, mixed $method = null): Router
     {

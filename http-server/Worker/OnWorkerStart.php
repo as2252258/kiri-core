@@ -55,12 +55,14 @@ class OnWorkerStart implements EventDispatcherInterface
     /**
      * @param $event
      * @throws \Kiri\Exception\ConfigException
+     * @throws \Exception
      */
     public function onTaskInit($event)
     {
-        $this->annotation->read(APP_PATH . 'app', 'App', [CONTROLLER_PATH]);
-
         putenv('environmental=' . Kiri::TASK);
+        if (is_enable_file_modification_listening()) {
+            $this->annotation->read(APP_PATH . 'app', 'App', [CONTROLLER_PATH]);
+        }
 
         echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
 
@@ -75,14 +77,17 @@ class OnWorkerStart implements EventDispatcherInterface
      */
     public function onWorkerInit($event)
     {
-        $this->annotation->read(APP_PATH . 'app');
         putenv('environmental=' . Kiri::WORKER);
-        echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
-        $this->setProcessName(sprintf('Worker[%d].%d', $event->server->worker_pid, $event->workerId));
+
         if (is_enable_file_modification_listening()) {
+            $this->annotation->read(APP_PATH . 'app');
             $loader = Kiri::app()->getRouter();
             $loader->_loader();
         }
+
+        echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
+
+        $this->setProcessName(sprintf('Worker[%d].%d', $event->server->worker_pid, $event->workerId));
     }
 
 

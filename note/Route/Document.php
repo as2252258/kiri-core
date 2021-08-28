@@ -32,7 +32,8 @@ use Annotation\Attribute;
 
 
 	/**
-	 * @param mixed $class
+     * @param static $params
+     * @param mixed $class
 	 * @param mixed|null $method
 	 * @return array
 	 */

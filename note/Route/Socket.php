@@ -32,6 +32,7 @@ use Kiri\Kiri;
 
 
 	/**
+     * @param static $params
 	 * @param mixed $class
 	 * @param mixed|null $method
 	 * @return Router
