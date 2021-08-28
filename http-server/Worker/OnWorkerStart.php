@@ -12,7 +12,6 @@ use Kiri\Kiri;
 use Kiri\Runtime;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionException;
-use Server\Events\OnWorkerStart as WorkerStart;
 
 class OnWorkerStart implements EventDispatcherInterface
 {
@@ -34,13 +33,6 @@ class OnWorkerStart implements EventDispatcherInterface
      */
     public function dispatch(object $event)
     {
-        putenv('state=start');
-        putenv('worker=' . $event->workerId);
-        $serialize = file_get_contents(storage(Runtime::CONFIG_NAME));
-        if (!empty($serialize)) {
-            Config::sets(unserialize($serialize));
-        }
-
         $isWorker = $event->workerId < $event->server->setting['worker_num'];
 
         $this->annotation->read(APP_PATH . 'app','App', $isWorker ? [] : [CONTROLLER_PATH]);

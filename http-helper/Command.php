@@ -10,6 +10,8 @@ use Kiri\Abstracts\Input;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Server\Events\OnBeforeWorkerStart;
+use Server\Worker\OnServerWorker;
 use Server\Worker\OnWorkerStart as WorkerDispatch;
 use Server\Events\OnWorkerStart;
 
@@ -70,6 +72,7 @@ class Command extends \Console\Command
     {
         exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder');
 
+        $this->eventProvider->on(OnBeforeWorkerStart::class, [di(OnServerWorker::class), 'setConfigure']);
         $this->eventProvider->on(OnWorkerStart::class, [di(WorkerDispatch::class), 'dispatch']);
 
         return $manager->start();

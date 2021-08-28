@@ -14,6 +14,8 @@ use Kiri\Runtime;
 use ReflectionException;
 use Server\Events\OnAfterRequest;
 use Server\Events\OnAfterWorkerStart;
+use Server\Events\OnBeforeReload;
+use Server\Events\OnBeforeWorkerStart;
 use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStart;
@@ -44,92 +46,25 @@ class OnServerWorker extends \Server\Abstracts\Server
      */
     public function onWorkerStart(Server $server, int $workerId)
     {
-        $this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
+        $this->eventDispatch->dispatch(new OnBeforeWorkerStart($workerId));
 
-//        $this->onWorkerStartInit($server, $workerId);
+        $this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
 
         $this->eventDispatch->dispatch(new OnAfterWorkerStart());
     }
 
 
     /**
-     * @param Server $server
-     * @param int $workerId
-     * @throws ConfigException
-     * @throws ReflectionException
-     * @throws Exception
+     * @param $workerId
+     * @throws \Exception
      */
-    private function onWorkerStartInit(Server $server, int $workerId)
+    public function setConfigure(OnBeforeWorkerStart $worker)
     {
         putenv('state=start');
-        putenv('worker=' . $workerId);
-
+        putenv('worker=' . $worker->workerId);
         $serialize = file_get_contents(storage(Runtime::CONFIG_NAME));
         if (!empty($serialize)) {
             Config::sets(unserialize($serialize));
-        }
-        if (is_enable_file_modification_listening()) {
-            $annotation = Kiri::app()->getAnnotation();
-            $annotation->read(APP_PATH . 'app', 'App',
-                $workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
-            );
-        }
-        $this->interpretDirectory($annotation);
-        $this->workerInitExecutor($server, $workerId);
-    }
-
-
-    /**
-     * @param Annotation $annotation
-     * @throws ReflectionException
-     * @throws Exception
-     */
-    private function interpretDirectory(Annotation $annotation)
-    {
-        $fileLists = $annotation->runtime(APP_PATH . 'app');
-        $di = Kiri::getDi();
-        foreach ($fileLists as $class) {
-            foreach ($di->getTargetNote($class) as $value) {
-                $value['class']::execute((object)$value['params'], $class);
-            }
-            $methods = $di->getMethodAttribute($class);
-            foreach ($methods as $method => $attribute) {
-                if (empty($attribute)) {
-                    continue;
-                }
-                foreach ($attribute as $item) {
-                    $item['class']::execute((object)$item['params'], $class, $method);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * @param Server $server
-     * @param Annotation $annotation
-     * @param int $workerId
-     * @throws ConfigException
-     * @throws Exception
-     */
-    private function workerInitExecutor(Server $server, int $workerId)
-    {
-        if ($workerId < $server->setting['worker_num']) {
-            putenv('environmental=' . Kiri::WORKER);
-
-            echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
-            $this->setProcessName(sprintf('Worker[%d].%d', $server->worker_pid, $workerId));
-
-            if (is_enable_file_modification_listening()) {
-                $loader = Kiri::app()->getRouter();
-                $loader->_loader();
-            }
-        } else {
-            putenv('environmental=' . Kiri::TASK);
-
-            echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
-
-            $this->setProcessName(sprintf('Tasker[%d].%d', $server->worker_pid, $workerId));
         }
     }
 
