@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Http;
 
 
+use Annotation\Inject;
 use Exception;
 use Kiri\Abstracts\Input;
 use Kiri\Events\EventProvider;
@@ -26,6 +27,13 @@ class Command extends \Console\Command
 
 
     const ACTIONS = ['start', 'stop', 'restart'];
+
+
+    /**
+     * @var \Kiri\Events\EventProvider
+     */
+    #[Inject(EventProvider::class)]
+    public EventProvider $eventProvider;
 
 
     /**
@@ -61,14 +69,8 @@ class Command extends \Console\Command
     private function generate_runtime_builder($manager)
     {
         exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder');
-        if (!is_enable_file_modification_listening()) {
-            scan_directory(directory('app'), 'App');
-            $loader = Kiri::app()->getRouter();
-            $loader->_loader();
-        }
 
-        $event = di(EventProvider::class);
-        $event->on(OnWorkerStart::class, [di(WorkerDispatch::class), 'dispatch']);
+        $this->eventProvider->on(OnWorkerStart::class, [WorkerDispatch::class, 'dispatch']);
 
         return $manager->start();
     }
