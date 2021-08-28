@@ -70,7 +70,7 @@ class Command extends \Console\Command
     {
         exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder');
 
-        $this->eventProvider->on(OnWorkerStart::class, [WorkerDispatch::class, 'dispatch']);
+        $this->eventProvider->on(OnWorkerStart::class, [di(WorkerDispatch::class), 'dispatch']);
 
         return $manager->start();
     }
