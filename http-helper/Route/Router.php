@@ -577,6 +577,20 @@ class Router extends HttpService implements RouterInterface
 	public function _loader()
 	{
 		$this->loadRouteDir(APP_PATH . 'routes');
+		$classes = Kiri::getAnnotation()->runtime(CONTROLLER_PATH);
+
+		$di = Kiri::getDi();
+		foreach ($classes as $class) {
+			$methods = $di->getMethodAttribute($class);
+			foreach ($methods as $method => $attribute) {
+				if (empty($attribute)) {
+					continue;
+				}
+				foreach ($attribute as $item) {
+                    $item['class']::execute((object)$item['params'], $class, $method);
+				}
+			}
+		}
 	}
 
 	/**
