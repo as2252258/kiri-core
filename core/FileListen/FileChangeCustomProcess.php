@@ -24,6 +24,7 @@ class FileChangeCustomProcess extends CustomProcess
 
 	public int $int = -1;
 
+
 	/**
 	 * @param Process $process
 	 * @return string
