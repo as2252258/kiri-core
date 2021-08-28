@@ -26,7 +26,7 @@ use Kiri\Kiri;
 	 * @param string|null $uri
 	 * @param string $version
 	 */
-	public function __construct(public string $event, public ?string $uri = null, public string $version = 'v.1.0')
+	public function __construct(string $event, ?string $uri = null, string $version = 'v.1.0')
 	{
 	}
 
@@ -37,12 +37,12 @@ use Kiri\Kiri;
 	 * @return Router
 	 * @throws Exception
 	 */
-	public function execute(mixed $class, mixed $method = null): Router
+    public static function execute(mixed $params, mixed $class, mixed $method = null): Router
 	{
 		// TODO: Implement setHandler() method.
 		$router = Kiri::app()->getRouter();
 
-		$path = $this->event . '::' . (is_null($this->uri) ? 'event' : $this->uri);
+		$path = $params->event . '::' . (is_null($params->uri) ? 'event' : $params->uri);
 
 		$router->addRoute($path, [di($class), $method], 'sw::socket');
 

@@ -21,7 +21,7 @@ namespace Annotation;
 	/**
 	 * @param string $only
 	 */
-	public function __construct(public string $only = Target::ALL)
+	public function __construct(string $only = Target::ALL)
 	{
 	}
 

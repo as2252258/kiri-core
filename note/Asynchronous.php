@@ -22,7 +22,7 @@ use Kiri\Kiri;
 	 * Asynchronous constructor.
 	 * @param string $name
 	 */
-	public function __construct(public string $name)
+	public function __construct(string $name)
 	{
 
 	}
@@ -34,10 +34,10 @@ use Kiri\Kiri;
 	 * @return bool
 	 * @throws Exception
 	 */
-    public function execute(mixed $class, mixed $method = null): bool
+    public static function execute(mixed $params, mixed $class, mixed $method = null): bool
     {
 		$async = Kiri::app()->getAsync();
-		$async->addAsync($this->name, $class);
+		$async->addAsync($params->name, $class);
 		return true;
 	}
 

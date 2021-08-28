@@ -23,7 +23,7 @@ use Kiri\Kiri;
 	 * Filter constructor.
 	 * @param array $rules
 	 */
-	public function __construct(public array $rules)
+	public function __construct(array $rules)
 	{
 	}
 
@@ -33,7 +33,7 @@ use Kiri\Kiri;
 	 * @param mixed|null $method
 	 * @return bool
 	 */
-    public function execute(mixed $class, mixed $method = null): bool
+    public static function execute(mixed $params, mixed $class, mixed $method = null): bool
 	{
 		return true;
 	}

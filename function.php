@@ -175,7 +175,7 @@ if (!function_exists('injectRuntime')) {
         $di = Kiri::getDi();
         foreach ($fileLists as $class) {
             foreach ($di->getTargetNote($class) as $value) {
-                $value->execute($class);
+                $value['class']::execute((object)$value['params'], $class);
             }
             $methods = $di->getMethodAttribute($class);
             foreach ($methods as $method => $attribute) {
@@ -183,7 +183,7 @@ if (!function_exists('injectRuntime')) {
                     continue;
                 }
                 foreach ($attribute as $item) {
-                    $item->execute($class, $method);
+                    $value['class']::execute((object)$value['params'], $class, $method);
                 }
             }
         }

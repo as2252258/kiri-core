@@ -26,10 +26,7 @@ use Annotation\Attribute;
 	];
 
 
-	public function __construct(
-		public array $request,
-		public array $response
-	)
+	public function __construct(array $request, array $response)
 	{
 	}
 
@@ -39,10 +36,10 @@ use Annotation\Attribute;
 	 * @param mixed|null $method
 	 * @return array
 	 */
-    public function execute(mixed $class, mixed $method = null): array
+    public static function execute(mixed $params, mixed $class, mixed $method = null): array
 	{
 		// TODO: Implement execute() method.
-		return [$this->request, $this->response];
+		return [$params->request, $params->response];
 	}
 
 }

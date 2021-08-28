@@ -203,7 +203,7 @@ class Container extends BaseObject implements ContainerInterface
 	{
 		foreach ($this->getPropertyNote($reflect) as $property => $inject) {
 			/** @var Inject $inject */
-			$inject->execute($object, $property);
+            $inject['class']::execute((object)$inject['params'] ,$object, $property);
 		}
 		return $object;
 	}

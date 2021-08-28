@@ -7,7 +7,7 @@ namespace Annotation\Route;
 use Annotation\Attribute;
 use Http\Route\MiddlewareManager;
 use ReflectionException;
-use Http\IInterface\MiddlewareInterface ;
+use Http\IInterface\MiddlewareInterface;
 
 /**
  * Class Middleware
@@ -22,34 +22,33 @@ use Http\IInterface\MiddlewareInterface ;
      * @param string|array $middleware
      * @throws
      */
-    public function __construct(public string|array $middleware)
+    public function __construct(string|array $middleware)
     {
-        if (is_string($this->middleware)) {
-            $this->middleware = [$this->middleware];
-        }
+    }
 
+
+    /**
+     * @param mixed $class
+     * @param mixed|null $method
+     * @return $this
+     * @throws ReflectionException
+     */
+    public static function execute(mixed $params, mixed $class, mixed $method = null): mixed
+    {
+        if (is_string($params->middleware)) {
+            $params->middleware = [$params->middleware];
+        }
         $array = [];
-        foreach ($this->middleware as $value) {
+        foreach ($params->middleware as $value) {
             $sn = di($value);
             if (!($sn instanceof MiddlewareInterface)) {
                 continue;
             }
             $array[] = [$sn, 'onHandler'];
         }
-        $this->middleware = $array;
-    }
+        MiddlewareManager::addMiddlewares($class, $method, $array);
 
-
-	/**
-	 * @param mixed $class
-	 * @param mixed|null $method
-	 * @return $this
-	 * @throws ReflectionException
-	 */
-    public function execute(mixed $class, mixed $method = null): static
-    {
-        MiddlewareManager::addMiddlewares($class, $method, $this->middleware);
-        return $this;
+        return parent::execute($params, $class, $method);
     }
 
 

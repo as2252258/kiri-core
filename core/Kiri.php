@@ -53,26 +53,6 @@ class Kiri
 
 
 	/**
-	 * @param object $class
-	 * @throws ReflectionException
-	 */
-	public static function injectProperty(object $class)
-	{
-		$attributes = static::getDi()->getClassReflectionProperty($class::class);
-		/**
-		 * @var string $property
-		 * @var ReflectionProperty $attribute
-		 */
-		foreach ($attributes as $property => $attribute) {
-
-			foreach ($attribute->getAttributes() as $item) {
-				$item->newInstance()->execute($class, $property);
-			}
-		}
-	}
-
-
-	/**
 	 * @param $service
 	 *
 	 * 初始化服务

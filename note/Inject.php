@@ -23,7 +23,7 @@ use ReflectionProperty;
 	 * @param string $value
 	 * @param array $construct
 	 */
-	public function __construct(private string $value, private array $construct = [])
+	public function __construct(string $value, array $construct = [])
 	{
 	}
 
@@ -35,15 +35,15 @@ use ReflectionProperty;
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function execute(mixed $class, mixed $method = null): bool
+    public static function execute(mixed $params, mixed $class, mixed $method = null): bool
 	{
-		if (!($method = $this->getProperty($class, $method))) {
+		if (!($method = static::getProperty($class, $method))) {
 			return false;
 		}
 		/** @var ReflectionProperty $class */
-		$injectValue = $this->parseInjectValue();
+		$injectValue = static::parseInjectValue($params);
 		if ($method->isPrivate() || $method->isProtected()) {
-			$this->setter($class, $method, $injectValue);
+			static::setter($class, $method, $injectValue);
 		} else {
 			$class->{$method->getName()} = $injectValue;
 		}
@@ -56,7 +56,7 @@ use ReflectionProperty;
 	 * @param $method
 	 * @param $injectValue
 	 */
-	private function setter($class, $method, $injectValue)
+	private static function setter($class, $method, $injectValue)
 	{
 		$method = 'set' . ucfirst(Str::convertUnderline($method->getName()));
 		if (!method_exists($class, $method)) {
@@ -72,7 +72,7 @@ use ReflectionProperty;
 	 * @return ReflectionProperty|bool
 	 * @throws ReflectionException
 	 */
-	private function getProperty($class, $method): ReflectionProperty|bool
+	private static function getProperty($class, $method): ReflectionProperty|bool
 	{
 		if ($method instanceof ReflectionProperty && !$method->isStatic()) {
 			return $method;
@@ -90,15 +90,15 @@ use ReflectionProperty;
 	 * @return mixed
 	 * @throws Exception
 	 */
-	private function parseInjectValue(): mixed
+	private static function parseInjectValue($params): mixed
 	{
-		if (!Kiri::app()->has($this->value)) {
-			if (!empty($this->construct)) {
-				return Kiri::getDi()->newObject($this->value, $this->construct);
+		if (!Kiri::app()->has($params->value)) {
+			if (!empty($params->construct)) {
+				return Kiri::getDi()->newObject($params->value, $params->construct);
 			}
-			return Kiri::getDi()->get($this->value);
+			return Kiri::getDi()->get($params->value);
 		} else {
-			return Kiri::app()->get($this->value);
+			return Kiri::app()->get($params->value);
 		}
 	}
 
