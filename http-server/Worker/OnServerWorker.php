@@ -2,19 +2,13 @@
 
 namespace Server\Worker;
 
-use Annotation\Annotation;
 use Annotation\Inject;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Help;
 use Kiri\Events\EventDispatch;
-use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
 use Kiri\Runtime;
-use ReflectionException;
-use Server\Events\OnAfterRequest;
 use Server\Events\OnAfterWorkerStart;
-use Server\Events\OnBeforeReload;
 use Server\Events\OnBeforeWorkerStart;
 use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
