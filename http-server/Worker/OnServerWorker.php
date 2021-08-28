@@ -115,8 +115,10 @@ class OnServerWorker extends \Server\Abstracts\Server
     private function workerInitExecutor(Server $server, int $workerId)
     {
         if ($workerId < $server->setting['worker_num']) {
-            $loader = Kiri::app()->getRouter();
-            $loader->_loader();
+            if (env('enableFileChange', 'off') == 'off') {
+                $loader = Kiri::app()->getRouter();
+                $loader->_loader();
+            }
 
             putenv('environmental=' . Kiri::WORKER);
 

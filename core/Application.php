@@ -229,7 +229,10 @@ class Application extends BaseApplication
 	{
 		if (env('enableFileChange', 'off') == 'off' || !($class instanceof Command)) {
 			scan_directory(directory('app'), 'App');
-		}
+
+            $loader = Kiri::app()->getRouter();
+            $loader->_loader();
+        }
 	}
 
 
