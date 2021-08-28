@@ -46,7 +46,7 @@ class OnServerWorker extends \Server\Abstracts\Server
     {
         $this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
 
-        $this->onWorkerStartInit($server, $workerId);
+//        $this->onWorkerStartInit($server, $workerId);
 
         $this->eventDispatch->dispatch(new OnAfterWorkerStart());
     }
@@ -68,14 +68,14 @@ class OnServerWorker extends \Server\Abstracts\Server
         if (!empty($serialize)) {
             Config::sets(unserialize($serialize));
         }
-        $this->workerInitExecutor($server, $workerId);
         if (is_enable_file_modification_listening()) {
             $annotation = Kiri::app()->getAnnotation();
             $annotation->read(APP_PATH . 'app', 'App',
                 $workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
             );
-            $this->interpretDirectory($annotation);
         }
+        $this->interpretDirectory($annotation);
+        $this->workerInitExecutor($server, $workerId);
     }
 
 

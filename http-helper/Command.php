@@ -6,8 +6,11 @@ namespace Http;
 
 use Exception;
 use Kiri\Abstracts\Input;
+use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Server\Worker\OnWorkerStart as WorkerDispatch;
+use Server\Events\OnWorkerStart;
 
 /**
  * Class Command
@@ -58,11 +61,15 @@ class Command extends \Console\Command
     private function generate_runtime_builder($manager)
     {
         exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder');
-        if (is_enable_file_modification_listening()) {
+        if (!is_enable_file_modification_listening()) {
             scan_directory(directory('app'), 'App');
             $loader = Kiri::app()->getRouter();
             $loader->_loader();
         }
+
+        $event = di(EventProvider::class);
+        $event->on(OnWorkerStart::class, [di(WorkerDispatch::class), 'dispatch']);
+
         return $manager->start();
     }
 
