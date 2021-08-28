@@ -16,6 +16,7 @@ trait Attributes
     private array $_classMethod = [];
     private array $_classPropertyNote = [];
     private array $_classProperty = [];
+    private array $_mapping = [];
 
 
     /**
