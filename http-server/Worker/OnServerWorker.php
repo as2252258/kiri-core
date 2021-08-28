@@ -68,12 +68,12 @@ class OnServerWorker extends \Server\Abstracts\Server
         if (!empty($serialize)) {
             Config::sets(unserialize($serialize));
         }
+        $this->workerInitExecutor($server, $workerId);
         if (env('enableFileChange', 'off') == 'off') {
             $annotation = Kiri::app()->getAnnotation();
             $annotation->read(APP_PATH . 'app', 'App',
                 $workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
             );
-            $this->workerInitExecutor($server, $annotation, $workerId);
             $this->interpretDirectory($annotation);
         }
     }
@@ -112,7 +112,7 @@ class OnServerWorker extends \Server\Abstracts\Server
      * @throws ConfigException
      * @throws Exception
      */
-    private function workerInitExecutor(Server $server, Annotation $annotation, int $workerId)
+    private function workerInitExecutor(Server $server, int $workerId)
     {
         if ($workerId < $server->setting['worker_num']) {
             $loader = Kiri::app()->getRouter();
