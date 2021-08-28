@@ -35,6 +35,7 @@ use Http\IInterface\MiddlewareInterface;
             }
             $array[] = [$sn, 'onHandler'];
         }
+        $this->middleware = $array;
     }
 
 
