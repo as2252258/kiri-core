@@ -39,7 +39,7 @@ class OnWorkerStart implements EventDispatcherInterface
         $this->interpretDirectory();
         if ($isWorker) {
             putenv('environmental=' . Kiri::WORKER);
-            $this->router->_loader();
+            Kiri::getFactory()->getRouter()->_loader();
 
             echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
 
