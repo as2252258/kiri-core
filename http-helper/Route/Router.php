@@ -620,6 +620,7 @@ class Router extends HttpService implements RouterInterface
 		try {
 			$router = $this;
 			include_once "{$files}";
+			var_dump($files);
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		} finally {
