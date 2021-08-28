@@ -69,7 +69,7 @@ class OnServerWorker extends \Server\Abstracts\Server
             Config::sets(unserialize($serialize));
         }
         $this->workerInitExecutor($server, $workerId);
-        if (env('enableFileChange', 'off') == 'off') {
+        if (is_enable_file_modification_listening()) {
             $annotation = Kiri::app()->getAnnotation();
             $annotation->read(APP_PATH . 'app', 'App',
                 $workerId < $server->setting['worker_num'] ? [] : [CONTROLLER_PATH]
@@ -115,15 +115,15 @@ class OnServerWorker extends \Server\Abstracts\Server
     private function workerInitExecutor(Server $server, int $workerId)
     {
         if ($workerId < $server->setting['worker_num']) {
-            if (env('enableFileChange', 'off') == 'off') {
-                $loader = Kiri::app()->getRouter();
-                $loader->_loader();
-            }
-
             putenv('environmental=' . Kiri::WORKER);
 
             echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $server->worker_pid, $workerId) . PHP_EOL;
             $this->setProcessName(sprintf('Worker[%d].%d', $server->worker_pid, $workerId));
+
+            if (is_enable_file_modification_listening()) {
+                $loader = Kiri::app()->getRouter();
+                $loader->_loader();
+            }
         } else {
             putenv('environmental=' . Kiri::TASK);
 
