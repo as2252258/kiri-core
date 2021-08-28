@@ -587,7 +587,7 @@ class Router extends HttpService implements RouterInterface
 					continue;
 				}
 				foreach ($attribute as $item) {
-                    $item['class']::execute((object)$item['params'], $class, $method);
+                    $item->execute($class, $method);
 				}
 			}
 		}
