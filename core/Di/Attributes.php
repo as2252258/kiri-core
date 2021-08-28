@@ -183,12 +183,12 @@ trait Attributes
      */
     private function format_annotation(ReflectionAttribute $attribute)
     {
-        $attr = new ReflectionClass($attribute->getName());
+        $reflection_class = new ReflectionClass($attribute->getName());
 
         $argument = $attribute->getArguments();
 
         $array = ['class' => $attribute->getName(), 'params' => []];
-        foreach ($attr->getConstructor()->getParameters() as $key => $parameter) {
+        foreach ($reflection_class->getConstructor()->getParameters() as $key => $parameter) {
             if (isset($argument[$parameter->getName()])) {
                 $array['params'][$parameter->getName()] = $argument[$parameter->getName()];
             } else {
@@ -199,6 +199,9 @@ trait Attributes
                 }
             }
         }
+
+        unset($reflection_class);
+
         return $array;
     }
 
