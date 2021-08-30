@@ -210,9 +210,9 @@ class Uri implements UriInterface
 			$domain .= ':' . $this->port;
 		}
 		if (empty($this->query) && empty($this->fragment)) {
-			return $domain . '/' . $this->path;
+			return $domain . $this->path;
 		}
-		return sprintf('%s?%s#%s', $domain . '/' . $this->path,
+		return sprintf('%s?%s#%s', $domain . $this->path,
 			$this->query, $this->fragment);
 	}
 
