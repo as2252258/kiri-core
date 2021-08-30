@@ -38,7 +38,7 @@ class MiddlewareManager extends BaseObject
 			return;
 		}
 		foreach ($middlewares as $middleware) {
-			if (in_array($middlewares, static::$_middlewares[$class . '::' . $method])) {
+			if (in_array($middleware, static::$_middlewares[$class . '::' . $method])) {
 				continue;
 			}
 			static::$_middlewares[$class . '::' . $method][] = $middleware;
