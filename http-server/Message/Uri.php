@@ -120,9 +120,8 @@ class Uri implements UriInterface
 	 */
 	public function withScheme($scheme): UriInterface
 	{
-		$class = clone $this;
-		$class->scheme = $scheme;
-		return $class;
+		$this->scheme = $scheme;
+		return $this;
 	}
 
 	/**
@@ -132,10 +131,9 @@ class Uri implements UriInterface
 	 */
 	public function withUserInfo($user, $password = null): UriInterface
 	{
-		$class = clone $this;
-		$class->username = $user;
-		$class->password = $password;
-		return $class;
+		$this->username = $user;
+		$this->password = $password;
+		return $this;
 	}
 
 
@@ -145,9 +143,8 @@ class Uri implements UriInterface
 	 */
 	public function withHost($host): UriInterface
 	{
-		$class = clone $this;
-		$class->host = $host;
-		return $class;
+		$this->host = $host;
+		return $this;
 	}
 
 
@@ -166,9 +163,8 @@ class Uri implements UriInterface
 	 */
 	public function withPort($port): UriInterface
 	{
-		$class = clone $this;
-		$class->port = $port;
-		return $class;
+		$this->port = $port;
+		return $this;
 	}
 
 
@@ -178,9 +174,8 @@ class Uri implements UriInterface
 	 */
 	public function withPath($path): UriInterface
 	{
-		$class = clone $this;
-		$class->path = $path;
-		return $class;
+		$this->path = $path;
+		return $this;
 	}
 
 
@@ -190,9 +185,8 @@ class Uri implements UriInterface
 	 */
 	public function withQuery($query): UriInterface
 	{
-		$class = clone $this;
-		$class->query = $query;
-		return $class;
+		$this->query = $query;
+		return $this;
 	}
 
 
@@ -202,9 +196,8 @@ class Uri implements UriInterface
 	 */
 	public function withFragment($fragment): UriInterface
 	{
-		$class = clone $this;
-		$class->fragment = $fragment;
-		return $class;
+		$this->fragment = $fragment;
+		return $this;
 	}
 
 
@@ -222,7 +215,7 @@ class Uri implements UriInterface
 	 * @param \Swoole\Http\Request $request
 	 * @return UriInterface
 	 */
-	#[Pure] public static function parseUri(\Swoole\Http\Request $request): UriInterface
+	public static function parseUri(\Swoole\Http\Request $request): UriInterface
 	{
 		$server = $request->server;
 		$header = $request->header;
