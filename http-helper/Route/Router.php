@@ -428,17 +428,12 @@ class Router extends HttpService implements RouterInterface
 	public function each(): array
 	{
 		$paths = [];
-		foreach ($this->nodes as $node) {
+		foreach ($this->nodes as $_node) {
 			/** @var Node[] $node */
-
-            var_dump($node);
-			foreach ($node as $_node) {
-				if (!empty($_node->sourcePath)) {
-					$path[] = ['method' => $_node->method, 'path' => $_node->sourcePath];
-				}
-                var_dump($_node);
-				$paths = $this->getChildes($_node, $paths);
-			}
+            if (!empty($_node->sourcePath)) {
+                $path[] = ['method' => $_node->method, 'path' => $_node->sourcePath];
+            }
+            $paths = $this->getChildes($_node, $paths);
 		}
 		return $paths;
 	}
