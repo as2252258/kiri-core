@@ -430,6 +430,8 @@ class Router extends HttpService implements RouterInterface
 		$paths = [];
 		foreach ($this->nodes as $node) {
 			/** @var Node[] $node */
+
+            var_dump($node);
 			foreach ($node as $_node) {
 				if (!empty($_node->sourcePath)) {
 					$path[] = ['method' => $_node->method, 'path' => $_node->sourcePath];
