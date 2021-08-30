@@ -290,13 +290,19 @@ class Router extends HttpService implements RouterInterface
 		$node->namespace = $this->loadNamespace($method);
 
 		$name = array_column($this->groupTacks, 'middleware');
-		if ($this->middleware instanceof \Closure) {
-			$node->addMiddleware($method, [$this->middleware]);
-		}
 		if (is_array($name)) {
 			$node->addMiddleware($method, $this->resolve_middleware($name));
 		}
 		return $node;
+	}
+
+
+	/**
+	 * @return Closure
+	 */
+	public function getMiddleware(): Closure
+	{
+		return $this->middleware;
 	}
 
 

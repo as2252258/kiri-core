@@ -156,10 +156,17 @@ class Node
 	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function injectControllerMiddleware($method, $handler, $_injectParameters): mixed
 	{
-		MiddlewareManager::addMiddlewares($handler[0], $handler[1], $this->middleware[$method] ?? []);
+		$middleware = $this->middleware[$method] ?? [];
+
+		$allowMiddleware = router()->getMiddleware();
+		if (!empty($allowMiddleware)){
+			array_unshift($middleware, $allowMiddleware);
+		}
+		MiddlewareManager::addMiddlewares($handler[0], $handler[1], $middleware);
 		return MiddlewareManager::callerMiddlewares(
 			$handler[0], $handler[1], $this->aopHandler($this->getAop($handler), $handler, $_injectParameters)
 		);
@@ -171,11 +178,18 @@ class Node
 	 * @param $handler
 	 * @param $_injectParameters
 	 * @return Closure
+	 * @throws Exception
 	 */
 	private function injectClosureMiddleware($method, $handler, $_injectParameters): Closure
 	{
-		if (!empty($this->middleware[$method] ?? [])) {
-			return MiddlewareManager::closureMiddlewares($this->middleware[$method],
+		$middleware = $this->middleware[$method] ?? [];
+
+		$allowMiddleware = router()->getMiddleware();
+		if (!empty($allowMiddleware)){
+			array_unshift($middleware, $allowMiddleware);
+		}
+		if (!empty($middleware)) {
+			return MiddlewareManager::closureMiddlewares($middleware,
 				$this->normalHandler($handler, $_injectParameters)
 			);
 		} else {
