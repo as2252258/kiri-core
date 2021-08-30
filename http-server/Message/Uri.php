@@ -223,6 +223,9 @@ class Uri implements UriInterface
 		$header = $request->header;
 		$uri = new Uri();
 		$uri = $uri->withScheme(!empty($server['https']) && $server['https'] !== 'off' ? 'https' : 'http');
+		if (isset($request->header['x-forwarded-proto'])) {
+			$uri->withScheme($request->header['x-forwarded-proto']);
+		}
 
 		$hasPort = false;
 		if (isset($server['http_host'])) {
