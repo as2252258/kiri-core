@@ -41,7 +41,7 @@ class Uri implements UriInterface
 	public function getExplode(): array
 	{
 		if ($this->path == '/' || $this->path == '') {
-			return [''];
+			return ['/'];
 		}
 		if (empty($this->_explode)) {
 			$this->_explode = array_filter(explode('/', $this->path));

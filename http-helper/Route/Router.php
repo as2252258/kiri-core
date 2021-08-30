@@ -93,9 +93,6 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function addRoute($path, $handler, string $method = 'any'): ?Node
 	{
-		if (!isset($this->nodes[$method])) {
-			$this->nodes[$method] = [];
-		}
 		if ($handler instanceof Closure) {
 			$handler = Closure::bind($handler, di(Controller::class));
 		}
@@ -130,14 +127,16 @@ class Router extends HttpService implements RouterInterface
 	private function tree($path, $handler, string $method = 'any'): Node
 	{
 		$explode = $this->split($path);
-		if (!isset($this->nodes['/'])) {
-			$this->nodes['/'] = $this->NodeInstance('/', 0, $method);
+		$start = array_shift($explode);
+		$parent = $this->nodes[$start] ?? null;
+		if (is_null($parent)) {
+			$parent = $this->nodes[$start] = $this->NodeInstance($start, 0, $method);
 		}
-		$parent = $this->nodes['/'];
-		if (!empty($explode)) {
-			$parent = $this->bindNode($parent, $explode, $method);
+		if (empty($explode)) {
+			return $parent->setHandler($handler, $method, $path);
 		}
-		return $parent->setHandler($handler, $method, $path);
+		return $this->bindNode($parent, $explode, $method)
+			->setHandler($handler, $method, $path);
 	}
 
 
@@ -396,10 +395,13 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function tree_search(?array $explode): ?Node
 	{
-		if (!isset($this->nodes['/'])) {
+		if (empty($this->nodes)) {
 			return null;
 		}
-		$parent = $this->nodes['/'];
+		$parent = $this->nodes[array_shift($explode)];
+		if (!($parent instanceof Node)) {
+			return null;
+		}
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			if (!$node) {
@@ -418,13 +420,13 @@ class Router extends HttpService implements RouterInterface
 	{
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
 		if ($path === '/') {
-			return [];
+			return ['/'];
 		}
 		$filter = array_filter(explode('/', $path));
 		if (!empty($filter)) {
 			return $filter;
 		}
-		return [];
+		return ['/'];
 	}
 
 	/**
