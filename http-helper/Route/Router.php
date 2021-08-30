@@ -390,7 +390,6 @@ class Router extends HttpService implements RouterInterface
 
 	/**
 	 * @param array|null $explode
-	 * @param $method
 	 * @return Node|null
 	 * 查找指定路由
 	 * @throws Exception
@@ -537,18 +536,19 @@ class Router extends HttpService implements RouterInterface
 	 * @param RequestInterface $request
 	 * @return Node|null
 	 * 树杈搜索
+	 * @throws Exception
 	 */
 	public function Branch_search(RequestInterface $request): ?Node
 	{
 		$uri = $request->getUri();
-		$node = $this->tree_search($uri->getExplode(), $request->getMethod());
+		$node = $this->tree_search($uri->getExplode());
 		if ($node instanceof Node) {
 			return $node;
 		}
 		if (!$request->isMethod('OPTIONS')) {
 			return null;
 		}
-		$node = $this->tree_search(['*'], $request->getMethod());
+		$node = $this->tree_search(['*']);
 		if (!($node instanceof Node)) {
 			return null;
 		}
