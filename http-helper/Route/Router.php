@@ -102,22 +102,6 @@ class Router extends HttpService implements RouterInterface
 		return $this->tree($path, $handler, $method);
 	}
 
-
-	/**
-	 * @param $path
-	 * @param $handler
-	 * @param string $method
-	 * @return ?Node
-	 */
-	private function hash($path, $handler, string $method = 'any'): ?Node
-	{
-		$path = $this->resolve($path);
-		$this->nodes[$method][$path] = $this->NodeInstance($path, 0, $method);
-
-		return $this->nodes[$method][$path]->setHandler($handler);
-	}
-
-
 	/**
 	 * @param $path
 	 * @return string
@@ -146,14 +130,14 @@ class Router extends HttpService implements RouterInterface
 	private function tree($path, $handler, string $method = 'any'): Node
 	{
 		$explode = $this->split($path);
-		if (!isset($this->nodes[$method]['/'])) {
-			$this->nodes[$method]['/'] = $this->NodeInstance('/', 0, $method);
+		if (!isset($this->nodes['/'])) {
+			$this->nodes['/'] = $this->NodeInstance('/', 0, $method);
 		}
-		$parent = $this->nodes[$method]['/'];
+		$parent = $this->nodes['/'];
 		if (!empty($explode)) {
 			$parent = $this->bindNode($parent, $explode, $method);
 		}
-		return $parent->setHandler($handler, $path);
+		return $parent->setHandler($handler, $method, $path);
 	}
 
 
@@ -187,7 +171,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function socket($route, $handler): ?Node
 	{
-		return $this->addRoute($route, $handler, 'socket');
+		return $this->addRoute($route, $handler, 'SOCKET');
 	}
 
 
@@ -301,7 +285,7 @@ class Router extends HttpService implements RouterInterface
 		$node->childes = [];
 		$node->path = $value;
 		$node->index = $index;
-		$node->method = $method;
+		$node->method[] = $method;
 		$node->namespace = $this->loadNamespace($method);
 
 		$name = array_column($this->groupTacks, 'middleware');

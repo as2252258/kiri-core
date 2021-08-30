@@ -27,7 +27,9 @@ class Node
 
 	public string $path = '';
 	public int $index = 0;
-	public string $method = '';
+
+	/** @var string[] */
+	public array $method = [];
 
 	/** @var Node[] $childes */
 	public array $childes = [];
@@ -38,7 +40,8 @@ class Node
 
 	private string $_dataType = '';
 
-	private array|Closure|null $_handler = null;
+	/** @var array<string, array|Closure|null> */
+	private array $_handler = [];
 
 	public string $htmlSuffix = '.html';
 	public bool $enableHtmlSuffix = false;
@@ -90,12 +93,13 @@ class Node
 
 
 	/**
-	 * @param $handler
-	 * @param $path
+	 * @param string|array|Closure $handler
+	 * @param string $method
+	 * @param string $path
 	 * @return Node
 	 * @throws ReflectionException
 	 */
-	public function setHandler($handler, $path): static
+	public function setHandler(string|array|Closure $handler, string $method, string $path): static
 	{
 		$this->sourcePath = '/' . ltrim($path, '/');
 		if (is_string($handler) && str_contains($handler, '@')) {
@@ -103,7 +107,7 @@ class Node
 		} else if ($handler != null && !is_callable($handler, true)) {
 			$this->_error = 'Controller is con\'t exec.';
 		}
-		$this->_handler = $handler;
+		$this->_handler[$method] = $handler;
 		return $this;
 	}
 
@@ -124,23 +128,23 @@ class Node
 
 
 	/**
+	 * @param string $method
+	 * @param $handler
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function injectMiddleware($handler): static
+	private function injectMiddleware(string $method, $handler): void
 	{
 		if (!($handler instanceof Closure)) {
 			$callback = $this->injectControllerMiddleware($handler);
 		} else {
 			$callback = $this->injectClosureMiddleware($handler);
 		}
-		HandlerProviders::add($this->method, $this->sourcePath, $callback);
-		return $this;
+		HandlerProviders::add($method, $this->sourcePath, $callback);
 	}
 
 
 	/**
-	 * @param $manager
 	 * @param $handler
 	 * @return mixed
 	 * @throws NotFindClassException
@@ -156,11 +160,10 @@ class Node
 
 
 	/**
-	 * @param $manager
 	 * @param $handler
-	 * @return mixed
+	 * @return Closure
 	 */
-	private function injectClosureMiddleware($handler): mixed
+	private function injectClosureMiddleware($handler): Closure
 	{
 		if (!empty($this->middleware)) {
 			return MiddlewareManager::closureMiddlewares($this->middleware, $this->normalHandler($handler));
@@ -183,17 +186,20 @@ class Node
 		if (empty($this->_handler)) {
 			return $this;
 		}
-		$dispatcher = $this->_handler;
-		if ($dispatcher instanceof Closure) {
-			$this->_injectParameters = $container->resolveFunctionParameters($dispatcher);
-		} else {
-			[$controller, $action] = $dispatcher;
-			if (is_object($controller)) {
-				$controller = get_class($controller);
+		foreach ($this->_handler as $method => $dispatcher) {
+			if ($dispatcher instanceof Closure) {
+				$this->_injectParameters = $container->resolveFunctionParameters($dispatcher);
+			} else {
+				[$controller, $action] = $dispatcher;
+				if (is_object($controller)) {
+					$controller = get_class($controller);
+				}
+				$this->_injectParameters = $container->getMethodParameters($controller, $action);
 			}
-			$this->_injectParameters = $container->getMethodParameters($controller, $action);
+			$this->injectMiddleware($method, $dispatcher);
 		}
-		return $this->injectMiddleware($dispatcher);
+		$this->_handler = [];
+		return $this;
 	}
 
 
@@ -261,9 +267,9 @@ class Node
 	 * @param RequestInterface $request
 	 * @return bool
 	 */
-	public function methodAllow(RequestInterface $request): bool
+	#[Pure] public function methodAllow(RequestInterface $request): bool
 	{
-		if ($this->method == $request->getMethod()) {
+		if (!in_array($request->getMethod(), $this->method)) {
 			return true;
 		}
 		return $this->method == 'any';
@@ -378,7 +384,10 @@ class Node
 	 */
 	public function dispatch(): mixed
 	{
-		$handlerProviders = HandlerProviders::get($this->sourcePath, $this->method);
+		if (!in_array(request()->getMethod(), $this->method)) {
+			throw new RequestException('<h2>HTTP 405 Method allow</h2><hr><i>Powered by Swoole</i>', 405);
+		}
+		$handlerProviders = HandlerProviders::get($this->sourcePath, request()->getMethod());
 		if (empty($handlerProviders)) {
 			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}
