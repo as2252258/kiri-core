@@ -73,7 +73,7 @@ class Node
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	public function __construct()
+	public function __construct(public Router $router)
 	{
 		$eventDispatcher = di(EventProvider::class);
 		$eventDispatcher->on(OnAfterWorkerStart::class, [$this, 'setParameters']);
@@ -162,7 +162,7 @@ class Node
 	{
 		$middleware = $this->middleware[$method] ?? [];
 
-		$allowMiddleware = router()->getMiddleware();
+		$allowMiddleware = $this->router->getMiddleware();
 		if (!empty($allowMiddleware)){
 			array_unshift($middleware, $allowMiddleware);
 		}
@@ -184,7 +184,7 @@ class Node
 	{
 		$middleware = $this->middleware[$method] ?? [];
 
-		$allowMiddleware = router()->getMiddleware();
+		$allowMiddleware = $this->router->getMiddleware();
 		if (!empty($allowMiddleware)){
 			array_unshift($middleware, $allowMiddleware);
 		}

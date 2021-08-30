@@ -18,6 +18,7 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\RequestInterface;
+use Throwable;
 
 defined('ROUTER_TREE') or define('ROUTER_TREE', 1);
 defined('ROUTER_HASH') or define('ROUTER_HASH', 2);
@@ -167,110 +168,95 @@ class Router extends HttpService implements RouterInterface
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws
 	 */
-	public function socket($route, $handler): ?Node
+	public function socket($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'SOCKET');
+		$this->addRoute($route, $handler, 'SOCKET');
 	}
 
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws
 	 */
-	public function post($route, $handler): ?Node
+	public function post($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'POST');
+		$this->addRoute($route, $handler, 'POST');
 	}
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws
 	 */
-	public function get($route, $handler): ?Node
+	public function get($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'GET');
-	}
-
-
-	/**
-	 * @param $port
-	 * @param callable $callback
-	 * @return mixed
-	 * @throws
-	 */
-	public function addRpcService($port, callable $callback): mixed
-	{
-		return call_user_func($callback, new Actuator($port));
+		$this->addRoute($route, $handler, 'GET');
 	}
 
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws
 	 */
-	public function options($route, $handler): ?Node
+	public function options($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'OPTIONS');
+		$this->addRoute($route, $handler, 'OPTIONS');
 	}
 
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Any
 	 * @throws
 	 */
-	public function any($route, $handler): Any
+	public function any($route, $handler): void
 	{
-		$nodes = [];
 		foreach ($this->methods as $method) {
-			$nodes[] = $this->addRoute($route, $handler, $method);
+			 $this->addRoute($route, $handler, $method);
 		}
-		return new Any($nodes);
 	}
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws
 	 */
-	public function delete($route, $handler): ?Node
+	public function delete($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'DELETE');
+		$this->addRoute($route, $handler, 'DELETE');
 	}
 
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws Exception
 	 */
-	public function head($route, $handler): ?Node
+	public function head($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'HEAD');
+		$this->addRoute($route, $handler, 'HEAD');
 	}
 
 
 	/**
 	 * @param $route
 	 * @param $handler
-	 * @return Node|null
+	 * @return void
 	 * @throws
 	 */
-	public function put($route, $handler): ?Node
+	public function put($route, $handler): void
 	{
-		return $this->addRoute($route, $handler, 'PUT');
+		$this->addRoute($route, $handler, 'PUT');
 	}
 
 	/**
@@ -282,12 +268,12 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function NodeInstance($value, int $index = 0, string $method = 'GET'): Node
 	{
-		$node = new Node();
+		$node = new Node($this);
 		$node->childes = [];
 		$node->path = $value;
 		$node->index = $index;
 		$node->method[] = $method;
-		$node->namespace = $this->loadNamespace($method);
+		$node->namespace = $this->loadNamespace();
 
 		$name = array_column($this->groupTacks, 'middleware');
 		if (is_array($name)) {
@@ -352,10 +338,9 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @param $method
 	 * @return array
 	 */
-	private function loadNamespace($method): array
+	private function loadNamespace(): array
 	{
 		$name = array_column($this->groupTacks, 'namespace');
 		array_unshift($name, $this->dir);
@@ -487,27 +472,6 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @param RequestInterface $request
-	 * @return Node|null 树干搜索
-	 * 树干搜索
-	 * @throws Exception
-	 */
-	public function find_path(RequestInterface $request): ?Node
-	{
-		$method = $request->getMethod();
-
-		$methods = $this->nodes[$method][\request()->getUri()->getPath()] ?? null;
-		if (!is_null($methods)) {
-			return $methods;
-		}
-		if ($request->isOption) {
-			return $this->nodes[$method]['*'] ?? null;
-		}
-		return null;
-	}
-
-
-	/**
 	 * @param $uri
 	 * @param $method
 	 * @return Node|null
@@ -522,23 +486,6 @@ class Router extends HttpService implements RouterInterface
 			return $methods[$uri];
 		}
 		return $methods['/'] ?? null;
-	}
-
-
-	/**
-	 * @param $request
-	 * @return Node|null
-	 */
-	private function search_options($request): ?Node
-	{
-		$method = $request->getMethod();
-		if (!isset($this->nodes[$method])) {
-			return null;
-		}
-		if (!isset($this->nodes[$method]['*'])) {
-			return null;
-		}
-		return $this->nodes[$method]['*'];
 	}
 
 
@@ -572,20 +519,6 @@ class Router extends HttpService implements RouterInterface
 	public function _loader()
 	{
 		$this->loadRouteDir(APP_PATH . 'routes');
-//		$classes = Kiri::getAnnotation()->runtime(CONTROLLER_PATH);
-
-//		$di = Kiri::getDi();
-//		foreach ($classes as $class) {
-//			$methods = $di->getMethodAttribute($class);
-//			foreach ($methods as $method => $attribute) {
-//				if (empty($attribute)) {
-//					continue;
-//				}
-//				foreach ($attribute as $item) {
-//                    $item->execute($class, $method);
-//				}
-//			}
-//		}
 	}
 
 	/**
@@ -614,8 +547,8 @@ class Router extends HttpService implements RouterInterface
 	{
 		try {
 			$router = $this;
-			include_once "{$files}";
-		} catch (\Throwable $exception) {
+			include_once "$files";
+		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
 		} finally {
 			if (isset($exception)) {
