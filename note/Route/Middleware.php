@@ -39,13 +39,11 @@ use Http\IInterface\MiddlewareInterface;
     }
 
 
-    /**
-     * @param static $params
-     * @param mixed $class
-     * @param mixed|null $method
-     * @return $this
-     * @throws ReflectionException
-     */
+	/**
+	 * @param mixed $class
+	 * @param mixed|null $method
+	 * @return $this
+	 */
     public function execute(mixed $class, mixed $method = null): mixed
     {
         MiddlewareManager::addMiddlewares($class, $method, $this->middleware);
