@@ -291,10 +291,10 @@ class Router extends HttpService implements RouterInterface
 
 		$name = array_column($this->groupTacks, 'middleware');
 		if ($this->middleware instanceof \Closure) {
-			$node->addMiddleware([$this->middleware]);
+			$node->addMiddleware($method, [$this->middleware]);
 		}
 		if (is_array($name)) {
-			$node->addMiddleware($this->resolve_middleware($name));
+			$node->addMiddleware($method, $this->resolve_middleware($name));
 		}
 		return $node;
 	}

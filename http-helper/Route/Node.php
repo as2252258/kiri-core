@@ -45,7 +45,11 @@ class Node
 
 	public string $htmlSuffix = '.html';
 	public bool $enableHtmlSuffix = false;
+
+	/** @var array<string,mixed> */
 	public array $namespace = [];
+
+	/** @var array<string,mixed> */
 	public array $middleware = [];
 
 	public string $sourcePath = '';
@@ -137,44 +141,47 @@ class Node
 	private function injectMiddleware(string $method, $handler, $_injectParameters): void
 	{
 		if (!($handler instanceof Closure)) {
-			$callback = $this->injectControllerMiddleware($handler);
+			$callback = $this->injectControllerMiddleware($method, $handler, $_injectParameters);
 		} else {
-			$callback = $this->injectClosureMiddleware($handler);
+			$callback = $this->injectClosureMiddleware($method, $handler, $_injectParameters);
 		}
-		HandlerProviders::add($method, $this->sourcePath, $callback, $_injectParameters);
+		HandlerProviders::add($method, $this->sourcePath, $callback);
 	}
 
 
 	/**
+	 * @param $method
 	 * @param $handler
+	 * @param $_injectParameters
 	 * @return mixed
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function injectControllerMiddleware($handler): mixed
+	private function injectControllerMiddleware($method, $handler, $_injectParameters): mixed
 	{
-		MiddlewareManager::addMiddlewares($handler[0], $handler[1], $this->middleware);
+		MiddlewareManager::addMiddlewares($handler[0], $handler[1], $this->middleware[$method] ?? []);
 		return MiddlewareManager::callerMiddlewares(
-			$handler[0], $handler[1], $this->aopHandler($this->getAop($handler), $handler)
+			$handler[0], $handler[1], $this->aopHandler($this->getAop($handler), $handler, $_injectParameters)
 		);
 	}
 
 
 	/**
+	 * @param $method
 	 * @param $handler
+	 * @param $_injectParameters
 	 * @return Closure
 	 */
-	private function injectClosureMiddleware($handler): Closure
+	private function injectClosureMiddleware($method, $handler, $_injectParameters): Closure
 	{
-		if (!empty($this->middleware)) {
-			return MiddlewareManager::closureMiddlewares($this->middleware, $this->normalHandler($handler));
+		if (!empty($this->middleware[$method] ?? [])) {
+			return MiddlewareManager::closureMiddlewares($this->middleware[$method],
+				$this->normalHandler($handler, $_injectParameters)
+			);
 		} else {
-			return $this->normalHandler($handler);
+			return $this->normalHandler($handler, $_injectParameters);
 		}
 	}
-
-
-	private ?array $_injectParameters = [];
 
 
 	/**
@@ -207,15 +214,16 @@ class Node
 	/**
 	 * @param IAspect|null $reflect
 	 * @param $handler
+	 * @param $_injectParameters
 	 * @return Closure
 	 */
-	#[Pure] private function aopHandler(?IAspect $reflect, $handler): Closure
+	#[Pure] private function aopHandler(?IAspect $reflect, $handler, $_injectParameters): Closure
 	{
 		if (is_null($reflect)) {
-			return $this->normalHandler($handler);
+			return $this->normalHandler($handler, $_injectParameters);
 		}
-		return static function () use ($reflect, $handler) {
-			return $reflect->invoke($handler, func_get_args());
+		return static function () use ($reflect, $handler, $_injectParameters) {
+			return $reflect->invoke($handler, $_injectParameters);
 		};
 	}
 
@@ -242,12 +250,13 @@ class Node
 
 	/**
 	 * @param $handler
+	 * @param $_injectParameters
 	 * @return Closure
 	 */
-	private function normalHandler($handler): Closure
+	private function normalHandler($handler, $_injectParameters): Closure
 	{
-		return static function () use ($handler) {
-			return call_user_func($handler, ...func_get_args());
+		return static function () use ($handler, $_injectParameters) {
+			return call_user_func($handler, ...$_injectParameters);
 		};
 	}
 
@@ -351,17 +360,21 @@ class Node
 
 
 	/**
+	 * @param $method
 	 * @param Closure|array $class
 	 * @return $this
 	 */
-	public function addMiddleware(Closure|array $class): static
+	public function addMiddleware($method, Closure|array $class): static
 	{
 		if (empty($class)) return $this;
+		if (!isset($this->middleware[$method])) {
+			$this->middleware[$method] = [];
+		}
 		foreach ($class as $closure) {
-			if (in_array($closure, $this->middleware)) {
+			if (in_array($closure, $this->middleware[$method])) {
 				continue;
 			}
-			$this->middleware[] = $closure;
+			$this->middleware[$method][] = $closure;
 		}
 		return $this;
 	}
@@ -389,11 +402,7 @@ class Node
 		if (empty($handlerProviders)) {
 			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}
-		if (!empty($handlerProviders[1])) {
-			var_dump($handlerProviders[1]);
-			return call_user_func($handlerProviders[0], ...$handlerProviders[1]);
-		}
-		return call_user_func($handlerProviders[0]);
+		return call_user_func($handlerProviders);
 	}
 
 }
