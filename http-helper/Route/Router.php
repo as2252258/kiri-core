@@ -393,13 +393,14 @@ class Router extends HttpService implements RouterInterface
 	 * @param $method
 	 * @return Node|null
 	 * 查找指定路由
+	 * @throws Exception
 	 */
-	public function tree_search(?array $explode, $method): ?Node
+	public function tree_search(?array $explode): ?Node
 	{
-		if (!isset($this->nodes[$method])) {
+		if (!isset($this->nodes['/'])) {
 			return null;
 		}
-		$parent = $this->nodes[$method]['/'];
+		$parent = $this->nodes['/'];
 		while ($value = array_shift($explode)) {
 			$node = $parent->findNode($value);
 			if (!$node) {
