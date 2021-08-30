@@ -2,7 +2,6 @@
 
 namespace Server\Message;
 
-use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\UriInterface;
 
 
@@ -206,6 +205,9 @@ class Uri implements UriInterface
 	 */
 	public function __toString(): string
 	{
+		if (empty($this->query) && empty($this->fragment)) {
+			return sprintf('%s://%s:%d%s', $this->scheme, $this->host, $this->port, $this->path);
+		}
 		return sprintf('%s://%s:%d%s?%s#%s', $this->scheme, $this->host, $this->port,
 			$this->path, $this->query, $this->fragment);
 	}
