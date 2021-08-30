@@ -137,6 +137,7 @@ class Node
 	 * @param $_injectParameters
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function injectMiddleware(string $method, $handler, $_injectParameters): void
 	{
