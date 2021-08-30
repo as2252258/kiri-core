@@ -29,10 +29,11 @@ class HandlerProviders extends BaseObject
 	 * @param $method
 	 * @param $path
 	 * @param $handler
+	 * @param $_injectParameters
 	 */
-	public static function add($method, $path, $handler)
+	public static function add($method, $path, $handler, $_injectParameters)
 	{
-        static::$handlers[$method][$path] = $handler;
+        static::$handlers[$method][$path] = [$handler, $_injectParameters];
 	}
 
 }

@@ -130,17 +130,18 @@ class Node
 	/**
 	 * @param string $method
 	 * @param $handler
+	 * @param $_injectParameters
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 */
-	private function injectMiddleware(string $method, $handler): void
+	private function injectMiddleware(string $method, $handler, $_injectParameters): void
 	{
 		if (!($handler instanceof Closure)) {
 			$callback = $this->injectControllerMiddleware($handler);
 		} else {
 			$callback = $this->injectClosureMiddleware($handler);
 		}
-		HandlerProviders::add($method, $this->sourcePath, $callback);
+		HandlerProviders::add($method, $this->sourcePath, $callback, $_injectParameters);
 	}
 
 
@@ -188,15 +189,15 @@ class Node
 		}
 		foreach ($this->_handler as $method => $dispatcher) {
 			if ($dispatcher instanceof Closure) {
-				$this->_injectParameters = $container->resolveFunctionParameters($dispatcher);
+				$_injectParameters = $container->resolveFunctionParameters($dispatcher);
 			} else {
 				[$controller, $action] = $dispatcher;
 				if (is_object($controller)) {
 					$controller = get_class($controller);
 				}
-				$this->_injectParameters = $container->getMethodParameters($controller, $action);
+				$_injectParameters = $container->getMethodParameters($controller, $action);
 			}
-			$this->injectMiddleware($method, $dispatcher);
+			$this->injectMiddleware($method, $dispatcher, $_injectParameters);
 		}
 		$this->_handler = [];
 		return $this;
@@ -213,10 +214,8 @@ class Node
 		if (is_null($reflect)) {
 			return $this->normalHandler($handler);
 		}
-
-		$params = $this->_injectParameters;
-		return static function () use ($reflect, $handler, $params) {
-			return $reflect->invoke($handler, $params);
+		return static function () use ($reflect, $handler) {
+			return $reflect->invoke($handler, func_get_args());
 		};
 	}
 
@@ -247,9 +246,8 @@ class Node
 	 */
 	private function normalHandler($handler): Closure
 	{
-		$params = $this->_injectParameters;
-		return static function () use ($handler, $params) {
-			return call_user_func($handler, ...$params);
+		return static function () use ($handler) {
+			return call_user_func($handler, ...func_get_args());
 		};
 	}
 
@@ -391,7 +389,7 @@ class Node
 		if (empty($handlerProviders)) {
 			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}
-		return call_user_func($handlerProviders, \request());
+		return call_user_func($handlerProviders[0], ...($handlerProviders[1] ?? []));
 	}
 
 }
