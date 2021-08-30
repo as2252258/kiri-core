@@ -177,10 +177,7 @@ trait Message
 	 */
 	private function addRequestHeader($key, $value)
 	{
-		$this->headers[$key] = [];
-		foreach (explode(';', $value) as $item) {
-			$this->headers[$key][] = $item;
-		}
+		$this->headers[$key] = [$value];
 	}
 
 

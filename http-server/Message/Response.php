@@ -2,6 +2,8 @@
 
 namespace Server\Message;
 
+use Exception;
+use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\ResponseInterface;
 
 
@@ -26,23 +28,24 @@ class Response implements ResponseInterface, \Server\ResponseInterface
     /**
      *
      */
-    public function __construct()
+    #[Pure] public function __construct()
     {
         $this->stream = new Stream('');
     }
 
 
-    /**
-     * @param string $type
-     * @return $this
-     */
+	/**
+	 * @param string $type
+	 * @return $this
+	 * @throws Exception
+	 */
     public function withContentType(string $type): static
     {
         if (!in_array($type, [
             Response::CONTENT_TYPE_HTML, Response::CONTENT_TYPE_JSON,
             Response::CONTENT_TYPE_STREAM, Response::CONTENT_TYPE_XML
         ])) {
-            throw new \Exception('Wrong content type.');
+            throw new Exception('Wrong content type.');
         }
         return $this->withHeader('Content-Type', $type);
     }
