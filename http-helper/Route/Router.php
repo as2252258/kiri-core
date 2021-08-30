@@ -434,6 +434,7 @@ class Router extends HttpService implements RouterInterface
 				if (!empty($_node->sourcePath)) {
 					$path[] = ['method' => $_node->method, 'path' => $_node->sourcePath];
 				}
+                var_dump($_node);
 				$paths = $this->getChildes($_node, $paths);
 			}
 		}
