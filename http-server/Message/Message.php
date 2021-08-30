@@ -29,6 +29,15 @@ trait Message
 
 
 	/**
+	 * @return array
+	 */
+	public function getServers(): array
+	{
+		return $this->servers;
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public function getProtocolVersion(): string
