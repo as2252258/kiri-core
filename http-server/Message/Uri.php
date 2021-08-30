@@ -205,11 +205,15 @@ class Uri implements UriInterface
 	 */
 	public function __toString(): string
 	{
-		if (empty($this->query) && empty($this->fragment)) {
-			return sprintf('%s://%s:%d%s', $this->scheme, $this->host, $this->port, $this->path);
+		$domain = sprintf('%s://%s', $this->scheme, $this->host);
+		if (!in_array($this->port, [80, 443])) {
+			$domain .= ':' . $this->port;
 		}
-		return sprintf('%s://%s:%d%s?%s#%s', $this->scheme, $this->host, $this->port,
-			$this->path, $this->query, $this->fragment);
+		if (empty($this->query) && empty($this->fragment)) {
+			return $domain . '/' . $this->path;
+		}
+		return sprintf('%s?%s#%s', $domain . '/' . $this->path,
+			$this->query, $this->fragment);
 	}
 
 
