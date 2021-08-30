@@ -389,7 +389,10 @@ class Node
 		if (empty($handlerProviders)) {
 			throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 		}
-		return call_user_func($handlerProviders[0], ...($handlerProviders[1] ?? []));
+		if (!empty($handlerProviders[1])) {
+			return call_user_func($handlerProviders[0], ...$handlerProviders[1]);
+		}
+		return call_user_func($handlerProviders[0]);
 	}
 
 }
