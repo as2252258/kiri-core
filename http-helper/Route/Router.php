@@ -391,7 +391,7 @@ class Router extends HttpService implements RouterInterface
 		if (empty($this->nodes)) {
 			return null;
 		}
-		$parent = $this->nodes[array_shift($explode)];
+		$parent = $this->nodes[array_shift($explode)] ?? null;
 		if (!($parent instanceof Node)) {
 			return null;
 		}
