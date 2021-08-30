@@ -152,7 +152,7 @@ class Uri implements UriInterface
 	 */
 	public function getDefaultPort(): int
 	{
-		return 80;
+		return $this->scheme == 'https' ? 443 : 80;
 	}
 
 
@@ -224,7 +224,7 @@ class Uri implements UriInterface
 		$uri = new Uri();
 		$uri = $uri->withScheme(!empty($server['https']) && $server['https'] !== 'off' ? 'https' : 'http');
 		if (isset($request->header['x-forwarded-proto'])) {
-			$uri->withScheme($request->header['x-forwarded-proto']);
+			$uri->withScheme($request->header['x-forwarded-proto'])->withPort(443);
 		}
 
 		$hasPort = false;
