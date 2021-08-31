@@ -38,4 +38,19 @@ class Sender
 		$server->push($fd, $body->getBody());
 	}
 
+
+	/**
+	 * @param $fd
+	 * @param int $code
+	 * @param string $message
+	 */
+	public function close($fd, int $code = 401, string $message = '')
+	{
+		$server = $this->manager->getServer();
+		if (!$server->isEstablished($fd)) {
+			return;
+		}
+		$server->close($code, $message);
+	}
+
 }
