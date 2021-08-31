@@ -3,8 +3,10 @@
 namespace Server\Constrict;
 
 
-use Kiri\Exception\NotFindClassException;
+use Exception;
+use Kiri\Kiri;
 use Psr\Http\Message\ResponseInterface;
+use Server\ServerManager;
 
 /**
  *
@@ -15,13 +17,13 @@ class WebSocketEmitter implements Emitter
 
 	/**
 	 * @param mixed $response
-	 * @param ResponseInterface $emitter
-	 * @throws NotFindClassException
-	 * @throws \ReflectionException
-	 * @throws \Exception
+	 * @param ResponseInterface|\Server\Message\Response $emitter
+	 * @throws Exception
 	 */
-	public function sender(mixed $response, ResponseInterface $emitter): void
+	public function sender(mixed $response, ResponseInterface|\Server\Message\Response $emitter): void
 	{
-//		$response->push($emitter->getClientId(), $emitter->getContent()->getData());
+		$server = Kiri::getDi()->get(ServerManager::class)->getServer();
+
+		$server->push($response->fd, $emitter->getBody());
 	}
 }

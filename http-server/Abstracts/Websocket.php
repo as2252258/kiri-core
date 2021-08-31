@@ -5,10 +5,8 @@ namespace Server\Abstracts;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
-use Server\Constrict\ResponseEmitter;
 use Server\Constrict\WebSocketEmitter;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
@@ -38,7 +36,6 @@ abstract class Websocket extends Server implements OnHandshake, OnMessage, OnClo
 	/**
 	 * @throws ReflectionException
 	 * @throws ConfigException
-	 * @throws NotFindClassException
 	 */
 	public function init()
 	{
