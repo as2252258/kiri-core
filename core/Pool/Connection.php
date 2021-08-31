@@ -3,15 +3,12 @@ declare(strict_types=1);
 
 namespace Kiri\Pool;
 
-use Annotation\Inject;
 use Closure;
 use Database\Mysql\PDO;
 use Exception;
 use Http\Context\Context;
 use Kiri\Abstracts\Component;
-use Kiri\Events\EventProvider;
 use Kiri\Kiri;
-use Server\Events\OnWorkerExit;
 use Swoole\Error;
 use Throwable;
 
