@@ -122,7 +122,10 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 	 */
 	public function json($data): ResponseInterface
 	{
-		return $this->withBody(static::parser($data, self::CONTENT_TYPE_JSON))
+		if (!is_array($data = $this->_toArray($data))) {
+			throw new Exception('Json data format error.');
+		}
+		return $this->withBody(new Stream(json_encode($this->_toArray($data))))
 			->withContentType(self::CONTENT_TYPE_JSON);
 	}
 
@@ -134,7 +137,7 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 	 */
 	public function html($data): ResponseInterface
 	{
-		return $this->withBody(static::parser($data, self::CONTENT_TYPE_HTML))
+		return $this->withBody(new Stream((string)$this->_toArray($data)))
 			->withContentType(self::CONTENT_TYPE_HTML);
 	}
 
@@ -146,29 +149,24 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 	 */
 	public function xml($data): ResponseInterface
 	{
-		return $this->withBody(static::parser($data, self::CONTENT_TYPE_XML))
+		if (!is_array($data = $this->_toArray($data))) {
+			throw new Exception('Xml data format error.');
+		}
+		return $this->withBody(new Stream(Help::toXml($data)))
 			->withContentType(self::CONTENT_TYPE_XML);
 	}
 
 
 	/**
 	 * @param $responseData
-	 * @param string $contentType
-	 * @return Stream
-	 * @throws Exception
+	 * @return string|array|bool|int|null
 	 */
-	public static function parser($responseData, $contentType = self::CONTENT_TYPE_JSON): Stream
+	public function _toArray($responseData): string|array|null|bool|int
 	{
 		if (is_object($responseData)) {
 			$responseData = $responseData instanceof ToArray ? $responseData->toArray() : get_object_vars($responseData);
 		}
-		if ($contentType == self::CONTENT_TYPE_JSON) {
-			return new Stream(json_encode($responseData));
-		}
-		if ($contentType == self::CONTENT_TYPE_XML) {
-			return new Stream(Help::toXml($responseData));
-		}
-		return new Stream((string)($responseData));
+		return $responseData;
 	}
 
 }

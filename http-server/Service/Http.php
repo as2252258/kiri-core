@@ -6,7 +6,7 @@ namespace Server\Service;
 use Exception;
 use Http\Exception\RequestException;
 use Http\Route\Node;
-use Kiri\ToArray;
+use Kiri\Core\Help;
 use Server\Events\OnAfterRequest;
 use Server\Message\Stream;
 use Server\ResponseInterface;
@@ -16,6 +16,7 @@ use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
+use Server\Message\Response as MsgResponse;
 
 /**
  *
@@ -24,38 +25,38 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
 
 
-    /**
-     * @param Server $server
-     * @param int $fd
-     */
-    public function onConnect(Server $server, int $fd): void
-    {
-        // TODO: Implement onConnect() method.
-    }
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 */
+	public function onConnect(Server $server, int $fd): void
+	{
+		// TODO: Implement onConnect() method.
+	}
 
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     */
-    public function onRequest(Request $request, Response $response): void
-    {
-        // TODO: Implement onRequest() method.
-        try {
-            $node = $this->router->Branch_search(\Server\Constrict\Request::create($request));
-            if (!($node instanceof Node)) {
-                throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
-            }
-            if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
-                $responseData = $this->transferToResponse($responseData);
-            }
-        } catch (Error | \Throwable $exception) {
-            $responseData = $this->exceptionHandler->emit($exception, $this->response);
-        } finally {
-            $this->responseEmitter->sender($response, $responseData);
-            $this->eventDispatch->dispatch(new OnAfterRequest());
-        }
-    }
+	/**
+	 * @param Request $request
+	 * @param Response $response
+	 */
+	public function onRequest(Request $request, Response $response): void
+	{
+		// TODO: Implement onRequest() method.
+		try {
+			$node = $this->router->Branch_search(\Server\Constrict\Request::create($request));
+			if (!($node instanceof Node)) {
+				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+			}
+			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
+				$responseData = $this->transferToResponse($responseData);
+			}
+		} catch (Error | \Throwable $exception) {
+			$responseData = $this->exceptionHandler->emit($exception, $this->response);
+		} finally {
+			$this->responseEmitter->sender($response, $responseData);
+			$this->eventDispatch->dispatch(new OnAfterRequest());
+		}
+	}
 
 
 	/**
@@ -63,45 +64,42 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-    private function transferToResponse($responseData): ResponseInterface
-    {
-        $interface = $this->response->withStatus(200);
-        if (is_object($responseData)) {
-            if (!($responseData instanceof ToArray)) {
-                $responseData = get_object_vars($responseData);
-            } else {
-                $responseData = $responseData->toArray();
-            }
-        }
-        if (is_array($responseData)) {
-            $responseData = new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE));
-        } else {
-            $responseData = new Stream((string)$responseData);
-        }
-        if (!$interface->hasHeader('Content-Type')) {
-            $interface->withContentType(\Server\Message\Response::CONTENT_TYPE_JSON);
-        }
-        return $interface->withBody($responseData);
-    }
+	private function transferToResponse($responseData): ResponseInterface
+	{
+		$interface = $this->response->withStatus(200);
+		if (!$interface->hasHeader('Content-Type')) {
+			$interface->withContentType(MsgResponse::CONTENT_TYPE_JSON);
+		}
+		$responseData = $interface->_toArray($responseData);
+		if ($interface->getHeader('Content-Type') == MsgResponse::CONTENT_TYPE_XML) {
+			$responseData = Help::toXml($responseData);
+		}
+		if (is_array($responseData)) {
+			$responseData = new Stream(json_encode($responseData, JSON_UNESCAPED_UNICODE));
+		} else {
+			$responseData = new Stream((string)$responseData);
+		}
+		return $interface->withBody($responseData);
+	}
 
 
-    /**
-     * @param Server $server
-     * @param int $fd
-     * @throws Exception
-     */
-    public function onDisconnect(Server $server, int $fd): void
-    {
-    }
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * @throws Exception
+	 */
+	public function onDisconnect(Server $server, int $fd): void
+	{
+	}
 
 
-    /**
-     * @param Server $server
-     * @param int $fd
-     * @throws Exception
-     */
-    public function onClose(Server $server, int $fd): void
-    {
-    }
+	/**
+	 * @param Server $server
+	 * @param int $fd
+	 * @throws Exception
+	 */
+	public function onClose(Server $server, int $fd): void
+	{
+	}
 
 }
