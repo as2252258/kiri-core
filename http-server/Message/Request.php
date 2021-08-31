@@ -3,6 +3,7 @@
 namespace Server\Message;
 
 use BadMethodCallException;
+use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -38,11 +39,27 @@ class Request implements RequestInterface
 
 
 	/**
+	 * @var AuthIdentity|null
+	 */
+	public ?AuthIdentity $authority = null;
+
+
+
+	/**
 	 * @return int
 	 */
 	public function getClientId(): int
 	{
 		return $this->serverRequest->fd;
+	}
+
+
+	/**
+	 * @param AuthIdentity $authority
+	 */
+	public function setAuthority(AuthIdentity $authority)
+	{
+		$this->authority = $authority;
 	}
 
 
