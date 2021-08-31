@@ -151,7 +151,6 @@ class Stream implements StreamInterface
 	}
 
 
-
 	/**
 	 * @return bool
 	 */
@@ -165,9 +164,12 @@ class Stream implements StreamInterface
 	 * @param int $length
 	 * @return string
 	 */
-	public function read($length): string
+	public function read($length = -1): string
 	{
-		return substr($this->body, 0, $length);
+		if ($length > 0) {
+			return substr($this->body, 0, $length);
+		}
+		return $this->body;
 	}
 
 
