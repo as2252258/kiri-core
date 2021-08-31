@@ -125,8 +125,10 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 		if (!is_array($data = $this->_toArray($data))) {
 			throw new Exception('Json data format error.');
 		}
-		return $this->withBody(new Stream(json_encode($this->_toArray($data))))
-			->withContentType(self::CONTENT_TYPE_JSON);
+
+		$this->stream->write(json_encode($this->_toArray($data)));
+
+		return $this->withContentType(self::CONTENT_TYPE_JSON);
 	}
 
 
@@ -137,8 +139,9 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 	 */
 	public function html($data): ResponseInterface
 	{
-		return $this->withBody(new Stream((string)$this->_toArray($data)))
-			->withContentType(self::CONTENT_TYPE_HTML);
+		$this->stream->write((string)$this->_toArray($data));
+
+		return $this->withContentType(self::CONTENT_TYPE_HTML);
 	}
 
 
@@ -152,8 +155,10 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 		if (!is_array($data = $this->_toArray($data))) {
 			throw new Exception('Xml data format error.');
 		}
-		return $this->withBody(new Stream(Help::toXml($data)))
-			->withContentType(self::CONTENT_TYPE_XML);
+
+		$this->stream->write(Help::toXml($data));
+
+		return $this->withContentType(self::CONTENT_TYPE_XML);
 	}
 
 
