@@ -44,7 +44,6 @@ class Request implements RequestInterface
 	public ?AuthIdentity $authority = null;
 
 
-
 	/**
 	 * @return int
 	 */
@@ -140,6 +139,21 @@ class Request implements RequestInterface
 			return new Uploaded($this->serverRequest->files[$name]);
 		}
 		return null;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function all(): array
+	{
+		if (empty($this->parseBody)) {
+			$this->parseBody = $this->parseBody($this->stream);
+		}
+		return array_merge($this->serverRequest->post ?? [],
+			$this->serverRequest->get ?? [],
+			is_array($this->parseBody) ? $this->parseBody : []
+		);
 	}
 
 
