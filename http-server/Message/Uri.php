@@ -35,6 +35,9 @@ class Uri implements UriInterface
 	private array $_explode = [];
 
 
+	private mixed $authority;
+
+
 	/**
 	 * @return string[]
 	 */
@@ -58,10 +61,24 @@ class Uri implements UriInterface
 		return $this->scheme;
 	}
 
-	public function getAuthority()
+
+	/**
+	 * @return mixed
+	 */
+	public function getAuthority(): mixed
 	{
-		// TODO: Implement getAuthority() method.
+		return $this->authority;
 	}
+
+
+	/**
+	 * @param $authority
+	 */
+	public function setAuthority($authority)
+	{
+		$this->authority = $authority;
+	}
+
 
 	public function getUserInfo()
 	{

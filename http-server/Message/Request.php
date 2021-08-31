@@ -2,12 +2,10 @@
 
 namespace Server\Message;
 
-use Annotation\Inject;
 use BadMethodCallException;
 use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use ReflectionException;
 
 
 /**
