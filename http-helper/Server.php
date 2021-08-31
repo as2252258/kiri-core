@@ -11,9 +11,8 @@ use Kiri\Abstracts\Config;
 use Kiri\Error\LoggerProcess;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
+use Kiri\Rpc\Service;
 use ReflectionException;
-use Server\Constant;
 use Server\Events\OnShutdown;
 use Server\ServerManager;
 use Swoole\Runtime;
@@ -78,7 +77,7 @@ class Server extends HttpService
 
 		$rpcService = Config::get('rpc', []);
 		if (!empty($rpcService)) {
-			$this->rpcListener($rpcService);
+			Service::addRpcListener($this->manager, $rpcService);
 		}
 
 		$processes = array_merge($this->process, Config::get('processes', []));
@@ -88,39 +87,6 @@ class Server extends HttpService
 		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
 
 		return $this->manager->getServer()->start();
-	}
-
-
-	/**
-	 * @param $rpcService
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 * @throws ConfigException
-	 */
-	private function rpcListener($rpcService)
-	{
-		if (in_array($rpcService['mode'], [SWOOLE_SOCK_UDP, SWOOLE_UDP, SWOOLE_UDP6, SWOOLE_SOCK_UDP6])) {
-			$rpcService['events'][Constant::PACKET] = [Service::class, 'onPacket'];
-		} else {
-			$rpcService['events'][Constant::RECEIVE] = [Service::class, 'onReceive'];
-			$rpcService['events'][Constant::CONNECT] = [Service::class, 'onConnect'];
-			$rpcService['events'][Constant::DISCONNECT] = [Service::class, 'onDisconnect'];
-			$rpcService['events'][Constant::CLOSE] = [Service::class, 'onClose'];
-		}
-		$rpcService['settings']['enable_unsafe_event'] = true;
-		$this->addRpcListener($rpcService);
-	}
-
-
-	/**
-	 * @param $rpcService
-	 * @throws ConfigException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
-	private function addRpcListener($rpcService)
-	{
-		$this->manager->addListener($rpcService['type'], $rpcService['host'], $rpcService['port'], $rpcService['mode'], $rpcService);
 	}
 
 
