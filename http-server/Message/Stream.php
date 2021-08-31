@@ -143,7 +143,7 @@ class Stream implements StreamInterface
 	 * @param string $string
 	 * @return int
 	 */
-	public function append($string): int
+	public function append(string $string): int
 	{
 		$this->body .= $string;
 		$this->size = strlen($this->body);

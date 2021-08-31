@@ -58,10 +58,11 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
     }
 
 
-    /**
-     * @param $responseData
-     * @return \Server\ResponseInterface
-     */
+	/**
+	 * @param $responseData
+	 * @return ResponseInterface
+	 * @throws Exception
+	 */
     private function transferToResponse($responseData): ResponseInterface
     {
         $interface = $this->response->withStatus(200);
