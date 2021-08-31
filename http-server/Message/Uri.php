@@ -64,7 +64,7 @@ class Uri implements UriInterface
 	 */
 	public function getAuthority(): string
 	{
-		throw new \BadMethodCallException('');
+		throw new \BadMethodCallException('Not Accomplish Method.');
 	}
 
 
