@@ -214,7 +214,7 @@ class Application extends BaseApplication
 			$console = di(\Symfony\Component\Console\Application::class);
 			$command = $input->getFirstArgument();
 			if (!empty($command)) {
-				$command = 'list';
+				$command = 'help';
 			}
 			$command = $console->find($command);
 			if ($command instanceof Command) {
