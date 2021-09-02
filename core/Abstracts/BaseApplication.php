@@ -17,7 +17,7 @@ use Http\Context\HttpHeaders;
 use Http\Context\HttpParams;
 use Http\Context\Response;
 use Http\Route\Router;
-use Http\Server;
+use Server\Server;
 use Http\Shutdown;
 use JetBrains\PhpStorm\Pure;
 use Kafka\KafkaProvider;

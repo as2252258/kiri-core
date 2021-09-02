@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Http;
+namespace Server;
 
 
 use Exception;
@@ -28,7 +28,7 @@ class ServerProviders extends Providers
 		$container = Kiri::getDi();
 
 		$console = $container->get(\Symfony\Component\Console\Application::class);
-		$console->add($container->get(Command::class));
+		$console->add($container->get(ServerCommand::class));
 
 	}
 }

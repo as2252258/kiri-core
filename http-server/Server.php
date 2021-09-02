@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Http;
+namespace Server;
 
 use Annotation\Inject;
 use Exception;
@@ -12,9 +12,7 @@ use Kiri\Error\LoggerProcess;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
 use Kiri\Rpc\Service;
-use ReflectionException;
 use Server\Events\OnShutdown;
-use Server\ServerManager;
 use Swoole\Runtime;
 
 

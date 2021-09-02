@@ -15,9 +15,9 @@ use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
-use Http\Command;
+use Server\ServerCommand;
 use Http\Context\Response;
-use Http\ServerProviders;
+use Server\ServerProviders;
 use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Kernel;
@@ -240,7 +240,7 @@ class Application extends BaseApplication
 	 */
 	private function enableFileChange($class): void
 	{
-		if (!($class instanceof Command)) {
+		if (!($class instanceof ServerCommand)) {
 			scan_directory(directory('app'), 'App');
 		}
 	}

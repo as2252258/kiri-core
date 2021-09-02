@@ -11,7 +11,7 @@ use Http\Client\Curl;
 use Http\Context\Response;
 use Http\HttpFilter;
 use Http\Route\Router;
-use Http\Server;
+use Server\Server;
 use Http\Shutdown;
 use Kiri\Crontab\Producer;
 use Kiri\Async;
