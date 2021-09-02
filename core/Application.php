@@ -213,7 +213,7 @@ class Application extends BaseApplication
 		try {
 			$console = di(\Symfony\Component\Console\Application::class);
 			$command = $input->getFirstArgument();
-			if (!empty($command)) {
+			if (empty($command)) {
 				$command = 'help';
 			}
 			$command = $console->find($command);
