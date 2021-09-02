@@ -15,9 +15,7 @@ use Console\Console;
 use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
-use Server\ServerCommand;
 use Http\Context\Response;
-use Server\ServerProviders;
 use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Kernel;
@@ -26,9 +24,12 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\FileListen\FileChangeCustomProcess;
 use ReflectionException;
 use Server\ResponseInterface;
+use Server\ServerCommand;
+use Server\ServerProviders;
 use stdClass;
 use Swoole\Process;
 use Swoole\Timer;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -62,6 +63,8 @@ class Application extends BaseApplication
 	{
 		$this->import(ConsoleProviders::class);
 		$this->import(ServerProviders::class);
+
+		$this->register(Runtime::class);
 	}
 
 
@@ -206,43 +209,47 @@ class Application extends BaseApplication
 	 */
 	public function execute(array $argv): void
 	{
+		[$input, $output] = $this->argument($argv);
 		try {
-			$this->register(Runtime::class);
-
-			$input = new ArgvInput($argv);
-
 			$console = di(\Symfony\Component\Console\Application::class);
-			$command = $console->find($input->getFirstArgument());
-
-//			/** @var Console $manager */
-//	        $manager = Kiri::app()->get('console');
-//            $class = $manager->setParameters($argv)->search();
-
-			$command->run($input, $output = new ConsoleOutput());
-
-			$this->enableFileChange($command);
-
-			$data = $output->getStream();
-
-//            $data = $this->getBuilder($manager->exec($class));
+			$command = $input->getFirstArgument();
+			if (!empty($command)) {
+				$command = 'list';
+			}
+			$command = $console->find($command);
+			if ($command instanceof Command) {
+				$this->enableFileChange($command, $input, $output);
+			}
 		} catch (\Throwable $exception) {
-			$data = $this->getBuilder(jTraceEx($exception));
+			$output->writeln(jTraceEx($exception));
 		} finally {
-			print_r($data);
 			Timer::clearAll();
 		}
 	}
 
 
 	/**
+	 * @param $argv
+	 * @return array
+	 */
+	private function argument($argv): array
+	{
+		return [new ArgvInput($argv), new ConsoleOutput()];
+	}
+
+
+	/**
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
-	private function enableFileChange($class): void
+	private function enableFileChange(Command $class, $input, $output): void
 	{
 		if (!($class instanceof ServerCommand)) {
 			scan_directory(directory('app'), 'App');
 		}
+		$class->run($input, $output);
+		$output->writeln('ok');
 	}
 
 
