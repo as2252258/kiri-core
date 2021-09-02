@@ -77,11 +77,11 @@ class Pool extends Component
 
 	/**
 	 * @param $name
-	 * @return Channel
+	 * @return Channel|SplQueue
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	private function getChannel($name): Channel
+	private function getChannel($name): Channel|SplQueue
 	{
 		if (!isset(static::$_connections[$name])) {
 			$this->newChannel($name);
