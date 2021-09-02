@@ -37,7 +37,7 @@ class Runtime extends Command
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
-	 * @return string
+	 * @return int
 	 * @throws Exception
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
