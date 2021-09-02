@@ -4,9 +4,11 @@
 namespace Kiri;
 
 
-use Console\Command;
 use Exception;
 use Kiri\Abstracts\Input;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
@@ -26,12 +28,19 @@ class Runtime extends Command
 	const CONFIG_NAME = '.config.cache';
 
 
+	protected function configure()
+	{
+		$this->setName('runtime:builder');
+	}
+
+
 	/**
-	 * @param Input $dtl
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
 	 * @return string
 	 * @throws Exception
 	 */
-	public function onHandler(Input $dtl): string
+	public function execute(InputInterface $input, OutputInterface $output): string
 	{
 		// TODO: Implement onHandler() method.
 		$annotation = Kiri::app()->getAnnotation();
