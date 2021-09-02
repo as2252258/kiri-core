@@ -40,7 +40,7 @@ class Runtime extends Command
 	 * @return string
 	 * @throws Exception
 	 */
-	public function execute(InputInterface $input, OutputInterface $output): string
+	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// TODO: Implement onHandler() method.
 		$annotation = Kiri::app()->getAnnotation();
@@ -51,7 +51,7 @@ class Runtime extends Command
 		Kiri::writeFile($config, $this->configEach());
 		Kiri::writeFile($runtime, serialize($annotation->getLoader()));
 
-		return 'ok';
+		return 1;
 	}
 
 
