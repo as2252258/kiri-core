@@ -17,7 +17,6 @@ use Kiri\Abstracts\Logger;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
-use Psr\Log\Test\TestLogger;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
@@ -203,7 +202,7 @@ class Container extends BaseObject implements ContainerInterface
 	{
 		foreach ($this->getPropertyNote($reflect) as $property => $inject) {
 			/** @var Inject $inject */
-            $inject->execute($object, $property);
+			$inject->execute($object, $property);
 		}
 		return $object;
 	}
@@ -252,7 +251,7 @@ class Container extends BaseObject implements ContainerInterface
 	private function onAfterInit($object, $config): mixed
 	{
 		Kiri::configure($object, $config);
-		if (method_exists($object, 'init')) {
+		if (method_exists($object, 'init') && is_callable([$object, 'init'])) {
 			call_user_func([$object, 'init']);
 		}
 		return $object;
