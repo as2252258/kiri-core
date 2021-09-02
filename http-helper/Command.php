@@ -16,6 +16,8 @@ use Server\Events\OnBeforeWorkerStart;
 use Server\Events\OnWorkerStart;
 use Server\Worker\OnServerWorker;
 use Server\Worker\OnWorkerStart as WorkerDispatch;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class Command
@@ -23,11 +25,6 @@ use Server\Worker\OnWorkerStart as WorkerDispatch;
  */
 class Command extends \Symfony\Component\Console\Command\Command
 {
-
-	public string $command = 'sw:server';
-
-
-	public string $description = 'server start|stop|reload|restart';
 
 
 	const ACTIONS = ['start', 'stop', 'restart'];
@@ -45,30 +42,33 @@ class Command extends \Symfony\Component\Console\Command\Command
 	 */
 	protected function configure()
 	{
-		$this->setName('swoole')
+		$this->setName('sw:server')
 			->setDescription('server start|stop|reload|restart');
 	}
 
 
 	/**
-	 * @param Input $dtl
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
 	 * @return string
-	 * @throws Exception
 	 * @throws ConfigException
+	 * @throws NotFindClassException
+	 * @throws ReflectionException
+	 * @throws Exception
 	 */
-	public function onHandler(Input $dtl): string
+	public function execute(InputInterface $input, OutputInterface $output): string
 	{
 		$manager = Kiri::app()->getServer();
-		$manager->setDaemon($dtl->get('daemon', 0));
-		if (!in_array($dtl->get('action'), self::ACTIONS)) {
-			return 'I don\'t know what I want to do.';
+		$manager->setDaemon($input->getArgument('daemon'));
+		if (!in_array($input->getArgument('action'), self::ACTIONS)) {
+			return $output->write('I don\'t know what I want to do.');
 		}
-		if ($manager->isRunner() && $dtl->get('action') == 'start') {
-			return 'Service is running. Please use restart.';
+		if ($manager->isRunner() && $input->getArgument('action') == 'start') {
+			return $output->write('Service is running. Please use restart.');
 		}
 		$manager->shutdown();
-		if ($dtl->get('action') == 'stop') {
-			return 'shutdown success.';
+		if ($input->getArgument('action') == 'stop') {
+			return $output->write('shutdown success');
 		}
 		return $this->generate_runtime_builder($manager);
 	}

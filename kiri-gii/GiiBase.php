@@ -13,6 +13,7 @@ use ReflectionClass;
 use ReflectionException;
 use Kiri\Abstracts\Input;
 use Kiri\Core\Json;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Class GiiBase
@@ -24,8 +25,7 @@ abstract class GiiBase
 	public array $fileList = [];
 
 
-	/** @var Input */
-	protected Input $input;
+	protected InputInterface $input;
 
 	public string $modelPath = APP_PATH . 'app/Models/';
 	public string $modelNamespace = 'App\Models\\';
@@ -92,9 +92,9 @@ abstract class GiiBase
 
 
 	/**
-	 * @param Input $input
+	 * @param InputInterface $input
 	 */
-	public function setInput(Input $input)
+	public function setInput(InputInterface $input)
 	{
 		$this->input = $input;
 	}

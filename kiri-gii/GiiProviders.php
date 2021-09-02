@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Gii;
 
 
-use Console\Console;
 use Exception;
 use Kiri\Abstracts\Providers;
 use Kiri\Application;
+use Kiri\Kiri;
 
 /**
  * Class DatabasesProviders
@@ -26,8 +26,9 @@ class GiiProviders extends Providers
 	{
 		$application->set('gii', ['class' => Gii::class]);
 
-		/** @var Console $console */
-		$console = $application->get('console');
-		$console->register(Command::class);
+		$container = Kiri::getDi();
+
+		$console = $container->get(\Symfony\Component\Console\Application::class);
+		$console->add($container->get(GiiCommand::class));
 	}
 }

@@ -23,7 +23,7 @@ class GiiMiddleware extends GiiBase
 	public function generate(): array
 	{
 
-		$managerName = $this->input->get('name', null);
+		$managerName = $this->input->getArgument('name');
 		if (empty($managerName)) {
 			throw new Exception('文件名称不能为空~');
 		}

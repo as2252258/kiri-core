@@ -12,10 +12,10 @@ namespace Gii;
 use Database\Connection;
 use Database\Db;
 use Exception;
-use Kiri\Abstracts\Input;
 use Kiri\Exception\ComponentException;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Class gii
@@ -29,8 +29,7 @@ class Gii
 	/** @var Connection */
 	private Connection $db;
 
-	/** @var Input */
-	private Input $input;
+	private InputInterface $input;
 
 	public string $modelPath = APP_PATH . 'app/Models/';
 	public string $modelNamespace = 'App\\Models\\';
@@ -49,46 +48,37 @@ class Gii
 	/**
 	 * @param Connection|null $db
 	 *
-	 * @param $input
+	 * @param InputInterface $input
 	 * @return array
 	 * @throws ComponentException
 	 * @throws ConfigException
-	 * @throws Exception
 	 */
-	public function run(?Connection $db, $input): array
+	public function run(?Connection $db, InputInterface $input): array
 	{
 		return $this->gen($input, $db);
 	}
 
 
 	/**
-	 * @param $input
+	 * @param InputInterface $input
 	 * @param $db
 	 * @return array
 	 * @throws ComponentException
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function gen($input, $db): array
+	public function gen(InputInterface $input, $db): array
 	{
 		$this->input = $input;
 		if (!empty($db)) $this->db = $db;
 
-		$make = $this->input->get('make', null);
+		$make = $this->input->getArgument('make');
 		if (empty($make)) {
 			throw new Exception('构建类型不能为空~');
 		}
 		switch (strtolower($make)) {
 			case 'task':
 				$task = new GiiTask();
-				$task->setInput($this->input);
-				return $task->generate();
-			case 'interceptor':
-				$task = new GiiInterceptor();
-				$task->setInput($this->input);
-				return $task->generate();
-			case 'limits':
-				$task = new GiiLimits();
 				$task->setInput($this->input);
 				return $task->generate();
 			case 'middleware':
@@ -114,7 +104,6 @@ class Gii
 	 * @param $input
 	 * @return array
 	 * @throws ComponentException
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	private function getModel($make, $input): array
@@ -122,7 +111,7 @@ class Gii
 		if ($this->db instanceof Connection) {
 			return $this->makeByDatabases($make, $input);
 		}
-		$db = $this->input->get('databases', 'db');
+		$db = $this->input->getArgument('databases');
 		$this->db = Kiri::app()->get('db')->get($db);
 
 		return $this->makeByDatabases($make, $input);
@@ -131,16 +120,15 @@ class Gii
 
 	/**
 	 * @param $make
-	 * @param $input
+	 * @param InputInterface $input
 	 * @return array
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
-	private function makeByDatabases($make, $input): array
+	private function makeByDatabases($make, InputInterface $input): array
 	{
 		$redis = Kiri::app()->getRedis();
-		if (!empty($input->get('name'))) {
-			$this->tableName = $input->get('name');
+		if (!empty($input->getArgument('name'))) {
+			$this->tableName = $input->getArgument('name');
 			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {
@@ -190,7 +178,7 @@ class Gii
 		$controller->setModelPath($this->modelPath);
 		$controller->setModelNamespace($this->modelNamespace);
 		$controller->setInput($this->input);
-		$controller->setModule($this->input->get('module', null));
+		$controller->setModule($this->input->getArgument('module'));
 		$controller->setControllerPath($this->controllerPath);
 		$controller->setControllerNamespace($this->controllerNamespace);
 		return $controller->generate();
@@ -209,7 +197,7 @@ class Gii
 		$controller->setInput($this->input);
 		$controller->setModelNamespace($this->modelNamespace);
 		$controller->setControllerPath($this->controllerPath);
-		$controller->setModule($this->input->get('module', null));
+		$controller->setModule($this->input->getArgument('module'));
 		$controller->setControllerNamespace($this->controllerNamespace);
 		return $controller->generate();
 	}

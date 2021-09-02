@@ -21,15 +21,15 @@ class GiiRpcClient extends GiiBase
 	public function generate(): array
 	{
 
-		$managerName = $this->input->get('name', null);
+		$managerName = $this->input->getArgument('name', null);
 		if (empty($managerName)) {
 			throw new Exception('文件名称不能为空~');
 		}
 
-		$service = $this->input->get('service', strtolower($managerName));
+		$service = $this->input->getArgument('service', strtolower($managerName));
 
-		$port = $this->input->get('port', 443);
-		$mode = $this->input->get('mode', 'SWOOLE_SOCK_TCP');
+		$port = $this->input->getArgument('port', 443);
+		$mode = $this->input->getArgument('mode', 'SWOOLE_SOCK_TCP');
 
 		$html = '<?php
 		
