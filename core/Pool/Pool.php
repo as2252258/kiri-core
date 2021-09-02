@@ -120,11 +120,26 @@ class Pool extends Component
 		$channel = $this->getChannel($name);
 		if (!$channel->isEmpty()) {
 			$connection = $channel->pop();
+			defer(fn() => $this->maxIdleQuantity($channel));
 			if ($this->checkCanUse($name, $connection)) {
 				return $connection;
 			}
 		}
 		return $callback();
+	}
+
+
+	/**
+	 * @param $channel
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	private function maxIdleQuantity($channel): void
+	{
+		$minx = Config::get('databases.pool.min', 1);
+		if ($channel->length() > $minx) {
+			$this->pop($channel, $minx);
+		}
 	}
 
 
