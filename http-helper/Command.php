@@ -43,7 +43,9 @@ class Command extends \Symfony\Component\Console\Command\Command
 	protected function configure()
 	{
 		$this->setName('sw:server')
-			->setDescription('server start|stop|reload|restart');
+			->setDescription('server start|stop|reload|restart')
+		->addOption('action')
+		->addOption('daemon');
 	}
 
 
