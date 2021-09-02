@@ -98,7 +98,7 @@ class Pool extends Component
 	 */
 	private function newChannel($name, $max = null)
 	{
-		if ($max !== null) {
+		if ($max == null) {
 			$max = Config::get('databases.pool.max', 10);
 		}
 		if (Coroutine::getCid() === -1) {
