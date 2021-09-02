@@ -30,6 +30,16 @@ class GiiCommand extends Command
 
 
 	/**
+	 *
+	 */
+	protected function configure()
+	{
+		$this->setName('sw:gii')
+			->setDescription('./snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx');
+	}
+
+
+	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @return array
