@@ -21,6 +21,7 @@
     "ext-xml": "*",
     "ext-curl": "*",
     "ext-openssl": "*",
+    "symfony/console": "^2.4 || ^3.0 || ^4.0",
     "amphp/amp": "v1.2.2",
     "psr/log": "1.*",
     "ext-sockets": "*",
@@ -34,7 +35,8 @@
     "psr/cache": "^3.0",
     "psr/http-client": "^1.0",
     "psr/simple-cache": "^1.0",
-    "game-worker/kiri-event": "v1.0"
+    "game-worker/kiri-event": "v1.0",
+    "linkorb/etcd-php": "^1.6"
   },
   "autoload": {
     "psr-4": {
@@ -49,7 +51,5 @@
       "error.php",
       "function.php"
     ]
-  },
-  "require-dev": {
   }
 }
