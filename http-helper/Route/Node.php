@@ -10,6 +10,7 @@ use Closure;
 use Exception;
 use Http\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
+use Kiri\Di\NoteManager;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\NotFindClassException;
 use Kiri\IAspect;
@@ -255,7 +256,7 @@ class Node
 		}
 
 		/** @var Aspect $aspect */
-		$aspect = Kiri::getDi()->getMethodByAnnotation(Aspect::class, $controller, $action);
+		$aspect = NoteManager::getMethodByAnnotation(Aspect::class, $controller, $action);
 		if (empty($aspect)) {
 			return null;
 		}
