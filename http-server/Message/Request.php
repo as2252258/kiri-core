@@ -25,9 +25,9 @@ class Request implements RequestInterface
 
 
 	/**
-	 * @var Uri
+	 * @var Uri|UriInterface
 	 */
-	private Uri $uri;
+	private Uri|UriInterface $uri;
 
 
 	private \Swoole\Http\Request $serverRequest;
