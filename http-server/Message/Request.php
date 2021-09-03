@@ -119,6 +119,15 @@ class Request implements RequestInterface
 
 
 	/**
+	 * @return array|null
+	 */
+	public function gets(): ?array
+	{
+		return $this->serverRequest->get;
+	}
+
+
+	/**
 	 * @param $name
 	 * @param null $default
 	 * @return mixed
