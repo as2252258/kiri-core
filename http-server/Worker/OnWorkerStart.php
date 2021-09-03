@@ -12,6 +12,7 @@ use Kiri\Kiri;
 use Kiri\Runtime;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionException;
+use Server\ServerManager;
 
 class OnWorkerStart implements EventDispatcherInterface
 {
@@ -35,17 +36,17 @@ class OnWorkerStart implements EventDispatcherInterface
     {
         $isWorker = $event->workerId < $event->server->setting['worker_num'];
 
-        $this->annotation->read(APP_PATH . 'app','App', $isWorker ? [] : [CONTROLLER_PATH]);
+        $this->annotation->read(APP_PATH . 'app', 'App', $isWorker ? [] : [CONTROLLER_PATH]);
         $this->interpretDirectory();
         if ($isWorker) {
-            putenv('environmental=' . Kiri::WORKER);
+            ServerManager::setEnv('environmental', Kiri::WORKER);
             Kiri::getFactory()->getRouter()->_loader();
 
             echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
 
             $this->setProcessName(sprintf('Worker[%d].%d', $event->server->worker_pid, $event->workerId));
         } else {
-            putenv('environmental=' . Kiri::TASK);
+            ServerManager::setEnv('environmental', Kiri::TASK);
 
             echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
 

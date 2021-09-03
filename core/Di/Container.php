@@ -34,8 +34,6 @@ use Server\ResponseInterface;
 class Container extends BaseObject implements ContainerInterface
 {
 
-	use Attributes;
-
 	/**
 	 * @var array
 	 *
@@ -200,7 +198,7 @@ class Container extends BaseObject implements ContainerInterface
 	 */
 	public function propertyInject(ReflectionClass $reflect, $object): mixed
 	{
-		foreach ($this->getPropertyNote($reflect) as $property => $inject) {
+		foreach (NoteManager::getPropertyNote($reflect) as $property => $inject) {
 			/** @var Inject $inject */
 			$inject->execute($object, $property);
 		}
@@ -216,7 +214,7 @@ class Container extends BaseObject implements ContainerInterface
 	 */
 	public function getMethodAttribute($className, $method = null): array
 	{
-		$methods = $this->getMethodNote($this->getReflect($className));
+		$methods = NoteManager::getMethodNote($this->getReflect($className));
 		if (!empty($method)) {
 			return $methods[$method] ?? [];
 		}
@@ -232,7 +230,7 @@ class Container extends BaseObject implements ContainerInterface
 	 */
 	public function getClassReflectionProperty(string $class, string $property = null): ReflectionProperty|null|array
 	{
-		$lists = $this->getProperty($this->getReflect($class));
+		$lists = NoteManager::getProperty($this->getReflect($class));
 		if (empty($lists)) {
 			return null;
 		}
@@ -272,9 +270,9 @@ class Container extends BaseObject implements ContainerInterface
 		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
 			return $this->_reflection[$class] = $reflect;
 		}
-		$this->setPropertyNote($reflect);
-		$this->setTargetNote($reflect);
-		$this->setMethodNote($reflect);
+        NoteManager::setPropertyNote($reflect);
+        NoteManager::setTargetNote($reflect);
+        NoteManager::setMethodNote($reflect);
 		$construct = $reflect->getConstructor();
 		if (!empty($construct) && $construct->getNumberOfParameters() > 0) {
 			$this->_constructs[$class] = $construct;
@@ -293,7 +291,7 @@ class Container extends BaseObject implements ContainerInterface
 		if (is_string($class)) {
 			$class = $this->getReflect($class);
 		}
-		return $this->getMethods($class);
+		return NoteManager::getMethods($class);
 	}
 
 

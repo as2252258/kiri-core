@@ -31,23 +31,4 @@ use Kiri\Kiri;
 	}
 
 
-	/**
-     * @param static $params
-	 * @param mixed $class
-	 * @param mixed|null $method
-	 * @return Router
-	 * @throws Exception
-	 */
-    public static function execute(mixed $params, mixed $class, mixed $method = null): Router
-	{
-		// TODO: Implement setHandler() method.
-		$router = Kiri::app()->getRouter();
-
-		$path = $params->event . '::' . (is_null($params->uri) ? 'event' : $params->uri);
-
-		$router->addRoute($path, [di($class), $method], 'sw::socket');
-
-		return $router;
-	}
-
 }

@@ -89,7 +89,7 @@ class ApplicationStore
 	 */
 	#[Pure] public function getStatus(): string
 	{
-		return env('state');
+		return env('state','start');
 	}
 
 }

@@ -14,6 +14,7 @@ use Server\Events\OnWorkerError;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStart;
 use Server\Events\OnWorkerStop;
+use Server\ServerManager;
 use Swoole\Server;
 use Swoole\Timer;
 
@@ -54,8 +55,7 @@ class OnServerWorker extends \Server\Abstracts\Server
      */
     public function setConfigure(OnBeforeWorkerStart $worker)
     {
-        putenv('state=start');
-        putenv('worker=' . $worker->workerId);
+        ServerManager::setEnv('worker', $worker->workerId);
         $serialize = file_get_contents(storage(Runtime::CONFIG_NAME));
         if (!empty($serialize)) {
             Config::sets(unserialize($serialize));
@@ -83,7 +83,7 @@ class OnServerWorker extends \Server\Abstracts\Server
      */
     public function onWorkerExit(Server $server, int $workerId)
     {
-        putenv('state=exit');
+        ServerManager::setEnv('state', 'exit');
 
         $this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
     }
@@ -104,7 +104,8 @@ class OnServerWorker extends \Server\Abstracts\Server
         $message = sprintf('Worker#%d::%d error stop. signal %d, exit_code %d, msg %s',
             $worker_id, $worker_pid, $signal, $exit_code, swoole_strerror(swoole_last_error(), 9)
         );
-        write($message, 'worker-exit');
+
+        $this->logger->error($message);
 
         $this->system_mail($message);
     }
