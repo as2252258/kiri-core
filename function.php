@@ -12,6 +12,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Application;
 use Kiri\AspectManager;
 use Kiri\Core\ArrayAccess;
+use Kiri\Di\NoteManager;
 use Kiri\Error\Logger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
@@ -187,7 +188,7 @@ if (!function_exists('injectRuntime')) {
         $fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
         $di = Kiri::getDi();
         foreach ($fileLists as $class) {
-            foreach ($di->getTargetNote($class) as $value) {
+            foreach (NoteManager::getTargetNote($class) as $value) {
                 $value->execute($class);
             }
             $methods = $di->getMethodAttribute($class);

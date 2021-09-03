@@ -7,6 +7,7 @@ use Annotation\Inject;
 use Exception;
 use Http\Route\Router;
 use Kiri\Abstracts\Config;
+use Kiri\Di\NoteManager;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Kiri\Runtime;
@@ -81,7 +82,7 @@ class OnWorkerStart implements EventDispatcherInterface
         $fileLists = $this->annotation->runtime(APP_PATH . 'app');
         $di = Kiri::getDi();
         foreach ($fileLists as $class) {
-            foreach ($di->getTargetNote($class) as $value) {
+            foreach (NoteManager::getTargetNote($class) as $value) {
                 $value->execute($class);
             }
             $methods = $di->getMethodAttribute($class);
