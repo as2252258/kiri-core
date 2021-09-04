@@ -329,7 +329,6 @@ class Node
         if (empty($handlerProviders)) {
             throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
         }
-        var_dump($handlerProviders->interpreter());
         return $handlerProviders->interpreter();
     }
 
