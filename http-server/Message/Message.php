@@ -86,9 +86,9 @@ trait Message
     /**
      * @return string|null
      */
-	#[Pure] public function getAccessControlRequestHeaders(): ?string
+	#[Pure] public function getAccessControlAllowHeaders(): ?string
 	{
-		return $this->getHeaderLine('Access-Control-Request-Headers');
+		return $this->getHeaderLine('Access-Control-Allow-Headers');
 	}
 
 
