@@ -493,6 +493,7 @@ class Router extends HttpService implements RouterInterface
 	{
 		$uri = $request->getUri();
 		$node = $this->tree_search($uri->getExplode());
+        var_dump($node);
 		if ($node instanceof Node) {
 			return $node;
 		}
