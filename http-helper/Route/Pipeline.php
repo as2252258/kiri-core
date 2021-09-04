@@ -52,6 +52,7 @@ class Pipeline
      */
     public function through($pipes)
     {
+        if (empty($pipes)) return $this;
         if (empty($this->pipes)) {
             $this->pipes = is_array($pipes) ? $pipes : func_get_args();
         } else {
