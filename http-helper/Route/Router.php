@@ -286,7 +286,7 @@ class Router extends HttpService implements RouterInterface
 	/**
 	 * @return Closure
 	 */
-	public function getMiddleware(): Closure
+	public function getMiddleware(): ?Closure
 	{
 		return $this->middleware;
 	}
