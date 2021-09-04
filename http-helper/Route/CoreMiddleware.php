@@ -29,9 +29,9 @@ class CoreMiddleware extends MiddlewareAbstracts
 	{
 		/** @var Response $response */
 		$response = \response();
-		$response->withAccessControlAllowOrigin($request->getUri()->getHost())
+		$response->withAccessControlAllowOrigin('*')
 			->withAccessControlRequestMethod($request->getAccessControlRequestMethod())
-			->withAccessControlAllowHeaders($request->getAccessControlRequestMethod());
+			->withAccessControlAllowHeaders($request->getAccessControlAllowHeaders());
 
 		return $next($request);
 	}
