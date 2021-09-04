@@ -161,61 +161,13 @@ class Node
      */
     private function injectMiddleware(string $method, $handler, $_injectParameters): void
     {
-        if (!($handler instanceof Closure)) {
-            $callback = $this->injectControllerMiddleware($method, $handler, $_injectParameters);
-        } else {
-            $callback = $this->injectClosureMiddleware($method, $handler, $_injectParameters);
-        }
+        $callback = (new Pipeline())->overall($this->router->getMiddleware())
+            ->through($this->middleware[$method] ?? [])
+            ->through(MiddlewareManager::get($handler))
+            ->send($_injectParameters)
+            ->then($handler);
+
         HandlerProviders::add($method, $this->sourcePath, $callback);
-    }
-
-
-    /**
-     * @param $method
-     * @param $handler
-     * @param $_injectParameters
-     * @return mixed
-     * @throws NotFindClassException
-     * @throws ReflectionException
-     * @throws Exception
-     */
-    private function injectControllerMiddleware($method, $handler, $_injectParameters): mixed
-    {
-        $middleware = $this->middleware[$method] ?? [];
-
-        $allowMiddleware = $this->router->getMiddleware();
-        if (!empty($allowMiddleware)) {
-            array_unshift($middleware, $allowMiddleware);
-        }
-        MiddlewareManager::addMiddlewares($handler[0], $handler[1], $middleware);
-        return MiddlewareManager::callerMiddlewares(
-            $handler[0], $handler[1], $this->aopHandler($this->getAop($handler), $handler, $_injectParameters)
-        );
-    }
-
-
-    /**
-     * @param $method
-     * @param $handler
-     * @param $_injectParameters
-     * @return Closure
-     * @throws Exception
-     */
-    private function injectClosureMiddleware($method, $handler, $_injectParameters): Closure
-    {
-        $middleware = $this->middleware[$method] ?? [];
-
-        $allowMiddleware = $this->router->getMiddleware();
-        if (!empty($allowMiddleware)) {
-            array_unshift($middleware, $allowMiddleware);
-        }
-        if (!empty($middleware)) {
-            return MiddlewareManager::closureMiddlewares($middleware,
-                $this->normalHandler($handler, $_injectParameters)
-            );
-        } else {
-            return $this->normalHandler($handler, $_injectParameters);
-        }
     }
 
 
@@ -233,56 +185,6 @@ class Node
         }
         $this->_handler = [];
         return $this;
-    }
-
-
-    /**
-     * @param IAspect|null $reflect
-     * @param $handler
-     * @param $_injectParameters
-     * @return Closure
-     */
-    #[Pure] private function aopHandler(?IAspect $reflect, $handler, $_injectParameters): Closure
-    {
-        if (is_null($reflect)) {
-            return $this->normalHandler($handler, $_injectParameters);
-        }
-        return static function () use ($reflect, $handler, $_injectParameters) {
-            return $reflect->invoke($handler, $_injectParameters);
-        };
-    }
-
-
-    /**
-     * @throws ReflectionException|NotFindClassException
-     */
-    private function getAop($handler): ?IAspect
-    {
-        [$controller, $action] = $handler;
-
-        if (is_object($controller)) {
-            $controller = get_class($controller);
-        }
-
-        /** @var Aspect $aspect */
-        $aspect = NoteManager::getSpecify_annotation(Aspect::class, $controller, $action);
-        if (empty($aspect)) {
-            return null;
-        }
-        return di($aspect->aspect);
-    }
-
-
-    /**
-     * @param $handler
-     * @param $_injectParameters
-     * @return Closure
-     */
-    private function normalHandler($handler, $_injectParameters): Closure
-    {
-        return static function () use ($handler, $_injectParameters) {
-            return call_user_func($handler, ...$_injectParameters);
-        };
     }
 
 
@@ -427,7 +329,7 @@ class Node
         if (empty($handlerProviders)) {
             throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
         }
-        return call_user_func($handlerProviders, request());
+        return $handlerProviders->interpreter();
     }
 
 }

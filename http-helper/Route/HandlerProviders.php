@@ -19,7 +19,7 @@ class HandlerProviders extends BaseObject
 	 * @param $method
 	 * @return mixed
 	 */
-	public static function get($path, $method): mixed
+	public static function get($path, $method): ?Pipeline
 	{
 		return static::$handlers[$method][$path] ?? null;
 	}
