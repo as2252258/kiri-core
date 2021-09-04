@@ -430,7 +430,7 @@ class Router extends HttpService implements RouterInterface
 		$paths = [];
 		foreach ($this->nodes as $_node) {
 			/** @var Node[] $node */
-            $paths[] = ['method' => $_node->method, 'path' => $_node->sourcePath];
+            $paths[] = ['method' => $_node->method, 'path' => $_node->sourcePath, 'alias' => $_node->getAlias()];
             $paths = $this->getChildes($_node, $paths);
 		}
 		return $paths;
@@ -445,7 +445,7 @@ class Router extends HttpService implements RouterInterface
 	private function getChildes(Node $node, array $path): array
 	{
 		foreach ($node->childes as $item) {
-            $path[] = ['method' => $item->method, 'path' => $item->sourcePath];
+            $path[] = ['method' => $item->method, 'path' => $item->sourcePath, 'alias' => $item->getAlias()];
 			if (!empty($item->childes)) {
 				$path = $this->getChildes($item, $path);
 			}
