@@ -5,9 +5,6 @@ namespace Annotation;
 
 
 use Exception;
-use Kiri\AspectManager;
-use Kiri\IAspect;
-use Kiri\Kiri;
 
 defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implement ');
 

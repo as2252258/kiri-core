@@ -57,7 +57,7 @@ class Router extends HttpService implements RouterInterface
 	/**
 	 * @param Closure $middleware
 	 */
-	public function setMiddleware(\Closure $middleware): void
+	public function setMiddleware(Closure $middleware): void
 	{
 		$this->middleware = $middleware;
 	}

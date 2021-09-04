@@ -218,10 +218,10 @@ class Request implements RequestInterface
 	}
 
 
-	/**
-	 * @return UriInterface
-	 */
-	public function getUri(): UriInterface
+    /**
+     * @return \Server\Message\Uri|\Psr\Http\Message\UriInterface
+     */
+	public function getUri(): Uri|UriInterface
 	{
 		return $this->uri;
 	}

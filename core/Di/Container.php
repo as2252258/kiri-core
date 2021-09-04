@@ -69,13 +69,6 @@ class Container extends BaseObject implements ContainerInterface
 
 
 	/**
-	 * @var array
-	 *
-	 * The construct parameter
-	 */
-	private array $_param = [];
-
-	/**
 	 * @param       $class
 	 * @param array $constrict
 	 * @param array $config
@@ -270,10 +263,7 @@ class Container extends BaseObject implements ContainerInterface
 		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
 			return $this->_reflection[$class] = $reflect;
 		}
-        NoteManager::setPropertyNote($reflect);
-        NoteManager::setTargetNote($reflect);
-        NoteManager::setMethodNote($reflect);
-		$construct = $reflect->getConstructor();
+        $construct = NoteManager::resolveTarget($reflect);
 		if (!empty($construct) && $construct->getNumberOfParameters() > 0) {
 			$this->_constructs[$class] = $construct;
 		}
@@ -313,14 +303,12 @@ class Container extends BaseObject implements ContainerInterface
 	 * @return array|null
 	 * @throws ReflectionException
 	 */
-	public function getMethodParameters(ReflectionClass|string $class, string $method): ?array
+	public function getMethodParameters(string $className, string $method): ?array
 	{
-		$className = $class;
-		if (is_object($class)) $className = $class->getName();
 		if (isset($this->_parameters[$className]) && isset($this->_parameters[$className][$method])) {
 			return $this->_parameters[$className][$method];
 		}
-		$reflectMethod = $this->getReflectMethod($class, $method);
+		$reflectMethod = $this->getReflectMethod($this->getReflect($className), $method);
 		if (!($reflectMethod instanceof ReflectionMethod)) {
 			throw new ReflectionException("Class does not have a function $className::$method");
 		}
@@ -355,7 +343,7 @@ class Container extends BaseObject implements ContainerInterface
 	 * @return array
 	 * @throws ReflectionException
 	 */
-	public function resolveFunctionParameters(Closure $reflectionMethod): array
+	public function getFunctionParameters(Closure $reflectionMethod): array
 	{
 		return $this->resolveMethodParameters(new ReflectionFunction($reflectionMethod));
 	}
@@ -419,8 +407,7 @@ class Container extends BaseObject implements ContainerInterface
 			$class = $class::class;
 		}
 		unset(
-			$this->_reflection[$class], $this->_singletons[$class],
-			$this->_param[$class], $this->_constructs[$class]
+			$this->_reflection[$class], $this->_singletons[$class], $this->_constructs[$class]
 		);
 	}
 
@@ -431,7 +418,6 @@ class Container extends BaseObject implements ContainerInterface
 	{
 		$this->_reflection = [];
 		$this->_singletons = [];
-		$this->_param = [];
 		$this->_constructs = [];
 		return $this;
 	}

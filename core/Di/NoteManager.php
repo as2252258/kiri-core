@@ -152,6 +152,20 @@ class NoteManager
 
 
     /**
+     * @param \ReflectionClass $reflect
+     * @return \ReflectionMethod|null
+     */
+    public static function resolveTarget(ReflectionClass $reflect): ?\ReflectionMethod
+    {
+        NoteManager::setPropertyNote($reflect);
+        NoteManager::setTargetNote($reflect);
+        NoteManager::setMethodNote($reflect);
+
+        return $reflect->getConstructor();
+    }
+
+
+    /**
      * @param ReflectionClass $class
      */
     public static function setPropertyNote(ReflectionClass $class)
@@ -197,7 +211,7 @@ class NoteManager
      * @param string|null $method
      * @return array
      */
-    public static function getMethodByAnnotation(string $attribute, string $class, string $method = null): mixed
+    public static function getSpecify_annotation(string $attribute, string $class, string $method = null): mixed
     {
         $class = self::getAttributeTrees($attribute, $class);
         if (empty($class) || !isset($class['method']) || empty($method)) {

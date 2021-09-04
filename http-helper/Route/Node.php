@@ -212,7 +212,7 @@ class Node
 		}
 		foreach ($this->_handler as $method => $dispatcher) {
 			if ($dispatcher instanceof Closure) {
-				$_injectParameters = $container->resolveFunctionParameters($dispatcher);
+				$_injectParameters = $container->getFunctionParameters($dispatcher);
 			} else {
 				[$controller, $action] = $dispatcher;
 				if (is_object($controller)) {
@@ -256,7 +256,7 @@ class Node
 		}
 
 		/** @var Aspect $aspect */
-		$aspect = NoteManager::getMethodByAnnotation(Aspect::class, $controller, $action);
+		$aspect = NoteManager::getSpecify_annotation(Aspect::class, $controller, $action);
 		if (empty($aspect)) {
 			return null;
 		}
