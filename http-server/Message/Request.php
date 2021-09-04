@@ -181,9 +181,8 @@ class Request implements RequestInterface
 	 */
 	public function withRequestTarget($requestTarget): RequestInterface
 	{
-		$class = clone $this;
-		$class->requestTarget = $requestTarget;
-		return $class;
+        $this->requestTarget = $requestTarget;
+		return $this;
 	}
 
 

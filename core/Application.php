@@ -11,8 +11,6 @@ namespace Kiri;
 
 
 use Closure;
-use Console\Console;
-use Console\ConsoleProviders;
 use Database\DatabasesProviders;
 use Exception;
 use Http\Context\Response;
@@ -32,6 +30,7 @@ use Swoole\Timer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Application as ConsoleApplication;
 
 /**
  * Class Init
@@ -61,7 +60,6 @@ class Application extends BaseApplication
 	 */
 	public function init()
 	{
-		$this->import(ConsoleProviders::class);
 		$this->import(ServerProviders::class);
 
 		$this->register(Runtime::class);
@@ -193,12 +191,7 @@ class Application extends BaseApplication
 	 */
 	public function register(string $command)
 	{
-		/** @var Console $abstracts */
-//        $abstracts = $this->get('console');
-//        $abstracts->register($command);
-
-		$console = di(\Symfony\Component\Console\Application::class);
-		$console->add(di($command));
+        di(ConsoleApplication::class)->add(di($command));
 	}
 
 
@@ -211,7 +204,7 @@ class Application extends BaseApplication
 	{
 		[$input, $output] = $this->argument($argv);
 		try {
-			$console = di(\Symfony\Component\Console\Application::class);
+			$console = di(ConsoleApplication::class);
 			$command = $input->getFirstArgument();
 			if (empty($command)) {
 				$command = 'list';
