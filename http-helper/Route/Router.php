@@ -496,6 +496,7 @@ class Router extends HttpService implements RouterInterface
 		if ($node instanceof Node) {
 			return $node;
 		}
+        var_dump($request->isMethod('OPTIONS'));
 		if (!$request->isMethod('OPTIONS')) {
 			return null;
 		}
