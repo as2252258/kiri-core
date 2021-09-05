@@ -5,6 +5,7 @@ namespace Kiri\Pool;
 
 
 use Exception;
+use Http\Context\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
@@ -46,9 +47,8 @@ class Pool extends Component
      */
     protected function pop(Channel $channel, $retain_number): void
     {
-        if ($channel instanceof Channel && Coroutine::getCid() === -1) {
-            $channel = null;
-            unset($channel);
+        if ($channel instanceof Channel && !Context::inCoroutine()) {
+            $channel->close();
             return;
         }
         while ($channel->length() > $retain_number) {
