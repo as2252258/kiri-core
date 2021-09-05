@@ -48,7 +48,6 @@ class Redis extends Component
 
 		$length = Config::get('connections.pool.max', 10);
 
-		$this->eventProvider->on(OnWorkerStop::class, [$this, 'destroy'], 0);
 		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
 		$connections->initConnections('Redis:' . $config['host'], true, $length);
