@@ -47,7 +47,7 @@ class Pool extends Component
      */
     protected function pop(Channel $channel, $retain_number): void
     {
-        if ($channel instanceof Channel && !Context::inCoroutine()) {
+        if (!Context::inCoroutine()) {
             $channel->close();
             return;
         }
