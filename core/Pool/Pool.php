@@ -47,6 +47,7 @@ class Pool extends Component
     protected function pop(Channel $channel, $retain_number): void
     {
         if ($channel instanceof Channel && Coroutine::getCid() === -1) {
+            $channel = null;
             unset($channel);
             return;
         }
