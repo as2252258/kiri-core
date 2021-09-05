@@ -21,6 +21,7 @@ use Kiri\Crontab\CrontabProviders;
 use Kiri\Exception\NotFindClassException;
 use Kiri\FileListen\FileChangeCustomProcess;
 use ReflectionException;
+use Server\Events\OnBeforeCommandExecute;
 use Server\ResponseInterface;
 use Server\ServerCommand;
 use Server\ServerProviders;
@@ -238,6 +239,7 @@ class Application extends BaseApplication
 	 */
 	private function enableFileChange(Command $class, $input, $output): void
 	{
+        fire(new OnBeforeCommandExecute());
 		if (!($class instanceof ServerCommand)) {
 			scan_directory(directory('app'), 'App');
 		}
