@@ -48,9 +48,11 @@ class Pool extends Component
     protected function pop(Channel $channel, $retain_number): void
     {
         while ($channel->length() > $retain_number) {
-            $connection = $channel->pop();
-            if ($connection instanceof StopHeartbeatCheck) {
-                $connection->stopHeartbeatCheck();
+            if (Context::inCoroutine()) {
+                $connection = $channel->pop();
+                if ($connection instanceof StopHeartbeatCheck) {
+                    $connection->stopHeartbeatCheck();
+                }
             }
         }
     }
@@ -217,8 +219,8 @@ class Pool extends Component
         if (!isset(static::$_connections[$name])) {
             return;
         }
-        $channel = static::$_connections[$name];
-        $this->pop($channel, 0);
+        static::$_connections[$name] = null;
+        unset(static::$_connections[$name]);
     }
 
 
