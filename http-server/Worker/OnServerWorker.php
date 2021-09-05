@@ -83,9 +83,9 @@ class OnServerWorker extends \Server\Abstracts\Server
      */
     public function onWorkerExit(Server $server, int $workerId)
     {
-        ServerManager::setEnv('state', 'exit');
-
         $this->eventDispatch->dispatch(new OnWorkerExit($server, $workerId));
+
+        ServerManager::setEnv('state', 'exit');
     }
 
 
