@@ -28,10 +28,10 @@ use Server\ServerProviders;
 use stdClass;
 use Swoole\Process;
 use Swoole\Timer;
+use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Application as ConsoleApplication;
 
 /**
  * Class Init
@@ -68,7 +68,7 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws NotFindClassException
+	 * @throws
 	 */
 	public function withDatabase()
 	{
@@ -77,7 +77,7 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws NotFindClassException
+	 * @throws
 	 */
 	public function withCrontab()
 	{
@@ -118,9 +118,7 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
+	 * @throws
 	 */
 	public function withFileChangeListen()
 	{
@@ -163,7 +161,7 @@ class Application extends BaseApplication
 	public function import(string $service): static
 	{
 		if (!class_exists($service)) {
-			throw new NotFindClassException($service);
+			return $this;
 		}
 		$class = Kiri::getDi()->get($service);
 		if (method_exists($class, 'onImport')) {
@@ -192,7 +190,7 @@ class Application extends BaseApplication
 	 */
 	public function register(string $command)
 	{
-        di(ConsoleApplication::class)->add(di($command));
+		di(ConsoleApplication::class)->add(di($command));
 	}
 
 
@@ -239,7 +237,7 @@ class Application extends BaseApplication
 	 */
 	private function enableFileChange(Command $class, $input, $output): void
 	{
-        fire(new OnBeforeCommandExecute());
+		fire(new OnBeforeCommandExecute());
 		if (!($class instanceof ServerCommand)) {
 			scan_directory(directory('app'), 'App');
 		}

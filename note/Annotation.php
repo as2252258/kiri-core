@@ -61,12 +61,13 @@ class Annotation extends Component
 	 * @param string $path
 	 * @param string $namespace
 	 * @param array $exclude
-	 * @return void
+	 * @return static
 	 * @throws Exception
 	 */
-	public function read(string $path, string $namespace = 'App', array $exclude = []): void
+	public function read(string $path, string $namespace = 'App', array $exclude = []): static
 	{
 		$this->_loader->_scanDir(new DirectoryIterator($path), $namespace, $exclude);
+		return $this;
 	}
 
 
