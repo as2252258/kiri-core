@@ -19,25 +19,32 @@ class OnWorkerStart implements EventDispatcherInterface
 {
 
 
+	/**
+	 * @var Annotation
+	 */
     #[Inject(Annotation::class)]
     public Annotation $annotation;
 
 
+	/**
+	 * @var Router
+	 */
     #[Inject(Router::class)]
     public Router $router;
 
 
-    /**
-     * @param object $event
-     * @return object|void
-     * @throws \Kiri\Exception\ConfigException
-     * @throws \ReflectionException
-     */
+	/**
+	 * @param object $event
+	 * @return void
+	 * @throws ConfigException
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
     public function dispatch(object $event)
     {
         $isWorker = $event->workerId < $event->server->setting['worker_num'];
 
-        $this->annotation->read(APP_PATH . 'app', 'App', $isWorker ? [] : [CONTROLLER_PATH]);
+        $this->annotation->read(APP_PATH . 'app', 'App');
         $this->interpretDirectory();
         if ($isWorker) {
             ServerManager::setEnv('environmental', Kiri::WORKER);

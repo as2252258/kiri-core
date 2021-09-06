@@ -49,10 +49,10 @@ class OnServerWorker extends \Server\Abstracts\Server
     }
 
 
-    /**
-     * @param $workerId
-     * @throws \Exception
-     */
+	/**
+	 * @param OnBeforeWorkerStart $worker
+	 * @throws Exception
+	 */
     public function setConfigure(OnBeforeWorkerStart $worker)
     {
         ServerManager::setEnv('worker', $worker->workerId);

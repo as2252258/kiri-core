@@ -11,7 +11,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Error\LoggerProcess;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
-use Kiri\Rpc\Service;
+use Kiri\Rpc\RpcProvider;
 use Server\Events\OnShutdown;
 use Swoole\Runtime;
 
@@ -75,7 +75,7 @@ class Server extends HttpService
 
 		$rpcService = Config::get('rpc', []);
 		if (!empty($rpcService)) {
-			Service::addRpcListener($this->manager, $rpcService);
+			RpcProvider::addRpcListener($this->manager, $rpcService);
 		}
 
 		$processes = array_merge($this->process, Config::get('processes', []));
