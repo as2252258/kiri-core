@@ -5,7 +5,6 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 use Annotation\Annotation;
 use Http\Context\Context;
-use Http\Context\Response as HttpResponse;
 use Http\Route\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -22,8 +21,10 @@ use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 use Server\Constrict\Request;
 use Server\Constrict\Response;
+use Server\ResponseInterface;
 use Server\ServerManager;
 use Swoole\WebSocket\Server;
+use Server\Message\Response as Par7Response;
 
 if (!function_exists('make')) {
 
@@ -841,10 +842,10 @@ if (!function_exists('response')) {
      */
     function response(): Response
     {
-        if (!Context::hasContext(HttpResponse::class)) {
-            Context::setContext(HttpResponse::class, new HttpResponse());
+        if (!Context::hasContext(ResponseInterface::class)) {
+            Context::setContext(ResponseInterface::class, new Par7Response());
         }
-        return di(Response::class);
+        return di(ResponseInterface::class);
     }
 
 }
@@ -898,8 +899,6 @@ if (!function_exists('di')) {
     /**
      * @param string $className
      * @return mixed
-     * @throws ReflectionException
-     * @throws NotFindClassException
      */
     function di(string $className): mixed
     {
@@ -914,8 +913,6 @@ if (!function_exists('duplicate')) {
     /**
      * @param string $className
      * @return mixed
-     * @throws ReflectionException
-     * @throws NotFindClassException
      */
     function duplicate(string $className): mixed
     {

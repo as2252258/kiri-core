@@ -5,10 +5,10 @@ namespace Kiri\Abstracts;
 
 
 use Annotation\Annotation as SAnnotation;
+use Database\Connection;
 use Database\DatabasesProviders;
 use Http\Client\Client;
 use Http\Client\Curl;
-use Http\Context\Response;
 use Http\HttpFilter;
 use Http\Route\Router;
 use Server\Server;
@@ -25,7 +25,6 @@ use Kiri\Jwt\Jwt;
  * @property Router $router
  * @property \Redis|Redis $redis
  * @property Server $server
- * @property Response $response
  * @property DatabasesProviders $db
  * @property Async $async
  * @property Logger $logger
@@ -33,7 +32,7 @@ use Kiri\Jwt\Jwt;
  * @property SAnnotation $annotation
  * @property BaseGoto $goto
  * @property Client $client
- * @property \Database\Connection $databases
+ * @property Connection $databases
  * @property Curl $curl
  * @property Producer $crontab
  * @property HttpFilter $filter

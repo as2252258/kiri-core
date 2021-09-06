@@ -15,7 +15,6 @@ use Database\Connection;
 use Exception;
 use Http\Context\HttpHeaders;
 use Http\Context\HttpParams;
-use Http\Context\Response;
 use Http\Route\Router;
 use Server\Server;
 use Http\Shutdown;
@@ -431,8 +430,6 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @param $array
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	private function setComponents($array): void
 	{
@@ -443,8 +440,6 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $id
 	 * @param $definition
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
 	 */
 	public function set($id, $definition): void
 	{
@@ -455,8 +450,6 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $id
 	 * @return bool
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public function has($id): bool
 	{
@@ -483,7 +476,6 @@ abstract class BaseApplication extends Component
 			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],
 			'kafka-container' => ['class' => KafkaProvider::class],
-			'response'        => ['class' => Response::class],
 			'shutdown'        => ['class' => Shutdown::class],
 		]);
 	}

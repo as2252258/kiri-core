@@ -29,10 +29,7 @@ class Response implements ResponseInterface
 	 */
 	public function __call($name, $args)
 	{
-		if (!method_exists($this, $name)) {
-			return $this->__call__()->{$name}(...$args);
-		}
-		return $this->{$name}(...$args);
+		return $this->__call__()->{$name}(...$args);
 	}
 
 	/**
@@ -50,6 +47,6 @@ class Response implements ResponseInterface
 	 */
 	public function __call__(): Psr7Response
 	{
-		return Context::getContext(Psr7Response::class, new Psr7Response());
+		return Context::getContext(ResponseInterface::class, new Psr7Response());
 	}
 }

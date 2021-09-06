@@ -87,9 +87,9 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 	/**
 	 * @param $value
-	 * @return ResponseInterface
+	 * @return Response
 	 */
-	public function withAccessControlAllowHeaders($value): ResponseInterface
+	public function withAccessControlAllowHeaders($value): static
 	{
 		return $this->withHeader('Access-Control-Allow-Headers', $value);
 	}
@@ -97,9 +97,9 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 	/**
 	 * @param $value
-	 * @return ResponseInterface
+	 * @return Response
 	 */
-	public function withAccessControlRequestMethod($value): ResponseInterface
+	public function withAccessControlRequestMethod($value): static
 	{
 		return $this->withHeader('Access-Control-Request-Method', $value);
 	}
@@ -107,9 +107,9 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 	/**
 	 * @param $value
-	 * @return ResponseInterface
+	 * @return Response
 	 */
-	public function withAccessControlAllowOrigin($value): ResponseInterface
+	public function withAccessControlAllowOrigin($value): static
 	{
 		return $this->withHeader('Access-Control-Allow-Origin', $value);
 	}

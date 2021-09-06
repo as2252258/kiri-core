@@ -7,7 +7,6 @@ use Annotation\Inject;
 use Closure;
 use Exception;
 use Http\Abstracts\HttpService;
-use Http\Context\Response;
 use Http\Controller;
 use Http\IInterface\MiddlewareInterface;
 use Http\IInterface\RouterInterface;
@@ -42,8 +41,6 @@ class Router extends HttpService implements RouterInterface
 
 	public int $useTree = ROUTER_TREE;
 
-	public ?Response $response = null;
-
 
 	/**
 	 * @var RequestInterface
@@ -69,8 +66,6 @@ class Router extends HttpService implements RouterInterface
 	public function init()
 	{
 		$this->namespace = Config::get('http.namespace', $this->namespace);
-
-		$this->response = Kiri::app()->get('response');
 	}
 
 

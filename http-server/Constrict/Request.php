@@ -3,10 +3,11 @@
 namespace Server\Constrict;
 
 use Http\Context\Context;
-use Http\Context\Response;
 use Kiri\Kiri;
 use Server\Message\Request as RequestMessage;
 use Server\RequestInterface;
+use Server\Message\Response;
+use Server\ResponseInterface;
 
 
 /**
@@ -53,7 +54,7 @@ class Request implements RequestInterface
 	 */
 	public static function create(\Swoole\Http\Request $request): RequestInterface
 	{
-		Context::setContext(Response::class, new Response());
+		Context::setContext(ResponseInterface::class, new Response());
 
 		Context::setContext(RequestMessage::class, RequestMessage::parseRequest($request));
 

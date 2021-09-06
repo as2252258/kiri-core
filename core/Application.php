@@ -13,7 +13,6 @@ namespace Kiri;
 use Closure;
 use Database\DatabasesProviders;
 use Exception;
-use Http\Context\Response;
 use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Kernel;
@@ -22,7 +21,6 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\FileListen\FileChangeCustomProcess;
 use ReflectionException;
 use Server\Events\OnBeforeCommandExecute;
-use Server\ResponseInterface;
 use Server\ServerCommand;
 use Server\ServerProviders;
 use stdClass;
@@ -57,7 +55,6 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws NotFindClassException
 	 */
 	public function init()
 	{
@@ -243,19 +240,6 @@ class Application extends BaseApplication
 		}
 		$class->run($input, $output);
 		$output->writeln('ok');
-	}
-
-
-	/**
-	 * @param $data
-	 * @return Response|ResponseInterface
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	private function getBuilder($data): Response|ResponseInterface
-	{
-		return di(Response::class)->getBuilder($data);
 	}
 
 
