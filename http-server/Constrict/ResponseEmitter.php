@@ -28,12 +28,12 @@ class ResponseEmitter implements Emitter
 	 */
 	public function sender(mixed $response, ResponseInterface|\Server\Message\Response $emitter): void
 	{
-		if (!empty($emitter->getHeaders()) && is_array($emitter->getHeaders())) {
+		if (is_array($emitter->getHeaders())) {
 			foreach ($emitter->getHeaders() as $name => $values) {
 				$response->header($name, implode(';', $values));
 			}
 		}
-		if (!empty($emitter->getCookies()) && is_array($emitter->getCookies())) {
+		if (is_array($emitter->getCookies())) {
 			foreach ($emitter->getCookies() as $name => $cookie) {
 				$response->cookie($name, ...$cookie);
 			}
