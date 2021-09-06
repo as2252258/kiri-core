@@ -8,7 +8,7 @@ use Http\Exception\RequestException;
 use Http\Route\Node;
 use Kiri\Core\Help;
 use Server\Events\OnAfterRequest;
-use Server\Message\Stream;
+use Server\Message\Response as MsgResponse;
 use Server\ResponseInterface;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
@@ -16,7 +16,6 @@ use Swoole\Error;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
-use Server\Message\Response as MsgResponse;
 
 /**
  *
@@ -68,14 +67,13 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	private function transferToResponse($responseData): ResponseInterface
 	{
 		$interface = $this->response->withStatus(200);
-		if (!$interface->hasHeader('Content-Type')) {
+		if (!$interface->hasContentType()) {
 			$interface->withContentType(MsgResponse::CONTENT_TYPE_JSON);
 		}
 		$responseData = $interface->_toArray($responseData);
-		if ($interface->getHeader('Content-Type') == MsgResponse::CONTENT_TYPE_XML) {
-			$responseData = Help::toXml($responseData);
-		}
-		if (is_array($responseData)) {
+		if ($interface->getContentType() == MsgResponse::CONTENT_TYPE_XML) {
+			$interface->stream->write(Help::toXml($responseData));
+		} else if (is_array($responseData)) {
 			$interface->stream->write(json_encode($responseData));
 		} else {
 			$interface->stream->write((string)$responseData);

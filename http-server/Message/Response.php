@@ -43,13 +43,25 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 	 */
 	public function withContentType(string $type): static
 	{
-		if (!in_array($type, [
-			Response::CONTENT_TYPE_HTML, Response::CONTENT_TYPE_JSON,
-			Response::CONTENT_TYPE_STREAM, Response::CONTENT_TYPE_XML
-		])) {
-			throw new Exception('Wrong content type.');
-		}
 		return $this->withHeader('Content-Type', $type);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	#[Pure] public function hasContentType(): bool
+	{
+		return $this->hasHeader('Content-Type');
+	}
+
+
+	/**
+	 * @return string
+	 */
+	#[Pure] public function getContentType(): string
+	{
+		return $this->getHeaderLine('Content-Type');
 	}
 
 
