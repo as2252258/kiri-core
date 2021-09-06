@@ -17,9 +17,9 @@ class Request implements RequestInterface
 
 
 	/**
-	 * @return RequestInterface
+	 * @return RequestMessage
 	 */
-	private function __call__(): RequestInterface
+	private function __call__(): RequestMessage
 	{
 		return Context::getContext(RequestMessage::class, new RequestMessage());
 	}
