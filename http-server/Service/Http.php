@@ -40,10 +40,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 */
 	public function onRequest(Request $request, Response $response): void
 	{
-        $response->status(200);
-        $response->end('');
-        return;
-
 		// TODO: Implement onRequest() method.
 		try {
 			[$request, $psr7Response] = \Server\Constrict\Request::create($request);
