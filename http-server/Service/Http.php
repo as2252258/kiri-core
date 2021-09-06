@@ -71,14 +71,15 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		if (!$interface->hasContentType()) {
 			$interface->withContentType(MsgResponse::CONTENT_TYPE_JSON);
 		}
-		$responseData = $interface->_toArray($responseData);
-		if ($interface->getContentType() == MsgResponse::CONTENT_TYPE_XML) {
-			$interface->stream->write(Help::toXml($responseData));
-		} else if (is_array($responseData)) {
-			$interface->stream->write(json_encode($responseData));
-		} else {
-			$interface->stream->write((string)$responseData);
-		}
+//		$responseData = $interface->_toArray($responseData);
+//		if ($interface->getContentType() == MsgResponse::CONTENT_TYPE_XML) {
+//			$interface->stream->write(Help::toXml($responseData));
+//		} else if (is_array($responseData)) {
+//			$interface->stream->write(json_encode($responseData));
+//		} else {
+//			$interface->stream->write((string)$responseData);
+//		}
+		$interface->stream->write((string)$responseData);
 		return $interface;
 	}
 
