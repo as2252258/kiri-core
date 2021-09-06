@@ -133,7 +133,7 @@ class Loader extends BaseObject
 				return;
 			}
 			$replace = $this->getReflect($path, $namespace);
-			if (!$replace->getAttributes(Target::class)) {
+			if (!$replace || !$replace->getAttributes(Target::class)) {
 				return;
 			}
 			$this->appendFileToDirectory($path->getRealPath(), $replace->getName());
