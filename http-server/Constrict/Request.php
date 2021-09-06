@@ -24,11 +24,7 @@ class Request implements RequestInterface
 	 */
 	public function __call($name, $args)
 	{
-		if (!Context::hasContext(RequestMessage::class)) {
-			$request = Context::setContext(RequestMessage::class, new RequestMessage());
-		} else {
-			$request = Context::getContext(RequestMessage::class);
-		}
+		$request = Context::getContext(RequestMessage::class);
 		if (property_exists($request, $name)) {
 			return $request->{$name};
 		}
@@ -50,7 +46,6 @@ class Request implements RequestInterface
 	/**
 	 * @param \Swoole\Http\Request $request
 	 * @return Request
-	 * @throws ReflectionException
 	 */
 	public static function create(\Swoole\Http\Request $request): RequestInterface
 	{
