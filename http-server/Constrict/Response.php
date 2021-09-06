@@ -50,11 +50,6 @@ class Response implements ResponseInterface
      */
     public function __call__(): Psr7Response
     {
-        if (!Context::hasContext(Psr7Response::class)) {
-            $context = Context::setContext(Psr7Response::class, new Psr7Response());
-        } else {
-            $context = Context::getContext(Psr7Response::class);
-        }
-        return $context;
+        return Context::getContext(Psr7Response::class);
     }
 }
