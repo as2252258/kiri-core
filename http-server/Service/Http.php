@@ -43,11 +43,12 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	{
 		// TODO: Implement onRequest() method.
 		try {
-			$node = $this->router->Branch_search(\Server\Constrict\Request::create($request));
+			$request = \Server\Constrict\Request::create($request);
+			$node = $this->router->Branch_search($request);
 			if (!($node instanceof Node)) {
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
 			}
-			if (!(($responseData = $node->dispatch()) instanceof ResponseInterface)) {
+			if (!(($responseData = $node->dispatch($request)) instanceof ResponseInterface)) {
 				$responseData = $this->transferToResponse($responseData);
 			}
 		} catch (Error | \Throwable $exception) {

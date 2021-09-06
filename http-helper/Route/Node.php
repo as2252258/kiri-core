@@ -313,20 +313,22 @@ class Node
     }
 
 
-    /**
-     * @return mixed
-     * @throws Exception
-     */
-    public function dispatch(): mixed
+	/**
+	 * @param RequestInterface $request
+	 * @return mixed
+	 * @throws RequestException
+	 * @throws Exception
+	 */
+    public function dispatch(RequestInterface $request): mixed
     {
-        if (!in_array(request()->getMethod(), $this->method)) {
+        if (!in_array($request->getMethod(), $this->method)) {
             throw new RequestException('<h2>HTTP 405 Method allow</h2><hr><i>Powered by Swoole</i>', 405);
         }
-        $handlerProviders = HandlerProviders::get($this->sourcePath, request()->getMethod());
+        $handlerProviders = HandlerProviders::get($this->sourcePath, $request->getMethod());
         if (empty($handlerProviders)) {
             throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
         }
-        return $handlerProviders->interpreter();
+        return $handlerProviders->interpreter($request);
     }
 
 }

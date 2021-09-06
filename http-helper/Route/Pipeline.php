@@ -127,12 +127,12 @@ class Pipeline
 
 
 	/**
+	 * @param $request
 	 * @return mixed
-	 * @throws Exception
 	 */
-	public function interpreter(): mixed
+	public function interpreter($request): mixed
 	{
-		return call_user_func($this->pipeline, request());
+		return call_user_func($this->pipeline, $request);
 	}
 
 
