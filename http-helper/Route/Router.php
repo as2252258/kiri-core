@@ -329,6 +329,7 @@ class Router extends HttpService implements RouterInterface
 	 * @return Closure|array|null
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	private function getMiddlewareInstance($value): null|Closure|array
 	{
@@ -387,17 +388,17 @@ class Router extends HttpService implements RouterInterface
 	}
 
 	/**
-	 * @param array|null $explode
+	 * @param string|null $explode
 	 * @return Node|null
 	 * 查找指定路由
 	 * @throws Exception
 	 */
-	public function tree_search(?array $explode): ?Node
+	public function tree_search(?string $explode): ?Node
 	{
 		if (empty($this->nodes)) {
 			return null;
 		}
-		$parent = $this->nodes[array_shift($explode)] ?? null;
+		return $this->nodes[$explode] ?? null;
 		if (!($parent instanceof Node)) {
 			return null;
 		}
@@ -506,7 +507,7 @@ class Router extends HttpService implements RouterInterface
 //			}
 //		} else {
 //		}
-		$node = $this->tree_search([$uri->getPath()]);
+		$node = $this->tree_search($uri->getPath());
 		if (!($node instanceof Node)) {
 			return null;
 		}
