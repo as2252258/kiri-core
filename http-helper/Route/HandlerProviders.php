@@ -17,7 +17,7 @@ class HandlerProviders extends BaseObject
 	/**
 	 * @param $path
 	 * @param $method
-	 * @return mixed
+	 * @return Pipeline|null
 	 */
 	public static function get($path, $method): ?Pipeline
 	{
