@@ -121,6 +121,8 @@ class Pipeline
 				$aop->after($data = $aop->invoke($destination, $parameters));
 				return $data;
 			};
+
+			var_dump($destination);
 		}
 		return $destination;
 	}
