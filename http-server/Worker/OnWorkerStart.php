@@ -43,7 +43,7 @@ class OnWorkerStart implements EventDispatcherInterface
 	{
 		$isWorker = $event->workerId < $event->server->setting['worker_num'];
 
-		$this->interpretDirectory();
+		$this->interpretDirectory($isWorker);
 		if ($isWorker) {
 			ServerManager::setEnv('environmental', Kiri::WORKER);
 			Kiri::getFactory()->getRouter()->_loader();
@@ -82,9 +82,16 @@ class OnWorkerStart implements EventDispatcherInterface
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function interpretDirectory()
+	private function interpretDirectory($isWorker)
 	{
 		$di = Kiri::getDi();
+
+		$namespace = array_filter(explode('\\', Router::getNamespace()));
+
+		$namespace = APP_PATH . implode('/', $namespace);
+
+		$this->annotation->read(APP_PATH . 'app', 'App', $isWorker ? [] : [$namespace]);
+
 		$fileLists = $this->annotation->read(APP_PATH . 'app');
 		foreach ($fileLists->runtime(APP_PATH . 'app') as $class) {
 			foreach (NoteManager::getTargetNote($class) as $value) {
