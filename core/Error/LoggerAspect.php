@@ -4,6 +4,7 @@
 namespace Kiri\Error;
 
 
+use Exception;
 use Kiri\IAspect;
 
 
@@ -14,8 +15,7 @@ use Kiri\IAspect;
 class LoggerAspect implements IAspect
 {
 
-	private string $className = '';
-	private string $methodName = '';
+	private float $time;
 
 
 	/**
@@ -25,27 +25,18 @@ class LoggerAspect implements IAspect
 	 */
 	public function invoke(mixed $handler, array $params = []): mixed
 	{
-		$startTime = microtime(true);
-
-		$data = call_user_func($handler, ...$params);
-
-		$this->print_runtime($handler, $startTime);
-
-		return $data;
+		return call_user_func($handler, ...$params);
 	}
 
 
 	/**
-	 * @param $handler
 	 * @param $startTime
+	 * @throws Exception
 	 */
-	private function print_runtime($handler, $startTime)
+	private function print_runtime($startTime)
 	{
-		$className = $handler[0]::class;
-		$methodName = $handler[1];
-
 		$runTime = round(microtime(true) - $startTime, 6);
-		echo sprintf('run %s::%s use time %6f', $className, $methodName, $runTime);
+		echo sprintf('run %s use time %6f', request()->getUri()->__toString(), $runTime);
 		echo PHP_EOL;
 	}
 
@@ -53,11 +44,16 @@ class LoggerAspect implements IAspect
 	public function before(): void
 	{
 		// TODO: Implement before() method.
+		$this->time = microtime(true);
 	}
 
 
+	/**
+	 * @throws Exception
+	 */
 	public function after(mixed $response): void
 	{
 		// TODO: Implement after() method.
+		$this->print_runtime($this->time);
 	}
 }
