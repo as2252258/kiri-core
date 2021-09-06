@@ -75,7 +75,7 @@ class Container extends BaseObject implements ContainerInterface
 	 *
 	 * @return mixed
 	 * @throws ReflectionException
-	 * @throws Exception
+	 * @throws
 	 */
 	public function get($class, array $constrict = [], array $config = []): mixed
 	{
