@@ -32,9 +32,7 @@ class Router extends HttpService implements RouterInterface
 	/** @var Node[] $nodes */
 	public array $nodes = [];
 	public array $groupTacks = [];
-	public ?string $dir = 'App\\Http\\Controllers';
-
-	const NOT_FOUND = 'Page not found or method not allowed.';
+	public ?string $namespace = 'App\\Http\\Controllers';
 
 	/** @var string[] */
 	public array $methods = ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'RECEIVE', 'HEAD'];
@@ -70,7 +68,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public function init()
 	{
-		$this->dir = Config::get('http.namespace', $this->dir);
+		$this->namespace = Config::get('http.namespace', $this->namespace);
 
 		$this->response = Kiri::app()->get('response');
 	}
@@ -343,7 +341,7 @@ class Router extends HttpService implements RouterInterface
 	private function loadNamespace(): array
 	{
 		$name = array_column($this->groupTacks, 'namespace');
-		array_unshift($name, $this->dir);
+		array_unshift($name, $this->namespace);
 		return array_filter($name);
 	}
 
