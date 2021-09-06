@@ -81,11 +81,7 @@ class Context extends BaseContext
 	 */
 	private static function loadByContext($id, $default = null, $coroutineId = null): mixed
 	{
-		$data = Coroutine::getContext($coroutineId)[$id] ?? null;
-		if ($data === null) {
-			return $default;
-		}
-		return $data;
+		return Coroutine::getContext($coroutineId)[$id] ?? $default;
 	}
 
 
@@ -96,11 +92,7 @@ class Context extends BaseContext
 	 */
 	private static function loadByStatic($id, $default = null): mixed
 	{
-		$data = static::$_contents[$id] ?? null;
-		if ($data === null) {
-			return $default;
-		}
-		return $data;
+		return static::$_contents[$id] ?? $default;
 	}
 
 
