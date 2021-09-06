@@ -44,12 +44,13 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		try {
 			$request = \Server\Constrict\Request::create($request);
 			$node = $this->router->Branch_search($request);
-			if (!($node instanceof Node)) {
-				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
-			}
-			if (!(($responseData = $node->dispatch($request)) instanceof ResponseInterface)) {
-				$responseData = $this->transferToResponse($responseData);
-			}
+//			if (!($node instanceof Node)) {
+//				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+//			}
+//			if (!(($responseData = $node->dispatch($request)) instanceof ResponseInterface)) {
+//				$responseData = $this->transferToResponse($responseData);
+//			}
+			$responseData = $this->transferToResponse('hello word.');
 		} catch (Error | \Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
@@ -60,11 +61,11 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 
 
 	/**
-	 * @param $responseData
+	 * @param mixed $responseData
 	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-	private function transferToResponse($responseData): ResponseInterface
+	private function transferToResponse(mixed $responseData): mixed
 	{
 		$interface = $this->response->withStatus(200);
 		if (!$interface->hasContentType()) {
