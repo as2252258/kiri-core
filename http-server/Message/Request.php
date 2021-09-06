@@ -153,70 +153,70 @@ class Request implements RequestInterface
 
 
 	/**
-	 * @param $name
-	 * @param $required
-	 * @return mixed
+	 * @param string $name
+	 * @param bool $required
+	 * @return string|null
 	 * @throws Exception
 	 */
-	public function string($name, $required): mixed
+	public function string(string $name, bool $required = false): ?string
 	{
 		if (is_null($data = $this->post($name))) {
 			if ($required) {
 				throw new Exception('Parameter is required and cannot be empty.');
 			}
-		}
-		return $data;
-	}
-
-
-	/**
-	 * @param $name
-	 * @param $required
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function int($name, $required)
-	{
-		if (is_null($data = $this->post($name))) {
-			if ($required) {
-				throw new Exception('Parameter is required and cannot be empty.');
-			}
+			return null;
 		}
 		return (string)$data;
 	}
 
 
 	/**
-	 * @param $name
-	 * @param $required
-	 * @return mixed
+	 * @param string $name
+	 * @param bool $required
+	 * @return int|null
 	 * @throws Exception
 	 */
-	public function float($name, $required)
+	public function int(string $name, bool $required = false): ?int
 	{
 		if (is_null($data = $this->post($name))) {
 			if ($required) {
 				throw new Exception('Parameter is required and cannot be empty.');
 			}
+			return null;
+		}
+		return (string)$data;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param bool $required
+	 * @return float|null
+	 * @throws Exception
+	 */
+	public function float(string $name, bool $required = false): ?float
+	{
+		if (is_null($data = $this->post($name))) {
+			if ($required) {
+				throw new Exception('Parameter is required and cannot be empty.');
+			}
+			return null;
 		}
 		return (float)$data;
 	}
 
 
 	/**
-	 * @param $name
-	 * @param $required
+	 * @param string $name
+	 * @param array $default
 	 * @return mixed
-	 * @throws Exception
 	 */
-	public function array($name, $required)
+	public function array(string $name, array $default = []): array
 	{
-		if (is_null($data = $this->post($name))) {
-			if ($required) {
-				throw new Exception('Parameter is required and cannot be empty.');
-			}
+		$data = $this->post($name);
+		if (!is_array($data)) {
+			return $default;
 		}
-		if (!is_array($data)) return [];
 		return $data;
 	}
 
