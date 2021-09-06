@@ -4,6 +4,7 @@ namespace Http\Route;
 
 use Annotation\Aspect;
 use Closure;
+use Exception;
 use Http\IInterface\MiddlewareInterface;
 use Kiri\Di\NoteManager;
 use Kiri\IAspect;
@@ -127,7 +128,7 @@ class Pipeline
 
 	/**
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function interpreter(): mixed
 	{
