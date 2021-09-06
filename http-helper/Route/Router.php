@@ -64,15 +64,6 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
-	 * @param string $namespace
-	 */
-	public function setNamespace(string $namespace): void
-	{
-		$this->dir = $namespace;
-	}
-
-
-	/**
 	 * @throws ConfigException
 	 * @throws Exception
 	 * 初始化函数路径
