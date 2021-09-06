@@ -38,7 +38,6 @@ class FileChangeCustomProcess extends CustomProcess
 
 	/**
 	 * @param Process $process
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function onHandler(Process $process): void
