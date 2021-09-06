@@ -50,4 +50,14 @@ class LoggerAspect implements IAspect
 	}
 
 
+	public function before(): void
+	{
+		// TODO: Implement before() method.
+	}
+
+
+	public function after(mixed $response): void
+	{
+		// TODO: Implement after() method.
+	}
 }
