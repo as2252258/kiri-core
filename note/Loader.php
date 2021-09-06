@@ -6,10 +6,10 @@ namespace Annotation;
 
 use DirectoryIterator;
 use Exception;
-use ReflectionClass;
-use ReflectionException;
 use Kiri\Abstracts\BaseObject;
 use Kiri\Kiri;
+use ReflectionClass;
+use ReflectionException;
 use Throwable;
 
 
@@ -151,7 +151,11 @@ class Loader extends BaseObject
 	 */
 	private function getReflect(DirectoryIterator $path, string $namespace): ?ReflectionClass
 	{
-		return Kiri::getDi()->getReflect($this->explodeFileName($path, $namespace));
+		$class = $this->explodeFileName($path, $namespace);
+		if (!class_exists($class)) {
+			return null;
+		}
+		return Kiri::getDi()->getReflect($class);
 	}
 
 

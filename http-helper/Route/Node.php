@@ -139,7 +139,6 @@ class Node
     /**
      * @param string $handler
      * @return array
-     * @throws ReflectionException
      */
     private function splitHandler(string $handler): array
     {
@@ -155,7 +154,6 @@ class Node
      * @param string $method
      * @param $handler
      * @param $_injectParameters
-     * @throws NotFindClassException
      * @throws ReflectionException
      * @throws Exception
      */
@@ -173,7 +171,6 @@ class Node
 
     /**
      * @throws ReflectionException
-     * @throws NotFindClassException
      */
     public function setParameters(): static
     {
