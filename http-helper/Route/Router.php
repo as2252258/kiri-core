@@ -75,6 +75,19 @@ class Router extends HttpService implements RouterInterface
 
 
 	/**
+	 * @return mixed
+	 * @throws ConfigException
+	 * @throws Exception
+	 */
+	public static function getNamespace(): string
+	{
+		$router = Kiri::app()->getRouter();
+
+		return Config::get('http.namespace', $router->namespace);
+	}
+
+
+	/**
 	 * @param bool $useTree
 	 */
 	public function setUseTree(bool $useTree): void
