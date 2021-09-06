@@ -43,21 +43,21 @@ class OnWorkerStart implements EventDispatcherInterface
 	{
 		$isWorker = $event->workerId < $event->server->setting['worker_num'];
 
+		$time = microtime(true);
+
 		$this->interpretDirectory($isWorker);
 		if ($isWorker) {
 			ServerManager::setEnv('environmental', Kiri::WORKER);
 			Kiri::getFactory()->getRouter()->_loader();
 
-			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Worker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
-
 			$this->setProcessName(sprintf('Worker[%d].%d', $event->server->worker_pid, $event->workerId));
 		} else {
 			ServerManager::setEnv('environmental', Kiri::TASK);
 
-			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Tasker[%d].%d start.", $event->server->worker_pid, $event->workerId) . PHP_EOL;
-
 			$this->setProcessName(sprintf('Tasker[%d].%d', $event->server->worker_pid, $event->workerId));
 		}
+		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Builder %s[%d].%d use time %s.", $event->server->worker_pid,
+				$isWorker ? 'Worker' : 'Taker', $event->workerId, round(microtime(true) - $time, 6) . 's') . PHP_EOL;
 	}
 
 
