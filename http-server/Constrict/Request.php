@@ -50,14 +50,14 @@ class Request implements RequestInterface
 
 	/**
 	 * @param \Swoole\Http\Request $request
-	 * @return Request
+	 * @return array<Request, Response>
 	 */
-	public static function create(\Swoole\Http\Request $request): RequestInterface
+	public static function create(\Swoole\Http\Request $request): array
 	{
-		Context::setContext(ResponseInterface::class, new Response());
+		Context::setContext(ResponseInterface::class, $response = new Response());
 
 		Context::setContext(RequestMessage::class, RequestMessage::parseRequest($request));
 
-		return Kiri::getDi()->get(Request::class);
+		return [Kiri::getDi()->get(Request::class), $response];
 	}
 }
