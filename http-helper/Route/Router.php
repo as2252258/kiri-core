@@ -418,6 +418,7 @@ class Router extends HttpService implements RouterInterface
 	public function split($path): ?array
 	{
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
+		return [$path];
 		if ($path === '/') {
 			return ['/'];
 		}
@@ -505,7 +506,7 @@ class Router extends HttpService implements RouterInterface
 //			}
 //		} else {
 //		}
-		$node = $this->tree_search($uri->getExplode());
+		$node = $this->tree_search([$uri->getPath()]);
 		if (!($node instanceof Node)) {
 			return null;
 		}

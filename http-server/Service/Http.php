@@ -43,14 +43,13 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		// TODO: Implement onRequest() method.
 		try {
 			$request = \Server\Constrict\Request::create($request);
-//			$node = $this->router->Branch_search($request);
-//			if (!($node instanceof Node)) {
-//				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
-//			}
-//			if (!(($responseData = $node->dispatch($request)) instanceof ResponseInterface)) {
-//				$responseData = $this->transferToResponse($responseData);
-//			}
-			$responseData = $this->transferToResponse('hello word.');
+			$node = $this->router->Branch_search($request);
+			if (!($node instanceof Node)) {
+				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+			}
+			if (!(($responseData = $node->dispatch($request)) instanceof ResponseInterface)) {
+				$responseData = $this->transferToResponse($responseData);
+			}
 		} catch (Error | \Throwable $exception) {
 			$responseData = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
@@ -71,15 +70,14 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		if (!$interface->hasContentType()) {
 			$interface->withContentType(MsgResponse::CONTENT_TYPE_JSON);
 		}
-//		$responseData = $interface->_toArray($responseData);
-//		if ($interface->getContentType() == MsgResponse::CONTENT_TYPE_XML) {
-//			$interface->stream->write(Help::toXml($responseData));
-//		} else if (is_array($responseData)) {
-//			$interface->stream->write(json_encode($responseData));
-//		} else {
-//			$interface->stream->write((string)$responseData);
-//		}
-		$interface->stream->write((string)$responseData);
+		$responseData = $interface->_toArray($responseData);
+		if ($interface->getContentType() == MsgResponse::CONTENT_TYPE_XML) {
+			$interface->stream->write(Help::toXml($responseData));
+		} else if (is_array($responseData)) {
+			$interface->stream->write(json_encode($responseData));
+		} else {
+			$interface->stream->write((string)$responseData);
+		}
 		return $interface;
 	}
 
