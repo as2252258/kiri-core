@@ -105,10 +105,10 @@ class Pipeline
 	/**
 	 * @param $destination
 	 * @param $parameters
-	 * @return Closure
+	 * @return Closure|array
 	 * @throws ReflectionException
 	 */
-	private function aspect_caller($destination, $parameters): Closure
+	private function aspect_caller($destination, $parameters): Closure|array
 	{
 		[$controller, $action] = $destination;
 		/** @var Aspect $aop */
@@ -121,8 +121,6 @@ class Pipeline
 				$aop->after($data = $aop->invoke($destination, $parameters));
 				return $data;
 			};
-
-			var_dump($destination);
 		}
 		return $destination;
 	}
