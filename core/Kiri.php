@@ -156,8 +156,6 @@ class Kiri
 	 * @param $className
 	 * @param array $construct
 	 * @return mixed
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public static function createObject($className, array $construct = []): mixed

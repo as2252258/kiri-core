@@ -129,9 +129,7 @@ class Container extends BaseObject implements ContainerInterface
 	 * @param array $constrict
 	 * @param array $config
 	 * @return object
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 * @throws Exception
+	 * @throws
 	 */
 	public function newObject($class, array $constrict = [], array $config = []): object
 	{
