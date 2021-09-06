@@ -134,7 +134,7 @@ class Stream implements StreamInterface
 	public function write($string): int
 	{
 		$this->body = $string;
-		$this->size = strlen($this->body);
+		$this->size = 0;
 		return $this->size;
 	}
 
@@ -146,7 +146,7 @@ class Stream implements StreamInterface
 	public function append(string $string): int
 	{
 		$this->body .= $string;
-		$this->size = strlen($this->body);
+		$this->size = 0;
 		return $this->size;
 	}
 
