@@ -3,6 +3,7 @@
 namespace Server\Message;
 
 use BadMethodCallException;
+use Exception;
 use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\RequestInterface;
@@ -15,295 +16,328 @@ use Psr\Http\Message\UriInterface;
 class Request implements RequestInterface
 {
 
-    use Message;
+	use Message;
 
 
-    public string $requestTarget;
+	public string $requestTarget;
 
 
-    public string $method;
+	public string $method;
 
 
-    /**
-     * @var Uri|UriInterface
-     */
-    private Uri|UriInterface $uri;
+	/**
+	 * @var Uri|UriInterface
+	 */
+	private Uri|UriInterface $uri;
 
 
-    private \Swoole\Http\Request $serverRequest;
+	private \Swoole\Http\Request $serverRequest;
 
 
-    private array $parseBody;
+	private array $parseBody;
 
-    private array $files = [];
-
-
-    /**
-     * @var AuthIdentity|null
-     */
-    public ?AuthIdentity $authority = null;
+	private array $files = [];
 
 
-    /**
-     * @return int
-     */
-    public function getClientId(): int
-    {
-        return $this->serverRequest->fd;
-    }
+	/**
+	 * @var AuthIdentity|null
+	 */
+	public ?AuthIdentity $authority = null;
 
 
-    /**
-     * @param AuthIdentity $authority
-     */
-    public function setAuthority(AuthIdentity $authority)
-    {
-        $this->authority = $authority;
-    }
+	/**
+	 * @return int
+	 */
+	public function getClientId(): int
+	{
+		return $this->serverRequest->fd;
+	}
 
 
-    /**
-     * @param \Swoole\Http\Request $request
-     * @return RequestInterface
-     */
-    public static function parseRequest(\Swoole\Http\Request $request): RequestInterface
-    {
-        $message = new Request();
-        $message->uri = Uri::parseUri($request);
-        $message->method = $request->getMethod();
-        $message->requestTarget = '';
-        $message->serverRequest = $request;
-        $message->version = $request->server['server_protocol'];
-        $message->stream = new Stream($request->getContent());
-        $message->servers = $request->server;
-        $message->parseRequestHeaders($request);
-        return $message;
-    }
+	/**
+	 * @param AuthIdentity $authority
+	 */
+	public function setAuthority(AuthIdentity $authority)
+	{
+		$this->authority = $authority;
+	}
 
 
-    /**
-     * @return float
-     */
-    #[Pure] public function getStartTime(): float
-    {
-        return $this->servers['request_time_float'];
-    }
+	/**
+	 * @param \Swoole\Http\Request $request
+	 * @return RequestInterface
+	 */
+	public static function parseRequest(\Swoole\Http\Request $request): RequestInterface
+	{
+		$message = new Request();
+		$message->uri = Uri::parseUri($request);
+		$message->method = $request->getMethod();
+		$message->requestTarget = '';
+		$message->serverRequest = $request;
+		$message->version = $request->server['server_protocol'];
+		$message->stream = new Stream($request->getContent());
+		$message->servers = $request->server;
+		$message->parseRequestHeaders($request);
+		return $message;
+	}
 
 
-    /**
-     * @param $name
-     * @param null $default
-     * @return mixed
-     */
-    public function input($name, $default = null): mixed
-    {
-        if (empty($this->parseBody)) {
-            $this->parseBody = $this->parseBody($this->stream);
-        }
-        if (!is_array($this->parseBody)) {
-            return $default;
-        }
-        return $this->parseBody[$name] ?? $default;
-    }
+	/**
+	 * @return float
+	 */
+	#[Pure] public function getStartTime(): float
+	{
+		return $this->servers['request_time_float'];
+	}
 
 
-    /**
-     * @param $name
-     * @param null $default
-     * @return mixed
-     */
-    public function post($name, $default = null): mixed
-    {
-        return $this->serverRequest->post[$name] ?? $default;
-    }
+	/**
+	 * @param $name
+	 * @param null $default
+	 * @return mixed
+	 */
+	public function input($name, $default = null): mixed
+	{
+		if (empty($this->parseBody)) {
+			$this->parseBody = $this->parseBody($this->stream);
+		}
+		if (!is_array($this->parseBody)) {
+			return $default;
+		}
+		return $this->parseBody[$name] ?? $default;
+	}
 
 
-    /**
-     * @param $name
-     * @param $required
-     * @return mixed
-     * @throws \Exception
-     */
-    public function string($name, $required)
-    {
-        if (is_null($data = $this->post($name))) {
-            if ($required) {
-                throw new \Exception('Parameter is required and cannot be empty.');
-            }
-        }
-        return $data;
-    }
+	/**
+	 * @param $name
+	 * @param null $default
+	 * @return mixed
+	 */
+	public function post($name, $default = null): mixed
+	{
+		return $this->serverRequest->post[$name] ?? $default;
+	}
 
 
-    /**
-     * @param $name
-     * @param $required
-     * @return mixed
-     * @throws \Exception
-     */
-    public function int($name, $required)
-    {
-        if (is_null($data = $this->post($name))) {
-            if ($required) {
-                throw new \Exception('Parameter is required and cannot be empty.');
-            }
-        }
-        return (string)$data;
-    }
+	/**
+	 * @param string $field
+	 * @param int $max
+	 * @return int
+	 */
+	public function size(string $field = 'size', int $max = 100): int
+	{
+		$size = (int)$this->query($field);
+		if ($size < 1) {
+			$size = 1;
+		} else if ($size > $max) {
+			$size = $max;
+		}
+		return $size;
+	}
 
 
-    /**
-     * @param $name
-     * @param $required
-     * @return mixed
-     * @throws \Exception
-     */
-    public function float($name, $required)
-    {
-        if (is_null($data = $this->post($name))) {
-            if ($required) {
-                throw new \Exception('Parameter is required and cannot be empty.');
-            }
-        }
-        return (float)$data;
-    }
+	/**
+	 * @param string $field
+	 * @param string $sizeField
+	 * @param int $max
+	 * @return float|int
+	 */
+	public function offset(string $field = 'page', string $sizeField = 'size', int $max = 100): float|int
+	{
+		$page = (int)$this->query($field);
+		if ($page < 1) {
+			$page = 1;
+		}
+		return ($page - 1) * $this->size($sizeField, $max);
+	}
 
 
-    /**
-     * @param $name
-     * @param $required
-     * @return mixed
-     * @throws \Exception
-     */
-    public function array($name, $required)
-    {
-        if (is_null($data = $this->post($name))) {
-            if ($required) {
-                throw new \Exception('Parameter is required and cannot be empty.');
-            }
-        }
-        if (!is_array($data)) return [];
-        return $data;
-    }
+	/**
+	 * @param $name
+	 * @param $required
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function string($name, $required): mixed
+	{
+		if (is_null($data = $this->post($name))) {
+			if ($required) {
+				throw new Exception('Parameter is required and cannot be empty.');
+			}
+		}
+		return $data;
+	}
 
 
-    /**
-     * @return array|null
-     */
-    public function gets(): ?array
-    {
-        return $this->serverRequest->get;
-    }
+	/**
+	 * @param $name
+	 * @param $required
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function int($name, $required)
+	{
+		if (is_null($data = $this->post($name))) {
+			if ($required) {
+				throw new Exception('Parameter is required and cannot be empty.');
+			}
+		}
+		return (string)$data;
+	}
 
 
-    /**
-     * @param $name
-     * @param null $default
-     * @return mixed
-     */
-    public function query($name, $default = null): mixed
-    {
-        return $this->serverRequest->get[$name] ?? $default;
-    }
+	/**
+	 * @param $name
+	 * @param $required
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function float($name, $required)
+	{
+		if (is_null($data = $this->post($name))) {
+			if ($required) {
+				throw new Exception('Parameter is required and cannot be empty.');
+			}
+		}
+		return (float)$data;
+	}
 
 
-    /**
-     * @param $name
-     * @return Uploaded|null
-     */
-    public function file($name): ?Uploaded
-    {
-        if (isset($this->serverRequest->files[$name])) {
-            return new Uploaded($this->serverRequest->files[$name]);
-        }
-        return null;
-    }
+	/**
+	 * @param $name
+	 * @param $required
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function array($name, $required)
+	{
+		if (is_null($data = $this->post($name))) {
+			if ($required) {
+				throw new Exception('Parameter is required and cannot be empty.');
+			}
+		}
+		if (!is_array($data)) return [];
+		return $data;
+	}
 
 
-    /**
-     * @return array
-     */
-    public function all(): array
-    {
-        if (empty($this->parseBody)) {
-            $this->parseBody = $this->parseBody($this->stream);
-        }
-        return array_merge($this->serverRequest->post ?? [],
-            $this->serverRequest->get ?? [],
-            is_array($this->parseBody) ? $this->parseBody : []
-        );
-    }
+	/**
+	 * @return array|null
+	 */
+	public function gets(): ?array
+	{
+		return $this->serverRequest->get;
+	}
 
 
-    /**
-     * @return string
-     */
-    public function getRequestTarget(): string
-    {
-        throw new BadMethodCallException('Not Accomplish Method.');
-    }
+	/**
+	 * @param $name
+	 * @param null $default
+	 * @return mixed
+	 */
+	public function query($name, $default = null): mixed
+	{
+		return $this->serverRequest->get[$name] ?? $default;
+	}
 
 
-    /**
-     * @param mixed $requestTarget
-     * @return RequestInterface
-     */
-    public function withRequestTarget($requestTarget): RequestInterface
-    {
-        $this->requestTarget = $requestTarget;
-        return $this;
-    }
+	/**
+	 * @param $name
+	 * @return Uploaded|null
+	 */
+	public function file($name): ?Uploaded
+	{
+		if (isset($this->serverRequest->files[$name])) {
+			return new Uploaded($this->serverRequest->files[$name]);
+		}
+		return null;
+	}
 
 
-    /**
-     * @return string
-     */
-    public function getMethod(): string
-    {
-        return $this->method;
-    }
+	/**
+	 * @return array
+	 */
+	public function all(): array
+	{
+		if (empty($this->parseBody)) {
+			$this->parseBody = $this->parseBody($this->stream);
+		}
+		return array_merge($this->serverRequest->post ?? [],
+			$this->serverRequest->get ?? [],
+			is_array($this->parseBody) ? $this->parseBody : []
+		);
+	}
 
 
-    /**
-     * @param string $method
-     * @return bool
-     */
-    public function isMethod(string $method): bool
-    {
-        return $this->method === $method;
-    }
+	/**
+	 * @return string
+	 */
+	public function getRequestTarget(): string
+	{
+		throw new BadMethodCallException('Not Accomplish Method.');
+	}
 
 
-    /**
-     * @param string $method
-     * @return RequestInterface
-     */
-    public function withMethod($method): RequestInterface
-    {
-        $class = clone $this;
-        $class->method = $method;
-        return $class;
-    }
+	/**
+	 * @param mixed $requestTarget
+	 * @return RequestInterface
+	 */
+	public function withRequestTarget($requestTarget): RequestInterface
+	{
+		$this->requestTarget = $requestTarget;
+		return $this;
+	}
 
 
-    /**
-     * @return \Server\Message\Uri|\Psr\Http\Message\UriInterface
-     */
-    public function getUri(): Uri|UriInterface
-    {
-        return $this->uri;
-    }
+	/**
+	 * @return string
+	 */
+	public function getMethod(): string
+	{
+		return $this->method;
+	}
 
 
-    /**
-     * @param UriInterface $uri
-     * @param false $preserveHost
-     * @return RequestInterface
-     */
-    public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
-    {
-        $class = clone $this;
-        $class->uri = $uri;
-        return $class;
-    }
+	/**
+	 * @param string $method
+	 * @return bool
+	 */
+	public function isMethod(string $method): bool
+	{
+		return $this->method === $method;
+	}
+
+
+	/**
+	 * @param string $method
+	 * @return RequestInterface
+	 */
+	public function withMethod($method): RequestInterface
+	{
+		$class = clone $this;
+		$class->method = $method;
+		return $class;
+	}
+
+
+	/**
+	 * @return \Server\Message\Uri|\Psr\Http\Message\UriInterface
+	 */
+	public function getUri(): Uri|UriInterface
+	{
+		return $this->uri;
+	}
+
+
+	/**
+	 * @param UriInterface $uri
+	 * @param false $preserveHost
+	 * @return RequestInterface
+	 */
+	public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
+	{
+		$class = clone $this;
+		$class->uri = $uri;
+		return $class;
+	}
 }
