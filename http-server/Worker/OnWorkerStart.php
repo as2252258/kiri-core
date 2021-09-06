@@ -56,7 +56,8 @@ class OnWorkerStart implements EventDispatcherInterface
 
 			$this->setProcessName(sprintf('Tasker[%d].%d', $event->server->worker_pid, $event->workerId));
 		}
-		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m Builder %s[%d].%d use time %s.", $isWorker ? 'Worker' : 'Taker',
+		$name = Config::get('id', 'system-service');
+		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m (%s)Builder %s[%d].%d use time %s.", $name, $isWorker ? 'Worker' : 'Taker',
 				$event->server->worker_pid, $event->workerId, round(microtime(true) - $time, 6) . 's') . PHP_EOL;
 	}
 
