@@ -75,7 +75,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 			$responseData = Help::toXml($responseData);
 		}
 		if (is_array($responseData)) {
-			$interface->stream->write(json_encode($responseData, JSON_UNESCAPED_UNICODE));
+			$interface->stream->write(json_encode($responseData));
 		} else {
 			$interface->stream->write((string)$responseData);
 		}
