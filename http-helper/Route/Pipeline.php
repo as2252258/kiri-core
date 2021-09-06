@@ -116,7 +116,9 @@ class Pipeline
 			$aop = Kiri::getDi()->get($aop->aspect);
 			$destination = static function () use ($aop, $destination, $parameters) {
 				/** @var IAspect $aop */
-				return $aop->invoke($destination, $parameters);
+				$aop->before();
+				$aop->after($data = $aop->invoke($destination, $parameters));
+				return $data;
 			};
 		}
 		return $destination;
