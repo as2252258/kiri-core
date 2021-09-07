@@ -140,7 +140,7 @@ class Redis implements StopHeartbeatCheck
 	private function newClient(): \Redis
 	{
 		$redis = new \Redis();
-		if (!$redis->pconnect($this->host, $this->port, $this->timeout)) {
+		if (!$redis->connect($this->host, $this->port, $this->timeout)) {
 			throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $this->host, $this->port));
 		}
 		if (!empty($this->auth) && !$redis->auth($this->auth)) {
