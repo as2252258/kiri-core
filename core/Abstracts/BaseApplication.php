@@ -146,7 +146,7 @@ abstract class BaseApplication extends Component
 	 *
 	 * @return bool
 	 */
-	#[Pure] protected function looksLikeSetter(string $line): bool
+	protected function looksLikeSetter(string $line): bool
 	{
 		return str_contains($line, '=');
 	}
@@ -211,7 +211,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @param TaskExecute $execute
-	 * @throws ReflectionException|NotFindClassException
+	 * @throws ReflectionException
 	 */
 	public function task(TaskExecute $execute): void
 	{
@@ -223,8 +223,6 @@ abstract class BaseApplication extends Component
 	 * @param $key
 	 * @param $value
 	 * @throws InitException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function addEvent($key, $value): void
@@ -280,9 +278,7 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $name
 	 * @return mixed
-	 * @throws ReflectionException
-	 * @throws NotFindClassException
-	 * @throws Exception
+	 * @throws
 	 */
 	public function get($name): mixed
 	{
@@ -309,7 +305,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return Logger
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getLogger(): Logger
 	{
@@ -319,7 +315,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return \Redis|Redis
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getRedis(): Redis|\Redis
 	{
@@ -338,7 +334,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return ErrorHandler
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getError(): ErrorHandler
 	{
@@ -349,7 +345,7 @@ abstract class BaseApplication extends Component
 	/**
 	 * @param $name
 	 * @return Table
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getTable($name): Table
 	{
@@ -359,7 +355,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return Config
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getConfig(): Config
 	{
@@ -369,7 +365,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return Router
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getRouter(): Router
 	{
@@ -379,7 +375,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return Jwt
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getJwt(): Jwt
 	{
@@ -389,7 +385,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return Server
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getServer(): Server
 	{
@@ -409,7 +405,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return SAnnotation
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getAnnotation(): SAnnotation
 	{
@@ -419,7 +415,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @return Async
-	 * @throws Exception
+	 * @throws
 	 */
 	public function getAsync(): Async
 	{
