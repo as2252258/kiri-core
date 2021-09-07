@@ -239,7 +239,7 @@ class Application extends BaseApplication
 			scan_directory(directory('app'), 'App');
 		}
 		$class->run($input, $output);
-		$output->writeln('ok');
+		$output->writeln('ok' . PHP_EOL);
 	}
 
 
