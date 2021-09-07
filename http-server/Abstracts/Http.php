@@ -27,7 +27,7 @@ abstract class Http extends Server implements OnRequest
 	use ResponseHelper;
 
 	/** @var Router|mixed */
-	#[Inject('router')]
+	#[Inject(Router::class)]
 	public Router $router;
 
 
