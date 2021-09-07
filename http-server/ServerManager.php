@@ -339,7 +339,7 @@ class ServerManager
 
 		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m [%s]$type service %s::%d start.", $id, $host, $port) . PHP_EOL;
 
-		$this->addDefaultListener($type, $settings);
+		$this->addDefaultListener($settings);
 	}
 
 
@@ -398,6 +398,9 @@ class ServerManager
 		}
 		$this->container->setBindings(SwooleServerInterface::class, $this->server);
 		$this->addServiceEvents(ServerManager::DEFAULT_EVENT, $this->server);
+		if (!empty($settings['events']) && is_array($settings['events'])) {
+			$this->addServiceEvents($settings['events'], $this->server);
+		}
 	}
 
 
