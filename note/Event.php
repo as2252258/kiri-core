@@ -6,6 +6,7 @@ namespace Annotation;
 
 use Exception;
 use Kiri\Events\EventProvider;
+use Kiri\Kiri;
 
 
 /**
@@ -34,9 +35,9 @@ use Kiri\Events\EventProvider;
      */
     public function execute(mixed $class, mixed $method = null): bool
     {
-        $pro = di(EventProvider::class);
+        $pro = Kiri::getDi()->get(EventProvider::class);
         if (is_string($class)) {
-            $class = di($class);
+            $class = Kiri::getDi()->get($class);
         }
         $pro->on($this->name, [$class, $method]);
         return true;
