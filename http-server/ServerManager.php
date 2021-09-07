@@ -277,12 +277,13 @@ class ServerManager
 	 * @param int $port
 	 * @param int $mode
 	 * @param array $settings
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	private function addNewListener(string $type, string $host, int $port, int $mode, array $settings = [])
 	{
-		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
+		$id = Config::get('id', 'system-service');
+
+		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m [%s]$type service %s::%d start.", $id, $host, $port) . PHP_EOL;
 		/** @var Server\Port $service */
 		$this->ports[$port] = $this->server->addlistener($host, $port, $mode);
 		if ($this->ports[$port] === false) {
@@ -329,7 +330,9 @@ class ServerManager
 		$this->server = new $match($host, $port, SWOOLE_PROCESS, $mode);
 		$this->server->set(array_merge(Config::get('server.settings', []), $settings['settings']));
 
-		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m $type service %s::%d start.", $host, $port) . PHP_EOL;
+		$id = Config::get('id', 'system-service');
+
+		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m [%s]$type service %s::%d start.", $id, $host, $port) . PHP_EOL;
 
 		$this->addDefaultListener($type, $settings);
 	}
@@ -398,7 +401,6 @@ class ServerManager
 	/**
 	 * @param array $events
 	 * @param Server|Port $server
-	 * @throws ReflectionException
 	 */
 	private function addServiceEvents(array $events, Server|Port $server)
 	{
@@ -423,8 +425,6 @@ class ServerManager
 	/**
 	 * @param string $class
 	 * @return object
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	private function getNewInstance(string $class): object
 	{
@@ -487,7 +487,6 @@ class ServerManager
 	/**
 	 * @param Port|Server $server
 	 * @param array|null $settings
-	 * @throws ReflectionException
 	 */
 	public function bindCallback(Port|Server $server, ?array $settings = [])
 	{
