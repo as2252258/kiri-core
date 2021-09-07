@@ -67,16 +67,16 @@ class Redis implements StopHeartbeatCheck
 	 */
 	public function heartbeat_check(): void
 	{
-		if (env('state','start') == 'exit') {
+		if (env('state', 'start') == 'exit') {
 			return;
 		}
 		if ($this->_timer === -1 && Context::inCoroutine()) {
 			$this->_timer = Timer::tick(1000, function () {
 				try {
-					if (env('state','start') == 'exit') {
-                        Kiri::getDi()->get(Logger::class)->critical('timer end');
-                        $this->stopHeartbeatCheck();
-                    }
+					if (env('state', 'start') == 'exit') {
+						Kiri::getDi()->get(Logger::class)->critical('timer end');
+						$this->stopHeartbeatCheck();
+					}
 					if (time() - $this->_last > 10 * 60) {
 						$this->stopHeartbeatCheck();
 						$this->pdo = null;
@@ -150,7 +150,9 @@ class Redis implements StopHeartbeatCheck
 			$this->read_timeout = 0;
 		}
 		$redis->select($this->database);
-		$redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->read_timeout);
+		if ($this->read_timeout > 0) {
+			$redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->read_timeout);
+		}
 		$redis->setOption(\Redis::OPT_PREFIX, $this->prefix);
 		return $redis;
 
