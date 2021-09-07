@@ -61,10 +61,13 @@ class Uploaded implements UploadedFileInterface
 
 	/**
 	 * @param string $targetPath
+     * @return bool
 	 */
-	public function moveTo($targetPath)
+	public function moveTo($targetPath): bool
 	{
 		@move_uploaded_file($this->tmp_name, $targetPath);
+
+        return file_exists($targetPath);
 	}
 
 	/**
