@@ -387,18 +387,17 @@ class ServerManager
 
 
 	/**
-	 * @param string $type
 	 * @param array $settings
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	private function addDefaultListener(string $type, array $settings): void
+	private function addDefaultListener(array $settings): void
 	{
 		if (($this->server->setting['task_worker_num'] ?? 0) > 0) {
 			$this->addTaskListener($settings['events']);
 		}
-		$this->addServiceEvents(ServerManager::DEFAULT_EVENT, $this->server);
 		$this->container->setBindings(SwooleServerInterface::class, $this->server);
+		$this->addServiceEvents(ServerManager::DEFAULT_EVENT, $this->server);
 	}
 
 
