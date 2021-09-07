@@ -50,7 +50,7 @@ class Request implements RequestInterface
 
 	/**
 	 * @param \Swoole\Http\Request $request
-	 * @return array<Request, Response>
+	 * @return array<RequestInterface, ResponseInterface>
 	 */
 	public static function create(\Swoole\Http\Request $request): array
 	{

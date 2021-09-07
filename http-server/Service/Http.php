@@ -40,7 +40,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 */
 	public function onRequest(Request $request, Response $response): void
 	{
-		// TODO: Implement onRequest() method.
 		try {
 			[$request, $psr7Response] = \Server\Constrict\Request::create($request);
 			$node = $this->router->Branch_search($request);

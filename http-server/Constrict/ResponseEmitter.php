@@ -5,6 +5,7 @@ namespace Server\Constrict;
 use Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 use Server\RequestInterface;
+use Server\SInterface\DownloadInterface;
 use Swoole\Server;
 
 
@@ -41,7 +42,12 @@ class ResponseEmitter implements Emitter
 		$response->setStatusCode($emitter->getStatusCode());
 		$response->header('Server', 'swoole');
 		$response->header('Swoole-Version', swoole_version());
-		$response->end($emitter->getBody());
+
+		if (!($emitter instanceof DownloadInterface)) {
+			$response->end($emitter->getBody());
+		} else {
+			$emitter->dispatch($response);
+		}
 	}
 
 }
