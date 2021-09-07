@@ -60,7 +60,7 @@ trait Message
 	 */
 	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
-        $this->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
+		$this->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
 		return $this;
 	}
 
@@ -74,27 +74,27 @@ trait Message
 	}
 
 
-    /**
-     * @return string|null
-     */
+	/**
+	 * @return string|null
+	 */
 	#[Pure] public function getAccessControlAllowOrigin(): ?string
 	{
 		return $this->getHeaderLine('Access-Control-Allow-Origin');
 	}
 
 
-    /**
-     * @return string|null
-     */
+	/**
+	 * @return string|null
+	 */
 	#[Pure] public function getAccessControlAllowHeaders(): ?string
 	{
 		return $this->getHeaderLine('Access-Control-Allow-Headers');
 	}
 
 
-    /**
-     * @return string|null
-     */
+	/**
+	 * @return string|null
+	 */
 	#[Pure] public function getAccessControlRequestMethod(): ?string
 	{
 		return $this->getHeaderLine('Access-Control-Request-Method');
@@ -107,7 +107,7 @@ trait Message
 	 */
 	public function withProtocolVersion($version): static
 	{
-        $this->version = $version;
+		$this->version = $version;
 		return $this;
 	}
 
@@ -201,7 +201,7 @@ trait Message
 		if (!is_array($value)) {
 			$value = [$value];
 		}
-        $this->headers[$name] = $value;
+		$this->headers[$name] = $value;
 		return $this;
 	}
 
@@ -217,7 +217,7 @@ trait Message
 		if (!array_key_exists($name, $this->headers)) {
 			throw new \Exception('Headers `' . $name . '` not exists.');
 		}
-        $this->headers[$name][] = $value;
+		$this->headers[$name][] = $value;
 		return $this;
 	}
 
@@ -248,7 +248,7 @@ trait Message
 	 */
 	public function withBody(StreamInterface $body): static
 	{
-        $this->stream = $body;
+		$this->stream = $body;
 		return $this;
 	}
 
@@ -281,10 +281,10 @@ trait Message
 	}
 
 
-    /**
-     * @param $host
-     * @return \Server\Message\Request|\Server\Message\Response
-     */
+	/**
+	 * @param $host
+	 * @return \Server\Message\Request|\Server\Message\Response
+	 */
 	public function redirectTo($host)
 	{
 		return $this->withHeader('Location', $host)

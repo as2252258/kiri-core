@@ -77,7 +77,6 @@ class ServerManager
 
 
 	/**
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws ConfigException
 	 */
@@ -202,8 +201,8 @@ class ServerManager
 
 
 	/**
-	 * @param $key
-	 * @param $value
+	 * @param string $key
+	 * @param string|int $value
 	 */
 	public static function setEnv(string $key, string|int $value): void
 	{

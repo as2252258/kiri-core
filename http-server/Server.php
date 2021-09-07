@@ -82,7 +82,7 @@ class Server extends HttpService
 		foreach ($processes as $process) {
 			$this->manager->addProcess($process);
 		}
-		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
+//		Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
 
 		return $this->manager->getServer()->start();
 	}
