@@ -177,9 +177,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws
 	 */
-	public function socket($route, $handler): void
+	public static function socket($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'SOCKET');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'SOCKET');
 	}
 
 
@@ -189,9 +190,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws
 	 */
-	public function post($route, $handler): void
+	public static function post($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'POST');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'POST');
 	}
 
 	/**
@@ -200,9 +202,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws
 	 */
-	public function get($route, $handler): void
+	public static function get($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'GET');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'GET');
 	}
 
 
@@ -212,9 +215,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws
 	 */
-	public function options($route, $handler): void
+	public static function options($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'OPTIONS');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'OPTIONS');
 	}
 
 
@@ -223,10 +227,11 @@ class Router extends HttpService implements RouterInterface
 	 * @param $handler
 	 * @throws
 	 */
-	public function any($route, $handler): void
+	public static function any($route, $handler): void
 	{
-		foreach ($this->methods as $method) {
-			$this->addRoute($route, $handler, $method);
+		$router = Kiri::getDi()->get(Router::class);
+		foreach ($router->methods as $method) {
+			$router->addRoute($route, $handler, $method);
 		}
 	}
 
@@ -236,9 +241,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws
 	 */
-	public function delete($route, $handler): void
+	public static function delete($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'DELETE');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'DELETE');
 	}
 
 
@@ -248,9 +254,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws Exception
 	 */
-	public function head($route, $handler): void
+	public static function head($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'HEAD');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'HEAD');
 	}
 
 
@@ -260,9 +267,10 @@ class Router extends HttpService implements RouterInterface
 	 * @return void
 	 * @throws
 	 */
-	public function put($route, $handler): void
+	public static function put($route, $handler): void
 	{
-		$this->addRoute($route, $handler, 'PUT');
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'PUT');
 	}
 
 	/**
@@ -503,9 +511,9 @@ class Router extends HttpService implements RouterInterface
 		if ($request->isMethod('OPTIONS')) {
 			$node = $this->tree_search('/*');
 		}
-        if (!isset($node)) {
-            $node = $this->tree_search($uri->getPath());
-        }
+		if (!isset($node)) {
+			$node = $this->tree_search($uri->getPath());
+		}
 		if (!($node instanceof Node)) {
 			return null;
 		}
@@ -546,7 +554,6 @@ class Router extends HttpService implements RouterInterface
 	private function loadRouterFile($files)
 	{
 		try {
-			$router = $this;
 			include_once "$files";
 		} catch (Throwable $exception) {
 			$this->addError($exception, 'throwable');
