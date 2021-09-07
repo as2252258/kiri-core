@@ -8,6 +8,7 @@ use Kiri\Events\EventProvider;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Kiri;
 use Kiri\Pool\StopHeartbeatCheck;
+use RedisException;
 use Server\Events\OnWorkerExit;
 use Swoole\Timer;
 
@@ -45,7 +46,6 @@ class Redis implements StopHeartbeatCheck
 	 * @param string $prefix
 	 * @param int $timeout
 	 * @param int $read_timeout
-	 * @throws \ReflectionException
 	 */
 	public function __construct(public string $host, public int $port, public int $database = 0,
 	                            public string $auth = '', public string $prefix = '', public int $timeout = 30,
@@ -105,7 +105,7 @@ class Redis implements StopHeartbeatCheck
 	 * @param string $name
 	 * @param array $arguments
 	 * @return mixed
-	 * @throws RedisConnectException
+	 * @throws RedisConnectException|RedisException
 	 */
 	public function __call(string $name, array $arguments)
 	{
@@ -119,13 +119,14 @@ class Redis implements StopHeartbeatCheck
 	/**
 	 * @return \Redis
 	 * @throws RedisConnectException
+	 * @throws RedisException
 	 */
 	public function _pdo(): \Redis
 	{
 		if ($this->_timer === -1) {
 			$this->heartbeat_check();
 		}
-		if (!($this->pdo instanceof \Redis)) {
+		if (!($this->pdo instanceof \Redis) || !$this->pdo->ping('isOk')) {
 			$this->pdo = $this->newClient();
 		}
 		return $this->pdo;
