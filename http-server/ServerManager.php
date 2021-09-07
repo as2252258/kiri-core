@@ -2,18 +2,23 @@
 
 namespace Server;
 
+use Annotation\Inject;
 use Closure;
 use Exception;
 use Http\Route\Router;
 use Kiri\Abstracts\Config;
+use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\Manager\OnPipeMessage;
+use Server\Manager\OnServer;
+use Server\Manager\OnServerManager;
+use Server\Manager\OnServerReload;
 use Server\SInterface\CustomProcess;
 use Server\SInterface\TaskExecute;
 use Server\Task\OnServerTask;
+use Server\Worker\OnServerWorker;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;
@@ -41,6 +46,27 @@ class ServerManager
 
 
 	private Server|null $server = null;
+
+
+	/**
+	 * @var ContainerInterface
+	 */
+	#[Inject(ContainerInterface::class)]
+	public ContainerInterface $container;
+
+
+	const DEFAULT_EVENT = [
+		Constant::WORKER_START  => [OnServerWorker::class, 'onWorkerStart'],
+		Constant::WORKER_EXIT   => [OnServerWorker::class, 'onWorkerExit'],
+		Constant::WORKER_STOP   => [OnServerWorker::class, 'onWorkerStop'],
+		Constant::WORKER_ERROR  => [OnServerWorker::class, 'onWorkerError'],
+		Constant::MANAGER_START => [OnServerManager::class, 'onManagerStart'],
+		Constant::MANAGER_STOP  => [OnServerManager::class, 'onManagerStop'],
+		Constant::BEFORE_RELOAD => [OnServerReload::class, 'onBeforeReload'],
+		Constant::AFTER_RELOAD  => [OnServerReload::class, 'onAfterReload'],
+		Constant::START         => [OnServer::class, 'onStart'],
+		Constant::SHUTDOWN      => [OnServer::class, 'onShutdown'],
+	];
 
 
 	/**
@@ -87,7 +113,7 @@ class ServerManager
 			$this->startListenerHandler($context, $config, $daemon);
 		}
 		$this->bindCallback($this->server, [Constant::PIPE_MESSAGE => [OnPipeMessage::class, 'onPipeMessage']]);
-		$this->bindCallback($this->server, $this->getSystemEvents($configs));
+//		$this->bindCallback($this->server, $this->getSystemEvents($configs));
 	}
 
 
@@ -207,27 +233,6 @@ class ServerManager
 	public static function setEnv(string $key, string|int $value): void
 	{
 		putenv(sprintf('%s=%s', $key, (string)$value));
-	}
-
-
-	/**
-	 * @param array $configs
-	 * @return array
-	 */
-	private function getSystemEvents(array $configs): array
-	{
-		return array_intersect_key($configs['events'] ?? [], [
-			Constant::SHUTDOWN      => '',
-			Constant::WORKER_START  => '',
-			Constant::WORKER_ERROR  => '',
-			Constant::WORKER_EXIT   => '',
-			Constant::WORKER_STOP   => '',
-			Constant::MANAGER_START => '',
-			Constant::MANAGER_STOP  => '',
-			Constant::BEFORE_RELOAD => '',
-			Constant::AFTER_RELOAD  => '',
-			Constant::START         => '',
-		]);
 	}
 
 
@@ -392,9 +397,8 @@ class ServerManager
 		if (($this->server->setting['task_worker_num'] ?? 0) > 0) {
 			$this->addTaskListener($settings['events']);
 		}
-		$this->addServiceEvents($settings['events'] ?? [], $this->server);
-		Kiri::getDi()->setBindings(SwooleServerInterface::class,
-			$this->server);
+		$this->addServiceEvents(ServerManager::DEFAULT_EVENT, $this->server);
+		$this->container->setBindings(SwooleServerInterface::class, $this->server);
 	}
 
 
@@ -406,7 +410,7 @@ class ServerManager
 	{
 		foreach ($events as $name => $event) {
 			if (is_array($event) && is_string($event[0])) {
-				$event[0] = Kiri::getDi()->get($event[0], [$server]);
+				$event[0] = $this->container->get($event[0], [$server]);
 			}
 			$server->on($name, $event);
 		}
@@ -428,7 +432,7 @@ class ServerManager
 	 */
 	private function getNewInstance(string $class): object
 	{
-		return Kiri::getDi()->newObject($class);
+		return $this->container->newObject($class);
 	}
 
 
@@ -446,7 +450,7 @@ class ServerManager
 				$this->server->setting['worker_num'] + 1 + $this->server->setting['task_worker_num']);
 		}
 		if (is_string($handler)) {
-			$implements = Kiri::getDi()->getReflect($handler);
+			$implements = $this->container->getReflect($handler);
 			if (!in_array(TaskExecute::class, $implements->getInterfaceNames())) {
 				throw new Exception('Task must instance ' . TaskExecute::class);
 			}
@@ -474,7 +478,7 @@ class ServerManager
 	private function addTaskListener(array $events = []): void
 	{
 		$task_use_object = $this->server->setting['task_object'] ?? $this->server->setting['task_use_object'] ?? false;
-		$reflect = Kiri::getDi()->getReflect(OnServerTask::class)?->newInstance();
+		$reflect = $this->container->getReflect(OnServerTask::class)?->newInstance();
 		if ($task_use_object || $this->server->setting['task_enable_coroutine']) {
 			$this->server->on('task', $events[Constant::TASK] ?? [$reflect, 'onCoroutineTask']);
 		} else {
@@ -499,7 +503,7 @@ class ServerManager
 				continue;
 			}
 			if (is_array($callback) && !is_object($callback[0])) {
-				$callback[0] = Kiri::getDi()->get($callback[0]);
+				$callback[0] = $this->container->get($callback[0]);
 			}
 			$this->server->on($event_type, $callback);
 		}
