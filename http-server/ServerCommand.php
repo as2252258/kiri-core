@@ -6,14 +6,14 @@ namespace Server;
 
 use Annotation\Inject;
 use Exception;
+use Kiri\Abstracts\Config;
 use Kiri\Events\EventProvider;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
-use ReflectionException;
 use Server\Events\OnBeforeWorkerStart;
 use Server\Events\OnWorkerStart;
 use Server\Worker\OnServerWorker;
 use Server\Worker\OnWorkerStart as WorkerDispatch;
+use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -70,6 +70,10 @@ class ServerCommand extends Command
 			if ($input->getArgument('action') == 'stop') {
 				throw new Exception('shutdown success');
 			}
+			$enable_coroutine = Config::get('servers.settings.enable_coroutine', false);
+			if ($enable_coroutine === true) {
+				Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL ^ SWOOLE_HOOK_BLOCKING_FUNCTION);
+			}
 			$this->generate_runtime_builder($manager);
 		} catch (\Throwable $throwable) {
 			$output->write($throwable->getMessage());
@@ -81,9 +85,6 @@ class ServerCommand extends Command
 
 	/**
 	 * @param $manager
-	 * @return void
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	private function generate_runtime_builder($manager): void
 	{
