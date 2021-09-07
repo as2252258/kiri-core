@@ -122,13 +122,7 @@ class Pool extends Component
 	{
 		$channel = $this->getChannel($name);
 		if (!$channel->isEmpty()) {
-			Coroutine::defer(function () {
-				echo '111';
-			});
-			$connection = $this->maxIdleQuantity($channel);
-			if ($this->checkCanUse($name, $connection)) {
-				return $connection;
-			}
+			return $this->maxIdleQuantity($channel);
 		}
 		return $callback();
 	}
