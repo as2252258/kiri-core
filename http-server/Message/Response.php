@@ -130,10 +130,10 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 	/**
 	 * @param $data
-	 * @return ResponseInterface
+	 * @return \Server\ResponseInterface
 	 * @throws Exception
 	 */
-	public function json($data): ResponseInterface
+	public function json($data): \Server\ResponseInterface
 	{
 		if (!is_array($data = $this->_toArray($data))) {
 			throw new Exception('Json data format error.');
@@ -147,10 +147,10 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 	/**
 	 * @param $data
-	 * @return ResponseInterface
+	 * @return \Server\ResponseInterface
 	 * @throws Exception
 	 */
-	public function html($data): ResponseInterface
+	public function html($data): \Server\ResponseInterface
 	{
 		$this->stream->write((string)$this->_toArray($data));
 
@@ -160,10 +160,10 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 	/**
 	 * @param $data
-	 * @return ResponseInterface
+	 * @return \Server\ResponseInterface
 	 * @throws Exception
 	 */
-	public function xml($data): ResponseInterface
+	public function xml($data): \Server\ResponseInterface
 	{
 		if (!is_array($data = $this->_toArray($data))) {
 			throw new Exception('Xml data format error.');
