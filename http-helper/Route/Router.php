@@ -76,7 +76,7 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public static function getNamespace(): string
 	{
-		$router = Kiri::app()->getRouter();
+		$router = Kiri::getDi()->get(Router::class);
 
 		return Config::get('http.namespace', $router->namespace);
 	}
@@ -96,7 +96,7 @@ class Router extends HttpService implements RouterInterface
 	 * @param $handler
 	 * @param string $method
 	 * @return ?Node
-	 * @throws Exception
+	 * @throws
 	 */
 	public function addRoute($path, $handler, string $method = 'any'): ?Node
 	{

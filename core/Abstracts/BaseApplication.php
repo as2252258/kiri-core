@@ -373,7 +373,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function getRouter(): Router
 	{
-		return $this->get('router');
+		return Kiri::getDi()->get(Router::class);
 	}
 
 
@@ -467,7 +467,6 @@ abstract class BaseApplication extends Component
 			'config'          => ['class' => Config::class],
 			'logger'          => ['class' => Logger::class],
 			'annotation'      => ['class' => SAnnotation::class],
-			'router'          => ['class' => Router::class],
 			'redis'           => ['class' => Redis::class],
 			'databases'       => ['class' => Connection::class],
 			'aop'             => ['class' => AspectManager::class],

@@ -48,7 +48,7 @@ class OnWorkerStart implements EventDispatcherInterface
 		$this->interpretDirectory($isWorker);
 		if ($isWorker) {
 			ServerManager::setEnv('environmental', Kiri::WORKER);
-			Kiri::getFactory()->getRouter()->_loader();
+			Kiri::getDi()->get(Router::class)->_loader();
 
 			$this->setProcessName(sprintf('Worker[%d].%d', $event->server->worker_pid, $event->workerId));
 		} else {

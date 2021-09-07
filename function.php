@@ -1006,7 +1006,7 @@ if (!function_exists('router')) {
      */
     function router(): Router
     {
-        return Kiri::app()->getRouter();
+        return Kiri::getDi()->get(Router::class);
     }
 
 }
@@ -1018,8 +1018,6 @@ if (!function_exists('isService')) {
     /**
      * @param string $name
      * @return bool
-     * @throws NotFindClassException
-     * @throws ReflectionException
      */
     function isService(string $name): bool
     {

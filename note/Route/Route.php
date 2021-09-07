@@ -23,18 +23,15 @@ use Kiri\Kiri;
     }
 
 
-    /**
-     * @param static $params
-     * @param mixed $class
-     * @param mixed|null $method
-     * @return Router
-     * @throws \Kiri\Exception\NotFindClassException
-     * @throws \ReflectionException
-     */
+	/**
+	 * @param mixed $class
+	 * @param mixed|null $method
+	 * @return Router
+	 */
     public function execute(mixed $class, mixed $method = null): Router
     {
         // TODO: Implement setHandler() method.
-        $router = Kiri::app()->getRouter();
+        $router = Kiri::getDi()->get(Router::class);
         if (is_string($class)) {
             $class = di($class);
         }
