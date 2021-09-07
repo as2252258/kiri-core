@@ -155,7 +155,7 @@ class ServerManager
 				$soloProcess->name($system . '.' . $name . ' start.');
 			}
 			$name = Config::get('id', 'system-service');
-			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m (%s)Builder %s[%d].%d use time %s.", $name, 'Process ' . $name,
+			echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m [%s]Builder %s[%d].%d use time %s.", $name, 'Process ' . $name,
 					$server->master_pid, $soloProcess->pid, round(microtime(true) - $time, 6) . 's') . PHP_EOL;
 			$customProcess->signListen($soloProcess);
 			$customProcess->onHandler($soloProcess);

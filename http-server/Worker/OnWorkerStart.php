@@ -68,7 +68,7 @@ class OnWorkerStart implements EventDispatcherInterface
 	 */
 	private function mixed($event, $name, $isWorker, $time)
 	{
-		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m (%s)Builder %s[%d].%d use time %s.", $name, $isWorker ? 'Worker' : 'Taker',
+		echo sprintf("\033[36m[" . date('Y-m-d H:i:s') . "]\033[0m [%s]Builder %s[%d].%d use time %s.", $name, $isWorker ? 'Worker' : 'Taker',
 				$event->server->worker_pid, $event->workerId, round(microtime(true) - $time, 6) . 's') . PHP_EOL;
 	}
 
