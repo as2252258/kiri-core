@@ -366,17 +366,15 @@ class Router extends HttpService implements RouterInterface
 	 * @param array $config
 	 * @param callable $callback
 	 * 路由分组
-	 * @param null $stdClass
 	 */
-	public function group(array $config, callable $callback, $stdClass = null)
+	public static function group(array $config, callable $callback)
 	{
-		$this->groupTacks[] = $config;
-		if ($stdClass) {
-			$callback($stdClass);
-		} else {
-			$callback($this);
-		}
-		array_pop($this->groupTacks);
+		$router = Kiri::getDi()->get(Router::class);
+		$router->groupTacks[] = $config;
+
+		call_user_func($callback);
+
+		array_pop($router->groupTacks);
 	}
 
 	/**
