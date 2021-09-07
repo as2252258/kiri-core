@@ -324,7 +324,7 @@ class Kiri
 	 * @param bool $isWorker
 	 * @throws Exception
 	 */
-	public static function clearProcessId($workerId, $isWorker = false)
+	public static function clearProcessId($workerId, bool $isWorker = false)
 	{
 		clearstatcache();
 		$directory = $isWorker === true ? 'pid/worker' : 'pid/task';
