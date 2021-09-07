@@ -136,12 +136,14 @@ class Curl extends ClientAbstracts
 	 */
 	private function execute($curl): Result|bool|array|string
 	{
-		defer(fn() => $this->cleanData());
 		$output = curl_exec($curl);
 		if ($output === false) {
-			return $this->fail(400, curl_error($curl));
+			$response = $this->fail(400, curl_error($curl));
+		} else {
+			$response = $this->parseResponse($curl, $output);
 		}
-		return $this->parseResponse($curl, $output);
+		$this->cleanData();
+		return $response;
 	}
 
 
