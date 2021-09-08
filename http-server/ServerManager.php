@@ -296,7 +296,9 @@ class ServerManager
 		}
 		if ($type == Constant::SERVER_TYPE_HTTP && !isset($settings['settings']['open_http_protocol'])) {
 			$settings['settings']['open_http_protocol'] = true;
-			$settings['settings']['open_http2_protocol'] = true;
+			if (in_array($this->server->setting['dispatch_mode'], [2, 4])) {
+				$settings['settings']['open_http2_protocol'] = true;
+			}
 		}
 		if ($type == Constant::SERVER_TYPE_WEBSOCKET && !isset($settings['settings']['open_websocket_protocol'])) {
 			$settings['settings']['open_websocket_protocol'] = true;
