@@ -9,6 +9,7 @@ use Http\Route\Node;
 use Kiri\Core\Help;
 use Server\Events\OnAfterRequest;
 use Server\Message\Response as MsgResponse;
+use Server\RequestInterface;
 use Server\ResponseInterface;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
@@ -41,8 +42,8 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-            /** @var \Server\RequestInterface $request */
 			[$request, $psr7Response] = \Server\Constrict\Request::create($request);
+			/** @var RequestInterface $request */
 			$node = $this->router->Branch_search($request);
 			if (!($node instanceof Node)) {
 				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
