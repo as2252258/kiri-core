@@ -394,17 +394,17 @@ class Router extends HttpService implements RouterInterface
 	}
 
 	/**
-	 * @param string|null $explode
+	 * @param array|null $explode
 	 * @return Node|null
 	 * 查找指定路由
 	 * @throws Exception
 	 */
-	public function tree_search(?string $explode): ?Node
+	public function tree_search(?array $explode): ?Node
 	{
 		if (empty($this->nodes)) {
 			return null;
 		}
-		return $this->nodes[$explode] ?? null;
+		$parent = $this->nodes[$explode] ?? null;
 		if (!($parent instanceof Node)) {
 			return null;
 		}
@@ -425,7 +425,6 @@ class Router extends HttpService implements RouterInterface
 	public function split($path): ?array
 	{
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
-		return [$path];
 		if ($path === '/') {
 			return ['/'];
 		}
@@ -507,13 +506,10 @@ class Router extends HttpService implements RouterInterface
 	{
 		$uri = $request->getUri();
 		if ($request->isMethod('OPTIONS')) {
-			$node = $this->tree_search('/*');
+			$node = $this->tree_search(['*']);
 		}
 		if (!isset($node)) {
-			$node = $this->tree_search($uri->getPath());
-		}
-		if (!($node instanceof Node)) {
-			return null;
+			$node = $this->tree_search($uri->getExplode());
 		}
 		return $node;
 	}
