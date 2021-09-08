@@ -298,6 +298,9 @@ class ServerManager
 			$settings['settings']['open_http_protocol'] = true;
 			$settings['settings']['open_http2_protocol'] = true;
 		}
+		if ($type == Constant::SERVER_TYPE_WEBSOCKET && !isset($settings['settings']['open_websocket_protocol'])) {
+			$settings['settings']['open_websocket_protocol'] = true;
+		}
 		$this->ports[$port]->set($settings['settings'] ?? []);
 		$this->addServiceEvents($settings['events'] ?? [], $this->ports[$port]);
 	}
