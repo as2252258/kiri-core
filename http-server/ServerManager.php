@@ -294,6 +294,10 @@ class ServerManager
 		if ($this->ports[$port] === false) {
 			throw new Exception("The port is already in use[$host::$port]");
 		}
+		if ($type == Constant::SERVER_TYPE_HTTP && !isset($settings['settings']['open_http_protocol'])) {
+			$settings['settings']['open_http_protocol'] = true;
+			$settings['settings']['open_http2_protocol'] = true;
+		}
 		$this->ports[$port]->set($settings['settings'] ?? []);
 		$this->addServiceEvents($settings['events'] ?? [], $this->ports[$port]);
 	}
