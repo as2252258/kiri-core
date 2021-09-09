@@ -7,6 +7,7 @@ use Exception;
 use Http\Exception\RequestException;
 use Http\Route\Node;
 use Kiri\Core\Help;
+use Server\Constant;
 use Server\Events\OnAfterRequest;
 use Server\Message\Response as MsgResponse;
 use Server\RequestInterface;
@@ -46,9 +47,10 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 			/** @var RequestInterface $request */
 			$node = $this->router->Branch_search($request);
 			if (!($node instanceof Node)) {
-				throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
 			}
-			if (!(($psr7Response = $node->dispatch($request)) instanceof ResponseInterface)) {
+			$psr7Response = $node->dispatch($request);
+			if (!($psr7Response instanceof ResponseInterface)) {
 				$psr7Response = $this->transferToResponse($psr7Response);
 			}
 		} catch (Error | \Throwable $exception) {

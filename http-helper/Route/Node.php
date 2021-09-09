@@ -16,6 +16,7 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\IAspect;
 use Kiri\Kiri;
 use ReflectionException;
+use Server\Constant;
 use Server\Events\OnAfterWorkerStart;
 use Server\RequestInterface;
 
@@ -322,11 +323,11 @@ class Node
     public function dispatch(RequestInterface $request): mixed
     {
         if (!in_array($request->getMethod(), $this->method)) {
-            throw new RequestException('<h2>HTTP 405 Method allow</h2><hr><i>Powered by Swoole</i>', 405);
+            throw new RequestException(Constant::STATUS_405_MESSAGE, 405);
         }
         $handlerProviders = HandlerProviders::get($this->sourcePath, $request->getMethod());
         if (empty($handlerProviders)) {
-            throw new RequestException('<h2>HTTP 404 Not Found</h2><hr><i>Powered by Swoole</i>', 404);
+            throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
         }
         return $handlerProviders->interpreter($request);
     }
