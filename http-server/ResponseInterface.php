@@ -69,24 +69,24 @@ interface ResponseInterface extends \Psr\Http\Message\ResponseInterface
 
 
 	/**
-	 * @param string $value
+	 * @param ?string $value
 	 * @return ResponseInterface
 	 */
-	public function withAccessControlAllowOrigin(string $value): ResponseInterface;
+	public function withAccessControlAllowOrigin(?string $value): ResponseInterface;
 
 
 	/**
-	 * @param string $value
+	 * @param ?string $value
 	 * @return ResponseInterface
 	 */
-	public function withAccessControlRequestMethod(string $value): ResponseInterface;
+	public function withAccessControlRequestMethod(?string $value): ResponseInterface;
 
 
 	/**
-	 * @param string $value
+	 * @param ?string $value
 	 * @return ResponseInterface
 	 */
-	public function withAccessControlAllowHeaders(string $value): ResponseInterface;
+	public function withAccessControlAllowHeaders(?string $value): ResponseInterface;
 
 
 
