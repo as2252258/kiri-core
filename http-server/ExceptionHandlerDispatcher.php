@@ -15,11 +15,12 @@ class ExceptionHandlerDispatcher implements ExceptionHandlerInterface
 {
 
 
-    /**
-     * @param Throwable $exception
-     * @param CResponse $response
-     * @return ResponseInterface
-     */
+	/**
+	 * @param Throwable $exception
+	 * @param CResponse $response
+	 * @return ResponseInterface
+	 * @throws \Exception
+	 */
     public function emit(Throwable $exception, Response $response): ResponseInterface
     {
         if ($exception->getCode() == 404) {
