@@ -21,10 +21,6 @@ interface ResponseInterface extends \Psr\Http\Message\ResponseInterface
 	public function file(string $path): DownloadInterface;
 
 
-	public function getClientId(): int;
-	public function getClientInfo(): array;
-
-
 	/**
 	 * @param $responseData
 	 * @return string|array|bool|int|null

@@ -24,7 +24,7 @@ class Request implements RequestInterface
 	 */
 	private function __call__(): RequestMessage
 	{
-		return Context::getContext(RequestMessage::class, new RequestMessage());
+		return Context::getContext(RequestInterface::class, new RequestMessage());
 	}
 
 
@@ -47,7 +47,7 @@ class Request implements RequestInterface
 	{
 		Context::setContext(ResponseInterface::class, $response = new Response());
 
-		Context::setContext(RequestMessage::class, RequestMessage::parseRequest($request));
+		Context::setContext(RequestInterface::class, RequestMessage::parseRequest($request));
 
 		return [Kiri::getDi()->get(Request::class), $response];
 	}

@@ -6,9 +6,13 @@ namespace Server\Constrict;
 
 use Http\Context\Context;
 use JetBrains\PhpStorm\Pure;
+use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
+use Server\Message\Request as RequestMessage;
 use Server\Message\Response as Psr7Response;
+use Server\RequestInterface;
 use Server\ResponseInterface;
+use Server\ServerManager;
 use Server\SInterface\DownloadInterface;
 
 
@@ -314,7 +318,11 @@ class Response implements ResponseInterface
 	 */
 	public function getClientId(): int
 	{
-		return $this->__call__()->{__FUNCTION__}();
+		if (!Context::hasContext('client.id.property')) {
+			$request = Context::getContext(RequestInterface::class, new RequestMessage());
+			return Context::setContext('client.id.property', $request->getClientId());
+		}
+		return (int)Context::getContext('client.id.property');
 	}
 
 
@@ -323,6 +331,16 @@ class Response implements ResponseInterface
 	 */
 	public function getClientInfo(): array
 	{
-		return $this->__call__()->{__FUNCTION__}();
+		if (!Context::hasContext('client.info.property')) {
+			$request = Context::getContext(RequestInterface::class, new RequestMessage());
+
+			$server = Kiri::getDi()->get(ServerManager::class)->getServer();
+
+			$clientInfo = $server->getClientInfo($request->getClientId());
+
+			return Context::setContext('client.info.property', $clientInfo);
+		}
+		return Context::getContext('client.info.property');
 	}
+
 }
