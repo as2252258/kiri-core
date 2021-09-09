@@ -192,4 +192,32 @@ trait Message
         return $this;
     }
 
+
+
+    /**
+     * @return string|null
+     */
+    #[Pure] public function getAccessControlAllowOrigin(): ?string
+    {
+        return $this->getHeaderLine('Access-Control-Allow-Origin');
+    }
+
+
+    /**
+     * @return string|null
+     */
+    #[Pure] public function getAccessControlAllowHeaders(): ?string
+    {
+        return $this->getHeaderLine('Access-Control-Allow-Headers');
+    }
+
+
+    /**
+     * @return string|null
+     */
+    #[Pure] public function getAccessControlRequestMethod(): ?string
+    {
+        return $this->getHeaderLine('Access-Control-Request-Method');
+    }
+
 }
