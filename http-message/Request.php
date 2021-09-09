@@ -1,21 +1,32 @@
 <?php
 
-namespace Server\Constrict;
+namespace Protocol\Message;
 
+use BadMethodCallException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Server\Message\Message;
 
-class TRequest implements RequestInterface
+
+/**
+ *
+ */
+abstract class Request implements RequestInterface
 {
 
 	use Message;
 
 
-	private UriInterface $uri;
+    /**
+     * @var \Psr\Http\Message\UriInterface
+     */
+    protected UriInterface $uriInterface;
 
 
-	private string $method;
+    /**
+     * @var string
+     */
+    protected string $method;
+
 
 
 	/**
@@ -23,7 +34,7 @@ class TRequest implements RequestInterface
 	 */
 	public function getRequestTarget(): string
 	{
-		throw new \BadMethodCallException('Not Accomplish Method.');
+		throw new BadMethodCallException('Not Accomplish Method.');
 	}
 
 
@@ -33,7 +44,7 @@ class TRequest implements RequestInterface
 	 */
 	public function withRequestTarget($requestTarget): static
 	{
-		throw new \BadMethodCallException('Not Accomplish Method.');
+		throw new BadMethodCallException('Not Accomplish Method.');
 	}
 
 
@@ -42,7 +53,6 @@ class TRequest implements RequestInterface
 	 */
 	public function getMethod(): string
 	{
-		// TODO: Implement getMethod() method.
 		return $this->method;
 	}
 
@@ -53,7 +63,6 @@ class TRequest implements RequestInterface
 	 */
 	public function withMethod($method): RequestInterface
 	{
-		// TODO: Implement withMethod() method.
 		$this->method = $method;
 		return $this;
 	}
@@ -64,19 +73,18 @@ class TRequest implements RequestInterface
 	 */
 	public function getUri(): UriInterface
 	{
-		// TODO: Implement getUri() method.
-		return $this->uri;
+		return $this->uriInterface;
 	}
 
 
 	/**
 	 * @param UriInterface $uri
 	 * @param false $preserveHost
-	 * @return $this|TRequest
+	 * @return $this|Request
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
 	{
-		$this->uri = $uri;
+		$this->uriInterface = $uri;
 		return $this;
 	}
 }
