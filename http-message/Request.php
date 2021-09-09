@@ -3,6 +3,7 @@
 namespace Protocol\Message;
 
 use BadMethodCallException;
+use Http\IInterface\AuthIdentity;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -26,6 +27,21 @@ abstract class Request implements RequestInterface
      * @var string
      */
     protected string $method;
+
+
+    /**
+     * @var \Http\IInterface\AuthIdentity
+     */
+    public AuthIdentity $authority;
+
+
+    /**
+     * @param \Http\IInterface\AuthIdentity $authIdentity
+     */
+    public function setAuthority(AuthIdentity $authIdentity): void
+    {
+        $this->authority = $authIdentity;
+    }
 
 
     /**
