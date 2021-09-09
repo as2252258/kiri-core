@@ -307,4 +307,22 @@ class Response implements ResponseInterface
 	{
 		return $this->__call__()->{__FUNCTION__}();
 	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getClientId(): int
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getClientInfo(): array
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
 }

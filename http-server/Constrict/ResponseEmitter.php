@@ -3,7 +3,7 @@
 namespace Server\Constrict;
 
 use Annotation\Inject;
-use Psr\Http\Message\ResponseInterface;
+use Server\ResponseInterface;
 use Server\RequestInterface;
 use Server\SInterface\DownloadInterface;
 use Swoole\Server;

@@ -5,8 +5,8 @@ namespace Server\Constrict;
 
 use Exception;
 use Kiri\Kiri;
-use Psr\Http\Message\ResponseInterface;
 use Server\ServerManager;
+use Server\ResponseInterface;
 
 /**
  *

@@ -2,7 +2,7 @@
 
 namespace Server\Constrict;
 
-use Psr\Http\Message\ResponseInterface;
+use Server\ResponseInterface;
 
 interface Emitter
 {

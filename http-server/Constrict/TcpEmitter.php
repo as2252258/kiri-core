@@ -2,9 +2,9 @@
 
 namespace Server\Constrict;
 
+use Exception;
 use Http\Context\Formatter\FileFormatter;
-use Kiri\Exception\NotFindClassException;
-use Psr\Http\Message\ResponseInterface;
+use Server\ResponseInterface;
 use Swoole\Server;
 
 
@@ -18,17 +18,15 @@ class TcpEmitter implements Emitter
 	/**
 	 * @param Server $response
 	 * @param ResponseInterface $emitter
-	 * @throws NotFindClassException
-	 * @throws \ReflectionException
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function sender(mixed $response, ResponseInterface $emitter): void
 	{
-		$formatter = $emitter->getContent();
+		$formatter = $emitter->stream->getContents();
 		if ($formatter instanceof FileFormatter) {
-			$response->sendfile($emitter->getClientId(), $formatter->getData());
+			$response->sendfile($emitter->getClientId(), $formatter);
 		} else {
-			$response->send($emitter->getClientId(), $formatter->getData());
+			$response->send($emitter->getClientId(), $formatter);
 		}
 	}
 }
