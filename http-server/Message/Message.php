@@ -5,6 +5,8 @@ namespace Server\Message;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Xml;
 use Psr\Http\Message\StreamInterface;
+use Server\RequestInterface;
+use Server\ResponseInterface;
 
 
 /**
@@ -56,9 +58,9 @@ trait Message
 	 * @param null $httponly
 	 * @param null $samesite
 	 * @param null $priority
-	 * @return static
+	 * @return RequestInterface|ResponseInterface
 	 */
-	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
+	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): RequestInterface|ResponseInterface
 	{
 		$this->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
 		return $this;
@@ -103,9 +105,9 @@ trait Message
 
 	/**
 	 * @param $version
-	 * @return $this
+	 * @return RequestInterface|ResponseInterface
 	 */
-	public function withProtocolVersion($version): static
+	public function withProtocolVersion($version): RequestInterface|ResponseInterface
 	{
 		$this->version = $version;
 		return $this;
@@ -153,9 +155,9 @@ trait Message
 
 	/**
 	 * @param \Swoole\Http\Request $request
-	 * @return $this
+	 * @return RequestInterface|ResponseInterface
 	 */
-	private function parseRequestHeaders(\Swoole\Http\Request $request): static
+	private function parseRequestHeaders(\Swoole\Http\Request $request): RequestInterface|ResponseInterface
 	{
 		$index = strpos($request->getData(), "\r\n\r\n");
 		$headers = explode("\r\n", substr($request->getData(), 0, $index));
@@ -194,9 +196,9 @@ trait Message
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return static
+	 * @return RequestInterface|ResponseInterface
 	 */
-	public function withHeader($name, $value): static
+	public function withHeader($name, $value): RequestInterface|ResponseInterface
 	{
 		if (!is_array($value)) {
 			$value = [$value];
@@ -209,10 +211,10 @@ trait Message
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return static
+	 * @return RequestInterface|ResponseInterface
 	 * @throws
 	 */
-	public function withAddedHeader($name, $value): static
+	public function withAddedHeader($name, $value): RequestInterface|ResponseInterface
 	{
 		if (!array_key_exists($name, $this->headers)) {
 			throw new \Exception('Headers `' . $name . '` not exists.');
@@ -224,9 +226,9 @@ trait Message
 
 	/**
 	 * @param $name
-	 * @return $this
+	 * @return RequestInterface|ResponseInterface
 	 */
-	public function withoutHeader($name): static
+	public function withoutHeader($name): RequestInterface|ResponseInterface
 	{
 		unset($this->headers[$name]);
 		return $this;
@@ -236,7 +238,7 @@ trait Message
 	/**
 	 * @return string
 	 */
-	public function getBody(): string
+	#[Pure] public function getBody(): string
 	{
 		return $this->stream->getContents();
 	}
@@ -244,9 +246,9 @@ trait Message
 
 	/**
 	 * @param StreamInterface $body
-	 * @return static
+	 * @return RequestInterface|ResponseInterface
 	 */
-	public function withBody(StreamInterface $body): static
+	public function withBody(StreamInterface $body): RequestInterface|ResponseInterface
 	{
 		$this->stream = $body;
 		return $this;
@@ -283,9 +285,9 @@ trait Message
 
 	/**
 	 * @param $host
-	 * @return \Server\Message\Request|\Server\Message\Response
+	 * @return Request|Response
 	 */
-	public function redirectTo($host)
+	public function redirectTo($host): RequestInterface|ResponseInterface
 	{
 		return $this->withHeader('Location', $host)
 			->withStatus(302);

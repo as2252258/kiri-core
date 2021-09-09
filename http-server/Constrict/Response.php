@@ -252,31 +252,31 @@ class Response implements ResponseInterface
 
 
 	/**
-	 * @param string $data
+	 * @param string $value
 	 * @return ResponseInterface
 	 */
-	public function withAccessControlAllowOrigin(string $data): ResponseInterface
+	public function withAccessControlAllowOrigin(string $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($data);
+		return $this->__call__()->{__METHOD__}($value);
 	}
 
 
 	/**
-	 * @param string $data
+	 * @param string $value
 	 * @return ResponseInterface
 	 */
-	public function withAccessControlRequestMethod(string $data): ResponseInterface
+	public function withAccessControlRequestMethod(string $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($data);
+		return $this->__call__()->{__METHOD__}($value);
 	}
 
 
 	/**
-	 * @param string $data
+	 * @param string $value
 	 * @return ResponseInterface
 	 */
-	public function withAccessControlAllowHeaders(string $data): ResponseInterface
+	public function withAccessControlAllowHeaders(string $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($data);
+		return $this->__call__()->{__METHOD__}($value);
 	}
 }
