@@ -3,6 +3,7 @@
 namespace Server;
 
 
+use JetBrains\PhpStorm\Pure;
 use Server\Message\Response;
 use Server\SInterface\DownloadInterface;
 
@@ -86,5 +87,26 @@ interface ResponseInterface extends \Psr\Http\Message\ResponseInterface
 	 * @return ResponseInterface
 	 */
 	public function withAccessControlAllowHeaders(string $value): ResponseInterface;
+
+
+
+	/**
+	 * @return string|null
+	 */
+	#[Pure] public function getAccessControlAllowOrigin(): ?string;
+
+
+
+	/**
+	 * @return string|null
+	 */
+	#[Pure] public function getAccessControlAllowHeaders(): ?string;
+
+
+	/**
+	 * @return string|null
+	 */
+	#[Pure] public function getAccessControlRequestMethod(): ?string;
+
 
 }

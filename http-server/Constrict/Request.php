@@ -405,4 +405,31 @@ class Request implements RequestInterface
 	{
 		return $this->__call__()->{__FUNCTION__}();
 	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getAccessControlAllowOrigin(): ?string
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getAccessControlAllowHeaders(): ?string
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getAccessControlRequestMethod(): ?string
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
 }

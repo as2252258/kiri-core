@@ -132,4 +132,24 @@ interface RequestInterface extends \Psr\Http\Message\RequestInterface
 	 * @return int
 	 */
 	public function getClientId(): int;
+
+
+
+	/**
+	 * @return string|null
+	 */
+	#[Pure] public function getAccessControlAllowOrigin(): ?string;
+
+
+
+	/**
+	 * @return string|null
+	 */
+	#[Pure] public function getAccessControlAllowHeaders(): ?string;
+
+
+	/**
+	 * @return string|null
+	 */
+	#[Pure] public function getAccessControlRequestMethod(): ?string;
 }

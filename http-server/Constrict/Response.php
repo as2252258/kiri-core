@@ -5,6 +5,7 @@ namespace Server\Constrict;
 
 
 use Http\Context\Context;
+use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\StreamInterface;
 use Server\Message\Response as Psr7Response;
 use Server\ResponseInterface;
@@ -278,5 +279,32 @@ class Response implements ResponseInterface
 	public function withAccessControlAllowHeaders(string $value): ResponseInterface
 	{
 		return $this->__call__()->{__FUNCTION__}($value);
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getAccessControlAllowOrigin(): ?string
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getAccessControlAllowHeaders(): ?string
+	{
+		return $this->__call__()->{__FUNCTION__}();
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getAccessControlRequestMethod(): ?string
+	{
+		return $this->__call__()->{__FUNCTION__}();
 	}
 }
