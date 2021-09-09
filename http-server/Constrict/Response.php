@@ -285,7 +285,7 @@ class Response implements ResponseInterface
 	/**
 	 * @return string|null
 	 */
-	public function getAccessControlAllowOrigin(): ?string
+	#[Pure] public function getAccessControlAllowOrigin(): ?string
 	{
 		return $this->__call__()->{__FUNCTION__}();
 	}
@@ -294,7 +294,7 @@ class Response implements ResponseInterface
 	/**
 	 * @return string|null
 	 */
-	public function getAccessControlAllowHeaders(): ?string
+	#[Pure] public function getAccessControlAllowHeaders(): ?string
 	{
 		return $this->__call__()->{__FUNCTION__}();
 	}
@@ -303,7 +303,7 @@ class Response implements ResponseInterface
 	/**
 	 * @return string|null
 	 */
-	public function getAccessControlRequestMethod(): ?string
+	#[Pure] public function getAccessControlRequestMethod(): ?string
 	{
 		return $this->__call__()->{__FUNCTION__}();
 	}
