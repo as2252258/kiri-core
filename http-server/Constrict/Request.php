@@ -58,7 +58,7 @@ class Request implements RequestInterface
 	 */
 	public function getProtocolVersion(): string
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -68,7 +68,7 @@ class Request implements RequestInterface
 	 */
 	public function withProtocolVersion($version): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($version);
+		return $this->__call__()->{__FUNCTION__}($version);
 	}
 
 
@@ -77,7 +77,7 @@ class Request implements RequestInterface
 	 */
 	public function getHeaders(): array
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -87,7 +87,7 @@ class Request implements RequestInterface
 	 */
 	public function hasHeader($name): bool
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -97,7 +97,7 @@ class Request implements RequestInterface
 	 */
 	public function getHeader($name): array
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -107,7 +107,7 @@ class Request implements RequestInterface
 	 */
 	public function getHeaderLine($name): string
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -118,7 +118,7 @@ class Request implements RequestInterface
 	 */
 	public function withHeader($name, $value): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($name, $value);
+		return $this->__call__()->{__FUNCTION__}($name, $value);
 	}
 
 
@@ -129,7 +129,7 @@ class Request implements RequestInterface
 	 */
 	public function withAddedHeader($name, $value): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($name, $value);
+		return $this->__call__()->{__FUNCTION__}($name, $value);
 	}
 
 
@@ -139,7 +139,7 @@ class Request implements RequestInterface
 	 */
 	public function withoutHeader($name): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -148,7 +148,7 @@ class Request implements RequestInterface
 	 */
 	public function getBody(): StreamInterface
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -158,7 +158,7 @@ class Request implements RequestInterface
 	 */
 	public function withBody(StreamInterface $body): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($body);
+		return $this->__call__()->{__FUNCTION__}($body);
 	}
 
 
@@ -167,7 +167,7 @@ class Request implements RequestInterface
 	 */
 	public function getRequestTarget(): string
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -177,7 +177,7 @@ class Request implements RequestInterface
 	 */
 	public function withRequestTarget($requestTarget): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($requestTarget);
+		return $this->__call__()->{__FUNCTION__}($requestTarget);
 	}
 
 
@@ -186,7 +186,7 @@ class Request implements RequestInterface
 	 */
 	public function getMethod(): string
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -196,7 +196,7 @@ class Request implements RequestInterface
 	 */
 	public function isMethod(string $method): bool
 	{
-		return $this->__call__()->{__METHOD__}($method);
+		return $this->__call__()->{__FUNCTION__}($method);
 	}
 
 
@@ -206,7 +206,7 @@ class Request implements RequestInterface
 	 */
 	public function withMethod($method): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($method);
+		return $this->__call__()->{__FUNCTION__}($method);
 	}
 
 
@@ -215,7 +215,7 @@ class Request implements RequestInterface
 	 */
 	public function getUri(): UriInterface
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -226,7 +226,7 @@ class Request implements RequestInterface
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
 	{
-		return $this->__call__()->{__METHOD__}($uri, $preserveHost);
+		return $this->__call__()->{__FUNCTION__}($uri, $preserveHost);
 	}
 
 
@@ -236,7 +236,7 @@ class Request implements RequestInterface
 	 */
 	public function file(string $name): ?Uploaded
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -245,7 +245,7 @@ class Request implements RequestInterface
 	 */
 	public function all(): array
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -256,7 +256,7 @@ class Request implements RequestInterface
 	 */
 	public function query(string $name, bool|int|string|null $default = null): mixed
 	{
-		return $this->__call__()->{__METHOD__}($name, $default);
+		return $this->__call__()->{__FUNCTION__}($name, $default);
 	}
 
 
@@ -267,7 +267,7 @@ class Request implements RequestInterface
 	 */
 	public function post(string $name, int|bool|array|string|null $default = null): mixed
 	{
-		return $this->__call__()->{__METHOD__}($name, $default);
+		return $this->__call__()->{__FUNCTION__}($name, $default);
 	}
 
 
@@ -278,7 +278,7 @@ class Request implements RequestInterface
 	 */
 	public function int(string $name, bool $required = false): ?int
 	{
-		return $this->__call__()->{__METHOD__}($name, $required);
+		return $this->__call__()->{__FUNCTION__}($name, $required);
 	}
 
 
@@ -289,7 +289,7 @@ class Request implements RequestInterface
 	 */
 	public function float(string $name, bool $required = false): ?float
 	{
-		return $this->__call__()->{__METHOD__}($name, $required);
+		return $this->__call__()->{__FUNCTION__}($name, $required);
 	}
 
 
@@ -300,7 +300,7 @@ class Request implements RequestInterface
 	 */
 	public function date(string $name, bool $required = false): ?string
 	{
-		return $this->__call__()->{__METHOD__}($name, $required);
+		return $this->__call__()->{__FUNCTION__}($name, $required);
 	}
 
 
@@ -311,7 +311,7 @@ class Request implements RequestInterface
 	 */
 	public function timestamp(string $name, bool $required = false): ?int
 	{
-		return $this->__call__()->{__METHOD__}($name, $required);
+		return $this->__call__()->{__FUNCTION__}($name, $required);
 	}
 
 
@@ -322,7 +322,7 @@ class Request implements RequestInterface
 	 */
 	public function string(string $name, bool $required = false): ?string
 	{
-		return $this->__call__()->{__METHOD__}($name, $required);
+		return $this->__call__()->{__FUNCTION__}($name, $required);
 	}
 
 
@@ -333,7 +333,7 @@ class Request implements RequestInterface
 	 */
 	public function array(string $name, array $default = []): ?array
 	{
-		return $this->__call__()->{__METHOD__}($name, $default);
+		return $this->__call__()->{__FUNCTION__}($name, $default);
 	}
 
 
@@ -342,7 +342,7 @@ class Request implements RequestInterface
 	 */
 	public function gets(): ?array
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -354,7 +354,7 @@ class Request implements RequestInterface
 	 */
 	public function offset(string $field = 'page', string $sizeField = 'size', int $max = 100): float|int
 	{
-		return $this->__call__()->{__METHOD__}($field, $sizeField, $max);
+		return $this->__call__()->{__FUNCTION__}($field, $sizeField, $max);
 	}
 
 
@@ -365,7 +365,7 @@ class Request implements RequestInterface
 	 */
 	public function size(string $field = 'size', int $max = 100): int
 	{
-		return $this->__call__()->{__METHOD__}($field, $max);
+		return $this->__call__()->{__FUNCTION__}($field, $max);
 	}
 
 
@@ -376,7 +376,7 @@ class Request implements RequestInterface
 	 */
 	public function input($name, $default = null): mixed
 	{
-		return $this->__call__()->{__METHOD__}($name, $default);
+		return $this->__call__()->{__FUNCTION__}($name, $default);
 	}
 
 
@@ -385,7 +385,7 @@ class Request implements RequestInterface
 	 */
 	#[Pure] public function getStartTime(): float
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -394,7 +394,7 @@ class Request implements RequestInterface
 	 */
 	public function setAuthority(AuthIdentity $authority): void
 	{
-		$this->__call__()->{__METHOD__}($authority);
+		$this->__call__()->{__FUNCTION__}($authority);
 	}
 
 
@@ -403,6 +403,6 @@ class Request implements RequestInterface
 	 */
 	public function getClientId(): int
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 }

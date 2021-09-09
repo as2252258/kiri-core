@@ -48,7 +48,7 @@ class Response implements ResponseInterface
 	 */
 	public function getProtocolVersion(): string
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -58,7 +58,7 @@ class Response implements ResponseInterface
 	 */
 	public function withProtocolVersion($version): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($version);
+		return $this->__call__()->{__FUNCTION__}($version);
 	}
 
 
@@ -67,7 +67,7 @@ class Response implements ResponseInterface
 	 */
 	public function getHeaders(): array
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -77,7 +77,7 @@ class Response implements ResponseInterface
 	 */
 	public function hasHeader($name): bool
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -87,7 +87,7 @@ class Response implements ResponseInterface
 	 */
 	public function getHeader($name): string
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -97,7 +97,7 @@ class Response implements ResponseInterface
 	 */
 	public function getHeaderLine($name): string
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -108,7 +108,7 @@ class Response implements ResponseInterface
 	 */
 	public function withHeader($name, $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($name, $value);
+		return $this->__call__()->{__FUNCTION__}($name, $value);
 	}
 
 
@@ -119,7 +119,7 @@ class Response implements ResponseInterface
 	 */
 	public function withAddedHeader($name, $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($name, $value);
+		return $this->__call__()->{__FUNCTION__}($name, $value);
 	}
 
 
@@ -129,7 +129,7 @@ class Response implements ResponseInterface
 	 */
 	public function withoutHeader($name): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($name);
+		return $this->__call__()->{__FUNCTION__}($name);
 	}
 
 
@@ -138,7 +138,7 @@ class Response implements ResponseInterface
 	 */
 	public function getBody(): StreamInterface
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -148,7 +148,7 @@ class Response implements ResponseInterface
 	 */
 	public function withBody(StreamInterface $body): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($body);
+		return $this->__call__()->{__FUNCTION__}($body);
 	}
 
 	/**
@@ -156,7 +156,7 @@ class Response implements ResponseInterface
 	 */
 	public function getStatusCode(): int
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -167,7 +167,7 @@ class Response implements ResponseInterface
 	 */
 	public function withStatus($code, $reasonPhrase = ''): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($code, $reasonPhrase);
+		return $this->__call__()->{__FUNCTION__}($code, $reasonPhrase);
 	}
 
 
@@ -176,7 +176,7 @@ class Response implements ResponseInterface
 	 */
 	public function getReasonPhrase(): string
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 	/**
@@ -185,7 +185,7 @@ class Response implements ResponseInterface
 	 */
 	public function file(string $path): DownloadInterface
 	{
-		return $this->__call__()->{__METHOD__}($path);
+		return $this->__call__()->{__FUNCTION__}($path);
 	}
 
 	/**
@@ -194,7 +194,7 @@ class Response implements ResponseInterface
 	 */
 	public function _toArray($responseData): string|array|null|bool|int
 	{
-		return $this->__call__()->{__METHOD__}($responseData);
+		return $this->__call__()->{__FUNCTION__}($responseData);
 	}
 
 	/**
@@ -203,7 +203,7 @@ class Response implements ResponseInterface
 	 */
 	public function xml($data): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($data);
+		return $this->__call__()->{__FUNCTION__}($data);
 	}
 
 	/**
@@ -212,7 +212,7 @@ class Response implements ResponseInterface
 	 */
 	public function html($data): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($data);
+		return $this->__call__()->{__FUNCTION__}($data);
 	}
 
 	/**
@@ -221,7 +221,7 @@ class Response implements ResponseInterface
 	 */
 	public function json($data): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($data);
+		return $this->__call__()->{__FUNCTION__}($data);
 	}
 
 	/**
@@ -229,7 +229,7 @@ class Response implements ResponseInterface
 	 */
 	public function getContentType(): string
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Response implements ResponseInterface
 	 */
 	public function hasContentType(): bool
 	{
-		return $this->__call__()->{__METHOD__}();
+		return $this->__call__()->{__FUNCTION__}();
 	}
 
 
@@ -247,7 +247,7 @@ class Response implements ResponseInterface
 	 */
 	public function withContentType(string $type): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($type);
+		return $this->__call__()->{__FUNCTION__}($type);
 	}
 
 
@@ -257,7 +257,7 @@ class Response implements ResponseInterface
 	 */
 	public function withAccessControlAllowOrigin(string $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($value);
+		return $this->__call__()->{__FUNCTION__}($value);
 	}
 
 
@@ -267,7 +267,7 @@ class Response implements ResponseInterface
 	 */
 	public function withAccessControlRequestMethod(string $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($value);
+		return $this->__call__()->{__FUNCTION__}($value);
 	}
 
 
@@ -277,6 +277,6 @@ class Response implements ResponseInterface
 	 */
 	public function withAccessControlAllowHeaders(string $value): ResponseInterface
 	{
-		return $this->__call__()->{__METHOD__}($value);
+		return $this->__call__()->{__FUNCTION__}($value);
 	}
 }
