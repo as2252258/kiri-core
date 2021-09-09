@@ -99,30 +99,30 @@ class Response implements ResponseInterface, \Server\ResponseInterface
 
 
 	/**
-	 * @param $value
+	 * @param string $value
 	 * @return Response
 	 */
-	public function withAccessControlAllowHeaders($value): static
+	public function withAccessControlAllowHeaders(string $value): static
 	{
 		return $this->withHeader('Access-Control-Allow-Headers', $value);
 	}
 
 
 	/**
-	 * @param $value
+	 * @param string $value
 	 * @return Response
 	 */
-	public function withAccessControlRequestMethod($value): static
+	public function withAccessControlRequestMethod(string $value): static
 	{
 		return $this->withHeader('Access-Control-Request-Method', $value);
 	}
 
 
 	/**
-	 * @param $value
+	 * @param string $value
 	 * @return Response
 	 */
-	public function withAccessControlAllowOrigin($value): static
+	public function withAccessControlAllowOrigin(string $value): static
 	{
 		return $this->withHeader('Access-Control-Allow-Origin', $value);
 	}

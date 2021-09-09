@@ -6,8 +6,8 @@ use BadMethodCallException;
 use Exception;
 use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
+use Server\RequestInterface;
 
 
 /**
@@ -57,7 +57,7 @@ class Request implements RequestInterface
 	/**
 	 * @param AuthIdentity $authority
 	 */
-	public function setAuthority(AuthIdentity $authority)
+	public function setAuthority(AuthIdentity $authority): void
 	{
 		$this->authority = $authority;
 	}
@@ -321,7 +321,7 @@ class Request implements RequestInterface
 
 
 	/**
-	 * @return \Server\Message\Uri|\Psr\Http\Message\UriInterface
+	 * @return Uri|UriInterface
 	 */
 	public function getUri(): Uri|UriInterface
 	{
@@ -339,5 +339,43 @@ class Request implements RequestInterface
 		$class = clone $this;
 		$class->uri = $uri;
 		return $class;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param bool $required
+	 * @return string|null
+	 * @throws Exception
+	 */
+	public function date(string $name, bool $required = false): ?string
+	{
+		$param = $this->post($name, null);
+		if (empty($param)) {
+			if ($required) {
+				throw new Exception('Required ' . $name . ' is must.');
+			}
+			return $param;
+		}
+		return $param;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param bool $required
+	 * @return int|null
+	 * @throws Exception
+	 */
+	public function timestamp(string $name, bool $required = false): ?int
+	{
+		$param = $this->post($name, null);
+		if (empty($param)) {
+			if ($required) {
+				throw new Exception('Required ' . $name . ' is must.');
+			}
+			return $param;
+		}
+		return (int)$param;
 	}
 }
