@@ -5,8 +5,8 @@ namespace Server;
 
 use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
+use Psr\Http\Message\UploadedFileInterface;
 use Server\Message\Request;
-use Server\Message\Uploaded;
 
 /**
  *
@@ -24,9 +24,9 @@ interface RequestInterface extends \Psr\Http\Message\RequestInterface
 
 	/**
 	 * @param string $name
-	 * @return Uploaded|null
+	 * @return UploadedFileInterface|null
 	 */
-	public function file(string $name): ?Uploaded;
+	public function file(string $name): ?UploadedFileInterface;
 
 
 	/**

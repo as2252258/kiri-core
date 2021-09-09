@@ -3,12 +3,8 @@
 namespace Protocol\Message;
 
 use Http\Context\Context;
-use Kiri\Core\Xml;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UploadedFileInterface;
 
 
 /**
@@ -95,42 +91,6 @@ class ServerRequest extends Request implements ServerRequestInterface
                     return $posts;
                 }
             });
-    }
-
-
-    /**
-     * @param string $name
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function post(string $name, mixed $default = null): mixed
-    {
-        return $this->parsedBody[$name] ?? $default;
-    }
-
-
-    /**
-     * @param string $name
-     * @param string|null $default
-     * @return string|null
-     */
-    public function query(string $name, ?string $default = null): ?string
-    {
-        return $this->queryParams[$name] ?? $default;
-    }
-
-
-    /**
-     * @param string $name
-     * @return \Psr\Http\Message\UploadedFileInterface|null
-     */
-    public function file(string $name): ?UploadedFileInterface
-    {
-        if (isset($this->parsedBody[$name])) {
-            $files = $this->parsedBody[$name];
-            return new Uploaded($files['tmp_name'], $files['name'], $files['type'], $files['size'], $files['error']);
-        }
-        return null;
     }
 
 
