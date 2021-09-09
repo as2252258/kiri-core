@@ -58,9 +58,9 @@ trait Message
 	 * @param null $httponly
 	 * @param null $samesite
 	 * @param null $priority
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 */
-	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): RequestInterface|ResponseInterface
+	public function withCookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null, $samesite = null, $priority = null): static
 	{
 		$this->cookies[$name] = [$value, $expires, $path, $domain, $secure, $httponly, $samesite, $priority];
 		return $this;
@@ -105,9 +105,9 @@ trait Message
 
 	/**
 	 * @param $version
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 */
-	public function withProtocolVersion($version): RequestInterface|ResponseInterface
+	public function withProtocolVersion($version): static
 	{
 		$this->version = $version;
 		return $this;
@@ -155,9 +155,9 @@ trait Message
 
 	/**
 	 * @param \Swoole\Http\Request $request
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 */
-	private function parseRequestHeaders(\Swoole\Http\Request $request): RequestInterface|ResponseInterface
+	private function parseRequestHeaders(\Swoole\Http\Request $request): static
 	{
 		$index = strpos($request->getData(), "\r\n\r\n");
 		$headers = explode("\r\n", substr($request->getData(), 0, $index));
@@ -196,9 +196,9 @@ trait Message
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 */
-	public function withHeader($name, $value): RequestInterface|ResponseInterface
+	public function withHeader($name, $value): static
 	{
 		if (!is_array($value)) {
 			$value = [$value];
@@ -211,10 +211,10 @@ trait Message
 	/**
 	 * @param $name
 	 * @param $value
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 * @throws
 	 */
-	public function withAddedHeader($name, $value): RequestInterface|ResponseInterface
+	public function withAddedHeader($name, $value): static
 	{
 		if (!array_key_exists($name, $this->headers)) {
 			throw new \Exception('Headers `' . $name . '` not exists.');
@@ -226,9 +226,9 @@ trait Message
 
 	/**
 	 * @param $name
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 */
-	public function withoutHeader($name): RequestInterface|ResponseInterface
+	public function withoutHeader($name): static
 	{
 		unset($this->headers[$name]);
 		return $this;
@@ -246,9 +246,9 @@ trait Message
 
 	/**
 	 * @param StreamInterface $body
-	 * @return RequestInterface|ResponseInterface
+	 * @return static
 	 */
-	public function withBody(StreamInterface $body): RequestInterface|ResponseInterface
+	public function withBody(StreamInterface $body): static
 	{
 		$this->stream = $body;
 		return $this;
@@ -285,9 +285,9 @@ trait Message
 
 	/**
 	 * @param $host
-	 * @return Request|Response
+	 * @return static
 	 */
-	public function redirectTo($host): RequestInterface|ResponseInterface
+	public function redirectTo($host): static
 	{
 		return $this->withHeader('Location', $host)
 			->withStatus(302);
