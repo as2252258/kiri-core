@@ -85,6 +85,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 					}
 					return $posts;
 				} catch (\Throwable $throwable) {
+					var_dump($throwable->getMessage());
 					return $posts;
 				}
 			});
