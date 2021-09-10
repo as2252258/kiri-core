@@ -12,6 +12,7 @@ namespace Gii;
 use Database\Connection;
 use Database\Db;
 use Exception;
+use Kiri\Cache\Redis;
 use Kiri\Exception\ComponentException;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
@@ -64,7 +65,6 @@ class Gii
 	 * @param $db
 	 * @return array
 	 * @throws ComponentException
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	public function gen(InputInterface $input, $db): array
@@ -103,7 +103,6 @@ class Gii
 	 * @param $make
 	 * @param $input
 	 * @return array
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	private function getModel($make, $input): array
@@ -126,7 +125,7 @@ class Gii
 	 */
 	private function makeByDatabases($make, InputInterface $input): array
 	{
-		$redis = Kiri::app()->getRedis();
+		$redis = Kiri::getDi()->get(Redis::class);
 		if (!empty($input->getArgument('name'))) {
 			$this->tableName = $input->getArgument('name');
 			$redis->del('column:' . $this->tableName);

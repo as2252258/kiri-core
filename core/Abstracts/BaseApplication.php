@@ -319,7 +319,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function getRedis(): Redis|\Redis
 	{
-		return $this->get('redis');
+		return Kiri::getDi()->get(Redis::class);
 	}
 
 	/**
@@ -463,7 +463,6 @@ abstract class BaseApplication extends Component
 			'config'          => ['class' => Config::class],
 			'logger'          => ['class' => Logger::class],
 			'annotation'      => ['class' => SAnnotation::class],
-			'redis'           => ['class' => Redis::class],
 			'databases'       => ['class' => Connection::class],
 			'aop'             => ['class' => AspectManager::class],
 			'input'           => ['class' => HttpParams::class],

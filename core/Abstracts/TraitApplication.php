@@ -15,7 +15,6 @@ use Server\Server;
 use Http\Shutdown;
 use Kiri\Crontab\Producer;
 use Kiri\Async;
-use Kiri\Cache\Redis;
 use Kiri\Error\Logger;
 use Kiri\Jwt\Jwt;
 
@@ -23,7 +22,6 @@ use Kiri\Jwt\Jwt;
  * Trait TraitApplication
  * @package Kiri\Abstracts
  * @property Router $router
- * @property \Redis|Redis $redis
  * @property Server $server
  * @property DatabasesProviders $db
  * @property Async $async

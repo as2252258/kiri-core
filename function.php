@@ -394,7 +394,7 @@ if (!function_exists('redis')) {
      */
     function redis(): \Kiri\Cache\Redis|Redis
     {
-        return Kiri::app()->getRedis();
+        return Kiri::getDi()->get(\Kiri\Cache\Redis::class);
     }
 }
 
