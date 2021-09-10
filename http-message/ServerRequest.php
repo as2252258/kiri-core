@@ -79,6 +79,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 			->withParsedBody(function (StreamInterface $stream, ?array $posts) {
 				try {
 					$content = $stream->getContents();
+					var_dump($content, $posts);
 					if (!empty($content)) {
 						return Parse::data($content, $this->getContentType());
 					}
