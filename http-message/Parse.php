@@ -16,9 +16,8 @@ class Parse
 	public static function data($content, $contentType): mixed
 	{
 		if (str_contains($contentType, 'json')) {
-			return json_encode($content);
+			return json_encode($content,true);
 		}
-		var_dump($contentType);
 		if (str_contains($contentType, 'xml')) {
 			return Xml::toArray($content);
 		}
