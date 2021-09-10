@@ -4,9 +4,11 @@ namespace Server;
 
 
 use Server\Constrict\Response;
-use Server\Constrict\Response as CResponse;
-use Server\Message\Stream;
+use Protocol\Message\Response as CResponse;
 use Throwable;
+use Protocol\Message\Stream;
+use Server\Constrict\ResponseInterface;
+
 
 /**
  *
@@ -17,20 +19,19 @@ class ExceptionHandlerDispatcher implements ExceptionHandlerInterface
 
 	/**
 	 * @param Throwable $exception
-	 * @param CResponse $response
+	 * @param Response $response
 	 * @return ResponseInterface
-	 * @throws \Exception
 	 */
     public function emit(Throwable $exception, Response $response): ResponseInterface
     {
         if ($exception->getCode() == 404) {
             return $response->withBody(new Stream($exception->getMessage()))
-                ->withContentType(Message\Response::CONTENT_TYPE_HTML)
+                ->withContentType(CResponse::CONTENT_TYPE_HTML)
                 ->withStatus(404);
         }
         $code = $exception->getCode() == 0 ? 500 : $exception->getCode();
         return $response->withBody(new Stream(jTraceEx($exception, null, true)))
-            ->withContentType(Message\Response::CONTENT_TYPE_HTML)
+            ->withContentType(CResponse::CONTENT_TYPE_HTML)
             ->withStatus($code);
     }
 

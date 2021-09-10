@@ -4,6 +4,7 @@ namespace Server;
 
 use Server\Constrict\Response;
 use Throwable;
+use Server\Constrict\ResponseInterface;
 
 /**
  *
