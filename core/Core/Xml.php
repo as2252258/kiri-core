@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Kiri\Core;
 
+use Exception;
+
 /**
  * Class Xml
  * @package Kiri\Kiri\Core
@@ -20,19 +22,26 @@ class Xml
 	 * @param $data
 	 * @param bool $asArray
 	 * @return array|object
+	 * @throws Exception
 	 */
 	public static function toArray($data, bool $asArray = true): object|array
 	{
 		$data = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
-		if ($asArray) {
-			return json_decode(json_encode($data), TRUE);
+		if ($data === false) {
+			throw new Exception('Parameter format error.');
 		}
-		return json_decode(json_encode($data));
+		$array = get_object_vars($data);
+		if (isset($array[0])) {
+			$array[$data->getName()] = $array[0];
+			unset($array[0]);
+		}
+		return $array;
 	}
 
 	/**
 	 * @param $str
 	 * @return array|bool|object
+	 * @throws Exception
 	 */
 	public static function isXml($str): object|bool|array
 	{
