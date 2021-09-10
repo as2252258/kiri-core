@@ -51,9 +51,9 @@ class Request implements RequestInterface
 
 	/**
 	 * @param \Swoole\Http\Request $request
-	 * @return array<RequestInterface, ResponseInterface>
+	 * @return Request
 	 */
-	public static function create(\Swoole\Http\Request $request): array
+	public static function create(\Swoole\Http\Request $request): Request
 	{
 		$serverRequest = ServerRequest::createServerRequest($request);
 
