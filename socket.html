@@ -12,21 +12,30 @@
     </style>
 </head>
 <body style="background-color: #666;color: #fff;presentation-level: increment;">
+<video id="output" width="320" height="240" autoplay></video>
 <pre id="format"></pre>
 <script type="text/javascript">
     let sock, tick, format = document.getElementById('format');
 
-    console.log(new Date().getTime());
-    console.log(Date.parse(new Date()));
+
+    let buffer;
+    let ms = new MediaSource()
+    let output = document.getElementById('output')
+    output.src = URL.createObjectURL(ms)
+    ms.onsourceopen = () => {
+        buffer = ms.addSourceBuffer('video/webm; codecs="vorbis,vp8"')
+    }
 
     function message(message) {
-        let div = document.createElement('div');
-        div.innerHTML = message.data;
-        div.style.cssText = 'padding:5px 10px;background-color:#222;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;word-break: break-all;word-wrap: break-word;';
-        div.style.marginBottom = '10px';
-        let count = format.getElementsByTagName('div');
+        // let div = document.createElement('div');
+        // div.innerHTML = message.data;
+        // div.style.cssText = 'padding:5px 10px;background-color:#222;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;word-break: break-all;word-wrap: break-word;';
+        // div.style.marginBottom = '10px';
+        // let count = format.getElementsByTagName('div');
 
-        format.insertBefore(div, count[0]);
+        buffer.appendBuffer(new Uint8Array(message.data))
+
+        // format.insertBefore(div, count[0]);
     }
 
     function close(even) {
@@ -39,22 +48,25 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://47.92.194.207:9528/socket?auth='+encodeURIComponent('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhcHBsaWNhdGlvbjFfNjEwMzc2ZTU2MTRhMTkuNTk0ODM5NzEiLCJpYXQiOjE2Mjc2MTY5OTcsIm5iZiI6MTYyNzYxNjk5NywiZXhwIjoxODg2ODE2OTk3LCJ1aWQiOjUxMCwibmlja25hbWUiOiJvcGVuaWQiLCJqd3Rfc2NlbmUiOiJhcHBsaWNhdGlvbjEifQ.B7zqH0WJklZVN0acER3tmc9S08WoK-aucJ1MghnunuE'),
-        ['test', 'asdasdkjfgghdfgjdfgdfg12343', 'm-chat']);
+        sock = new WebSocket('ws://47.92.194.207:9528/');
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
             }
             tick = setInterval(function () {
                 sock.send(JSON.stringify({'route': 'getUserPosition', 'tick': new Date().getTime()}));
-                // sock.close(4000);
             }, 3000)
         }
     }
 
+
     connect();
     sock.onmessage = message;
     sock.onclose = close;
+
+    // console.log(window);
+
+
 </script>
 </body>
 </html>
