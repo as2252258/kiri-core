@@ -12,14 +12,14 @@ class Parse
 	 * @param $content
 	 * @param $contentType
 	 * @return mixed
+	 * @throws \Exception
 	 */
 	public static function data($content, $contentType): mixed
 	{
-		var_dump($contentType, $content);
-		if (str_contains($contentType, 'json')) {
-			return json_encode($content,true);
+		if (empty($content)) {
+			return null;
 		}
-		if (str_contains($contentType, 'xml')) {
+		if (str_starts_with($content, '<') || str_contains($contentType, 'xml')) {
 			return Xml::toArray($content);
 		}
 		if (str_contains($contentType, 'x-www-form-urlencoded')) {
@@ -29,7 +29,7 @@ class Parse
 		if (str_contains($contentType, 'serialize')) {
 			return unserialize($content);
 		}
-		return $content;
+		return json_encode($content, true);
 	}
 
 }
