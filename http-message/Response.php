@@ -26,6 +26,15 @@ class Response implements ResponseInterface
 
 
 	/**
+	 * __construct
+	 */
+	public function __construct()
+	{
+		$this->stream = new Stream();
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public function getStatusCode(): int
