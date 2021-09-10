@@ -1,6 +1,6 @@
 <?php
 
-namespace Http\Message;
+namespace Protocol\Message;
 
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Http\Message\StreamInterface;

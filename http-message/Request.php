@@ -1,6 +1,6 @@
 <?php
 
-namespace Http\Message;
+namespace Protocol\Message;
 
 use BadMethodCallException;
 use Http\IInterface\AuthIdentity;

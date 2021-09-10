@@ -1,6 +1,6 @@
 <?php
 
-namespace Http\Message;
+namespace Protocol\Message;
 
 use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Xml;
