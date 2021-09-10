@@ -57,9 +57,9 @@ class Response implements ResponseInterface
 
 	/**
 	 * @param string $version
-	 * @return ResponseInterface
+	 * @return ResponseInterface|Psr7Response
 	 */
-	public function withProtocolVersion($version): ResponseInterface
+	public function withProtocolVersion($version): ResponseInterface|Psr7Response
 	{
 		return $this->__call__()->{__FUNCTION__}($version);
 	}
@@ -107,9 +107,9 @@ class Response implements ResponseInterface
 	/**
 	 * @param string $name
 	 * @param string|string[] $value
-	 * @return ResponseInterface
+	 * @return ResponseInterface|Psr7Response
 	 */
-	public function withHeader($name, $value): ResponseInterface
+	public function withHeader($name, $value): ResponseInterface|Psr7Response
 	{
 		return $this->__call__()->{__FUNCTION__}($name, $value);
 	}
@@ -118,9 +118,9 @@ class Response implements ResponseInterface
 	/**
 	 * @param string $name
 	 * @param string|string[] $value
-	 * @return ResponseInterface
+	 * @return ResponseInterface|Psr7Response
 	 */
-	public function withAddedHeader($name, $value): ResponseInterface
+	public function withAddedHeader($name, $value): ResponseInterface|Psr7Response
 	{
 		return $this->__call__()->{__FUNCTION__}($name, $value);
 	}
@@ -128,9 +128,9 @@ class Response implements ResponseInterface
 
 	/**
 	 * @param string $name
-	 * @return ResponseInterface
+	 * @return ResponseInterface|Psr7Response
 	 */
-	public function withoutHeader($name): ResponseInterface
+	public function withoutHeader($name): ResponseInterface|Psr7Response
 	{
 		return $this->__call__()->{__FUNCTION__}($name);
 	}
@@ -147,9 +147,9 @@ class Response implements ResponseInterface
 
 	/**
 	 * @param StreamInterface $body
-	 * @return ResponseInterface
+	 * @return ResponseInterface|Psr7Response
 	 */
-	public function withBody(StreamInterface $body): ResponseInterface
+	public function withBody(StreamInterface $body): ResponseInterface|Psr7Response
 	{
 		return $this->__call__()->{__FUNCTION__}($body);
 	}
@@ -166,9 +166,9 @@ class Response implements ResponseInterface
 	/**
 	 * @param int $code
 	 * @param string $reasonPhrase
-	 * @return ResponseInterface
+	 * @return ResponseInterface|Psr7Response
 	 */
-	public function withStatus($code, $reasonPhrase = ''): ResponseInterface
+	public function withStatus($code, $reasonPhrase = ''): ResponseInterface|Psr7Response
 	{
 		return $this->__call__()->{__FUNCTION__}($code, $reasonPhrase);
 	}
