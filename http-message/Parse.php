@@ -15,6 +15,7 @@ class Parse
 	 */
 	public static function data($content, $contentType): mixed
 	{
+		var_dump($contentType, $content);
 		if (str_contains($contentType, 'json')) {
 			return json_encode($content,true);
 		}
