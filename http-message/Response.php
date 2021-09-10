@@ -16,10 +16,7 @@ class Response implements ResponseInterface
 	use Message;
 
 
-	const CONTENT_TYPE_JSON = 'application/json;charset=utf-8';
 	const CONTENT_TYPE_HTML = 'text/html;charset=utf-8';
-	const CONTENT_TYPE_STREAM = 'octet-stream';
-	const CONTENT_TYPE_XML = 'application/xml;charset=utf-8';
 
 
 	protected int $statusCode = 200;
@@ -145,23 +142,23 @@ class Response implements ResponseInterface
 
 	/**
 	 * @param $data
+	 * @param string $contentType
 	 * @return static
-	 * @throws Exception
 	 */
-	public function json($data): static
+	public function json($data, string $contentType = 'application/json;charset=utf-8'): static
 	{
 		$this->stream->write(json_encode($data));
 
-		return $this->withContentType(self::CONTENT_TYPE_JSON);
+		return $this->withContentType($contentType);
 	}
 
 
 	/**
 	 * @param $data
+	 * @param string $contentType
 	 * @return static
-	 * @throws Exception
 	 */
-	public function html($data): static
+	public function html($data, string $contentType = 'text/html;charset=utf-8'): static
 	{
 		if (!is_string($data)) {
 			$data = json_encode($data);
@@ -169,21 +166,20 @@ class Response implements ResponseInterface
 
 		$this->stream->write((string)$data);
 
-		return $this->withContentType(self::CONTENT_TYPE_HTML);
+		return $this->withContentType($contentType);
 	}
 
 
 	/**
 	 * @param $data
+	 * @param string $contentType
 	 * @return static
-	 * @throws Exception
 	 */
-	public function xml($data): static
+	public function xml($data, string $contentType = 'application/xml;charset=utf-8'): static
 	{
-
 		$this->stream->write(Help::toXml($data));
 
-		return $this->withContentType(self::CONTENT_TYPE_XML);
+		return $this->withContentType($contentType);
 	}
 
 
