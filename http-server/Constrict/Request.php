@@ -6,12 +6,12 @@ use Http\Context\Context;
 use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Kiri;
+use Protocol\Message\Response;
 use Protocol\Message\ServerRequest;
 use Protocol\Message\Uploaded;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
-use Protocol\Message\Response;
 
 
 class Request implements RequestInterface
@@ -252,7 +252,8 @@ class Request implements RequestInterface
 		if (empty($files) || !isset($files[$name])) {
 			return null;
 		}
-		return new Uploaded($files['tmp_name'], $files['name'], $files['type'], $files['size'], $files['error']);
+		return new Uploaded($files[$name]['tmp_name'], $files[$name]['name'], $files[$name]['type'],
+			$files[$name]['size'], $files[$name]['error']);
 	}
 
 
