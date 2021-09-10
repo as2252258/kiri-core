@@ -29,8 +29,7 @@ class Parse
 		if (str_contains($contentType, 'serialize')) {
 			return unserialize($content);
 		}
-		var_dump($content);
-		return json_encode($content, true);
+		return json_encode(urldecode($content), true);
 	}
 
 }
