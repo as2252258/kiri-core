@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Server\SInterface\DownloadInterface;
 
 
-class Response implements ResponseInterface
+class Response implements ResponseInterface, \Server\Constrict\ResponseInterface
 {
 
 

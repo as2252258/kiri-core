@@ -22,13 +22,6 @@ interface ResponseInterface extends \Psr\Http\Message\ResponseInterface
 
 
 	/**
-	 * @param $responseData
-	 * @return string|array|bool|int|null
-	 */
-	public function _toArray($responseData): string|array|null|bool|int;
-
-
-	/**
 	 * @param $data
 	 * @return ResponseInterface
 	 */
