@@ -18,6 +18,7 @@ class Parse
 		if (str_contains($contentType, 'json')) {
 			return json_encode($content);
 		}
+		var_dump($contentType);
 		if (str_contains($contentType, 'xml')) {
 			return Xml::toArray($content);
 		}
