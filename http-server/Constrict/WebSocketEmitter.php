@@ -17,13 +17,13 @@ class WebSocketEmitter implements Emitter
 
 	/**
 	 * @param mixed $response
-	 * @param ResponseInterface|\Server\Message\Response $emitter
+	 * @param ResponseInterface|\Protocol\Message\Response $emitter
 	 * @throws Exception
 	 */
-	public function sender(mixed $response, ResponseInterface|\Server\Message\Response $emitter): void
+	public function sender(mixed $response, ResponseInterface|\Protocol\Message\Response $emitter): void
 	{
 		$server = Kiri::getDi()->get(ServerManager::class)->getServer();
 
-		$server->push($response->fd, $emitter->getBody());
+		$server->push($response->fd, $emitter->getBody()->getContents());
 	}
 }

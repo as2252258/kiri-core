@@ -173,11 +173,11 @@ trait Message
 
 
 	/**
-	 * @return string
+	 * @return StreamInterface
 	 */
-	public function getBody(): string
+	public function getBody(): StreamInterface
 	{
-		return $this->stream->getContents();
+		return $this->stream;
 	}
 
 

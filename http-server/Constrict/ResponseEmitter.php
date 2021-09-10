@@ -42,7 +42,7 @@ class ResponseEmitter implements Emitter
 		$response->header('Swoole-Version', swoole_version());
 
 		if (!($emitter instanceof DownloadInterface)) {
-			$response->end($emitter->getBody());
+			$response->end($emitter->getBody()->getContents());
 		} else {
 			$emitter->dispatch($response);
 		}

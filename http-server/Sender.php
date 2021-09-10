@@ -4,7 +4,7 @@ namespace Server;
 
 use Annotation\Inject;
 use Server\Constrict\Response;
-use Server\Message\Stream;
+use Protocol\Message\Stream;
 
 class Sender
 {
@@ -35,7 +35,7 @@ class Sender
 		if (!$server->isEstablished($fd)) {
 			return;
 		}
-		$server->push($fd, $body->getBody());
+		$server->push($fd, $body->getBody()->getContents());
 	}
 
 
