@@ -23,17 +23,18 @@ class ResponseEmitter implements Emitter
 
 	/**
 	 * @param mixed $response
-	 * @param \Server\Message\Response|ResponseInterface $emitter
+	 * @param \Protocol\Message\Response|ResponseInterface $emitter
+	 * @throws \Exception
 	 */
-	public function sender(mixed $response, ResponseInterface|\Server\Message\Response $emitter): void
+	public function sender(mixed $response, ResponseInterface|\Protocol\Message\Response $emitter): void
 	{
 		if (is_array($emitter->getHeaders())) {
 			foreach ($emitter->getHeaders() as $name => $values) {
 				$response->header($name, implode(';', $values));
 			}
 		}
-		if (is_array($emitter->getCookies())) {
-			foreach ($emitter->getCookies() as $name => $cookie) {
+		if (is_array($this->request->getCookieParams())) {
+			foreach ($this->request->getCookieParams() as $name => $cookie) {
 				$response->cookie($name, ...$cookie);
 			}
 		}

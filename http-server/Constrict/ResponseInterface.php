@@ -4,7 +4,7 @@ namespace Server\Constrict;
 
 
 use JetBrains\PhpStorm\Pure;
-use Server\Message\Response;
+use Protocol\Message\Response;
 use Server\SInterface\DownloadInterface;
 
 /**

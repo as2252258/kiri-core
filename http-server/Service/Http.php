@@ -9,7 +9,7 @@ use Http\Route\Node;
 use Kiri\Core\Help;
 use Server\Constant;
 use Server\Events\OnAfterRequest;
-use Server\Message\Response as MsgResponse;
+use Protocol\Message\Response as MsgResponse;
 use Server\Constrict\RequestInterface;
 use Server\Constrict\ResponseInterface;
 use Server\SInterface\OnClose;
@@ -70,7 +70,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-	private function transferToResponse(mixed $responseData): mixed
+	private function transferToResponse(mixed $responseData): ResponseInterface
 	{
 		$interface = $this->response->withStatus(200);
 		if (!$interface->hasContentType()) {

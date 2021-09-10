@@ -11,7 +11,7 @@ use Protocol\Message\Uploaded;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
-use Server\Message\Response;
+use Protocol\Message\Response;
 
 
 class Request implements RequestInterface
