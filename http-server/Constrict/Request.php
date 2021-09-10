@@ -248,8 +248,8 @@ class Request implements RequestInterface
 	 */
 	public function file(string $name): ?UploadedFileInterface
 	{
-		$files = $this->__call__()->getParsedBody();
-		if (!isset($files[$name])) {
+		$files = $this->__call__()->getUploadedFiles();
+		if (empty($files) || !isset($files[$name])) {
 			return null;
 		}
 		return new Uploaded($files['tmp_name'], $files['name'], $files['type'], $files['size'], $files['error']);
