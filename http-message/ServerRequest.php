@@ -67,7 +67,6 @@ class ServerRequest extends Request implements ServerRequestInterface
 	 */
 	public static function createServerRequest(\Swoole\Http\Request $request): static|ServerRequestInterface
 	{
-		$contentType = $request->header['content-type'];
 		return (new static())->parseRequestHeaders($request)
 			->withServerParams($request->server)
 			->withServerTarget($request)
@@ -77,9 +76,9 @@ class ServerRequest extends Request implements ServerRequestInterface
 			->withQueryParams($request->get ?? [])
 			->withUploadedFiles($request->files ?? [])
 			->withMethod($request->getMethod())
-			->withParsedBody(function (StreamInterface $stream, ?array $posts) use ($contentType) {
+			->withParsedBody(function (StreamInterface $stream, ?array $posts) {
 				try {
-					$content = Parse::data($stream->getContents(), $contentType);
+					$content = Parse::data($stream->getContents());
 					if (!empty($content)) {
 						return $content;
 					}
