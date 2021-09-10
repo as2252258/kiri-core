@@ -8,10 +8,9 @@ use Http\Exception\RequestException;
 use Http\Route\Node;
 use Kiri\Core\Help;
 use Server\Constant;
-use Server\Events\OnAfterRequest;
-use Protocol\Message\Response as MsgResponse;
 use Server\Constrict\RequestInterface;
 use Server\Constrict\ResponseInterface;
+use Server\Events\OnAfterRequest;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
 use Swoole\Error;
@@ -76,7 +75,9 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		if (!$interface->hasContentType()) {
 			$interface->withContentType('application/json;charset=utf-8');
 		}
-		$responseData = $interface->_toArray($responseData);
+		if (is_object($responseData)) {
+			$responseData = get_object_vars($responseData);
+		}
 		if ($interface->getContentType() == 'application/xml;charset=utf-8') {
 			$interface->getBody()->write(Help::toXml($responseData));
 		} else if (is_array($responseData)) {
