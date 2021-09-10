@@ -1,6 +1,6 @@
 <?php
 
-namespace Server;
+namespace Server\Constrict;
 
 
 use JetBrains\PhpStorm\Pure;

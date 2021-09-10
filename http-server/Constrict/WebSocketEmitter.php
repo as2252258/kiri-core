@@ -6,7 +6,7 @@ namespace Server\Constrict;
 use Exception;
 use Kiri\Kiri;
 use Server\ServerManager;
-use Server\ResponseInterface;
+use Server\Constrict\ResponseInterface;
 
 /**
  *

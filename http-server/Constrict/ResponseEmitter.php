@@ -3,8 +3,6 @@
 namespace Server\Constrict;
 
 use Annotation\Inject;
-use Server\ResponseInterface;
-use Server\RequestInterface;
 use Server\SInterface\DownloadInterface;
 use Swoole\Server;
 

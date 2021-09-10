@@ -8,7 +8,6 @@ namespace Kiri\Jwt;
 use Closure;
 use Exception;
 use Http\Route\MiddlewareAbstracts;
-use Server\RequestInterface;
 use Kiri\Kiri;
 
 /**

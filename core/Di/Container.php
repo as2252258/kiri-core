@@ -24,8 +24,8 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Server\Constrict\Request;
 use Server\Constrict\Response;
-use Server\RequestInterface;
-use Server\ResponseInterface;
+use Server\Constrict\RequestInterface;
+use Server\Constrict\ResponseInterface;
 
 /**
  * Class Container

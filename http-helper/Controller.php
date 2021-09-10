@@ -9,8 +9,8 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Application;
 use Kiri\Di\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Server\RequestInterface;
-use Server\ResponseInterface;
+use Server\Constrict\RequestInterface;
+use Server\Constrict\ResponseInterface;
 
 /**
  * Class WebController

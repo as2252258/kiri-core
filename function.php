@@ -21,7 +21,7 @@ use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 use Server\Constrict\Request;
 use Server\Constrict\Response;
-use Server\ResponseInterface;
+use Server\Constrict\ResponseInterface;
 use Server\ServerManager;
 use Swoole\WebSocket\Server;
 use Server\Message\Response as Par7Response;

@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Http\Route;
 
 
-use Annotation\Aspect;
 use Closure;
 use Exception;
 use Http\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
-use Kiri\Di\NoteManager;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\NotFindClassException;
-use Kiri\IAspect;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\Constant;
 use Server\Events\OnAfterWorkerStart;
-use Server\RequestInterface;
+use Server\Constrict\RequestInterface;
 
 /**
  * Class Node

@@ -10,8 +10,6 @@ use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
 use Server\Message\Request as RequestMessage;
 use Server\Message\Response as Psr7Response;
-use Server\RequestInterface;
-use Server\ResponseInterface;
 use Server\ServerManager;
 use Server\SInterface\DownloadInterface;
 

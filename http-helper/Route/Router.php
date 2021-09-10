@@ -16,7 +16,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
-use Server\RequestInterface;
+use Server\Constrict\RequestInterface;
 use Throwable;
 
 defined('ROUTER_TREE') or define('ROUTER_TREE', 1);

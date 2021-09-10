@@ -3,7 +3,7 @@
 namespace Server\Constrict;
 
 use Kiri\Exception\NotFindClassException;
-use Server\ResponseInterface;
+use Server\Constrict\ResponseInterface;
 use Swoole\Server;
 
 

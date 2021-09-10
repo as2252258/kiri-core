@@ -34,7 +34,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Http\IInterface\MiddlewareInterface;
-use Server\RequestInterface;
+use Server\Constrict\RequestInterface;
 
 ';
 

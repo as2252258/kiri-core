@@ -7,7 +7,7 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
-use Server\RequestInterface;
+use Server\Constrict\RequestInterface;
 
 /**
  * Class CoreMiddleware

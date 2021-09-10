@@ -4,7 +4,7 @@ namespace Server\Constrict;
 
 use Exception;
 use Http\Context\Formatter\FileFormatter;
-use Server\ResponseInterface;
+use Server\Constrict\ResponseInterface;
 use Swoole\Server;
 
 

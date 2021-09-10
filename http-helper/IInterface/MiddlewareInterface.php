@@ -6,7 +6,7 @@ namespace Http\IInterface;
 
 
 use Closure;
-use Server\RequestInterface;
+use Server\Constrict\RequestInterface;
 
 /**
  * Interface IMiddleware
