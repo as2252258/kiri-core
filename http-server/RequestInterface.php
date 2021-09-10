@@ -5,12 +5,12 @@ namespace Server;
 
 use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
+use Protocol\Message\ServerRequest;
 use Psr\Http\Message\UploadedFileInterface;
-use Server\Message\Request;
 
 /**
  *
- * @mixin Request
+ * @mixin ServerRequest
  */
 interface RequestInterface extends \Psr\Http\Message\RequestInterface
 {
