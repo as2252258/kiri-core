@@ -57,11 +57,11 @@ class Request implements RequestInterface
 	{
 		$serverRequest = ServerRequest::createServerRequest($request);
 
-		Context::setContext(ResponseInterface::class, $response = new Response());
+		Context::setContext(ResponseInterface::class, new Response());
 
 		Context::setContext(RequestInterface::class, $serverRequest);
 
-		return [Kiri::getDi()->get(Request::class), $response];
+		return Kiri::getDi()->get(Request::class);
 	}
 
 

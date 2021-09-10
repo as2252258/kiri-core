@@ -8,7 +8,7 @@ use Http\Exception\RequestException;
 use Http\Route\Node;
 use Kiri\Core\Help;
 use Server\Constant;
-use Server\Constrict\RequestInterface;
+use Server\Constrict\Request as ScRequest;
 use Server\Constrict\ResponseInterface;
 use Server\Events\OnAfterRequest;
 use Server\SInterface\OnClose;
@@ -42,22 +42,16 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-			[$request, $psr7Response] = \Server\Constrict\Request::create($request);
-			/** @var RequestInterface $request */
-			$node = $this->router->Branch_search($request);
+			$node = $this->router->Branch_search($Psr7Request = ScRequest::create($request));
 			if (!($node instanceof Node)) {
 				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
 			}
-			$psr7Response = $node->dispatch($request);
-			if (!($psr7Response instanceof ResponseInterface)) {
+			if (!(($psr7Response = $node->dispatch($Psr7Request)) instanceof ResponseInterface)) {
 				$psr7Response = $this->transferToResponse($psr7Response);
 			}
 		} catch (Error | \Throwable $exception) {
 			$psr7Response = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
-			if (!isset($psr7Response)) {
-				return;
-			}
 			$this->responseEmitter->sender($response, $psr7Response);
 			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
