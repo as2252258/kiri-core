@@ -63,11 +63,12 @@ class ServerRequest extends Request implements ServerRequestInterface
 
 	/**
 	 * @param \Swoole\Http\Request $request
-	 * @return static
+	 * @return static|ServerRequestInterface
 	 */
-	public static function createServerRequest(\Swoole\Http\Request $request): static
+	public static function createServerRequest(\Swoole\Http\Request $request): static|ServerRequestInterface
 	{
-		return (new static())->withServerParams($request->server)
+		return (new static())->parseRequestHeaders($request)
+			->withServerParams($request->server)
 			->withServerTarget($request)
 			->withCookieParams($request->cookie)
 			->withUri(Uri::parseUri($request))
@@ -75,7 +76,6 @@ class ServerRequest extends Request implements ServerRequestInterface
 			->withQueryParams($request->get ?? [])
 			->withUploadedFiles($request->files ?? [])
 			->withMethod($request->getMethod())
-			->parseRequestHeaders($request)
 			->withParsedBody(function (StreamInterface $stream, ?array $posts) {
 				try {
 					$content = $stream->getContents();
