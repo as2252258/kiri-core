@@ -113,10 +113,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 
 
     /**
-     * @param array $cookies
+     * @param array|null $cookies
      * @return $this|ServerRequest
      */
-    public function withCookieParams(array $cookies): ServerRequestInterface
+    public function withCookieParams(?array $cookies): ServerRequestInterface
     {
         $this->cookieParams = $cookies;
         return $this;
