@@ -29,11 +29,6 @@ class ServerRequest extends Request implements ServerRequestInterface
 	/**
 	 * @var array|null
 	 */
-	protected ?array $cookieParams = [];
-
-	/**
-	 * @var array|null
-	 */
 	protected ?array $queryParams;
 
 	/**
@@ -104,26 +99,6 @@ class ServerRequest extends Request implements ServerRequestInterface
 
 
 	/**
-	 * @return null|array
-	 */
-	public function getCookieParams(): ?array
-	{
-		return $this->cookieParams;
-	}
-
-
-	/**
-	 * @param array|null $cookies
-	 * @return $this|ServerRequest
-	 */
-	public function withCookieParams(?array $cookies): ServerRequestInterface
-	{
-		$this->cookieParams = $cookies;
-		return $this;
-	}
-
-
-	/**
 	 * @return array|null
 	 */
 	public function getQueryParams(): ?array
@@ -134,7 +109,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
 	/**
 	 * @param array $query
-	 * @return \Psr\Http\Message\ServerRequestInterface
+	 * @return ServerRequestInterface
 	 */
 	public function withQueryParams(array $query): ServerRequestInterface
 	{
@@ -154,7 +129,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
 	/**
 	 * @param array $uploadedFiles
-	 * @return \Psr\Http\Message\ServerRequestInterface
+	 * @return ServerRequestInterface
 	 */
 	public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
 	{

@@ -33,8 +33,8 @@ class ResponseEmitter implements Emitter
 				$response->header($name, implode(';', $values));
 			}
 		}
-		if (is_array($this->request->getCookieParams())) {
-			foreach ($this->request->getCookieParams() as $name => $cookie) {
+		if (is_array($emitter->getCookieParams())) {
+			foreach ($emitter->getCookieParams() as $name => $cookie) {
 				$response->cookie($name, ...$cookie);
 			}
 		}

@@ -3,6 +3,7 @@
 namespace Protocol\Message;
 
 use JetBrains\PhpStorm\Pure;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 
 
@@ -28,6 +29,13 @@ trait Message
 	 * @var array
 	 */
 	protected array $headers = [];
+
+
+
+	/**
+	 * @var array|null
+	 */
+	protected ?array $cookieParams = [];
 
 
 	/**
@@ -171,6 +179,25 @@ trait Message
 		return $this;
 	}
 
+
+	/**
+	 * @return null|array
+	 */
+	public function getCookieParams(): ?array
+	{
+		return $this->cookieParams;
+	}
+
+
+	/**
+	 * @param array|null $cookies
+	 * @return static
+	 */
+	public function withCookieParams(?array $cookies): static
+	{
+		$this->cookieParams = $cookies;
+		return $this;
+	}
 
 	/**
 	 * @return StreamInterface
