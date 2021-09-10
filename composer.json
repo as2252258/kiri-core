@@ -21,7 +21,7 @@
     "ext-xml": "*",
     "ext-curl": "*",
     "ext-openssl": "*",
-    "symfony/console": "^v5.3.7",
+    "symfony/console": "v4.4.30",
     "psr/log": "1.*",
     "ext-sockets": "*",
     "ext-pcntl": "*",
@@ -41,6 +41,7 @@
     "psr-4": {
       "Kiri\\": "core/",
       "Http\\": "http-helper/",
+      "Protocol\\Message": "http-message/",
       "Server\\": "http-server/",
       "Console\\": "kiri-console/",
       "Gii\\": "kiri-gii/",
