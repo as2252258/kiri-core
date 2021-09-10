@@ -506,7 +506,8 @@ class Router extends HttpService implements RouterInterface
 			$node = $this->tree_search(['*']);
 		}
 		if (!isset($node)) {
-			$node = $this->tree_search($uri->getExplode());
+			$_explode = array_filter(explode('/', $uri->getPath()));
+			$node = $this->tree_search($_explode);
 		}
 		return $node;
 	}
