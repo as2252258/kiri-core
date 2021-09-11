@@ -84,7 +84,8 @@ class Constant
     const OPTION_OPEN_CPU_AFFINITY = 'open_cpu_affinity';
     const OPTION_CPU_AFFINITY_IGNORE = 'cpu_affinity_ignore';
     const OPTION_TCP_DEFER_ACCEPT = 'tcp_defer_accept';
-    const OPTION_SSL_CERT_FILE = 'ssl_cert_file/ssl_key_file';/SSL_KEY_FILE
+    const OPTION_SSL_CERT_FILE = 'ssl_cert_file';
+    const OPTION_SSL_KEY_FILE = 'ssl_key_file';
     const OPTION_SSL_METHOD = 'ssl_method';
     const OPTION_SSL_PROTOCOLS = 'ssl_protocols';
     const OPTION_SSL_SNI_CERTS = 'ssl_sni_certs';
@@ -113,7 +114,7 @@ class Constant
     const OPTION_TCP_FASTOPEN = 'tcp_fastopen';
     const OPTION_REQUEST_SLOWLOG_FILE = 'request_slowlog_file';
     const OPTION_ENABLE_COROUTINE = 'enable_coroutine';
-    const OPTION_MAX_COROUTINE = 'max_coroutine/max_coro_num';/MAX_CORO_NUM
+    const OPTION_MAX_COROUTINE = 'max_coroutine';
     const OPTION_SEND_YIELD = 'send_yield';
     const OPTION_SEND_TIMEOUT = 'send_timeout';
     const OPTION_HOOK_FLAGS = 'hook_flags';
