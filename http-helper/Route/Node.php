@@ -236,7 +236,7 @@ class Node
 	 */
 	public function addChild(Node $node): Node
 	{
-		$this->childes[] = $node;
+		$this->childes[$node->path] = $node;
 		return $node;
 	}
 
@@ -248,15 +248,7 @@ class Node
 	 */
 	public function findNode(string $search): ?Node
 	{
-		if (empty($this->childes)) {
-			return null;
-		}
-		foreach ($this->childes as $val) {
-			if ($search == $val->path) {
-				return $val;
-			}
-		}
-		return null;
+		return $this->childes[$search] ?? null;
 	}
 
 
