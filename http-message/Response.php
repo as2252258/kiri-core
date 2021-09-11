@@ -5,11 +5,11 @@ namespace Protocol\Message;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Help;
-use Psr\Http\Message\ResponseInterface;
+use Server\Constrict\ResponseInterface;
 use Server\SInterface\DownloadInterface;
 
 
-class Response implements ResponseInterface, \Server\Constrict\ResponseInterface
+class Response implements ResponseInterface
 {
 
 
