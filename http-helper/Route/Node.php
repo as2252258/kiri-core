@@ -69,10 +69,9 @@ class Node
 	}
 
 
-	/**
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
+    /**
+     * @param \Http\Route\Router $router
+     */
 	public function __construct(public Router $router)
 	{
 		$eventDispatcher = di(EventProvider::class);
@@ -197,7 +196,7 @@ class Node
 	 * @param RequestInterface $request
 	 * @return bool
 	 */
-	#[Pure] public function methodAllow(RequestInterface $request): bool
+	public function methodAllow(RequestInterface $request): bool
 	{
 		if (!in_array($request->getMethod(), $this->method)) {
 			return true;

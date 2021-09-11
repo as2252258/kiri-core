@@ -11,7 +11,7 @@ use Psr\Http\Message\UriInterface;
 /**
  *
  */
-abstract class Request implements RequestInterface
+class Request implements RequestInterface
 {
 
 	use Message;

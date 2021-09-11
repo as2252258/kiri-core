@@ -42,7 +42,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-			$node = $this->router->Branch_search($Psr7Request = ScRequest::create($request));
+			$node = $this->router->radix_tree($Psr7Request = ScRequest::create($request));
 			if (!($node instanceof Node)) {
 				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
 			}

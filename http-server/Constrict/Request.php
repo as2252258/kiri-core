@@ -49,10 +49,11 @@ class Request implements RequestInterface
 	}
 
 
-	/**
-	 * @param \Swoole\Http\Request $request
-	 * @return Request
-	 */
+    /**
+     * @param \Swoole\Http\Request $request
+     * @return Request
+     * @throws \Exception
+     */
 	public static function create(\Swoole\Http\Request $request): Request
 	{
 		$serverRequest = ServerRequest::createServerRequest($request);

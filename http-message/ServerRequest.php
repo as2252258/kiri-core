@@ -14,193 +14,195 @@ class ServerRequest extends Request implements ServerRequestInterface
 {
 
 
-	/**
-	 * @var mixed
-	 */
-	protected ?array $parsedBody = null;
+    const PARSE_BODY = 'with.parsed.body.callback';
 
 
-	/**
-	 * @var array|null
-	 */
-	protected ?array $serverParams;
+    /**
+     * @var mixed
+     */
+    protected ?array $parsedBody = null;
 
 
-	/**
-	 * @var array|null
-	 */
-	protected ?array $queryParams;
-
-	/**
-	 * @var array|null
-	 */
-	protected ?array $uploadedFiles;
+    /**
+     * @var array|null
+     */
+    protected ?array $serverParams;
 
 
-	protected \Swoole\Http\Request $serverTarget;
+    /**
+     * @var array|null
+     */
+    protected ?array $queryParams;
+
+    /**
+     * @var array|null
+     */
+    protected ?array $uploadedFiles;
 
 
-	/**
-	 * @param array $server
-	 * @return static
-	 */
-	public function withServerParams(array $server): static
-	{
-		$this->serverParams = $server;
-		return $this;
-	}
-
-	/**
-	 * @param \Swoole\Http\Request $server
-	 * @return static
-	 */
-	public function withServerTarget(\Swoole\Http\Request $server): static
-	{
-		$this->serverTarget = $server;
-		return $this;
-	}
+    protected \Swoole\Http\Request $serverTarget;
 
 
-	/**
-	 * @param \Swoole\Http\Request $request
-	 * @return static|ServerRequestInterface
-	 */
-	public static function createServerRequest(\Swoole\Http\Request $request): static|ServerRequestInterface
-	{
-		return (new static())->parseRequestHeaders($request)
-			->withServerParams($request->server)
-			->withServerTarget($request)
-			->withCookieParams($request->cookie)
-			->withUri(Uri::parseUri($request))
-			->withBody(new Stream($request->getContent()))
-			->withQueryParams($request->get ?? [])
-			->withUploadedFiles($request->files ?? [])
-			->withMethod($request->getMethod())
-			->withParsedBody(function (StreamInterface $stream, ?array $posts) {
-				try {
-					$content = Parse::data($stream->getContents());
-					if (!empty($content)) {
-						return $content;
-					}
-					return $posts;
-				} catch (\Throwable $throwable) {
-					return $posts;
-				}
-			});
-	}
+    /**
+     * @param array $server
+     * @return static
+     */
+    public function withServerParams(array $server): static
+    {
+        $this->serverParams = $server;
+        return $this;
+    }
+
+    /**
+     * @param \Swoole\Http\Request $server
+     * @return static
+     */
+    public function withServerTarget(\Swoole\Http\Request $server): static
+    {
+        $this->serverTarget = $server;
+        return $this;
+    }
 
 
-	/**
-	 * @return null|array
-	 */
-	public function getServerParams(): ?array
-	{
-		return $this->serverParams;
-	}
+    /**
+     * @param \Swoole\Http\Request $request
+     * @return static|ServerRequestInterface
+     * @throws \Exception
+     */
+    public static function createServerRequest(\Swoole\Http\Request $request): static|ServerRequestInterface
+    {
+        $serverRequest = new ServerRequest();
+        $serverRequest->withData($request->getData());
+        $serverRequest->withServerParams($request->server);
+        $serverRequest->withServerTarget($request);
+        $serverRequest->withCookieParams($request->cookie);
+        $serverRequest->withUri(Uri::parseUri($request));
+        $serverRequest->withQueryParams($request->get ?? []);
+        $serverRequest->withUploadedFiles($request->files ?? []);
+        $serverRequest->withMethod($request->getMethod());
+        $serverRequest->withParsedBody($request->post);
+        return $serverRequest;
+    }
 
 
-	/**
-	 * @return array|null
-	 */
-	public function getQueryParams(): ?array
-	{
-		return $this->queryParams;
-	}
+    /**
+     * @return null|array
+     */
+    public function getServerParams(): ?array
+    {
+        return $this->serverParams;
+    }
 
 
-	/**
-	 * @param array $query
-	 * @return ServerRequestInterface
-	 */
-	public function withQueryParams(array $query): ServerRequestInterface
-	{
-		$this->queryParams = $query;
-		return $this;
-	}
+    /**
+     * @return array|null
+     */
+    public function getQueryParams(): ?array
+    {
+        return $this->queryParams;
+    }
 
 
-	/**
-	 * @return array|null
-	 */
-	public function getUploadedFiles(): ?array
-	{
-		return $this->uploadedFiles;
-	}
+    /**
+     * @param array $query
+     * @return ServerRequestInterface
+     */
+    public function withQueryParams(array $query): ServerRequestInterface
+    {
+        $this->queryParams = $query;
+        return $this;
+    }
 
 
-	/**
-	 * @param array $uploadedFiles
-	 * @return ServerRequestInterface
-	 */
-	public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
-	{
-		$this->uploadedFiles = $uploadedFiles;
-		return $this;
-	}
+    /**
+     * @return array|null
+     */
+    public function getUploadedFiles(): ?array
+    {
+        return $this->uploadedFiles;
+    }
 
 
-	/**
-	 * @return array|object|null
-	 */
-	public function getParsedBody(): object|array|null
-	{
-		if (empty($this->parsedBody)) {
-			$callback = Context::getContext('with.parsed.body.callback');
-
-			$this->parsedBody = $callback($this->getBody(), $this->serverTarget->post);
-		}
-		return $this->parsedBody;
-	}
+    /**
+     * @param array $uploadedFiles
+     * @return ServerRequestInterface
+     */
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
+    {
+        $this->uploadedFiles = $uploadedFiles;
+        return $this;
+    }
 
 
-	/**
-	 * @param array|object|null $data
-	 * @return ServerRequestInterface
-	 */
-	public function withParsedBody($data): ServerRequestInterface
-	{
-		Context::setContext('with.parsed.body.callback', $data);
-		return $this;
-	}
+    /**
+     * @return array|object|null
+     */
+    public function getParsedBody(): object|array|null
+    {
+        if (empty($this->parsedBody)) {
+            $callback = Context::getContext(self::PARSE_BODY);
+
+            $this->parsedBody = $callback($this->getBody(), $this->serverTarget->post);
+        }
+        return $this->parsedBody;
+    }
 
 
-	/**
-	 * @return array
-	 */
-	public function getAttributes(): array
-	{
-		throw new \BadMethodCallException('Not Accomplish Method.');
-	}
+    /**
+     * @param array|object|null $data
+     * @return ServerRequestInterface
+     */
+    public function withParsedBody($data): ServerRequestInterface
+    {
+        $functions = function (StreamInterface $stream) use ($data) {
+            $content = Parse::data($stream->getContents());
+            if (!empty($content)) {
+                return $content;
+            }
+            return $data;
+        };
+        Context::setContext(self::PARSE_BODY, $functions);
+        return $this;
+    }
 
 
-	/**
-	 * @param string $name
-	 * @param null $default
-	 * @return mixed
-	 */
-	public function getAttribute($name, $default = null): mixed
-	{
-		throw new \BadMethodCallException('Not Accomplish Method.');
-	}
+    /**
+     * @return array
+     */
+    public function getAttributes(): array
+    {
+        throw new \BadMethodCallException('Not Accomplish Method.');
+    }
 
 
-	/**
-	 * @param string $name
-	 * @param mixed $value
-	 * @return ServerRequestInterface
-	 */
-	public function withAttribute($name, $value): ServerRequestInterface
-	{
-		throw new \BadMethodCallException('Not Accomplish Method.');
-	}
+    /**
+     * @param string $name
+     * @param null $default
+     * @return mixed
+     */
+    public function getAttribute($name, $default = null): mixed
+    {
+        throw new \BadMethodCallException('Not Accomplish Method.');
+    }
 
 
-	/**
-	 * @param string $name
-	 * @return ServerRequestInterface
-	 */
-	public function withoutAttribute($name): ServerRequestInterface
-	{
-		throw new \BadMethodCallException('Not Accomplish Method.');
-	}
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return ServerRequestInterface
+     */
+    public function withAttribute($name, $value): ServerRequestInterface
+    {
+        throw new \BadMethodCallException('Not Accomplish Method.');
+    }
+
+
+    /**
+     * @param string $name
+     * @return ServerRequestInterface
+     */
+    public function withoutAttribute($name): ServerRequestInterface
+    {
+        throw new \BadMethodCallException('Not Accomplish Method.');
+    }
 }
