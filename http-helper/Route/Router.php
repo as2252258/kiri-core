@@ -156,15 +156,13 @@ class Router extends HttpService implements RouterInterface
     private function getRootNode($root, $method, bool $create = true): array
     {
         [$start, $explode] = $this->path_recombination($root);
-
-        foreach ($this->nodes as $node) {
-            if ($node->path == $start) {
-                return [$node, $explode];
-            }
+        $parent = $this->nodes[$start] ?? null;
+        if ($parent instanceof Node) {
+            return [$parent, $explode];
         }
         if ($create) {
             $parent = $this->NodeInstance($root, 0, $method);
-            $this->nodes[] = $parent;
+            $this->nodes[$start] = $parent;
 
             return [$parent, $explode];
         }
