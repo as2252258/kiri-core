@@ -5,22 +5,21 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
-use Exception;
 use Http\Route\Router;
 use Kiri\Kiri;
 
-#[\Attribute(\Attribute::TARGET_METHOD)] class Route extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Route extends Attribute
 {
 
-    /**
-     * Route constructor.
-     * @param string $uri
-     * @param string $method
-     * @param string $version
-     */
-    public function __construct(public string $uri,public string $method,public string $version = 'v.1.0')
-    {
-    }
+	/**
+	 * Route constructor.
+	 * @param string $uri
+	 * @param string $method
+	 * @param string $version
+	 */
+	public function __construct(public string $uri, public string $method, public string $version = 'v.1.0')
+	{
+	}
 
 
 	/**
@@ -28,16 +27,16 @@ use Kiri\Kiri;
 	 * @param mixed|null $method
 	 * @return Router
 	 */
-    public function execute(mixed $class, mixed $method = null): Router
-    {
-        // TODO: Implement setHandler() method.
-        $router = Kiri::getDi()->get(Router::class);
-        if (is_string($class)) {
-            $class = di($class);
-        }
-        $router->addRoute($this->uri, [$class, $method], strtoupper($this->method));
-        return $router;
-    }
+	public function execute(mixed $class, mixed $method = null): Router
+	{
+		// TODO: Implement setHandler() method.
+		$router = Kiri::getDi()->get(Router::class);
+		if (is_string($class)) {
+			$class = di($class);
+		}
+		$router->addRoute($this->uri, [$class, $method], strtoupper($this->method));
+		return $router;
+	}
 
 
 }
