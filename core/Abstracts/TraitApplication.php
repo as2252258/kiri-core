@@ -9,7 +9,6 @@ use Database\Connection;
 use Database\DatabasesProviders;
 use Http\Client\Client;
 use Http\Client\Curl;
-use Http\HttpFilter;
 use Http\Route\Router;
 use Server\Server;
 use Kiri\Crontab\Producer;
@@ -32,7 +31,6 @@ use Kiri\Jwt\Jwt;
  * @property Connection $databases
  * @property Curl $curl
  * @property Producer $crontab
- * @property HttpFilter $filter
  */
 trait TraitApplication
 {
