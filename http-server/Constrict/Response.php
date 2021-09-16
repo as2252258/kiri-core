@@ -8,8 +8,8 @@ use Http\Context\Context;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
-use Protocol\Message\ServerRequest as RequestMessage;
-use Protocol\Message\Response as Psr7Response;
+use Http\Message\ServerRequest as RequestMessage;
+use Http\Message\Response as Psr7Response;
 use Server\ServerManager;
 use Server\SInterface\DownloadInterface;
 

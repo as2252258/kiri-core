@@ -1,7 +1,8 @@
 <?php
 
-namespace Protocol\Message;
+namespace Http\Message;
 
+use Exception;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -17,6 +18,12 @@ class Uploaded implements UploadedFileInterface
 		4 => "No file was uploaded",
 		6 => "Missing a temporary folder"
 	];
+
+
+	/**
+	 * @var resource
+	 */
+	private mixed $stream;
 
 
 	/**
@@ -39,28 +46,37 @@ class Uploaded implements UploadedFileInterface
 
 	/**
 	 * @return StreamInterface
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function getStream(): StreamInterface
 	{
-		if (!fopen($this->tmp_name, 'r')) {
-			throw new \Exception('The file "' . $this->name . '" con\'t readable.');
+		if ($this->stream instanceof Stream) {
+			return $this->stream;
 		}
-		return new Stream(fopen($this->tmp_name, 'r'));
+
+		$this->stream = new Stream(fopen($this->tmp_name, 'r+'));
+
+		return $this->stream;
 	}
 
 
 	/**
 	 * @param string $targetPath
-	 * @return \Psr\Http\Message\StreamInterface
-	 * @throws \Exception
+	 * @return StreamInterface
+	 * @throws Exception
 	 */
 	public function moveTo($targetPath): StreamInterface
 	{
 		@move_uploaded_file($this->tmp_name, $targetPath);
 		if (!file_exists($targetPath)) {
-			throw new \Exception('File save fail.');
+			throw new Exception('File save fail.');
 		}
+
+		if ($this->stream instanceof Stream) {
+			$this->stream->close();
+			$this->stream = null;
+		}
+
 		$this->tmp_name = $targetPath;
 		return $this->getStream();
 	}

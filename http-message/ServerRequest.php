@@ -1,6 +1,6 @@
 <?php
 
-namespace Protocol\Message;
+namespace Http\Message;
 
 use Http\Context\Context;
 use Psr\Http\Message\ServerRequestInterface;

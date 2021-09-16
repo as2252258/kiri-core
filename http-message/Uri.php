@@ -1,6 +1,6 @@
 <?php
 
-namespace Protocol\Message;
+namespace Http\Message;
 
 use Psr\Http\Message\UriInterface;
 use Swoole\Http\Request;

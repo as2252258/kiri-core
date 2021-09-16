@@ -24,7 +24,7 @@ use Server\Constrict\Response;
 use Server\Constrict\ResponseInterface;
 use Server\ServerManager;
 use Swoole\WebSocket\Server;
-use Protocol\Message\Response as Par7Response;
+use Http\Message\Response as Par7Response;
 
 if (!function_exists('make')) {
 

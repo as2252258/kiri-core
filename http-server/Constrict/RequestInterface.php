@@ -5,7 +5,7 @@ namespace Server\Constrict;
 
 use Http\IInterface\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
-use Protocol\Message\ServerRequest;
+use Http\Message\ServerRequest;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**

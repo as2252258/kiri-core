@@ -23,10 +23,10 @@ class ResponseEmitter implements Emitter
 
 	/**
 	 * @param mixed $response
-	 * @param \Protocol\Message\Response|ResponseInterface $emitter
+	 * @param \Http\Message\Response|ResponseInterface $emitter
 	 * @throws \Exception
 	 */
-	public function sender(mixed $response, ResponseInterface|\Protocol\Message\Response $emitter): void
+	public function sender(mixed $response, ResponseInterface|\Http\Message\Response $emitter): void
 	{
 		if (is_array($emitter->getHeaders())) {
 			foreach ($emitter->getHeaders() as $name => $values) {

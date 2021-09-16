@@ -40,7 +40,7 @@
     "psr-4": {
       "Kiri\\": "core/",
       "Http\\": "http-helper/",
-      "Protocol\\Message\\": "http-message/",
+      "Http\\Message\\": "http-message/",
       "Server\\": "http-server/",
       "Console\\": "kiri-console/",
       "Gii\\": "kiri-gii/",

@@ -3,7 +3,7 @@
 namespace Server;
 
 
-use Protocol\Message\Stream;
+use Http\Message\Stream;
 use Server\Constrict\Response;
 use Server\Constrict\ResponseInterface;
 use Throwable;

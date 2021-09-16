@@ -1,6 +1,6 @@
 <?php
 
-namespace Protocol\Message;
+namespace Http\Message;
 
 class StatusCode
 {

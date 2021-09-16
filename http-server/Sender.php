@@ -4,7 +4,7 @@ namespace Server;
 
 use Annotation\Inject;
 use Server\Constrict\Response;
-use Protocol\Message\Stream;
+use Http\Message\Stream;
 
 class Sender
 {
