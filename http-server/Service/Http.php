@@ -64,7 +64,11 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 */
 	private function _runTime(Request $request): float
 	{
-		return round(microtime(true) - ($request->server['request_time_float'] - $request->server['request_time']), 6);
+		$float = microtime(true) - time();
+
+		$rTime = $request->server['request_time_float'] - $request->server['request_time'];
+
+		return round($float - $rTime, 6);
 	}
 
 
