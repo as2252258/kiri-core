@@ -46,7 +46,7 @@ use Http\IInterface\MiddlewareInterface;
 	 */
     public function execute(mixed $class, mixed $method = null): mixed
     {
-        MiddlewareManager::addMiddlewares($class, $method, $this->middleware);
+        MiddlewareManager::add($class, $method, $this->middleware);
         return parent::execute($class, $method);
     }
 
