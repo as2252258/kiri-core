@@ -41,6 +41,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 */
 	public function onRequest(Request $request, Response $response): void
 	{
+		$request_time_float = microtime(true);
 		try {
 			$node = $this->router->radix_tree($Psr7Request = ScRequest::create($request));
 			if (!($node instanceof Node)) {
@@ -52,7 +53,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		} catch (Error | \Throwable $exception) {
 			$psr7Response = $this->exceptionHandler->emit($exception, $this->response);
 		} finally {
-			$request_time_float = $request->server['request_time_float'] - $request->server['request_time'];
 			$psr7Response->withHeader('Run-Time', microtime(true) - $request_time_float);
 			$this->responseEmitter->sender($response, $psr7Response);
 			$this->eventDispatch->dispatch(new OnAfterRequest());
