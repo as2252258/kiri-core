@@ -9,6 +9,9 @@ use Server\Constrict\ResponseInterface;
 use Server\SInterface\DownloadInterface;
 
 
+/**
+ *
+ */
 class Response implements ResponseInterface
 {
 

@@ -20,14 +20,6 @@ class Controller
 {
 
 
-    /**
-     * @param Application $application
-     */
-    #[Pure] public function __construct(protected Application $application)
-    {
-    }
-
-
 	/**
 	 * inject di container
 	 *

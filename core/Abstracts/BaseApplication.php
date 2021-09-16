@@ -13,12 +13,8 @@ namespace Kiri\Abstracts;
 use Annotation\Annotation as SAnnotation;
 use Database\Connection;
 use Exception;
-use Http\Context\HttpHeaders;
-use Http\Context\HttpParams;
 use Http\Route\Router;
 use Server\Server;
-use Http\Shutdown;
-use JetBrains\PhpStorm\Pure;
 use Kafka\KafkaProvider;
 use Kiri\AspectManager;
 use Kiri\Async;
@@ -465,12 +461,9 @@ abstract class BaseApplication extends Component
 			'annotation'      => ['class' => SAnnotation::class],
 			'databases'       => ['class' => Connection::class],
 			'aop'             => ['class' => AspectManager::class],
-			'input'           => ['class' => HttpParams::class],
-			'header'          => ['class' => HttpHeaders::class],
 			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],
 			'kafka-container' => ['class' => KafkaProvider::class],
-			'shutdown'        => ['class' => Shutdown::class],
 		]);
 	}
 }

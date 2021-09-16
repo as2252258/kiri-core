@@ -12,7 +12,6 @@ use Http\Client\Curl;
 use Http\HttpFilter;
 use Http\Route\Router;
 use Server\Server;
-use Http\Shutdown;
 use Kiri\Crontab\Producer;
 use Kiri\Async;
 use Kiri\Error\Logger;
@@ -34,7 +33,6 @@ use Kiri\Jwt\Jwt;
  * @property Curl $curl
  * @property Producer $crontab
  * @property HttpFilter $filter
- * @property Shutdown $shutdown
  */
 trait TraitApplication
 {

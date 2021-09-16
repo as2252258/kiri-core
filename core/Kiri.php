@@ -101,11 +101,27 @@ class Kiri
 		return static::$service;
 	}
 
+
+	/**
+	 * @return Application|null
+	 */
+	public static function getApplicationContext(): ?Application
+	{
+		return static::$service;
+	}
+
+
+	/**
+	 * @return Container|null
+	 */
+	public static function getContainerContext(): ?Container
+	{
+		return static::$container;
+	}
+
 	/**
 	 * @param $name
 	 * @return bool
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public static function has($name): bool
 	{
