@@ -7,11 +7,9 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
-use Http\Context\Context;
 use Http\Exception\RequestException;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Events\EventProvider;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\Constant;
@@ -69,9 +67,9 @@ class Node
 	}
 
 
-    /**
-     * @param \Http\Route\Router $router
-     */
+	/**
+	 * @param Router $router
+	 */
 	public function __construct(public Router $router)
 	{
 		$eventDispatcher = di(EventProvider::class);
