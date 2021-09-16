@@ -157,13 +157,11 @@ class Node
 	 */
 	private function injectMiddleware(string $method, $handler, $_injectParameters): void
 	{
-		$callback = (new Pipeline())->overall($this->router->getMiddleware())
+		$this->callback[$method] = (new Pipeline())->overall($this->router->getMiddleware())
 			->through($this->middleware[$method] ?? [])
 			->through(MiddlewareManager::get($handler))
 			->send($_injectParameters)
 			->then($handler);
-
-		HandlerProviders::add($method, $this->sourcePath, $callback);
 	}
 
 
@@ -314,11 +312,10 @@ class Node
 		if (!in_array($request->getMethod(), $this->method)) {
 			throw new RequestException(Constant::STATUS_405_MESSAGE, 405);
 		}
-		$handlerProviders = HandlerProviders::get($this->sourcePath, $request->getMethod());
-		if (empty($handlerProviders)) {
+		if (empty($this->callback[$request->getMethod()])) {
 			throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
 		}
-		return $handlerProviders->interpreter($request);
+		return $this->callback[$request->getMethod()]->interpreter($request);
 	}
 
 }
