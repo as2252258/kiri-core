@@ -1,0 +1,50 @@
+<?php
+
+namespace Http\Handler\Abstracts;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Http\Handler\Handler as CHl;
+
+
+abstract class Handler implements RequestHandlerInterface
+{
+
+
+	private int $offset = 0;
+
+
+	/**
+	 * @param CHl $handler
+	 * @param array|null $middlewares
+	 */
+	public function __construct(protected CHl $handler, protected ?array $middlewares)
+	{
+	}
+
+
+	/**
+	 * @param ServerRequestInterface $request
+	 * @return ResponseInterface
+	 * @throws \Exception
+	 */
+	protected function execute(ServerRequestInterface $request): ResponseInterface
+	{
+		if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
+			return call_user_func($this->handler->callback, ...$this->handler->params);
+		}
+
+		$middleware = $this->middlewares[$this->offset];
+		if (!($middleware instanceof MiddlewareInterface)) {
+			throw new \Exception('get_implements_class($middleware) not found method process.');
+		}
+
+		++$this->offset;
+
+		return $middleware->process($request, $this);
+	}
+
+
+}

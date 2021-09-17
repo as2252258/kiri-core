@@ -295,7 +295,7 @@ class Container extends BaseObject implements ContainerInterface
 
 
 	/**
-	 * @param ReflectionClass|string $class
+	 * @param string $className
 	 * @param string $method
 	 * @return array|null
 	 * @throws ReflectionException
