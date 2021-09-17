@@ -19,52 +19,75 @@ class TestRequest
 {
 
 
-	private ?ResponseEmitter $response = null;
+    private ?ResponseEmitter $response = null;
 
 
-	/**
-	 * @param Request $request
-	 * @param Response $response
-	 * @throws Exception
-	 */
-	public function onRequest(Request $request, Response $response): void
-	{
-		try {
-			[$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
-
-			/** @var Handler $handler */
-			$handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
-			if (is_null($handler)) {
-				$PsrResponse->withStatus(404)->withBody(null);
-			} else if (is_integer($handler)) {
-				$PsrResponse->withStatus($handler)->withBody(null);
-			} else {
-				$middlewares = MiddlewareManager::get($handler->callback[0]::class, $handler->callback[1]);
-
-				$stream = new Stream((new Dispatcher($handler, $middlewares))->handle($PsrRequest));
-
-				$PsrResponse->withStatus(200)->withBody($stream);
-			}
-		} catch (\Throwable $throwable) {
-
-		} finally {
-			$this->response->sender($response, $PsrResponse);
-		}
-	}
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @throws Exception
+     */
+    public function onRequest(Request $request, Response $response): void
+    {
+        try {
+            [$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
+            /** @var Handler $handler */
+            $handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
+            if (is_integer($handler)) {
+                $PsrResponse->withStatus($handler)->withBody(null);
+            } else if (is_null($handler)) {
+                $PsrResponse->withStatus(404)->withBody(null);
+            } else {
+                $PsrResponse = $this->handler($handler, $PsrRequest);
+            }
+        } catch (\Throwable $throwable) {
+            $PsrResponse = $this->throwable($throwable);
+        } finally {
+            $this->response->sender($response, $PsrResponse);
+        }
+    }
 
 
-	/**
-	 * @param Request $request
-	 * @return array<ServerRequestInterface, ResponseInterface>
-	 * @throws Exception
-	 */
-	private function initRequestResponse(Request $request): array
-	{
-		$PsrResponse = Context::setContext(\Server\Constrict\ResponseInterface::class, new \Http\Message\Response());
+    /**
+     * @param \Throwable $throwable
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function throwable(\Throwable $throwable): ResponseInterface
+    {
+        return \response()->withStatus($throwable->getCode())
+            ->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
+            ->withBody(new Stream(jTraceEx($throwable)));
+    }
 
-		$PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
 
-		return [$PsrRequest, $PsrResponse];
-	}
+    /**
+     * @param \Http\Handler\Handler $handler
+     * @param $PsrRequest
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
+     */
+    protected function handler(Handler $handler, $PsrRequest): ResponseInterface
+    {
+        $middlewares = MiddlewareManager::get($handler->callback);
+
+        $dispatcher = new Dispatcher($handler, $middlewares);
+
+        return $dispatcher->handle($PsrRequest);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return array<ServerRequestInterface, ResponseInterface>
+     * @throws Exception
+     */
+    private function initRequestResponse(Request $request): array
+    {
+        $PsrResponse = Context::setContext(ResponseInterface::class, new \Http\Message\Response());
+
+        $PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
+
+        return [$PsrRequest, $PsrResponse];
+    }
 
 }
