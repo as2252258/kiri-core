@@ -30,10 +30,6 @@
     "swiftmailer/swiftmailer": "^6.0",
     "psr/container": "^2.0",
     "psr/http-server-middleware": "^1.0",
-    "psr/link": "^2.0",
-    "psr/cache": "^3.0",
-    "psr/http-client": "^1.0",
-    "psr/simple-cache": "^1.0",
     "game-worker/kiri-event": "v1.0"
   },
   "autoload": {
@@ -41,6 +37,7 @@
       "Kiri\\": "core/",
       "Http\\": "http-helper/",
       "Http\\Message\\": "http-message/",
+      "Http\\Handler\\": "http-handler/",
       "Server\\": "http-server/",
       "Console\\": "kiri-console/",
       "Gii\\": "kiri-gii/",
