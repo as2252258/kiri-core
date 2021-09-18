@@ -28,10 +28,10 @@ use Http\Route\Router;
 	/**
 	 * @param mixed $class
 	 * @param mixed|null $method
-	 * @return Router
+	 * @return bool
 	 * @throws \ReflectionException
 	 */
-	public function execute(mixed $class, mixed $method = null): Router
+	public function execute(mixed $class, mixed $method = null): bool
 	{
 		HandlerManager::add($this->uri, $this->method, new Handler($this->uri, [$class, $method]));
 		return parent::execute($class, $method);
