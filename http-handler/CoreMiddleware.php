@@ -20,6 +20,9 @@ class CoreMiddleware extends Middleware
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
 		// TODO: Implement process() method.
+
+
+
 		return $handler->handle($request);
 	}
 

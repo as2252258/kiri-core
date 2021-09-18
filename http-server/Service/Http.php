@@ -5,6 +5,7 @@ namespace Server\Service;
 
 use Exception;
 use Http\Exception\RequestException;
+use Http\Handler\TestRequest;
 use Http\Route\Node;
 use Kiri\Core\Help;
 use Server\Constant;
@@ -24,6 +25,17 @@ use Swoole\Server;
 class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
 
+	public TestRequest $request;
+
+
+	public function init()
+	{
+
+		$this->request = new TestRequest();
+
+		parent::init();
+	}
+
 
 	/**
 	 * @param Server $server
@@ -38,9 +50,13 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	/**
 	 * @param Request $request
 	 * @param Response $response
+	 * @throws Exception
 	 */
 	public function onRequest(Request $request, Response $response): void
 	{
+		$this->request->onRequest($request, $response);
+		return;
+
 		try {
 			if (!(($node = $this->router->radix_tree($Psr7Request = ScRequest::create($request))) instanceof Node)) {
 				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);

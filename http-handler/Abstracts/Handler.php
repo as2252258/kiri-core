@@ -2,11 +2,12 @@
 
 namespace Http\Handler\Abstracts;
 
+use Http\Handler\Handler as CHl;
+use Kiri\Kiri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Http\Handler\Handler as CHl;
 
 
 abstract class Handler implements RequestHandlerInterface
@@ -33,7 +34,11 @@ abstract class Handler implements RequestHandlerInterface
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
 		if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
-			return call_user_func($this->handler->callback, ...$this->handler->params);
+			[$controller, $action] = $this->handler->callback;
+
+			$controller = Kiri::getDi()->get($controller);
+
+			return call_user_func([$controller, $action], ...$this->handler->params);
 		}
 
 		$middleware = $this->middlewares[$this->offset];

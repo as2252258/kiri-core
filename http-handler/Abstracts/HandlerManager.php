@@ -13,11 +13,11 @@ class HandlerManager
 
 
 	/**
-	 * @param $path
-	 * @param $method
-	 * @param $handler
+	 * @param string $path
+	 * @param string $method
+	 * @param \Http\Handler\Handler|Closure $handler
 	 */
-	public static function add($path, $method, $handler)
+	public static function add(string $path, string $method, \Http\Handler\Handler|Closure $handler)
 	{
 		if (!isset(static::$handlers[$path])) {
 			static::$handlers[$path] = [];
