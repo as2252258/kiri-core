@@ -9,6 +9,7 @@ use Exception;
 use Http\Abstracts\HttpService;
 use Http\Controller;
 use Http\Handler\Abstracts\HandlerManager;
+use Http\Handler\Handler;
 use Http\IInterface\MiddlewareInterface;
 use Http\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
@@ -107,9 +108,8 @@ class Router extends HttpService implements RouterInterface
 
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
 
-		
 
-		HandlerManager::add($path, $method, $handler);
+		HandlerManager::add($path, $method, new Handler($path, $handler));
 
 		return null;
 		return $this->tree($path, $handler, $method);
