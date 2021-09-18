@@ -40,12 +40,6 @@ class HandlerManager
 		if (is_null($array)) {
 			return 405;
 		}
-		if ($array instanceof \Http\Handler\Handler) {
-			$array = [
-				Kiri::getDi()->get($array->callback[0]),
-				$array->callback[1]
-			];
-		}
 		return $array;
 	}
 
