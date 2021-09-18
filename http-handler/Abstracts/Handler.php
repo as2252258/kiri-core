@@ -56,14 +56,14 @@ abstract class Handler implements RequestHandlerInterface
 	protected function dispatcher(): mixed
 	{
 		if ($this->handler->callback instanceof \Closure) {
-			return call_user_func($this->handler->callback, ...$this->handler->params);
+			$response = call_user_func($this->handler->callback, ...$this->handler->params);
+		} else {
+			[$controller, $action] = $this->handler->callback;
 
+			$controller = Kiri::getDi()->get($controller);
+
+			$response = call_user_func([$controller, $action], ...$this->handler->params);
 		}
-		[$controller, $action] = $this->handler->callback;
-
-		$controller = Kiri::getDi()->get($controller);
-
-		$response = call_user_func([$controller, $action], ...$this->handler->params);
 		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}
