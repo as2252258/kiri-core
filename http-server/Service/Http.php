@@ -34,17 +34,6 @@ use Swoole\Server;
 class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
 
-	public TestRequest $request;
-
-
-	public function init()
-	{
-
-		$this->request = new TestRequest();
-
-		parent::init();
-	}
-
 
 	/**
 	 * @param Server $server
