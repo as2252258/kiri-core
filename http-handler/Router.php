@@ -47,6 +47,7 @@ class Router
 	 * @param string|array $method
 	 * @param string $route
 	 * @param string|Closure $closure
+	 * @throws \ReflectionException
 	 */
 	public function addRoute(string|array $method, string $route, string|Closure $closure)
 	{
@@ -61,7 +62,8 @@ class Router
 			$this->addMiddlewares($controller, $closure[0]);
 		}
 		foreach ($method as $value) {
-			HandlerManager::add($route, $value, $closure);
+			HandlerManager::add($route, $value,
+				new Handler($route, $closure));
 		}
 	}
 
