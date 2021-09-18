@@ -5,9 +5,8 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
-use Http\Handler\Abstracts\HandlerManager;
-use Http\Handler\Handler;
-use Http\Route\Router;
+use Http\Handler\Router;
+use Kiri\Kiri;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Route extends Attribute
 {
@@ -33,7 +32,8 @@ use Http\Route\Router;
 	 */
 	public function execute(mixed $class, mixed $method = null): bool
 	{
-		HandlerManager::add($this->uri, $this->method, new Handler($this->uri, [$class, $method]));
+		$di = Kiri::getDi()->get(Router::class);
+		$di->addRoute($method, $this->uri, $class . '@' . $method);
 		return parent::execute($class, $method);
 	}
 
