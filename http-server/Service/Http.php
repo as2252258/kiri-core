@@ -68,7 +68,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 				->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
 				->withBody(new Stream(jTraceEx($throwable, null, true)));
 		} finally {
-			$this->response->sender($response, $PsrResponse);
+			$this->responseEmitter->sender($response, $PsrResponse);
 		}
 	}
 
