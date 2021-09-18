@@ -17,6 +17,7 @@ class Router
 	 * @param string $route
 	 * @param string|Closure $closure
 	 * @param array $options
+	 * @throws \ReflectionException
 	 */
 	public function get(string $route, string|Closure $closure, array $options = [])
 	{
@@ -32,6 +33,7 @@ class Router
 	 * @param string $route
 	 * @param string|Closure $closure
 	 * @param array $options
+	 * @throws \ReflectionException
 	 */
 	public function post(string $route, string|Closure $closure, array $options = [])
 	{

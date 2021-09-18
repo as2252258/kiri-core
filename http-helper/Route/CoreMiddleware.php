@@ -7,6 +7,11 @@ namespace Http\Route;
 
 use Closure;
 use Exception;
+use Http\Message\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Server\Constrict\RequestInterface;
 
 /**
@@ -14,22 +19,22 @@ use Server\Constrict\RequestInterface;
  * @package Kiri\Kiri\Route
  * 跨域中间件
  */
-class CoreMiddleware extends MiddlewareAbstracts
+class CoreMiddleware implements MiddlewareInterface
 {
 
 
 	/**
-	 * @param RequestInterface $request
-	 * @param Closure $next
+	 * @param ServerRequest $request
+	 * @param RequestHandlerInterface $handler
 	 * @return mixed
 	 */
-	public function onHandler(RequestInterface $request, Closure $next): mixed
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
 		$response = \response();
 		$response->withAccessControlAllowOrigin('*')
 			->withAccessControlRequestMethod($request->getAccessControlRequestMethod())
 			->withAccessControlAllowHeaders($request->getAccessControlAllowHeaders());
-		return $next($request);
+		return $handler->handle($request);
 	}
 
 }
