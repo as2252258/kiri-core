@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use Http\Abstracts\HttpService;
 use Http\Controller;
+use Http\Handler\Abstracts\HandlerManager;
 use Http\IInterface\MiddlewareInterface;
 use Http\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
@@ -103,6 +104,14 @@ class Router extends HttpService implements RouterInterface
 		if ($handler instanceof Closure) {
 			$handler = Closure::bind($handler, di(Controller::class));
 		}
+
+		$path = $this->addPrefix() . '/' . ltrim($path, '/');
+
+		
+
+		HandlerManager::add($path, $method, $handler);
+
+		return null;
 		return $this->tree($path, $handler, $method);
 	}
 
