@@ -40,10 +40,12 @@ class HandlerManager
 		if (is_null($array)) {
 			return 405;
 		}
-		if ($array instanceof Closure) {
-			return $array;
+		if ($array instanceof \Http\Handler\Handler) {
+			$array = [
+				Kiri::getDi()->get($array->callback[0]),
+				$array->callback[1]
+			];
 		}
-		$array->callback[0] = Kiri::getDi()->get($array->callback[0]);
 		return $array;
 	}
 
