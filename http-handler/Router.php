@@ -17,6 +17,9 @@ class Router
 	protected array $groupTack = [];
 
 
+	protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'];
+
+
 	/**
 	 * @param $route
 	 * @param $handler
@@ -26,7 +29,7 @@ class Router
 	public static function socket($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'SOCKET');
+		$router->addRoute('SOCKET', $route, $handler);
 	}
 
 
@@ -39,7 +42,7 @@ class Router
 	public static function post($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'POST');
+		$router->addRoute('POST', $route, $handler);
 	}
 
 	/**
@@ -51,7 +54,7 @@ class Router
 	public static function get($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'GET');
+		$router->addRoute('GET', $route, $handler);
 	}
 
 
@@ -64,7 +67,7 @@ class Router
 	public static function options($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'OPTIONS');
+		$router->addRoute('OPTIONS', $route, $handler);
 	}
 
 
@@ -77,7 +80,7 @@ class Router
 	{
 		$router = Kiri::getDi()->get(Router::class);
 		foreach ($router->methods as $method) {
-			$router->addRoute($route, $handler, $method);
+			$router->addRoute($method, $route, $handler);
 		}
 	}
 
@@ -90,7 +93,7 @@ class Router
 	public static function delete($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'DELETE');
+		$router->addRoute('DELETE', $route, $handler);
 	}
 
 
@@ -103,7 +106,7 @@ class Router
 	public static function head($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'HEAD');
+		$router->addRoute('HEAD', $route, $handler);
 	}
 
 
@@ -116,7 +119,7 @@ class Router
 	public static function put($route, $handler): void
 	{
 		$router = Kiri::getDi()->get(Router::class);
-		$router->addRoute($route, $handler, 'PUT');
+		$router->addRoute('PUT', $route, $handler);
 	}
 
 
