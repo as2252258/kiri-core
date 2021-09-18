@@ -34,11 +34,7 @@ abstract class Handler implements RequestHandlerInterface
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
 		if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
-			[$controller, $action] = $this->handler->callback;
-
-			$controller = Kiri::getDi()->get($controller);
-
-			return call_user_func([$controller, $action], ...$this->handler->params);
+			return $this->dispatcher();
 		}
 
 		$middleware = $this->middlewares[$this->offset];
@@ -49,6 +45,23 @@ abstract class Handler implements RequestHandlerInterface
 		++$this->offset;
 
 		return $middleware->process($request, $this);
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	protected function dispatcher(): mixed
+	{
+		if ($this->handler->callback instanceof \Closure) {
+			return call_user_func($this->handler->callback, ...$this->handler->params);
+
+		}
+		[$controller, $action] = $this->handler->callback;
+
+		$controller = Kiri::getDi()->get($controller);
+
+		return call_user_func([$controller, $action], ...$this->handler->params);
 	}
 
 
