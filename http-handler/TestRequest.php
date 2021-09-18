@@ -21,6 +21,11 @@ class TestRequest
 
 	private ?ResponseEmitter $response = null;
 
+	public function __construct()
+	{
+		$this->response = new ResponseEmitter();
+	}
+
 
 	/**
 	 * @param Request $request
