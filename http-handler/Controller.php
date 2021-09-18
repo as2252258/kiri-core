@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Http;
+namespace Http\Handler;
 
 
 use Annotation\Inject;
