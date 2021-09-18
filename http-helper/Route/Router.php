@@ -108,6 +108,9 @@ class Router extends HttpService implements RouterInterface
 
 		$path = $this->addPrefix() . '/' . ltrim($path, '/');
 
+		if (is_string($handler)) {
+			$handler = explode('@', $handler);
+		}
 
 		HandlerManager::add($path, $method, new Handler($path, $handler));
 
