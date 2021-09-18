@@ -89,9 +89,9 @@ class Router
 		$route = ltrim($route, '/');
 		$prefix = array_column($this->groupTack, 'prefix');
 		if (empty($prefix = array_filter($prefix))) {
-			return $route;
+			return '/' . $route;
 		}
-		return implode('/', $prefix) . $route;
+		return '/' . implode('/', $prefix) . $route;
 	}
 
 
