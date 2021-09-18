@@ -113,60 +113,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 
 		return [$PsrRequest, $PsrResponse];
 	}
-//
-//
-//
-//	/**
-//	 * @param Request $request
-//	 * @param Response $response
-//	 * @throws Exception
-//	 */
-//	public function onRequest(Request $request, Response $response): void
-//	{
-//		$this->request->onRequest($request, $response);
-//		return;
-//
-//		try {
-//			if (!(($node = $this->router->radix_tree($Psr7Request = ScRequest::create($request))) instanceof Node)) {
-//				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
-//			}
-//			if (!(($psr7Response = $node->dispatch($Psr7Request)) instanceof ResponseInterface)) {
-//				$psr7Response = $this->transferToResponse($psr7Response);
-//			}
-//			$psr7Response->withHeader('Run-Time', $this->_runTime($request));
-//		} catch (Error | \Throwable $exception) {
-//			$psr7Response = $this->exceptionHandler->emit($exception, $this->response);
-//		} finally {
-//			$this->responseEmitter->sender($response, $psr7Response);
-//			$this->eventDispatch->dispatch(new OnAfterRequest());
-//		}
-//	}
 
-
-
-	/**
-	 * @param mixed $responseData
-	 * @return ResponseInterface
-	 * @throws Exception
-	 */
-	private function transferToResponse(mixed $responseData): ResponseInterface
-	{
-		$interface = $this->response->withStatus(200);
-		if (!$interface->hasContentType()) {
-			$interface->withContentType('application/json;charset=utf-8');
-		}
-		if (is_object($responseData)) {
-			$responseData = get_object_vars($responseData);
-		}
-		if ($interface->getContentType() == 'application/xml;charset=utf-8') {
-			$interface->getBody()->write(Help::toXml($responseData));
-		} else if (is_array($responseData)) {
-			$interface->getBody()->write(json_encode($responseData));
-		} else {
-			$interface->getBody()->write((string)$responseData);
-		}
-		return $interface;
-	}
 
 
 	/**
