@@ -3,6 +3,7 @@
 namespace Http\Handler\Abstracts;
 
 use Http\Handler\Handler as CHl;
+use Http\Message\ServerRequest;
 use Kiri\Core\Help;
 use Kiri\Kiri;
 use Psr\Http\Message\ResponseInterface;
@@ -35,7 +36,7 @@ abstract class Handler implements RequestHandlerInterface
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
 		if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
-			return $this->dispatcher();
+			return $this->dispatcher($request);
 		}
 
 		$middleware = $this->middlewares[$this->offset];
@@ -50,10 +51,11 @@ abstract class Handler implements RequestHandlerInterface
 
 
 	/**
+	 * @param ServerRequestInterface $request
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	protected function dispatcher(): mixed
+	protected function dispatcher(ServerRequestInterface $request): mixed
 	{
 		if ($this->handler->callback instanceof \Closure) {
 			$response = call_user_func($this->handler->callback, ...$this->handler->params);
@@ -67,7 +69,24 @@ abstract class Handler implements RequestHandlerInterface
 		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}
+		$response->withHeader('Run-Time', $this->_runTime($request));
 		return $response;
+	}
+
+
+	/**
+	 * @param ServerRequest $request
+	 * @return float
+	 */
+	private function _runTime(ServerRequestInterface $request): float
+	{
+		$float = microtime(true) - time();
+
+		$serverParams = $request->getServerParams();
+
+		$rTime = $serverParams['request_time_float'] - $serverParams['request_time'];
+
+		return round($float - $rTime, 6);
 	}
 
 

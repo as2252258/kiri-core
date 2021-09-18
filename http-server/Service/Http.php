@@ -4,12 +4,21 @@ namespace Server\Service;
 
 
 use Exception;
+use Http\Context\Context;
 use Http\Exception\RequestException;
+use Http\Handler\Abstracts\HandlerManager;
+use Http\Handler\Dispatcher;
+use Http\Handler\Handler;
 use Http\Handler\TestRequest;
+use Http\Message\ServerRequest;
+use Http\Message\Stream;
+use Http\Route\MiddlewareManager;
 use Http\Route\Node;
 use Kiri\Core\Help;
+use Psr\Http\Message\ServerRequestInterface;
 use Server\Constant;
 use Server\Constrict\Request as ScRequest;
+use Server\Constrict\RequestInterface;
 use Server\Constrict\ResponseInterface;
 use Server\Events\OnAfterRequest;
 use Server\SInterface\OnClose;
@@ -54,38 +63,85 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 */
 	public function onRequest(Request $request, Response $response): void
 	{
-		$this->request->onRequest($request, $response);
-		return;
-
 		try {
-			if (!(($node = $this->router->radix_tree($Psr7Request = ScRequest::create($request))) instanceof Node)) {
-				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
+			[$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
+			/** @var Handler $handler */
+			$handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
+			if (is_integer($handler)) {
+				$PsrResponse->withStatus($handler)->withBody(new Stream('Allow Method[' . $request->getMethod() . '].'));
+			} else if (is_null($handler)) {
+				$PsrResponse->withStatus(404)->withBody(new Stream('Page not found.'));
+			} else {
+				$PsrResponse = $this->handler($handler, $PsrRequest);
 			}
-			if (!(($psr7Response = $node->dispatch($Psr7Request)) instanceof ResponseInterface)) {
-				$psr7Response = $this->transferToResponse($psr7Response);
-			}
-			$psr7Response->withHeader('Run-Time', $this->_runTime($request));
-		} catch (Error | \Throwable $exception) {
-			$psr7Response = $this->exceptionHandler->emit($exception, $this->response);
+		} catch (\Throwable $throwable) {
+			$PsrResponse = \response()->withStatus($throwable->getCode())
+				->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
+				->withBody(new Stream(jTraceEx($throwable, null, true)));
 		} finally {
-			$this->responseEmitter->sender($response, $psr7Response);
-			$this->eventDispatch->dispatch(new OnAfterRequest());
+			$this->response->sender($response, $PsrResponse);
 		}
 	}
 
 
 	/**
-	 * @param Request $request
-	 * @return float
+	 * @param Handler $handler
+	 * @param $PsrRequest
+	 * @return ResponseInterface
+	 * @throws Exception
 	 */
-	private function _runTime(Request $request): float
+	protected function handler(Handler $handler, $PsrRequest): \Psr\Http\Message\ResponseInterface
 	{
-		$float = microtime(true) - time();
+		$middlewares = MiddlewareManager::get($handler->callback);
 
-		$rTime = $request->server['request_time_float'] - $request->server['request_time'];
+		$dispatcher = new Dispatcher($handler, $middlewares);
 
-		return round($float - $rTime, 6);
+		return $dispatcher->handle($PsrRequest);
 	}
+
+
+	/**
+	 * @param Request $request
+	 * @return array<ServerRequestInterface, ResponseInterface>
+	 * @throws Exception
+	 */
+	private function initRequestResponse(Request $request): array
+	{
+		$PsrResponse = Context::setContext(ResponseInterface::class, new \Http\Message\Response());
+
+		$PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
+
+		return [$PsrRequest, $PsrResponse];
+	}
+//
+//
+//
+//	/**
+//	 * @param Request $request
+//	 * @param Response $response
+//	 * @throws Exception
+//	 */
+//	public function onRequest(Request $request, Response $response): void
+//	{
+//		$this->request->onRequest($request, $response);
+//		return;
+//
+//		try {
+//			if (!(($node = $this->router->radix_tree($Psr7Request = ScRequest::create($request))) instanceof Node)) {
+//				throw new RequestException(Constant::STATUS_404_MESSAGE, 404);
+//			}
+//			if (!(($psr7Response = $node->dispatch($Psr7Request)) instanceof ResponseInterface)) {
+//				$psr7Response = $this->transferToResponse($psr7Response);
+//			}
+//			$psr7Response->withHeader('Run-Time', $this->_runTime($request));
+//		} catch (Error | \Throwable $exception) {
+//			$psr7Response = $this->exceptionHandler->emit($exception, $this->response);
+//		} finally {
+//			$this->responseEmitter->sender($response, $psr7Response);
+//			$this->eventDispatch->dispatch(new OnAfterRequest());
+//		}
+//	}
+
 
 
 	/**
