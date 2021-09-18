@@ -14,7 +14,7 @@ class Router
 {
 
 
-	private array $groupTack = [];
+	protected array $groupTack = [];
 
 
 	/**
@@ -148,13 +148,15 @@ class Router
 	 * @param array $config
 	 * @param Closure $closure
 	 */
-	public function group(array $config, Closure $closure)
+	public static function group(array $config, Closure $closure)
 	{
-		array_push($this->groupTack, $config);
+		$router = Kiri::getDi()->get(Router::class);
 
-		call_user_func($closure, $this);
+		array_push($router->groupTack, $config);
 
-		array_pop($this->groupTack);
+		call_user_func($closure, $router);
+
+		array_pop($router->groupTack);
 	}
 
 
