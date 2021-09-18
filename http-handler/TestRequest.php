@@ -39,16 +39,16 @@ class TestRequest
 			/** @var Handler $handler */
 			$handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
 			if (is_integer($handler)) {
-				$PsrResponse->withStatus($handler)->withBody(null);
+				$PsrResponse->withStatus($handler)->withBody(new Stream('Allow Method[' . $request->getMethod() . '].'));
 			} else if (is_null($handler)) {
-				$PsrResponse->withStatus(404)->withBody(null);
+				$PsrResponse->withStatus(404)->withBody(new Stream('Page not found.'));
 			} else {
 				$PsrResponse = $this->handler($handler, $PsrRequest);
 			}
 		} catch (\Throwable $throwable) {
 			$PsrResponse = \response()->withStatus($throwable->getCode())
 				->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
-				->withBody(new Stream(jTraceEx($throwable,null,true)));
+				->withBody(new Stream(jTraceEx($throwable, null, true)));
 		} finally {
 			$this->response->sender($response, $PsrResponse);
 		}
