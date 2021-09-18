@@ -43,7 +43,7 @@ class HandlerManager
 		if ($array instanceof Closure) {
 			return $array;
 		}
-		$array[1] = Kiri::getDi()->get($array[1]);
+		$array->callback[0] = Kiri::getDi()->get($array->callback[0]);
 		return $array;
 	}
 
