@@ -55,15 +55,14 @@ class Router
 		$route = $this->getPath($route);
 		if (is_string($closure)) {
 			$closure = explode('@', $closure);
-			$controller = $this->addNamespace($closure[0]);
-			if (!class_exists($controller)) {
+			$closure[0] = $this->addNamespace($closure[0]);
+			if (!class_exists($closure[0])) {
 				return;
 			}
-			$this->addMiddlewares($controller, $closure[0]);
+			$this->addMiddlewares(...$closure);
 		}
 		foreach ($method as $value) {
-			HandlerManager::add($route, $value,
-				new Handler($route, $closure));
+			HandlerManager::add($route, $value, new Handler($route, $closure));
 		}
 	}
 
