@@ -3,6 +3,7 @@
 namespace Server\Service;
 
 
+use Annotation\Inject;
 use Exception;
 use Http\Context\Context;
 use Http\Exception\RequestException;
@@ -33,6 +34,10 @@ use Swoole\Server;
  */
 class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
+
+
+	#[Inject(Dispatcher::class)]
+	public Dispatcher $dispatcher;
 
 
 	/**
@@ -83,7 +88,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
 
-		$dispatcher = new Dispatcher($handler, $middlewares);
+		$dispatcher = $this->dispatcher->setHandler($handler)->setMiddlewares($middlewares);
 
 		return $dispatcher->handle($PsrRequest);
 	}

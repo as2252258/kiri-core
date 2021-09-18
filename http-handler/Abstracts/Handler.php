@@ -19,12 +19,29 @@ abstract class Handler implements RequestHandlerInterface
 	private int $offset = 0;
 
 
+	protected CHl $handler;
+
+	protected ?array $middlewares;
+
 	/**
 	 * @param CHl $handler
-	 * @param array|null $middlewares
+	 * @return $this
 	 */
-	public function __construct(protected CHl $handler, protected ?array $middlewares)
+	public function setHandler(CHl $handler): static
 	{
+		$this->handler = $handler;
+		return $this;
+	}
+
+
+	/**
+	 * @param array|null $middlewares
+	 * @return $this
+	 */
+	public function setMiddlewares(?array $middlewares): static
+	{
+		$this->middlewares = $middlewares;
+		return $this;
 	}
 
 
