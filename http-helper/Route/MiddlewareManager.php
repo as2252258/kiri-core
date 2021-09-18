@@ -55,7 +55,7 @@ class MiddlewareManager extends BaseObject
 		if ($handler instanceof Closure) {
 			return null;
 		}
-		[$class, $method] = [$handler[0]::class, $handler[1]];
+		[$class, $method] = [$handler[0], $handler[1]];
 		if (!static::hasMiddleware($class, $method)) {
 			return null;
 		}
