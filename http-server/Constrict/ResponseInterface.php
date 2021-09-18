@@ -43,9 +43,9 @@ interface ResponseInterface extends \Psr\Http\Message\ResponseInterface
 
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
-	public function getContentType(): string;
+	public function getContentType(): ?string;
 
 
 	/**

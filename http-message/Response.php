@@ -113,15 +113,6 @@ class Response implements ResponseInterface
 		return $this->hasHeader('Content-Type');
 	}
 
-
-	/**
-	 * @return string
-	 */
-	#[Pure] public function getContentType(): string
-	{
-		return $this->getHeaderLine('Content-Type');
-	}
-
 	/**
 	 * @param string|null $value
 	 * @return Response
