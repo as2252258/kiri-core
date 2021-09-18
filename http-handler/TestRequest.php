@@ -48,7 +48,7 @@ class TestRequest
 		} catch (\Throwable $throwable) {
 			$PsrResponse = \response()->withStatus($throwable->getCode())
 				->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
-				->withBody(new Stream(jTraceEx($throwable)));
+				->withBody(new Stream(jTraceEx($throwable,null,true)));
 		} finally {
 			$this->response->sender($response, $PsrResponse);
 		}
