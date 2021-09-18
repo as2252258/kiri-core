@@ -4,7 +4,7 @@
 namespace Server\Constrict;
 
 
-use Http\Context\Context;
+use Http\Handler\Context;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;

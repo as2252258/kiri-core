@@ -5,7 +5,7 @@ namespace Server\Worker;
 use Annotation\Annotation;
 use Annotation\Inject;
 use Exception;
-use Http\Route\Router;
+use Http\Handler\Router;
 use Kiri\Abstracts\Config;
 use Kiri\Di\NoteManager;
 use Kiri\Exception\ConfigException;

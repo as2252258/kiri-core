@@ -8,7 +8,7 @@ namespace Kiri\Pool;
 use Annotation\Inject;
 use Closure;
 use Exception;
-use Http\Context\Context;
+use Http\Handler\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;

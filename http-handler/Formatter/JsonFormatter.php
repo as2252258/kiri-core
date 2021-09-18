@@ -7,10 +7,9 @@
  */
 declare(strict_types=1);
 
-namespace Http\Context\Formatter;
+namespace Http\Handler\Formatter;
 
-use Http\Abstracts\HttpService;
-use Http\IInterface\IFormatter;
+use Http\Handler\Abstracts\HttpService;
 
 /**
  * Class JsonFormatter

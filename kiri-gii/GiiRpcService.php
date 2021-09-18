@@ -37,7 +37,6 @@ use Annotation\Route\RpcProducer;
 use Annotation\Target;
 use Exception;
 use Http\Controller;
-use Http\Exception\RequestException;
 use Kiri\Core\Json;
 
 ';

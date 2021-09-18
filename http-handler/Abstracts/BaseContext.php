@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Http\Abstracts;
+namespace Http\Handler\Abstracts;
 
 
 

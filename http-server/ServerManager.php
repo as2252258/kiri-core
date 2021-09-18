@@ -5,7 +5,6 @@ namespace Server;
 use Annotation\Inject;
 use Closure;
 use Exception;
-use Http\Route\Router;
 use Kiri\Abstracts\Config;
 use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
@@ -169,12 +168,8 @@ class ServerManager
 				$customProcess = Kiri::createObject($customProcess, [$server]);
 			}
 
-			$namespace = array_filter(explode('\\', Router::getNamespace()));
-
-			$namespace = APP_PATH . implode('/', $namespace);
-
 			$name = $customProcess->getProcessName($soloProcess);
-			scan_directory(directory('app'), 'App', [$namespace]);
+			scan_directory(directory('app'), 'App');
 
 			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
 			if (Kiri::getPlatform()->isLinux()) {

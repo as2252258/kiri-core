@@ -5,7 +5,6 @@ namespace Kiri\Abstracts;
 
 
 use Exception;
-use Http\Exception\ExitException;
 use Kiri\Core\Json;
 
 /**
@@ -19,11 +18,11 @@ class BaseGoto extends Component
 	 * @param string $message
 	 * @param int $statusCode
 	 * @return mixed
-	 * @throws ExitException
+	 * @throws Exception
 	 */
-	public function end(string $message, $statusCode = 200): mixed
+	public function end(string $message, int $statusCode = 200): mixed
 	{
-		throw new ExitException(Json::to(12350, $message), $statusCode);
+		throw new Exception(Json::to(12350, $message), $statusCode);
 	}
 
 }

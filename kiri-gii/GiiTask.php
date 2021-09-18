@@ -31,7 +31,7 @@ class GiiTask extends GiiBase
 		
 namespace App\Async;
 
-use Http\IInterface\Task;
+use Server\SInterface\TaskExecute;
 
 ';
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Http\Route;
+namespace Http\Handler;
 
 use Annotation\Aspect;
 use Closure;
 use Exception;
-use Http\IInterface\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Kiri\Di\NoteManager;
 use Kiri\IAspect;
 use Kiri\Kiri;
@@ -156,7 +156,7 @@ class Pipeline
 		return static function ($stack, $pipe) {
 			return static function ($passable) use ($stack, $pipe) {
 				if ($pipe instanceof MiddlewareInterface) {
-					$pipe = [$pipe, 'OnHandler'];
+					$pipe = [$pipe, 'process'];
 				}
 				return $pipe($passable, $stack);
 			};

@@ -5,17 +5,21 @@ declare(strict_types=1);
 namespace Kiri\Jwt;
 
 
-use Closure;
+use Annotation\Inject;
 use Exception;
-use Http\Route\MiddlewareAbstracts;
+use Http\Message\ServerRequest;
 use Kiri\Kiri;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Server\Constrict\ResponseInterface;
 
 /**
  * Class CoreMiddleware
  * @package Kiri\Kiri\Route
  * 跨域中间件
  */
-class JWTAuthMiddleware extends MiddlewareAbstracts
+class JWTAuthMiddleware implements MiddlewareInterface
 {
 
 
@@ -23,27 +27,31 @@ class JWTAuthMiddleware extends MiddlewareAbstracts
 	public int $zOrder = 0;
 
 
+	#[Inject(ResponseInterface::class)]
+	public ResponseInterface $response;
+
+
 	/**
-	 * @param RequestInterface $request
-	 * @param Closure $next
-	 * @return mixed
+	 * @param ServerRequest $request
+	 * @param RequestHandlerInterface $handler
+	 * @return \Psr\Http\Message\ResponseInterface
 	 * @throws Exception
 	 */
-	public function onHandler(RequestInterface $request, Closure $next): mixed
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
 	{
 		$authorization = $request->getHeaderLine('Authorization');
 		if (empty($authorization)) {
-			throw new JWTAuthTokenException('JWT voucher cannot be empty.');
+			return $this->response->json(['code' => 401, 'JWT voucher cannot be empty.']);
 		}
 		if (!str_starts_with($authorization, 'Bearer ')) {
-			throw new JWTAuthTokenException('JWT Voucher Format Error.');
+			return $this->response->json(['code' => 401, 'JWT Voucher Format Error.']);
 		}
 		$authorization = str_replace('Bearer ', '', $authorization);
 		$jwt = Kiri::app()->getJwt();
 		if (!$jwt->validator($authorization)) {
-			throw new JWTAuthTokenException('JWT Validator fail.');
+			return $this->response->json(['code' => 401, 'JWT Validator fail.']);
 		}
-		return $next($request);
+		return $handler->handle($request);
 	}
 
 }

@@ -5,7 +5,7 @@ namespace Server;
 
 use Annotation\Inject;
 use Exception;
-use Http\Abstracts\HttpService;
+use Http\Handler\Abstracts\HttpService;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Error\LoggerProcess;

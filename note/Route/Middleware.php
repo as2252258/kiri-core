@@ -5,8 +5,8 @@ namespace Annotation\Route;
 
 
 use Annotation\Attribute;
-use Http\IInterface\MiddlewareInterface;
-use Http\Route\MiddlewareManager;
+use Http\Handler\Abstracts\MiddlewareManager;
+use Psr\Http\Server\MiddlewareInterface;
 
 /**
  * Class Middleware
@@ -27,12 +27,12 @@ use Http\Route\MiddlewareManager;
 			$this->middleware = [$this->middleware];
 		}
 		$array = [];
+
+
 		foreach ($this->middleware as $value) {
-			$sn = di($value);
-			if (!($sn instanceof MiddlewareInterface)) {
-				continue;
+			if (!in_array(MiddlewareInterface::class, class_implements($value))) {
+				throw new \Exception('The middleware');
 			}
-			$array[] = [$sn, 'onHandler'];
 		}
 		$this->middleware = $array;
 	}

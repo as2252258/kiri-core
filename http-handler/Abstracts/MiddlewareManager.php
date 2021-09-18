@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Http\Route;
+namespace Http\Handler\Abstracts;
 
 
 use Closure;

@@ -2,7 +2,7 @@
 
 namespace Http\Message;
 
-use Http\Context\Context;
+use Http\Handler\Context;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 

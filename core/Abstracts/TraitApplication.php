@@ -9,7 +9,7 @@ use Database\Connection;
 use Database\DatabasesProviders;
 use Http\Client\Client;
 use Http\Client\Curl;
-use Http\Route\Router;
+use Http\Handler\Router;
 use Server\Server;
 use Kiri\Crontab\Producer;
 use Kiri\Async;

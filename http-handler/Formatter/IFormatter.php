@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 17:29
  */
 
-namespace Http\IInterface;
+namespace Http\Handler\Formatter;
 
 
 /**

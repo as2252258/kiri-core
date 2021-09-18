@@ -3,7 +3,6 @@
 namespace Http\Handler\Abstracts;
 
 use Closure;
-use Kiri\Kiri;
 
 class HandlerManager
 {
@@ -39,6 +38,22 @@ class HandlerManager
 		$array = static::$handlers[$path][$method] ?? null;
 		if (is_null($array)) {
 			return 405;
+		}
+		return $array;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public static function dump(): array
+	{
+		$array = [];
+		foreach (static::$handlers as $path => $handlers) {
+			$array[] = [
+				'path'   => $path,
+				'method' => implode(',', array_keys($handlers))
+			];
 		}
 		return $array;
 	}

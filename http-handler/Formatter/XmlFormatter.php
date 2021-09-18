@@ -7,14 +7,13 @@
  */
 declare(strict_types=1);
 
-namespace Http\Context\Formatter;
+namespace Http\Handler\Formatter;
 
 
 use Exception;
-use Http\Abstracts\HttpService;
+use Http\Handler\Abstracts\HttpService;
 use SimpleXMLElement;
 use Swoole\Http\Response;
-use Http\IInterface\IFormatter;
 
 
 /**

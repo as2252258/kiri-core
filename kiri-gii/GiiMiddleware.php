@@ -33,7 +33,7 @@ class GiiMiddleware extends GiiBase
 namespace App\Http\Middleware;
 
 use Closure;
-use Http\IInterface\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Server\Constrict\RequestInterface;
 
 ';

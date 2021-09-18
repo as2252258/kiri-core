@@ -5,7 +5,7 @@ namespace Kiri\Pool;
 
 
 use Exception;
-use Http\Context\Context;
+use Http\Handler\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;

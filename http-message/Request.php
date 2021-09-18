@@ -3,7 +3,7 @@
 namespace Http\Message;
 
 use BadMethodCallException;
-use Http\IInterface\AuthIdentity;
+use Http\Handler\AuthIdentity;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 

@@ -3,8 +3,12 @@
 namespace Http\Handler;
 
 use Closure;
+use Exception;
 use Http\Handler\Abstracts\HandlerManager;
-use Http\Route\MiddlewareManager;
+use Http\Handler\Abstracts\MiddlewareManager;
+use Kiri\Abstracts\Logger;
+use Kiri\Kiri;
+use Throwable;
 
 class Router
 {
@@ -14,34 +18,105 @@ class Router
 
 
 	/**
-	 * @param string $route
-	 * @param string|Closure $closure
-	 * @param array $options
-	 * @throws \ReflectionException
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws
 	 */
-	public function get(string $route, string|Closure $closure, array $options = [])
+	public static function socket($route, $handler): void
 	{
-		array_push($this->groupTack, $options);
-
-		$this->addRoute('GET', $route, $closure);
-
-		array_pop($this->groupTack);
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'SOCKET');
 	}
 
 
 	/**
-	 * @param string $route
-	 * @param string|Closure $closure
-	 * @param array $options
-	 * @throws \ReflectionException
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws
 	 */
-	public function post(string $route, string|Closure $closure, array $options = [])
+	public static function post($route, $handler): void
 	{
-		array_push($this->groupTack, $options);
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'POST');
+	}
 
-		$this->addRoute('POST', $route, $closure);
+	/**
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws
+	 */
+	public static function get($route, $handler): void
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'GET');
+	}
 
-		array_pop($this->groupTack);
+
+	/**
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws
+	 */
+	public static function options($route, $handler): void
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'OPTIONS');
+	}
+
+
+	/**
+	 * @param $route
+	 * @param $handler
+	 * @throws
+	 */
+	public static function any($route, $handler): void
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		foreach ($router->methods as $method) {
+			$router->addRoute($route, $handler, $method);
+		}
+	}
+
+	/**
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws
+	 */
+	public static function delete($route, $handler): void
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'DELETE');
+	}
+
+
+	/**
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws Exception
+	 */
+	public static function head($route, $handler): void
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'HEAD');
+	}
+
+
+	/**
+	 * @param $route
+	 * @param $handler
+	 * @return void
+	 * @throws
+	 */
+	public static function put($route, $handler): void
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute($route, $handler, 'PUT');
 	}
 
 
@@ -126,6 +201,55 @@ class Router
 		return implode('\\', array_map(function ($value) {
 			return trim($value, '\\');
 		}, $middleware));
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function _loader()
+	{
+		$this->loadRouteDir(APP_PATH . 'routes');
+	}
+
+
+	/**
+	 * @param $path
+	 * @throws Exception
+	 * 加载目录下的路由文件
+	 */
+	private function loadRouteDir($path)
+	{
+		$files = glob($path . '/*');
+		for ($i = 0; $i < count($files); $i++) {
+			if (is_dir($files[$i])) {
+				$this->loadRouteDir($files[$i]);
+			} else {
+				$this->loadRouterFile($files[$i]);
+			}
+		}
+	}
+
+
+	/**
+	 * @param $files
+	 * @throws Exception
+	 */
+	private function loadRouterFile($files)
+	{
+		try {
+			include_once "$files";
+		} catch (Throwable $exception) {
+			di(Logger::class)->error('router', [
+				$exception->getMessage(),
+				$exception->getFile(),
+				$exception->getLine(),
+			]);
+		} finally {
+			if (isset($exception)) {
+				unset($exception);
+			}
+		}
 	}
 
 
