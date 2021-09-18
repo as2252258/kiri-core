@@ -98,11 +98,11 @@ class OnWorkerStart implements EventDispatcherInterface
 	{
 		$di = Kiri::getDi();
 
-		$namespace = array_filter(explode('\\', Router::getNamespace()));
+//		$namespace = array_filter(explode('\\', Router::getNamespace()));
+//
+//		$namespace = APP_PATH . implode('/', $namespace);
 
-		$namespace = APP_PATH . implode('/', $namespace);
-
-		$this->annotation->read(APP_PATH . 'app', 'App', $isWorker ? [] : [$namespace]);
+		$this->annotation->read(APP_PATH . 'app', 'App');
 
 		$fileLists = $this->annotation->read(APP_PATH . 'app');
 		foreach ($fileLists->runtime(APP_PATH . 'app') as $class) {
