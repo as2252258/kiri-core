@@ -64,7 +64,7 @@ abstract class Handler implements RequestHandlerInterface
 		$controller = Kiri::getDi()->get($controller);
 
 		$response = call_user_func([$controller, $action], ...$this->handler->params);
-		if (!$response instanceof ResponseInterface) {
+		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}
 		return $response;
