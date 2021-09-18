@@ -33,7 +33,7 @@ use Kiri\Kiri;
 	public function execute(mixed $class, mixed $method = null): bool
 	{
 		$di = Kiri::getDi()->get(Router::class);
-		$di->addRoute($method, $this->uri, $class . '@' . $method);
+		$di->addRoute($this->method, $this->uri, $class . '@' . $method);
 		return parent::execute($class, $method);
 	}
 
