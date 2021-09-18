@@ -8,8 +8,6 @@ use Closure;
 use Exception;
 use Http\Abstracts\HttpService;
 use Http\Controller;
-use Http\Handler\Abstracts\HandlerManager;
-use Http\Handler\Handler;
 use Http\IInterface\MiddlewareInterface;
 use Http\IInterface\RouterInterface;
 use JetBrains\PhpStorm\Pure;
@@ -106,14 +104,10 @@ class Router extends HttpService implements RouterInterface
 			$handler = Closure::bind($handler, di(Controller::class));
 		}
 
-		$path = $this->addPrefix() . '/' . ltrim($path, '/');
 
-		if (is_string($handler)) {
-			$handler = explode('@', $handler);
-			$handler[0] = $this->namespace . '\\' . $handler[0];
-		}
+		$di = Kiri::getDi()->get(\Http\Handler\Router::class);
+		$di->addRoute($method, $path, $handler);
 
-		HandlerManager::add($path, $method, new Handler($path, $handler));
 
 		return null;
 		return $this->tree($path, $handler, $method);
@@ -402,12 +396,8 @@ class Router extends HttpService implements RouterInterface
 	 */
 	public static function group(array $config, callable $callback)
 	{
-		$router = Kiri::getDi()->get(Router::class);
-		$router->groupTacks[] = $config;
-
-		call_user_func($callback);
-
-		array_pop($router->groupTacks);
+		$di = Kiri::getDi()->get(\Http\Handler\Router::class);
+		$di->group($config, $callback);
 	}
 
 	/**
