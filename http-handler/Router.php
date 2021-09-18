@@ -174,7 +174,7 @@ class Router
 		if (empty($prefix = array_filter($prefix))) {
 			return '/' . $route;
 		}
-		return '/' . implode('/', $prefix) . $route;
+		return '/' . implode('/', $prefix) . '/' . $route;
 	}
 
 
