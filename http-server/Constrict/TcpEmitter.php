@@ -3,8 +3,7 @@
 namespace Server\Constrict;
 
 use Exception;
-use Http\Context\Formatter\FileFormatter;
-use Server\Constrict\ResponseInterface;
+use Http\Handler\Formatter\FileFormatter;
 use Swoole\Server;
 
 
