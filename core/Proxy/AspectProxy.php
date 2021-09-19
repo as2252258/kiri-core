@@ -42,7 +42,7 @@ class AspectProxy extends AProxy implements ProxyInterface
      * @param array $executor
      * @return ?IAspect
      */
-    protected function getAspect(array $executor): ?Aspect
+    protected function getAspect(array $executor): ?IAspect
     {
         $aspect = NoteManager::getSpecify_annotation(Aspect::class, $executor[0], $executor[1]);
         if (!is_null($aspect)) {
