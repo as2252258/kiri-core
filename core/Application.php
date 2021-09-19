@@ -237,7 +237,9 @@ class Application extends BaseApplication
 		fire(new OnBeforeCommandExecute());
 		if (!($class instanceof ServerCommand)) {
 			scan_directory(directory('app'), 'App');
-		}
+		} else if (!is_enable_file_modification_listening()) {
+            scan_directory(directory('app'), 'App');
+        }
 		$class->run($input, $output);
 		$output->writeln('ok' . PHP_EOL);
 	}

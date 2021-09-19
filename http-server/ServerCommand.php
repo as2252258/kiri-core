@@ -82,6 +82,9 @@ class ServerCommand extends Command
     }
 
 
+    /**
+     * @throws \Kiri\Exception\ConfigException
+     */
     private function configure_set()
     {
         $enable_coroutine = Config::get('servers.settings.enable_coroutine', false);
