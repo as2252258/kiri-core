@@ -188,7 +188,9 @@ class Router
 		if (empty($middleware = array_filter($middleware))) {
 			return;
 		}
-		MiddlewareManager::add($controller, $method, $middleware);
+        foreach ($middleware as $value) {
+            MiddlewareManager::add($controller, $method, $value);
+        }
 	}
 
 
