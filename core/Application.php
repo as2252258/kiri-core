@@ -238,6 +238,7 @@ class Application extends BaseApplication
 		if (!($class instanceof ServerCommand)) {
 			scan_directory(directory('app'), 'App');
 		} else if (!is_enable_file_modification_listening()) {
+            $this->getRouter()->read_files();
             scan_directory(directory('app'), 'App');
         }
 		$class->run($input, $output);
