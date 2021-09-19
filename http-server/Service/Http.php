@@ -94,11 +94,9 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	 */
 	private function initRequestResponse(Request $request): array
 	{
-        Kiri::getDi()->setBindings(ResponseInterface::class, $PsrResponse = new \Http\Message\Response());
-        Kiri::getDi()->setBindings(RequestInterface::class, $PsrRequest = ServerRequest::createServerRequest($request));
-//		$PsrResponse = Context::setContext(ResponseInterface::class, new \Http\Message\Response());
+		$PsrResponse = Context::setContext(ResponseInterface::class, new \Http\Message\Response());
 
-//		$PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
+		$PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
 
 		return [$PsrRequest, $PsrResponse];
 	}
