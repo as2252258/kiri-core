@@ -29,17 +29,22 @@ class MiddlewareManager extends BaseObject
 		if (is_object($class)) {
 			$class = $class::class;
 		}
-		if (!isset(static::$_middlewares[$class . '::' . $method])) {
-			static::$_middlewares[$class . '::' . $method] = [];
+		if (!isset(static::$_middlewares[$class])) {
+			static::$_middlewares[$class] = [];
 		}
-		if (is_string($middlewares) && !in_array($middlewares, static::$_middlewares[$class . '::' . $method])) {
-			static::$_middlewares[$class . '::' . $method][] = $middlewares;
+		if (!isset(static::$_middlewares[$class][$method])) {
+			static::$_middlewares[$class][$method] = [];
+		}
+
+        $source = &static::$_middlewares[$class][$method];
+		if (is_string($middlewares) && !in_array($middlewares, $source)) {
+            $source[] = $middlewares;
 		} else {
 			foreach ($middlewares as $middleware) {
-				if (in_array($middleware, static::$_middlewares[$class . '::' . $method])) {
+				if (in_array($middleware, $source)) {
 					continue;
 				}
-				static::$_middlewares[$class . '::' . $method][] = $middleware;
+                $source[] = $middleware;
 			}
 		}
 		return true;
@@ -52,28 +57,11 @@ class MiddlewareManager extends BaseObject
 	 */
 	public static function get($handler): mixed
 	{
-		if ($handler instanceof Closure) {
+		if ($handler instanceof Closure || !isset(static::$_middlewares[$handler[0]])) {
 			return null;
 		}
-		[$class, $method] = [$handler[0], $handler[1]];
-		if (!static::hasMiddleware($class, $method)) {
-			return null;
-		}
-		return static::$_middlewares[$class . '::' . $method];
+        return static::$_middlewares[$handler[0]][$handler[1]] ?? null;
 	}
 
-
-	/**
-	 * @param $class
-	 * @param $method
-	 * @return bool
-	 */
-	public static function hasMiddleware($class, $method): bool
-	{
-		if (is_object($class)) {
-			$class = $class::class;
-		}
-		return isset(static::$_middlewares[$class . '::' . $method]);
-	}
 
 }
