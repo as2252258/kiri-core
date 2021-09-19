@@ -85,7 +85,7 @@ class ServerCommand extends Command
     private function configure_set()
     {
         $enable_coroutine = Config::get('servers.settings.enable_coroutine', false);
-        if ($enable_coroutine == true) {
+        if ($enable_coroutine != true) {
             return;
         }
         Coroutine::set([
