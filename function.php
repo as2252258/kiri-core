@@ -9,7 +9,6 @@ use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Application;
-use Kiri\AspectManager;
 use Kiri\Core\ArrayAccess;
 use Kiri\Di\NoteManager;
 use Kiri\Error\Logger;
@@ -409,21 +408,6 @@ if (!function_exists('fire')) {
     function fire(object $event)
     {
         di(EventDispatch::class)->dispatch($event);
-    }
-}
-
-if (!function_exists('aop')) {
-
-
-    /**
-     * @param mixed $handler
-     * @param array $params
-     * @return mixed
-     * @throws Exception
-     */
-    function aop(mixed $handler, array $params = []): mixed
-    {
-        return Kiri::getDi()->get(AspectManager::class)->dispatch($handler, $params);
     }
 }
 

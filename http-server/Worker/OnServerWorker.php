@@ -7,6 +7,7 @@ use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Help;
 use Kiri\Events\EventDispatch;
+use Kiri\Kiri;
 use Kiri\Runtime;
 use Server\Events\OnAfterWorkerStart;
 use Server\Events\OnBeforeWorkerStart;
@@ -17,6 +18,7 @@ use Server\Events\OnWorkerStop;
 use Server\ServerManager;
 use Swoole\Server;
 use Swoole\Timer;
+use Server\Events\OnTaskerStart as OnTaskStart;
 
 
 /**
@@ -42,9 +44,13 @@ class OnServerWorker extends \Server\Abstracts\Server
     public function onWorkerStart(Server $server, int $workerId)
     {
         $this->eventDispatch->dispatch(new OnBeforeWorkerStart($workerId));
-
-        $this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
-
+        if ($workerId < $server->setting['worker_num']) {
+            $this->eventDispatch->dispatch(new OnWorkerStart($server, $workerId));
+            $this->setProcessName(sprintf('Worker[%d].%d', $server->worker_pid, $workerId));
+        } else {
+            $this->eventDispatch->dispatch(new OnTaskStart($server, $workerId));
+            $this->setProcessName(sprintf('Tasker[%d].%d', $server->worker_pid, $workerId));
+        }
         $this->eventDispatch->dispatch(new OnAfterWorkerStart());
     }
 

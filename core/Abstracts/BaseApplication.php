@@ -16,7 +16,6 @@ use Exception;
 use Http\Handler\Router;
 use Server\Server;
 use Kafka\KafkaProvider;
-use Kiri\AspectManager;
 use Kiri\Async;
 use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
@@ -460,7 +459,6 @@ abstract class BaseApplication extends Component
 			'logger'          => ['class' => Logger::class],
 			'annotation'      => ['class' => SAnnotation::class],
 			'databases'       => ['class' => Connection::class],
-			'aop'             => ['class' => AspectManager::class],
 			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],
 			'kafka-container' => ['class' => KafkaProvider::class],

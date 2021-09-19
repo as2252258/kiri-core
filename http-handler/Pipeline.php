@@ -106,8 +106,7 @@ class Pipeline
 	 * @param $destination
 	 * @param $parameters
 	 * @return Closure|array
-	 * @throws ReflectionException
-	 */
+     */
 	private function aspect_caller($destination, $parameters): Closure|array
 	{
 		[$controller, $action] = $destination;

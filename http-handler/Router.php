@@ -212,7 +212,7 @@ class Router
 	/**
 	 * @throws Exception
 	 */
-	public function _loader()
+	public function read_files()
 	{
 		$this->loadRouteDir(APP_PATH . 'routes');
 	}

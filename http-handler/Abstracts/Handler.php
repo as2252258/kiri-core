@@ -6,6 +6,7 @@ use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
 use Kiri\Kiri;
+use Kiri\Proxy\AspectProxy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -74,16 +75,8 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function dispatcher(ServerRequestInterface $request): mixed
 	{
-		if ($this->handler->callback instanceof \Closure) {
-			$response = call_user_func($this->handler->callback, ...$this->handler->params);
-		} else {
-			[$controller, $action] = $this->handler->callback;
-
-			$controller = Kiri::getDi()->get($controller);
-
-			$response = call_user_func([$controller, $action], ...$this->handler->params);
-		}
-		if (!($response instanceof ResponseInterface)) {
+        $aspect = Kiri::getDi()->get(AspectProxy::class);
+		if (!(($response = $aspect->proxy($this->handler)) instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}
 		$response->withHeader('Run-Time', $this->_runTime($request));

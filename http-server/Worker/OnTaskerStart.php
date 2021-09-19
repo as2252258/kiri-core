@@ -2,28 +2,18 @@
 
 namespace Server\Worker;
 
-use Annotation\Annotation;
-use Annotation\Inject;
-use Exception;
-use Http\Handler\Router;
 use Kiri\Abstracts\Config;
-use Kiri\Di\NoteManager;
-use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use ReflectionException;
 use Server\ServerManager;
 
-class OnWorkerStart extends WorkerStart implements EventDispatcherInterface
+class OnTaskerStart extends WorkerStart implements EventDispatcherInterface
 {
 
 
     /**
-     * @param object $event
-     * @return void
-     * @throws ConfigException
-     * @throws ReflectionException
-     * @throws Exception
+     * @throws \Kiri\Exception\ConfigException
+     * @throws \ReflectionException
      */
     public function dispatch(object $event)
     {
@@ -31,12 +21,13 @@ class OnWorkerStart extends WorkerStart implements EventDispatcherInterface
 
         $time = microtime(true);
 
-        ServerManager::setEnv('environmental', Kiri::WORKER);
+        ServerManager::setEnv('environmental', Kiri::TASK);
         if (!is_enable_file_modification_listening()) {
-            $this->router->read_files();
             $this->interpretDirectory();
         }
+
         $this->mixed($event, $isWorker, $time);
     }
+
 
 }

@@ -61,7 +61,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 				$PsrResponse = $this->handler($handler, $PsrRequest);
 			}
 		} catch (\Throwable $throwable) {
-			$PsrResponse = \response()->withStatus($throwable->getCode())
+			$PsrResponse = $this->response->withStatus($throwable->getCode())
 				->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
 				->withBody(new Stream(jTraceEx($throwable, null, true)));
 		} finally {
