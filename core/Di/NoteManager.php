@@ -214,8 +214,11 @@ class NoteManager
     public static function getSpecify_annotation(string $attribute, string $class, string $method = null): mixed
     {
         $class = self::getAttributeTrees($attribute, $class);
-        if (empty($class) || !isset($class['method']) || empty($method)) {
-            return $class['method'] ?? [];
+        if (empty($class) || !isset($class['method'])){
+            return null;
+        }
+        if (empty($method)) {
+            return $class['method'];
         }
         foreach ($class['method'] as $value) {
             $key = key($value);
