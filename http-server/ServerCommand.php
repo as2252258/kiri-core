@@ -10,9 +10,11 @@ use Kiri\Abstracts\Config;
 use Kiri\Events\EventProvider;
 use Kiri\Kiri;
 use Server\Events\OnBeforeWorkerStart;
+use Server\Events\OnTaskerStart;
 use Server\Events\OnWorkerStart;
 use Server\Worker\OnServerWorker;
 use Server\Worker\OnWorkerStart as WorkerDispatch;
+use Server\Worker\OnTaskerStart as TaskerDispatch;
 use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -92,6 +94,7 @@ class ServerCommand extends Command
 
 		$this->eventProvider->on(OnBeforeWorkerStart::class, [di(OnServerWorker::class), 'setConfigure']);
 		$this->eventProvider->on(OnWorkerStart::class, [di(WorkerDispatch::class), 'dispatch']);
+		$this->eventProvider->on(OnTaskerStart::class, [di(TaskerDispatch::class), 'dispatch']);
 
 		$manager->start();
 	}
