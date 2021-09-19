@@ -88,9 +88,9 @@ if (!function_exists('is_enable_file_modification_listening')) {
     /**
      * @return bool
      */
-    function is_enable_file_modification_listening(): bool
+    #[Pure] function is_enable_file_modification_listening(): bool
     {
-        return env('enable_file_modification_listening', 'off') == 'off';
+        return env('enable_file_modification_listening', 'off') == 'on';
     }
 
 
@@ -158,7 +158,6 @@ if (!function_exists('scan_directory')) {
      * @param $dir
      * @param $namespace
      * @param array $exclude
-     * @throws NotFindClassException
      * @throws ReflectionException
      * @throws Exception
      */
@@ -179,7 +178,6 @@ if (!function_exists('injectRuntime')) {
     /**
      * @param string $path
      * @param array $exclude
-     * @throws NotFindClassException
      * @throws ReflectionException
      * @throws Exception
      */
