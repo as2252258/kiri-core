@@ -169,7 +169,9 @@ class ServerManager
 			}
 
 			$name = $customProcess->getProcessName($soloProcess);
-			scan_directory(directory('app'), 'App');
+            if (is_enable_file_modification_listening()) {
+                scan_directory(directory('app'), 'App');
+            }
 
 			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
 			if (Kiri::getPlatform()->isLinux()) {
