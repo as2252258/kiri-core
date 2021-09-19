@@ -27,8 +27,6 @@ class OnWorkerStart extends WorkerStart implements EventDispatcherInterface
      */
     public function dispatch(object $event)
     {
-        $isWorker = $event->workerId < $event->server->setting['worker_num'];
-
         $time = microtime(true);
 
         ServerManager::setEnv('environmental', Kiri::WORKER);
@@ -36,7 +34,7 @@ class OnWorkerStart extends WorkerStart implements EventDispatcherInterface
             $this->router->read_files();
             $this->interpretDirectory();
         }
-        $this->mixed($event, $isWorker, $time);
+        $this->mixed($event, true, $time);
     }
 
 }

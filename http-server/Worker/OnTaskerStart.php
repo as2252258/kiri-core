@@ -2,7 +2,6 @@
 
 namespace Server\Worker;
 
-use Kiri\Abstracts\Config;
 use Kiri\Kiri;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Server\ServerManager;
@@ -17,8 +16,6 @@ class OnTaskerStart extends WorkerStart implements EventDispatcherInterface
      */
     public function dispatch(object $event)
     {
-        $isWorker = $event->workerId < $event->server->setting['worker_num'];
-
         $time = microtime(true);
 
         ServerManager::setEnv('environmental', Kiri::TASK);
@@ -26,7 +23,7 @@ class OnTaskerStart extends WorkerStart implements EventDispatcherInterface
             $this->interpretDirectory();
         }
 
-        $this->mixed($event, $isWorker, $time);
+        $this->mixed($event, false, $time);
     }
 
 
