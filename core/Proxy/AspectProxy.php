@@ -46,7 +46,6 @@ class AspectProxy extends AProxy implements ProxyInterface
     {
         $aspect = NoteManager::getSpecify_annotation(Aspect::class, $executor[0], $executor[1]);
         if (!is_null($aspect)) {
-            var_dump($aspect);
             $aspect = Kiri::getDi()->get($aspect->aspect);
         }
         return $aspect;
