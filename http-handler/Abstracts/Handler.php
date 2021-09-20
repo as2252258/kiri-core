@@ -2,6 +2,7 @@
 
 namespace Http\Handler\Abstracts;
 
+use Annotation\Inject;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
@@ -21,6 +22,9 @@ abstract class Handler implements RequestHandlerInterface
 
 
 	protected CHl $handler;
+
+    #[Inject(AspectProxy::class)]
+	protected AspectProxy $aspectProxy;
 
 	protected ?array $middlewares;
 
@@ -75,8 +79,8 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function dispatcher(ServerRequestInterface $request): mixed
 	{
-        $aspect = Kiri::getDi()->get(AspectProxy::class);
-		if (!(($response = $aspect->proxy($this->handler)) instanceof ResponseInterface)) {
+        $response = $this->aspectProxy->proxy($this->handler);
+		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}
 		$response->withHeader('Run-Time', $this->_runTime($request));
