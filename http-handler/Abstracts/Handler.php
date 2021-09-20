@@ -50,28 +50,6 @@ abstract class Handler implements RequestHandlerInterface
 
 
     /**
-     * @param CHl $handler
-     * @return $this
-     */
-    public function setHandler(CHl $handler): static
-    {
-        $this->handler = $handler;
-        return $this;
-    }
-
-
-    /**
-     * @param array|null $middlewares
-     * @return $this
-     */
-    public function setMiddlewares(?array $middlewares): static
-    {
-        $this->middlewares = $middlewares;
-        return $this;
-    }
-
-
-    /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws \Exception

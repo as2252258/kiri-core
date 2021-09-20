@@ -29,10 +29,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 {
 
 
-	#[Inject(Dispatcher::class)]
-	public Dispatcher $dispatcher;
-
-
 	/**
 	 * @param Server $server
 	 * @param int $fd
