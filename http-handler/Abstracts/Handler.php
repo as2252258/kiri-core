@@ -21,22 +21,17 @@ abstract class Handler implements RequestHandlerInterface
     private int $offset = 0;
 
 
-    protected CHl $handler;
 
     #[Inject(AspectProxy::class)]
     protected AspectProxy $aspectProxy;
-
-    protected ?array $middlewares;
 
 
     /**
      * @param \Http\Handler\Handler $handler
      * @param array|null $middlewares
      */
-    public function __construct(CHl $handler, ?array $middlewares)
+    public function __construct(public CHl $handler,public ?array $middlewares)
     {
-        $this->handler = $handler;
-        $this->middlewares = $middlewares;
     }
 
 
