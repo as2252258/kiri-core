@@ -38,8 +38,8 @@ class Response implements ResponseInterface
             'format'    =>  ContentType::JSON,
             'charset'   =>  'utf-8'
         ]);
-        $this->withContentType($contentType['format'])
-            ->withCharset($contentType['charset']);
+        $this->withContentType($contentType['format'] ?? ContentType::JSON)
+            ->withCharset($contentType['charset'] ?? 'utf-8');
     }
 
 
