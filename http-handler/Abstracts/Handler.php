@@ -22,7 +22,6 @@ abstract class Handler implements RequestHandlerInterface
 
 
 
-    #[Inject(AspectProxy::class)]
     protected AspectProxy $aspectProxy;
 
 
@@ -32,15 +31,7 @@ abstract class Handler implements RequestHandlerInterface
      */
     public function __construct(public CHl $handler,public ?array $middlewares)
     {
-    }
-
-
-    /**
-     * @param \Kiri\Proxy\AspectProxy $aspectProxy
-     */
-    public function setAspectProxy(AspectProxy $aspectProxy)
-    {
-        $this->aspectProxy = $aspectProxy;
+        $this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
     }
 
 
