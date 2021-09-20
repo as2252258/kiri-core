@@ -29,11 +29,17 @@ class Response implements ResponseInterface
 	const FILE = 'file';
 
 
+    /**
+     * @throws \Kiri\Exception\ConfigException
+     */
     public function __construct()
     {
-        $contentType = Config::get('response.format',ContentType::JSON);
-
-        $this->withContentType($contentType)->withCharset('utf-8');
+        $contentType = Config::get('response',[
+            'format'    =>  ContentType::JSON,
+            'charset'   =>  'utf-8'
+        ]);
+        $this->withContentType($contentType['format'])
+            ->withCharset($contentType['charset']);
     }
 
 
