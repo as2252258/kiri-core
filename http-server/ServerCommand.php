@@ -103,6 +103,7 @@ class ServerCommand extends Command
 
     /**
      * @param $manager
+     * @throws \Kiri\Exception\ConfigException
      */
     private function generate_runtime_builder($manager): void
     {
