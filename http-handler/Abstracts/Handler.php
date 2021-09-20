@@ -21,7 +21,6 @@ abstract class Handler implements RequestHandlerInterface
     private int $offset = 0;
 
 
-
     protected AspectProxy $aspectProxy;
 
 
@@ -29,7 +28,7 @@ abstract class Handler implements RequestHandlerInterface
      * @param \Http\Handler\Handler $handler
      * @param array|null $middlewares
      */
-    public function __construct(public CHl $handler,public ?array $middlewares)
+    public function __construct(public CHl $handler, public ?array $middlewares)
     {
         $this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
     }
@@ -103,7 +102,7 @@ abstract class Handler implements RequestHandlerInterface
         if (is_object($responseData)) {
             $responseData = get_object_vars($responseData);
         }
-        if ($interface->getContentType() == 'application/xml;charset=utf-8') {
+        if (str_contains($interface->getContentType(), 'xml')) {
             $interface->getBody()->write(Help::toXml($responseData));
         } else if (is_array($responseData)) {
             $interface->getBody()->write(json_encode($responseData));
