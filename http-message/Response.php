@@ -19,7 +19,10 @@ class Response implements ResponseInterface
 	use Message;
 
 
-	const CONTENT_TYPE_HTML = 'text/html;charset=utf-8';
+	const CONTENT_TYPE_HTML = 'text/html';
+
+
+    protected string $charset = 'utf8';
 
 
 	protected int $statusCode = 200;
@@ -148,7 +151,7 @@ class Response implements ResponseInterface
 	 * @param string $contentType
 	 * @return static
 	 */
-	public function json($data, string $contentType = 'application/json;charset=utf-8'): static
+	public function json($data, string $contentType = 'application/json'): static
 	{
 		$this->stream->write(json_encode($data));
 
@@ -161,7 +164,7 @@ class Response implements ResponseInterface
 	 * @param string $contentType
 	 * @return static
 	 */
-	public function html($data, string $contentType = 'text/html;charset=utf-8'): static
+	public function html($data, string $contentType = 'text/html'): static
 	{
 		if (!is_string($data)) {
 			$data = json_encode($data);
@@ -178,12 +181,26 @@ class Response implements ResponseInterface
 	 * @param string $contentType
 	 * @return static
 	 */
-	public function xml($data, string $contentType = 'application/xml;charset=utf-8'): static
+	public function xml($data, string $contentType = 'application/xml'): static
 	{
 		$this->stream->write(Help::toXml($data));
 
 		return $this->withContentType($contentType);
 	}
+
+
+    /**
+     * @param string $charset
+     * @return $this
+     */
+    public function withCharset(string $charset): static
+    {
+        $type = explode('charset', $this->getContentType())[0];
+        $this->withContentType(
+            rtrim($type,';') . ';charset=' . $charset
+        );
+        return $this;
+    }
 
 
 	/**

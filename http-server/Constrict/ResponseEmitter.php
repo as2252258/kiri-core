@@ -22,7 +22,7 @@ class ResponseEmitter implements Emitter
 
 
 	/**
-	 * @param mixed $response
+	 * @param \Swoole\Http\Response $response
 	 * @param \Http\Message\Response|ResponseInterface $emitter
 	 * @throws \Exception
 	 */

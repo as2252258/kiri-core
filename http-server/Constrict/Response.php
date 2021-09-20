@@ -5,7 +5,9 @@ namespace Server\Constrict;
 
 
 use Http\Handler\Context;
+use Http\Message\ContentType;
 use JetBrains\PhpStorm\Pure;
+use Kiri\Abstracts\Config;
 use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
 use Http\Message\ServerRequest as RequestMessage;
@@ -27,7 +29,15 @@ class Response implements ResponseInterface
 	const FILE = 'file';
 
 
-	/**
+    public function __construct()
+    {
+        $contentType = Config::get('response.format',ContentType::JSON);
+
+        $this->withContentType($contentType)->withCharset('utf-8');
+    }
+
+
+    /**
 	 * @param string $name
 	 * @return mixed
 	 */

@@ -9,6 +9,7 @@ use Http\Handler\Context;
 use Http\Handler\Abstracts\HandlerManager;
 use Http\Handler\Dispatcher;
 use Http\Handler\Handler;
+use Http\Message\ContentType;
 use Http\Message\ServerRequest;
 use Http\Message\Stream;
 use Http\Handler\Abstracts\MiddlewareManager;
@@ -58,9 +59,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 				$PsrResponse = $this->handler($handler, $PsrRequest);
 			}
 		} catch (\Throwable $throwable) {
-			$PsrResponse = $this->response->withStatus($throwable->getCode())
-				->withContentType(\Http\Message\Response::CONTENT_TYPE_HTML)
-				->withBody(new Stream(jTraceEx($throwable, null, true)));
+            $PsrResponse= $this->exceptionHandler->emit($throwable, $this->response);
 		} finally {
 			$this->responseEmitter->sender($response, $PsrResponse);
 		}

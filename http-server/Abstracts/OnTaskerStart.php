@@ -1,6 +1,6 @@
 <?php
 
-namespace Server\Worker;
+namespace Server\Abstracts;
 
 use Kiri\Kiri;
 use Psr\EventDispatcher\EventDispatcherInterface;

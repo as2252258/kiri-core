@@ -3,6 +3,7 @@
 namespace Server;
 
 
+use Http\Message\ContentType;
 use Http\Message\Stream;
 use Server\Constrict\Response;
 use Server\Constrict\ResponseInterface;
@@ -23,7 +24,7 @@ class ExceptionHandlerDispatcher implements ExceptionHandlerInterface
 	 */
 	public function emit(Throwable $exception, Response $response): ResponseInterface
 	{
-		$response->withContentType('text/html;charset=utf-8');
+		$response->withContentType(ContentType::HTML)->withCharset('utf-8');
 		if ($exception->getCode() == 404) {
 			return $response->withBody(new Stream($exception->getMessage()))
 				->withStatus(404);

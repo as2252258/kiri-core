@@ -1,6 +1,6 @@
 <?php
 
-namespace Server\Worker;
+namespace Server\Abstracts;
 
 use Annotation\Annotation;
 use Annotation\Inject;
