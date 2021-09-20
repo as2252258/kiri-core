@@ -81,7 +81,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
 
-		$dispatcher = $this->dispatcher->setHandler($handler)->setMiddlewares($middlewares);
+		$dispatcher = new Dispatcher($handler, $middlewares);
 
 		return $dispatcher->handle($PsrRequest);
 	}

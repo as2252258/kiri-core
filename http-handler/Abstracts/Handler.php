@@ -30,6 +30,17 @@ abstract class Handler implements RequestHandlerInterface
 
 
     /**
+     * @param \Http\Handler\Handler $handler
+     * @param array|null $middlewares
+     */
+    public function __construct(CHl $handler, ?array $middlewares)
+    {
+        $this->handler = $handler;
+        $this->middlewares = $middlewares;
+    }
+
+
+    /**
      * @param \Kiri\Proxy\AspectProxy $aspectProxy
      */
     public function setAspectProxy(AspectProxy $aspectProxy)
