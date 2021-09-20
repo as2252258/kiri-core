@@ -365,7 +365,7 @@ class ContentType
     const D_907 = 'drawing/907';
     const SLK = 'drawing/x-slk';
     const TOP = 'drawing/x-top';
-    const CLASS = 'java/*';
+    const JAVA_CLASS = 'java/*';
     const JAVA = 'java/*';
     const X_DWF = 'Model/vnd.dwf';
 
