@@ -70,7 +70,7 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
             $xhprof_data = \xhprof_disable();
 
 
-            $XHPROF_ROOT = "/tools/xhprof/";
+            $XHPROF_ROOT = "/root/pear/share/pear";
             include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_lib.php";
             include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_runs.php";
 
