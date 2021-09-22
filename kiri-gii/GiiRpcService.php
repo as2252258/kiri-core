@@ -31,7 +31,7 @@ class GiiRpcService extends GiiBase
 		$html = '<?php
 		
 		
-namespace App\Http\Rpc;
+namespace App\Rpc;
 
 use Annotation\Route\RpcProducer;
 use Annotation\Target;

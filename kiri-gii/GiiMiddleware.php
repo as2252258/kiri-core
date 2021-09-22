@@ -30,7 +30,7 @@ class GiiMiddleware extends GiiBase
 		$html = '<?php
 		
 		
-namespace App\Http\Middleware;
+namespace App\Middleware;
 
 use Closure;
 use Psr\Http\Server\MiddlewareInterface;
@@ -42,7 +42,7 @@ use Server\Constrict\RequestInterface;
 		$html .= '
  /**
  * Class ' . $managerName . 'Middleware
- * @package App\Http\Middleware
+ * @package App\Middleware
  */
 class ' . $managerName . 'Middleware implements Middleware
 {

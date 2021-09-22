@@ -31,7 +31,7 @@ abstract class GiiBase
 	public string $modelNamespace = 'App\Models\\';
 
 	public string $controllerPath = APP_PATH . 'app/Http/Controllers/';
-	public string $controllerNamespace = 'App\\Http\\Controllers\\';
+	public string $controllerNamespace = 'App\\Controllers\\';
 
 	public ?string $module = null;
 
