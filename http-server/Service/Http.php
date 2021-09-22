@@ -48,7 +48,9 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-			[$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
+            xhprof_enable(XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+
+            [$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
 			/** @var Handler $handler */
 			$handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
 			if (is_integer($handler)) {
