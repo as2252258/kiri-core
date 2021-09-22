@@ -17,6 +17,7 @@ use Kiri\Kiri;
 use Psr\Http\Message\ServerRequestInterface;
 use Server\Constrict\RequestInterface;
 use Server\Constrict\ResponseInterface;
+use Server\Events\OnAfterRequest;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
 use Swoole\Http\Request;
@@ -64,7 +65,20 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
             $PsrResponse= $this->exceptionHandler->emit($throwable, $this->response);
 		} finally {
 			$this->responseEmitter->sender($response, $PsrResponse);
-		}
+            $this->eventDispatch->dispatch(new OnAfterRequest());
+
+            $xhprof_data = \xhprof_disable();
+
+
+            $XHPROF_ROOT = "/tools/xhprof/";
+            include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_lib.php";
+            include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_runs.php";
+
+            $xhprof_runs = new \XHProfRuns_Default();
+            $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
+
+            echo "http://localhost/xhprof/xhprof_html/index.php?run={$run_id}&source=xhprof_testing\n";
+        }
 	}
 
 
