@@ -8,6 +8,7 @@ use Http\Handler\Context;
 use Http\Message\ContentType;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Psr\Http\Message\StreamInterface;
 use Http\Message\ServerRequest as RequestMessage;
@@ -30,7 +31,7 @@ class Response implements ResponseInterface
 
 
     /**
-     * @throws \Kiri\Exception\ConfigException
+     * @throws ConfigException
      */
     public function __construct()
     {
