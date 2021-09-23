@@ -26,9 +26,9 @@ use Server\Constrict\ResponseInterface;
 use Server\Events\OnAfterRequest;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
-use Server\SInterface\OnClose;
-use Server\SInterface\OnConnect;
-use Server\SInterface\OnRequest;
+use Server\SInterface\OnCloseInterface;
+use Server\SInterface\OnConnectInterface;
+use Server\SInterface\OnRequestInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
@@ -36,7 +36,7 @@ use Swoole\Server;
 /**
  *
  */
-class Http implements OnClose, OnConnect, OnRequest
+class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 {
 
     use EventDispatchHelper;

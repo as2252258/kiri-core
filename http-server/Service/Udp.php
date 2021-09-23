@@ -13,13 +13,13 @@ use Server\Abstracts\Utility\ResponseHelper;
 use Server\Constrict\UdpEmitter;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
-use Server\SInterface\OnPacket;
+use Server\SInterface\OnPacketInterface;
 
 
 /**
  *
  */
-class Udp implements OnPacket
+class Udp implements OnPacketInterface
 {
 
     use EventDispatchHelper;

@@ -4,7 +4,7 @@ namespace Server\SInterface;
 
 use Server\Abstracts\Server;
 
-interface OnPacket
+interface OnPacketInterface
 {
 
 

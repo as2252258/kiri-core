@@ -8,7 +8,7 @@ use Swoole\Server;
 /**
  *
  */
-interface OnClose
+interface OnCloseInterface
 {
 
 
@@ -17,13 +17,6 @@ interface OnClose
 	 * @param int $fd
 	 */
 	public function onClose(Server $server, int $fd): void;
-
-
-	/**
-	 * @param Server $server
-	 * @param int $fd
-	 */
-	public function onDisconnect(Server $server, int $fd): void;
 
 
 }

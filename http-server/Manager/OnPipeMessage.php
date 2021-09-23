@@ -6,7 +6,7 @@ use Annotation\Inject;
 use Server\Abstracts\Server;
 use Exception;
 use Server\Events\OnAfterRequest;
-use Server\SInterface\PipeMessage;
+use Server\SInterface\OnPipeMessageInterface;
 use Kiri\Events\EventDispatch;
 
 /**
@@ -29,7 +29,7 @@ class OnPipeMessage extends Server
 	 */
 	public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
 	{
-		if (!is_object($message) || !($message instanceof PipeMessage)) {
+		if (!is_object($message) || !($message instanceof OnPipeMessageInterface)) {
 			return;
 		}
 

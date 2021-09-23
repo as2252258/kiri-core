@@ -6,7 +6,7 @@ namespace Server\SInterface;
 
 use Swoole\Server;
 
-interface TaskExecute
+interface OnTaskInterface
 {
 
 	public function execute();

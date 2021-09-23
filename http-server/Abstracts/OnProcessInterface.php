@@ -11,7 +11,7 @@ use Swoole\Process;
 /**
  *
  */
-abstract class CustomProcess implements \Server\SInterface\CustomProcess
+abstract class OnProcessInterface implements \Server\SInterface\OnProcessInterface
 {
 
 	/** @var bool */

@@ -12,10 +12,10 @@ use Server\Abstracts\Utility\ResponseHelper;
 use Server\Constrict\WebSocketEmitter;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
-use Server\SInterface\OnClose;
-use Server\SInterface\OnHandshake;
-use Server\SInterface\OnMessage;
-use Server\SInterface\OnRequest;
+use Server\SInterface\OnCloseInterface;
+use Server\SInterface\OnHandshakeInterface;
+use Server\SInterface\OnMessageInterface;
+use Server\SInterface\OnRequestInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
@@ -24,7 +24,7 @@ use Swoole\WebSocket\Frame;
 /**
  *
  */
-class WebSocket implements OnHandshake, OnMessage, OnClose
+class WebSocket implements OnHandshakeInterface, OnMessageInterface, OnCloseInterface
 {
 
 
@@ -60,7 +60,7 @@ class WebSocket implements OnHandshake, OnMessage, OnClose
 	 */
 	public function onHandshake(Request $request, Response $response): void
 	{
-        // TODO: Implement OnHandshake() method.
+        // TODO: Implement OnHandshakeInterface() method.
         $secWebSocketKey = $request->header['sec-websocket-key'];
         $patten = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
         if (0 === preg_match($patten, $secWebSocketKey) || 16 !== strlen(base64_decode($secWebSocketKey))) {
@@ -91,7 +91,7 @@ class WebSocket implements OnHandshake, OnMessage, OnClose
 	 */
 	public function onMessage(Server $server, Frame $frame): void
 	{
-		// TODO: Implement OnMessage() method.
+		// TODO: Implement OnMessageInterface() method.
 	}
 
 
@@ -101,7 +101,7 @@ class WebSocket implements OnHandshake, OnMessage, OnClose
 	 */
 	public function onClose(Server $server, int $fd): void
 	{
-		// TODO: Implement OnClose() method.
+		// TODO: Implement OnCloseInterface() method.
 	}
 
 
@@ -111,6 +111,6 @@ class WebSocket implements OnHandshake, OnMessage, OnClose
 	 */
 	public function onDisconnect(Server $server, int $fd): void
 	{
-		// TODO: Implement OnDisconnect() method.
+		// TODO: Implement OnDisconnectInterface() method.
 	}
 }

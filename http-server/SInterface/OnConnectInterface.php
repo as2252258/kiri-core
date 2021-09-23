@@ -4,7 +4,7 @@ namespace Server\SInterface;
 
 use Swoole\Server;
 
-interface OnConnect
+interface OnConnectInterface
 {
 
 

@@ -28,7 +28,7 @@ use Kiri\Jwt\Jwt;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\ServerManager;
-use Server\SInterface\TaskExecute;
+use Server\SInterface\OnTaskInterface;
 use Swoole\Table;
 
 /**
@@ -205,10 +205,10 @@ abstract class BaseApplication extends Component
 
 
 	/**
-	 * @param TaskExecute $execute
+	 * @param OnTaskInterface $execute
 	 * @throws ReflectionException
 	 */
-	public function task(TaskExecute $execute): void
+	public function task(OnTaskInterface $execute): void
 	{
 		di(ServerManager::class)->task($execute);
 	}

@@ -6,7 +6,7 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Help;
 use Server\Constrict\ResponseInterface;
-use Server\SInterface\DownloadInterface;
+use Server\SInterface\OnDownloadInterface;
 
 
 /**
@@ -208,15 +208,15 @@ class Response implements ResponseInterface
 	 * @param bool $isChunk
 	 * @param int $size
 	 * @param int $offset
-	 * @return DownloadInterface
+	 * @return OnDownloadInterface
 	 * @throws Exception
 	 */
-	public function file($path, bool $isChunk = false, int $size = -1, int $offset = 0): DownloadInterface
+	public function file($path, bool $isChunk = false, int $size = -1, int $offset = 0): OnDownloadInterface
 	{
 		$path = realpath($path);
 		if (!file_exists($path) || !is_readable($path)) {
 			throw new Exception('Cannot read file "' . $path . '", no permission');
 		}
-		return (new Download())->path($path, $isChunk, $size, $offset);
+		return (new OnDownload())->path($path, $isChunk, $size, $offset);
 	}
 }

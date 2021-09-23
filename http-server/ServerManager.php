@@ -14,8 +14,15 @@ use Server\Manager\OnPipeMessage;
 use Server\Manager\OnServer;
 use Server\Manager\OnServerManager;
 use Server\Manager\OnServerReload;
-use Server\SInterface\CustomProcess;
-use Server\SInterface\TaskExecute;
+use Server\SInterface\OnProcessInterface;
+use Server\SInterface\OnCloseInterface;
+use Server\SInterface\OnConnectInterface;
+use Server\SInterface\OnDisconnectInterface;
+use Server\SInterface\OnHandshakeInterface;
+use Server\SInterface\OnMessageInterface;
+use Server\SInterface\OnPacketInterface;
+use Server\SInterface\OnReceiveInterface;
+use Server\SInterface\OnTaskInterface;
 use Server\Task\OnServerTask;
 use Server\Worker\OnServerWorker;
 use Swoole\Http\Server as HServer;
@@ -66,6 +73,19 @@ class ServerManager
 		Constant::START         => [OnServer::class, 'onStart'],
 		Constant::SHUTDOWN      => [OnServer::class, 'onShutdown'],
 	];
+
+
+
+    private array $eventInterface = [
+        OnReceiveInterface::class    => 'receive',
+        OnPacketInterface::class     =>'packet',
+        OnHandshakeInterface::class  => 'handshake',
+        OnMessageInterface::class    =>'message',
+        OnConnectInterface::class    =>'connect',
+        OnCloseInterface::class      =>'close',
+        OnDisconnectInterface::class =>'disconnect'
+    ];
+
 
 
 	/**
@@ -134,17 +154,17 @@ class ServerManager
 
 
 	/**
-	 * @param string|CustomProcess $customProcess
+	 * @param string|OnProcessInterface $customProcess
 	 * @param null $redirect_stdin_and_stdout
 	 * @param int|null $pipe_type
 	 * @param bool $enable_coroutine
 	 * @throws Exception
 	 */
-	public function addProcess(string|CustomProcess $customProcess, $redirect_stdin_and_stdout = null, ?int $pipe_type = SOCK_DGRAM, bool $enable_coroutine = true)
+	public function addProcess(string|OnProcessInterface $customProcess, $redirect_stdin_and_stdout = null, ?int $pipe_type = SOCK_DGRAM, bool $enable_coroutine = true)
 	{
 		$process = $this->initProcess($customProcess, $redirect_stdin_and_stdout, $pipe_type, $enable_coroutine);
 		$this->server->addProcess($process);
-		if ($customProcess instanceof CustomProcess) {
+		if ($customProcess instanceof OnProcessInterface) {
 			Kiri::app()->addProcess($customProcess::class, $process);
 		} else {
 			Kiri::app()->addProcess($customProcess, $process);
@@ -445,13 +465,13 @@ class ServerManager
 
 
 	/**
-	 * @param TaskExecute|string $handler
+	 * @param OnTaskInterface|string $handler
 	 * @param array $params
 	 * @param int|null $workerId
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function task(TaskExecute|string $handler, array $params = [], int $workerId = null)
+	public function task(OnTaskInterface|string $handler, array $params = [], int $workerId = null)
 	{
 		if ($workerId === null || $workerId <= $this->server->setting['worker_num']) {
 			$workerId = random_int($this->server->setting['worker_num'] + 1,
@@ -459,8 +479,8 @@ class ServerManager
 		}
 		if (is_string($handler)) {
 			$implements = $this->container->getReflect($handler);
-			if (!in_array(TaskExecute::class, $implements->getInterfaceNames())) {
-				throw new Exception('Task must instance ' . TaskExecute::class);
+			if (!in_array(OnTaskInterface::class, $implements->getInterfaceNames())) {
+				throw new Exception('Task must instance ' . OnTaskInterface::class);
 			}
 			$handler = $implements->newInstanceArgs($params);
 		}

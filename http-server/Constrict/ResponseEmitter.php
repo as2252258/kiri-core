@@ -3,7 +3,7 @@
 namespace Server\Constrict;
 
 use Annotation\Inject;
-use Server\SInterface\DownloadInterface;
+use Server\SInterface\OnDownloadInterface;
 use Swoole\Server;
 
 
@@ -42,7 +42,7 @@ class ResponseEmitter implements Emitter
 		$response->header('Server', 'swoole');
 		$response->header('Swoole-Version', swoole_version());
 
-		if (!($emitter instanceof DownloadInterface)) {
+		if (!($emitter instanceof OnDownloadInterface)) {
 			$response->end($emitter->getBody()->getContents());
 		} else {
 			$emitter->dispatch($response);

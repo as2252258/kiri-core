@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
 use Http\Message\ServerRequest as RequestMessage;
 use Http\Message\Response as Psr7Response;
 use Server\ServerManager;
-use Server\SInterface\DownloadInterface;
+use Server\SInterface\OnDownloadInterface;
 
 
 /**
@@ -201,9 +201,9 @@ class Response implements ResponseInterface
 
 	/**
 	 * @param string $path
-	 * @return DownloadInterface
+	 * @return OnDownloadInterface
 	 */
-	public function file(string $path): DownloadInterface
+	public function file(string $path): OnDownloadInterface
 	{
 		return $this->__call__()->{__FUNCTION__}($path);
 	}

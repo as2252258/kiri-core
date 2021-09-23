@@ -8,10 +8,10 @@ use Swoole\Process;
 
 
 /**
- * Interface CustomProcess
+ * Interface OnProcessInterface
  * @package SInterface
  */
-interface CustomProcess
+interface OnProcessInterface
 {
 
 

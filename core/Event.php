@@ -71,7 +71,7 @@ class Event extends BaseObject
 	const SERVER_ON_CLOSE = 'Close';
 	const SERVER_ON_TASK = 'Task';
 	const SERVER_ON_FINISH = 'Finish';
-	const SERVER_ON_PIPE_MESSAGE = 'PipeMessage';
+	const SERVER_ON_PIPE_MESSAGE = 'OnPipeMessageInterface';
 	const SERVER_ON_WORKER_ERROR = 'WorkerError';
 	const SERVER_ON_MANAGER_START = 'ManagerStart';
 	const SERVER_ON_MANAGER_STOP = 'ManagerStop';

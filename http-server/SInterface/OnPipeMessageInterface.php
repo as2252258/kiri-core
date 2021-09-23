@@ -5,10 +5,10 @@ namespace Server\SInterface;
 
 
 /**
- * Interface PipeMessage
+ * Interface OnPipeMessageInterface
  * @package Server\SInterface
  */
-interface PipeMessage
+interface OnPipeMessageInterface
 {
 
 	/**

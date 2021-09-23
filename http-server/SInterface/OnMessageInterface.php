@@ -5,7 +5,7 @@ namespace Server\SInterface;
 use Swoole\Server;
 use Swoole\WebSocket\Frame;
 
-interface OnMessage
+interface OnMessageInterface
 {
 
 

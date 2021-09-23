@@ -4,7 +4,7 @@ namespace Server\SInterface;
 
 use Swoole\Http\Response;
 
-interface DownloadInterface
+interface OnDownloadInterface
 {
 
 	public function dispatch(Response $response);

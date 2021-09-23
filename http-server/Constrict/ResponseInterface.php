@@ -5,7 +5,7 @@ namespace Server\Constrict;
 
 use JetBrains\PhpStorm\Pure;
 use Http\Message\Response;
-use Server\SInterface\DownloadInterface;
+use Server\SInterface\OnDownloadInterface;
 
 /**
  * @mixin Response
@@ -16,9 +16,9 @@ interface ResponseInterface extends \Psr\Http\Message\ResponseInterface
 
 	/**
 	 * @param string $path
-	 * @return DownloadInterface
+	 * @return OnDownloadInterface
 	 */
-	public function file(string $path): DownloadInterface;
+	public function file(string $path): OnDownloadInterface;
 
 
 	/**

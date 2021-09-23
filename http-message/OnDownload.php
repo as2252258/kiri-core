@@ -2,10 +2,10 @@
 
 namespace Http\Message;
 
-use Server\SInterface\DownloadInterface;
+use Server\SInterface\OnDownloadInterface;
 
 
-class Download extends Response implements DownloadInterface
+class OnDownload extends Response implements OnDownloadInterface
 {
 
 	use Message;
@@ -34,7 +34,7 @@ class Download extends Response implements DownloadInterface
 	 * @param int $offset
 	 * @return $this
 	 */
-	public function path(string $path, bool $isChunk = false, int $size = -1, int $offset = 0): Download
+	public function path(string $path, bool $isChunk = false, int $size = -1, int $offset = 0): OnDownload
 	{
 		$this->path = $path;
 		$this->isChunk = $isChunk;

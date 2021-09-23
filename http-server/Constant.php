@@ -26,7 +26,7 @@ class Constant
 	const CLOSE = 'Close';
 	const TASK = 'Task';
 	const FINISH = 'Finish';
-	const PIPE_MESSAGE = 'PipeMessage';
+	const PIPE_MESSAGE = 'OnPipeMessageInterface';
 	const WORKER_ERROR = 'WorkerError';
 	const MANAGER_START = 'ManagerStart';
 	const MANAGER_STOP = 'ManagerStop';

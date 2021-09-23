@@ -12,7 +12,7 @@ use Server\Constrict\Response;
 use Server\Constrict\ResponseInterface;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
-use Server\SInterface\TaskExecute;
+use Server\SInterface\OnTaskInterface;
 use Swoole\Server;
 
 
@@ -108,7 +108,7 @@ class OnServerTask
 	 */
 	public function onFinish(Server $server, int $task_id, mixed $data)
 	{
-		if (!($data instanceof TaskExecute)) {
+		if (!($data instanceof OnTaskInterface)) {
 			return;
 		}
 		$data->finish($server, $task_id);

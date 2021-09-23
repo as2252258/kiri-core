@@ -8,7 +8,7 @@ use Swoole\Server;
 /**
  *
  */
-interface OnReceive
+interface OnReceiveInterface
 {
 
 

@@ -10,16 +10,16 @@ use Server\Abstracts\Utility\ResponseHelper;
 use Server\Constrict\TcpEmitter;
 use Server\ExceptionHandlerDispatcher;
 use Server\ExceptionHandlerInterface;
-use Server\SInterface\OnClose;
-use Server\SInterface\OnConnect;
-use Server\SInterface\OnReceive;
+use Server\SInterface\OnCloseInterface;
+use Server\SInterface\OnConnectInterface;
+use Server\SInterface\OnReceiveInterface;
 use Swoole\Server;
 
 
 /**
  *
  */
-class Tcp implements OnConnect, OnClose, OnReceive
+class Tcp implements OnConnectInterface, OnCloseInterface, OnReceiveInterface
 {
 
     use EventDispatchHelper;
