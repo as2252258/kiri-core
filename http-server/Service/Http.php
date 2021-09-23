@@ -49,8 +49,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-            \xhprof_enable(XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
-
             [$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
 			/** @var Handler $handler */
 			$handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
@@ -66,18 +64,6 @@ class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
 		} finally {
 			$this->responseEmitter->sender($response, $PsrResponse);
             $this->eventDispatch->dispatch(new OnAfterRequest());
-
-            $xhprof_data = \xhprof_disable();
-
-
-            $XHPROF_ROOT = "/root/pear/share/pear";
-            include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_lib.php";
-            include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_runs.php";
-
-            $xhprof_runs = new \XHProfRuns_Default(storage(null,'xhprof'));
-            $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
-
-            echo "http://localhost/xhprof/xhprof_html/index.php?run={$run_id}&source=xhprof_testing\n";
         }
 	}
 
