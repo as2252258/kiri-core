@@ -9,17 +9,26 @@ use Http\Handler\Context;
 use Http\Handler\Abstracts\HandlerManager;
 use Http\Handler\Dispatcher;
 use Http\Handler\Handler;
+use Http\Handler\Router;
 use Http\Message\ContentType;
 use Http\Message\ServerRequest;
 use Http\Message\Stream;
 use Http\Handler\Abstracts\MiddlewareManager;
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Psr\Http\Message\ServerRequestInterface;
+use Server\Abstracts\Utility\EventDispatchHelper;
+use Server\Abstracts\Utility\ResponseHelper;
 use Server\Constrict\RequestInterface;
+use Server\Constrict\ResponseEmitter;
 use Server\Constrict\ResponseInterface;
 use Server\Events\OnAfterRequest;
+use Server\ExceptionHandlerDispatcher;
+use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
+use Server\SInterface\OnRequest;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
@@ -27,8 +36,35 @@ use Swoole\Server;
 /**
  *
  */
-class Http extends \Server\Abstracts\Http implements OnClose, OnConnect
+class Http implements OnClose, OnConnect, OnRequest
 {
+
+    use EventDispatchHelper;
+    use ResponseHelper;
+
+    /** @var Router|mixed */
+    #[Inject(Router::class)]
+    public Router $router;
+
+
+    /**
+     * @var ExceptionHandlerInterface
+     */
+    public ExceptionHandlerInterface $exceptionHandler;
+
+
+    /**
+     * @throws ConfigException
+     */
+    public function init()
+    {
+        $exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
+        if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
+            $exceptionHandler = ExceptionHandlerDispatcher::class;
+        }
+        $this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
+        $this->responseEmitter = Kiri::getDi()->get(ResponseEmitter::class);
+    }
 
 
 	/**

@@ -2,19 +2,52 @@
 
 namespace Server\Service;
 
+use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
+use Server\Abstracts\Utility\EventDispatchHelper;
+use Server\Abstracts\Utility\ResponseHelper;
+use Server\Constrict\TcpEmitter;
+use Server\ExceptionHandlerDispatcher;
+use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnClose;
 use Server\SInterface\OnConnect;
+use Server\SInterface\OnReceive;
 use Swoole\Server;
 
 
 /**
  *
  */
-class Tcp extends \Server\Abstracts\Tcp implements OnConnect, OnClose
+class Tcp implements OnConnect, OnClose, OnReceive
 {
 
+    use EventDispatchHelper;
+    use ResponseHelper;
 
-	/**
+
+    /**
+     * @var ExceptionHandlerInterface
+     */
+    public ExceptionHandlerInterface $exceptionHandler;
+
+
+    /**
+     * @throws ConfigException
+     */
+    public function init()
+    {
+        $exceptionHandler = Config::get('exception.tcp', ExceptionHandlerDispatcher::class);
+        if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
+            $exceptionHandler = ExceptionHandlerDispatcher::class;
+        }
+        $this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
+        $this->responseEmitter = Kiri::getDi()->get(TcpEmitter::class);
+    }
+
+
+
+    /**
 	 * @param Server $server
 	 * @param int $fd
 	 */

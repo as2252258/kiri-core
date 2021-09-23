@@ -1,6 +1,6 @@
 <?php
 
-namespace Server\Abstracts;
+namespace Server\Abstracts\Utility;
 
 use Annotation\Inject;
 use Kiri\Events\EventDispatch;
