@@ -28,6 +28,8 @@ abstract class Handler implements RequestHandlerInterface
 	public function __construct(public CHl $handler, public ?Iterator $middlewares)
 	{
 		$this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
+
+		$this->middlewares->rewind();
 	}
 
 
