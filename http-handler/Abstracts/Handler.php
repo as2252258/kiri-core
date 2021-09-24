@@ -5,6 +5,7 @@ namespace Http\Handler\Abstracts;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
+use Kiri\Events\EventDispatch;
 use Kiri\Kiri;
 use Kiri\Proxy\AspectProxy;
 use Psr\Http\Message\ResponseInterface;

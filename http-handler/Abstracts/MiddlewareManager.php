@@ -16,6 +16,10 @@ use Kiri\Abstracts\BaseObject;
 class MiddlewareManager extends BaseObject
 {
 
+
+	/**
+	 * @var array<string, Iterator>
+	 */
 	private static array $_middlewares = [];
 
 
@@ -54,7 +58,7 @@ class MiddlewareManager extends BaseObject
 	 * @param $handler
 	 * @return mixed
 	 */
-	public static function get($handler): mixed
+	public static function get($handler): Iterator
 	{
 		if (!($handler instanceof Closure)) {
 			if (!isset(static::$_middlewares[$handler[0]])) {
@@ -63,9 +67,14 @@ class MiddlewareManager extends BaseObject
 			if (!isset(static::$_middlewares[$handler[0]][$handler[1]])) {
 				static::$_middlewares[$handler[0]][$handler[1]] = new Iterator();
 			}
-			return static::$_middlewares[$handler[0]][$handler[1]];
+			/** @var Iterator $iterator */
+			$iterator = static::$_middlewares[$handler[0]][$handler[1]];
+			if ($iterator->count() > 0 && !$iterator->valid()) {
+				$iterator->rewind();
+			}
+			return $iterator;
 		}
-		return new Iterator();
+		return di(Iterator::class);
 	}
 
 
