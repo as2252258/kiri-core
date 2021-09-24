@@ -114,7 +114,7 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
 
-		$dispatcher = new Dispatcher($handler, empty($middlewares) ? null : new Iterator($middlewares));
+		$dispatcher = new Dispatcher($handler, $middlewares);
 
 		return $dispatcher->handle($PsrRequest);
 	}

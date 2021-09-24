@@ -5,6 +5,7 @@ namespace Http\Handler\Abstracts;
 
 
 use Closure;
+use Co\Iterator;
 use Kiri\Abstracts\BaseObject;
 
 
@@ -33,12 +34,12 @@ class MiddlewareManager extends BaseObject
 			static::$_middlewares[$class] = [];
 		}
 		if (!isset(static::$_middlewares[$class][$method])) {
-			static::$_middlewares[$class][$method] = [];
+			static::$_middlewares[$class][$method] = new Iterator();
 		}
 		if (is_string($middlewares)) {
 			$middlewares = [$middlewares];
 		}
-		$source = &static::$_middlewares[$class][$method];
+		$source = static::$_middlewares[$class][$method];
 		foreach ($middlewares as $middleware) {
 			if (isset($source[$middleware])) {
 				continue;
