@@ -28,8 +28,6 @@ abstract class Handler implements RequestHandlerInterface
 	public function __construct(public CHl $handler, public ?Iterator $middlewares)
 	{
 		$this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
-
-		$this->middlewares->rewind();
 	}
 
 
@@ -40,9 +38,11 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
-		if (empty($this->middlewares) || !($middleware = $this->middlewares->current())) {
+		if ($this->middlewares->count() < 1 || !$this->middlewares->valid()) {
 			return $this->dispatcher($request);
 		}
+
+		$middleware = $this->middlewares->current();
 		if (!($middleware instanceof MiddlewareInterface)) {
 			throw new \Exception('get_implements_class($middleware) not found method process.');
 		}
@@ -60,6 +60,9 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function dispatcher(ServerRequestInterface $request): mixed
 	{
+		if ($this->middlewares->count() > 0) {
+			$this->middlewares->rewind();
+		}
 		$response = $this->aspectProxy->proxy($this->handler);
 		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
