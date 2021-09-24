@@ -34,7 +34,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Kiri\\": "kiri-core/",
+      "Kiri\\": "kiri-engine/",
       "Http\\Message\\": "http-message/",
       "Http\\Coroutine\\": "http-coroutine/",
       "Http\\Handler\\": "http-handler/",
