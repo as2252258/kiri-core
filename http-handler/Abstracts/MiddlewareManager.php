@@ -35,17 +35,14 @@ class MiddlewareManager extends BaseObject
 		if (!isset(static::$_middlewares[$class][$method])) {
 			static::$_middlewares[$class][$method] = [];
 		}
-
-        $source = &static::$_middlewares[$class][$method];
-		if (is_string($middlewares) && !in_array($middlewares, $source)) {
-            $source[$middlewares] = di($middlewares);
-		} else {
-			foreach ($middlewares as $middleware) {
-				if (isset($source[$middleware])) {
-					continue;
-				}
-                $source[$middleware] = di($middleware);
+		if (is_string($middlewares)) {
+			$middlewares = [$middlewares];
+		}
+		foreach ($middlewares as $middleware) {
+			if (isset(static::$_middlewares[$class][$method][$middleware])) {
+				continue;
 			}
+			static::$_middlewares[$class][$method][$middleware] = di($middleware);
 		}
 		return true;
 	}
@@ -60,7 +57,7 @@ class MiddlewareManager extends BaseObject
 		if ($handler instanceof Closure || !isset(static::$_middlewares[$handler[0]])) {
 			return null;
 		}
-        return static::$_middlewares[$handler[0]][$handler[1]] ?? null;
+		return static::$_middlewares[$handler[0]][$handler[1]] ?? null;
 	}
 
 
