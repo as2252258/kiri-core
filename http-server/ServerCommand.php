@@ -122,10 +122,10 @@ class ServerCommand extends Command
 		$this->eventProvider->on(OnAfterWorkerStart::class, function () {
 			$lists = HandlerManager::dump();
 			foreach ($lists as $list) {
-				if ($list instanceof \Closure) {
+				/** @var Handler|Closure $list */
+				if ($list->callback instanceof \Closure) {
 					continue;
 				}
-				/** @var Handler|Closure $list */
 				MiddlewareManager::add($list->callback[0], $list->callback[1], null);
 			}
 		});
