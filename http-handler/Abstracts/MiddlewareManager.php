@@ -26,19 +26,14 @@ class MiddlewareManager extends BaseObject
 	/**
 	 * @param $class
 	 * @param $method
-	 * @param array|string $middlewares
+	 * @param array|string|null $middlewares
 	 * @return bool
 	 */
-	public static function add($class, $method, array|string $middlewares): bool
+	public static function add($class, $method, array|string|null $middlewares): bool
 	{
-		if (is_object($class)) {
-			$class = $class::class;
-		}
-		if (!isset(static::$_middlewares[$class])) {
-			static::$_middlewares[$class] = [];
-		}
-		if (!isset(static::$_middlewares[$class][$method])) {
-			static::$_middlewares[$class][$method] = new Iterator();
+		[$class, $method] = static::setDefault($class, $method);
+		if (empty($middlewares)) {
+			return false;
 		}
 		if (is_string($middlewares)) {
 			$middlewares = [$middlewares];
@@ -51,6 +46,22 @@ class MiddlewareManager extends BaseObject
 			$source[$middleware] = di($middleware);
 		}
 		return true;
+	}
+
+
+	private static function setDefault($class, $method): array
+	{
+		if (is_object($class)) {
+			$class = $class::class;
+		}
+
+		if (!isset(static::$_middlewares[$class])) {
+			static::$_middlewares[$class] = [];
+		}
+		if (!isset(static::$_middlewares[$class][$method])) {
+			static::$_middlewares[$class][$method] = new Iterator();
+		}
+		return [$class, $method];
 	}
 
 
