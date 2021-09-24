@@ -4,6 +4,7 @@ namespace Server\Service;
 
 
 use Annotation\Inject;
+use Co\Iterator;
 use Exception;
 use Http\Handler\Abstracts\HandlerManager;
 use Http\Handler\Abstracts\MiddlewareManager;
@@ -28,7 +29,6 @@ use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnCloseInterface;
 use Server\SInterface\OnConnectInterface;
 use Server\SInterface\OnRequestInterface;
-use Swoole\Coroutine\Iterator;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
@@ -113,9 +113,11 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	protected function handler(Handler $handler, $PsrRequest): \Psr\Http\Message\ResponseInterface
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
-
-		$dispatcher = new Dispatcher($handler, $middlewares);
-
+		if ($middlewares instanceof Iterator) {
+			$dispatcher = new Dispatcher($handler, $middlewares);
+		} else {
+			$dispatcher = new Dispatcher($handler, new Iterator());
+		}
 		return $dispatcher->handle($PsrRequest);
 	}
 

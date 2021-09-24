@@ -56,23 +56,12 @@ class MiddlewareManager extends BaseObject
 
 	/**
 	 * @param $handler
-	 * @return mixed
+	 * @return Iterator|null
 	 */
-	public static function get($handler): Iterator
+	public static function get($handler): ?Iterator
 	{
 		if (!($handler instanceof Closure)) {
-			if (!isset(static::$_middlewares[$handler[0]])) {
-				static::$_middlewares[$handler[0]] = [];
-			}
-			if (!isset(static::$_middlewares[$handler[0]][$handler[1]])) {
-				static::$_middlewares[$handler[0]][$handler[1]] = new Iterator();
-			}
-			/** @var Iterator $iterator */
-			$iterator = static::$_middlewares[$handler[0]][$handler[1]];
-			if ($iterator->count() > 0 && !$iterator->valid()) {
-				$iterator->rewind();
-			}
-			return $iterator;
+			return static::$_middlewares[$handler[0]][$handler[1]] ?? null;
 		}
 		return di(Iterator::class);
 	}
