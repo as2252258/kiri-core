@@ -27,12 +27,11 @@ use Psr\Http\Server\MiddlewareInterface;
 			$this->middleware = [$this->middleware];
 		}
 		$array = [];
-
-
 		foreach ($this->middleware as $value) {
 			if (!in_array(MiddlewareInterface::class, class_implements($value))) {
 				throw new \Exception('The middleware');
 			}
+			$array[] = $value;
 		}
 		$this->middleware = $array;
 	}
