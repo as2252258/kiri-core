@@ -12,23 +12,21 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Swoole\Coroutine\Iterator;
 
 
 abstract class Handler implements RequestHandlerInterface
 {
 
 
-    private int $offset = 0;
-
-
     protected AspectProxy $aspectProxy;
 
 
     /**
-     * @param \Http\Handler\Handler $handler
-     * @param array|null $middlewares
+     * @param CHl $handler
+     * @param Iterator $middlewares
      */
-    public function __construct(public CHl $handler, public ?array $middlewares)
+    public function __construct(public CHl $handler, public Iterator $middlewares)
     {
         $this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
     }
@@ -41,16 +39,15 @@ abstract class Handler implements RequestHandlerInterface
      */
     protected function execute(ServerRequestInterface $request): ResponseInterface
     {
-        if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
+		$middleware = $this->middlewares->current();
+        if (empty($middleware)) {
             return $this->dispatcher($request);
         }
+	    if (!($middleware instanceof MiddlewareInterface)) {
+		    throw new \Exception('get_implements_class($middleware) not found method process.');
+	    }
 
-        $middleware = $this->middlewares[$this->offset];
-        if (!($middleware instanceof MiddlewareInterface)) {
-            throw new \Exception('get_implements_class($middleware) not found method process.');
-        }
-
-        ++$this->offset;
+        $this->middlewares->next();
 
         return $middleware->process($request, $this);
     }

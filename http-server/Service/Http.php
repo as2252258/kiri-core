@@ -16,6 +16,7 @@ use Http\Message\Stream;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Kiri\Pool\Helper\SplQueue;
 use Psr\Http\Message\ServerRequestInterface;
 use Server\Abstracts\Utility\EventDispatchHelper;
 use Server\Abstracts\Utility\ResponseHelper;
@@ -28,6 +29,7 @@ use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnCloseInterface;
 use Server\SInterface\OnConnectInterface;
 use Server\SInterface\OnRequestInterface;
+use Swoole\Coroutine\Iterator;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
@@ -113,7 +115,8 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
 
-		$dispatcher = new Dispatcher($handler, $middlewares);
+
+		$dispatcher = new Dispatcher($handler, new Iterator($middlewares));
 
 		return $dispatcher->handle($PsrRequest);
 	}
