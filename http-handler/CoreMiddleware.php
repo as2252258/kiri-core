@@ -20,7 +20,6 @@ class CoreMiddleware extends Middleware
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		var_dump(get_called_class());
 		$this->response->withAccessControlAllowOrigin('*')
 			->withAccessControlRequestMethod($request->getAccessControlRequestMethod())
 			->withAccessControlAllowHeaders($request->getAccessControlAllowHeaders());
