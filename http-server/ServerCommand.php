@@ -118,17 +118,18 @@ class ServerCommand extends Command
 		$this->eventProvider->on(OnBeforeWorkerStart::class, [di(OnServerWorker::class), 'setConfigure']);
 		$this->eventProvider->on(OnWorkerStart::class, [di(WorkerDispatch::class), 'dispatch']);
 		$this->eventProvider->on(OnTaskerStart::class, [di(TaskerDispatch::class), 'dispatch']);
-
 		$this->eventProvider->on(OnAfterWorkerStart::class, function () {
 			$lists = HandlerManager::getHandlers();
 			foreach ($lists as $list) {
-				foreach ($list as $value) {
-					/** @var Handler|Closure $list */
-					if ($value->callback instanceof \Closure) {
-						continue;
+				Coroutine\go(function () use ($list) {
+					foreach ($list as $value) {
+						/** @var Handler|Closure $list */
+						if ($value->callback instanceof \Closure) {
+							continue;
+						}
+						MiddlewareManager::add($value->callback[0], $value->callback[1], null);
 					}
-					MiddlewareManager::add($value->callback[0], $value->callback[1], null);
-				}
+				});
 			}
 		});
 		$manager->start();
