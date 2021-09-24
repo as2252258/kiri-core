@@ -26,6 +26,8 @@ class CoreMiddleware extends Middleware
 			->withAccessControlRequestMethod($request->getAccessControlRequestMethod())
 			->withAccessControlAllowHeaders($request->getAccessControlAllowHeaders());
 
+		var_dump(get_called_class());
+
 		return $handler->handle($request);
 	}
 
