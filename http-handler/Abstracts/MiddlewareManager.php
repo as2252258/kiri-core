@@ -42,7 +42,6 @@ class MiddlewareManager extends BaseObject
 			if (isset(static::$_middlewares[$class][$method][$middleware])) {
 				continue;
 			}
-			echo sprintf('%s::%s -> %s', $class, $method, $middleware) . PHP_EOL;
 			static::$_middlewares[$class][$method][$middleware] = di($middleware);
 		}
 		return true;
