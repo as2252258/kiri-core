@@ -2,7 +2,6 @@
 
 namespace Http\Handler\Abstracts;
 
-use Annotation\Inject;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
@@ -19,95 +18,94 @@ abstract class Handler implements RequestHandlerInterface
 {
 
 
-    protected AspectProxy $aspectProxy;
+	protected AspectProxy $aspectProxy;
 
 
-    /**
-     * @param CHl $handler
-     * @param Iterator $middlewares
-     */
-    public function __construct(public CHl $handler, public Iterator $middlewares)
-    {
-        $this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
-    }
+	/**
+	 * @param CHl $handler
+	 * @param null|Iterator $middlewares
+	 */
+	public function __construct(public CHl $handler, public ?Iterator $middlewares)
+	{
+		$this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
+	}
 
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Exception
-     */
-    protected function execute(ServerRequestInterface $request): ResponseInterface
-    {
-		$middleware = $this->middlewares->current();
-        if (empty($middleware)) {
-            return $this->dispatcher($request);
-        }
-	    if (!($middleware instanceof MiddlewareInterface)) {
-		    throw new \Exception('get_implements_class($middleware) not found method process.');
-	    }
+	/**
+	 * @param ServerRequestInterface $request
+	 * @return ResponseInterface
+	 * @throws \Exception
+	 */
+	protected function execute(ServerRequestInterface $request): ResponseInterface
+	{
+		if (empty($this->middlewares) || !($middleware = $this->middlewares->current())) {
+			return $this->dispatcher($request);
+		}
+		if (!($middleware instanceof MiddlewareInterface)) {
+			throw new \Exception('get_implements_class($middleware) not found method process.');
+		}
 
-        $this->middlewares->next();
+		$this->middlewares->next();
 
-        return $middleware->process($request, $this);
-    }
-
-
-    /**
-     * @param ServerRequestInterface $request
-     * @return mixed
-     * @throws \Exception
-     */
-    protected function dispatcher(ServerRequestInterface $request): mixed
-    {
-        $response = $this->aspectProxy->proxy($this->handler);
-        if (!($response instanceof ResponseInterface)) {
-            $response = $this->transferToResponse($response);
-        }
-        $response->withHeader('Run-Time', $this->_runTime($request));
-        return $response;
-    }
+		return $middleware->process($request, $this);
+	}
 
 
-    /**
-     * @param ServerRequest $request
-     * @return float
-     */
-    private function _runTime(ServerRequestInterface $request): float
-    {
-        $float = microtime(true) - time();
+	/**
+	 * @param ServerRequestInterface $request
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	protected function dispatcher(ServerRequestInterface $request): mixed
+	{
+		$response = $this->aspectProxy->proxy($this->handler);
+		if (!($response instanceof ResponseInterface)) {
+			$response = $this->transferToResponse($response);
+		}
+		$response->withHeader('Run-Time', $this->_runTime($request));
+		return $response;
+	}
 
-        $serverParams = $request->getServerParams();
 
-        $rTime = $serverParams['request_time_float'] - $serverParams['request_time'];
+	/**
+	 * @param ServerRequest $request
+	 * @return float
+	 */
+	private function _runTime(ServerRequestInterface $request): float
+	{
+		$float = microtime(true) - time();
 
-        return round($float - $rTime, 6);
-    }
+		$serverParams = $request->getServerParams();
+
+		$rTime = $serverParams['request_time_float'] - $serverParams['request_time'];
+
+		return round($float - $rTime, 6);
+	}
 
 
-    /**
-     * @param mixed $responseData
-     * @return \Server\Constrict\ResponseInterface
-     * @throws \Exception
-     */
-    private function transferToResponse(mixed $responseData): ResponseInterface
-    {
-        $interface = response()->withStatus(200);
-        if (!$interface->hasContentType()) {
-            $interface->withContentType('application/json;charset=utf-8');
-        }
-        if (is_object($responseData)) {
-            $responseData = get_object_vars($responseData);
-        }
-        if (str_contains($interface->getContentType(), 'xml')) {
-            $interface->getBody()->write(Help::toXml($responseData));
-        } else if (is_array($responseData)) {
-            $interface->getBody()->write(json_encode($responseData));
-        } else {
-            $interface->getBody()->write((string)$responseData);
-        }
-        return $interface;
-    }
+	/**
+	 * @param mixed $responseData
+	 * @return \Server\Constrict\ResponseInterface
+	 * @throws \Exception
+	 */
+	private function transferToResponse(mixed $responseData): ResponseInterface
+	{
+		$interface = response()->withStatus(200);
+		if (!$interface->hasContentType()) {
+			$interface->withContentType('application/json;charset=utf-8');
+		}
+		if (is_object($responseData)) {
+			$responseData = get_object_vars($responseData);
+		}
+		if (str_contains($interface->getContentType(), 'xml')) {
+			$interface->getBody()->write(Help::toXml($responseData));
+		} else if (is_array($responseData)) {
+			$interface->getBody()->write(json_encode($responseData));
+		} else {
+			$interface->getBody()->write((string)$responseData);
+		}
+		return $interface;
+	}
 
 
 }
