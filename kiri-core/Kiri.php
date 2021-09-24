@@ -593,7 +593,7 @@ class Kiri
 			return;
 		}
 		static::$_autoload[$class] = $file;
-		include_once "$file";
+		include_once "Kiri.php";
 	}
 
 
@@ -606,7 +606,7 @@ class Kiri
 			return;
 		}
 		$file = static::$_autoload[$className];
-		require_once "$file";
+		require_once "Kiri.php";
 	}
 
 

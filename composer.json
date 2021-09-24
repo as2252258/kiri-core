@@ -34,12 +34,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Kiri\\": "core/",
+      "Kiri\\": "kiri-core/",
       "Http\\Message\\": "http-message/",
+      "Http\\Coroutine\\": "http-coroutine/",
       "Http\\Handler\\": "http-handler/",
       "Server\\": "http-server/",
       "Gii\\": "kiri-gii/",
-      "Annotation\\": "note/"
+      "Annotation\\": "kiri-note/"
     },
     "files": [
       "error.php",
