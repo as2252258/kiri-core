@@ -120,13 +120,15 @@ class ServerCommand extends Command
 		$this->eventProvider->on(OnTaskerStart::class, [di(TaskerDispatch::class), 'dispatch']);
 
 		$this->eventProvider->on(OnAfterWorkerStart::class, function () {
-			$lists = HandlerManager::dump();
+			$lists = HandlerManager::getHandlers();
 			foreach ($lists as $list) {
-				/** @var Handler|Closure $list */
-				if ($list->callback instanceof \Closure) {
-					continue;
+				foreach ($list as $value) {
+					/** @var Handler|Closure $list */
+					if ($value->callback instanceof \Closure) {
+						continue;
+					}
+					MiddlewareManager::add($value->callback[0], $value->callback[1], null);
 				}
-				MiddlewareManager::add($list->callback[0], $list->callback[1], null);
 			}
 		});
 		$manager->start();

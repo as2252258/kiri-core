@@ -46,6 +46,15 @@ class HandlerManager
 	/**
 	 * @return array
 	 */
+	public static function getHandlers(): array
+	{
+		return static::$handlers;
+	}
+
+
+	/**
+	 * @return array
+	 */
 	public static function dump(): array
 	{
 		$array = [];
