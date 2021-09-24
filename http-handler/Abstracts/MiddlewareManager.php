@@ -38,13 +38,13 @@ class MiddlewareManager extends BaseObject
 
         $source = &static::$_middlewares[$class][$method];
 		if (is_string($middlewares) && !in_array($middlewares, $source)) {
-            $source[] = di($middlewares);
+            $source[$middlewares] = di($middlewares);
 		} else {
 			foreach ($middlewares as $middleware) {
-				if (in_array($middleware, $source)) {
+				if (isset($source[$middleware])) {
 					continue;
 				}
-                $source[] = di($middleware);
+                $source[$middleware] = di($middleware);
 			}
 		}
 		return true;
