@@ -20,14 +20,9 @@ class CoreMiddleware extends Middleware
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		// TODO: Implement process() method.
-
-		\response()->withAccessControlAllowOrigin('*')
+		$this->response->withAccessControlAllowOrigin('*')
 			->withAccessControlRequestMethod($request->getAccessControlRequestMethod())
 			->withAccessControlAllowHeaders($request->getAccessControlAllowHeaders());
-
-		var_dump(get_called_class());
-
 		return $handler->handle($request);
 	}
 

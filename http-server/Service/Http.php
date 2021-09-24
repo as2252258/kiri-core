@@ -5,15 +5,14 @@ namespace Server\Service;
 
 use Annotation\Inject;
 use Exception;
-use Http\Handler\Context;
 use Http\Handler\Abstracts\HandlerManager;
+use Http\Handler\Abstracts\MiddlewareManager;
+use Http\Handler\Context;
 use Http\Handler\Dispatcher;
 use Http\Handler\Handler;
 use Http\Handler\Router;
-use Http\Message\ContentType;
 use Http\Message\ServerRequest;
 use Http\Message\Stream;
-use Http\Handler\Abstracts\MiddlewareManager;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
@@ -39,32 +38,32 @@ use Swoole\Server;
 class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 {
 
-    use EventDispatchHelper;
-    use ResponseHelper;
+	use EventDispatchHelper;
+	use ResponseHelper;
 
-    /** @var Router|mixed */
-    #[Inject(Router::class)]
-    public Router $router;
-
-
-    /**
-     * @var ExceptionHandlerInterface
-     */
-    public ExceptionHandlerInterface $exceptionHandler;
+	/** @var Router|mixed */
+	#[Inject(Router::class)]
+	public Router $router;
 
 
-    /**
-     * @throws ConfigException
-     */
-    public function init()
-    {
-        $exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
-        if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
-            $exceptionHandler = ExceptionHandlerDispatcher::class;
-        }
-        $this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
-        $this->responseEmitter = Kiri::getDi()->get(ResponseEmitter::class);
-    }
+	/**
+	 * @var ExceptionHandlerInterface
+	 */
+	public ExceptionHandlerInterface $exceptionHandler;
+
+
+	/**
+	 * @throws ConfigException
+	 */
+	public function init()
+	{
+		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
+		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
+			$exceptionHandler = ExceptionHandlerDispatcher::class;
+		}
+		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
+		$this->responseEmitter = Kiri::getDi()->get(ResponseEmitter::class);
+	}
 
 
 	/**
@@ -85,7 +84,7 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	public function onRequest(Request $request, Response $response): void
 	{
 		try {
-            [$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
+			[$PsrRequest, $PsrResponse] = $this->initRequestResponse($request);
 			/** @var Handler $handler */
 			$handler = HandlerManager::get($request->server['request_uri'], $request->getMethod());
 			if (is_integer($handler)) {
@@ -96,11 +95,11 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 				$PsrResponse = $this->handler($handler, $PsrRequest);
 			}
 		} catch (\Throwable $throwable) {
-            $PsrResponse= $this->exceptionHandler->emit($throwable, $this->response);
+			$PsrResponse = $this->exceptionHandler->emit($throwable, $this->response);
 		} finally {
 			$this->responseEmitter->sender($response, $PsrResponse);
-            $this->eventDispatch->dispatch(new OnAfterRequest());
-        }
+			$this->eventDispatch->dispatch(new OnAfterRequest());
+		}
 	}
 
 
@@ -130,10 +129,11 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 		$PsrResponse = Context::setContext(ResponseInterface::class, new \Http\Message\Response());
 
 		$PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
-
+		if ($PsrRequest->isMethod('OPTIONS')) {
+			$request->server['request_uri'] = '/*';
+		}
 		return [$PsrRequest, $PsrResponse];
 	}
-
 
 
 	/**
