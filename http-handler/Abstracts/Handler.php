@@ -44,7 +44,7 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
-		if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
+		if (empty($this->middlewares) || !array_key_exists($this->offset, $this->middlewares)) {
 			return $this->dispatcher($request);
 		}
 
