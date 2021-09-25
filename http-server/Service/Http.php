@@ -47,10 +47,6 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	public Router $router;
 
 
-    #[Inject(Dispatcher::class)]
-    public Dispatcher $dispatcher;
-
-
 	/**
 	 * @var ExceptionHandlerInterface
 	 */
@@ -118,11 +114,8 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	protected function handler(Handler $handler, $PsrRequest): \Psr\Http\Message\ResponseInterface
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
-        $this->dispatcher->setHandler($handler);
-        if (!empty($middlewares)) {
-            $this->dispatcher->setMiddlewares($middlewares);
-        }
-        return  $this->dispatcher->handle($PsrRequest);
+        $dispatcher = new Dispatcher($handler, $middlewares);
+        return  $dispatcher->handle($PsrRequest);
 	}
 
 

@@ -102,10 +102,10 @@ abstract class Handler implements RequestHandlerInterface
 		if (!$interface->hasContentType()) {
 			$interface->withContentType('application/json;charset=utf-8');
 		}
-		if (is_object($responseData)) {
-			$responseData = get_object_vars($responseData);
-		}
 		if (str_contains($interface->getContentType(), 'xml')) {
+            if (is_object($responseData)) {
+                $responseData = get_object_vars($responseData);
+            }
 			$interface->getBody()->write(Help::toXml($responseData));
 		} else if (is_array($responseData)) {
 			$interface->getBody()->write(json_encode($responseData));
