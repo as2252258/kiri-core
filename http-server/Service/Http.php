@@ -64,7 +64,6 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 		}
 		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
 		$this->responseEmitter = Kiri::getDi()->get(ResponseEmitter::class);
-        $this->dispatcher = Kiri::getDi()->get(Dispatcher::class);
 	}
 
 
