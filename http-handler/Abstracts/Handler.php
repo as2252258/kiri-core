@@ -22,6 +22,9 @@ abstract class Handler implements RequestHandlerInterface
 	protected AspectProxy $aspectProxy;
 
 
+    protected int $offset = 0;
+
+
 	/**
 	 * @param CHl $handler
 	 * @param null|Iterator $middlewares
@@ -39,16 +42,16 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
-		if ($this->middlewares->count() < 1 || !$this->middlewares->valid()) {
+		if ($this->middlewares->count() < 1) {
 			return $this->dispatcher($request);
 		}
 
-		$middleware = $this->middlewares->current();
+		$middleware = $this->middlewares->offsetGet($this->offset);
 		if (!($middleware instanceof MiddlewareInterface)) {
 			throw new \Exception('get_implements_class($middleware) not found method process.');
 		}
 
-		$this->middlewares->next();
+		$this->offset++;
 
 		return $middleware->process($request, $this);
 	}
@@ -61,9 +64,6 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function dispatcher(ServerRequestInterface $request): mixed
 	{
-		if ($this->middlewares->count() > 0) {
-			$this->middlewares->rewind();
-		}
 		$response = $this->aspectProxy->proxy($this->handler);
 		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
