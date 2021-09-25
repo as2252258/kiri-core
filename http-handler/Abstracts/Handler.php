@@ -27,6 +27,14 @@ abstract class Handler implements RequestHandlerInterface
     public ?Iterator $middlewares = null;
 
     /**
+     * @param \Kiri\Proxy\AspectProxy $aspectProxy
+     */
+    public function setAspectProxy(AspectProxy $aspectProxy): void
+    {
+        $this->aspectProxy = $aspectProxy;
+    }
+
+    /**
      * @param \Http\Handler\Handler $handler
      */
     public function setHandler(CHl $handler): void
