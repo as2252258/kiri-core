@@ -47,6 +47,9 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	public Router $router;
 
 
+    public Dispatcher $dispatcher;
+
+
 	/**
 	 * @var ExceptionHandlerInterface
 	 */
@@ -64,6 +67,7 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 		}
 		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
 		$this->responseEmitter = Kiri::getDi()->get(ResponseEmitter::class);
+        $this->dispatcher = Kiri::getDi()->get(Dispatcher::class);
 	}
 
 
@@ -113,12 +117,11 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	protected function handler(Handler $handler, $PsrRequest): \Psr\Http\Message\ResponseInterface
 	{
 		$middlewares = MiddlewareManager::get($handler->callback);
-		if ($middlewares instanceof Iterator) {
-			$dispatcher = new Dispatcher($handler, $middlewares);
-		} else {
-			$dispatcher = new Dispatcher($handler, new Iterator());
-		}
-		return $dispatcher->handle($PsrRequest);
+        $this->dispatcher->setHandler($handler);
+        if (!empty($middlewares)) {
+            $this->dispatcher->setMiddlewares($middlewares);
+        }
+        return  $this->dispatcher->handle($PsrRequest);
 	}
 
 

@@ -2,6 +2,7 @@
 
 namespace Http\Handler\Abstracts;
 
+use Annotation\Inject;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
@@ -19,20 +20,27 @@ abstract class Handler implements RequestHandlerInterface
 {
 
 
+    #[Inject(AspectProxy::class)]
 	protected AspectProxy $aspectProxy;
 
+    public CHl $handler;
+    public ?Iterator $middlewares = null;
 
-    protected int $offset = 0;
+    /**
+     * @param \Http\Handler\Handler $handler
+     */
+    public function setHandler(CHl $handler): void
+    {
+        $this->handler = $handler;
+    }
 
-
-	/**
-	 * @param CHl $handler
-	 * @param null|Iterator $middlewares
-	 */
-	public function __construct(public CHl $handler, public ?Iterator $middlewares)
-	{
-		$this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
-	}
+    /**
+     * @param \Swoole\Coroutine\Iterator|null $middlewares
+     */
+    public function setMiddlewares(?Iterator $middlewares): void
+    {
+        $this->middlewares = $middlewares;
+    }
 
 
 	/**
@@ -42,16 +50,16 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
-		if ($this->middlewares->count() < 1) {
+		if (empty($this->middlewares) || !$this->middlewares->valid()) {
 			return $this->dispatcher($request);
 		}
 
-		$middleware = $this->middlewares->offsetGet($this->offset);
+		$middleware = $this->middlewares->current();
 		if (!($middleware instanceof MiddlewareInterface)) {
 			throw new \Exception('get_implements_class($middleware) not found method process.');
 		}
 
-		$this->offset++;
+		$this->middlewares->next();
 
 		return $middleware->process($request, $this);
 	}
@@ -62,7 +70,7 @@ abstract class Handler implements RequestHandlerInterface
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	protected function dispatcher(ServerRequestInterface $request): mixed
+	public function dispatcher(ServerRequestInterface $request): mixed
 	{
 		$response = $this->aspectProxy->proxy($this->handler);
 		if (!($response instanceof ResponseInterface)) {
