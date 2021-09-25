@@ -59,6 +59,7 @@ abstract class Handler implements RequestHandlerInterface
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
 		if (empty($this->middlewares) || !$this->middlewares->valid()) {
+            $this->middlewares->rewind();
 			return $this->dispatcher($request);
 		}
 
