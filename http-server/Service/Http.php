@@ -47,6 +47,7 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	public Router $router;
 
 
+    #[Inject(Dispatcher::class)]
     public Dispatcher $dispatcher;
 
 
