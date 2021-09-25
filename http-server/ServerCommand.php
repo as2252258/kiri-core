@@ -79,7 +79,7 @@ class ServerCommand extends Command
 			}
 			$this->generate_runtime_builder($manager);
 		} catch (\Throwable $throwable) {
-			$output->write($throwable->getMessage());
+			$output->write(jTraceEx($throwable));
 		} finally {
 			return 1;
 		}
