@@ -23,52 +23,37 @@ abstract class Handler implements RequestHandlerInterface
     #[Inject(AspectProxy::class)]
 	protected AspectProxy $aspectProxy;
 
-    public CHl $handler;
-    public ?Iterator $middlewares = null;
 
-    /**
-     * @param \Kiri\Proxy\AspectProxy $aspectProxy
-     */
-    public function setAspectProxy(AspectProxy $aspectProxy): void
-    {
-        $this->aspectProxy = $aspectProxy;
-    }
+    protected int $offset = 0;
+
 
     /**
      * @param \Http\Handler\Handler $handler
+     * @param array|null $middlewares
      */
-    public function setHandler(CHl $handler): void
+    public function __construct(public CHl $handler, public ?array $middlewares)
     {
-        $this->handler = $handler;
+        $this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
     }
+
 
     /**
-     * @param \Swoole\Coroutine\Iterator|null $middlewares
-     */
-    public function setMiddlewares(?Iterator $middlewares): void
-    {
-        $this->middlewares = $middlewares;
-    }
-
-
-	/**
 	 * @param ServerRequestInterface $request
 	 * @return ResponseInterface
 	 * @throws \Exception
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
-		if (empty($this->middlewares) || !$this->middlewares->valid()) {
-            $this->middlewares->rewind();
+		if (empty($this->middlewares)) {
 			return $this->dispatcher($request);
 		}
 
-		$middleware = $this->middlewares->current();
+		$middleware = $this->middlewares[$this->offset];
 		if (!($middleware instanceof MiddlewareInterface)) {
 			throw new \Exception('get_implements_class($middleware) not found method process.');
 		}
 
-		$this->middlewares->next();
+        $this->offset++;
 
 		return $middleware->process($request, $this);
 	}
