@@ -39,6 +39,9 @@ class Handler
 
 		$dispatcher = Kiri::getDi()->get(EventProvider::class);
 		$dispatcher->on(OnAfterWorkerStart::class, function () {
+			if ($this->route instanceof Closure) {
+				return;
+			}
 			$this->_middlewares = MiddlewareManager::get($this->route);
 		});
 	}
