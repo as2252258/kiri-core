@@ -21,7 +21,7 @@ class Handler
 	public ?array $params = [];
 
 
-	public array $_middlewares = [];
+	public ?array $_middlewares = [];
 
 
 	/**
