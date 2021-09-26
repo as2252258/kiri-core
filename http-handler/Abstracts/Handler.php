@@ -6,38 +6,36 @@ use Annotation\Inject;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
-use Kiri\Events\EventDispatch;
 use Kiri\Kiri;
 use Kiri\Proxy\AspectProxy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Swoole\Coroutine\Iterator;
 
 
 abstract class Handler implements RequestHandlerInterface
 {
 
 
-    #[Inject(AspectProxy::class)]
+	#[Inject(AspectProxy::class)]
 	protected AspectProxy $aspectProxy;
 
 
-    protected int $offset = 0;
+	protected int $offset = 0;
 
 
-    /**
-     * @param CHl $handler
-     * @param array|null $middlewares
-     */
-    public function __construct(public CHl $handler, public ?array $middlewares)
-    {
-        $this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
-    }
+	/**
+	 * @param CHl $handler
+	 * @param array|null $middlewares
+	 */
+	public function __construct(public CHl $handler, public ?array $middlewares)
+	{
+		$this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
+	}
 
 
-    /**
+	/**
 	 * @param ServerRequestInterface $request
 	 * @return ResponseInterface
 	 * @throws \Exception
@@ -53,9 +51,19 @@ abstract class Handler implements RequestHandlerInterface
 			throw new \Exception('get_implements_class($middleware) not found method process.');
 		}
 
-        $this->offset++;
+		$this->offset++;
 
 		return $middleware->process($request, $this);
+	}
+
+
+	private function redecue()
+	{
+		return function ($stack, $pipe) {
+			return function ($passable) use ($stack, $pipe) {
+				return ([$pipe, 'process'])($passable, $stack);
+			};
+		};
 	}
 
 
@@ -103,9 +111,9 @@ abstract class Handler implements RequestHandlerInterface
 			$interface->withContentType('application/json;charset=utf-8');
 		}
 		if (str_contains($interface->getContentType(), 'xml')) {
-            if (is_object($responseData)) {
-                $responseData = get_object_vars($responseData);
-            }
+			if (is_object($responseData)) {
+				$responseData = get_object_vars($responseData);
+			}
 			$interface->getBody()->write(Help::toXml($responseData));
 		} else if (is_array($responseData)) {
 			$interface->getBody()->write(json_encode($responseData));

@@ -3,7 +3,10 @@
 namespace Http\Handler;
 
 use Closure;
+use Http\Handler\Abstracts\MiddlewareManager;
+use Kiri\Events\EventProvider;
 use Kiri\Kiri;
+use Server\Events\OnAfterWorkerStart;
 
 class Handler
 {
@@ -18,6 +21,9 @@ class Handler
 	public ?array $params = [];
 
 
+	public array $_middlewares = [];
+
+
 	/**
 	 * @param string $route
 	 * @param array|Closure $callback
@@ -30,6 +36,11 @@ class Handler
 		$this->_injectParams($callback);
 
 		$this->callback = $callback;
+
+		$dispatcher = Kiri::getDi()->get(EventProvider::class);
+		$dispatcher->on(OnAfterWorkerStart::class, function () {
+			$this->_middlewares = MiddlewareManager::get($this->route);
+		});
 	}
 
 

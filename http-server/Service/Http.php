@@ -4,10 +4,8 @@ namespace Server\Service;
 
 
 use Annotation\Inject;
-use Co\Iterator;
 use Exception;
 use Http\Handler\Abstracts\HandlerManager;
-use Http\Handler\Abstracts\MiddlewareManager;
 use Http\Handler\Context;
 use Http\Handler\Dispatcher;
 use Http\Handler\Handler;
@@ -112,9 +110,8 @@ class Http implements OnCloseInterface, OnConnectInterface, OnRequestInterface
 	 */
 	protected function handler(Handler $handler, $PsrRequest): \Psr\Http\Message\ResponseInterface
 	{
-		$middlewares = MiddlewareManager::get($handler->callback);
-        $dispatcher = new Dispatcher($handler, $middlewares);
-        return  $dispatcher->handle($PsrRequest);
+		$dispatcher = new Dispatcher($handler, $handler->_middlewares);
+		return $dispatcher->handle($PsrRequest);
 	}
 
 
