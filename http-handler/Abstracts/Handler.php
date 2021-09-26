@@ -28,7 +28,7 @@ abstract class Handler implements RequestHandlerInterface
 
 
     /**
-     * @param \Http\Handler\Handler $handler
+     * @param CHl $handler
      * @param array|null $middlewares
      */
     public function __construct(public CHl $handler, public ?array $middlewares)
@@ -44,7 +44,7 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
-		if (empty($this->middlewares) || !array_key_exists($this->offset, $this->middlewares)) {
+		if (empty($this->middlewares) || !isset($this->middlewares[$this->offset])) {
 			return $this->dispatcher($request);
 		}
 
