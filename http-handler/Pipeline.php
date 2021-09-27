@@ -70,7 +70,6 @@ class Pipeline
 	 * 执行
 	 * @param callable $destination
 	 * @return static
-	 * @throws ReflectionException
 	 */
 	public function then(callable $destination): static
 	{

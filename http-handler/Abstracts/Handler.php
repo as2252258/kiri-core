@@ -7,8 +7,6 @@ use Exception;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
-use Kiri\Kiri;
-use Kiri\Proxy\AspectProxy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,11 +15,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 abstract class Handler implements RequestHandlerInterface
 {
-
-
-	#[Inject(AspectProxy::class)]
-	protected AspectProxy $aspectProxy;
-
 
 	protected int $offset = 0;
 
@@ -32,7 +25,6 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	public function __construct(public CHl $handler, public ?array $middlewares)
 	{
-		$this->aspectProxy = Kiri::getDi()->get(AspectProxy::class);
 	}
 
 
