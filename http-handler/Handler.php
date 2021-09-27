@@ -47,6 +47,8 @@ class Handler
 			$this->_middlewares = MiddlewareManager::get($this->callback);
 
 			$aspect = NoteManager::getSpecify_annotation(Aspect::class, $this->callback[0], $this->callback[1]);
+
+			$this->callback[0] = Kiri::getDi()->get($this->callback[0]);
 			if (!is_null($aspect)) {
 				$this->recover($aspect);
 			}
@@ -69,9 +71,8 @@ class Handler
 		$this->params = [];
 		$this->callback = static function () use ($aspect, $callback, $params) {
 			$aspect->before();
-			$result = $aspect->invoke([$callback, $callback[1]], $params);
+			$result = $aspect->invoke($callback, $params);
 			$aspect->after($result);
-
 			return $result;
 		};
 	}
