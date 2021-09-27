@@ -2,8 +2,10 @@
 
 namespace Http\Handler;
 
+use Annotation\Aspect;
 use Closure;
 use Http\Handler\Abstracts\MiddlewareManager;
+use Kiri\Di\NoteManager;
 use Kiri\Events\EventProvider;
 use Kiri\Kiri;
 use Server\Events\OnAfterWorkerStart;
@@ -43,7 +45,35 @@ class Handler
 				return;
 			}
 			$this->_middlewares = MiddlewareManager::get($this->callback);
+
+			$aspect = NoteManager::getSpecify_annotation(Aspect::class, $this->callback[0], $this->callback[1]);
+			if (!is_null($aspect)) {
+				$this->recover($aspect);
+			}
 		});
+	}
+
+
+	/**
+	 * @param Aspect $aspect
+	 */
+	public function recover(Aspect $aspect)
+	{
+		$aspect = Kiri::getDi()->get($aspect->aspect);
+		if (empty($aspect)) {
+			return;
+		}
+		$callback = $this->callback;
+		$params = $this->params;
+
+		$this->params = [];
+		$this->callback = static function () use ($aspect, $callback, $params) {
+			$aspect->before();
+			$result = $aspect->invoke([$callback, $callback[1]], $params);
+			$aspect->after($result);
+
+			return $result;
+		};
 	}
 
 

@@ -3,6 +3,7 @@
 namespace Http\Handler\Abstracts;
 
 use Annotation\Inject;
+use Exception;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
@@ -38,7 +39,7 @@ abstract class Handler implements RequestHandlerInterface
 	/**
 	 * @param ServerRequestInterface $request
 	 * @return ResponseInterface
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	protected function execute(ServerRequestInterface $request): ResponseInterface
 	{
@@ -48,7 +49,7 @@ abstract class Handler implements RequestHandlerInterface
 
 		$middleware = $this->middlewares[$this->offset];
 		if (!($middleware instanceof MiddlewareInterface)) {
-			throw new \Exception('get_implements_class($middleware) not found method process.');
+			throw new Exception('get_implements_class($middleware) not found method process.');
 		}
 
 		$this->offset++;
@@ -57,24 +58,14 @@ abstract class Handler implements RequestHandlerInterface
 	}
 
 
-	private function redecue()
-	{
-		return function ($stack, $pipe) {
-			return function ($passable) use ($stack, $pipe) {
-				return ([$pipe, 'process'])($passable, $stack);
-			};
-		};
-	}
-
-
 	/**
 	 * @param ServerRequestInterface $request
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function dispatcher(ServerRequestInterface $request): mixed
 	{
-		$response = $this->aspectProxy->proxy($this->handler);
+		$response = call_user_func($this->handler->callback, ...$this->handler->params);
 		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}
@@ -102,7 +93,7 @@ abstract class Handler implements RequestHandlerInterface
 	/**
 	 * @param mixed $responseData
 	 * @return \Server\Constrict\ResponseInterface
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function transferToResponse(mixed $responseData): ResponseInterface
 	{
