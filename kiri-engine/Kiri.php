@@ -6,7 +6,7 @@ namespace Kiri;
 
 
 use Annotation\Annotation;
-use Database\ActiveRecord;
+use Database\ModelInterface;
 use Database\Collection;
 use Exception;
 use JetBrains\PhpStorm\Pure;
@@ -536,7 +536,7 @@ class Kiri
 	public static function param(string $event, $data = NULL): bool|string
 	{
 		if (is_object($data)) {
-			if ($data instanceof ActiveRecord || $data instanceof Collection) {
+			if ($data instanceof ModelInterface || $data instanceof Collection) {
 				$data = $data->getAttributes();
 			} else {
 				$data = get_object_vars($data);
