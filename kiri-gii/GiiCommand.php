@@ -45,8 +45,6 @@ class GiiCommand extends Command
 	 * @return array
 	 * @throws ComponentException
 	 * @throws ConfigException
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): array
 	{

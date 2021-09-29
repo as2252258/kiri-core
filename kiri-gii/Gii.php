@@ -51,8 +51,7 @@ class Gii
 	 *
 	 * @param InputInterface $input
 	 * @return array
-	 * @throws ComponentException
-	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function run(?Connection $db, InputInterface $input): array
 	{
@@ -64,13 +63,12 @@ class Gii
 	 * @param InputInterface $input
 	 * @param $db
 	 * @return array
-	 * @throws ComponentException
 	 * @throws Exception
 	 */
 	public function gen(InputInterface $input, $db): array
 	{
 		$this->input = $input;
-		if (!empty($db)) $this->db = $db;
+		$this->db = $db;
 
 		$make = $this->input->getArgument('make');
 		if (empty($make)) {
@@ -110,8 +108,6 @@ class Gii
 		if ($this->db instanceof Connection) {
 			return $this->makeByDatabases($make, $input);
 		}
-		$db = $this->input->getArgument('databases');
-		$this->db = Kiri::app()->get('db')->get($db);
 
 		return $this->makeByDatabases($make, $input);
 	}
