@@ -43,8 +43,8 @@ class GiiCommand extends Command
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @return array
-	 * @throws ComponentException
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): array
 	{
@@ -52,9 +52,9 @@ class GiiCommand extends Command
 		$gii = Kiri::app()->get('gii');
 
 		$connections = Kiri::app()->get('db');
-		if ($input->getArgument('databases')) {
-			return $gii->run($connections->get($input->getArgument('databases')), $input);
-		}
+//		if ($input->getArgument('databases')) {
+//			return $gii->run($connections->get($input->getArgument('databases')), $input);
+//		}
 
 		$array = [];
 		foreach (Config::get('databases') as $key => $connection) {
