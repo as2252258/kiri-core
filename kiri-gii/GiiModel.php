@@ -133,7 +133,7 @@ use Database\Model;
 		$html .= $this->createRules($this->fields);
 
 		if (is_object($class)) {
-			$html .= $this->getClassMethods($class, ['rules', 'tableName', 'attributes']);
+			$html .= $this->getClassMethods($class, ['rules', 'tableName', 'attributes', 'getDb']);
 		} else {
 			$other = $this->generate_json_function($html, $this->fields);
 			if (!empty($other)) {
