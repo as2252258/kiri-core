@@ -306,16 +306,15 @@ use Database\Model;
 				$e_x = explode(',', $key);
 				$key = '\'round\' => ' . $e_x[1] . ', \'maxLength\' => ' . ((int)$e_x[0] + 1);
 			} else if (is_string($key) && str_contains($key, ',')) {
-				$key = '\'between\' => [' . $key . ']';
 			} else {
 				$key = '\'maxLength\' => ' . $key;
 			}
 			if (count($_val) == 1) {
 				$_tmp = '
-			[\'' . $_val[0][3] . '\', ' . ($_val[0][1] == 'enum' ? '\'enum\' => ' . $key : $key) . ']';
+		[\'' . $_val[0][3] . '\', ' . ($_val[0][1] == 'enum' ? '\'enum\' => ' . ($key) : $key) . ']';
 			} else {
 				$_tmp = '
-			[[\'' . implode('\', \'', array_column($_val, 3)) . '\'], ' . $key . ']';
+		[[\'' . implode('\', \'', array_column($_val, 3)) . '\'], ' . $key . ']';
 			}
 			$string[] = $_tmp;
 		}

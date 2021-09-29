@@ -6,12 +6,8 @@ namespace Gii;
 
 use Exception;
 use Kiri\Abstracts\Config;
-use Kiri\Abstracts\Input;
-use Kiri\Exception\ComponentException;
 use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
-use ReflectionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,7 +32,7 @@ class GiiCommand extends Command
 	protected function configure()
 	{
 		$this->setName('sw:gii')
-			->addArgument('action',InputArgument::REQUIRED)
+			->addArgument('action', InputArgument::REQUIRED)
 			->setDescription('./snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx');
 	}
 
@@ -48,7 +44,7 @@ class GiiCommand extends Command
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function execute(InputInterface $input, OutputInterface $output): array
+	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		/** @var Gii $gii */
 		$gii = Kiri::app()->get('gii');
@@ -62,7 +58,10 @@ class GiiCommand extends Command
 		foreach (Config::get('databases.connections') as $key => $connection) {
 			$array[$key] = $gii->run($connections->get($key), $input);
 		}
-		return $array;
+
+		$output->writeln(json_encode($array, JSON_UNESCAPED_UNICODE));
+
+		return 1;
 	}
 
 }
