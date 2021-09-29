@@ -90,7 +90,7 @@ class Gii
 				$task->setInput($this->input);
 				return $task->generate();
 			default:
-				return $this->getModel($make, $db, $input);
+				return $this->getModel($make, $input);
 		}
 	}
 
@@ -101,9 +101,9 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function getModel($make, $db, $input): array
+	private function getModel($make, $input): array
 	{
-		return $this->makeByDatabases($make, $db, $input);
+		return $this->makeByDatabases($make, $input);
 	}
 
 
@@ -113,7 +113,7 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function makeByDatabases($make, $db, InputInterface $input): array
+	private function makeByDatabases($make, InputInterface $input): array
 	{
 		$redis = Kiri::getDi()->get(Redis::class);
 		if ($input->hasArgument('name')) {
@@ -121,8 +121,8 @@ class Gii
 			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {
-			'controller' => $this->getTable($db, 1, 0),
-			'model' => $this->getTable($db, 0, 1),
+			'controller' => $this->getTable(1, 0),
+			'model' => $this->getTable(0, 1),
 			default => [],
 		};
 	}
@@ -135,9 +135,9 @@ class Gii
 	 *
 	 * @throws Exception
 	 */
-	private function getTable($db, $controller, $model): array
+	private function getTable($controller, $model): array
 	{
-		$tables = $this->getFields($this->getTables($db), $db);
+		$tables = $this->getFields($this->getTables());
 		if (empty($tables)) {
 			return [];
 		}
@@ -195,10 +195,10 @@ class Gii
 	 * @return array|string|null
 	 * @throws Exception
 	 */
-	private function getTables($db): array|string|null
+	private function getTables(): array|string|null
 	{
 		if (empty($this->tableName)) {
-			return $this->showAll($db);
+			return $this->showAll();
 		}
 		$res = $this->tableName;
 		if (is_string($res)) {
@@ -214,10 +214,10 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function showAll(Connection $db): array
+	private function showAll(): array
 	{
 		$res = [];
-		$_tables = Db::findAllBySql('show tables from `' . $db->database . '`', [], $db);
+		$_tables = Db::findAllBySql('show tables from `' . $this->db->database . '`', [], $this->db);
 		if (empty($_tables)) {
 			return $res;
 		}
@@ -245,7 +245,7 @@ class Gii
 	 * @return array
 	 * @throws
 	 */
-	private function getFields($tables, $db): array
+	private function getFields($tables): array
 	{
 		$res = [];
 		if (!is_array($tables)) {
@@ -253,7 +253,7 @@ class Gii
 		}
 		foreach ($tables as $key => $val) {
 			if (empty($val)) continue;
-			$_tmp = Db::findAllBySql('SHOW FULL FIELDS FROM `' . $db->database . '`' . $val, [], $db);
+			$_tmp = Db::findAllBySql('SHOW FULL FIELDS FROM `' . $this->db->database . '`.' . $val, [], $this->db);
 			if (empty($_tmp)) {
 				continue;
 			}
