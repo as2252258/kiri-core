@@ -13,8 +13,6 @@ use Database\Connection;
 use Database\Db;
 use Exception;
 use Kiri\Cache\Redis;
-use Kiri\Exception\ComponentException;
-use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -123,8 +121,8 @@ class Gii
 			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {
-			'controller' => $this->getTable($db,1, 0),
-			'model' => $this->getTable($db,0, 1),
+			'controller' => $this->getTable($db, 1, 0),
+			'model' => $this->getTable($db, 0, 1),
 			default => [],
 		};
 	}
@@ -139,7 +137,7 @@ class Gii
 	 */
 	private function getTable($db, $controller, $model): array
 	{
-		$tables = $this->getFields($this->getTables($db));
+		$tables = $this->getFields($this->getTables($db), $db);
 		if (empty($tables)) {
 			return [];
 		}
@@ -216,10 +214,10 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function showAll($db): array
+	private function showAll(Connection $db): array
 	{
 		$res = [];
-		$_tables = Db::findAllBySql('show tables', [], $db);
+		$_tables = Db::findAllBySql('show tables from `' . $db->database . '`', [], $db);
 		if (empty($_tables)) {
 			return $res;
 		}
@@ -247,7 +245,7 @@ class Gii
 	 * @return array
 	 * @throws
 	 */
-	private function getFields($tables): array
+	private function getFields($tables, $db): array
 	{
 		$res = [];
 		if (!is_array($tables)) {
@@ -255,7 +253,7 @@ class Gii
 		}
 		foreach ($tables as $key => $val) {
 			if (empty($val)) continue;
-			$_tmp = Db::findAllBySql('SHOW FULL FIELDS FROM ' . $val, [], $this->db);
+			$_tmp = Db::findAllBySql('SHOW FULL FIELDS FROM `' . $db->database . '`' . $val, [], $db);
 			if (empty($_tmp)) {
 				continue;
 			}
