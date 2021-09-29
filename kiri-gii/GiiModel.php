@@ -110,7 +110,6 @@ use Database\Model;
  * Class ' . $managerName . '
  * @package Inter\mysql
  *' . implode('', $this->visible) . '
- * @sql
  */
 #[Target] class ' . $managerName . ' extends Model
 {
