@@ -195,6 +195,17 @@ trait Message
 
 
     /**
+     * @param array $headers
+     * @return static
+     */
+    public function withHeaders(array $headers): static
+    {
+        $this->headers = $headers;
+        return $this;
+    }
+
+
+    /**
      * @param $name
      * @param $value
      * @return static

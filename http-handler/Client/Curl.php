@@ -1,17 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace Http\Client;
+namespace Http\Handler\Client;
 
 
 use CurlHandle;
 use Exception;
+use Http\Message\Response;
+use Http\Message\Stream;
 use JetBrains\PhpStorm\Pure;
+use Psr\Http\Message\ResponseInterface;
 
 
 /**
  * Class Curl
- * @package Http\Client
+ * @package Http\Handler\Client
  */
 class Curl extends ClientAbstracts
 {
@@ -20,10 +23,10 @@ class Curl extends ClientAbstracts
 	 * @param $method
 	 * @param $path
 	 * @param array $params
-	 * @return Result|array|string
+	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-	public function request($method, $path, array $params = []): Result|array|string
+	public function request($method, $path, array $params = []): ResponseInterface
 	{
 		if ($method == self::GET) {
 			$path = $this->joinGetParams($path, $params);
@@ -131,67 +134,39 @@ class Curl extends ClientAbstracts
 
 	/**
 	 * @param $curl
-	 * @return Result|bool|array|string
+	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-	private function execute($curl): Result|bool|array|string
+	private function execute($curl): ResponseInterface
 	{
 		$output = curl_exec($curl);
+		curl_close($curl);
 		if ($output === false) {
-			$response = $this->fail(400, curl_error($curl));
+			$response = (new Response())->withStatus(400)->withBody(new Stream(curl_error($curl)));
 		} else {
-			$response = $this->parseResponse($curl, $output);
+			$response = $this->explode($output);
 		}
-		$this->cleanData();
 		return $response;
 	}
 
 
 	/**
-	 * @param $curl
 	 * @param $output
-	 * @param array $params
-	 * @return mixed
+	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-	private function parseResponse($curl, $output, array $params = []): mixed
+	private function explode($output): ResponseInterface
 	{
-		curl_close($curl);
-		if ($output === FALSE) {
-			return $this->fail(500, $output);
-		}
-		[$header, $body, $status] = $this->explode($output);
-		if ($status != 200 && $status != 201) {
-			$data = $this->fail($status, $body, [], $header);
-		} else {
-			$data = $this->structure($body, $params, $header);
-		}
-		return $data;
-	}
-
-
-	/**
-	 * @param $output
-	 * @return array
-	 * @throws Exception
-	 */
-	private function explode($output): array
-	{
-		if (empty($output) || !str_contains($output, "\r\n\r\n")) {
-			throw new Exception('Get data null.');
-		}
-
 		[$header, $body] = explode("\r\n\r\n", $output, 2);
 		if ($header == 'HTTP/1.1 100 Continue') {
 			[$header, $body] = explode("\r\n\r\n", $body, 2);
 		}
 
 		$header = explode("\r\n", $header);
+		$status = explode(' ', array_shift($header));
 
-		$status = (int)explode(' ', trim($header[0]))[1];
-		$header = $this->headerFormat($header);
-
-		return [$header, $this->resolve($header, $body), $status];
+		return (new Response())->withStatus(intval($status[1]))->withHeaders($this->headerFormat($header))
+			->withBody(new Stream($body));
 	}
 
 	/**
@@ -204,7 +179,7 @@ class Curl extends ClientAbstracts
 		foreach ($headers as $val) {
 			$trim = explode(': ', trim($val));
 
-			$_tmp[strtolower($trim[0])] = $trim[1] ?? '';
+			$_tmp[strtolower($trim[0])] = [$trim[1] ?? ''];
 		}
 		return $_tmp;
 	}

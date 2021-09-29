@@ -7,11 +7,14 @@
  */
 declare(strict_types=1);
 
-namespace Http\Client;
+namespace Http\Handler\Client;
 
 use Exception;
+use Http\Message\Response;
+use Http\Message\Stream;
 use JetBrains\PhpStorm\Pure;
-use Swoole\Coroutine\Http\Client as SClient;
+use Psr\Http\Message\ResponseInterface;
+use Swoole\Coroutine\Http\Client as SwowClient;
 
 /**
  * Class Client
@@ -24,12 +27,12 @@ class Client extends ClientAbstracts
 	 * @param string $method
 	 * @param $path
 	 * @param array $params
-	 * @return array|string|Result
+	 * @return ResponseInterface
 	 * @throws Exception
 	 */
-	public function request(string $method, $path, array $params = []): array|string|Result
+	public function request(string $method, $path, array $params = []): ResponseInterface
 	{
-		return $this->setMethod($method)
+		return $this->withMethod($method)
 			->coroutine(
 				$this->matchHost($path),
 				$this->paramEncode($params)
@@ -40,33 +43,23 @@ class Client extends ClientAbstracts
 	/**
 	 * @param $url
 	 * @param array|string $data
-	 * @return array|string|Result
+	 * @return ResponseInterface
 	 * @throws Exception 使用swoole协程方式请求
 	 */
-	private function coroutine($url, array|string $data = []): array|string|Result
+	private function coroutine($url, array|string $data = []): ResponseInterface
 	{
 		try {
 			$client = $this->generate_client($data, ...$url);
-			$this->setData('');
 			if ($client->statusCode < 0) {
 				throw new Exception($client->errMsg);
 			}
-			$body = $this->resolve($client->getHeaders(), $client->body);
-			if (in_array($client->getStatusCode(), [200, 201])) {
-				return $this->structure($body, $data, $client->getHeaders());
-			}
-			if (is_string($body)) {
-				$message = 'Request error code ' . $client->getStatusCode();
-			} else {
-				$message = $this->searchMessageByData($body);
-			}
-			return $this->fail($client->getStatusCode(), $message, $body, $client->getHeaders());
+			return (new Response())->withStatus($client->getStatusCode())
+				->withHeaders($client->getHeaders())
+				->withBody(new Stream($client->getBody()));
 		} catch (\Throwable $exception) {
 			$this->addError($exception, 'rpc');
-			return $this->fail(500, $exception->getMessage(), [
-				'file' => $exception->getFile(),
-				'line' => $exception->getLine()
-			], []);
+			return (new Response())->withStatus(-1)->withHeaders([])
+				->withBody(new Stream(jTraceEx($exception)));
 		}
 	}
 
@@ -76,18 +69,18 @@ class Client extends ClientAbstracts
 	 * @param $host
 	 * @param $isHttps
 	 * @param $path
-	 * @return SClient
+	 * @return SwowClient
 	 */
-	private function generate_client($data, $host, $isHttps, $path): SClient
+	private function generate_client($data, $host, $isHttps, $path): SwowClient
 	{
 		if ($isHttps || $this->isSSL()) {
-			$client = new SClient($host, 443, true);
+			$client = new SwowClient($host, 443, true);
 		} else {
-			$client = new SClient($host, $this->getPort(), false);
+			$client = new SwowClient($host, $this->getPort(), false);
 		}
 		$client->set($this->settings());
 		if (!empty($this->getAgent())) {
-			$this->addHeader('User-Agent', $this->getAgent());
+			$this->withAddedHeader('User-Agent', $this->getAgent());
 		}
 		$client->setHeaders($this->getHeader());
 		$client->setMethod(strtoupper($this->getMethod()));
@@ -98,12 +91,12 @@ class Client extends ClientAbstracts
 
 
 	/**
-	 * @param SClient $client
+	 * @param SwowClient $client
 	 * @param $path
 	 * @param $data
 	 * @return string
 	 */
-	private function setParams(SClient $client, $path, $data): string
+	private function setParams(SwowClient $client, $path, $data): string
 	{
 		if ($this->isGet()) {
 			if (!empty($data)) $path .= '?' . $data;

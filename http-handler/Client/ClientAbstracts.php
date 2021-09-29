@@ -1,13 +1,17 @@
 <?php
 
 
-namespace Http\Client;
+namespace Http\Handler\Client;
 
 
 use Closure;
+use Http\Handler\Context;
+use Http\Message\Stream;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Help;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Swoole\Coroutine\System;
 
 defined('SPLIT_URL') or define('SPLIT_URL', '/(http[s]?:\/\/)?(([\w\-_]+\.)+\w+(:\d+)?)((\/[a-zA-Z0-9\-]+)+[\/]?(\?[a-zA-Z]+=.*)?)?/');
@@ -15,7 +19,7 @@ defined('SPLIT_URL') or define('SPLIT_URL', '/(http[s]?:\/\/)?(([\w\-_]+\.)+\w+(
 
 /**
  * Class ClientAbstracts
- * @package Http\Client
+ * @package Http\Handler\Client
  */
 abstract class ClientAbstracts extends Component implements IClient
 {
@@ -34,23 +38,18 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	private int $timeout = 0;
 
-	private ?Closure $callback = null;
 	private string $method = 'get';
 
 	private bool $isSSL = false;
 	private string $agent = '';
-	private string $errorCodeField = '';
-	private string $errorMsgField = '';
-	private bool $use_swoole = false;
 
 	private string $ssl_cert_file = '';
 	private string $ssl_key_file = '';
 	private string $ca = '';
 	private int $port = 80;
 
-	/** @var string $_message 错误信息 */
-	private string $_message = '';
-	private string $_data = '';
+
+	private StreamInterface $_data;
 
 	private int $connect_timeout = 1;
 
@@ -58,24 +57,18 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return static
 	 */
-	#[Pure] public static function NewRequest(): static
+	public static function NewRequest(): static
 	{
 		return new static();
-	}
-
-
-	protected function cleanData(): void
-	{
-		$this->_data = '';
 	}
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function post(string $path, array $params = []): array|int|string|Result
+	public function post(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::POST, $path, $params);
 	}
@@ -84,9 +77,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function put(string $path, array $params = []): array|int|string|Result
+	public function put(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::PUT, $path, $params);
 	}
@@ -94,19 +87,21 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $contentType
+	 * @return ClientAbstracts
 	 */
-	public function setContentType(string $contentType): void
+	public function withContentType(string $contentType): static
 	{
 		$this->header['Content-Type'] = $contentType;
+		return $this;
 	}
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function head(string $path, array $params = []): array|int|string|Result
+	public function head(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::HEAD, $path, $params);
 	}
@@ -115,9 +110,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function get(string $path, array $params = []): array|int|string|Result
+	public function get(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::GET, $path, $params);
 	}
@@ -125,9 +120,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function option(string $path, array $params = []): array|int|string|Result
+	public function option(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::OPTIONS, $path, $params);
 	}
@@ -135,9 +130,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function delete(string $path, array $params = []): array|int|string|Result
+	public function delete(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::DELETE, $path, $params);
 	}
@@ -145,9 +140,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function options(string $path, array $params = []): array|int|string|Result
+	public function options(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::OPTIONS, $path, $params);
 
@@ -156,9 +151,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|int|string|Result
+	 * @return ResponseInterface
 	 */
-	public function upload(string $path, array $params = []): array|int|string|Result
+	public function upload(string $path, array $params = []): ResponseInterface
 	{
 		return $this->request(self::UPLOAD, $path, $params);
 	}
@@ -175,7 +170,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @return int
 	 */
-	protected function getHostPort(): int
+	#[Pure] protected function getHostPort(): int
 	{
 		if (!empty($this->getPort())) {
 			return $this->getPort();
@@ -188,14 +183,15 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $host
+	 * @return ClientAbstracts
 	 */
-	public function setHost(string $host): void
+	public function withHost(string $host): static
 	{
 		$this->host = $host;
-		if ($this->use_swoole) {
+		if (Context::inCoroutine()) {
 			$this->host = System::gethostbyname($host);
 		}
-		$this->addHeader('Host', $host);
+		return $this->withAddedHeader('Host', $host);
 	}
 
 	/**
@@ -208,35 +204,39 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param array $header
+	 * @return ClientAbstracts
 	 */
-	public function setHeader(array $header): void
+	public function withHeader(array $header): static
 	{
 		$this->header = $header;
+		return $this;
 	}
 
 
 	/**
 	 * @param array $header
-	 * @return array
+	 * @return ClientAbstracts
 	 */
-	public function setHeaders(array $header): array
+	public function withHeaders(array $header): static
 	{
 		if (empty($header)) {
-			return [];
+			return $this;
 		}
 		foreach ($header as $key => $val) {
 			$this->header[$key] = $val;
 		}
-		return $this->header;
+		return $this;
 	}
 
 	/**
 	 * @param $key
 	 * @param $value
+	 * @return ClientAbstracts
 	 */
-	public function addHeader($key, $value): void
+	public function withAddedHeader($key, $value): static
 	{
 		$this->header[$key] = $value;
+		return $this;
 	}
 
 	/**
@@ -249,26 +249,22 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param int $value
+	 * @return ClientAbstracts
 	 */
-	public function setTimeout(int $value): void
+	public function withTimeout(int $value): static
 	{
 		$this->timeout = $value;
+		return $this;
 	}
 
-	/**
-	 * @return Closure|null
-	 */
-	public function getCallback(): ?Closure
-	{
-		return $this->callback;
-	}
 
 	/**
 	 * @param Closure|null $value
+	 * @return ClientAbstracts
 	 */
-	public function setCallback(?Closure $value): void
+	public function withCallback(?Closure $value): static
 	{
-		$this->callback = $value;
+		return $this;
 	}
 
 	/**
@@ -283,7 +279,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param string $value
 	 * @return static
 	 */
-	public function setMethod(string $value): static
+	public function withMethod(string $value): static
 	{
 		$this->method = $value;
 		return $this;
@@ -299,10 +295,12 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param bool $isSSL
+	 * @return ClientAbstracts
 	 */
-	public function setIsSSL(bool $isSSL): void
+	public function withIsSSL(bool $isSSL): static
 	{
 		$this->isSSL = $isSSL;
+		return $this;
 	}
 
 	/**
@@ -315,59 +313,14 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $agent
+	 * @return ClientAbstracts
 	 */
-	public function setAgent(string $agent): void
+	public function withAgent(string $agent): static
 	{
 		$this->agent = $agent;
+		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getErrorCodeField(): string
-	{
-		return $this->errorCodeField;
-	}
-
-	/**
-	 * @param string $errorCodeField
-	 */
-	public function setErrorCodeField(string $errorCodeField): void
-	{
-		$this->errorCodeField = $errorCodeField;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getErrorMsgField(): string
-	{
-		return $this->errorMsgField;
-	}
-
-	/**
-	 * @param string $errorMsgField
-	 */
-	public function setErrorMsgField(string $errorMsgField): void
-	{
-		$this->errorMsgField = $errorMsgField;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isUseSwoole(): bool
-	{
-		return $this->use_swoole;
-	}
-
-	/**
-	 * @param bool $use_swoole
-	 */
-	public function setUseSwoole(bool $use_swoole): void
-	{
-		$this->use_swoole = $use_swoole;
-	}
 
 	/**
 	 * @return string
@@ -379,10 +332,12 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $ssl_cert_file
+	 * @return ClientAbstracts
 	 */
-	public function setSslCertFile(string $ssl_cert_file): void
+	public function withSslCertFile(string $ssl_cert_file): static
 	{
 		$this->ssl_cert_file = $ssl_cert_file;
+		return $this;
 	}
 
 	/**
@@ -395,10 +350,12 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $ssl_key_file
+	 * @return ClientAbstracts
 	 */
-	public function setSslKeyFile(string $ssl_key_file): void
+	public function withSslKeyFile(string $ssl_key_file): static
 	{
 		$this->ssl_key_file = $ssl_key_file;
+		return $this;
 	}
 
 	/**
@@ -411,16 +368,18 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param string $ssl_key_file
+	 * @return static
 	 */
-	public function setCa(string $ssl_key_file): void
+	public function withCa(string $ssl_key_file): static
 	{
 		$this->ca = $ssl_key_file;
+		return $this;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPort(): int
+	#[Pure] public function getPort(): int
 	{
 		if ($this->isSSL()) {
 			return 443;
@@ -433,42 +392,34 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param int $port
+	 * @return ClientAbstracts
 	 */
-	public function setPort(int $port): void
+	public function withPort(int $port): static
 	{
 		$this->port = $port;
+		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getMessage(): string
-	{
-		return $this->_message;
-	}
 
 	/**
-	 * @param string $message
+	 * @return StreamInterface
 	 */
-	public function setMessage(string $message): void
-	{
-		$this->_message = $message;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getData(): string
+	public function getData(): StreamInterface
 	{
 		return $this->_data;
 	}
 
 	/**
-	 * @param string $data
+	 * @param string|StreamInterface $data
+	 * @return ClientAbstracts
 	 */
-	public function setData(string $data): void
+	public function withBody(string|StreamInterface $data): static
 	{
+		if (is_string($data)) {
+			$data = new Stream($data);
+		}
 		$this->_data = $data;
+		return $this;
 	}
 
 	/**
@@ -482,7 +433,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	/**
 	 * @param int $connect_timeout
 	 */
-	public function setConnectTimeout(int $connect_timeout): void
+	public function withConnectTimeout(int $connect_timeout): void
 	{
 		$this->connect_timeout = $connect_timeout;
 	}
@@ -517,7 +468,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	#[Pure] protected function isHttp($url): bool
+	protected function isHttp($url): bool
 	{
 		return str_starts_with($url, 'http://');
 	}
@@ -526,7 +477,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $url
 	 * @return bool
 	 */
-	#[Pure] protected function isHttps($url): bool
+	protected function isHttps($url): bool
 	{
 		return str_starts_with($url, 'https://');
 	}
@@ -591,78 +542,6 @@ abstract class ClientAbstracts extends Component implements IClient
 			return Help::toArray($body);
 		}
 		return $body;
-	}
-
-
-	/**
-	 * @param $body
-	 * @param $_data
-	 * @param array $header
-	 * @param int $statusCode
-	 * @return mixed 构建返回体
-	 * 构建返回体
-	 */
-	protected function structure($body, $_data, $header = [], $statusCode = 200): mixed
-	{
-		if ($this->callback instanceof Closure) {
-			$result = call_user_func($this->callback, $body, $_data, $header);
-		} else {
-			$result = $this->parseResult($body, $header, $statusCode);
-		}
-		return $result;
-	}
-
-
-	/**
-	 * @param $body
-	 * @param $header
-	 * @param $statusCode
-	 * @return Result
-	 */
-	private function parseResult($body, $header, $statusCode): Result
-	{
-		if (is_string($body)) {
-			$result['code'] = 0;
-			$result['message'] = '';
-		} else {
-			$result['code'] = $body[$this->errorCodeField] ?? 0;
-			$result['message'] = $this->searchMessageByData($body);
-		}
-		$result['data'] = $body;
-		$result['header'] = $header;
-		$result['httpStatus'] = $statusCode;
-		return new Result($result);
-	}
-
-
-	/**
-	 * @param $body
-	 * @return mixed
-	 */
-	protected function searchMessageByData($body): mixed
-	{
-		$parent = [];
-		if (empty($this->errorMsgField)) {
-			return 'system success.';
-		}
-		$explode = explode('.', $this->errorMsgField);
-		if (!isset($body[$explode[0]])) {
-			return 'system success.';
-		}
-		foreach ($explode as $item) {
-			if (empty($item)) {
-				continue;
-			}
-			if (empty($parent)) {
-				$parent = $body[$item];
-				continue;
-			}
-			if (is_string($parent) || !isset($parent[$item])) {
-				break;
-			}
-			$parent = $parent[$item];
-		}
-		return !empty($parent) ? $parent : 'system success.';
 	}
 
 
@@ -755,7 +634,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		$host = $this->getHost();
 		if ($string == '/') {
 			$string = '';
-		} else if (strpos($string, '/') !== 0) {
+		} else if (!str_starts_with($string, '/')) {
 			$string = '/' . $string;
 		}
 		return [$host, $this->isSSL(), $string];
@@ -767,7 +646,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	 * @param $params
 	 * @return string
 	 */
-	#[Pure] protected function joinGetParams($path, $params): string
+	protected function joinGetParams($path, $params): string
 	{
 		if (empty($params)) {
 			return $path;
@@ -778,29 +657,10 @@ abstract class ClientAbstracts extends Component implements IClient
 		if (str_contains($path, '?')) {
 			[$path, $getParams] = explode('?', $path);
 		}
-		if (!isset($getParams) || empty($getParams)) {
+		if (empty($getParams)) {
 			return $path . '?' . $params;
 		}
 		return $path . '?' . $params . '&' . $getParams;
 	}
-
-
-	/**
-	 * @param $code
-	 * @param $message
-	 * @param $data
-	 * @param $header
-	 * @return Result
-	 */
-	protected function fail($code, $message, $data = [], $header = []): Result
-	{
-		return new Result([
-			'code'    => $code,
-			'message' => $message,
-			'data'    => $data,
-			'header'  => $header,
-		]);
-	}
-
 
 }

@@ -1,10 +1,12 @@
 <?php
 
 
-namespace Http\Client;
+namespace Http\Handler\Client;
 
 
 use Closure;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 interface IClient
 {
@@ -13,205 +15,177 @@ interface IClient
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function get(string $path, array $params = []): Result|int|array|string;
+	public function get(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function post(string $path, array $params = []): Result|int|array|string;
+	public function post(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function delete(string $path, array $params = []): Result|int|array|string;
+	public function delete(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function options(string $path, array $params = []): Result|int|array|string;
+	public function options(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function upload(string $path, array $params = []): Result|int|array|string;
+	public function upload(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function put(string $path, array $params = []): Result|int|array|string;
+	public function put(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function head(string $path, array $params = []): Result|int|array|string;
+	public function head(string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $method
 	 * @param string $path
 	 * @param array $params
-	 * @return array|Result|int|string
+	 * @return ResponseInterface
 	 */
-	public function request(string $method, string $path, array $params = []): Result|array|int|string;
+	public function request(string $method, string $path, array $params = []): ResponseInterface;
 
 
 	/**
 	 * @param string $host
-	 * @return mixed
+	 * @return static
 	 */
-	public function setHost(string $host): void;
+	public function withHost(string $host): static;
 
 
 	/**
 	 * @param array $header
-	 * @return mixed
+	 * @return static
 	 */
-	public function setHeader(array $header): void;
+	public function withHeader(array $header): static;
 
 
 	/**
 	 * @param array $header
-	 * @return mixed
+	 * @return static
 	 */
-	public function setHeaders(array $header): array;
+	public function withHeaders(array $header): static;
 
 
 	/**
 	 * @param string $key
 	 * @param string $value
-	 * @return mixed
+	 * @return static
 	 */
-	public function addHeader(string $key, string $value): void;
+	public function withAddedHeader(string $key, string $value): static;
 
 
 	/**
 	 * @param int $value
-	 * @return mixed
+	 * @return static
 	 */
-	public function setTimeout(int $value): void;
+	public function withTimeout(int $value): static;
 
 
 	/**
 	 * @param Closure|null $value
-	 * @return mixed
+	 * @return static
 	 */
-	public function setCallback(?Closure $value): void;
+	public function withCallback(?Closure $value): static;
 
 
 	/**
 	 * @param string $value
 	 * @return static
 	 */
-	public function setMethod(string $value): static;
+	public function withMethod(string $value): static;
 
 
 	/**
 	 * @param bool $isSSL
-	 * @return mixed
+	 * @return static
 	 */
-	public function setIsSSL(bool $isSSL): void;
+	public function withIsSSL(bool $isSSL): static;
 
 
 	/**
 	 * @param string $agent
-	 * @return mixed
+	 * @return static
 	 */
-	public function setAgent(string $agent): void;
-
-
-	/**
-	 * @param string $errorCodeField
-	 * @return mixed
-	 */
-	public function setErrorCodeField(string $errorCodeField): void;
-
-
-	/**
-	 * @param string $errorMsgField
-	 * @return mixed
-	 */
-	public function setErrorMsgField(string $errorMsgField): void;
-
-
-	/**
-	 * @param bool $use_swoole
-	 * @return mixed
-	 */
-	public function setUseSwoole(bool $use_swoole): void;
+	public function withAgent(string $agent): static;
 
 
 	/**
 	 * @param string $ssl_cert_file
-	 * @return mixed
+	 * @return static
 	 */
-	public function setSslCertFile(string $ssl_cert_file): void;
+	public function withSslCertFile(string $ssl_cert_file): static;
 
 
 	/**
 	 * @param string $ssl_key_file
-	 * @return mixed
+	 * @return static
 	 */
-	public function setSslKeyFile(string $ssl_key_file): void;
+	public function withSslKeyFile(string $ssl_key_file): static;
 
 
 	/**
 	 * @param string $ssl_key_file
-	 * @return mixed
+	 * @return static
 	 */
-	public function setCa(string $ssl_key_file): void;
+	public function withCa(string $ssl_key_file): static;
 
 
 	/**
 	 * @param int $port
-	 * @return mixed
+	 * @return static
 	 */
-	public function setPort(int $port): void;
+	public function withPort(int $port): static;
 
 
 	/**
-	 * @param string $message
-	 * @return mixed
+	 * @param string|StreamInterface $data
+	 * @return static
 	 */
-	public function setMessage(string $message): void;
-
-
-	/**
-	 * @param string $data
-	 * @return mixed
-	 */
-	public function setData(string $data): void;
+	public function withBody(string|StreamInterface $data): static;
 
 
 	/**
 	 * @param int $connect_timeout
-	 * @return mixed
+	 * @return static
 	 */
-	public function setConnectTimeout(int $connect_timeout): void;
+	public function withConnectTimeout(int $connect_timeout): static;
 
 
 	/**
 	 * @param string $contentType
-	 * @return mixed
+	 * @return static
 	 */
-	public function setContentType(string $contentType): void;
+	public function withContentType(string $contentType): static;
 }
