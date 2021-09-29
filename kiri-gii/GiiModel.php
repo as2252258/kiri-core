@@ -169,6 +169,7 @@ use Database\Model;
 	 * @return int|bool|string
 	 * @throws Exception
     */
+	#[Set(\'' . $field['Field'] . '\')]
 	public function set' . ucfirst($field['Field']) . 'Attribute($value): int|bool|string
 	{
 		if ( !is_string($value) ) {
