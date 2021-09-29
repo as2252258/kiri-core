@@ -432,10 +432,12 @@ abstract class ClientAbstracts extends Component implements IClient
 
 	/**
 	 * @param int $connect_timeout
+	 * @return ClientAbstracts
 	 */
-	public function withConnectTimeout(int $connect_timeout): void
+	public function withConnectTimeout(int $connect_timeout): static
 	{
 		$this->connect_timeout = $connect_timeout;
+		return $this;
 	}
 
 
