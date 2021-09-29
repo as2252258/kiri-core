@@ -49,7 +49,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	private int $port = 80;
 
 
-	private StreamInterface $_data;
+	private ?StreamInterface $_data = null;
 
 	private int $connect_timeout = 1;
 
