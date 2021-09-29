@@ -178,6 +178,9 @@ abstract class GiiBase
 
 		foreach ($class->getDefaultProperties() as $key => $val) {
 			$property = $class->getProperty($key);
+			if ($key == 'primary' || $key == 'table' || $key == 'connection' || $key ==  'rules') {
+				continue;
+			}
 			if ($property->class != $class->getName()) continue;
 			if (is_array($val)) {
 				$val = '[\'' . implode('\', \'', $val) . '\']';
@@ -201,9 +204,6 @@ abstract class GiiBase
 				$html .= '
     ' . $debug . ' static' . $type;
 			} else {
-				if ($key == 'primary' || $key == 'table' || $key == 'connection' || $key ==  'rules') {
-					continue;
-				}
 				$html .= '
     ' . $debug . $type;
 			}
