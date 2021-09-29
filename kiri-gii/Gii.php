@@ -70,7 +70,7 @@ class Gii
 		$this->input = $input;
 		$this->db = $db;
 
-		$make = $this->input->getArgument('make');
+		$make = $this->input->getArgument('action');
 		if (empty($make)) {
 			throw new Exception('构建类型不能为空~');
 		}

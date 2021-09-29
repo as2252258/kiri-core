@@ -13,6 +13,7 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use ReflectionException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -35,6 +36,7 @@ class GiiCommand extends Command
 	protected function configure()
 	{
 		$this->setName('sw:gii')
+			->addArgument('action',InputArgument::REQUIRED)
 			->setDescription('./snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx');
 	}
 
