@@ -201,7 +201,7 @@ abstract class GiiBase
 				$html .= '
     ' . $debug . ' static' . $type;
 			} else {
-				if ($key == 'primary') {
+				if ($key == 'primary' || $key == 'table' || $key == 'connection' || $key ==  'rules') {
 					continue;
 				}
 				$html .= '

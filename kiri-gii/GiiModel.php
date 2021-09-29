@@ -127,12 +127,13 @@ use Database\ActiveRecord;
 
 		$html .= $this->createTableName($this->tableName) . "\n";
 
+		$html .= $this->createDatabaseSource();
+
 		$html .= $this->createRules($this->fields);
 
 		if (is_object($class)) {
 			$html .= $this->getClassMethods($class, ['rules', 'tableName', 'attributes']);
 		} else {
-			$html .= $this->createDatabaseSource();
 			$other = $this->generate_json_function($html, $this->fields);
 			if (!empty($other)) {
 				$html .= implode($other);
@@ -228,11 +229,8 @@ use Database\ActiveRecord;
     /**
      * @inheritdoc
      */
-    public static function tableName(): string
-    {
-        return \'' . $field . '\';
-    }
-    ';
+    protected string $table = \'' . $field . '\';
+';
 	}
 
 	/**
@@ -282,12 +280,9 @@ use Database\ActiveRecord;
 	/**
 	 * @return array
 	 */
-    public function rules(): array
-    {
-        return [' . $_field_one . '
-        ];
-    }
-        ';
+    public array $rules = [' . $_field_one . '
+    ];
+';
 	}
 
 	/**
@@ -402,10 +397,7 @@ use Database\ActiveRecord;
 	 * @return Connection
 	 * @throws Exception
 	 */
-    public static function getDb(): Connection
-    {
-	    return static::setDatabaseConnect(\'' . $this->db->id . '\');
-    }
+    protected string $connection = \'' . $this->db->id . '\';
 ';
 	}
 
