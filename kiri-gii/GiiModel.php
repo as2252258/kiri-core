@@ -311,7 +311,7 @@ use Database\Model;
 			}
 			if (count($_val) == 1) {
 				$_tmp = '
-		[\'' . $_val[0][3] . '\', ' . ($_val[0][1] == 'enum' ? '\'enum\' => ' . ($key) : $key) . ']';
+		[\'' . $_val[0][3] . '\', ' . ($_val[0][1] == 'enum' ? '\'enum\' => [' . $key .']' : $key) . ']';
 			} else {
 				$_tmp = '
 		[[\'' . implode('\', \'', array_column($_val, 3)) . '\'], ' . $key . ']';
