@@ -617,7 +617,7 @@ abstract class ClientAbstracts extends Component implements IClient
 		$this->port = $isHttps ? 443 : $this->port;
 		if (isIp($domain)) {
 			$this->host = $domain;
-		} else if ($this->isUseSwoole()) {
+		} else if (Context::inCoroutine()) {
 			$this->host = System::gethostbyname($domain) ?? $domain;
 		} else {
 			$this->host = $domain;
@@ -638,7 +638,7 @@ abstract class ClientAbstracts extends Component implements IClient
 	{
 		$host = $this->getHost();
 		if ($string == '/') {
-			$string = '';
+			$string = '/';
 		} else if (!str_starts_with($string, '/')) {
 			$string = '/' . $string;
 		}
