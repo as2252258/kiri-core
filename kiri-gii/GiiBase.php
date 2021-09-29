@@ -246,8 +246,17 @@ abstract class GiiBase
 							$_array[] = $_key . ': ' . $argument . '';
 						}
 					}
-					$over .= "	#[" . end($explode) . "(" . implode(',', $_array) . ")]
+
+					if (empty($_array)){
+						$end = "	#[" . end($explode) . "]
 ";
+					}else{
+						$end = "	#[" . end($explode) . "(" . implode(',', $_array) . ")]
+";
+					}
+					if (!str_contains($over, $end)){
+						$over .= $end;
+					}
 				}
 			}
 
