@@ -98,16 +98,16 @@ class Client extends ClientAbstracts
 	 */
 	private function setParams(SwowClient $client, $path, $data): string
 	{
+		$content = $this->getData()->getContents();
+		if (!empty($content)) {
+			$client->setData($content);
+		}
 		if ($this->isGet()) {
 			if (!empty($data)) $path .= '?' . $data;
-			if (!empty($this->getData())) {
-				$client->setData($this->getData());
-			}
 		} else {
-			if (!empty($this->getData())) {
-				$client->setData($this->getData());
-			} else {
-				$client->setData($this->mergeParams($data));
+			$data = $this->mergeParams($data);
+			if (!empty($data)) {
+				$client->setData($data);
 			}
 		}
 		return $path;
