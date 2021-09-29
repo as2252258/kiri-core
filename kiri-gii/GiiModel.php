@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gii;
 
 use Database\Db;
+use Database\Model;
 use Exception;
 use ReflectionException;
 use Kiri\Kiri;
@@ -68,10 +69,10 @@ namespace ' . $namespace . ';
 					$html .= $imports . PHP_EOL;
 				}
 
-				if (!str_contains($imports, 'Annotation\Model\Set')) {
+				if (!str_contains($imports, 'Database\Annotation\Set')) {
 					$html .= 'use Annotation\Model\Set;' . PHP_EOL;
 				}
-				if (!str_contains($imports, 'Annotation\Model\Get')) {
+				if (!str_contains($imports, 'Database\Annotation\Get')) {
 					$html .= 'use Annotation\Model\Get;' . PHP_EOL;
 				}
 			} catch (\Throwable $e) {
@@ -92,7 +93,7 @@ use Database\Connection;
 use Annotation\Model\Get;
 use Annotation\Model\Set;
 use Annotation\Model\Relation;
-use Database\ActiveRecord;
+use Database\Model;
 ' . PHP_EOL;
 		}
 
@@ -111,7 +112,7 @@ use Database\ActiveRecord;
  *' . implode('', $this->visible) . '
  * @sql
  */
-#[Target] class ' . $managerName . ' extends ActiveRecord
+#[Target] class ' . $managerName . ' extends Model
 {
 
 ';
@@ -220,8 +221,6 @@ use Database\ActiveRecord;
 		if (!empty($prefixed)) {
 			if (str_starts_with($field, $prefixed)) {
 				$field = str_replace($prefixed, '', $field);
-
-				$field = '{{%' . $field . '}}';
 			}
 		}
 
@@ -384,7 +383,10 @@ use Database\ActiveRecord;
 			return null;
 		}
 		return '
-	public ?string $primary = \'' . $field . '\';';
+	/**
+	 * @var string|null 
+	 */
+	protected ?string $primary = \'' . $field . '\';';
 	}
 
 	/**
@@ -394,8 +396,7 @@ use Database\ActiveRecord;
 	{
 		return '
     /**
-	 * @return Connection
-	 * @throws Exception
+	 * @var string
 	 */
     protected string $connection = \'' . $this->db->id . '\';
 ';

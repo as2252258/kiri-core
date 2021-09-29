@@ -92,7 +92,7 @@ class Gii
 				$task->setInput($this->input);
 				return $task->generate();
 			default:
-				return $this->getModel($make, $input);
+				return $this->getModel($make, $db, $input);
 		}
 	}
 
@@ -103,13 +103,9 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function getModel($make, $input): array
+	private function getModel($make, $db, $input): array
 	{
-		if ($this->db instanceof Connection) {
-			return $this->makeByDatabases($make, $input);
-		}
-
-		return $this->makeByDatabases($make, $input);
+		return $this->makeByDatabases($make, $db, $input);
 	}
 
 
@@ -119,7 +115,7 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function makeByDatabases($make, InputInterface $input): array
+	private function makeByDatabases($make, $db, InputInterface $input): array
 	{
 		$redis = Kiri::getDi()->get(Redis::class);
 		if ($input->hasArgument('name')) {
@@ -127,8 +123,8 @@ class Gii
 			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {
-			'controller' => $this->getTable(1, 0),
-			'model' => $this->getTable(0, 1),
+			'controller' => $this->getTable($db,1, 0),
+			'model' => $this->getTable($db,0, 1),
 			default => [],
 		};
 	}
@@ -141,9 +137,9 @@ class Gii
 	 *
 	 * @throws Exception
 	 */
-	private function getTable($controller, $model): array
+	private function getTable($db, $controller, $model): array
 	{
-		$tables = $this->getFields($this->getTables());
+		$tables = $this->getFields($this->getTables($db));
 		if (empty($tables)) {
 			return [];
 		}
@@ -201,10 +197,10 @@ class Gii
 	 * @return array|string|null
 	 * @throws Exception
 	 */
-	private function getTables(): array|string|null
+	private function getTables($db): array|string|null
 	{
 		if (empty($this->tableName)) {
-			return $this->showAll();
+			return $this->showAll($db);
 		}
 		$res = $this->tableName;
 		if (is_string($res)) {
@@ -220,10 +216,10 @@ class Gii
 	 * @return array
 	 * @throws Exception
 	 */
-	private function showAll(): array
+	private function showAll($db): array
 	{
 		$res = [];
-		$_tables = Db::findAllBySql('show tables', [], $this->db);
+		$_tables = Db::findAllBySql('show tables', [], $db);
 		if (empty($_tables)) {
 			return $res;
 		}
