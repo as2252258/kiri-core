@@ -263,7 +263,7 @@ use Database\Model;
 				$field = '\'' . current($val)['Field'] . '\'';
 			}
 			$_field_one .= '
-			[' . $field . ', \'' . $key . '\'],';
+		[' . $field . ', \'' . $key . '\'],';
 		}
 		foreach ($data as $key => $val) {
 			$length = $this->getLength($val);
@@ -338,7 +338,7 @@ use Database\Model;
 			return '';
 		}
 		return '
-			[[\'' . implode('\', \'', $data) . '\'], \'unique\'],';
+		[[\'' . implode('\', \'', $data) . '\'], \'unique\'],';
 	}
 
 	/**
@@ -358,7 +358,7 @@ use Database\Model;
 			return '';
 		}
 		return '
-			[[\'' . implode('\', \'', $data) . '\'], \'required\'],';
+		[[\'' . implode('\', \'', $data) . '\'], \'required\'],';
 	}
 
 	/**
