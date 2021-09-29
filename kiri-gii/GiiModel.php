@@ -81,7 +81,7 @@ namespace ' . $namespace . ';
 		}
 
 
-		if (!isset($html) || empty($html)) {
+		if (empty($html)) {
 			$html = '<?php
 namespace ' . $namespace . ';
 
