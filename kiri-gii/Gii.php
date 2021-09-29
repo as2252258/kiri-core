@@ -173,7 +173,7 @@ class Gii
 		$controller->setModelPath($this->modelPath);
 		$controller->setModelNamespace($this->modelNamespace);
 		$controller->setInput($this->input);
-		$controller->setModule($this->input->getArgument('module'));
+//		$controller->setModule($this->input->getArgument('module'));
 		$controller->setControllerPath($this->controllerPath);
 		$controller->setControllerNamespace($this->controllerNamespace);
 		return $controller->generate();
