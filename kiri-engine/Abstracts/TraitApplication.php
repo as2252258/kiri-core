@@ -30,7 +30,6 @@ use Kiri\Jwt\Jwt;
  * @property Client $client
  * @property Connection $databases
  * @property Curl $curl
- * @property Producer $crontab
  */
 trait TraitApplication
 {
