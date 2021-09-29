@@ -109,7 +109,7 @@ class Connection extends Component
 	public function create($coroutineName, $config): Closure
 	{
 		return static function () use ($coroutineName, $config) {
-			return Kiri::getDi()->newObject(PDO::class, [
+			return Kiri::getDi()->create(PDO::class, [
 				$config['database'], $config['cds'], $config['username'], $config['password'], $config['charset'] ?? 'utf8mb4'
 			]);
 		};

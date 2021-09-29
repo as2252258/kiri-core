@@ -460,7 +460,7 @@ class ServerManager
 	 */
 	private function getNewInstance(string $class): object
 	{
-		return $this->container->newObject($class);
+		return $this->container->create($class);
 	}
 
 

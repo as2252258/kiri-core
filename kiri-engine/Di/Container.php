@@ -131,7 +131,7 @@ class Container extends BaseObject implements ContainerInterface
 	 * @return object
 	 * @throws
 	 */
-	public function newObject($class, array $constrict = [], array $config = []): object
+	public function create($class, array $constrict = [], array $config = []): object
 	{
 		return $this->resolve($class, $constrict, $config);
 	}

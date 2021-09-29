@@ -180,7 +180,7 @@ class Kiri
 		} else if (is_array($className) && isset($className['class'])) {
 			$class = $className['class'];
 			unset($className['class']);
-			return static::$container->newObject($class, $construct, $className);
+			return static::$container->create($class, $construct, $className);
 		} else if (is_callable($className, TRUE)) {
 			return call_user_func($className, $construct);
 		} else {

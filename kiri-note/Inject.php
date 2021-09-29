@@ -94,7 +94,7 @@ use ReflectionProperty;
     {
         if (!Kiri::app()->has($this->value)) {
             if (!empty($this->construct)) {
-                return Kiri::getDi()->newObject($this->value, $this->construct);
+                return Kiri::getDi()->create($this->value, $this->construct);
             }
             return Kiri::getDi()->get($this->value);
         } else {
