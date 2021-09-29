@@ -7,12 +7,9 @@ namespace Gii;
 
 use Database\Connection;
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
-
+use Kiri\Core\Json;
 use ReflectionClass;
 use ReflectionException;
-use Kiri\Abstracts\Input;
-use Kiri\Core\Json;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
@@ -178,7 +175,7 @@ abstract class GiiBase
 
 		foreach ($class->getDefaultProperties() as $key => $val) {
 			$property = $class->getProperty($key);
-			if ($key == 'primary' || $key == 'table' || $key == 'connection' || $key ==  'rules') {
+			if ($key == 'primary' || $key == 'table' || $key == 'connection' || $key == 'rules') {
 				continue;
 			}
 			if ($property->class != $class->getName()) continue;
@@ -247,16 +244,17 @@ abstract class GiiBase
 						}
 					}
 
-					if (empty($_array)){
+					if (empty($_array)) {
 						$end = "	#[" . end($explode) . "]
 ";
-					}else{
+					} else {
 						$end = "	#[" . end($explode) . "(" . implode(',', $_array) . ")]
 ";
 					}
-					if (!str_contains($over, $end)){
-						$over .= $end;
+					if (str_contains($over, $end)) {
+						$over = str_replace($end, '', $over);
 					}
+					$over .= $end;
 				}
 			}
 
