@@ -406,6 +406,9 @@ abstract class ClientAbstracts extends Component implements IClient
 	 */
 	public function getData(): StreamInterface
 	{
+		if (!$this->_data) {
+			$this->_data = new Stream();
+		}
 		return $this->_data;
 	}
 
