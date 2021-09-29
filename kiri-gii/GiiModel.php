@@ -70,10 +70,10 @@ namespace ' . $namespace . ';
 				}
 
 				if (!str_contains($imports, 'Database\Annotation\Set')) {
-					$html .= 'use Annotation\Model\Set;' . PHP_EOL;
+					$html .= 'use Database\Annotation\Set;' . PHP_EOL;
 				}
 				if (!str_contains($imports, 'Database\Annotation\Get')) {
-					$html .= 'use Annotation\Model\Get;' . PHP_EOL;
+					$html .= 'use Database\Annotation\Get;' . PHP_EOL;
 				}
 			} catch (\Throwable $e) {
 				logger()->addError($e, 'throwable');
@@ -90,8 +90,8 @@ use Exception;
 use Annotation\Target;
 use Kiri\Core\Json;
 use Database\Connection;
-use Annotation\Model\Get;
-use Annotation\Model\Set;
+use Database\Annotation\Get;
+use Database\Annotation\Set;
 use Annotation\Model\Relation;
 use Database\Model;
 ' . PHP_EOL;
