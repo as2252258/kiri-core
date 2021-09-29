@@ -279,7 +279,7 @@ use Database\Model;
 	/**
 	 * @return array
 	 */
-    public array $rules = [' . $_field_one . '
+    protected array $rules = [' . $_field_one . '
     ];
 ';
 	}
