@@ -59,7 +59,7 @@ class GiiCommand extends Command
 //		}
 
 		$array = [];
-		foreach (Config::get('databases') as $key => $connection) {
+		foreach (Config::get('databases.connections') as $key => $connection) {
 			$array[$key] = $gii->run($connections->get($key), $input);
 		}
 		return $array;
