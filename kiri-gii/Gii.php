@@ -122,7 +122,7 @@ class Gii
 	private function makeByDatabases($make, InputInterface $input): array
 	{
 		$redis = Kiri::getDi()->get(Redis::class);
-		if (!empty($input->getArgument('name'))) {
+		if ($input->hasArgument('name')) {
 			$this->tableName = $input->getArgument('name');
 			$redis->del('column:' . $this->tableName);
 		}
