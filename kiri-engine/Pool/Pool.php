@@ -132,6 +132,7 @@ class Pool extends Component
 	 * @param $channel
 	 * @return mixed
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	private function maxIdleQuantity($channel): mixed
 	{

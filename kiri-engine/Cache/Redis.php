@@ -11,6 +11,7 @@ namespace Kiri\Cache;
 
 use Annotation\Inject;
 use Exception;
+use Server\Events\OnAfterRequest;
 use Server\Events\OnWorkerExit;
 use Server\Events\OnWorkerStop;
 use Kiri\Abstracts\Component;
@@ -48,6 +49,7 @@ class Redis extends Component
 
 		$length = Config::get('connections.pool.max', 10);
 
+		$this->eventProvider->on(OnAfterRequest::class, [$this, 'release'], 0);
 		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
 		$connections->initConnections('Redis:' . $config['host'], true, $length);
@@ -67,7 +69,6 @@ class Redis extends Component
 			$data = $this->{$name}(...$arguments);
 		} else {
 			$data = $this->proxy()->{$name}(...$arguments);
-			$this->release();
 		}
 		if (microtime(true) - $time >= 0.02) {
 			$this->warning('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));

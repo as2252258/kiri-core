@@ -18,7 +18,7 @@ class Environmental
 	/**
 	 * @return bool
 	 */
-	#[Pure] public function isMac(): bool
+	public function isMac(): bool
 	{
 		$output = strtolower(PHP_OS | PHP_OS_FAMILY);
 		if (str_contains('mac', $output)) {
