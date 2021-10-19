@@ -6,14 +6,14 @@ use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Kiri;
 use ReflectionException;
-use Server\Abstracts\OnProcessInterface;
+use Server\Abstracts\BaseProcess;
 use Swoole\Process;
 
 
 /**
  *
  */
-class FileChangeCustomProcess extends OnProcessInterface
+class FileChangeCustomProcess extends BaseProcess
 {
 
 

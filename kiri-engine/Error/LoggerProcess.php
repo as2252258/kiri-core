@@ -11,13 +11,13 @@ use Kiri\Exception\ComponentException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Process;
-use Server\Abstracts\OnProcessInterface;
+use Server\Abstracts\BaseProcess;
 
 /**
  * Class LoggerProcess
  * @package Kiri\Error
  */
-class LoggerProcess extends OnProcessInterface
+class LoggerProcess extends BaseProcess
 {
 
 	/**

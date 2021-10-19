@@ -8,7 +8,7 @@ use Swoole\Process;
 
 
 /**
- * Interface OnProcessInterface
+ * Interface BaseProcess
  * @package SInterface
  */
 interface OnProcessInterface

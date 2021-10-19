@@ -5,13 +5,14 @@ namespace Server\Abstracts;
 
 use JetBrains\PhpStorm\Pure;
 use Kiri\Kiri;
+use Server\SInterface\OnProcessInterface;
 use Swoole\Coroutine;
 use Swoole\Process;
 
 /**
  *
  */
-abstract class OnProcessInterface implements \Server\SInterface\OnProcessInterface
+abstract class BaseProcess implements OnProcessInterface
 {
 
 	/** @var bool */
