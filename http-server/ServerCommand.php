@@ -6,16 +6,12 @@ namespace Server;
 
 use Annotation\Inject;
 use Exception;
-use Http\Handler\Abstracts\HandlerManager;
-use Http\Handler\Abstracts\MiddlewareManager;
-use Http\Handler\Handler;
 use Kiri\Abstracts\Config;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Server\Abstracts\OnTaskerStart as TaskerDispatch;
 use Server\Abstracts\OnWorkerStart as WorkerDispatch;
-use Server\Events\OnAfterWorkerStart;
 use Server\Events\OnBeforeWorkerStart;
 use Server\Events\OnTaskerStart;
 use Server\Events\OnWorkerStart;
@@ -24,6 +20,7 @@ use Swoole\Coroutine;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -52,7 +49,7 @@ class ServerCommand extends Command
 		$this->setName('sw:server')
 			->setDescription('server start|stop|reload|restart')
 			->addArgument('action', InputArgument::REQUIRED)
-			->addOption('daemon');
+			->addOption('daemon', 'd', InputOption::VALUE_NONE,'is run daemonize');
 	}
 
 
@@ -66,7 +63,6 @@ class ServerCommand extends Command
 	{
 		try {
 			$manager = Kiri::app()->getServer();
-			var_dump((int)$input->hasOption('daemon'));
 			$manager->setDaemon((int)$input->hasOption('daemon'));
 			if (!in_array($input->getArgument('action'), self::ACTIONS)) {
 				throw new Exception('I don\'t know what I want to do.');
