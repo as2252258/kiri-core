@@ -49,7 +49,7 @@ class ServerCommand extends Command
 		$this->setName('sw:server')
 			->setDescription('server start|stop|reload|restart')
 			->addArgument('action', InputArgument::REQUIRED)
-			->addOption('daemon', 'd', InputOption::VALUE_NONE,'is run daemonize');
+			->addOption('daemon', 'd', InputOption::VALUE_NONE,'is run daemonize',-1);
 	}
 
 
@@ -63,7 +63,7 @@ class ServerCommand extends Command
 	{
 		try {
 			$manager = Kiri::app()->getServer();
-			$manager->setDaemon((int)$input->hasOption('daemon'));
+			$manager->setDaemon((int)is_null($input->getOption('daemon')));
 			if (!in_array($input->getArgument('action'), self::ACTIONS)) {
 				throw new Exception('I don\'t know what I want to do.');
 			}
