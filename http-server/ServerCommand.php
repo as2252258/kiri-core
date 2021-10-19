@@ -66,7 +66,7 @@ class ServerCommand extends Command
 	{
 		try {
 			$manager = Kiri::app()->getServer();
-			$manager->setDaemon($input->getArgument('daemon'));
+			$manager->setDaemon((int)$input->hasOption('--daemon'));
 			if (!in_array($input->getArgument('action'), self::ACTIONS)) {
 				throw new Exception('I don\'t know what I want to do.');
 			}
