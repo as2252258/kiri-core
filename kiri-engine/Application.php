@@ -194,7 +194,6 @@ class Application extends BaseApplication
 	/**
 	 * @param array $argv
 	 * @return void
-	 * @throws Exception
 	 */
 	public function execute(array $argv): void
 	{
