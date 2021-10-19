@@ -52,7 +52,7 @@ class ServerCommand extends Command
 		$this->setName('sw:server')
 			->setDescription('server start|stop|reload|restart')
 			->addArgument('action', InputArgument::REQUIRED)
-			->addOption('daemon');
+			->addOption('daemon','d');
 	}
 
 
@@ -66,8 +66,7 @@ class ServerCommand extends Command
 	{
 		try {
 			$manager = Kiri::app()->getServer();
-			var_dump($input->hasOption('daemon'));
-			$manager->setDaemon((int)$input->hasOption('--daemon'));
+			$manager->setDaemon((int)$input->hasOption('daemon'));
 			if (!in_array($input->getArgument('action'), self::ACTIONS)) {
 				throw new Exception('I don\'t know what I want to do.');
 			}
