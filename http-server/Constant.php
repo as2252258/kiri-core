@@ -13,6 +13,7 @@ class Constant
 
 	const START = 'Start';
 	const SHUTDOWN = 'Shutdown';
+	const BEFORE_SHUTDOWN = 'beforeShutdown';
 	const WORKER_START = 'WorkerStart';
 	const WORKER_STOP = 'WorkerStop';
 	const WORKER_EXIT = 'WorkerExit';

@@ -14,13 +14,13 @@ use Server\Manager\OnPipeMessage;
 use Server\Manager\OnServer;
 use Server\Manager\OnServerManager;
 use Server\Manager\OnServerReload;
-use Server\SInterface\OnProcessInterface;
 use Server\SInterface\OnCloseInterface;
 use Server\SInterface\OnConnectInterface;
 use Server\SInterface\OnDisconnectInterface;
 use Server\SInterface\OnHandshakeInterface;
 use Server\SInterface\OnMessageInterface;
 use Server\SInterface\OnPacketInterface;
+use Server\SInterface\OnProcessInterface;
 use Server\SInterface\OnReceiveInterface;
 use Server\SInterface\OnTaskInterface;
 use Server\Task\OnServerTask;
@@ -62,30 +62,29 @@ class ServerManager
 
 
 	const DEFAULT_EVENT = [
-		Constant::WORKER_START  => [OnServerWorker::class, 'onWorkerStart'],
-		Constant::WORKER_EXIT   => [OnServerWorker::class, 'onWorkerExit'],
-		Constant::WORKER_STOP   => [OnServerWorker::class, 'onWorkerStop'],
-		Constant::WORKER_ERROR  => [OnServerWorker::class, 'onWorkerError'],
-		Constant::MANAGER_START => [OnServerManager::class, 'onManagerStart'],
-		Constant::MANAGER_STOP  => [OnServerManager::class, 'onManagerStop'],
-		Constant::BEFORE_RELOAD => [OnServerReload::class, 'onBeforeReload'],
-		Constant::AFTER_RELOAD  => [OnServerReload::class, 'onAfterReload'],
-		Constant::START         => [OnServer::class, 'onStart'],
-		Constant::SHUTDOWN      => [OnServer::class, 'onShutdown'],
+		Constant::WORKER_START    => [OnServerWorker::class, 'onWorkerStart'],
+		Constant::WORKER_EXIT     => [OnServerWorker::class, 'onWorkerExit'],
+		Constant::WORKER_STOP     => [OnServerWorker::class, 'onWorkerStop'],
+		Constant::WORKER_ERROR    => [OnServerWorker::class, 'onWorkerError'],
+		Constant::MANAGER_START   => [OnServerManager::class, 'onManagerStart'],
+		Constant::MANAGER_STOP    => [OnServerManager::class, 'onManagerStop'],
+		Constant::BEFORE_RELOAD   => [OnServerReload::class, 'onBeforeReload'],
+		Constant::AFTER_RELOAD    => [OnServerReload::class, 'onAfterReload'],
+		Constant::START           => [OnServer::class, 'onStart'],
+		Constant::BEFORE_SHUTDOWN => [OnServer::class, 'onBeforeShutdown'],
+		Constant::SHUTDOWN        => [OnServer::class, 'onShutdown'],
 	];
 
 
-
-    private array $eventInterface = [
-        OnReceiveInterface::class    => 'receive',
-        OnPacketInterface::class     =>'packet',
-        OnHandshakeInterface::class  => 'handshake',
-        OnMessageInterface::class    =>'message',
-        OnConnectInterface::class    =>'connect',
-        OnCloseInterface::class      =>'close',
-        OnDisconnectInterface::class =>'disconnect'
-    ];
-
+	private array $eventInterface = [
+		OnReceiveInterface::class    => 'receive',
+		OnPacketInterface::class     => 'packet',
+		OnHandshakeInterface::class  => 'handshake',
+		OnMessageInterface::class    => 'message',
+		OnConnectInterface::class    => 'connect',
+		OnCloseInterface::class      => 'close',
+		OnDisconnectInterface::class => 'disconnect'
+	];
 
 
 	/**
@@ -189,9 +188,9 @@ class ServerManager
 			}
 
 			$name = $customProcess->getProcessName($soloProcess);
-            if (is_enable_file_modification_listening()) {
-                scan_directory(directory('app'), 'App');
-            }
+			if (is_enable_file_modification_listening()) {
+				scan_directory(directory('app'), 'App');
+			}
 
 			$system = sprintf('%s.process[%d]', Config::get('id', 'system-service'), $soloProcess->pid);
 			if (Kiri::getPlatform()->isLinux()) {

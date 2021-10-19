@@ -3,11 +3,12 @@
 namespace Server\Manager;
 
 use Annotation\Inject;
-use Server\Abstracts\Server;
-use Server\Events\OnShutdown;
-use Server\Events\OnStart;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
+use Server\Abstracts\Server;
+use Server\Events\OnBeforeShutdown;
+use Server\Events\OnShutdown;
+use Server\Events\OnStart;
 
 
 /**
@@ -25,18 +26,26 @@ class OnServer extends Server
 
 
 	/**
-     * @param \Swoole\Server $server
-     * @throws ConfigException
-     */
+	 * @param \Swoole\Server $server
+	 * @throws ConfigException
+	 */
 	public function onStart(\Swoole\Server $server)
 	{
-        $this->setProcessName(sprintf('start[%d].server', $server->master_pid));
+		$this->setProcessName(sprintf('start[%d].server', $server->master_pid));
 
-        $this->eventDispatch->dispatch(new OnStart($server));
+		$this->eventDispatch->dispatch(new OnStart($server));
 	}
 
 
-	
+	/**
+	 * @param \Swoole\Server $server
+	 */
+	public function onBeforeShutdown(\Swoole\Server $server)
+	{
+		$this->eventDispatch->dispatch(new OnBeforeShutdown($server));
+	}
+
+
 	/**
 	 * @param \Swoole\Server $server
 	 */
@@ -44,7 +53,6 @@ class OnServer extends Server
 	{
 		$this->eventDispatch->dispatch(new OnShutdown($server));
 	}
-
 
 
 }
