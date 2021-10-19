@@ -52,7 +52,7 @@ class ServerCommand extends Command
 		$this->setName('sw:server')
 			->setDescription('server start|stop|reload|restart')
 			->addArgument('action', InputArgument::REQUIRED)
-			->addArgument('--daemon', InputArgument::OPTIONAL, '', 0);
+			->addOption('--daemon', '-d');
 	}
 
 
