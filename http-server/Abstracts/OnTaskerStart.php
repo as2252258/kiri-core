@@ -2,17 +2,23 @@
 
 namespace Server\Abstracts;
 
+use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionException;
 use Server\ServerManager;
 
+
+/**
+ *
+ */
 class OnTaskerStart extends WorkerStart implements EventDispatcherInterface
 {
 
 
     /**
-     * @throws \Kiri\Exception\ConfigException
-     * @throws \ReflectionException
+     * @throws ConfigException
+     * @throws ReflectionException
      */
     public function dispatch(object $event)
     {
