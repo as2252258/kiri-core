@@ -218,12 +218,8 @@ class Pool extends Component
 		if (!isset(static::$_connections[$name])) {
 			return;
 		}
-
-		var_dump(static::$_connections[$name]);
-
-		/** @var Channel|SplQueue $connection */
-		foreach (static::$_connections[$name] as $connection) {
-			$client = $connection->pop();
+		while (static::$_connections[$name]->length() > 0) {
+			$client = static::$_connections[$name]->pop();
 			if ($client instanceof StopHeartbeatCheck) {
 				$client->stopHeartbeatCheck();
 			}
