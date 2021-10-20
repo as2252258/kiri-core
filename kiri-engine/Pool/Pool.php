@@ -218,6 +218,9 @@ class Pool extends Component
 		if (!isset(static::$_connections[$name])) {
 			return;
 		}
+
+		var_dump(static::$_connections[$name]);
+
 		/** @var Channel|SplQueue $connection */
 		foreach (static::$_connections[$name] as $connection) {
 			$client = $connection->pop();
