@@ -439,7 +439,7 @@ class ServerManager
 	{
 		foreach ($events as $name => $event) {
 			if (is_array($event) && is_string($event[0])) {
-				$event[0] = $this->container->get($event[0], [$server]);
+				$event[0] = $this->container->get($event[0]);
 			}
 			$server->on($name, $event);
 		}
