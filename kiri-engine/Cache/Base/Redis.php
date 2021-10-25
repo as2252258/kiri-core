@@ -2,14 +2,12 @@
 
 namespace Kiri\Cache\Base;
 
-use Http\Handler\Context;
 use Kiri\Abstracts\Logger;
-use Kiri\Events\EventProvider;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Kiri;
 use Kiri\Pool\StopHeartbeatCheck;
 use RedisException;
-use Server\Events\OnWorkerExit;
+use Server\Context;
 use Swoole\Timer;
 
 

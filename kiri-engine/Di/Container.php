@@ -14,7 +14,6 @@ use Closure;
 use Exception;
 use Kiri\Abstracts\BaseObject;
 use Kiri\Abstracts\Logger;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
@@ -22,10 +21,6 @@ use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
-use Server\Constrict\Request;
-use Server\Constrict\Response;
-use Server\Constrict\RequestInterface;
-use Server\Constrict\ResponseInterface;
 
 /**
  * Class Container
@@ -62,8 +57,6 @@ class Container extends BaseObject implements ContainerInterface
 
 	/** @var array|string[] */
 	private array $_interfaces = [
-		RequestInterface::class  => Request::class,
-		ResponseInterface::class => Response::class,
 		LoggerInterface::class   => Logger::class
 	];
 

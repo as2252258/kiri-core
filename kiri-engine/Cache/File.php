@@ -10,8 +10,6 @@ declare(strict_types=1);
 namespace Kiri\Cache;
 
 
-use Exception;
-
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Component;
 use Swoole\Coroutine\System;

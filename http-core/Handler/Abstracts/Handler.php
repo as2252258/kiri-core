@@ -2,8 +2,9 @@
 
 namespace Http\Handler\Abstracts;
 
-use Annotation\Inject;
+
 use Exception;
+use Http\Constrict\ResponseInterface as HttpResponseInterface;
 use Http\Handler\Handler as CHl;
 use Http\Message\ServerRequest;
 use Kiri\Core\Help;
@@ -84,12 +85,11 @@ abstract class Handler implements RequestHandlerInterface
 
 	/**
 	 * @param mixed $responseData
-	 * @return \Server\Constrict\ResponseInterface
-	 * @throws Exception
+	 * @return ResponseInterface
 	 */
 	private function transferToResponse(mixed $responseData): ResponseInterface
 	{
-		$interface = response()->withStatus(200);
+		$interface = di(HttpResponseInterface::class)->withStatus(200);
 		if (!$interface->hasContentType()) {
 			$interface->withContentType('application/json;charset=utf-8');
 		}

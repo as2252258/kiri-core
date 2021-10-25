@@ -2,7 +2,6 @@
 
 namespace Kiri\Di;
 
-use Annotation\Inject;
 use Kiri\Abstracts\Component;
 use Kiri\Kiri;
 

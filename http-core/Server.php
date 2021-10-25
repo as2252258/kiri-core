@@ -5,29 +5,26 @@ namespace Http;
 
 use Annotation\Inject;
 use Exception;
+use Http\Abstracts\EventDispatchHelper;
+use Http\Abstracts\ExceptionHandlerInterface;
+use Http\Abstracts\ResponseHelper;
 use Http\Constrict\RequestInterface;
+use Http\Constrict\ResponseEmitter;
+use Http\Constrict\ResponseInterface;
+use Http\Events\OnAfterRequest;
 use Http\Handler\Abstracts\HandlerManager;
-use Http\Handler\Context;
 use Http\Handler\Dispatcher;
 use Http\Handler\Handler;
 use Http\Handler\Router;
 use Http\Message\ServerRequest;
 use Http\Message\Stream;
 use Kiri\Abstracts\Config;
+use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
 use Psr\Http\Message\ServerRequestInterface;
-use Http\Abstracts\ExceptionHandlerInterface;
-
+use Server\Context;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-
-use Http\Events\OnAfterRequest;
-
-use Http\Abstracts\EventDispatchHelper;
-use Http\Abstracts\ResponseHelper;
-use Http\Constrict\ResponseEmitter;
-use Http\Constrict\ResponseInterface;
 
 /**
  *
@@ -50,6 +47,16 @@ class Server implements OnRequestInterface
 
 
 	/**
+	 * @param ContainerInterface $container
+	 */
+	public function __construct(protected ContainerInterface $container)
+	{
+		$this->container->setBindings(RequestInterface::class, Constrict\Request::class);
+		$this->container->setBindings(ResponseInterface::class, Constrict\Response::class);
+	}
+
+
+	/**
 	 * @throws ConfigException
 	 */
 	public function init()
@@ -58,8 +65,8 @@ class Server implements OnRequestInterface
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
 		}
-		$this->exceptionHandler = Kiri::getDi()->get($exceptionHandler);
-		$this->responseEmitter = Kiri::getDi()->get(ResponseEmitter::class);
+		$this->exceptionHandler = $this->container->get($exceptionHandler);
+		$this->responseEmitter = $this->container->get(ResponseEmitter::class);
 	}
 
 
@@ -110,7 +117,7 @@ class Server implements OnRequestInterface
 	 */
 	private function initRequestResponse(Request $request): array
 	{
-		$PsrResponse = Context::setContext(ResponseInterface::class, new \Http\Message\Response());
+		$PsrResponse = Context::setContext(ResponseInterface::class, new Message\Response());
 
 		$PsrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
 		if ($PsrRequest->isMethod('OPTIONS')) {

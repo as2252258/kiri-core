@@ -9,7 +9,7 @@ interface ProxyInterface
 
 
     /**
-     * @param \Http\Handler\Handler $executor
+     * @param Handler $executor
      * @return mixed
      */
     public function proxy(Handler $executor): mixed;

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Http\Handler;
+namespace Server;
 
-use Http\Handler\Abstracts\BaseContext;
+use Server\Abstracts\BaseContext;
 use Swoole\Coroutine;
 
 /**

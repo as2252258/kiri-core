@@ -4,7 +4,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
-use Http\Handler\Context;
+use Server\Context;
 use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -18,9 +18,6 @@ use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
-use Server\Constrict\Request;
-use Server\Constrict\Response;
-use Server\Constrict\ResponseInterface;
 use Server\ServerManager;
 use Swoole\WebSocket\Server;
 use Http\Message\Response as Par7Response;
@@ -732,19 +729,6 @@ if (!function_exists('get_file_extension')) {
     }
 }
 
-if (!function_exists('request')) {
-
-    /**
-     * @return Request
-     * @throws Exception
-     */
-    function request(): Request
-    {
-        return Kiri::getDi()->get(Request::class);
-    }
-
-}
-
 if (!function_exists('storage')) {
 
     /**
@@ -816,43 +800,12 @@ if (!function_exists('name')) {
 
 }
 
-if (!function_exists('response')) {
-
-    /**
-     * @return Response
-     * @throws
-     */
-    function response(): Response
-    {
-        if (!Context::hasContext(ResponseInterface::class)) {
-            Context::setContext(ResponseInterface::class, new Par7Response());
-        }
-        return di(ResponseInterface::class);
-    }
-
-}
-
 
 if (!function_exists('zero_full')) {
     function zero_full(int $data = 1, int $length = 10): string
     {
         return sprintf('%0' . $length . 'd', $data);
     }
-}
-
-
-if (!function_exists('redirect')) {
-
-
-    /**
-     * @param $url
-     * @return int
-     */
-    function redirect($url): int
-    {
-        return response()->redirect($url);
-    }
-
 }
 
 
