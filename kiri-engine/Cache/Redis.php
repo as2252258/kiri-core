@@ -68,7 +68,7 @@ class Redis extends Component
 		if (method_exists($this, $name)) {
 			$data = $this->{$name}(...$arguments);
 		} else {
-			$data = $this->proxy()->{$name}(...$arguments);
+			$data = $this->proxy($name, $arguments);
 		}
 		if (microtime(true) - $time >= 0.02) {
 			$this->warning('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
@@ -130,10 +130,13 @@ SCRIPT;
 	}
 
 	/**
+	 * @param $name
+	 * @param $arguments
 	 * @return Base\Redis
+	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function proxy(): Base\Redis
+	public function proxy($name, $arguments): Base\Redis
 	{
         $connections = Kiri::getDi()->get(PoolRedis::class);
 
@@ -143,7 +146,9 @@ SCRIPT;
 		if (!($client instanceof Base\Redis)) {
 			throw new Exception('Redis connections more.');
 		}
-		return $client;
+		$response = $client->{$name}(...$arguments);
+		$this->release();
+		return $response;
 	}
 
 	/**
