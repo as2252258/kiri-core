@@ -1,6 +1,6 @@
 <?php
 
-namespace Server\Manager;
+namespace Server\Handler;
 
 use Annotation\Inject;
 use Kiri\Events\EventDispatch;

@@ -1,17 +1,14 @@
 <?php
 
 
-namespace Server\Task;
+namespace Server\Handler;
 
 
-use Kiri\Abstracts\Config;
+use Annotation\Inject;
+use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use ReflectionException;
-use Server\Constrict\Response;
-use Server\Constrict\ResponseInterface;
-use Server\ExceptionHandlerDispatcher;
-use Server\ExceptionHandlerInterface;
 use Server\SInterface\OnTaskInterface;
 use Swoole\Server;
 
@@ -24,26 +21,8 @@ class OnServerTask
 {
 
 
-	/**
-	 * @var ExceptionHandlerInterface|null
-	 */
-	public ?ExceptionHandlerInterface $handler = null;
-
-
-	/**
-	 * @throws ConfigException
-	 */
-	public function emit(\Throwable $exception, Response $response): ResponseInterface
-	{
-		if ($this->handler == null) {
-			$exceptionHandler = Config::get('exception.task', ExceptionHandlerDispatcher::class);
-			if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
-				$exceptionHandler = ExceptionHandlerDispatcher::class;
-			}
-			$this->handler = Kiri::getDi()->get($exceptionHandler);
-		}
-		return $this->handler->emit($exception, $response);
-	}
+	#[Inject(Logger::class)]
+	public Logger $logger;
 
 
 	/**
@@ -58,7 +37,9 @@ class OnServerTask
 		try {
 			$data = $this->resolve($data);
 		} catch (\Throwable $exception) {
-			$data = $this->emit($exception, new Response());
+			$data = jTraceEx($exception);
+
+			$this->logger->error('task', [$data]);
 		} finally {
 			$server->finish($data);
 		}
@@ -75,7 +56,9 @@ class OnServerTask
 		try {
 			$data = $this->resolve($task->data);
 		} catch (\Throwable $exception) {
-			$data = $this->emit($exception, new Response());
+			$data = jTraceEx($exception);
+
+			$this->logger->error('task', [$data]);
 		} finally {
 			$server->finish($data);
 		}

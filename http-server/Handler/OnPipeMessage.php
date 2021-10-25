@@ -1,11 +1,10 @@
 <?php
 
-namespace Server\Manager;
+namespace Server\Handler;
 
 use Annotation\Inject;
 use Server\Abstracts\Server;
 use Exception;
-use Server\Events\OnAfterRequest;
 use Server\SInterface\OnPipeMessageInterface;
 use Kiri\Events\EventDispatch;
 
@@ -32,9 +31,7 @@ class OnPipeMessage extends Server
 		if (!is_object($message) || !($message instanceof OnPipeMessageInterface)) {
 			return;
 		}
-
 		call_user_func([$message, 'process'], $server, $src_worker_id);
-		$this->eventDispatch->dispatch(new OnAfterRequest());
 	}
 
 

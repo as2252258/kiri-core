@@ -10,10 +10,14 @@ use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use ReflectionException;
-use Server\Manager\OnPipeMessage;
-use Server\Manager\OnServer;
-use Server\Manager\OnServerManager;
-use Server\Manager\OnServerReload;
+
+use Server\Handler\OnPipeMessage;
+use Server\Handler\OnServer;
+use Server\Handler\OnServerManager;
+use Server\Handler\OnServerReload;
+use Server\Handler\OnServerWorker;
+use Server\Handler\OnServerTask;
+
 use Server\SInterface\OnCloseInterface;
 use Server\SInterface\OnConnectInterface;
 use Server\SInterface\OnDisconnectInterface;
@@ -23,8 +27,6 @@ use Server\SInterface\OnPacketInterface;
 use Server\SInterface\OnProcessInterface;
 use Server\SInterface\OnReceiveInterface;
 use Server\SInterface\OnTaskInterface;
-use Server\Task\OnServerTask;
-use Server\Worker\OnServerWorker;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;

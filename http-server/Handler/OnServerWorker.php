@@ -1,6 +1,6 @@
 <?php
 
-namespace Server\Worker;
+namespace Server\Handler;
 
 use Annotation\Inject;
 use Exception;

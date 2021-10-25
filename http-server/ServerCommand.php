@@ -15,7 +15,7 @@ use Server\Abstracts\OnWorkerStart as WorkerDispatch;
 use Server\Events\OnBeforeWorkerStart;
 use Server\Events\OnTaskerStart;
 use Server\Events\OnWorkerStart;
-use Server\Worker\OnServerWorker;
+use Server\Handler\OnServerWorker;
 use Swoole\Coroutine;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
