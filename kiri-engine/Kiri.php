@@ -6,17 +6,15 @@ namespace Kiri;
 
 
 use Annotation\Annotation;
-use Database\ModelInterface;
 use Database\Collection;
+use Database\ModelInterface;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
 use Kiri\Di\ContainerInterface;
-use Kiri\Exception\NotFindClassException;
 use ReflectionException;
-use ReflectionProperty;
 use Server\ServerManager;
 use Swoole\Coroutine;
 use Swoole\Process;
@@ -44,7 +42,7 @@ class Kiri
 {
 
 	/** @var Container */
-	public static Container $container;
+	private static Container $container;
 
 
 	/** @var ?Application */
@@ -59,6 +57,16 @@ class Kiri
 	public static function init($service)
 	{
 		static::$service = $service;
+	}
+
+
+	/**
+	 * @param Container $container
+	 */
+	public static function setContainer(Container $container)
+	{
+		$container->setBindings(ContainerInterface::class, $container);
+		static::$container = $container;
 	}
 
 
@@ -613,5 +621,4 @@ class Kiri
 }
 
 //spl_autoload_register([Kiri::class, 'autoload'], true, true);
-Kiri::$container = new Container();
-Kiri::$container->setBindings(ContainerInterface::class, Kiri::$container);
+Kiri::setContainer(new Container());
