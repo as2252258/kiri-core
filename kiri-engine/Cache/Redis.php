@@ -132,11 +132,11 @@ SCRIPT;
 	/**
 	 * @param $name
 	 * @param $arguments
-	 * @return Base\Redis
+	 * @return mixed
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function proxy($name, $arguments): Base\Redis
+	public function proxy($name, $arguments): mixed
 	{
         $connections = Kiri::getDi()->get(PoolRedis::class);
 
