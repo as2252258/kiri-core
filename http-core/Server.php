@@ -47,13 +47,10 @@ class Server implements OnRequestInterface
 
 
 	/**
-	 * @param ContainerInterface $container
+	 * @var ContainerInterface
 	 */
-	public function __construct(protected ContainerInterface $container)
-	{
-		$this->container->setBindings(RequestInterface::class, Constrict\Request::class);
-		$this->container->setBindings(ResponseInterface::class, Constrict\Response::class);
-	}
+	#[Inject(ContainerInterface::class)]
+	protected ContainerInterface $container;
 
 
 	/**
@@ -61,6 +58,9 @@ class Server implements OnRequestInterface
 	 */
 	public function init()
 	{
+		$this->container->setBindings(RequestInterface::class, Constrict\Request::class);
+		$this->container->setBindings(ResponseInterface::class, Constrict\Response::class);
+
 		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
