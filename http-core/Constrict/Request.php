@@ -2,7 +2,7 @@
 
 namespace Http\Constrict;
 
-use Server\Context;
+use Kiri\Context;
 use Http\Handler\AuthIdentity;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Kiri;

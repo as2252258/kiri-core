@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Server;
+namespace Kiri;
 
-use Server\Abstracts\BaseContext;
+use Kiri\Abstracts\BaseContext;
 use Swoole\Coroutine;
 
 /**

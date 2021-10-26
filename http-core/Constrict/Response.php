@@ -4,7 +4,7 @@
 namespace Http\Constrict;
 
 
-use Server\Context;
+use Kiri\Context;
 use Http\Message\ContentType;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;

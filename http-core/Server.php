@@ -11,7 +11,6 @@ use Http\Abstracts\ResponseHelper;
 use Http\Constrict\RequestInterface;
 use Http\Constrict\ResponseEmitter;
 use Http\Constrict\ResponseInterface;
-use Http\Events\OnAfterRequest;
 use Http\Handler\Abstracts\HandlerManager;
 use Http\Handler\Dispatcher;
 use Http\Handler\Handler;
@@ -21,9 +20,8 @@ use Http\Message\Stream;
 use Kiri\Abstracts\Config;
 use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
 use Psr\Http\Message\ServerRequestInterface;
-use Server\Context;
+use Kiri\Context;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

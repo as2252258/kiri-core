@@ -6,7 +6,7 @@ namespace Kiri\Pool;
 use Closure;
 use Database\Mysql\PDO;
 use Exception;
-use Server\Context;
+use Kiri\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Kiri;
 use Swoole\Error;
