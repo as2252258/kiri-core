@@ -245,7 +245,7 @@ class Router
 	private function loadRouterFile($files)
 	{
 		try {
-			include_once "Router.php";
+			include_once "$files";
 		} catch (Throwable $exception) {
 			di(Logger::class)->error('router', [
 				$exception->getMessage(),
