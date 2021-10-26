@@ -57,7 +57,7 @@ class Container extends BaseObject implements ContainerInterface
 
 	/** @var array|string[] */
 	private array $_interfaces = [
-		LoggerInterface::class   => Logger::class
+		LoggerInterface::class => Logger::class
 	];
 
 
@@ -112,8 +112,12 @@ class Container extends BaseObject implements ContainerInterface
 	 */
 	public function setBindings(string $interface, $object)
 	{
-		$this->_singletons[$interface] = $object;
-		$this->_interfaces[$interface] = get_class($object);
+		if (is_string($object)) {
+			$this->_interfaces[$interface] = $object;
+		} else {
+			$this->_interfaces[$interface] = get_class($object);
+			$this->_singletons[$interface] = $object;
+		}
 	}
 
 
@@ -253,7 +257,7 @@ class Container extends BaseObject implements ContainerInterface
 		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
 			return $this->_reflection[$class] = $reflect;
 		}
-        $construct = NoteManager::resolveTarget($reflect);
+		$construct = NoteManager::resolveTarget($reflect);
 		if (!empty($construct) && $construct->getNumberOfParameters() > 0) {
 			$this->_constructs[$class] = $construct;
 		}
