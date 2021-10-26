@@ -15,7 +15,7 @@ use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Events\EventDispatch;
 use Kiri\Kiri;
-use Server\Events\OnAfterRequest;
+use Http\Events\OnAfterRequest;
 
 /**
  * Class ErrorHandler

@@ -92,7 +92,7 @@ class Server implements OnRequestInterface
 			$PsrResponse = $this->exceptionHandler->emit($throwable, $this->response);
 		} finally {
 			$this->responseEmitter->sender($response, $PsrResponse);
-			$this->eventDispatch->dispatch(new OnAfterRequest());
+//			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}
 
