@@ -58,8 +58,8 @@ class Server implements OnRequestInterface
 	 */
 	public function init()
 	{
-		$this->container->setBindings(RequestInterface::class, Constrict\Request::class);
-		$this->container->setBindings(ResponseInterface::class, Constrict\Response::class);
+		$this->container->mapping(RequestInterface::class, Constrict\Request::class);
+		$this->container->mapping(ResponseInterface::class, Constrict\Response::class);
 
 		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
