@@ -49,9 +49,6 @@ class Server extends HttpService
 	public EventDispatch $eventDispatch;
 
 
-
-
-
 	/**
 	 *
 	 */
