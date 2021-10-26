@@ -50,7 +50,7 @@ class Server implements OnRequestInterface
 	 * @var ContainerInterface
 	 */
 	#[Inject(ContainerInterface::class)]
-	protected ContainerInterface $container;
+	public ContainerInterface $container;
 
 
 	/**
