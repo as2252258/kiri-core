@@ -5,9 +5,14 @@ namespace Server;
 
 use Annotation\Inject;
 use Exception;
+use Http\Constrict\Request;
+use Http\Constrict\RequestInterface;
+use Http\Constrict\Response;
+use Http\Constrict\ResponseInterface;
 use Http\Handler\Abstracts\HttpService;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
+use Kiri\Di\ContainerInterface;
 use Kiri\Error\LoggerProcess;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
@@ -44,11 +49,19 @@ class Server extends HttpService
 	public EventDispatch $eventDispatch;
 
 
+
+	/** @var ContainerInterface */
+	#[Inject(ContainerInterface::class)]
+	public ContainerInterface $container;
+
+
 	/**
 	 *
 	 */
 	public function init()
 	{
+		$this->container->mapping(RequestInterface::class, Request::class);
+		$this->container->mapping(ResponseInterface::class, Response::class);
 	}
 
 

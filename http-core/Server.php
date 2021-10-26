@@ -21,6 +21,7 @@ use Http\Message\Stream;
 use Kiri\Abstracts\Config;
 use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 use Psr\Http\Message\ServerRequestInterface;
 use Server\Context;
 use Swoole\Http\Request;
@@ -58,9 +59,6 @@ class Server implements OnRequestInterface
 	 */
 	public function init()
 	{
-		$this->container->mapping(RequestInterface::class, Constrict\Request::class);
-		$this->container->mapping(ResponseInterface::class, Constrict\Response::class);
-
 		$exceptionHandler = Config::get('exception.http', ExceptionHandlerDispatcher::class);
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exceptionHandler))) {
 			$exceptionHandler = ExceptionHandlerDispatcher::class;
