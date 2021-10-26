@@ -5,7 +5,9 @@ namespace Kiri\Error;
 
 
 use Exception;
+use Http\Constrict\RequestInterface;
 use Kiri\IAspect;
+use Kiri\Kiri;
 
 
 /**
@@ -35,8 +37,10 @@ class LoggerAspect implements IAspect
 	 */
 	private function print_runtime($startTime)
 	{
+		$request = Kiri::getDi()->get(RequestInterface::class);
+
 		$runTime = round(microtime(true) - $startTime, 6);
-		echo sprintf('run %s use time %6f', request()->getUri()->__toString(), $runTime);
+		echo sprintf('run %s use time %6f', $request->getUri()->__toString(), $runTime);
 		echo PHP_EOL;
 	}
 
