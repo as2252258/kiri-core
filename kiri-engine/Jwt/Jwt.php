@@ -5,11 +5,11 @@ namespace Kiri\Jwt;
 
 use Annotation\Inject;
 use Exception;
+use Http\Constrict\RequestInterface;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Exception\ConfigException;
-use Server\Constrict\Request;
 
 
 /**
@@ -22,14 +22,14 @@ class Jwt extends Component
 	use JwtHelper;
 
 
-	#[Inject(Request::class)]
-	private Request $request;
+	#[Inject(RequestInterface::class)]
+	private RequestInterface $request;
 
 
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 */
-	public function setRequest(Request $request): void
+	public function setRequest(RequestInterface $request): void
 	{
 		$this->request = $request;
 	}
@@ -48,7 +48,7 @@ class Jwt extends Component
 	 */
 	public function init()
 	{
-		$this->request = di(Request::class);
+		$this->request = di(RequestInterface::class);
 
 		$this->public = Config::get('ssl.public', $this->public);
 		$this->private = Config::get('ssl.private', $this->private);
