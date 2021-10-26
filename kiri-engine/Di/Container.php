@@ -115,8 +115,9 @@ class Container extends BaseObject implements ContainerInterface
 		if (is_string($object)) {
 			$this->_interfaces[$interface] = $object;
 		} else {
-			$this->_interfaces[$interface] = get_class($object);
-			$this->_singletons[get_class($object)] = $object;
+			$className = get_class($object);
+			$this->_interfaces[$interface] = $className;
+			$this->_singletons[$className] = $object;
 		}
 	}
 
