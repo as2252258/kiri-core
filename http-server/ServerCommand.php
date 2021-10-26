@@ -6,7 +6,12 @@ namespace Server;
 
 use Annotation\Inject;
 use Exception;
+use Http\Constrict\Request;
+use Http\Constrict\RequestInterface;
+use Http\Constrict\Response;
+use Http\Constrict\ResponseInterface;
 use Kiri\Abstracts\Config;
+use Kiri\Di\ContainerInterface;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
@@ -41,6 +46,11 @@ class ServerCommand extends Command
 	public EventProvider $eventProvider;
 
 
+	/** @var ContainerInterface */
+	#[Inject(ContainerInterface::class)]
+	public ContainerInterface $container;
+
+
 	/**
 	 *
 	 */
@@ -62,6 +72,9 @@ class ServerCommand extends Command
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		try {
+			$this->container->mapping(RequestInterface::class, Request::class);
+			$this->container->mapping(ResponseInterface::class, Response::class);
+
 			$manager = Kiri::app()->getServer();
 			$manager->setDaemon((int)is_null($input->getOption('daemon')));
 			if (!in_array($input->getArgument('action'), self::ACTIONS)) {

@@ -50,9 +50,6 @@ class Server extends HttpService
 
 
 
-	/** @var ContainerInterface */
-	#[Inject(ContainerInterface::class)]
-	public ContainerInterface $container;
 
 
 	/**
@@ -60,8 +57,6 @@ class Server extends HttpService
 	 */
 	public function init()
 	{
-		$this->container->mapping(RequestInterface::class, Request::class);
-		$this->container->mapping(ResponseInterface::class, Response::class);
 	}
 
 
