@@ -89,6 +89,7 @@ use Annotation\Target;
 use Http\Handler\Controller;
 use Kiri\Rpc\Annotation\JsonRpc;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
+use Kiri\Rpc\JsonRpcConsumers;
 
 
 #[Target]
