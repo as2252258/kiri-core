@@ -34,6 +34,7 @@ class GiiCommand extends Command
 		$this->setName('sw:gii')
 			->addArgument('action', InputArgument::REQUIRED)
 			->addArgument('name', InputArgument::OPTIONAL)
+			->addArgument('databases', InputArgument::OPTIONAL)
 			->setDescription('./snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx');
 	}
 
@@ -43,6 +44,7 @@ class GiiCommand extends Command
 	 * @param OutputInterface $output
 	 * @return int
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
@@ -50,9 +52,16 @@ class GiiCommand extends Command
 		$gii = Kiri::app()->get('gii');
 
 		$connections = Kiri::app()->get('db');
-//		if ($input->getArgument('databases')) {
-//			return $gii->run($connections->get($input->getArgument('databases')), $input);
-//		}
+		if ($input->hasArgument('databases')) {
+			$gii->run($connections->get($input->getArgument('databases')), $input);
+			return 1;
+		}
+
+		$action = $input->getArgument('action');
+		if (!in_array($action, ['model', 'controller'])) {
+			$gii->run(null, $input);
+			return 1;
+		}
 
 		$array = [];
 		foreach (Config::get('databases.connections') as $key => $connection) {

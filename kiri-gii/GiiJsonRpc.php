@@ -44,9 +44,12 @@ interface ' . ucfirst($name) . 'RpcInterface
 	}
 
 
-	private function createProducers($name)
+	private function createProducers($name): string
 	{
 		$html = '<?php
+
+namespace Rpc\Producers;
+
 
 use Annotation\Target;
 use Http\Handler\Controller;
@@ -75,9 +78,12 @@ class ' . ucfirst($name) . 'RpcController extends Controller implements ' . ucfi
 	}
 
 
-	private function createConsumer($name)
+	private function createConsumer($name): string
 	{
 		$html = '<?php
+
+namespace Rpc\Consumers;
+
 
 use Annotation\Target;
 use Http\Handler\Controller;
