@@ -25,8 +25,8 @@ class Gii
 {
 	private ?string $tableName = NULL;
 
-	/** @var Connection */
-	private Connection $db;
+	/** @var null|Connection */
+	private ?Connection $db;
 
 	private InputInterface $input;
 
