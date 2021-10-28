@@ -19,7 +19,7 @@ class GiiJsonRpc extends GiiBase
 	}
 
 
-	private function createInterface($name)
+	private function createInterface($name): string
 	{
 		$html = '<?php
 
@@ -52,14 +52,13 @@ namespace Rpc\Producers;
 
 
 use Annotation\Target;
-use Http\Handler\Controller;
-use Kiri\Rpc\Annotation\JsonRpc;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
+use Exception;
+use Kiri\Rpc\JsonRpcConsumers;
 
 
 #[Target]
-#[JsonRpc(method: \'test\', version: \'2.0\')]
-class ' . ucfirst($name) . 'RpcController extends Controller implements ' . ucfirst($name) . 'RpcInterface
+class ' . ucfirst($name) . 'RpcService extends JsonRpcConsumers implements ' . ucfirst($name) . 'RpcInterface
 {
 
 
@@ -86,15 +85,14 @@ namespace Rpc\Consumers;
 
 
 use Annotation\Target;
-use Http\Handler\Controller;
 use Kiri\Rpc\Annotation\JsonRpc;
+use Http\Handler\Controller;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
-use Kiri\Rpc\JsonRpcConsumers;
 
 
 #[Target]
-#[JsonRpc(method: \'test\', version: \'2.0\')]
-class ' . ucfirst($name) . 'RpcConsumer extends JsonRpcConsumers implements ' . ucfirst($name) . 'RpcInterface
+#[JsonRpc(method: \''.$name.'\', version: \'2.0\')]
+class ' . ucfirst($name) . 'RpcConsumer extends Controller implements ' . ucfirst($name) . 'RpcInterface
 {
 
 
