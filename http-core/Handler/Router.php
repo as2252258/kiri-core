@@ -8,6 +8,7 @@ use Http\Handler\Abstracts\HandlerManager;
 use Http\Handler\Abstracts\MiddlewareManager;
 use Kiri\Abstracts\Logger;
 use Kiri\Kiri;
+use ReflectionException;
 use Throwable;
 
 class Router
@@ -30,6 +31,30 @@ class Router
 	{
 		$router = Kiri::getDi()->get(Router::class);
 		$router->addRoute('SOCKET', $route, $handler);
+	}
+
+
+	/**
+	 * @param $service
+	 * @param Closure $callback
+	 * @param string $version
+	 */
+	public static function addService($service, Closure $callback, string $version = '2.0')
+	{
+		$default = ['prefix' => '.rpc/' . $service . '/' . $version];
+		static::group($default, $callback);
+	}
+
+
+	/**
+	 * @param $method
+	 * @param $handler
+	 * @throws ReflectionException
+	 */
+	public static function jsonp($method, $handler)
+	{
+		$router = Kiri::getDi()->get(Router::class);
+		$router->addRoute('json-rpc', $method, $handler);
 	}
 
 
@@ -127,7 +152,7 @@ class Router
 	 * @param string|array $method
 	 * @param string $route
 	 * @param string|Closure $closure
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function addRoute(string|array $method, string $route, string|Closure $closure)
 	{
@@ -188,9 +213,9 @@ class Router
 		if (empty($middleware = array_filter($middleware))) {
 			return;
 		}
-        foreach ($middleware as $value) {
-            MiddlewareManager::add($controller, $method, $value);
-        }
+		foreach ($middleware as $value) {
+			MiddlewareManager::add($controller, $method, $value);
+		}
 	}
 
 
