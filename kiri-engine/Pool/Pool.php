@@ -115,14 +115,16 @@ class Pool extends Component
 	/**
 	 * @param $name
 	 * @param $callback
+	 * @param $minx
 	 * @return array
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
-	public function get($name, $callback): mixed
+	public function get($name, $callback, $minx): mixed
 	{
 		$channel = $this->getChannel($name);
 		if (!$channel->isEmpty()) {
-			return $this->maxIdleQuantity($channel);
+			return $this->maxIdleQuantity($channel, $minx);
 		}
 		return $callback();
 	}
@@ -130,14 +132,13 @@ class Pool extends Component
 
 	/**
 	 * @param $channel
+	 * @param $minx
 	 * @return mixed
-	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	private function maxIdleQuantity($channel): mixed
+	protected function maxIdleQuantity($channel, $minx): mixed
 	{
 		$connection = $channel->pop();
-		$minx = Config::get('databases.pool.min', 1);
 		if ($channel->length() > $minx) {
 			$this->pop($channel, $minx);
 		}

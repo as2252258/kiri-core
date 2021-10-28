@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Kiri\Pool;
 
 
-use Annotation\Inject;
 use Closure;
 use Exception;
-use Kiri\Context;
 use Kiri\Abstracts\Component;
-use Kiri\Events\EventProvider;
+use Kiri\Context;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
-use Server\Events\OnWorkerExit;
 
 /**
  * Class RedisClient
@@ -37,7 +34,10 @@ class Redis extends Component
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		}
-		$clients = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config));
+
+		$pool = $config['pool'] ?? ['min' => 1, 'max' => 100];
+
+		$clients = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config), $pool['min'] ?? 1);
 		return Context::setContext($coroutineName, $clients);
 	}
 

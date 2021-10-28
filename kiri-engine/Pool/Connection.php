@@ -6,8 +6,9 @@ namespace Kiri\Pool;
 use Closure;
 use Database\Mysql\PDO;
 use Exception;
-use Kiri\Context;
 use Kiri\Abstracts\Component;
+use Kiri\Abstracts\Config;
+use Kiri\Context;
 use Kiri\Kiri;
 use Swoole\Error;
 use Throwable;
@@ -92,8 +93,11 @@ class Connection extends Component
 		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
 			return $pdo;
 		}
+
+		$minx = Config::get('databases.pool.min', 1);
+
 		/** @var PDO $connections */
-		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config));
+		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config), $minx);
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
