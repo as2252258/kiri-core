@@ -52,8 +52,8 @@ class GiiCommand extends Command
 		$gii = Kiri::app()->get('gii');
 
 		$connections = Kiri::app()->get('db');
-		if ($input->hasArgument('databases')) {
-			$gii->run($connections->get($input->getArgument('databases')), $input);
+		if (($db = $input->getArgument('databases')) != null) {
+			$gii->run($connections->get($db), $input);
 			return 1;
 		}
 
