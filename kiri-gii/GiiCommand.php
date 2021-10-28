@@ -40,9 +40,8 @@ class GiiCommand extends Command
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
-	 * @return array
+	 * @return int
 	 * @throws ConfigException
-	 * @throws Exception
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{

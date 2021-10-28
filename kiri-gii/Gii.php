@@ -89,6 +89,10 @@ class Gii
 				$task = new GiiRpcService();
 				$task->setInput($this->input);
 				return $task->generate();
+			case 'json-rpc':
+				$task = new GiiJsonRpc();
+				$task->setInput($this->input);
+				return $task->create();
 			default:
 				return $this->getModel($make, $input);
 		}
