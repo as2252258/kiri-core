@@ -58,7 +58,13 @@ abstract class Handler implements RequestHandlerInterface
 	 */
 	public function dispatcher(ServerRequestInterface $request): mixed
 	{
-		$response = call_user_func($this->handler->callback, ...$this->handler->params);
+		if (!empty($this->handler->_aspect)) {
+			$this->handler->_aspect->before();
+			$response = $this->handler->_aspect->invoke($this->handler->callback, $this->handler->params);
+			$this->handler->_aspect->after($response);
+		} else {
+			$response = call_user_func($this->handler->callback, ...$this->handler->params);
+		}
 		if (!($response instanceof ResponseInterface)) {
 			$response = $this->transferToResponse($response);
 		}

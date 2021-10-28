@@ -7,6 +7,7 @@ use Closure;
 use Http\Handler\Abstracts\MiddlewareManager;
 use Kiri\Di\NoteManager;
 use Kiri\Events\EventProvider;
+use Kiri\IAspect;
 use Kiri\Kiri;
 use Server\Events\OnAfterWorkerStart;
 
@@ -21,6 +22,9 @@ class Handler
 
 
 	public ?array $params = [];
+
+
+	public IAspect $_aspect;
 
 
 	public ?array $_middlewares = [];
@@ -65,16 +69,7 @@ class Handler
 		if (empty($aspect)) {
 			return;
 		}
-		$callback = $this->callback;
-		$params = $this->params;
-
-		$this->params = [];
-		$this->callback = static function () use ($aspect, $callback, $params) {
-			$aspect->before();
-			$result = $aspect->invoke($callback, $params);
-			$aspect->after($result);
-			return $result;
-		};
+		$this->_aspect = $aspect;
 	}
 
 
