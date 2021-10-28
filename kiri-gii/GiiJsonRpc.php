@@ -67,7 +67,7 @@ class ' . ucfirst($name) . 'RpcService extends JsonRpcConsumers implements ' . u
 		
 		';
 
-		$name = ucfirst($name) . 'RpcController.php';
+		$name = ucfirst($name) . 'RpcService.php';
 		if (!is_dir(APP_PATH . '/rpc/Producers/')) {
 			mkdir(APP_PATH . '/rpc/Producers/');
 		}
