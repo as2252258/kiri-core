@@ -64,6 +64,8 @@ use Kiri\Rpc\JsonRpcConsumers;
 class ' . ucfirst($name) . 'RpcService extends JsonRpcConsumers implements ' . ucfirst($name) . 'RpcInterface
 {
 
+	protected string $name = \'' . $name . '\';
+
 
 
 }
