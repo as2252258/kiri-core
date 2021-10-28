@@ -5,18 +5,12 @@ namespace Server;
 
 use Annotation\Inject;
 use Exception;
-use Http\Constrict\Request;
-use Http\Constrict\RequestInterface;
-use Http\Constrict\Response;
-use Http\Constrict\ResponseInterface;
 use Http\Handler\Abstracts\HttpService;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
-use Kiri\Di\ContainerInterface;
 use Kiri\Error\LoggerProcess;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
-use Kiri\Rpc\RpcProvider;
 use Server\Events\OnShutdown;
 
 
@@ -79,7 +73,8 @@ class Server extends HttpService
 
 		$rpcService = Config::get('rpc', []);
 		if (!empty($rpcService)) {
-			RpcProvider::addRpcListener($this->manager, $rpcService);
+			$this->manager->addListener($rpcService['type'], $rpcService['host'], $rpcService['port'],
+				$rpcService['mode'], $rpcService);
 		}
 
 		$processes = array_merge($this->process, Config::get('processes', []));
