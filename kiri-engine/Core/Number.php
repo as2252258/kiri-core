@@ -16,7 +16,7 @@ class Number
 	{
 		$explode = current(explode(' ', str_replace('0.', '', microtime())));
 
-		return 'No.' . sprintf('%09d', $userId) . '.' . date('Ymd.His') . '.' . $explode;
+		return 'No.' . sprintf('%010d', $userId) . '.' . date('Ymd.His') . '.' . $explode;
 	}
 
 	/**
