@@ -33,6 +33,7 @@ class GiiCommand extends Command
 	{
 		$this->setName('sw:gii')
 			->addArgument('action', InputArgument::REQUIRED)
+			->addArgument('name', InputArgument::OPTIONAL)
 			->setDescription('./snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx');
 	}
 
