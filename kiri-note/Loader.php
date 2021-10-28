@@ -152,7 +152,7 @@ class Loader extends BaseObject
 	private function getReflect(DirectoryIterator $path, string $namespace): ?ReflectionClass
 	{
 		$class = $this->explodeFileName($path, $namespace);
-		if (!class_exists($class) && !interface_exists($class)) {
+		if (!class_exists($class)) {
 			return null;
 		}
 		return Kiri::getDi()->getReflect($class);

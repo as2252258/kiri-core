@@ -255,13 +255,10 @@ class Container extends BaseObject implements ContainerInterface
 			return $this->_reflection[$class];
 		}
 		$reflect = new ReflectionClass($class);
-		if ($reflect->isAbstract() || $reflect->isTrait()) {
+		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
 			return $this->_reflection[$class] = $reflect;
 		}
 		$construct = NoteManager::resolveTarget($reflect);
-		if ($reflect->isInterface()) {
-			return $this->_reflection[$class] = $reflect;
-		}
 		if (!empty($construct) && $construct->getNumberOfParameters() > 0) {
 			$this->_constructs[$class] = $construct;
 		}

@@ -25,12 +25,7 @@ class GiiJsonRpc extends GiiBase
 
 namespace Rpc;
 
-use Annotation\Mapping;
-use Annotation\Target;
-use Rpc\Producers\\' . ucfirst($name) . 'RpcService;
 
-#[Target]
-#[Mapping(' . ucfirst($name) . 'RpcService::class)]
 interface ' . ucfirst($name) . 'RpcInterface
 {
 
@@ -58,12 +53,14 @@ namespace Rpc\Producers;
 
 
 use Annotation\Target;
+use Annotation\Mapping;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
 use Exception;
 use Kiri\Rpc\JsonRpcConsumers;
 
 
 #[Target]
+#[Mapping(' . ucfirst($name) . 'RpcInterface::class)]
 class ' . ucfirst($name) . 'RpcService extends JsonRpcConsumers implements ' . ucfirst($name) . 'RpcInterface
 {
 

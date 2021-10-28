@@ -23,7 +23,7 @@ use Kiri\Kiri;
 	 */
 	public function execute(mixed $class, mixed $method = ''): mixed
 	{
-		Kiri::getDi()->mapping($class, $this->class);
+		Kiri::getDi()->mapping($this->class, $class);
 
 		return parent::execute($class, $method);
 	}
