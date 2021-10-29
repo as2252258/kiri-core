@@ -18,10 +18,10 @@ use Http\Handler\Router;
 use Http\Message\ServerRequest;
 use Http\Message\Stream;
 use Kiri\Abstracts\Config;
+use Kiri\Context;
 use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
 use Psr\Http\Message\ServerRequestInterface;
-use Kiri\Context;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -87,8 +87,10 @@ class Server implements OnRequestInterface
 		} catch (\Throwable $throwable) {
 			$PsrResponse = $this->exceptionHandler->emit($throwable, $this->response);
 		} finally {
+			if ($request->server['request_method'] == 'HEAD') {
+				$PsrResponse->getBody()->write('');
+			}
 			$this->responseEmitter->sender($response, $PsrResponse);
-//			$this->eventDispatch->dispatch(new OnAfterRequest());
 		}
 	}
 
