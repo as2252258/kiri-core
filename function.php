@@ -238,7 +238,7 @@ if (!function_exists('isUrl')) {
 	 * @param bool $get_info
 	 * @return false|array
 	 */
-	function isUrl($url, $get_info = true): bool|array
+	function isUrl($url, bool $get_info = true): bool|array
 	{
 		if (str_starts_with($url, '/')) {
 			return false;
