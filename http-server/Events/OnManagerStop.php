@@ -11,7 +11,7 @@ class OnManagerStop
 	/**
 	 * @param Server $server
 	 */
-	public function __construct(Server $server)
+	public function __construct(public Server $server)
 	{
 	}
 

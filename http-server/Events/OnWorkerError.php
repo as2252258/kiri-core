@@ -18,7 +18,7 @@ class OnWorkerError
 	 * @param int $exit_code
 	 * @param int $signal
 	 */
-	public function __construct(Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
+	public function __construct(public Server $server, public int $worker_id, public int $worker_pid, public int $exit_code, public int $signal)
 	{
 	}
 

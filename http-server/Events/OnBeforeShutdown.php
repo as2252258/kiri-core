@@ -11,7 +11,7 @@ class OnBeforeShutdown
 	/**
 	 * @param Server|null $server
 	 */
-	public function __construct(?Server $server = null)
+	public function __construct(public ?Server $server = null)
 	{
 	}
 
