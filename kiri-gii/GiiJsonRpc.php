@@ -30,8 +30,7 @@ interface ' . ucfirst($name) . 'RpcInterface
 {
 
 
-}		
-		';
+}';
 
 
 		$name = ucfirst($name) . 'RpcInterface.php';
@@ -68,9 +67,7 @@ class ' . ucfirst($name) . 'RpcService extends JsonRpcConsumers implements ' . u
 
 
 
-}
-		
-		';
+}';
 
 		$name = ucfirst($name) . 'RpcService.php';
 		if (!is_dir(APP_PATH . '/rpc/Producers/')) {
@@ -96,15 +93,13 @@ use Rpc\\' . ucfirst($name) . 'RpcInterface;
 
 
 #[Target]
-#[JsonRpc(method: \'' . $name . '\', version: \'2.0\')]
+#[JsonRpc(service: \'' . $name . '\', version: \'2.0\')]
 class ' . ucfirst($name) . 'RpcConsumer extends Controller implements ' . ucfirst($name) . 'RpcInterface
 {
 
 
 
-}
-		
-		';
+}';
 
 		$name = ucfirst($name) . 'RpcConsumer.php';
 		if (!is_dir(APP_PATH . '/rpc/Consumers/')) {
