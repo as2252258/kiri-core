@@ -30,10 +30,10 @@ class OnWorkerStart extends WorkerStart implements EventDispatcherInterface
         $time = microtime(true);
 
         ServerManager::setEnv('environmental', Kiri::WORKER);
-        if (is_enable_file_modification_listening()) {
-            $this->router->read_files();
-            $this->interpretDirectory();
-        }
+//        if (is_enable_file_modification_listening()) {
+//            $this->router->read_files();
+//            $this->interpretDirectory();
+//        }
         $this->mixed($event, true, $time);
     }
 

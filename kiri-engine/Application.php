@@ -234,12 +234,16 @@ class Application extends BaseApplication
 	private function enableFileChange(Command $class, $input, $output): void
 	{
 		fire(new OnBeforeCommandExecute());
-		if (!($class instanceof ServerCommand)) {
-			scan_directory(directory('app'), 'App');
-		} else if (!is_enable_file_modification_listening()) {
-            $this->getRouter()->read_files();
-            scan_directory(directory('app'), 'App');
-        }
+//		if (!($class instanceof ServerCommand)) {
+//			scan_directory(directory('app'), 'App');
+//		} else if (!is_enable_file_modification_listening()) {
+//			$this->getRouter()->read_files();
+//			scan_directory(directory('app'), 'App');
+//		}
+		scan_directory(directory('app'), 'App');
+		if ($class instanceof ServerCommand) {
+			$this->getRouter()->read_files();
+		}
 		$class->run($input, $output);
 		$output->writeln('ok' . PHP_EOL);
 	}

@@ -25,9 +25,9 @@ class OnTaskerStart extends WorkerStart implements EventDispatcherInterface
         $time = microtime(true);
 
         ServerManager::setEnv('environmental', Kiri::TASK);
-        if (!is_enable_file_modification_listening()) {
-            $this->interpretDirectory();
-        }
+//        if (!is_enable_file_modification_listening()) {
+//            $this->interpretDirectory();
+//        }
 
         $this->mixed($event, false, $time);
     }
