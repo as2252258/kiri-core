@@ -17,10 +17,11 @@ use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Kernel;
 use Kiri\Crontab\CrontabProviders;
+use Kiri\Events\OnAfterCommandExecute;
+use Kiri\Events\OnBeforeCommandExecute;
 use Kiri\Exception\NotFindClassException;
 use Kiri\FileListen\FileChangeCustomProcess;
 use ReflectionException;
-use Server\Events\OnBeforeCommandExecute;
 use Server\ServerCommand;
 use Server\ServerProviders;
 use stdClass;
@@ -129,7 +130,6 @@ class Application extends BaseApplication
 	 */
 	public function middleware(Closure|array $closure): static
 	{
-		$this->getRouter()->setMiddleware($closure);
 		return $this;
 	}
 
@@ -141,7 +141,6 @@ class Application extends BaseApplication
 	 */
 	public function setUseTree(bool $useTree): static
 	{
-		$this->getRouter()->setUseTree($useTree);
 		return $this;
 	}
 
@@ -230,17 +229,12 @@ class Application extends BaseApplication
 	private function enableFileChange(Command $class, $input, $output): void
 	{
 		fire(new OnBeforeCommandExecute());
-//		if (!($class instanceof ServerCommand)) {
-//			scan_directory(directory('app'), 'App');
-//		} else if (!is_enable_file_modification_listening()) {
-//			$this->getRouter()->read_files();
-//			scan_directory(directory('app'), 'App');
-//		}
 		scan_directory(directory('app'), 'App');
 		if ($class instanceof ServerCommand) {
 			$this->getRouter()->read_files();
 		}
 		$class->run($input, $output);
+		fire(new OnAfterCommandExecute());
 		$output->writeln('ok' . PHP_EOL);
 	}
 
