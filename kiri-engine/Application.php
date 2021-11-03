@@ -88,10 +88,6 @@ class Application extends BaseApplication
 	 */
 	public function addProcess(string $class, Process $process)
 	{
-		if (!isset($this->_process[$class])) {
-			$this->_process[$class] = [];
-		}
-		$this->_process[$class][] = $process;
 	}
 
 
