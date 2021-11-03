@@ -48,7 +48,7 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://47.92.194.207:9528/');
+        sock = new WebSocket('ws://localhost:8080/websocket');
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
