@@ -85,9 +85,9 @@ class FileChangeCustomProcess extends BaseProcess
 	 */
 	public function trigger_reload()
 	{
-		exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder', $output);
-
-		print_r(implode(PHP_EOL, $output));
+//		exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder', $output);
+//
+//		print_r(implode(PHP_EOL, $output));
 
 		Kiri::reload();
 	}
