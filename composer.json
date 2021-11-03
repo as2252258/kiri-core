@@ -35,7 +35,6 @@
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
-      "Http\\": "http-core/",
       "Server\\": "http-server/",
       "Gii\\": "kiri-gii/",
       "Annotation\\": "kiri-note/"
