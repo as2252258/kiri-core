@@ -8,6 +8,7 @@
     }
   ],
   "license": "MIT",
+  "composer-runtime-api": "^2.0",
   "require": {
     "php": ">=8.0",
     "ext-json": "*",
