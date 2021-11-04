@@ -13,6 +13,6 @@ putenv('SCAN_CACHEABLE=(true)');
 
 $cwd = getcwd();
 
-$dir = __DIR__ . '/../../../../../../';
+$dir = __DIR__ . '/../../../../../';
 
 require_once $dir . 'kiri.php';
