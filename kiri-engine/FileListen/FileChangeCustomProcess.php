@@ -102,7 +102,6 @@ class FileChangeCustomProcess extends Command
             }
             $this->channel->pop();
 
-
             $descriptorspec = [
                 0 => STDIN,
                 1 => STDOUT,
