@@ -108,7 +108,7 @@ class FileChangeCustomProcess extends Command
                 2 => STDERR,
             ];
 
-            proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
+            proc_open("php " . __DIR__ . "/watcher.php start", $descriptorspec, $pipes);
 
             $this->channel->push(1);
         });
