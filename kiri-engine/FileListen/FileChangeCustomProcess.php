@@ -117,7 +117,9 @@ class FileChangeCustomProcess extends Command
 		foreach ($this->pipes as $pipe) {
 			fclose($pipe);
 		}
-		proc_close($this->source);
+		if (is_resource($this->source)) {
+			proc_close($this->source);
+		}
 	}
 
 }
