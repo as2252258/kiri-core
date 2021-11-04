@@ -7,6 +7,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Barrier;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -61,6 +62,12 @@ class FileChangeCustomProcess extends Command
 		$make = Barrier::make();
 		go(function () {
 			$this->trigger_reload();
+		});
+		go(function () {
+			$sign = Coroutine::waitSignal(SIGTERM, -1);
+			if ($sign) {
+				proc_open("php " . APP_PATH . "kiri.php sw:server stop", [], $pipes);
+			}
 		});
 		go(function () use ($driver) {
 			$driver->start();
