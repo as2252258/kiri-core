@@ -97,7 +97,7 @@ class FileChangeCustomProcess extends Command
 
         $content = (int)file_get_contents(storage('.swoole.pid'));
         if (!empty($content) && Process::kill($content, 0)) {
-            Process::kill($content, SIGTERM);
+            proc_open("php " . APP_PATH . "kiri.php sw:server stop", [], $pipes);
         }
         Coroutine::create(function () {
             if (!$this->channel) {
