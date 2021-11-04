@@ -100,7 +100,7 @@ class FileChangeCustomProcess extends Command
         if (file_exists(storage('.swoole.pid'))) {
             $content = (int)file_get_contents(storage('.swoole.pid'));
             if ($content > 0 && Process::kill($content,0)){
-                Process::kill($content,15);
+                var_dump(Process::kill($content,15));
             }
             @unlink(storage('.swoole.pid'));
         }
