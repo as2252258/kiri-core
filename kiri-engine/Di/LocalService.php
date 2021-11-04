@@ -28,6 +28,7 @@ class LocalService extends Component
         unset($this->_components[$name]);
 
         $this->_definition[$name] = $define;
+		$this->_components[$name] = $define;
     }
 
 
