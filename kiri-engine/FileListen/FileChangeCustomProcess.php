@@ -108,6 +108,7 @@ class FileChangeCustomProcess extends Command
 		$content = (int)file_get_contents(storage('.swoole.pid'));
 		if (!empty($content)) {
 			var_dump($content, Process::kill($content, 0));
+			var_dump(Process::kill($content, SIGTERM));
 			if (Process::kill($content, 0)) {
 				Process::kill($content, SIGTERM);
 			}
