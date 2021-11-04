@@ -118,6 +118,8 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		$path = ['file' => $file, 'line' => $line];
 
+        var_dump(func_get_args());
+
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
 		write($data, $this->category);
