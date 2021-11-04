@@ -4,10 +4,10 @@ namespace Kiri\FileListen;
 
 use Exception;
 use Kiri\Abstracts\Config;
+use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine\Barrier;
-use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -92,12 +92,8 @@ class FileChangeCustomProcess extends Command
 	 */
 	public function trigger_reload()
 	{
+		Kiri::getDi()->get(Logger::class)->warning('change reload');
+
 		proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $pipes);
-
-//		exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder', $output);
-//
-//		print_r(implode(PHP_EOL, $output));
-
-//		Kiri::reload();
 	}
 }
