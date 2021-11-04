@@ -116,10 +116,10 @@ class Application extends BaseApplication
 	 */
 	public function withFileChangeListen()
 	{
-		$manager = $this->getServer();
-		$manager->addProcess(FileChangeCustomProcess::class);
+		$container = Kiri::getDi();
 
-		enable_file_modification_listening();
+		$console = $container->get(ConsoleApplication::class);
+		$console->add($container->get(FileChangeCustomProcess::class));
 	}
 
 

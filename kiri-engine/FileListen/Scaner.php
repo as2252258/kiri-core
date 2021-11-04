@@ -3,7 +3,6 @@
 namespace Kiri\FileListen;
 
 use Exception;
-use Swoole\Timer;
 
 class Scaner
 {
@@ -129,7 +128,9 @@ class Scaner
 
 		$this->loadDirs(true);
 
-		Timer::after(2000, [$this, 'tick']);
+		sleep(2);
+
+		$this->tick();
 	}
 
 }

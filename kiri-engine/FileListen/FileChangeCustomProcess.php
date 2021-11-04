@@ -5,15 +5,18 @@ namespace Kiri\FileListen;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Kiri;
-use ReflectionException;
-use Server\Abstracts\BaseProcess;
+use Swoole\Coroutine\Barrier;
 use Swoole\Process;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
  *
  */
-class FileChangeCustomProcess extends BaseProcess
+class FileChangeCustomProcess extends Command
 {
 
 
@@ -26,13 +29,13 @@ class FileChangeCustomProcess extends BaseProcess
 
 
 	/**
-	 * @param Process $process
-	 * @return string
+	 *
 	 */
-	public function getProcessName(Process $process): string
+	protected function configure()
 	{
-		// TODO: Implement getProcessName() method.
-		return 'file change listener.';
+		$this->setName('sw:wather')
+			->setDescription('server start|stop|reload|restart')
+			->addArgument('action', InputArgument::REQUIRED);
 	}
 
 
@@ -40,7 +43,7 @@ class FileChangeCustomProcess extends BaseProcess
 	 * @param Process $process
 	 * @throws Exception
 	 */
-	public function onHandler(Process $process): void
+	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// TODO: Implement onHandler() method.
 		set_error_handler([$this, 'onErrorHandler']);
@@ -50,16 +53,15 @@ class FileChangeCustomProcess extends BaseProcess
 		} else {
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
-		$driver->start();
-	}
-
-
-	/**
-	 * @param Process $process
-	 */
-	public function signListen(Process $process): void
-	{
-
+		$make = Barrier::make();
+		go(function () {
+			$this->trigger_reload();
+		});
+		go(function () use ($driver) {
+			$driver->start();
+		});
+		Barrier::wait($make);
+		return 0;
 	}
 
 
@@ -85,10 +87,12 @@ class FileChangeCustomProcess extends BaseProcess
 	 */
 	public function trigger_reload()
 	{
+		proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $pipes);
+
 //		exec(PHP_BINARY . ' ' . APP_PATH . 'kiri.php runtime:builder', $output);
 //
 //		print_r(implode(PHP_EOL, $output));
 
-		Kiri::reload();
+//		Kiri::reload();
 	}
 }
