@@ -110,7 +110,7 @@ if (!function_exists('now')) {
 	 */
 	function now(): string
 	{
-		return date('Y-m-d H:i:s') . '.' . str_replace('0.', '', (string)microtime(true));
+		return date('Y-m-d H:i:s') . '.' . str_replace(time() . '.', '', (string)microtime(true));
 	}
 }
 
