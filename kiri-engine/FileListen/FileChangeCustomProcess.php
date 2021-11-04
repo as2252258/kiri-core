@@ -102,7 +102,14 @@ class FileChangeCustomProcess extends Command
             }
             $this->channel->pop();
 
-            shell_exec("php " . APP_PATH . "kiri.php");
+
+            $descriptorspec = [
+                0 => STDIN,
+                1 => STDOUT,
+                2 => STDERR,
+            ];
+
+            proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
 
             $this->channel->push(1);
         });
