@@ -199,8 +199,6 @@ abstract class BaseApplication extends Component
 			if (is_string($value)) {
 				$value = Kiri::createObject($value);
 			}
-
-			var_dump($key, $value);
 			$this->addEvent($key, $value);
 		}
 	}
@@ -245,6 +243,7 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
+				var_dump($key, $item);
 				$eventProvider->on($key, $item, 0);
 			}
 		}
