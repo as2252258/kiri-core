@@ -104,6 +104,7 @@ class FileChangeCustomProcess extends Command
             }
             @unlink(storage('.swoole.pid'));
         }
+
         Coroutine::create(function () {
             $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
