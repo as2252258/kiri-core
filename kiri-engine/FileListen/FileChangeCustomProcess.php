@@ -31,6 +31,7 @@ class FileChangeCustomProcess extends Command
 
 
 	protected mixed $source = null;
+	protected mixed $pipes = [];
 
 
 	/**
@@ -69,11 +70,9 @@ class FileChangeCustomProcess extends Command
 		go(function () {
 			$sign = Coroutine::waitSignal(SIGTERM, -1);
 			if ($sign) {
-				if (is_resource($this->source)) {
-					proc_close($this->source);
-				}
-				$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server stop", [], $pipes);
-				proc_close($this->source);
+				$this->closeProc();
+				$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server stop", [], $this->pipes);
+				$this->closeProc();
 			}
 		});
 		go(function () use ($driver) {
@@ -107,9 +106,18 @@ class FileChangeCustomProcess extends Command
 	public function trigger_reload()
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
-		if (is_resource($this->source)) {
-			proc_close($this->source);
-		}
-		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $pipes);
+
+		$this->closeProc();
+		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $this->pipes);
 	}
+
+
+	private function closeProc()
+	{
+		foreach ($this->pipes as $pipe) {
+			fclose($pipe);
+		}
+		proc_close($this->source);
+	}
+
 }
