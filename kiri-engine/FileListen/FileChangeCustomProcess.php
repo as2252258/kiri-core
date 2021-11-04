@@ -100,7 +100,6 @@ class FileChangeCustomProcess extends Command
                 $this->channel = new Coroutine\Channel(1);
                 $this->channel->push(true);
             }
-
             $this->channel->pop();
 
             proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
