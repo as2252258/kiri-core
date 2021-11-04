@@ -14,6 +14,7 @@ use Annotation\Annotation as SAnnotation;
 use Database\Connection;
 use Exception;
 use Http\Handler\Router;
+use Kiri\Events\OnBeforeCommandExecute;
 use Server\Server;
 use Kafka\KafkaProvider;
 use Kiri\Async;
@@ -237,6 +238,10 @@ abstract class BaseApplication extends Component
 				$value[0] = Kiri::createObject($value[0]);
 				$eventProvider->on($key, $value, 0);
 				return;
+			}
+
+			if ($key == OnBeforeCommandExecute::class){
+				var_dump($value);
 			}
 
 			foreach ($value as $item) {
