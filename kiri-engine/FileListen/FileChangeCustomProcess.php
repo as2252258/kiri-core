@@ -34,6 +34,8 @@ class FileChangeCustomProcess extends Command
 	protected mixed $source = null;
 	protected mixed $pipes = [];
 
+    protected Coroutine\Channel $channel;
+
 
 	/**
 	 *
@@ -42,7 +44,10 @@ class FileChangeCustomProcess extends Command
 	{
 		$this->setName('sw:wather')
 			->setDescription('server start');
-	}
+
+        $this->channel = new Coroutine\Channel(1);
+        $this->channel->push(true);
+    }
 
 
 
@@ -98,7 +103,11 @@ class FileChangeCustomProcess extends Command
             Process::kill($content, SIGTERM);
         }
         Coroutine::create(function () {
+            $this->channel->pop();
+
             proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
+
+            $this->channel->push(1);
         });
 	}
 
