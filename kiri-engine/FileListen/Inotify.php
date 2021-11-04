@@ -45,11 +45,10 @@ class Inotify
 	}
 
 
-
-
-	/**
-	 * 开始监听
-	 */
+    /**
+     * 开始监听
+     * @throws Exception
+     */
 	public function check()
 	{
 		if (!($events = inotify_read($this->inotify))) {
@@ -68,12 +67,10 @@ class Inotify
 			}
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
-				if ($this->process->int !== -1) {
+				if ($this->process->isReloading) {
 					return;
 				}
-				$this->process->int = @swoole_timer_after(2000, [$this, 'reload']);
-
-				$this->process->isReloading = true;
+                $this->reload();
 			}
 		}
 	}

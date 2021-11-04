@@ -57,7 +57,7 @@ class FileChangeCustomProcess extends Command
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// TODO: Implement onHandler() method.
-		set_error_handler([$this, 'onErrorHandler']);
+//		set_error_handler([$this, 'onErrorHandler']);
 
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		if (!extension_loaded('inotify')) {
