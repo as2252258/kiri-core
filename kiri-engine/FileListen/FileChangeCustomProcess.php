@@ -68,8 +68,6 @@ class FileChangeCustomProcess extends Command
 			$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart",
 				[
 					0 => ["pipe", "r"],  // 标准输入，子进程从此管道中读取数据
-					1 => ["pipe", "w"],  // 标准输出，子进程向此管道中写入数据
-					2 => ["file", "/tmp/error-output.txt", "a"] // 标准错误，写入到一个文件
 				]
 				, $this->pipes);
 			var_dump($this->source, $this->pipes);
