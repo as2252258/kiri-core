@@ -102,6 +102,7 @@ class FileChangeCustomProcess extends Command
             if ($content > 0 && Process::kill($content,0)){
                 Process::kill($content,15);
             }
+            @unlink(storage('.swoole.pid'));
         }
 
         Coroutine::create(function () {
