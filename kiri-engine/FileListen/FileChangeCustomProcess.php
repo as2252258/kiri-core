@@ -107,9 +107,8 @@ class FileChangeCustomProcess extends Command
 
 		$content = file_get_contents(storage('.swoole.pid'));
 		if (!empty($content)) {
-			if (Process::kill((int) $content, 0)) {
-				Process::kill((int) $content, SIGTERM);
-			}
+			var_dump($content);
+			Process::kill((int)$content, SIGTERM);
 		}
 		proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
 	}
