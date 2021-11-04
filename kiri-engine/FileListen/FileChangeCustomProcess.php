@@ -14,6 +14,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function Co\run;
 
 
 /**
@@ -66,7 +67,9 @@ class FileChangeCustomProcess extends Command
 		} else {
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
-        $driver->start();
+        run(function () use ($driver) {
+            $driver->start();
+        });
         return 0;
 	}
 
