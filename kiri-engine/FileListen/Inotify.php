@@ -31,15 +31,15 @@ class Inotify
 	/**
 	 * @throws Exception
 	 */
-	public function start($cid)
+	public function start()
 	{
-		$this->cid = $cid;
 		$this->inotify = inotify_init();
 		$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 		foreach ($this->dirs as $dir) {
 			if (!is_dir($dir)) continue;
 			$this->watch($dir);
 		}
+        $this->process->trigger_reload();
 		Event::add($this->inotify, [$this, 'check']);
 		Event::wait();
 	}
@@ -84,7 +84,7 @@ class Inotify
 	public function reload()
 	{
 		$this->process->isReloading = true;
-		$this->process->trigger_reload($this->cid);
+		$this->process->trigger_reload();
 
 		$this->clearWatch();
 		foreach ($this->dirs as $root) {
