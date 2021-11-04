@@ -97,6 +97,14 @@ class FileChangeCustomProcess extends Command
 	public function trigger_reload()
 	{
         Kiri::getDi()->get(Logger::class)->warning('change reload');
+
+        if (file_exists(storage('.swoole.pid'))) {
+            $content = (int)file_get_contents(storage('.swoole.pid'));
+            if ($content > 0 && Process::kill($content,0)){
+                Process::kill($content,15);
+            }
+        }
+
         Coroutine::create(function () {
             if (!$this->channel) {
                 $this->channel = new Coroutine\Channel(1);
