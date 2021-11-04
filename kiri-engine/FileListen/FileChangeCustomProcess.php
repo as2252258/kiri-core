@@ -81,7 +81,6 @@ class FileChangeCustomProcess extends Command
 		return 0;
 	}
 
-
 	/**
 	 * @param $code
 	 * @param $message
