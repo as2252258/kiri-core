@@ -243,7 +243,6 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				var_dump($key, $item);
 				$eventProvider->on($key, $item, 0);
 			}
 		}
