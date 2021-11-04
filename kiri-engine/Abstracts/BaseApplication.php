@@ -199,6 +199,8 @@ abstract class BaseApplication extends Component
 			if (is_string($value)) {
 				$value = Kiri::createObject($value);
 			}
+
+			var_dump($key, $value);
 			$this->addEvent($key, $value);
 		}
 	}
