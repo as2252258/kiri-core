@@ -57,7 +57,7 @@ class FileChangeCustomProcess extends Command
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// TODO: Implement onHandler() method.
-		set_error_handler([$this, 'onErrorHandler']);
+//		set_error_handler([$this, 'onErrorHandler']);
 
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		if (!extension_loaded('inotify')) {
@@ -104,6 +104,7 @@ class FileChangeCustomProcess extends Command
 	public function trigger_reload($cid)
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
+
 
 		$content = (int)file_get_contents(storage('.swoole.pid'));
 		if (!empty($content)) {
