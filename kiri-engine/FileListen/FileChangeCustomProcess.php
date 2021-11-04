@@ -105,18 +105,9 @@ class FileChangeCustomProcess extends Command
             @unlink(storage('.swoole.pid'));
         }
         Coroutine::create(function () {
-            if (!$this->channel) {
-                $this->channel = new Coroutine\Channel(1);
-                $this->channel->push(true);
-            }
-            $this->channel->pop();
-
             $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
             proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
-            var_dump($pipes);
-
-            $this->channel->push(1);
         });
 	}
 
