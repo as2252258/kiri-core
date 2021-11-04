@@ -69,9 +69,6 @@ class FileChangeCustomProcess extends Command
 		go(function () use ($driver) {
 			$driver->start();
 		});
-		go(function () {
-			proc_open("php " . APP_PATH . "kiri.php sw:server start", [], $pipes);
-		});
 		Barrier::wait($make);
 		return 0;
 	}
