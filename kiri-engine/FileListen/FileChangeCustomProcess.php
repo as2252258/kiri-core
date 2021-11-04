@@ -65,21 +65,22 @@ class FileChangeCustomProcess extends Command
 		}
 		$make = Barrier::make();
 		go(function () {
-			$this->trigger_reload();
-		});
-		go(function () {
 			$sign = Coroutine::waitSignal(SIGTERM, -1);
 			if ($sign) {
-				$this->closeProc();
-				$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server stop", [
-					STDIN, STDOUT
-				], $this->pipes);
-				$this->closeProc();
 			}
 		});
 		go(function () use ($driver) {
 			$driver->start();
 		});
+		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart",
+			[
+				0 => ["pipe", "r"],  // 标准输入，子进程从此管道中读取数据
+				1 => ["pipe", "w"],  // 标准输出，子进程向此管道中写入数据
+				2 => ["file", "/tmp/error-output.txt", "a"] // 标准错误，写入到一个文件
+			]
+			, $this->pipes);
+
+		var_dump($this->source, $this->pipes);
 		Barrier::wait($make);
 		return 0;
 	}
@@ -109,24 +110,11 @@ class FileChangeCustomProcess extends Command
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
 
-		if (is_resource($this->source)) {
-			fwrite($this->source, "php " . APP_PATH . "kiri.php sw:server restart");
-		} else {
-			$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [
-				STDIN, STDOUT
-			], $this->pipes);
-
-			var_dump($this->pipes);
-		}
-
-	}
+		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [
+			STDIN, STDOUT
+		], $this->pipes);
 
 
-	private function closeProc()
-	{
-		foreach ($this->pipes as $pipe) {
-			fclose($pipe);
-		}
 	}
 
 }
