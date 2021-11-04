@@ -232,9 +232,6 @@ class Application extends BaseApplication
 		if (!($class instanceof FileChangeCustomProcess)) {
 			scan_directory(directory('app'), 'App');
 		}
-		if ($class instanceof ServerCommand) {
-			$this->getRouter()->read_files();
-		}
 		$class->run($input, $output);
 		fire(new OnAfterCommandExecute());
 		$output->writeln('ok' . PHP_EOL);
