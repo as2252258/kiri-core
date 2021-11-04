@@ -15,4 +15,4 @@ $cwd = getcwd();
 
 $dir = __DIR__ . '/../../../../../';
 
-require_once $dir . 'kiri.php';
+require_once $dir . 'kiri.php sw:server restart';
