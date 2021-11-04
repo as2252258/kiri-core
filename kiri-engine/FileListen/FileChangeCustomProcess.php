@@ -64,9 +64,7 @@ class FileChangeCustomProcess extends Command
 		} else {
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
-
         $driver->start();
-
         return 0;
 	}
 
