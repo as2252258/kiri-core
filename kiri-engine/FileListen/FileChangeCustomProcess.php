@@ -80,6 +80,7 @@ class FileChangeCustomProcess extends Command
 	}
 
 
+
 	/**
 	 * @param $code
 	 * @param $message
