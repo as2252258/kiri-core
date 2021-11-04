@@ -105,13 +105,17 @@ class FileChangeCustomProcess extends Command
                 Process::kill($content,15);
             }
             @unlink(storage('.swoole.pid'));
+
+            if (is_resource($this->source)) {
+                proc_close($this->source);
+                $this->source = null;
+            }
         }
 
         Coroutine::create(function () {
             $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
-            $proc = proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
-            proc_close($proc);
+            $this->source = proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
         });
 	}
 
