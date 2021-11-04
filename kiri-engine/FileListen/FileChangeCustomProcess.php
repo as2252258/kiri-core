@@ -65,14 +65,10 @@ class FileChangeCustomProcess extends Command
 		} else {
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
-		$make = Barrier::make();
-		go(function () {
-			$this->trigger_reload(0);
-		});
-		go(function () use ($driver) {
+        $this->trigger_reload(0);
+        Coroutine::create(function () use ($driver) {
 			$driver->start(Coroutine::getCid());
 		});
-		Barrier::wait($make);
 		return 0;
 	}
 
@@ -99,13 +95,15 @@ class FileChangeCustomProcess extends Command
 	 */
 	public function trigger_reload($cid)
 	{
-		Kiri::getDi()->get(Logger::class)->warning('change reload');
+        Kiri::getDi()->get(Logger::class)->warning('change reload');
 
-		$content = (int)file_get_contents(storage('.swoole.pid'));
-		if (!empty($content) && Process::kill($content, 0)) {
+        $content = (int)file_get_contents(storage('.swoole.pid'));
+        if (!empty($content) && Process::kill($content, 0)) {
             Process::kill($content, SIGTERM);
-		}
-        proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
+        }
+        Coroutine::create(function () {
+            proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
+        });
 	}
 
 
