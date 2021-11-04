@@ -70,7 +70,6 @@ class FileChangeCustomProcess extends Command
 					0 => ["pipe", "r"],  // 标准输入，子进程从此管道中读取数据
 				]
 				, $this->pipes);
-			var_dump($this->source, $this->pipes);
 		});
 		go(function () {
 			$sign = Coroutine::waitSignal(SIGTERM, -1);
@@ -110,11 +109,11 @@ class FileChangeCustomProcess extends Command
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
 
-		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [
-			STDIN, STDOUT
-		], $this->pipes);
+//		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [
+//			STDIN, STDOUT
+//		], $this->pipes);
 
-
+		fwrite($this->pipes[0], "php " . APP_PATH . "kiri.php sw:server restart");
 	}
 
 }
