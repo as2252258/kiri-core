@@ -228,6 +228,11 @@ abstract class BaseApplication extends Component
 			$eventProvider->on($key, $value, 0);
 			return;
 		}
+
+
+		if ($key == OnBeforeCommandExecute::class){
+			var_dump($value);
+		}
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
 				$eventProvider->on($key, $value, 0);
@@ -240,9 +245,6 @@ abstract class BaseApplication extends Component
 				return;
 			}
 
-			if ($key == OnBeforeCommandExecute::class){
-				var_dump($value);
-			}
 
 			foreach ($value as $item) {
 				if (!is_callable($item, true)) {
