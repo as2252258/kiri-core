@@ -61,9 +61,6 @@ class FileChangeCustomProcess extends Command
 		}
 		$make = Barrier::make();
 		go(function () {
-			$this->trigger_reload();
-		});
-		go(function () {
 			$sign = Coroutine::waitSignal(SIGTERM, -1);
 			if ($sign) {
 				proc_open("php " . APP_PATH . "kiri.php sw:server stop", [], $pipes);
@@ -71,6 +68,9 @@ class FileChangeCustomProcess extends Command
 		});
 		go(function () use ($driver) {
 			$driver->start();
+		});
+		go(function () {
+			proc_open("php " . APP_PATH . "kiri.php sw:server start", [], $pipes);
 		});
 		Barrier::wait($make);
 		return 0;
