@@ -41,8 +41,7 @@ class FileChangeCustomProcess extends Command
 	protected function configure()
 	{
 		$this->setName('sw:wather')
-			->setDescription('server start')
-			->addArgument('action', InputArgument::REQUIRED);
+			->setDescription('server start');
 	}
 
 
