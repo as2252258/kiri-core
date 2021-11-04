@@ -197,6 +197,13 @@ abstract class BaseApplication extends Component
 			return;
 		}
 		foreach ($config['events'] as $key => $value) {
+
+
+			var_dump($key);
+			if ($key == OnBeforeCommandExecute::class){
+				var_dump($value);
+			}
+
 			if (is_string($value)) {
 				$value = Kiri::createObject($value);
 			}
@@ -230,9 +237,6 @@ abstract class BaseApplication extends Component
 		}
 
 
-		if ($key == OnBeforeCommandExecute::class){
-			var_dump($value);
-		}
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
 				$eventProvider->on($key, $value, 0);
