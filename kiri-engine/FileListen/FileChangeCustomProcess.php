@@ -47,6 +47,7 @@ class FileChangeCustomProcess extends Command
     }
 
 
+
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
