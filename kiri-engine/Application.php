@@ -229,7 +229,9 @@ class Application extends BaseApplication
 	private function enableFileChange(Command $class, $input, $output): void
 	{
 		fire(new OnBeforeCommandExecute());
-		scan_directory(directory('app'), 'App');
+		if (!($class instanceof FileChangeCustomProcess)) {
+			scan_directory(directory('app'), 'App');
+		}
 		if ($class instanceof ServerCommand) {
 			$this->getRouter()->read_files();
 		}
