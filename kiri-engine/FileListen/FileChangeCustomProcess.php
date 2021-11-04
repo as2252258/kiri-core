@@ -111,8 +111,6 @@ class FileChangeCustomProcess extends Command
                 $this->source = null;
             }
         }
-
-
         Coroutine::create(function () {
             $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
