@@ -65,21 +65,19 @@ class FileChangeCustomProcess extends Command
 		}
 		$make = Barrier::make();
 		go(function () {
-			$this->source = proc_open('php ' . APP_PATH . 'kiri.php sw:server restart', [], $this->pipes);
-		});
-		go(function () {
 			$sign = Coroutine::waitSignal(SIGTERM, -1);
 			if ($sign) {
 				proc_close($this->source);
 			}
 		});
 		go(function () use ($driver) {
-			$driver->start();
+			$this->source = proc_open('php ' . APP_PATH . 'kiri.php sw:server restart', [], $this->pipes);
+
+			$driver->start(Coroutine::getCid());
 		});
 		Barrier::wait($make);
 		return 0;
 	}
-
 
 
 	/**
@@ -102,10 +100,9 @@ class FileChangeCustomProcess extends Command
 	 * 重启
 	 * @throws Exception
 	 */
-	public function trigger_reload()
+	public function trigger_reload($cid)
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
-
 		if (is_resource($this->source)) {
 			proc_close($this->source);
 		}

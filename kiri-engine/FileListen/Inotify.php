@@ -13,6 +13,9 @@ class Inotify
 
 	private array $watchFiles = [];
 
+
+	protected int $cid;
+
 	const IG_DIR = [APP_PATH . 'commands', APP_PATH . '.git', APP_PATH . '.gitee'];
 
 
@@ -28,8 +31,9 @@ class Inotify
 	/**
 	 * @throws Exception
 	 */
-	public function start()
+	public function start($cid)
 	{
+		$this->cid = $cid;
 		$this->inotify = inotify_init();
 		$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 		foreach ($this->dirs as $dir) {
@@ -80,7 +84,7 @@ class Inotify
 	public function reload()
 	{
 		$this->process->isReloading = true;
-		$this->process->trigger_reload();
+		$this->process->trigger_reload($this->cid);
 
 		$this->clearWatch();
 		foreach ($this->dirs as $root) {
