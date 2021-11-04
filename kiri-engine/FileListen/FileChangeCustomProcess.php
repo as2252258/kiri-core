@@ -66,7 +66,7 @@ class FileChangeCustomProcess extends Command
 		} else {
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
-        
+
         $this->trigger_reload();
         Coroutine::create(function () use ($driver) {
             $driver->start();
