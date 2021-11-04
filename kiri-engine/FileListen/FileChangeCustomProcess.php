@@ -61,11 +61,11 @@ class FileChangeCustomProcess extends Command
 		set_error_handler([$this, 'onErrorHandler']);
 
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
-//		if (!extension_loaded('inotify')) {
+		if (!extension_loaded('inotify')) {
 			$driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
-//		} else {
-//			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
-//		}
+		} else {
+			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
+		}
         $this->trigger_reload();
         Coroutine::create(function () use ($driver) {
             $driver->start();
