@@ -51,7 +51,6 @@ class FileChangeCustomProcess extends Command
 	 * @param OutputInterface $output
 	 * @return int
 	 * @throws ConfigException
-	 * @throws \Swoole\Exception
 	 * @throws Exception
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
