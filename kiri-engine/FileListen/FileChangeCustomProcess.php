@@ -111,9 +111,8 @@ class FileChangeCustomProcess extends Command
         Coroutine::create(function () {
             $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
-            proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
-
-            var_dump($pipes);
+            $proc = proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
+            proc_close($proc);
         });
 	}
 
