@@ -96,7 +96,6 @@ class FileChangeCustomProcess extends Command
 		debug('Error:' . $message . ' at ' . $file . ':' . $line);
 	}
 
-
 	/**
 	 * 重启
 	 * @throws Exception
