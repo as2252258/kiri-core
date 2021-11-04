@@ -73,7 +73,7 @@ class FileChangeCustomProcess extends Command
 			}
 		});
 		go(function () use ($driver) {
-			$this->source = proc_open('php ' . APP_PATH . 'kiri.php sw:server restart', [], $this->pipes);
+			$this->source = proc_open('php ' . APP_PATH . 'kiri.php', null, $this->pipes);
 
 			$driver->start(Coroutine::getCid());
 		});
@@ -110,15 +110,14 @@ class FileChangeCustomProcess extends Command
 		$content = file_get_contents(storage('.swoole.pid'));
 
 		if (!empty($content)) {
-			var_dump($content);
 			Process::kill((int)$content, 15);
 
-			var_dump($content);
+			var_dump($content, $this->pipes);
 
 			proc_close($this->source);
 		}
 
-		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $this->pipes);
+		$this->source = proc_open("php " . APP_PATH . "kiri.php", null, $this->pipes);
 	}
 
 }
