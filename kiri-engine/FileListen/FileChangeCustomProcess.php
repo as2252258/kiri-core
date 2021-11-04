@@ -73,7 +73,7 @@ class FileChangeCustomProcess extends Command
 			}
 		});
 		go(function () use ($driver) {
-			$this->source = proc_open('php ' . APP_PATH . 'kiri.php', null, $this->pipes);
+			$this->source = proc_open('php ' . APP_PATH . 'kiri.php', [], $this->pipes);
 
 			$driver->start(Coroutine::getCid());
 		});
@@ -117,7 +117,7 @@ class FileChangeCustomProcess extends Command
 			proc_close($this->source);
 		}
 
-		$this->source = proc_open("php " . APP_PATH . "kiri.php", null, $this->pipes);
+		$this->source = proc_open("php " . APP_PATH . "kiri.php", [], $this->pipes);
 	}
 
 }
