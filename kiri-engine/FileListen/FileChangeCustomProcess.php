@@ -30,7 +30,7 @@ class FileChangeCustomProcess extends Command
 	public int $int = -1;
 
 
-	protected mixed $source;
+	protected mixed $source = null;
 
 
 	/**
@@ -69,7 +69,7 @@ class FileChangeCustomProcess extends Command
 		go(function () {
 			$sign = Coroutine::waitSignal(SIGTERM, -1);
 			if ($sign) {
-				if ($this->source) {
+				if (is_resource($this->source)) {
 					proc_close($this->source);
 				}
 				$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server stop", [], $pipes);
@@ -107,7 +107,7 @@ class FileChangeCustomProcess extends Command
 	public function trigger_reload()
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
-		if ($this->source) {
+		if (is_resource($this->source)) {
 			proc_close($this->source);
 		}
 		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $pipes);
