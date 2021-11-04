@@ -102,7 +102,7 @@ class FileChangeCustomProcess extends Command
             }
             $this->channel->pop();
 
-            proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
+            shell_exec("php " . APP_PATH . "kiri.php");
 
             $this->channel->push(1);
         });
