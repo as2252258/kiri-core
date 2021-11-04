@@ -57,7 +57,7 @@ class FileChangeCustomProcess extends Command
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// TODO: Implement onHandler() method.
-//		set_error_handler([$this, 'onErrorHandler']);
+		set_error_handler([$this, 'onErrorHandler']);
 
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		if (!extension_loaded('inotify')) {
@@ -67,14 +67,9 @@ class FileChangeCustomProcess extends Command
 		}
 		$make = Barrier::make();
 		go(function () {
-			$sign = Coroutine::waitSignal(SIGTERM, -1);
-			if ($sign) {
-				proc_close($this->source);
-			}
+			$this->trigger_reload(0);
 		});
 		go(function () use ($driver) {
-			proc_open('php ' . APP_PATH . 'kiri.php', [], $pipes);
-
 			$driver->start(Coroutine::getCid());
 		});
 		Barrier::wait($make);
@@ -115,5 +110,10 @@ class FileChangeCustomProcess extends Command
 		}
 		proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
 	}
+
+
+
+
+
 
 }
