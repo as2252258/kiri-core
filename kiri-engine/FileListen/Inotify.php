@@ -30,8 +30,6 @@ class Inotify
 	 */
 	public function start()
 	{
-		$this->process->trigger_reload();
-
 		$this->inotify = inotify_init();
 		$this->events = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
 		foreach ($this->dirs as $dir) {
