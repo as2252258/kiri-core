@@ -112,7 +112,9 @@ class FileChangeCustomProcess extends Command
 		if (is_resource($this->source)) {
 			fwrite($this->source, "php " . APP_PATH . "kiri.php sw:server restart");
 		} else {
-			$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $this->pipes);
+			$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [
+				STDIN, STDOUT
+			], $this->pipes);
 
 			var_dump($this->pipes);
 		}
