@@ -13,4 +13,6 @@ putenv('SCAN_CACHEABLE=(true)');
 
 $cwd = getcwd();
 
-require_once APP_PATH.'kiri.php';
+$dir = __DIR__ . '/../../../../../../';
+
+require_once $dir . 'kiri.php';
