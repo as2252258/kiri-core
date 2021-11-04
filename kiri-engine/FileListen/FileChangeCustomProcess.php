@@ -88,7 +88,6 @@ class FileChangeCustomProcess extends Command
 	}
 
 
-
 	/**
 	 * 重启
      *
