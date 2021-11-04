@@ -72,7 +72,7 @@ class FileChangeCustomProcess extends Command
 			}
 		});
 		go(function () use ($driver) {
-			$this->source = proc_open('php ' . APP_PATH . 'kiri.php sw:server restart', [], $this->pipes);
+			$this->source = proc_open('php ' . APP_PATH . 'kiri.php sw:server start', [], $this->pipes);
 
 			$driver->start(Coroutine::getCid());
 		});
