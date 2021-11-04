@@ -102,7 +102,7 @@ class FileChangeCustomProcess extends Command
         if (file_exists(storage('.swoole.pid'))) {
             $content = (int)file_get_contents(storage('.swoole.pid'));
             if ($content > 0 && Process::kill($content,0)){
-                var_dump(Process::kill($content,15));
+                Process::kill($content,15);
             }
             @unlink(storage('.swoole.pid'));
         }
@@ -112,6 +112,8 @@ class FileChangeCustomProcess extends Command
             $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
             proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
+
+            var_dump($pipes);
         });
 	}
 
