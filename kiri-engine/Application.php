@@ -22,7 +22,6 @@ use Kiri\Events\OnBeforeCommandExecute;
 use Kiri\Exception\NotFindClassException;
 use Kiri\FileListen\FileChangeCustomProcess;
 use ReflectionException;
-use Server\ServerCommand;
 use Server\ServerProviders;
 use stdClass;
 use Swoole\Process;
@@ -30,6 +29,7 @@ use Swoole\Timer;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -192,12 +192,14 @@ class Application extends BaseApplication
 	 */
 	public function execute(array $argv): void
 	{
+		/** @var InputInterface $input */
 		[$input, $output] = $this->argument($argv);
 		try {
 			$console = di(ConsoleApplication::class);
 			$command = $input->getFirstArgument();
 			if (empty($command)) {
-				$command = 'list';
+				$input->setArgument('action', 'restart');
+				$command = 'sw:server';
 			}
 			$command = $console->find($command);
 			if ($command instanceof Command) {
