@@ -107,9 +107,8 @@ class FileChangeCustomProcess extends Command
             while (Process::kill($content,0)) {
                 Coroutine::sleep(0.01);
             }
-            proc_close($this->source);
 		}
-		$this->source = proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
+        proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
 	}
 
 
