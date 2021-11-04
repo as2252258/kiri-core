@@ -39,7 +39,6 @@ class Inotify
 			if (!is_dir($dir)) continue;
 			$this->watch($dir);
 		}
-        $this->process->trigger_reload();
 		Event::add($this->inotify, [$this, 'check']);
 		Event::wait();
 	}
