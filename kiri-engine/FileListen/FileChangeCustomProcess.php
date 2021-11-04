@@ -9,6 +9,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Barrier;
+use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -80,7 +81,6 @@ class FileChangeCustomProcess extends Command
 	}
 
 
-
 	/**
 	 * @param $code
 	 * @param $message
@@ -104,9 +104,14 @@ class FileChangeCustomProcess extends Command
 	public function trigger_reload($cid)
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
-		if (is_resource($this->source)) {
+
+		$content = file_get_contents(storage('.swoole.pid'));
+
+		if (!empty($content)) {
+			Process::kill(storage('.swoole.pid'), 15);
 			proc_close($this->source);
 		}
+
 		$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server restart", [], $this->pipes);
 	}
 
