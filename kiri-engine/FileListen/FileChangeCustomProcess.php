@@ -4,6 +4,7 @@ namespace Kiri\FileListen;
 
 use Exception;
 use Kiri\Abstracts\Config;
+use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine\Barrier;
 use Swoole\Process;
@@ -34,13 +35,17 @@ class FileChangeCustomProcess extends Command
 	protected function configure()
 	{
 		$this->setName('sw:wather')
-			->setDescription('server start|stop|reload|restart')
+			->setDescription('server start')
 			->addArgument('action', InputArgument::REQUIRED);
 	}
 
 
 	/**
-	 * @param Process $process
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @return int
+	 * @throws ConfigException
+	 * @throws \Swoole\Exception
 	 * @throws Exception
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
