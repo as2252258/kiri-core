@@ -198,7 +198,6 @@ class Application extends BaseApplication
 			$console = di(ConsoleApplication::class);
 			$command = $input->getFirstArgument();
 			if (empty($command)) {
-				$input->setArgument('action', 'restart');
 				$command = 'sw:server';
 			}
 			$command = $console->find($command);
