@@ -101,11 +101,8 @@ class FileChangeCustomProcess extends Command
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
 
 		$content = (int)file_get_contents(storage('.swoole.pid'));
-		if (!empty($content)) {
-			var_dump($content, Process::kill($content, 0));
-			if (Process::kill($content, 0)) {
-				Process::kill($content, SIGTERM);
-			}
+		if (!empty($content) && Process::kill($content, 0)) {
+            Process::kill($content, SIGTERM);
 		}
 		proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
 	}
