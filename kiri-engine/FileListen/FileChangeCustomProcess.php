@@ -64,6 +64,10 @@ class FileChangeCustomProcess extends Command
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
 
+		if (Kiri::getPlatform()->isLinux()) {
+			swoole_set_process_name(Config::get('id', 'sw service.'));
+		}
+
 		$this->trigger_reload();
 		Coroutine::create(function () use ($driver) {
 			Coroutine::create(function () use ($driver) {
