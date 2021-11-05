@@ -67,12 +67,6 @@ class FileChangeCustomProcess extends Command
 		if (Kiri::getPlatform()->isLinux()) {
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
 		}
-
-		Process::signal(SIGKILL | SIGTERM, function ($data)  use ($driver) {
-			$driver->clear();
-			$this->stop();
-		});
-
 		$this->trigger_reload();
 		Coroutine::create(function () use ($driver) {
 			$driver->start();
