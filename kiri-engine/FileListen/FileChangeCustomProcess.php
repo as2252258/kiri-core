@@ -95,7 +95,6 @@ class FileChangeCustomProcess extends Command
 //			Process::kill($content, 15);
 //		}
 //		@unlink(storage('.swoole.pid'));
-
 		if (is_resource($this->source)) {
 			proc_terminate($this->source);
 			while (proc_get_status($this->source)['running']) {
