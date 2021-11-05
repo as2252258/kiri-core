@@ -47,6 +47,7 @@ class Inotify
 	public function clear()
 	{
 		Event::del($this->inotify);
+		Event::exit();
 	}
 
 
