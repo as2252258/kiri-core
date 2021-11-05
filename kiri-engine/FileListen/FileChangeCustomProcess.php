@@ -65,7 +65,7 @@ class FileChangeCustomProcess extends Command
 		}
 
 		if (Kiri::getPlatform()->isLinux()) {
-			swoole_set_process_name(Config::get('id', 'sw service.'));
+			swoole_set_process_name('[' . Config::get('id', 'sw service.') . ']');
 		}
 
 		$this->trigger_reload();
