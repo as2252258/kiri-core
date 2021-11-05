@@ -11,9 +11,9 @@ class Scaner
 
 	/**
 	 * @param array $dirs
-	 * @param FileChangeCustomProcess $process
+	 * @param HotReload $process
 	 */
-	public function __construct(protected array $dirs, public FileChangeCustomProcess $process)
+	public function __construct(protected array $dirs, public HotReload $process)
 	{
 	}
 

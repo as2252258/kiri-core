@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  *
  */
-class FileChangeCustomProcess extends Command
+class HotReload extends Command
 {
 
 

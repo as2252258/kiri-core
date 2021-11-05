@@ -20,7 +20,7 @@ use Kiri\Crontab\CrontabProviders;
 use Kiri\Events\OnAfterCommandExecute;
 use Kiri\Events\OnBeforeCommandExecute;
 use Kiri\Exception\NotFindClassException;
-use Kiri\FileListen\FileChangeCustomProcess;
+use Kiri\FileListen\HotReload;
 use ReflectionException;
 use Server\ServerProviders;
 use stdClass;
@@ -119,7 +119,7 @@ class Application extends BaseApplication
 		$container = Kiri::getDi();
 
 		$console = $container->get(ConsoleApplication::class);
-		$console->add($container->get(FileChangeCustomProcess::class));
+		$console->add($container->get(HotReload::class));
 	}
 
 
@@ -231,7 +231,7 @@ class Application extends BaseApplication
 	private function enableFileChange(Command $class, $input, $output): void
 	{
 		fire(new OnBeforeCommandExecute());
-		if (!($class instanceof FileChangeCustomProcess)) {
+		if (!($class instanceof HotReload)) {
 			scan_directory(directory('app'), 'App');
 		}
 		$class->run($input, $output);
