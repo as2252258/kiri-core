@@ -8,13 +8,10 @@ use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
-use Swoole\Coroutine\Barrier;
 use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function Co\run;
 
 
 /**
@@ -35,7 +32,7 @@ class FileChangeCustomProcess extends Command
 	protected mixed $source = null;
 	protected mixed $pipes = [];
 
-    protected ?Coroutine\Channel $channel = null;
+	protected ?Coroutine\Channel $channel = null;
 
 
 	/**
@@ -45,7 +42,7 @@ class FileChangeCustomProcess extends Command
 	{
 		$this->setName('sw:wather')
 			->setDescription('server start');
-    }
+	}
 
 
 	/**
@@ -67,11 +64,38 @@ class FileChangeCustomProcess extends Command
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
 
-        $this->trigger_reload();
-        Coroutine::create(function () use ($driver) {
-            $driver->start();
-        });
-        return 0;
+		$this->trigger_reload();
+		Coroutine::create(function () use ($driver) {
+			Coroutine::create(function () {
+				$waite = Coroutine::waitSignal(SIGTERM | SIGKILL);
+				if ($waite) {
+					$this->stop();
+				}
+			});
+			$driver->start();
+		});
+		return 0;
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	private function stop(): void
+	{
+		if (!file_exists(storage('.swoole.pid'))) {
+			return;
+		}
+		$content = (int)file_get_contents(storage('.swoole.pid'));
+		if ($content > 0 && Process::kill($content, 0)) {
+			Process::kill($content, 15);
+		}
+		@unlink(storage('.swoole.pid'));
+
+		if (is_resource($this->source)) {
+			proc_close($this->source);
+			$this->source = null;
+		}
 	}
 
 	/**
@@ -92,35 +116,31 @@ class FileChangeCustomProcess extends Command
 
 	/**
 	 * 重启
-     *
+	 *
 	 * @throws Exception
 	 */
 	public function trigger_reload()
 	{
-        Kiri::getDi()->get(Logger::class)->warning('change reload');
+		Kiri::getDi()->get(Logger::class)->warning('change reload');
 
-        if (file_exists(storage('.swoole.pid'))) {
-            $content = (int)file_get_contents(storage('.swoole.pid'));
-            if ($content > 0 && Process::kill($content,0)){
-                Process::kill($content,15);
-            }
-            @unlink(storage('.swoole.pid'));
+		if (file_exists(storage('.swoole.pid'))) {
+			$content = (int)file_get_contents(storage('.swoole.pid'));
+			if ($content > 0 && Process::kill($content, 0)) {
+				Process::kill($content, 15);
+			}
+			@unlink(storage('.swoole.pid'));
 
-            if (is_resource($this->source)) {
-                proc_close($this->source);
-                $this->source = null;
-            }
-        }
-        Coroutine::create(function () {
-            $descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
+			if (is_resource($this->source)) {
+				proc_close($this->source);
+				$this->source = null;
+			}
+		}
+		Coroutine::create(function () {
+			$descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
 
-            $this->source = proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
-        });
+			$this->source = proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
+		});
 	}
-
-
-
-
 
 
 }
