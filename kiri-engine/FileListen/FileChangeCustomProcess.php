@@ -98,7 +98,8 @@ class FileChangeCustomProcess extends Command
 		if (is_resource($this->source)) {
 			proc_terminate($this->source);
 			while (proc_get_status($this->source)['running']) {
-				Coroutine::sleep(0.001);
+				var_dump(proc_get_status($this->source));
+				Coroutine::sleep(1);
 			}
 			proc_close($this->source);
 			$this->source = null;
