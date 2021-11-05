@@ -8,7 +8,6 @@ use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
-use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -99,6 +98,10 @@ class FileChangeCustomProcess extends Command
 
 		if (is_resource($this->source)) {
 			proc_terminate($this->source);
+			while (proc_get_status($this->source)['running']) {
+				Coroutine::sleep(0.001);
+			}
+			proc_close($this->source);
 			$this->source = null;
 		}
 	}
