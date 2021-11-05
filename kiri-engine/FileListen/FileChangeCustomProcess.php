@@ -73,6 +73,7 @@ class FileChangeCustomProcess extends Command
 			Coroutine::create(function () use ($driver) {
 				$waite = Coroutine::waitSignal(SIGTERM | SIGKILL);
 				if ($waite) {
+					$driver->clear();
 					$this->stop($driver);
 				}
 			});
@@ -85,20 +86,19 @@ class FileChangeCustomProcess extends Command
 	/**
 	 * @throws Exception
 	 */
-	private function stop($driver): void
+	private function stop(): void
 	{
-		$driver->clear();
-		if (!file_exists(storage('.swoole.pid'))) {
-			return;
-		}
-		$content = (int)file_get_contents(storage('.swoole.pid'));
-		if ($content > 0 && Process::kill($content, 0)) {
-			Process::kill($content, 15);
-		}
-		@unlink(storage('.swoole.pid'));
+//		if (!file_exists(storage('.swoole.pid'))) {
+//			return;
+//		}
+//		$content = (int)file_get_contents(storage('.swoole.pid'));
+//		if ($content > 0 && Process::kill($content, 0)) {
+//			Process::kill($content, 15);
+//		}
+//		@unlink(storage('.swoole.pid'));
 
 		if (is_resource($this->source)) {
-			proc_close($this->source);
+			proc_terminate($this->source);
 			$this->source = null;
 		}
 	}
@@ -128,22 +128,9 @@ class FileChangeCustomProcess extends Command
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
 
-		if (file_exists(storage('.swoole.pid'))) {
-			$content = (int)file_get_contents(storage('.swoole.pid'));
-			if ($content > 0 && Process::kill($content, 0)) {
-				Process::kill($content, 15);
-			}
-			@unlink(storage('.swoole.pid'));
-
-			if (is_resource($this->source)) {
-				proc_close($this->source);
-				$this->source = null;
-			}
-		}
+		$this->stop();
 		Coroutine::create(function () {
-			$descriptorspec = [0 => STDIN, 1 => STDOUT, 2 => STDERR];
-
-			$this->source = proc_open("php " . APP_PATH . "kiri.php", $descriptorspec, $pipes);
+			$this->source = proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
 		});
 	}
 
