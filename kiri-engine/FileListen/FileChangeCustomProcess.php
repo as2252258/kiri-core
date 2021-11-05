@@ -8,6 +8,7 @@ use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
+use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -66,6 +67,11 @@ class FileChangeCustomProcess extends Command
 		if (Kiri::getPlatform()->isLinux()) {
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
 		}
+
+		Process::signal(SIGKILL | SIGTERM, function ($data)  use ($driver) {
+			$driver->clear();
+			$this->stop();
+		});
 
 		$this->trigger_reload();
 		Coroutine::create(function () use ($driver) {
