@@ -117,12 +117,20 @@ class Scaner
 	}
 
 
+	private bool $isStop = false;
+
+	public function clear()
+	{
+		$this->isStop = true;
+	}
+
+
 	/**
 	 * @throws Exception
 	 */
 	public function tick()
 	{
-		if ($this->process->isReloading) {
+		if ($this->process->isReloading || $this->isStop) {
 			return;
 		}
 
