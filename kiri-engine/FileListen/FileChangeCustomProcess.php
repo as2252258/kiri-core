@@ -66,10 +66,10 @@ class FileChangeCustomProcess extends Command
 
 		$this->trigger_reload();
 		Coroutine::create(function () use ($driver) {
-			Coroutine::create(function () {
+			Coroutine::create(function () use ($driver) {
 				$waite = Coroutine::waitSignal(SIGTERM | SIGKILL);
 				if ($waite) {
-					$this->stop();
+					$this->stop($driver);
 				}
 			});
 			$driver->start();
@@ -81,8 +81,9 @@ class FileChangeCustomProcess extends Command
 	/**
 	 * @throws Exception
 	 */
-	private function stop(): void
+	private function stop($driver): void
 	{
+		$driver->clear();
 		if (!file_exists(storage('.swoole.pid'))) {
 			return;
 		}

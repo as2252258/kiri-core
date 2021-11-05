@@ -44,6 +44,12 @@ class Inotify
 	}
 
 
+	public function clear()
+	{
+		Event::del($this->inotify);
+	}
+
+
 	/**
 	 * 开始监听
 	 */
