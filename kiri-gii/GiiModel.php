@@ -92,7 +92,7 @@ use Kiri\Core\Json;
 use Database\Connection;
 use Database\Annotation\Get;
 use Database\Annotation\Set;
-use Annotation\Model\Relation;
+use Database\Relation;
 use Database\Model;
 ' . PHP_EOL;
 		}
