@@ -24,11 +24,11 @@ abstract class GiiBase
 
 	protected InputInterface $input;
 
-	public string $modelPath = APP_PATH . 'app/Models/';
-	public string $modelNamespace = 'App\Models\\';
+	public string $modelPath = APP_PATH . 'app/Model/';
+	public string $modelNamespace = 'App\Model\\';
 
-	public string $controllerPath = APP_PATH . 'app/Http/Controllers/';
-	public string $controllerNamespace = 'App\\Controllers\\';
+	public string $controllerPath = APP_PATH . 'app/Http/Controller/';
+	public string $controllerNamespace = 'App\\Controller\\';
 
 	public ?string $module = null;
 
