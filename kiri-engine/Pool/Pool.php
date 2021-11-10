@@ -220,6 +220,10 @@ class Pool extends Component
 			return;
 		}
 		while (static::$_connections[$name]->length() > 0) {
+            if (!Context::inCoroutine() && static::$_connections[$name] instanceof Channel)
+            {
+                break;
+            }
 			$client = static::$_connections[$name]->pop();
 			if ($client instanceof StopHeartbeatCheck) {
 				$client->stopHeartbeatCheck();
