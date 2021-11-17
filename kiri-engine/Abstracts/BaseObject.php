@@ -136,7 +136,6 @@ class BaseObject implements Configure
             $message = print_r($message, true);
         }
         $message = "\033[35m[" . date('Y-m-d H:i:s') . '][DEBUG]: ' . $message . "\033[0m";
-        $message .= PHP_EOL;
 
         $this->logger()->debug(Logger::DEBUG, [$message, $method, $file]);
     }
@@ -154,7 +153,6 @@ class BaseObject implements Configure
             $message = print_r($message, true);
         }
         $message = "\033[34m[" . date('Y-m-d H:i:s') . '][INFO]: ' . $message . "\033[0m";
-        $message .= PHP_EOL;
 
         $this->logger()->info(Logger::NOTICE, [$message, $method, $file]);
     }
@@ -173,7 +171,6 @@ class BaseObject implements Configure
         }
 
         $message = "\033[36m[" . date('Y-m-d H:i:s') . '][SUCCESS]: ' . $message . "\033[0m";
-        $message .= PHP_EOL;
 
         $this->logger()->notice(Logger::NOTICE, [$message, $method, $file]);
     }
@@ -192,7 +189,6 @@ class BaseObject implements Configure
         }
 
         $message = "\033[33m[" . date('Y-m-d H:i:s') . '][WARNING]: ' . $message . "\033[0m";
-        $message .= PHP_EOL;
 
         $this->logger()->critical(Logger::NOTICE, [$message, $method, $file]);
     }
