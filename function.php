@@ -18,6 +18,7 @@ use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 use Server\ServerManager;
+use Swoole\Process;
 use Swoole\WebSocket\Server;
 
 if (!function_exists('make')) {
@@ -52,6 +53,38 @@ if (!function_exists('make')) {
 }
 
 
+if (!function_exists('checkPortIsAlready')) {
+
+
+	/**
+	 * @param $port
+	 * @return bool|string
+	 * @throws Exception
+	 */
+	function checkPortIsAlready($port): bool|string
+	{
+		if (!Kiri::getPlatform()->isLinux()) {
+			exec("lsof -i :" . $port . " | grep -i 'LISTEN' | awk '{print $2}'", $output);
+			if (empty($output)) return false;
+			$output = explode(PHP_EOL, $output[0]);
+			return $output[0];
+		}
+
+		$serverPid = file_get_contents(storage('.swoole.pid'));
+		if (!empty($serverPid) && shell_exec('ps -ef | grep ' . $serverPid . ' | grep -v grep')) {
+			Process::kill($serverPid, SIGTERM);
+		}
+
+		exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
+		if (empty($output)) {
+			return false;
+		}
+		return explode('/', $output[0])[0];
+	}
+
+}
+
+
 if (!function_exists('done')) {
 
 	/**
@@ -59,11 +92,25 @@ if (!function_exists('done')) {
 	 */
 	function done()
 	{
-		ServerManager::setEnv('state', 'exit');
+		set_env('state', 'exit');
 	}
 
 }
 
+
+if (!function_exists('set_env')) {
+
+
+	/**
+	 * @param $key
+	 * @param $value
+	 */
+	function set_env($key, $value)
+	{
+		putenv(sprintf('%s=%s', $key, $value));
+	}
+
+}
 
 if (!function_exists('enable_file_modification_listening')) {
 
