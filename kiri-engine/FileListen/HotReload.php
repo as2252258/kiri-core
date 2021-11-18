@@ -7,6 +7,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Server\Constant;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
@@ -132,6 +133,11 @@ class HotReload extends Command
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
 		Coroutine::create(function () {
+			$reusePort = Config::get('server.settings')[Constant::OPTION_ENABLE_REUSE_PORT] ?? false;
+			if (!$reusePort) {
+				$this->source = proc_open("php " . APP_PATH . "kiri.php sw:server", [], $pipes);
+				return;
+			}
 			$pid = file_get_contents(storage('.swoole.pid'));
 			$source = proc_open("php " . APP_PATH . "kiri.php sw:server start", [], $pipes);
 			if (!empty($pid) && Process::kill($pid, 0)) {
