@@ -25,6 +25,7 @@ class HotReload extends Command
 	public bool $isReloading = false;
 	public bool $isReloadingOut = false;
 	public ?array $dirs = [];
+
 	public int $events;
 
 	public int $int = -1;
