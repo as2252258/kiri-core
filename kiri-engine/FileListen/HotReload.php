@@ -117,7 +117,7 @@ class HotReload extends Command
 		Coroutine::create(function () {
 			$pid = file_get_contents(storage('.swoole.pid'));
 			$source = proc_open("php " . APP_PATH . "kiri.php sw:server start", [], $pipes);
-			if (!empty($pid)) {
+			if (!empty($pid) && Process::kill($pid, 0)) {
 				Process::kill($pid, SIGTERM);
 			}
 			$this->stop();
