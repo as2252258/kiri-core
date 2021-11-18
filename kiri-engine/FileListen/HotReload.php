@@ -85,7 +85,7 @@ class HotReload extends Command
         return 0;
     }
 
-    
+
     /**
      * @throws Exception
      */
@@ -95,7 +95,7 @@ class HotReload extends Command
         $this->driver->clear();
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
-            Process::kill($pid, SIGTERM);
+            var_dump(Process::kill($pid, SIGTERM));
         }
         var_dump('over');
     }
