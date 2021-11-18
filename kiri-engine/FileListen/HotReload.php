@@ -78,7 +78,9 @@ class HotReload extends Command
         $this->trigger_reload();
         Process::signal(SIGKILL, [$this, 'onSignal']);
         Process::signal(SIGTERM, [$this, 'onSignal']);
-        $this->driver->start();
+        Coroutine\run(function (){
+            $this->driver->start();
+        });
         return 0;
     }
 
