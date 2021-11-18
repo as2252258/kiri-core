@@ -72,15 +72,10 @@ class HotReload extends Command
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
 		}
 		$this->trigger_reload();
-		Process::signal(SIGTERM | SIGKILL, function ($data) {
-			var_dump($data);
+		pcntl_signal(SIGTERM | SIGKILL, function ($data) {
 			$pid = file_get_contents(storage('.swoole.pid'));
 			if (!empty($pid) && Process::kill($pid, 0)) {
 				Process::kill($pid, SIGTERM);
-			}
-			while ($ret = Process::wait(true)) {
-				echo "PID={$ret['pid']}\n";
-				sleep(1);
 			}
 		});
 		$driver->start();
