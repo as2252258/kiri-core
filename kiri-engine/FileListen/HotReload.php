@@ -92,28 +92,10 @@ class HotReload extends Command
     #[NoReturn] public function onSignal($data)
     {
         $pid = file_get_contents(storage('.swoole.pid'));
-        var_dump($pid);
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
         $this->driver->clear();
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    public function onExit()
-    {
-        $data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
-        if ($data) {
-            $pid = file_get_contents(storage('.swoole.pid'));
-            if (!empty($pid) && Process::kill($pid, 0)) {
-                Process::kill($pid, SIGTERM);
-            }
-            $this->stop();
-            $this->source = NULL;
-        }
     }
 
 
@@ -126,11 +108,8 @@ class HotReload extends Command
             proc_terminate($this->source);
             while (proc_get_status($this->source)['running']) {
                 Coroutine::sleep(1);
-                var_dump(proc_get_status($this->source)['running']);
             }
-            var_dump(proc_get_status($this->source)['running']);
             proc_close($this->source);
-            var_dump('isClose.');
             $this->source = NULL;
         }
     }
@@ -165,8 +144,9 @@ class HotReload extends Command
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
+        $this->stop();
         Coroutine::create(function () {
-            proc_open('php ' . APP_PATH . '/kiri.php sw:server restart', [], $pipes);
+            $this->source = proc_open('php ' . APP_PATH . '/kiri.php sw:server restart', [], $pipes);
         });
     }
 
