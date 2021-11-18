@@ -135,7 +135,7 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		$message = "\033[35m[" . $message . "\033[0m";
+		$message = "\033[35m" . $message . "\033[0m";
 
 
 		$context = [];
@@ -157,7 +157,7 @@ class BaseObject implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		$message = "\033[34m[" . $message . "\033[0m";
+		$message = "\033[34m" . $message . "\033[0m";
 
 
 		$context = [];
@@ -180,7 +180,7 @@ class BaseObject implements Configure
 			$message = print_r($message, true);
 		}
 
-		$message = "\033[36m[" . $message . "\033[0m";
+		$message = "\033[36m" . $message . "\033[0m";
 
 
 		$context = [];
@@ -203,7 +203,7 @@ class BaseObject implements Configure
 			$message = print_r($message, true);
 		}
 
-		$message = "\033[33m[" . $message . "\033[0m";
+		$message = "\033[33m" . $message . "\033[0m";
 
 
 		$context = [];
@@ -227,10 +227,10 @@ class BaseObject implements Configure
 		}
 		$content = (empty($method) ? '' : $method . ': ') . $message;
 
-		$message = "\033[41;37m[" . $content . "\033[0m";
+		$message = "\033[41;37m" . $content . "\033[0m";
 
 		if (!empty($file)) {
-			$message .= PHP_EOL . "\033[41;37m[" . $file . "\033[0m";
+			$message .= PHP_EOL . "\03341;37m[" . $file . "\033[0m";
 		}
 
 		$context = [];
