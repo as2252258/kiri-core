@@ -148,6 +148,7 @@ class HotReload extends Command
     }
 
 
+
     /**
      * 重启
      *
@@ -159,7 +160,6 @@ class HotReload extends Command
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
-            Process::wait(TRUE);
         }
         Coroutine::create(function () {
             proc_open('php ' . APP_PATH . ' kiri.php sw:server restart', [], $pipes);
