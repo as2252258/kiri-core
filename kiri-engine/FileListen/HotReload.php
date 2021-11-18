@@ -78,7 +78,7 @@ class HotReload extends Command
         $this->trigger_reload();
         Process::signal(SIGKILL, [$this, 'onSignal']);
         Process::signal(SIGTERM, [$this, 'onSignal']);
-        Coroutine\run(function (){
+        Coroutine::create(function () {
             $this->driver->start();
         });
         return 0;
@@ -148,7 +148,6 @@ class HotReload extends Command
         }
         debug('Error:' . $message . ' at ' . $file . ':' . $line);
     }
-
 
 
     /**
