@@ -241,6 +241,7 @@ class Application extends BaseApplication
 	}
 
 
+
 	/**
 	 * @param $className
 	 * @param null $abstracts
