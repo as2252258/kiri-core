@@ -168,8 +168,9 @@ class HotReload extends Command
         }
         var_dump('d');
         Coroutine::create(function () {
-            proc_open('php ' . APP_PATH . ' kiri.php sw:server restart', [], $pipes);
+            proc_open('php ' . APP_PATH . '/kiri.php sw:server restart', [], $pipes);
         });
+
     }
 
 
