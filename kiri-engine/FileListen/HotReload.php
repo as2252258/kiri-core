@@ -99,12 +99,13 @@ class HotReload extends Command
         $this->driver->clear();
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
+            Process::kill($pid, SIGTERM);
             while (Process::kill($pid, 0)) {
-                var_dump($pid);
                 sleep(1);
                 Process::kill($pid, SIGTERM);
             }
         }
+        $this->stop();
         $this->logger->notice('over');
     }
 
