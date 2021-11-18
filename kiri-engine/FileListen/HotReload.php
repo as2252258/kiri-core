@@ -97,6 +97,7 @@ class HotReload extends Command
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
+        var_dump('over');
         $this->driver->clear();
     }
 
