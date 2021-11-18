@@ -165,7 +165,7 @@ class HotReload extends Command
         }
         $this->process = new Process(function (Process $process) {
             $process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
-        });
+        },null,null,FALSE);
         $this->process->start();
     }
 
