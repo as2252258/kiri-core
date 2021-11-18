@@ -76,9 +76,13 @@ class HotReload extends Command
             swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
         }
         $this->trigger_reload();
-        Process::signal(SIGKILL, [$this, 'onSignal']);
-        Process::signal(SIGTERM, [$this, 'onSignal']);
         Coroutine::create(function () {
+            Coroutine::create(function () {
+                $this->onSignal(Coroutine::waitSignal(SIGKILL, -1));
+            });
+            Coroutine::create(function () {
+                $this->onSignal(Coroutine::waitSignal(SIGTERM, -1));
+            });
             $this->driver->start();
         });
         return 0;
