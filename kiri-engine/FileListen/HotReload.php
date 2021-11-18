@@ -73,6 +73,7 @@ class HotReload extends Command
 		}
 		$this->trigger_reload();
 		pcntl_signal(SIGTERM | SIGKILL, function ($data) {
+            var_dump($data);
 			$pid = file_get_contents(storage('.swoole.pid'));
 			if (!empty($pid) && Process::kill($pid, 0)) {
 				Process::kill($pid, SIGTERM);
