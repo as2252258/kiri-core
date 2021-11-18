@@ -114,10 +114,14 @@ class HotReload extends Command
 	public function trigger_reload()
 	{
 		Kiri::getDi()->get(Logger::class)->warning('change reload');
-
-		$this->stop();
 		Coroutine::create(function () {
-			$this->source = proc_open("php " . APP_PATH . "kiri.php", [], $pipes);
+			$source = proc_open("php " . APP_PATH . "kiri.php start", [], $pipes);
+			$pid = file_get_contents(storage('.swoole.pid'));
+			if (!empty($pid)) {
+				Process::kill($pid, SIGTERM);
+			}
+			$this->stop();
+			$this->source = $source;
 		});
 	}
 
