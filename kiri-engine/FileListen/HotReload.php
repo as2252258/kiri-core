@@ -100,10 +100,7 @@ class HotReload extends Command
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
-            while (Process::kill($pid, 0)) {
-                sleep(1);
-                Process::kill($pid, SIGTERM);
-            }
+            Process::wait(TRUE);
         }
         $this->stop();
         $this->logger->notice('over');
