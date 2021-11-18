@@ -29,7 +29,7 @@ use Kiri\Jwt\Jwt;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\ServerManager;
-use Server\SInterface\OnTaskInterface;
+use Server\Contract\OnTaskInterface;
 use Swoole\Table;
 
 /**
