@@ -85,8 +85,7 @@ class HotReload extends Command
         return 0;
     }
 
-
-
+    
     /**
      * @throws Exception
      */
