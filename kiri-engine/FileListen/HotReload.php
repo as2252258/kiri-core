@@ -31,6 +31,7 @@ class HotReload extends Command
 
 
 	protected mixed $source = null;
+
 	protected mixed $pipes = [];
 
 	protected ?Coroutine\Channel $channel = null;
