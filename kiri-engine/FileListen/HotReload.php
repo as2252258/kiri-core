@@ -162,6 +162,7 @@ class HotReload extends Command
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
+        var_dump('d');
         Coroutine::create(function () {
             proc_open('php ' . APP_PATH . ' kiri.php sw:server restart', [], $pipes);
         });
