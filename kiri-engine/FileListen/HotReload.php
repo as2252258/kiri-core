@@ -78,10 +78,7 @@ class HotReload extends Command
         $this->trigger_reload();
         Coroutine::create(function () {
             Coroutine::create(function () {
-                $this->onSignal(Coroutine::waitSignal(SIGKILL, -1));
-            });
-            Coroutine::create(function () {
-                $this->onSignal(Coroutine::waitSignal(SIGTERM, -1));
+                $this->onSignal(Coroutine::waitSignal(SIGKILL & SIGTERM, -1));
             });
             $this->driver->start();
         });
