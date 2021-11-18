@@ -83,7 +83,6 @@ class HotReload extends Command
     }
 
 
-
     /**
      * @throws Exception
      */
@@ -149,7 +148,6 @@ class HotReload extends Command
     }
 
 
-
     /**
      * 重启
      *
@@ -158,18 +156,14 @@ class HotReload extends Command
     public function trigger_reload()
     {
         Kiri::getDi()->get(Logger::class)->warning('change reload');
-        if ($this->process instanceof Process && Process::kill($this->process->pid, 0)) {
-            $pid = file_get_contents(storage('.swoole.pid'));
-            if (!empty($pid) && Process::kill($pid, 0)) {
-                Process::kill($pid, SIGTERM);
-            }
-            Process::kill($this->process->pid, SIGTERM);
+        $pid = file_get_contents(storage('.swoole.pid'));
+        if (!empty($pid) && Process::kill($pid, 0)) {
+            Process::kill($pid, SIGTERM);
             Process::wait(TRUE);
         }
-        $this->process = new Process(function (Process $process) {
-            $process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
-        },null,null,FALSE);
-        $this->process->start();
+        Coroutine::create(function () {
+            proc_open('php ' . APP_PATH . ' kiri.php sw:server restart', [], $pipes);
+        });
     }
 
 
