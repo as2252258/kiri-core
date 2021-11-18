@@ -29,7 +29,7 @@ class LoggerProcess extends BaseProcess
 	 * @param Process $process
 	 * @throws ComponentException
 	 */
-	public function onProcessExec(Process $process): void
+	public function process(Process $process): void
 	{
 		// TODO: Implement onHandler() method.
 		$this->message($process);
