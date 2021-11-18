@@ -97,7 +97,6 @@ class HotReload extends Command
     #[NoReturn] public function onSignal($data)
     {
         $this->driver->clear();
-        $this->stop();
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
             while (Process::kill($pid, 0)) {
