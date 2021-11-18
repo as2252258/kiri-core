@@ -95,6 +95,7 @@ class HotReload extends Command
     #[NoReturn] public function onSignal($data)
     {
         $pid = file_get_contents(storage('.swoole.pid'));
+        var_dump($pid);
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
@@ -167,7 +168,6 @@ class HotReload extends Command
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
-        var_dump('d');
         Coroutine::create(function () {
             proc_open('php ' . APP_PATH . '/kiri.php sw:server restart', [], $pipes);
         });
