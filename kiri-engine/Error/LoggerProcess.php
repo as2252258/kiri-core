@@ -20,22 +20,16 @@ use Server\Abstracts\BaseProcess;
 class LoggerProcess extends BaseProcess
 {
 
-	/**
-	 * @param Process $process
-	 * @return string
-	 */
-	#[Pure] public function getProcessName(Process $process): string
-	{
-		// TODO: Implement getProcessName() method.
-		return get_called_class();
-	}
+
+	public string $name = 'logger process';
+
 
 
 	/**
 	 * @param Process $process
 	 * @throws ComponentException
 	 */
-	public function onHandler(Process $process): void
+	public function onProcessExec(Process $process): void
 	{
 		// TODO: Implement onHandler() method.
 		$this->message($process);
@@ -49,10 +43,6 @@ class LoggerProcess extends BaseProcess
 	 */
 	public function message(Process $process)
 	{
-		if ($this->checkProcessIsStop()) {
-			$this->exit();
-			return;
-		}
 		$message = Json::decode($process->read());
 		if (!empty($message)) {
 			Kiri::writeFile($this->getDirName($message), $message[0], FILE_APPEND);
