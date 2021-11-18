@@ -63,15 +63,32 @@ class HotReload extends Command
 		} else {
 			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
-
 		if (Kiri::getPlatform()->isLinux()) {
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
 		}
 		$this->trigger_reload();
+		Coroutine::create(fn() => $this->onExit());
 		Coroutine::create(function () use ($driver) {
 			$driver->start();
 		});
 		return 0;
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function onExit()
+	{
+		$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
+		if ($data) {
+			$pid = file_get_contents(storage('.swoole.pid'));
+			if (!empty($pid) && Process::kill($pid, 0)) {
+				Process::kill($pid, SIGTERM);
+			}
+			$this->stop();
+			$this->source = null;
+		}
 	}
 
 
