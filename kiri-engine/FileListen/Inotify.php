@@ -51,9 +51,10 @@ class Inotify
 	}
 
 
-	/**
-	 * 开始监听
-	 */
+    /**
+     * 开始监听
+     * @throws Exception
+     */
 	public function check()
 	{
 		if (!($events = inotify_read($this->inotify))) {
@@ -75,7 +76,10 @@ class Inotify
 				if ($this->process->int !== -1) {
 					return;
 				}
-				$this->process->int = @swoole_timer_after(2000, [$this, 'reload']);
+
+                usleep(200);
+
+				$this->reload();
 
 				$this->process->isReloading = true;
 			}
