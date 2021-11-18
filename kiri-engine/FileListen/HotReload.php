@@ -3,6 +3,7 @@
 namespace Kiri\FileListen;
 
 use Exception;
+use JetBrains\PhpStorm\NoReturn;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
@@ -79,13 +80,16 @@ class HotReload extends Command
     }
 
 
-    public function onSignal($data)
+    /**
+     * @throws Exception
+     */
+    #[NoReturn] public function onSignal($data)
     {
-        var_dump($data);
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
+        exit(0);
     }
 
 
