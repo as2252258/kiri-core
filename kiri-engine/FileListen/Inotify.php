@@ -155,7 +155,6 @@ class Inotify
 			} else if (!str_ends_with($f, '.php')) {
 				continue;
 			}
-
 			//检测文件类型
 			if (strstr($f, '.') == '.php') {
 				$wd = @inotify_add_watch($this->inotify, $path, $this->events);
