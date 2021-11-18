@@ -9,6 +9,7 @@ use Kiri\Abstracts\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
+use Swoole\Event;
 use Swoole\Process;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,6 +31,8 @@ class HotReload extends Command
 
     public int $int = -1;
 
+
+    private Scaner|Inotify $driver;
 
     private ?Process $process = NULL;
 
@@ -65,9 +68,9 @@ class HotReload extends Command
 
         $this->dirs = Config::get('inotify', [APP_PATH . 'app']);
         if (!extension_loaded('inotify')) {
-            $driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
+            $this->driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
         } else {
-            $driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
+            $this->driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
         }
         if (Kiri::getPlatform()->isLinux()) {
             swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
@@ -75,7 +78,7 @@ class HotReload extends Command
         $this->trigger_reload();
         Process::signal(SIGKILL, [$this, 'onSignal']);
         Process::signal(SIGTERM, [$this, 'onSignal']);
-        $driver->start();
+        $this->driver->start();
         return 0;
     }
 
@@ -90,7 +93,7 @@ class HotReload extends Command
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
-        exit(0);
+        $this->driver->clear();
     }
 
 
