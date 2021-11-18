@@ -2,6 +2,7 @@
 
 namespace Kiri\FileListen;
 
+use Annotation\Inject;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Kiri\Abstracts\Config;
@@ -30,6 +31,10 @@ class HotReload extends Command
     public int $events;
 
     public int $int = -1;
+
+
+    #[Inject(Logger::class)]
+    public Logger $logger;
 
 
     private Scaner|Inotify $driver;
@@ -91,13 +96,14 @@ class HotReload extends Command
      */
     #[NoReturn] public function onSignal($data)
     {
-        var_dump($data);
         $this->driver->clear();
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
-            var_dump(Process::kill($pid, SIGTERM));
+            while (Process::kill($pid, 0)) {
+                Process::kill($pid, SIGTERM);
+            }
         }
-        var_dump('over');
+        $this->logger->notice('over');
     }
 
 
@@ -133,7 +139,6 @@ class HotReload extends Command
     }
 
 
-
     /**
      * 重启
      *
@@ -141,7 +146,7 @@ class HotReload extends Command
      */
     public function trigger_reload()
     {
-        Kiri::getDi()->get(Logger::class)->warning('change reload');
+        $this->logger->notice('change reload');
         $pid = file_get_contents(storage('.swoole.pid'));
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
