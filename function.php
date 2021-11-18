@@ -72,7 +72,7 @@ if (!function_exists('checkPortIsAlready')) {
 
 		$serverPid = file_get_contents(storage('.swoole.pid'));
 		if (!empty($serverPid) && shell_exec('ps -ef | grep ' . $serverPid . ' | grep -v grep')) {
-			Process::kill($serverPid, SIGTERM);
+			Process::kill($serverPid, 0) && Process::kill($serverPid, SIGTERM);
 		}
 
 		exec('netstat -lnp | grep ' . $port . ' | grep "LISTEN" | awk \'{print $7}\'', $output);
