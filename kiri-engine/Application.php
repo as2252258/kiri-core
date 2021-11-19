@@ -223,6 +223,7 @@ class Application extends BaseApplication
 	}
 
 
+
 	/**
 	 * @throws NotFindClassException
 	 * @throws ReflectionException
@@ -238,6 +239,8 @@ class Application extends BaseApplication
 		fire(new OnAfterCommandExecute());
 		$output->writeln('ok' . PHP_EOL);
 	}
+
+
 
 
 	/**

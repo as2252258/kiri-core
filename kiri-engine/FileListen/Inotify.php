@@ -47,13 +47,17 @@ class Inotify
 	public function clear()
 	{
 		Event::del($this->inotify);
+
+        var_dump('clear event');
+
 		Event::exit();
 	}
 
 
-	/**
-	 * 开始监听
-	 */
+    /**
+     * 开始监听
+     * @throws Exception
+     */
 	public function check()
 	{
 		if (!($events = inotify_read($this->inotify))) {
@@ -75,7 +79,10 @@ class Inotify
 				if ($this->process->int !== -1) {
 					return;
 				}
-				$this->process->int = @swoole_timer_after(2000, [$this, 'reload']);
+
+                usleep(200);
+
+				$this->reload();
 
 				$this->process->isReloading = true;
 			}
@@ -151,7 +158,6 @@ class Inotify
 			} else if (!str_ends_with($f, '.php')) {
 				continue;
 			}
-
 			//检测文件类型
 			if (strstr($f, '.') == '.php') {
 				$wd = @inotify_add_watch($this->inotify, $path, $this->events);
