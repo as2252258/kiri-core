@@ -104,8 +104,8 @@ class HotReload extends Command
 		if (!empty($pid) && Process::kill($pid, 0)) {
 			Process::kill($pid, SIGTERM);
 		}
-		if ($this->process instanceof Process) {
-			$this->process->exit();
+		if ($this->process && Process::kill($this->process->pid,0)) {
+			Process::kill($this->process->pid) && Process::wait(true);
 		}
 		while ($ret = Process::wait(true)) {
 			echo "PID={$ret['pid']}\n";
