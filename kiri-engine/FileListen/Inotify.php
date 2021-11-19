@@ -14,6 +14,9 @@ class Inotify
 	private array $watchFiles = [];
 
 
+    protected bool $isReloading;
+
+
 	protected int $cid;
 
 	const IG_DIR = [APP_PATH . 'commands', APP_PATH . '.git', APP_PATH . '.gitee'];
@@ -60,7 +63,7 @@ class Inotify
 		if (!($events = inotify_read($this->inotify))) {
 			return;
 		}
-		if ($this->process->isReloading) {
+		if ($this->isReloading) {
 			return;
 		}
 
@@ -81,11 +84,11 @@ class Inotify
 	 */
 	public function reload()
 	{
-		if ($this->process->isReloading) {
+		if ($this->isReloading) {
 			return;
 		}
 
-		$this->process->isReloading = true;
+        $this->isReloading = true;
 
 		$this->process->trigger_reload();
 		$this->clearWatch();
@@ -93,7 +96,7 @@ class Inotify
 			$this->watch($root);
 		}
 		$this->process->int = -1;
-		$this->process->isReloading = FALSE;
+        $this->isReloading = FALSE;
 	}
 
 
