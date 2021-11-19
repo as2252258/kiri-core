@@ -92,6 +92,7 @@ class HotReload extends Command
 	}
 
 
+
 	/**
 	 * @param $data
 	 * @throws Exception
