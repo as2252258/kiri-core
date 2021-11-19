@@ -2,9 +2,10 @@
 
 namespace Kiri\FileListen;
 
+use Annotation\Inject;
 use Exception;
 use Kiri\Abstracts\Config;
-use Kiri\Abstracts\Logger;
+use Kiri\Error\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
@@ -34,6 +35,10 @@ class HotReload extends Command
 
 
 	public Inotify|Scaner $driver;
+
+
+	#[Inject(Logger::class)]
+	public Logger $logger;
 
 
 	protected mixed $source = null;
@@ -85,10 +90,12 @@ class HotReload extends Command
 	}
 
 
-
+	/**
+	 * @param $data
+	 * @throws Exception
+	 */
 	public function onSignal($data)
 	{
-		var_dump($data);
 		$this->driver->clear();
 		$pid = file_get_contents(storage('.swoole.pid'));
 		if (!empty($pid) && Process::kill($pid, 0)) {
@@ -97,42 +104,6 @@ class HotReload extends Command
 		while ($ret = Process::wait(true)) {
 			echo "PID={$ret['pid']}\n";
 			sleep(1);
-		}
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function onExit()
-	{
-		$data = Coroutine::waitSignal(SIGTERM | SIGKILL, -1);
-		if ($data) {
-			$pid = file_get_contents(storage('.swoole.pid'));
-			if (!empty($pid) && Process::kill($pid, 0)) {
-				Process::kill($pid, SIGTERM);
-			}
-			$this->stop();
-			$this->source = null;
-		}
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	private function stop(): void
-	{
-		if (is_resource($this->source)) {
-			proc_terminate($this->source);
-			while (proc_get_status($this->source)['running']) {
-				Coroutine::sleep(1);
-				var_dump(proc_get_status($this->source)['running']);
-			}
-			var_dump(proc_get_status($this->source)['running']);
-			proc_close($this->source);
-			var_dump('isClose.');
-			$this->source = null;
 		}
 	}
 
@@ -160,13 +131,14 @@ class HotReload extends Command
 	 */
 	public function trigger_reload()
 	{
-		Kiri::getDi()->get(Logger::class)->warning('change reload');
+		$this->logger->warning('change reload');
 		if ($this->process instanceof Process && Process::kill($this->process->pid, 0)) {
 			$pid = file_get_contents(storage('.swoole.pid'));
 			if (!empty($pid) && Process::kill($pid, 0)) {
 				Process::kill($pid, SIGTERM);
 			}
-			Process::kill($this->process->pid, SIGTERM);
+//			Process::kill($this->process->pid, SIGTERM);
+			$this->process->exit(0);
 			Process::wait(true);
 		}
 		$this->process = new Process(function (Process $process) {
