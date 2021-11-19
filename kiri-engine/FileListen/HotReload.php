@@ -124,7 +124,6 @@ class HotReload extends Command
 	}
 
 
-
 	/**
 	 * 重启
 	 *
@@ -137,8 +136,10 @@ class HotReload extends Command
 		if (!empty($pid) && Process::kill($pid, 0)) {
 			Process::kill($pid, SIGTERM);
 		}
+		if ($this->process && Process::kill($this->process->pid, 0)) {
+			Process::kill($this->process->pid, 15);
+		}
 		Process::wait(true);
-		$this->process?->exit();
 		$this->process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
 		});
