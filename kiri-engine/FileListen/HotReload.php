@@ -71,8 +71,7 @@ class HotReload extends Command
 		// TODO: Implement onHandler() method.
 		set_error_handler([$this, 'onErrorHandler']);
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
-
-		Runtime::enableCoroutine(false);
+		swoole_async_set(['enable_coroutine' => false]);
 		if (!extension_loaded('inotify')) {
 			$this->driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
 		} else {
