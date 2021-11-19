@@ -5,8 +5,9 @@ namespace Kiri\Error;
 
 
 use Exception;
+use Http\Aspect\OnAspectInterface;
+use Http\Aspect\OnJoinPointInterface;
 use Http\Constrict\RequestInterface;
-use Kiri\IAspect;
 use Kiri\Kiri;
 
 
@@ -14,20 +15,24 @@ use Kiri\Kiri;
  * Class LoggerAspect
  * @package Kiri\Error
  */
-class LoggerAspect implements IAspect
+class LoggerAspect implements OnAspectInterface
 {
-
-	private float $time;
 
 
 	/**
-	 * @param mixed $handler
-	 * @param array $params
+	 * @param OnJoinPointInterface $joinPoint
 	 * @return mixed
+	 * @throws Exception
 	 */
-	public function invoke(mixed $handler, array $params = []): mixed
+	public function process(OnJoinPointInterface $joinPoint): mixed
 	{
-		return call_user_func($handler, ...$params);
+		$time = microtime(true);
+
+		$response = $joinPoint->process();
+
+		$this->print_runtime($time);
+
+		return $response;
 	}
 
 
@@ -44,20 +49,4 @@ class LoggerAspect implements IAspect
 		echo PHP_EOL;
 	}
 
-
-	public function before(): void
-	{
-		// TODO: Implement before() method.
-		$this->time = microtime(true);
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	public function after(mixed $response): void
-	{
-		// TODO: Implement after() method.
-		$this->print_runtime($this->time);
-	}
 }
