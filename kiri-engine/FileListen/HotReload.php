@@ -33,6 +33,9 @@ class HotReload extends Command
 	private ?Process $process = null;
 
 
+	public Inotify|Scaner $driver;
+
+
 	protected mixed $source = null;
 
 	protected mixed $pipes = [];
@@ -63,9 +66,9 @@ class HotReload extends Command
 		set_error_handler([$this, 'onErrorHandler']);
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		if (!extension_loaded('inotify')) {
-			$driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
+			$this->driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
 		} else {
-			$driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
+			$this->driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
 		}
 		if (Kiri::getPlatform()->isLinux()) {
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
@@ -73,6 +76,7 @@ class HotReload extends Command
 		$this->trigger_reload();
 		Process::signal(SIGTERM | SIGKILL, function ($data) {
 			var_dump($data);
+			$this->driver->clear();
 			$pid = file_get_contents(storage('.swoole.pid'));
 			if (!empty($pid) && Process::kill($pid, 0)) {
 				Process::kill($pid, SIGTERM);
@@ -82,7 +86,7 @@ class HotReload extends Command
 				sleep(1);
 			}
 		});
-		$driver->start();
+		$this->driver->start();
 		return 0;
 	}
 
