@@ -140,12 +140,12 @@ class HotReload extends Command
 	public function trigger_reload()
 	{
 		$this->logger->warning('change reload');
-//		$pid = file_get_contents(storage('.swoole.pid'));
-//		if (!empty($pid) && Process::kill($pid, 0)) {
-//			Process::kill($pid, SIGTERM);
-//		}
-		if ($this->process instanceof Process) {
-			$this->process->exit();
+		$pid = file_get_contents(storage('.swoole.pid'));
+		if (!empty($pid) && Process::kill($pid, 0)) {
+			Process::kill($pid, SIGTERM);
+		}
+		if ($this->process && Process::kill($this->process->pid,0)) {
+			Process::kill($this->process->pid) && Process::wait(true);
 		}
 		$this->process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
