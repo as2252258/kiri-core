@@ -156,9 +156,11 @@ if (!function_exists('now')) {
 	 */
 	function now(): string
 	{
-		$sprintf = sprintf('%04d', microtime(true));
+		$replace = str_replace(time() . '.', '', (string)microtime(true));
 
-		return date('Y-m-d H:i:s') . '.' . str_replace(time() . '.', '', $sprintf);
+		$sprintf = sprintf('%04d', $replace);
+
+		return date('Y-m-d H:i:s') . '.' . $sprintf;
 	}
 }
 
