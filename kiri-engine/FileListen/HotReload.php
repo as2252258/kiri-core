@@ -138,7 +138,7 @@ class HotReload extends Command
 	public function trigger_reload()
 	{
 		$this->logger->warning('change reload');
-		$pid  = $this->process->pid;
+		$pid  = $this->process?->pid;
 		$process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
 		});
