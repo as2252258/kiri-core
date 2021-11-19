@@ -10,7 +10,6 @@ use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Process;
-use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -91,19 +90,21 @@ class HotReload extends Command
 	}
 
 
-
 	/**
 	 * @param $data
 	 * @throws Exception
 	 */
 	public function onSignal($data)
 	{
+		if (!$data) {
+			return;
+		}
 		$this->driver->clear();
 		$pid = file_get_contents(storage('.swoole.pid'));
 		if (!empty($pid) && Process::kill($pid, 0)) {
 			Process::kill($pid, SIGTERM);
 		}
-		if ($this->process && Process::kill($this->process->pid,0)) {
+		if ($this->process && Process::kill($this->process->pid, 0)) {
 			Process::kill($this->process->pid) && Process::wait(true);
 		}
 		while ($ret = Process::wait(true)) {
@@ -129,7 +130,6 @@ class HotReload extends Command
 	}
 
 
-
 	/**
 	 * 重启
 	 *
@@ -142,7 +142,7 @@ class HotReload extends Command
 //		if (!empty($pid) && Process::kill($pid, 0)) {
 //			Process::kill($pid, SIGTERM);
 //		}
-		if ($this->process && Process::kill($this->process->pid,0)) {
+		if ($this->process && Process::kill($this->process->pid, 0)) {
 			Process::kill($this->process->pid) && Process::wait(true);
 		}
 		$this->process = new Process(function (Process $process) {
