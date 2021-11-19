@@ -47,9 +47,6 @@ class Inotify
 	public function clear()
 	{
 		Event::del($this->inotify);
-
-        var_dump('clear event');
-
 		Event::exit();
 	}
 
@@ -76,10 +73,7 @@ class Inotify
 			}
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
-				if ($this->process->int !== -1) {
-					return;
-				}
-                usleep(2000);
+                sleep(2);
 				$this->reload();
 			}
 		}
