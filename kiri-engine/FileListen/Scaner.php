@@ -103,6 +103,9 @@ class Scaner
 	 */
 	public function timerReload()
 	{
+		if ($this->process->isReloading) {
+			return;
+		}
 		$this->process->isReloading = true;
 		$this->process->trigger_reload();
 

@@ -61,11 +61,10 @@ class Inotify
 			return;
 		}
 		if ($this->process->isReloading) {
-			if (!$this->process->isReloadingOut) {
-				$this->process->isReloadingOut = true;
-			}
 			return;
 		}
+		$this->process->isReloading = true;
+
 		$LISTEN_TYPE = [IN_CREATE, IN_DELETE, IN_MODIFY, IN_MOVED_TO, IN_MOVED_FROM];
 		foreach ($events as $ev) {
 			if (!in_array($ev['mask'], $LISTEN_TYPE)) {
@@ -73,6 +72,7 @@ class Inotify
 			}
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
+				sleep(1);
 				$this->reload();
 			}
 		}
@@ -83,10 +83,6 @@ class Inotify
 	 */
 	public function reload()
 	{
-		if ($this->process->isReloading) {
-			return;
-		}
-		$this->process->isReloading = true;
 		$this->process->trigger_reload();
 		$this->clearWatch();
 		foreach ($this->dirs as $root) {
@@ -94,7 +90,6 @@ class Inotify
 		}
 		$this->process->int = -1;
 		$this->process->isReloading = FALSE;
-		$this->process->isReloadingOut = FALSE;
 	}
 
 
