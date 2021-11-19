@@ -17,6 +17,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
+use Server\ServerManager;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
 
@@ -156,11 +157,7 @@ if (!function_exists('now')) {
 	 */
 	function now(): string
 	{
-		$replace = str_replace(time() . '.', '', (string)microtime(true));
-
-		$sprintf = sprintf('%04d', $replace);
-
-		return date('Y-m-d H:i:s') . '.' . $sprintf;
+		return date('Y-m-d H:i:s') . '.' . str_replace(time() . '.', '', (string)microtime(true));
 	}
 }
 
