@@ -10,6 +10,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Swoole\Coroutine;
 use Swoole\Process;
+use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -70,6 +71,8 @@ class HotReload extends Command
 		// TODO: Implement onHandler() method.
 		set_error_handler([$this, 'onErrorHandler']);
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
+
+		Runtime::enableCoroutine(false);
 		if (!extension_loaded('inotify')) {
 			$this->driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
 		} else {
