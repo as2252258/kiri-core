@@ -146,6 +146,7 @@ class HotReload extends Command
 		if ($pid && Process::kill($pid, 0)) {
 			Process::kill($pid) && Process::wait(true);
 		}
+		$this->process = null;
 		$this->process = $process;
 	}
 
