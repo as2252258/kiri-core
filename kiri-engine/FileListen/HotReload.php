@@ -83,7 +83,6 @@ class HotReload extends Command
 		$this->trigger_reload();
 
 		var_dump(getmypid());
-
 		Process::signal(SIGTERM, [$this, 'onSignal']);
 		Process::signal(SIGKILL, [$this, 'onSignal']);
 
@@ -144,11 +143,9 @@ class HotReload extends Command
 //		if (!empty($pid) && Process::kill($pid, 0)) {
 //			Process::kill($pid, SIGTERM);
 //		}
-		var_dump('kill process.');
 		if ($this->process && Process::kill($this->process->pid,0)) {
 			Process::kill($this->process->pid) && Process::wait(true);
 		}
-		var_dump('kill process end.');
 		$this->process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
 		});

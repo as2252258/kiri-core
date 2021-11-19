@@ -63,8 +63,6 @@ class Inotify
 		if (!($events = inotify_read($this->inotify))) {
 			return;
 		}
-
-		var_dump($this->process->isReloading);
 		if ($this->process->isReloading) {
 			if (!$this->process->isReloadingOut) {
 				$this->process->isReloadingOut = true;
@@ -81,12 +79,8 @@ class Inotify
 				if ($this->process->int !== -1) {
 					return;
 				}
-
                 usleep(200);
-
 				$this->reload();
-
-				$this->process->isReloading = true;
 			}
 		}
 	}
@@ -98,9 +92,6 @@ class Inotify
 	{
 		$this->process->isReloading = true;
 		$this->process->trigger_reload();
-
-		var_dump('trigger_reload');
-
 		$this->clearWatch();
 		foreach ($this->dirs as $root) {
 			$this->watch($root);
