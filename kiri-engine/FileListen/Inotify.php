@@ -79,7 +79,7 @@ class Inotify
 				if ($this->process->int !== -1) {
 					return;
 				}
-                usleep(200);
+                usleep(2000);
 				$this->reload();
 			}
 		}
