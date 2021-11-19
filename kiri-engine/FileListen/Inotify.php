@@ -4,6 +4,7 @@ namespace Kiri\FileListen;
 
 use Exception;
 use Swoole\Event;
+use Swoole\Timer;
 
 class Inotify
 {
@@ -74,7 +75,8 @@ class Inotify
 			}
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
-				$this->reload();
+                Timer::after(3000, fn()=>$this->reload());
+                $this->isReloading = TRUE;
 			}
 		}
 	}
@@ -84,12 +86,6 @@ class Inotify
 	 */
 	public function reload()
 	{
-		if ($this->isReloading) {
-			return;
-		}
-
-        $this->isReloading = true;
-
 		$this->process->trigger_reload();
 		$this->clearWatch();
 		foreach ($this->dirs as $root) {
