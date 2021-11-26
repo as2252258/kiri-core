@@ -12,7 +12,7 @@ use Kiri\Kiri;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Server\Constrict\ResponseInterface;
+use Http\Constrict\ResponseInterface;
 
 /**
  * Class CoreMiddleware

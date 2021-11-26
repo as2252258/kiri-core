@@ -32,6 +32,12 @@ trait JwtHelper
 	private string $iv = '';
 
 
+	private string $iss = 'jwt.service';
+
+
+	private bool $oos = false;
+
+
 	private ?string $public = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6BuML3gtLGde7QKNuNST
 UCB9gdHC7XIpOc7Wx2I64Esj3UxWHTgp3URj0ge8zpy7A3FfBdppR7d1nwoD6Xad
@@ -70,7 +76,37 @@ kIHG5j+Qga2CgXqI2Y5URXGz5XlsNbMNFUrnWcbpqEbW5O6/BgHLLSDEyQgwbygN
 mlAZUEjsoaT9vjvjGTxl3uCm0TX5KTgtSJIt2kA1tYVjQef+/iZTHxY=
 -----END RSA PRIVATE KEY-----';
 
+	/**
+	 * @return string
+	 */
+	public function getIss(): string
+	{
+		return $this->iss;
+	}
 
+	/**
+	 * @param string $iss
+	 */
+	public function setIss(string $iss): void
+	{
+		$this->iss = $iss;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isOos(): bool
+	{
+		return $this->oos;
+	}
+
+	/**
+	 * @param bool $oos
+	 */
+	public function setOos(bool $oos): void
+	{
+		$this->oos = $oos;
+	}
 
 
 	/**

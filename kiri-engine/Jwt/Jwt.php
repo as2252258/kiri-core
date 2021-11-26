@@ -8,8 +8,10 @@ use Exception;
 use Http\Constrict\RequestInterface;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
+use Kiri\Cache\Redis;
 use Kiri\Core\Json;
 use Kiri\Exception\ConfigException;
+use Kiri\Kiri;
 
 
 /**
@@ -80,7 +82,13 @@ class Jwt extends Component
 		if (!isset($this->data['source'])) {
 			$this->data['source'] = 'browser';
 		}
-		return $this->createEncrypt($unionId);
+		$token = $this->createEncrypt($unionId);
+		if ($this->oos) {
+			$redis = Kiri::getDi()->get(Redis::class);
+			$redis->set('_jwt:token:' . $unionId, $token);
+			$redis->expire('_jwt:token:' . $unionId, $this->timeout);
+		}
+		return $token;
 	}
 
 
@@ -89,14 +97,13 @@ class Jwt extends Component
 	 */
 	private function jwtHeader(): string
 	{
-		$string = openssl_encrypt(
-			json_encode(['type' => 'openssl', 'encrypt' => $this->encrypt]),
+		return openssl_encrypt(
+			json_encode(['type' => 'openssl', 'encrypt' => $this->encrypt], JSON_UNESCAPED_UNICODE),
 			$this->encrypt,
 			$this->key,
 			0,
 			$this->iv
 		);
-		return str_replace('=', '', $string);
 	}
 
 
@@ -107,7 +114,7 @@ class Jwt extends Component
 	 */
 	private function jwtBody($unionId): string
 	{
-		$json = json_encode(['unionId' => $unionId, 'createTime' => time(), 'expire_at' => time() + $this->timeout]);
+		$json = json_encode(['unionId' => $unionId, 'createTime' => time(), 'expire_at' => time() + $this->timeout], JSON_UNESCAPED_UNICODE);
 		openssl_private_encrypt($json, $encode, $this->private);
 		return base64_encode($encode);
 	}
