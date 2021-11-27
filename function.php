@@ -445,9 +445,7 @@ if (!function_exists('fire')) {
 
 	/**
 	 * @param object $event
-	 * @throws NotFindClassException
-	 * @throws ReflectionException
-	 */
+     */
 	function fire(object $event)
 	{
 		di(EventDispatch::class)->dispatch($event);
@@ -541,8 +539,8 @@ if (!function_exists('trim_blank')) {
 
 if (!function_exists('get_file_extension')) {
 
-	function get_file_extension($filename)
-	{
+	function get_file_extension($filename): bool|int|string
+    {
 		$mime_types = [
 			'txt'  => 'text/plain',
 			'htm'  => 'text/html',
@@ -879,10 +877,11 @@ if (!function_exists('env')) {
 if (!function_exists('di')) {
 
 
-	/**
-	 * @param string $className
-	 * @return mixed
-	 */
+    /**
+     * @param string $className
+     * @return mixed
+     * @throws ReflectionException
+     */
 	function di(string $className): mixed
 	{
 		return Kiri::getDi()->get($className);
@@ -893,10 +892,11 @@ if (!function_exists('di')) {
 if (!function_exists('duplicate')) {
 
 
-	/**
-	 * @param string $className
-	 * @return mixed
-	 */
+    /**
+     * @param string $className
+     * @return mixed
+     * @throws ReflectionException
+     */
 	function duplicate(string $className): mixed
 	{
 		$class = di($className);
