@@ -72,9 +72,9 @@ class HotReload extends Command
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		swoole_async_set(['enable_coroutine' => false]);
 		if (!extension_loaded('inotify')) {
-			$this->driver = Kiri::getDi()->get(Scaner::class, [$this->dirs, $this]);
+			$this->driver = Kiri::getDi()->make(Scaner::class, [$this->dirs, $this]);
 		} else {
-			$this->driver = Kiri::getDi()->get(Inotify::class, [$this->dirs, $this]);
+			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
 		}
 		if (Kiri::getPlatform()->isLinux()) {
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');

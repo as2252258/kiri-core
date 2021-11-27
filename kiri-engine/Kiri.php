@@ -13,7 +13,7 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
-use Kiri\Di\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use ReflectionException;
 use Server\ServerManager;
 use Swoole\Coroutine;

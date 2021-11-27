@@ -21,6 +21,7 @@ use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Container
@@ -61,24 +62,37 @@ class Container extends BaseObject implements ContainerInterface
 	];
 
 
-	/**
-	 * @param       $class
-	 * @param array $constrict
-	 * @param array $config
-	 *
-	 * @return mixed
-	 * @throws
-	 */
-	public function get($class, array $constrict = [], array $config = []): mixed
+    /**
+     * @param string $id
+     * @return mixed
+     * @throws ReflectionException
+     */
+	public function get(string $id): mixed
 	{
-		if ($this->isInterface($class)) {
-			$class = $this->_interfaces[$class];
-		}
-		if (!isset($this->_singletons[$class])) {
-			$this->_singletons[$class] = $this->resolve($class, $constrict, $config);
-		}
-		return $this->_singletons[$class];
+		return $this->make($id, [], []);
 	}
+
+
+
+    /**
+     * @param $class
+     * @param array $constrict
+     * @param array $config
+     * @return mixed
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    public function make($class, array $constrict = [], array $config = []): mixed
+    {
+        if ($this->isInterface($class)) {
+            $class = $this->_interfaces[$class];
+        }
+        if (!isset($this->_singletons[$class])) {
+            $this->_singletons[$class] = $this->resolve($class, $constrict, $config);
+        }
+        return $this->_singletons[$class];
+    }
+
 
 
 	/**
@@ -435,4 +449,13 @@ class Container extends BaseObject implements ContainerInterface
 		}
 		return $old;
 	}
+
+    /**
+     * @param string $id
+     * @return bool
+     */
+    public function has(string $id): bool
+    {
+        return isset($this->_singletons[$id]) || isset($this->_interfaces[$id]);
+    }
 }
