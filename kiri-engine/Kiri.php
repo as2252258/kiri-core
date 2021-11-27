@@ -230,6 +230,15 @@ class Kiri
 
 
 	/**
+	 * @return Container
+	 */
+	public static function di(): Container
+	{
+		return static::$container;
+	}
+
+
+	/**
 	 * @param $workerId
 	 * @return mixed
 	 * @throws Exception

@@ -25,7 +25,6 @@ use Kiri\Error\Logger;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\InitException;
 use Kiri\Exception\NotFindClassException;
-use Kiri\Jwt\Jwt;
 use Kiri\Kiri;
 use ReflectionException;
 use Server\ServerManager;
@@ -369,16 +368,6 @@ abstract class BaseApplication extends Component
 	public function getRouter(): Router
 	{
 		return Kiri::getDi()->get(Router::class);
-	}
-
-
-	/**
-	 * @return Jwt
-	 * @throws
-	 */
-	public function getJwt(): Jwt
-	{
-		return $this->get('jwt');
 	}
 
 
