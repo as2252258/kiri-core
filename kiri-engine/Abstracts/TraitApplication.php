@@ -14,7 +14,7 @@ use Server\Server;
 use Kiri\Crontab\Producer;
 use Kiri\Async;
 use Kiri\Error\Logger;
-use Kiri\Jwt\Jwt;
+use Kiri\Jwt\JWTAuth;
 
 /**
  * Trait TraitApplication
@@ -24,7 +24,7 @@ use Kiri\Jwt\Jwt;
  * @property DatabasesProviders $db
  * @property Async $async
  * @property Logger $logger
- * @property Jwt $jwt
+ * @property JWTAuth $jwt
  * @property SAnnotation $annotation
  * @property BaseGoto $goto
  * @property Client $client
