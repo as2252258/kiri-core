@@ -4,6 +4,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use Annotation\Annotation;
+use Annotation\Route\Route;
 use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -14,10 +15,8 @@ use Kiri\Error\Logger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
-use Kiri\Exception\NotFindClassException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
-use Server\ServerManager;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
 
@@ -227,6 +226,8 @@ if (!function_exists('injectRuntime')) {
 	{
 		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
 		$di = Kiri::getDi();
+
+		$router = [];
 		foreach ($fileLists as $class) {
 			foreach (NoteManager::getTargetNote($class) as $value) {
 				$value->execute($class);
@@ -237,8 +238,18 @@ if (!function_exists('injectRuntime')) {
 					continue;
 				}
 				foreach ($attribute as $item) {
-					$item->execute($class, $method);
+					if ($item instanceof Route) {
+						$router[] = [$item, $class, $method];
+					} else {
+						$item->execute($class, $method);
+					}
 				}
+			}
+		}
+		if (!empty($router)) {
+			foreach ($router as $class) {
+				[$item, $class, $method] = $class;
+				$item->execute($class, $method);
 			}
 		}
 	}
@@ -445,7 +456,7 @@ if (!function_exists('fire')) {
 
 	/**
 	 * @param object $event
-     */
+	 */
 	function fire(object $event)
 	{
 		di(EventDispatch::class)->dispatch($event);
@@ -540,7 +551,7 @@ if (!function_exists('trim_blank')) {
 if (!function_exists('get_file_extension')) {
 
 	function get_file_extension($filename): bool|int|string
-    {
+	{
 		$mime_types = [
 			'txt'  => 'text/plain',
 			'htm'  => 'text/html',
@@ -877,11 +888,11 @@ if (!function_exists('env')) {
 if (!function_exists('di')) {
 
 
-    /**
-     * @param string $className
-     * @return mixed
-     * @throws ReflectionException
-     */
+	/**
+	 * @param string $className
+	 * @return mixed
+	 * @throws ReflectionException
+	 */
 	function di(string $className): mixed
 	{
 		return Kiri::getDi()->get($className);
@@ -892,11 +903,11 @@ if (!function_exists('di')) {
 if (!function_exists('duplicate')) {
 
 
-    /**
-     * @param string $className
-     * @return mixed
-     * @throws ReflectionException
-     */
+	/**
+	 * @param string $className
+	 * @return mixed
+	 * @throws ReflectionException
+	 */
 	function duplicate(string $className): mixed
 	{
 		$class = di($className);

@@ -225,7 +225,6 @@ class Application extends BaseApplication
 
 
 	/**
-	 * @throws NotFindClassException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
