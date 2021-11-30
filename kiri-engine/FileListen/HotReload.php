@@ -98,14 +98,11 @@ class HotReload extends Command
 	public function healthCheck()
 	{
 		$pid = (int)file_get_contents(storage('.swoole.pid'));
-		$this->logger->debug('timer ticker.' . $pid . '.' . Process::kill($pid, 0));
 		if (empty($pid)) {
+			$this->logger->debug('service is shutdown you need reload.');
 			$this->trigger_reload();
 		} else if (!Process::kill($pid, 0)) {
-			if ($this->process && Process::kill($this->process->pid, 0)) {
-				echo 'service is shutdown you need reload.';
-				Process::kill($this->process->pid, -15);
-			}
+			$this->logger->debug('service is shutdown you need reload.');
 			$this->trigger_reload();
 		}
 	}
