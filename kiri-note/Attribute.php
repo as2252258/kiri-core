@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 /**
  * Class Attribute
- * @package Annotation
+ * @package Note
  */
-abstract class Attribute implements IAnnotation
+abstract class Attribute implements INote
 {
 
 

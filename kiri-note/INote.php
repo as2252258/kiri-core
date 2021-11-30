@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 
-interface IAnnotation
+interface INote
 {
 
     /**

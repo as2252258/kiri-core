@@ -51,8 +51,8 @@ interface ' . ucfirst($name) . 'RpcInterface
 namespace Rpc\Producers;
 
 
-use Annotation\Target;
-use Annotation\Mapping;
+use Note\Target;
+use Note\Mapping;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
 use Exception;
 use Kiri\Rpc\JsonRpcConsumers;
@@ -86,8 +86,8 @@ class ' . ucfirst($name) . 'RpcService extends JsonRpcConsumers implements ' . u
 namespace Rpc\Consumers;
 
 
-use Annotation\Target;
-use Kiri\Rpc\Annotation\JsonRpc;
+use Note\Target;
+use Kiri\Rpc\Note\JsonRpc;
 use Http\Handler\Controller;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
 

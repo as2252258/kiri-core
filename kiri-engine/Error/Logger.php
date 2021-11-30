@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Error;
 
-use Annotation\Inject;
+use Note\Inject;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;

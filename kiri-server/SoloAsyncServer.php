@@ -2,13 +2,14 @@
 
 namespace Kiri\Server;
 
-use Annotation\Inject;
+use Note\Inject;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Error\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Kiri\Server\Abstracts\BaseProcess;
+use ReflectionException;
 use Swoole\Http\Server as HServer;
 use Swoole\Process;
 use Swoole\Server;
@@ -54,7 +55,7 @@ class SoloAsyncServer implements SwooleServerInterface
 
 
 	/**
-	 * @throws ConfigException|\ReflectionException
+	 * @throws ConfigException|ReflectionException
 	 */
 	private function startProcess()
 	{
@@ -100,7 +101,7 @@ class SoloAsyncServer implements SwooleServerInterface
 
 	/**
 	 * @param Server\Port|Server|HServer|WServer $server
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	private function eventListener(mixed $server, array $config): Server\Port|HServer|Server|WServer
 	{

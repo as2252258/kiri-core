@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 use DirectoryIterator;
@@ -15,7 +15,7 @@ use Throwable;
 
 /**
  * Class Loader
- * @package Annotation
+ * @package Note
  */
 class Loader extends BaseObject
 {

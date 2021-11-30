@@ -36,8 +36,9 @@
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
+      "Kiri\\Gateway\\": "kiri-gateway/",
       "Gii\\": "kiri-gii/",
-      "Annotation\\": "kiri-note/"
+      "Note\\": "kiri-note/"
     },
     "files": [
       "error.php",

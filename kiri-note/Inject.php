@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 use Exception;
@@ -12,7 +12,7 @@ use ReflectionProperty;
 
 /**
  * Class Inject
- * @package Annotation
+ * @package Note
  */
 #[\Attribute(\Attribute::TARGET_PROPERTY)] class Inject extends Attribute
 {

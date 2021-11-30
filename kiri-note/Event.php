@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 use Exception;
@@ -11,7 +11,7 @@ use Kiri\Kiri;
 
 /**
  * Class Event
- * @package Annotation
+ * @package Note
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Event extends Attribute
 {

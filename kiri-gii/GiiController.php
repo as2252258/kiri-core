@@ -68,9 +68,9 @@ namespace {$namespace};
 		} else {
 			$import = "use Kiri;
 use Exception;
-use Annotation\Target;
-use Annotation\Route\Middleware;
-use Annotation\Route\Route;
+use Note\Target;
+use Note\Route\Middleware;
+use Note\Route\Route;
 use Kiri\Core\Str;
 use Kiri\Core\Json;
 use Http\Context\Request;

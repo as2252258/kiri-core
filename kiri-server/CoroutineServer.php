@@ -2,7 +2,7 @@
 
 namespace Kiri\Server;
 
-use Annotation\Inject;
+use Note\Inject;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Error\Logger;

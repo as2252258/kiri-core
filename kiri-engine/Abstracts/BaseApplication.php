@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
-use Annotation\Annotation as SAnnotation;
+use Note\Note as SNote;
 use Database\Connection;
 use Exception;
 use Http\Handler\Router;
@@ -392,10 +392,10 @@ abstract class BaseApplication extends Component
 
 
 	/**
-	 * @return SAnnotation
+	 * @return SNote
 	 * @throws
 	 */
-	public function getAnnotation(): SAnnotation
+	public function getNote(): SNote
 	{
 		return $this->get('annotation');
 	}
@@ -450,7 +450,7 @@ abstract class BaseApplication extends Component
 			'error'           => ['class' => ErrorHandler::class],
 			'config'          => ['class' => Config::class],
 			'logger'          => ['class' => Logger::class],
-			'annotation'      => ['class' => SAnnotation::class],
+			'annotation'      => ['class' => SNote::class],
 			'databases'       => ['class' => Connection::class],
 			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],

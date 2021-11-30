@@ -1,6 +1,6 @@
 <?php
 
-namespace Annotation;
+namespace Note;
 
 use Kiri\Kiri;
 

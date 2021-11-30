@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Di;
 
-use Annotation\Inject;
+use Note\Inject;
 use Closure;
 use Exception;
 use Kiri\Abstracts\BaseObject;

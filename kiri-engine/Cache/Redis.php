@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Cache;
 
-use Annotation\Inject;
+use Note\Inject;
 use Exception;
 use Server\Events\OnWorkerExit;
 use Kiri\Abstracts\Component;

@@ -3,8 +3,8 @@
 defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
-use Annotation\Annotation;
-use Annotation\Route\Route;
+use Note\Note;
+use Note\Route\Route;
 use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -180,12 +180,12 @@ if (!function_exists('annotation')) {
 
 
 	/**
-	 * @return Annotation
+	 * @return Note
 	 * @throws Exception
 	 */
-	function annotation(): Annotation
+	function annotation(): Note
 	{
-		return Kiri::getAnnotation();
+		return Kiri::getNote();
 	}
 
 
@@ -204,7 +204,7 @@ if (!function_exists('scan_directory')) {
 	 */
 	function scan_directory($dir, $namespace, array $exclude = [])
 	{
-		$annotation = Kiri::app()->getAnnotation();
+		$annotation = Kiri::app()->getNote();
 		$annotation->read($dir, $namespace, $exclude);
 
 		injectRuntime($dir, $exclude);
@@ -224,7 +224,7 @@ if (!function_exists('injectRuntime')) {
 	 */
 	function injectRuntime(string $path, array $exclude = [])
 	{
-		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
+		$fileLists = Kiri::getNote()->runtime($path, $exclude);
 		$di = Kiri::getDi();
 
 		$router = [];

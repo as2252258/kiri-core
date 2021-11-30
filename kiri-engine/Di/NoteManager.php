@@ -236,7 +236,7 @@ class NoteManager
      * @param string $method
      * @return mixed
      */
-    public static function getPropertyByAnnotation(string $attribute, string $class, string $method): mixed
+    public static function getPropertyByNote(string $attribute, string $class, string $method): mixed
     {
         $class = self::getAttributeTrees($attribute, $class);
         if (empty($class) || !isset($class['property'])) {

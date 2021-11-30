@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 /**
  * Class Target
- * @package Annotation
+ * @package Note
  */
 #[\Attribute(\Attribute::TARGET_CLASS)] class Target extends Attribute
 {

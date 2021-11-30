@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Annotation;
+namespace Note;
 
 
 use Exception;
@@ -10,7 +10,7 @@ defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implem
 
 /**
  * Class Aspect
- * @package Annotation
+ * @package Note
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Aspect extends Attribute
 {

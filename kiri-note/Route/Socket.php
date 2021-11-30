@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Annotation\Route;
+namespace Note\Route;
 
 
-use Annotation\Attribute;
+use Note\Attribute;
 
 /**
  * Class Socket
- * @package Annotation
+ * @package Note
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Socket extends Attribute
 {

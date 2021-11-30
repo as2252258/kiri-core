@@ -4,7 +4,7 @@
 namespace Kiri\Abstracts;
 
 
-use Annotation\Annotation as SAnnotation;
+use Note\Note as SNote;
 use Database\Connection;
 use Database\DatabasesProviders;
 use Http\Handler\Client\Client;
@@ -25,7 +25,7 @@ use Kiri\Jwt\JWTAuth;
  * @property Async $async
  * @property Logger $logger
  * @property JWTAuth $jwt
- * @property SAnnotation $annotation
+ * @property SNote $annotation
  * @property BaseGoto $goto
  * @property Client $client
  * @property Connection $databases

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Annotation\Route;
+namespace Note\Route;
 
 
-use Annotation\Attribute;
+use Note\Attribute;
 
 /**
  * Class Document
- * @package Annotation\Route
+ * @package Note\Route
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Document extends Attribute
 {

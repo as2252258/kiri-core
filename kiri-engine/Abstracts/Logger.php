@@ -2,7 +2,7 @@
 
 namespace Kiri\Abstracts;
 
-use Annotation\Inject;
+use Note\Inject;
 use Exception;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
