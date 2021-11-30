@@ -176,7 +176,7 @@ if (!function_exists('workerName')) {
 }
 
 
-if (!function_exists('annotation')) {
+if (!function_exists('note')) {
 
 
 	/**

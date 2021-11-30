@@ -397,7 +397,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function getNote(): SNote
 	{
-		return $this->get('annotation');
+		return $this->get('note');
 	}
 
 
@@ -450,7 +450,7 @@ abstract class BaseApplication extends Component
 			'error'           => ['class' => ErrorHandler::class],
 			'config'          => ['class' => Config::class],
 			'logger'          => ['class' => Logger::class],
-			'annotation'      => ['class' => SNote::class],
+			'note'      => ['class' => SNote::class],
 			'databases'       => ['class' => Connection::class],
 			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],
