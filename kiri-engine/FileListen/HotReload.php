@@ -99,10 +99,10 @@ class HotReload extends Command
 	{
 		$pid = (int)file_get_contents(storage('.swoole.pid'));
 		if (empty($pid)) {
-			$this->logger->debug('service is shutdown you need reload.');
+			$this->logger->warning('service is shutdown you need reload.');
 			$this->trigger_reload();
 		} else if (!Process::kill($pid, 0)) {
-			$this->logger->debug('service is shutdown you need reload.');
+			$this->logger->warning('service is shutdown you need reload.');
 			$this->trigger_reload();
 		}
 	}
