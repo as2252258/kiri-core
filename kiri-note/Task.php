@@ -6,19 +6,20 @@ namespace Annotation;
 
 use Exception;
 use Kiri\Kiri;
+use Server\Tasker\AsyncTaskExecute;
 
 
 /**
- * Class Asynchronous
+ * Class Task
  * @package Annotation
  * Task任务
  */
-#[\Attribute(\Attribute::TARGET_CLASS)] class Asynchronous extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS)] class Task extends Attribute
 {
 
 
 	/**
-	 * Asynchronous constructor.
+	 * Task constructor.
 	 * @param string $name
 	 */
 	public function __construct(public string $name)
@@ -35,8 +36,8 @@ use Kiri\Kiri;
 	 */
     public function execute(mixed $class, mixed $method = null): bool
     {
-		$async = Kiri::app()->getAsync();
-		$async->addAsync($this->name, $class);
+		$task = Kiri::getDi()->get(AsyncTaskExecute::class);
+		$task->reg($this->name, $class);
 		return true;
 	}
 
