@@ -2,14 +2,15 @@
 
 namespace Kiri\FileListen;
 
-use Note\Inject;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Error\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Note\Inject;
 use Swoole\Coroutine;
 use Swoole\Process;
+use Swoole\Timer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -81,12 +82,26 @@ class HotReload extends Command
 		}
 		$this->trigger_reload();
 
-		var_dump(getmypid());
+		Timer::tick(1000, fn() => $this->healthCheck());
+
 		Process::signal(SIGTERM, [$this, 'onSignal']);
 		Process::signal(SIGKILL, [$this, 'onSignal']);
 
 		$this->driver->start();
 		return 0;
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function healthCheck()
+	{
+		if ($this->process && !Process::kill($this->process->pid, 0)) {
+			echo 'service is shutdown you need reload.';
+
+			$this->trigger_reload();
+		}
 	}
 
 
@@ -138,7 +153,7 @@ class HotReload extends Command
 	public function trigger_reload()
 	{
 		$this->logger->warning('change reload');
-		$pid  = $this->process?->pid;
+		$pid = $this->process?->pid;
 		$process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
 		});
