@@ -30,7 +30,7 @@
     "swiftmailer/swiftmailer": "v6.3.*",
     "psr/container": "^2.0",
     "psr/http-server-middleware": "1.0.1",
-    "game-worker/kiri-event": "v1.0",
+    "game-worker/kiri-event": "^v1.0",
     "ext-inotify": "*"
   },
   "autoload": {
