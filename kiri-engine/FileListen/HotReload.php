@@ -97,6 +97,7 @@ class HotReload extends Command
 	 */
 	public function healthCheck()
 	{
+		$this->logger->debug('timer ticker.'.Process::kill($this->process->pid, 0));
 		if ($this->process && !Process::kill($this->process->pid, 0)) {
 			echo 'service is shutdown you need reload.';
 
@@ -156,6 +157,8 @@ class HotReload extends Command
 		$pid = $this->process?->pid;
 		$process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
+
+			$this->logger->warning('service stop.');
 		});
 		$process->start();
 		if ($pid && Process::kill($pid, 0)) {
