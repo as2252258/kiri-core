@@ -29,6 +29,7 @@ use Kiri\Kiri;
 use ReflectionException;
 use Server\ServerManager;
 use Server\Contract\OnTaskInterface;
+use Server\Tasker\AsyncTaskExecute;
 use Swoole\Table;
 
 /**
@@ -210,7 +211,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function task(OnTaskInterface $execute): void
 	{
-		di(ServerManager::class)->task($execute);
+		di(AsyncTaskExecute::class)->execute($execute);
 	}
 
 

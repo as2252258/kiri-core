@@ -16,6 +16,7 @@ use Kiri\Di\Container;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
 use Server\ServerManager;
+use Server\Tasker\AsyncTaskExecute;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
@@ -457,8 +458,8 @@ class Kiri
 	 */
 	public static function async(string $class, array $params = [])
 	{
-		$manager = di(ServerManager::class);
-		$manager->task(new $class(...$params));
+		$manager = di(AsyncTaskExecute::class);
+		$manager->execute(new $class(...$params));
 	}
 
 

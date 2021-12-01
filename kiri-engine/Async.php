@@ -7,6 +7,7 @@ namespace Kiri;
 use Exception;
 use Kiri\Abstracts\Component;
 use Server\ServerManager;
+use Server\Tasker\AsyncTaskExecute;
 
 /**
  * Class Async
@@ -36,8 +37,8 @@ class Async extends Component
      */
     public function dispatch(string $name, array $params = [])
     {
-    	$context  = di(ServerManager::class);
-    	$context->task(static::$_absences[$name], $params);
+    	$context = di(AsyncTaskExecute::class);
+    	$context->execute(static::$_absences[$name], $params);
     }
 
 }
