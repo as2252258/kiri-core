@@ -3,8 +3,6 @@
 defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
-use Note\Note;
-use Note\Route\Route;
 use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -16,6 +14,8 @@ use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Note\Note;
+use Note\Route\Route;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
@@ -899,6 +899,27 @@ if (!function_exists('di')) {
 	}
 
 }
+
+
+if (!function_exists('interval')) {
+
+
+	/**
+	 * @param callable $callback
+	 * @param int $interval
+	 * @param bool $is
+	 */
+	function interval(callable $callback, int $interval = 1000, bool $is = false)
+	{
+		usleep($interval * 1000);
+
+		$callback();
+
+		interval($callback, $interval, $is);
+	}
+
+}
+
 
 if (!function_exists('duplicate')) {
 
