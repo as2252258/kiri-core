@@ -6,7 +6,7 @@ namespace Note;
 
 use DirectoryIterator;
 use Exception;
-use Kiri\Abstracts\BaseObject;
+use Kiri\Abstracts\Component;
 use Kiri\Kiri;
 use ReflectionClass;
 use ReflectionException;
@@ -17,7 +17,7 @@ use Throwable;
  * Class Loader
  * @package Note
  */
-class Loader extends BaseObject
+class Loader extends Component
 {
 
 

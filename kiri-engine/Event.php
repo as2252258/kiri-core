@@ -6,14 +6,13 @@ namespace Kiri;
 
 
 use Exception;
-use Kiri\Abstracts\BaseObject;
-use Swoole\Coroutine;
+use Kiri\Abstracts\Component;
 
 /**
  * Class Event
  * @package Kiri
  */
-class Event extends BaseObject
+class Event extends Component
 {
 
 	public bool $isVide = true;

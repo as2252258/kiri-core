@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace Kiri\Di;
 
+use Kiri\Abstracts\Component;
 use Note\Inject;
 use Closure;
 use Exception;
-use Kiri\Abstracts\BaseObject;
 use Kiri\Abstracts\Logger;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  * Class Container
  * @package Kiri\Di
  */
-class Container extends BaseObject implements ContainerInterface
+class Container extends Component implements ContainerInterface
 {
 
 	/**
