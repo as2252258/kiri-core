@@ -46,7 +46,6 @@ class Component implements Configure
 	}
 
 
-
 	/**
 	 * @return Container
 	 */
@@ -228,15 +227,15 @@ class Component implements Configure
 		if ($message instanceof \Throwable) {
 			$message = $message->getMessage() . " on line " . $message->getLine() . " at file " . $message->getFile();
 		}
-		$content = (empty($method) ? '' : $method . ': ') . $message;
-
-		$message = "\033[41;37m" . $content . "\033[0m";
-
-		if (!empty($file)) {
-			$message .= PHP_EOL . "\03341;37m[" . $file . "\033[0m";
-		}
 
 		$context = [];
+		if (is_string($method)) {
+			$message = (empty($method) ? '' : $method . ': ') . $message;
+		} else {
+			$context = $method;
+		}
+		$message = "\033[41;37m" . $message . "\033[0m";
+
 		if (!empty($method)) $context['method'] = $method;
 		if (!empty($file)) $context['file'] = $file;
 
