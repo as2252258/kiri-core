@@ -9,6 +9,7 @@ use Http\Aspect\OnAspectInterface;
 use Http\Aspect\OnJoinPointInterface;
 use Http\Constrict\RequestInterface;
 use Kiri\Kiri;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -43,10 +44,10 @@ class LoggerAspect implements OnAspectInterface
 	private function print_runtime($startTime)
 	{
 		$request = Kiri::getDi()->get(RequestInterface::class);
-
 		$runTime = round(microtime(true) - $startTime, 6);
-		echo sprintf('run %s use time %6f', $request->getUri()->__toString(), $runTime);
-		echo PHP_EOL;
+
+		$logger = Kiri::getDi()->get(LoggerInterface::class);
+		$logger->debug(sprintf('run %s use time %6f', $request->getUri()->__toString(), $runTime));
 	}
 
 }
