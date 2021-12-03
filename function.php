@@ -3,6 +3,7 @@
 defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
+use Http\Handler\Abstracts\MiddlewareManager;
 use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -48,6 +49,22 @@ if (!function_exists('make')) {
 		return $class;
 	}
 
+
+}
+
+
+if (!function_exists('map')) {
+
+
+	/**
+	 * @param array $params
+	 * @param Closure $closure
+	 * @return mixed
+	 */
+	function map(array $params, Closure $closure): mixed
+	{
+		return array_map($closure, $params);
+	}
 
 }
 
