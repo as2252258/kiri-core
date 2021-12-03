@@ -11,12 +11,15 @@ namespace Kiri\Abstracts;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Kiri\Di\Container;
 use Kiri\Kiri;
+use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 
 /**
  * Class BaseObject
  * @package Kiri\Kiri\Base
+ * @property ContainerInterface $container
  */
 class BaseObject implements Configure
 {
@@ -50,6 +53,15 @@ class BaseObject implements Configure
 	public function async_create(array|callable $callback, object $scope)
 	{
 		Coroutine::create($callback, $scope);
+	}
+
+
+	/**
+	 * @return Container
+	 */
+	#[Pure] public function getContainer(): ContainerInterface
+	{
+		return Kiri::getDi();
 	}
 
 
