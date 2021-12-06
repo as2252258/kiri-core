@@ -2,12 +2,12 @@
 
 namespace Kiri\Cache\Base;
 
+use Exception;
 use Kiri\Abstracts\Logger;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Kiri;
 use Kiri\Pool\StopHeartbeatCheck;
 use RedisException;
-use Kiri\Context;
 use Swoole\Timer;
 
 
@@ -61,21 +61,28 @@ class Redis implements StopHeartbeatCheck
 		if (env('state', 'start') == 'exit') {
 			return;
 		}
-		if ($this->_timer === -1 && Context::inCoroutine()) {
-			$this->_timer = Timer::tick(1000, function () {
-				try {
-					if (env('state', 'start') == 'exit') {
-						Kiri::getDi()->get(Logger::class)->critical('timer end');
-						$this->stopHeartbeatCheck();
-					}
-					if (time() - $this->_last > 10 * 60) {
-						$this->stopHeartbeatCheck();
-						$this->pdo = null;
-					}
-				} catch (\Throwable $throwable) {
-					error($throwable);
-				}
-			});
+		if ($this->_timer === -1) {
+			$this->_timer = Timer::tick(1000, fn() => $this->waite());
+		}
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	private function waite(): void
+	{
+		try {
+			if (env('state', 'start') == 'exit') {
+				Kiri::getDi()->get(Logger::class)->critical('timer end');
+				$this->stopHeartbeatCheck();
+			}
+			if (time() - $this->_last > 10 * 60) {
+				$this->stopHeartbeatCheck();
+				$this->pdo = null;
+			}
+		} catch (\Throwable $throwable) {
+			error($throwable);
 		}
 	}
 
