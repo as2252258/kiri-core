@@ -147,16 +147,14 @@ class HotReload extends Command
 	{
 		$this->logger->warning('change reload');
 		$pid = $this->process?->pid;
-		$process = new Process(function (Process $process) {
-			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
-
-			$this->logger->warning('service stop.');
-		});
-		$process->start();
 		if ($pid && Process::kill($pid, 0)) {
 			Process::kill($pid) && Process::wait(true);
 		}
 		$this->process = null;
+		$process = new Process(function (Process $process) {
+			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
+		});
+		$process->start();
 		$this->process = $process;
 	}
 
