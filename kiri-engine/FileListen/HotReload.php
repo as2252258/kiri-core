@@ -74,7 +74,7 @@ class HotReload extends Command
 		if (file_exists(storage('.manager.pid'))) {
 			$pid = (int)file_get_contents(storage('.manager.pid'));
 			if ($pid > 0 && Process::kill($pid, 0)) {
-				Process::kill($pid, -15);
+				Process::kill($pid, 15) && Process::wait(true);
 			}
 		}
 		file_put_contents(storage('.manager.pid'), getmypid());
