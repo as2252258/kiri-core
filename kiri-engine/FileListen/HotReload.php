@@ -50,12 +50,19 @@ class HotReload extends Command
 
 
 	/**
-	 * @throws ConfigException
-	 * @throws \ReflectionException
 	 */
 	protected function configure()
 	{
 		$this->setName('sw:wather')->setDescription('server start');
+	}
+
+
+	/**
+	 * @throws ConfigException
+	 * @throws \ReflectionException
+	 */
+	protected function initCore()
+	{
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		swoole_async_set(['enable_coroutine' => false]);
 		if (!extension_loaded('inotify')) {
@@ -78,6 +85,7 @@ class HotReload extends Command
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
+		$this->initCore();
 		$this->trigger_reload();
 
 		Timer::tick(1000, fn() => $this->healthCheck());
