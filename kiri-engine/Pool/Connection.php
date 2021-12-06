@@ -113,6 +113,7 @@ class Connection extends Component
 	public function create($coroutineName, $config): Closure
 	{
 		return static function () use ($coroutineName, $config) {
+			var_dump($config);
 			return Kiri::getDi()->create(PDO::class, $config);
 		};
 	}
