@@ -9,9 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Cache;
 
-use Note\Inject;
 use Exception;
-use Server\Events\OnWorkerExit;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
@@ -19,6 +17,8 @@ use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Kiri\Pool\Redis as PoolRedis;
+use Note\Inject;
+use Server\Events\OnWorkerExit;
 
 /**
  * Class Redis
@@ -35,13 +35,25 @@ class Redis extends Component
 	public EventProvider $eventProvider;
 
 
+	const REDIS_OPTION_HOST = 'host';
+	const REDIS_OPTION_PORT = 'port';
+	const REDIS_OPTION_PREFIX = 'prefix';
+	const REDIS_OPTION_AUTH = 'auth';
+	const REDIS_OPTION_DATABASES = 'databases';
+	const REDIS_OPTION_TIMEOUT = 'timeout';
+	const REDIS_OPTION_POOL = 'pool';
+	const REDIS_OPTION_POOL_TICK = 'tick';
+	const REDIS_OPTION_POOL_MIN = 'min';
+	const REDIS_OPTION_POOL_MAX = 'max';
+
+
 	/**
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
 	public function init()
 	{
-        $connections = Kiri::getDi()->get(PoolRedis::class);
+		$connections = Kiri::getDi()->get(PoolRedis::class);
 
 		$config = $this->get_config();
 
@@ -111,7 +123,7 @@ SCRIPT;
 	 */
 	public function release()
 	{
-        $connections = Kiri::getDi()->get(PoolRedis::class);
+		$connections = Kiri::getDi()->get(PoolRedis::class);
 		$connections->release($this->get_config(), true);
 	}
 
@@ -135,7 +147,7 @@ SCRIPT;
 	 */
 	public function proxy($name, $arguments): mixed
 	{
-        $connections = Kiri::getDi()->get(PoolRedis::class);
+		$connections = Kiri::getDi()->get(PoolRedis::class);
 
 		$config = $this->get_config();
 
