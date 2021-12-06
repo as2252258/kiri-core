@@ -231,8 +231,11 @@ class Component implements Configure
 		$context = [];
 		if (is_string($method)) {
 			$message = (empty($method) ? '' : $method . ': ') . $message;
-		} else if (!empty($method) && is_object($method)) {
-			$context = [$method];
+		} else {
+			if (is_null($method)) {
+				$method = [];
+			}
+			$context = $method;
 		}
 		$message = "\033[41;37m" . $message . "\033[0m";
 
