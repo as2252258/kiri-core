@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
 /**
  * Class Component
  * @package Kiri\Kiri\Base
- * @property ContainerInterface $container
+ * @property ContainerInterface|Container $container
  */
 class Component implements Configure
 {
