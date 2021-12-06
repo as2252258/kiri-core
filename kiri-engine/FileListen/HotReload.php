@@ -4,6 +4,7 @@ namespace Kiri\FileListen;
 
 use Exception;
 use Kiri\Abstracts\Config;
+use Kiri\Core\Json;
 use Kiri\Error\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
@@ -65,12 +66,34 @@ class HotReload extends Command
 	protected function initCore()
 	{
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
-		swoole_async_set(['enable_coroutine' => false]);
 		if (!extension_loaded('inotify')) {
 			$this->driver = Kiri::getDi()->make(Scaner::class, [$this->dirs, $this]);
 		} else {
 			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
 		}
+		$this->clearOtherService();
+		$this->setProcessName();
+	}
+
+
+	/**
+	 * @throws ConfigException
+	 */
+	public function setProcessName()
+	{
+		swoole_async_set(['enable_coroutine' => false]);
+		set_error_handler([$this, 'errorHandler']);
+		if (Kiri::getPlatform()->isLinux()) {
+			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
+		}
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function clearOtherService()
+	{
 		if (file_exists(storage('.manager.pid'))) {
 			$pid = (int)file_get_contents(storage('.manager.pid'));
 			if ($pid > 0 && Process::kill($pid, 0)) {
@@ -78,9 +101,24 @@ class HotReload extends Command
 			}
 		}
 		file_put_contents(storage('.manager.pid'), getmypid());
-		if (Kiri::getPlatform()->isLinux()) {
-			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function errorHandler()
+	{
+		$error = func_get_args();
+
+		$path = ['file' => $error[2], 'line' => $error[3]];
+
+		if ($error[0] === 0) {
+			$error[0] = 500;
 		}
+		$data = Json::to(500, $error[1], $path);
+
+		$this->logger->error($data, 'error');
 	}
 
 
