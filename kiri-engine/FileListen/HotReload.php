@@ -60,6 +60,7 @@ class HotReload extends Command
 	/**
 	 * @throws ConfigException
 	 * @throws \ReflectionException
+	 * @throws Exception
 	 */
 	protected function initCore()
 	{
@@ -70,6 +71,10 @@ class HotReload extends Command
 		} else {
 			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
 		}
+		if (file_exists(storage('.manager.pid'))) {
+			Process::kill(file_get_contents((int)storage('.manager.pid')));
+		}
+		file_put_contents(storage('.manager.pid'), getmypid());
 		if (Kiri::getPlatform()->isLinux()) {
 			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
 		}
@@ -124,6 +129,7 @@ class HotReload extends Command
 		if (!$data) {
 			return;
 		}
+		Timer::clearAll();
 		$this->driver->clear();
 		$this->stopServer();
 		$this->stopManager();
