@@ -45,7 +45,7 @@ class Redis extends Component
 
 		$config = $this->get_config();
 
-		$length = Config::get('connections.pool.max', 10);
+		$length = Config::get('cache.redis.pool.max', 10);
 
 		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 

@@ -50,11 +50,7 @@ class Redis extends Component
 	public function create(string $name, mixed $config): Closure
 	{
 		return static function () use ($name, $config) {
-			return Kiri::getDi()->create(\Kiri\Cache\Base\Redis::class, [
-				$config['host'], (int)$config['port'], $config['databases'] ?? 0,
-				$config['auth'], $config['prefix'] ?? '', $config['timeout'] ?? 30,
-				$config['read_timeout'] ?? 30
-			]);
+			return Kiri::getDi()->create(\Kiri\Cache\Base\Redis::class, $config);
 		};
 	}
 

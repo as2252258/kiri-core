@@ -22,9 +22,21 @@ class Redis implements StopHeartbeatCheck
 
 	private ?\Redis $pdo = null;
 
+	public string $host;
 
-	private int $_transaction = 0;
+	public int $port;
 
+	public int $database = 0;
+
+	public string $auth = '';
+
+	public string $prefix = '';
+
+	public int $timeout = 30;
+
+	public int $read_timeout = 30;
+
+	public array $pool = [];
 
 	private int $_timer = -1;
 
@@ -32,18 +44,18 @@ class Redis implements StopHeartbeatCheck
 
 
 	/**
-	 * @param string $host
-	 * @param int $port
-	 * @param int $database
-	 * @param string $auth
-	 * @param string $prefix
-	 * @param int $timeout
-	 * @param int $read_timeout
+	 * @param array $config
 	 */
-	public function __construct(public string $host, public int $port, public int $database = 0,
-	                            public string $auth = '', public string $prefix = '', public int $timeout = 30,
-	                            public int    $read_timeout = 30)
+	public function __construct(array $config)
 	{
+		$this->host = $config['host'];
+		$this->port = $config['port'];
+		$this->database = $config['database'];
+		$this->auth = $config['auth'];
+		$this->prefix = $config['prefix'];
+		$this->timeout = $config['timeout'];
+		$this->read_timeout = $config['read_timeout'];
+		$this->pool = $config['pool'];
 	}
 
 
@@ -77,7 +89,7 @@ class Redis implements StopHeartbeatCheck
 				Kiri::getDi()->get(Logger::class)->critical('timer end');
 				$this->stopHeartbeatCheck();
 			}
-			if (time() - $this->_last > 10 * 60) {
+			if (time() - $this->_last > intval($this->pool['tick'] ?? 60)) {
 				$this->stopHeartbeatCheck();
 				$this->pdo = null;
 			}
