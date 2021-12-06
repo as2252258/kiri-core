@@ -86,6 +86,7 @@ class HotReload extends Command
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$this->initCore();
+
 		$this->trigger_reload();
 
 		Timer::tick(1000, fn() => $this->healthCheck());
@@ -124,16 +125,34 @@ class HotReload extends Command
 			return;
 		}
 		$this->driver->clear();
+		$this->stopServer();
+		$this->stopManager();
+		while ($ret = Process::wait(true)) {
+			echo "PID={$ret['pid']}\n";
+			sleep(1);
+		}
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	protected function stopServer()
+	{
 		$pid = file_get_contents(storage('.swoole.pid'));
 		if (!empty($pid) && Process::kill($pid, 0)) {
 			Process::kill($pid, SIGTERM);
 		}
+	}
+
+
+	/**
+	 *
+	 */
+	protected function stopManager()
+	{
 		if ($this->process && Process::kill($this->process->pid, 0)) {
 			Process::kill($this->process->pid) && Process::wait(true);
-		}
-		while ($ret = Process::wait(true)) {
-			echo "PID={$ret['pid']}\n";
-			sleep(1);
 		}
 	}
 
@@ -145,17 +164,21 @@ class HotReload extends Command
 	 */
 	public function trigger_reload()
 	{
-		$this->logger->warning('change reload');
-		$pid = $this->process?->pid;
-		if ($pid && Process::kill($pid, 0)) {
-			Process::kill($pid) && Process::wait(true);
+		if ($this->int == 1) {
+			return;
 		}
-		$this->process = null;
-		$process = new Process(function (Process $process) {
+		$this->int = 1;
+		$this->logger->warning('change reload');
+
+		$this->stopServer();
+		$this->stopManager();
+
+		$this->process = new Process(function (Process $process) {
 			$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
 		});
-		$process->start();
-		$this->process = $process;
+
+		$this->process->start();
+		$this->int = -1;
 	}
 
 
