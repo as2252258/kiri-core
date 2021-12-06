@@ -50,7 +50,7 @@ class Redis implements StopHeartbeatCheck
 	{
 		$this->host = $config['host'];
 		$this->port = $config['port'];
-		$this->database = $config['database'];
+		$this->database = $config['databases'];
 		$this->auth = $config['auth'];
 		$this->prefix = $config['prefix'];
 		$this->timeout = $config['timeout'];
