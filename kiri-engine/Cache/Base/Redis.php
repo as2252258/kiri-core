@@ -48,6 +48,7 @@ class Redis implements StopHeartbeatCheck
 	 */
 	public function __construct(array $config)
 	{
+		var_dump($config);
 		$this->host = $config['host'];
 		$this->port = $config['port'];
 		$this->database = $config['database'];
