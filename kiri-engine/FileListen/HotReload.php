@@ -50,12 +50,22 @@ class HotReload extends Command
 
 
 	/**
-	 *
+	 * @throws ConfigException
+	 * @throws \ReflectionException
 	 */
 	protected function configure()
 	{
-		$this->setName('sw:wather')
-			->setDescription('server start');
+		$this->setName('sw:wather')->setDescription('server start');
+		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
+		swoole_async_set(['enable_coroutine' => false]);
+		if (!extension_loaded('inotify')) {
+			$this->driver = Kiri::getDi()->make(Scaner::class, [$this->dirs, $this]);
+		} else {
+			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
+		}
+		if (Kiri::getPlatform()->isLinux()) {
+			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
+		}
 	}
 
 
@@ -68,18 +78,6 @@ class HotReload extends Command
 	 */
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
-		// TODO: Implement onHandler() method.
-		set_error_handler([$this, 'onErrorHandler']);
-		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
-		swoole_async_set(['enable_coroutine' => false]);
-		if (!extension_loaded('inotify')) {
-			$this->driver = Kiri::getDi()->make(Scaner::class, [$this->dirs, $this]);
-		} else {
-			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
-		}
-		if (Kiri::getPlatform()->isLinux()) {
-			swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
-		}
 		$this->trigger_reload();
 
 		Timer::tick(1000, fn() => $this->healthCheck());
@@ -129,22 +127,6 @@ class HotReload extends Command
 			echo "PID={$ret['pid']}\n";
 			sleep(1);
 		}
-	}
-
-
-	/**
-	 * @param $code
-	 * @param $message
-	 * @param $file
-	 * @param $line
-	 * @throws Exception
-	 */
-	public function onErrorHandler($code, $message, $file, $line)
-	{
-		if (str_contains($message, 'The file descriptor is not an inotify instance')) {
-			return;
-		}
-		debug('Error:' . $message . ' at ' . $file . ':' . $line);
 	}
 
 
