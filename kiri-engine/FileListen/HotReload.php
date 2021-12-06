@@ -72,7 +72,10 @@ class HotReload extends Command
 			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
 		}
 		if (file_exists(storage('.manager.pid'))) {
-			Process::kill((int)file_get_contents(storage('.manager.pid')), -15);
+			$pid = (int)file_get_contents(storage('.manager.pid'));
+			if ($pid > 0 && Process::kill($pid, 0)) {
+				Process::kill($pid, -15);
+			}
 		}
 		file_put_contents(storage('.manager.pid'), getmypid());
 		if (Kiri::getPlatform()->isLinux()) {
