@@ -105,7 +105,7 @@ class Inotify
 			try {
 				inotify_rm_watch($this->inotify, $wd);
 			} catch (\Throwable $exception) {
-				logger()->addError($exception, 'throwable');
+				logger()->addError($exception->getMessage(), 'throwable');
 			}
 		}
 		$this->watchFiles = [];
