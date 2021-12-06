@@ -5,13 +5,12 @@ namespace Kiri\Error;
 
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use Kiri\Core\Json;
 use Kiri\Exception\ComponentException;
 use Kiri\Kiri;
+use Server\Abstracts\BaseProcess;
 use Swoole\Coroutine;
 use Swoole\Process;
-use Server\Abstracts\BaseProcess;
 
 /**
  * Class LoggerProcess
@@ -22,7 +21,6 @@ class LoggerProcess extends BaseProcess
 
 
 	public string $name = 'logger process';
-
 
 
 	/**
@@ -43,6 +41,9 @@ class LoggerProcess extends BaseProcess
 	 */
 	public function message(Process $process)
 	{
+		if ($this->isStop()) {
+			return;
+		}
 		$message = Json::decode($process->read());
 		if (!empty($message)) {
 			Kiri::writeFile($this->getDirName($message), $message[0], FILE_APPEND);
