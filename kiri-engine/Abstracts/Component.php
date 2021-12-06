@@ -137,8 +137,7 @@ class Component implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		$message = "\033[35m" . $message . "\033[0m";
-
+//		$message = "\033[35m" . $message . "\033[0m";
 
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
@@ -159,8 +158,7 @@ class Component implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-		$message = "\033[34m" . $message . "\033[0m";
-
+//		$message = "\033[34m" . $message . "\033[0m";
 
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
@@ -182,8 +180,7 @@ class Component implements Configure
 			$message = print_r($message, true);
 		}
 
-		$message = "\033[36m" . $message . "\033[0m";
-
+//		$message = "\033[36m" . $message . "\033[0m";
 
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
@@ -205,8 +202,7 @@ class Component implements Configure
 			$message = print_r($message, true);
 		}
 
-		$message = "\033[33m" . $message . "\033[0m";
-
+//		$message = "\033[33m" . $message . "\033[0m";
 
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
@@ -237,7 +233,7 @@ class Component implements Configure
 			}
 			$context = $method;
 		}
-		$message = "\033[41;37m" . $message . "\033[0m";
+//		$message = "\033[41;37m" . $message . "\033[0m";
 
 		if (!empty($method)) $context['method'] = $method;
 		if (!empty($file)) $context['file'] = $file;
