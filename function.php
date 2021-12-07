@@ -3,7 +3,6 @@
 defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
-use Http\Handler\Abstracts\MiddlewareManager;
 use Http\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
@@ -949,7 +948,11 @@ if (!function_exists('duplicate')) {
 	function duplicate(string $className): mixed
 	{
 		$class = di($className);
-		return clone $class;
+		$clone = clone $class;
+		if (method_exists($clone, 'clear')) {
+			$clone->clear();
+		}
+		return $clone;
 	}
 
 }
