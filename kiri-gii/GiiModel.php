@@ -260,7 +260,7 @@ use Database\Model;
 				$field = '\'' . current($val)['Field'] . '\'';
 			}
 			$_field_one .= '
-		[' . $field . ', \'' . $key . '\'],';
+			[' . $field . ', \'' . $key . '\'],';
 		}
 		foreach ($data as $key => $val) {
 			$length = $this->getLength($val);
