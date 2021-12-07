@@ -51,9 +51,6 @@ class GiiModel extends GiiBase
 
 		$namespace = rtrim($modelPath['namespace'], '\\');
 
-		$prefix = str_replace('_', '', $this->db->tablePrefix);
-		$managerName = str_replace(ucfirst($prefix), '', $managerName);
-
 		if (file_exists($modelPath['path'] . '/' . $managerName . '.php')) {
 			try {
 				$className = str_replace('\\\\', '\\', "{$modelPath['namespace']}\\{$managerName}");

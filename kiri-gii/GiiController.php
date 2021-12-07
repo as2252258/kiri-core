@@ -47,9 +47,6 @@ class GiiController extends GiiBase
 		$namespace = rtrim($path['namespace'], '\\');
 		$model_namespace = rtrim($modelPath['namespace'], '\\');
 
-		$prefix = str_replace('_', '', $this->db->tablePrefix);
-		$managerName = str_replace(ucfirst($prefix), '', $managerName);
-
 		$class = '';
 		$controller = str_replace('\\\\', '\\', "$namespace\\{$managerName}Controller");
 

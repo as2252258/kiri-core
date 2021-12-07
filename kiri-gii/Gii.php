@@ -334,6 +334,7 @@ class Gii
 	private function getClassName($tableName): string
 	{
 		$res = [];
+		$tableName = str_replace($this->db->tablePrefix,'', $tableName);
 		foreach (explode('_', $tableName) as $n => $val) {
 			$res[] = ucfirst($val);
 		}
