@@ -13,6 +13,7 @@ namespace Kiri\Abstracts;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Di\Container;
+use Kiri\Events\EventProvider;
 use Kiri\Kiri;
 use Psr\Container\ContainerInterface;
 
@@ -20,6 +21,7 @@ use Psr\Container\ContainerInterface;
  * Class Component
  * @package Kiri\Kiri\Base
  * @property ContainerInterface|Container $container
+ * @property EventProvider $eventProvider
  */
 class Component implements Configure
 {
@@ -43,6 +45,16 @@ class Component implements Configure
 	 */
 	public function init()
 	{
+	}
+
+
+	/**
+	 * @return EventProvider
+	 * @throws \ReflectionException
+	 */
+	public function getEventProvider(): EventProvider
+	{
+		return Kiri::getDi()->get(EventProvider::class);
 	}
 
 

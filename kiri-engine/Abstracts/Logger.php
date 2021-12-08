@@ -2,18 +2,20 @@
 
 namespace Kiri\Abstracts;
 
+use Kiri\Kiri;
 use Note\Inject;
 use Exception;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Psr\Log\LoggerInterface;
+use ReflectionException;
 use Server\Events\OnWorkerStop;
 
 
 /**
  *
  */
-class Logger implements LoggerInterface
+class Logger extends Component implements LoggerInterface
 {
 
 	const EMERGENCY = 'emergency';
@@ -26,12 +28,6 @@ class Logger implements LoggerInterface
 	const DEBUG = 'debug';
 
 
-	/**
-	 * @var EventProvider
-	 */
-	#[Inject(EventProvider::class)]
-	public EventProvider $eventProvider;
-
 	private array $_loggers = [];
 
 
@@ -39,7 +35,7 @@ class Logger implements LoggerInterface
 
 
 	/**
-	 * 监听事件
+	 * @return void
 	 */
 	public function init()
 	{

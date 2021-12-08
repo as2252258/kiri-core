@@ -28,12 +28,6 @@ use Server\Events\OnWorkerExit;
 class Redis extends Component
 {
 
-	/**
-	 * @var EventProvider
-	 */
-	#[Inject(EventProvider::class)]
-	public EventProvider $eventProvider;
-
 
 	const REDIS_OPTION_HOST = 'host';
 	const REDIS_OPTION_PORT = 'port';

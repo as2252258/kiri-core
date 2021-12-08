@@ -29,11 +29,6 @@ class Logger extends Component
 	private array $logs = [];
 
 
-	/** @var EventProvider */
-	#[Inject(EventProvider::class)]
-	public EventProvider $eventProvider;
-
-
 	/**
 	 * inject logger
 	 *
