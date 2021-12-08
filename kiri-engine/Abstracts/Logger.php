@@ -15,7 +15,7 @@ use Server\Events\OnWorkerStop;
 /**
  *
  */
-class Logger extends Component implements LoggerInterface
+class Logger implements LoggerInterface
 {
 
 	const EMERGENCY = 'emergency';
@@ -36,10 +36,11 @@ class Logger extends Component implements LoggerInterface
 
 	/**
 	 * @return void
+	 * @throws ReflectionException
 	 */
 	public function init()
 	{
-		$this->eventProvider->on(OnWorkerStop::class, [$this, 'onAfterRequest']);
+		Kiri::getDi()->get(EventProvider::class)->on(OnWorkerStop::class, [$this, 'onAfterRequest']);
 	}
 
 
