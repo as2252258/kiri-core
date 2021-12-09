@@ -14,6 +14,7 @@ use Swoole\Process;
 use Swoole\Timer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -54,7 +55,8 @@ class HotReload extends Command
 	 */
 	protected function configure()
 	{
-		$this->setName('sw:wather')->setDescription('server start');
+		$this->setName('sw:wather')->setDescription('server start')
+			->addOption('daemon', null, InputOption::VALUE_OPTIONAL, "是否后台运行", "--front");
 	}
 
 
@@ -134,7 +136,9 @@ class HotReload extends Command
 		$this->initCore();
 
 		$this->trigger_reload();
-
+		if ($input->getOption('') == '--daemon') {
+			Process::daemon(true, true);
+		}
 		Timer::tick(1000, fn() => $this->healthCheck());
 
 		Process::signal(SIGTERM, [$this, 'onSignal']);
