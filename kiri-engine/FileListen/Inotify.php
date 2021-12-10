@@ -15,7 +15,7 @@ class Inotify
 	private array $watchFiles = [];
 
 
-    protected bool $isReloading = FALSE;
+    public bool $isReloading = FALSE;
 
 
 	protected int $cid;
