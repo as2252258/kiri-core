@@ -136,7 +136,7 @@ class HotReload extends Command
         $this->initCore();
 
         $this->trigger_reload();
-        if ($input->getOption('') == '--daemon') {
+        if ($input->getOption('daemon') == '--daemon') {
             Process::daemon(TRUE, TRUE);
         }
         Timer::tick(1000, fn() => $this->healthCheck());
