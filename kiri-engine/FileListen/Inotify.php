@@ -29,8 +29,14 @@ class Inotify
      */
     public function __construct(protected array $dirs, public HotReload $process)
     {
-        set_error_handler(fn() => function () {
-        });
+        set_error_handler([$this, 'error']);
+        set_exception_handler([$this, 'error']);
+    }
+
+
+    public function error()
+    {
+
     }
 
 
