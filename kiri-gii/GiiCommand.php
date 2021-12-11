@@ -32,9 +32,9 @@ class GiiCommand extends Command
 	protected function configure()
 	{
 		$this->setName('sw:gii')
-			->addOption('make', InputArgument::OPTIONAL)
-			->addOption('name', InputArgument::OPTIONAL)
-			->addOption('databases', InputArgument::OPTIONAL)
+			->addOption('make','m', InputArgument::OPTIONAL)
+			->addOption('name','t', InputArgument::OPTIONAL)
+			->addOption('databases','d', InputArgument::OPTIONAL)
 			->setDescription('./snowflake sw:gii make=model|controller|task|interceptor|limits|middleware name=xxxx');
 	}
 
