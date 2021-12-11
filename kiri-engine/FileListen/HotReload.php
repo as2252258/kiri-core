@@ -67,6 +67,7 @@ class HotReload extends Command
      */
     protected function initCore()
     {
+        set_error_handler([$this, 'errorHandler']);
         $this->dirs = Config::get('inotify', [APP_PATH . 'app']);
         if (!extension_loaded('inotify')) {
             $this->driver = Kiri::getDi()->make(Scaner::class, [$this->dirs, $this]);
@@ -84,7 +85,6 @@ class HotReload extends Command
     public function setProcessName()
     {
         swoole_async_set(['enable_coroutine' => FALSE]);
-        set_error_handler([$this, 'errorHandler']);
         if (Kiri::getPlatform()->isLinux()) {
             swoole_set_process_name('[' . Config::get('id', 'sw service.') . '].sw:wather');
         }
