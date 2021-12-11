@@ -68,7 +68,7 @@ class Gii
 		$this->input = $input;
 		$this->db = $db;
 
-		$make = $this->input->getArgument('action');
+		$make = $this->input->getOption('make');
 		if (empty($make)) {
 			throw new Exception('构建类型不能为空~');
 		}
@@ -120,8 +120,8 @@ class Gii
 	private function makeByDatabases($make, InputInterface $input): array
 	{
 		$redis = Kiri::getDi()->get(Redis::class);
-		if ($input->hasArgument('name')) {
-			$this->tableName = $input->getArgument('name');
+		if ($input->hasOption('name')) {
+			$this->tableName = $input->getOption('name');
 			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {
