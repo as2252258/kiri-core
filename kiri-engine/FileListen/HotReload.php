@@ -55,8 +55,7 @@ class HotReload extends Command
      */
     protected function configure()
     {
-        $this->setName('sw:wather')->setDescription('server start')
-            ->addOption('daemon', NULL, InputOption::VALUE_OPTIONAL, "是否后台运行", "--front");
+        $this->setName('sw:wather')->setDescription('server start');
     }
 
 
