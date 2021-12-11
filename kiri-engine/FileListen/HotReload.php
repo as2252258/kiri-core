@@ -136,9 +136,6 @@ class HotReload extends Command
         $this->initCore();
 
         $this->trigger_reload();
-        if ($input->getOption('daemon') == '--daemon') {
-            Process::daemon(TRUE, TRUE);
-        }
         Timer::tick(1000, fn() => $this->healthCheck());
 
         Process::signal(SIGTERM, [$this, 'onSignal']);
@@ -155,7 +152,7 @@ class HotReload extends Command
     public function healthCheck()
     {
         $pid = (int)file_get_contents(storage('.swoole.pid'));
-        if ($this->driver->isReloading) {
+        if ($this->int == 1) {
             return;
         }
         if (empty($pid)) {
