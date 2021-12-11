@@ -103,9 +103,9 @@ class Inotify
 	{
 		foreach ($this->watchFiles as $wd) {
 			try {
-				inotify_rm_watch($this->inotify, $wd);
+				@inotify_rm_watch($this->inotify, $wd);
 			} catch (\Throwable $exception) {
-				logger()->addError($exception->getMessage(), 'throwable');
+//				logger()->addError($exception->getMessage(), 'throwable');
 			}
 		}
 		$this->watchFiles = [];
