@@ -34,7 +34,10 @@ class Inotify
     }
 
 
-    public function error()
+    /**
+     * @return void
+     */
+    public function error(): void
     {
 
     }
