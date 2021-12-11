@@ -66,11 +66,11 @@ class Json
 	{
 		$params['code'] = $code;
 		if (!is_string($message)) {
-			$params['param'] = $message;
-			if (!empty($data)) {
-				$params['exPageInfo'] = $data;
-			}
-			$params['message'] = 'System success.';
+            $params['message'] = 'System success.';
+            $params['param'] = $message;
+            if (!empty($data)) {
+                $params['exPageInfo'] = $data;
+            }
 		} else {
 			$params['message'] = $message;
 			$params['param'] = $data;
