@@ -165,8 +165,9 @@ class Context extends BaseContext
 		if (!isset(static::$_contents[$id])) {
 			return false;
 		}
-		if (!empty($key) && !isset(static::$_contents[$id][$key])) {
-			return false;
+        $value = static::$_contents[$id];
+        if (!empty($key) && is_array($value)) {
+			return isset($value[$key]);
 		}
 		return true;
 	}
