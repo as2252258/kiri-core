@@ -17,6 +17,7 @@ abstract class Attribute implements INote
      * @param mixed|string $method
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function execute(mixed $class, mixed $method = ''): mixed
     {
         // TODO: Implement execute() method.
