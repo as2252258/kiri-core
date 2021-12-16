@@ -24,10 +24,13 @@ class Context extends BaseContext
 	 */
 	public static function setContext($id, $context, $coroutineId = null): mixed
 	{
-		if (Coroutine::getCid() === -1) {
-			return static::$_contents[$id] = $context;
-		}
-		return Coroutine::getContext($coroutineId)[$id] = $context;
+        if (is_null($coroutineId)) {
+            $coroutineId = Coroutine::getCid();
+        }
+		if (Coroutine::getCid() !== -1) {
+            return Coroutine::getContext($coroutineId)[$id] = $context;
+        }
+        return static::$_contents[$id] = $context;
 	}
 
 	/**
