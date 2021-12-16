@@ -38,6 +38,9 @@ class Context extends BaseContext
 	 */
 	public static function increment($id, int $value = 1, $coroutineId = null): bool|int
 	{
+        if (is_null($coroutineId)) {
+            $coroutineId = Coroutine::getCid();
+        }
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			Coroutine::getContext($coroutineId)[$id] = 0;
 		}
@@ -52,6 +55,9 @@ class Context extends BaseContext
 	 */
 	public static function decrement($id, int $value = 1, $coroutineId = null): bool|int
 	{
+        if (is_null($coroutineId)) {
+            $coroutineId = Coroutine::getCid();
+        }
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			Coroutine::getContext($coroutineId)[$id] = 0;
 		}
@@ -81,6 +87,9 @@ class Context extends BaseContext
 	 */
 	private static function loadByContext($id, $default = null, $coroutineId = null): mixed
 	{
+        if (is_null($coroutineId)) {
+            $coroutineId = Coroutine::getCid();
+        }
 		return Coroutine::getContext($coroutineId)[$id] ?? $default;
 	}
 
