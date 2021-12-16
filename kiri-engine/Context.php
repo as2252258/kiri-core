@@ -186,8 +186,9 @@ class Context extends BaseContext
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			return false;
 		}
-		if ($key !== null) {
-			return isset((Coroutine::getContext($coroutineId)[$id] ?? [])[$key]);
+        $value = Coroutine::getContext($coroutineId)[$id];
+		if ($key !== null && is_array($value)) {
+			return isset($value[$key]);
 		}
 		return true;
 	}
