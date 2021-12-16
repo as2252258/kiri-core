@@ -230,14 +230,13 @@ if (!function_exists('scan_directory')) {
 
 if (!class_exists('ReturnTypeWillChange')) {
 
-
     /**
-     * @since 8.0
+     * @since 8.1
      */
     #[Attribute(Attribute::TARGET_METHOD)]
-    class ReturnTypeWillChange
+    final class ReturnTypeWillChange
     {
-
+        public function __construct() {}
     }
 
 
