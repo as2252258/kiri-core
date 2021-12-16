@@ -127,6 +127,9 @@ class Context extends BaseContext
 	 */
 	public static function remove(string $id, $coroutineId = null)
 	{
+        if (is_null($coroutineId)) {
+            $coroutineId = Coroutine::getCid();
+        }
 		if (!static::hasContext($id, $coroutineId)) {
 			return;
 		}
