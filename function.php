@@ -246,6 +246,9 @@ if (!function_exists('injectRuntime')) {
 		$router = [];
 		foreach ($fileLists as $class) {
 			foreach (NoteManager::getTargetNote($class) as $value) {
+                if (!method_exists($value, 'execute')){
+                    continue;
+                }
 				$value->execute($class);
 			}
 			$methods = $di->getMethodAttribute($class);
@@ -257,6 +260,9 @@ if (!function_exists('injectRuntime')) {
 					if ($item instanceof Route) {
 						$router[] = [$item, $class, $method];
 					} else {
+                        if (!method_exists($item, 'execute')){
+                            continue;
+                        }
 						$item->execute($class, $method);
 					}
 				}
@@ -265,6 +271,9 @@ if (!function_exists('injectRuntime')) {
 		if (!empty($router)) {
 			foreach ($router as $class) {
 				[$item, $class, $method] = $class;
+                if (!method_exists($item, 'execute')){
+                    continue;
+                }
 				$item->execute($class, $method);
 			}
 		}
