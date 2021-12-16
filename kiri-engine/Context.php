@@ -165,6 +165,9 @@ class Context extends BaseContext
 	 */
 	private static function searchByCoroutine($id, $key = null, $coroutineId = null): bool
 	{
+        if (is_null($coroutineId)) {
+            $coroutineId = Coroutine::getCid();
+        }
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			return false;
 		}
