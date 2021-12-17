@@ -167,13 +167,13 @@ class CoroutineServer implements SwooleServerInterface
 			if (is_string($process)) {
 				$process = Kiri::getDi()->get($process);
 			}
-			$swowProcess = new Process([$process, 'onHandler'], $process->getRedirectStdinAndStdout(),
+			$sowProcess = new Process([$process, 'onHandler'], $process->getRedirectStdinAndStdout(),
 				$process->getPipeType(), $process->isEnableCoroutine());
 			if (Kiri::getPlatform()->isLinux()) {
-				$swowProcess->name($system . '(' . $process->getName() . ')');
+				$sowProcess->name($system . '(' . $process->getName() . ')');
 			}
-			$swowProcess->start();
-			array_push($processes, $swowProcess);
+			$sowProcess->start();
+			$processes[] = $sowProcess;
 		}
 		return $processes;
 	}
