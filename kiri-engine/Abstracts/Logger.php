@@ -2,6 +2,7 @@
 
 namespace Kiri\Abstracts;
 
+use DirectoryIterator;
 use Kiri\Kiri;
 use Note\Inject;
 use Exception;
@@ -199,8 +200,8 @@ class Logger implements LoggerInterface
      */
     private function removeFile(string $dirname)
     {
-        $paths = new \DirectoryIterator($dirname);
-        /** @var \DirectoryIterator $path */
+        $paths = new DirectoryIterator($dirname);
+        /** @var DirectoryIterator $path */
         foreach ($paths as $path) {
             if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
                 continue;
