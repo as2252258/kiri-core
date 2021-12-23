@@ -177,7 +177,7 @@ class Logger implements LoggerInterface
         $loggers = implode(PHP_EOL, $this->_loggers);
         $this->_loggers = [];
         if (!empty($loggers)) {
-            $filename = storage('log-' . date('Y-m-d') . '.log', 'logs/');
+            $filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
 
             file_put_contents($filename, $loggers);
         }
