@@ -200,6 +200,9 @@ class Help
 	 */
 	public static function sendEmail($email, string $Subject, $messageContent)
 	{
+		if (!class_exists('\Swift_Mailer')) {
+			return;
+		}
 		$mailer = new \Swift_Mailer((new \Swift_SmtpTransport($email['host'], $email['port']))
 			->setUsername($email['username'])->setPassword($email['password']));
 		$message = (new \Swift_Message($Subject))
