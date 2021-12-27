@@ -23,15 +23,15 @@ class Config extends Component
 
 	const ERROR_MESSAGE = 'The not find %s in app configs.';
 
-	protected mixed $data = [];
+	protected static mixed $data = [];
 
 
 	/**
 	 * @return mixed
 	 */
-	public function getData(): mixed
+	public static function getData(): mixed
 	{
-		return $this->data;
+		return static::$data;
 	}
 
 
@@ -40,23 +40,21 @@ class Config extends Component
 	 * @param $value
 	 * @return mixed
 	 */
-	public function setData($key, $value): mixed
+	public static function setData($key, $value): mixed
 	{
-		return $this->data[$key] = $value;
+		return static::$data[$key] = $value;
 	}
 
 
 	/**
 	 * @param array $configs
-	 * @throws Exception
 	 */
 	public static function sets(array $configs)
 	{
-		$config = Kiri::app()->getConfig();
 		if (empty($configs)) {
 			return;
 		}
-        $config->data = $configs;
+		static::$data = $configs;
 	}
 
 	/**
@@ -64,11 +62,11 @@ class Config extends Component
 	 * @param bool $try
 	 * @param mixed|null $default
 	 * @return mixed
-	 * @throws
+	 * @throws ConfigException
 	 */
 	public static function get($key, mixed $default = null, bool $try = FALSE): mixed
 	{
-		$instance = Kiri::app()->getConfig()->getData();
+		$instance = static::$data;
 		if (!str_contains($key, '.')) {
 			return $instance[$key] ?? $default;
 		}
@@ -94,27 +92,23 @@ class Config extends Component
 	 * @param $key
 	 * @param $value
 	 * @return mixed
-	 * @throws Exception
 	 */
 	public static function set($key, $value): mixed
 	{
-		$config = Kiri::app()->getConfig();
-		return $config->setData($key, $value);
+		return static::setData($key, $value);
 	}
 
 	/**
 	 * @param $key
 	 * @param bool $must_not_null
 	 * @return bool
-	 * @throws Exception
 	 */
 	public static function has($key, bool $must_not_null = false): bool
 	{
-		$config = Kiri::app()->getConfig();
-		if (!isset($config->data[$key])) {
+		if (!isset(static::$data[$key])) {
 			return false;
 		}
-		$config = $config->data[$key];
+		$config = static::$data[$key];
 		if ($must_not_null === false) {
 			return true;
 		}

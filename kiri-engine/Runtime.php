@@ -5,6 +5,7 @@ namespace Kiri;
 
 
 use Exception;
+use Kiri\Abstracts\Config;
 use Kiri\Abstracts\Input;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,8 +63,7 @@ class Runtime extends Command
 	public function configEach(): string
 	{
 		$array = [];
-		$configs = Kiri::app()->getConfig();
-		foreach ($configs->getData() as $key => $datum) {
+		foreach (Config::getData() as $key => $datum) {
 			if ($datum instanceof \Closure) {
 				continue;
 			}
