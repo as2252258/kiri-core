@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kiri;
 
+error_reporting(0);
+
 
 use Note\Note;
 use Database\Collection;
