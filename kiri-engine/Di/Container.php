@@ -65,7 +65,7 @@ class Container extends Component implements ContainerInterface
     /**
      * @param string $id
      * @return mixed
-     * @throws ReflectionException
+     * @throws
      */
 	public function get(string $id): mixed
 	{
