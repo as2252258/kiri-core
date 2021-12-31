@@ -119,10 +119,8 @@ class Gii
 	 */
 	private function makeByDatabases($make, InputInterface $input): array
 	{
-		$redis = Kiri::getDi()->get(Redis::class);
 		if ($input->hasOption('name')) {
 			$this->tableName = $input->getOption('name');
-			$redis->del('column:' . $this->tableName);
 		}
 		return match ($make) {
 			'controller' => $this->getTable(1, 0),
