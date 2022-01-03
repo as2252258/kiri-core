@@ -90,7 +90,7 @@ class Redis extends Component
     {
         $time = time();
         while (!$this->setNx($key, 1)) {
-            if (time()- $time >= $timeout){
+            if (time()- $time >= $timeout) {
                 return FALSE;
             }
             usleep(1000);
