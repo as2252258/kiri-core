@@ -30,21 +30,6 @@ class Component implements Configure
 {
 
 
-	/**
-	 * @var Container
-	 */
-	#[Inject(ContainerInterface::class)]
-	public ContainerInterface $container;
-
-
-
-	/**
-	 * @var EventProvider
-	 */
-	#[Inject(EventProvider::class)]
-	public EventProvider $eventProvider;
-
-
 
 	/**
 	 * BaseAbstract constructor.
