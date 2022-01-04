@@ -19,6 +19,7 @@ use Kiri\Kiri;
 use Kiri\Pool\Redis as PoolRedis;
 use Note\Inject;
 use Server\Events\OnWorkerExit;
+use Swoole\Timer;
 
 /**
  * Class Redis
@@ -78,6 +79,25 @@ class Redis extends Component
 		}
 		return $data;
 	}
+
+
+    /**
+     * @param $key
+     * @param int $timeout
+     * @return bool
+     */
+    public function waite($key, int $timeout = 5): bool
+    {
+        $time = time();
+        while (!$this->setNx($key, 1)) {
+            if (time()- $time >= $timeout) {
+                return FALSE;
+            }
+            usleep(1000);
+        }
+        $this->expire($key, $timeout);
+        return TRUE;
+    }
 
 
 	/**
