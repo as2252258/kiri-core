@@ -108,7 +108,6 @@ class Container implements ContainerInterface
 	/**
 	 * @param $class
 	 * @return bool
-	 * @throws ReflectionException
 	 */
 	public function isInterface($class): bool
 	{
@@ -212,7 +211,6 @@ class Container implements ContainerInterface
 	 * @param $className
 	 * @param $method
 	 * @return array
-	 * @throws ReflectionException
 	 */
 	public function getMethodAttribute($className, $method = null): array
 	{
@@ -228,7 +226,6 @@ class Container implements ContainerInterface
 	 * @param string $class
 	 * @param string|null $property
 	 * @return ReflectionProperty|ReflectionProperty[]|null
-	 * @throws ReflectionException
 	 */
 	public function getClassReflectionProperty(string $class, string $property = null): ReflectionProperty|null|array
 	{
@@ -339,9 +336,6 @@ class Container implements ContainerInterface
 		if (!isset($this->_parameters[$class])) {
 			$this->_parameters[$class] = [];
 		}
-		if (!isset($this->_parameters[$class][$method])) {
-			$this->_parameters[$class][$method] = [];
-		}
 		return $this->_parameters[$class][$method] = $parameters;
 	}
 
@@ -360,7 +354,6 @@ class Container implements ContainerInterface
 	/**
 	 * @param ReflectionMethod|ReflectionFunction $reflectionMethod
 	 * @return array
-	 * @throws ReflectionException
 	 */
 	private function resolveMethodParameters(ReflectionMethod|ReflectionFunction $reflectionMethod): array
 	{
@@ -394,7 +387,6 @@ class Container implements ContainerInterface
 	/**
 	 * @param $class
 	 * @return ReflectionClass|null
-	 * @throws ReflectionException
 	 */
 	public function getReflect($class): ?ReflectionClass
 	{

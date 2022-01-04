@@ -59,6 +59,7 @@ class Help
 	/**
 	 * @param $xml
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public static function toArray($xml): mixed
 	{

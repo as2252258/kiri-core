@@ -21,6 +21,7 @@ class Dtl extends Component
 	/**
 	 * Dtl constructor.
 	 * @param $params
+	 * @throws Exception
 	 */
 	public function __construct($params)
 	{
@@ -35,9 +36,6 @@ class Dtl extends Component
 	 */
 	public function toArray(): array
 	{
-		if (!is_array($this->params)) {
-			return ArrayAccess::toArray($this->params);
-		}
 		return $this->params;
 	}
 

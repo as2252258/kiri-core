@@ -935,7 +935,6 @@ if (!function_exists('di')) {
 	/**
 	 * @param string $className
 	 * @return mixed
-	 * @throws ReflectionException
 	 */
 	function di(string $className): mixed
 	{

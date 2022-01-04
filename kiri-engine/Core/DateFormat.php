@@ -27,7 +27,7 @@ class DateFormat
 		if ($time === null) {
 			$time = time();
 		} else if (is_numeric($time)) {
-			$length = strlen(floatval($time));
+			$length = strlen((string)$time);
 			if ($length != 10 && $length != 13) {
 				return false;
 			}
@@ -86,9 +86,7 @@ class DateFormat
 			return false;
 		}
 
-		$time = date('t', $time);
-
-		return $time;
+		return date('t', $time);
 	}
 
 	/**

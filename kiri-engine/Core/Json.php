@@ -43,7 +43,7 @@ class Json
 	 * @param bool $asArray
 	 * @return mixed
 	 */
-	public static function decode($data, $asArray = true): mixed
+	public static function decode($data, bool $asArray = true): mixed
 	{
 		if (is_array($data) || is_numeric($data)) {
 			return $data;
@@ -55,14 +55,13 @@ class Json
 
 	/**
 	 * @param $code
-	 * @param string $message
-	 * @param array $data
+	 * @param string|array $message
+	 * @param array|int $data
 	 * @param int $count
 	 * @param array $exPageInfo
-	 * @return mixed
-	 * @throws
+	 * @return string|bool
 	 */
-	public static function to($code, $message = '', $data = [], $count = 0, $exPageInfo = []): mixed
+	public static function to($code, string|array $message = '', array|int $data = [], int $count = 0, array $exPageInfo = []): string|bool
 	{
 		$params['code'] = $code;
 		if (!is_string($message)) {

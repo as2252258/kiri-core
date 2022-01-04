@@ -3,6 +3,7 @@
 namespace Kiri\Core;
 
 use JetBrains\PhpStorm\Pure;
+use ReturnTypeWillChange;
 
 class HashMap implements \ArrayAccess
 {
@@ -62,7 +63,7 @@ class HashMap implements \ArrayAccess
 	 * @param mixed $offset
 	 * @return bool
 	 */
-	public function offsetExists($offset): bool
+	public function offsetExists(mixed $offset): bool
 	{
 		return isset($this->lists[$offset]);
 	}
@@ -72,7 +73,7 @@ class HashMap implements \ArrayAccess
 	 * @param mixed $offset
 	 * @return mixed
 	 */
-	#[Pure] public function offsetGet($offset): mixed
+	#[Pure] public function offsetGet(mixed $offset): mixed
 	{
 		return $this->get($offset);
 	}
@@ -82,7 +83,8 @@ class HashMap implements \ArrayAccess
 	 * @param mixed $offset
 	 * @param mixed $value
 	 */
-	public function offsetSet($offset, $value)
+	#[ReturnTypeWillChange]
+	public function offsetSet(mixed $offset, mixed $value)
 	{
 		$this->put($offset, $value);
 	}
@@ -91,7 +93,8 @@ class HashMap implements \ArrayAccess
 	/**
 	 * @param mixed $offset
 	 */
-	public function offsetUnset($offset)
+	#[ReturnTypeWillChange]
+	public function offsetUnset(mixed $offset)
 	{
 		unset($this->lists[$offset]);
 	}
