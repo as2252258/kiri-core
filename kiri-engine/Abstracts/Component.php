@@ -16,7 +16,9 @@ use Kiri\Di\Container;
 use Kiri\Events\EventProvider;
 use Kiri\Kiri;
 use Note\Inject;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Component
@@ -55,6 +57,26 @@ class Component implements Configure
 		if (!empty($config) && is_array($config)) {
 			Kiri::configure($this, $config);
 		}
+	}
+
+
+	/**
+	 * @return Container|ContainerInterface
+	 */
+	#[Pure] public function getContainer(): ContainerInterface|Container
+	{
+		return Kiri::getDi();
+	}
+
+
+	/**
+	 * @return EventProvider
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	public function getEventProvider(): EventProvider
+	{
+		return $this->getContainer()->get(EventProvider::class);
 	}
 
 

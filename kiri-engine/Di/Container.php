@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  * Class Container
  * @package Kiri\Di
  */
-class Container extends Component implements ContainerInterface
+class Container implements ContainerInterface
 {
 
 	/**
