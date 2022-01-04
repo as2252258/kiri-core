@@ -15,6 +15,7 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Di\Container;
 use Kiri\Events\EventProvider;
 use Kiri\Kiri;
+use Note\Inject;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -25,6 +26,23 @@ use Psr\Container\ContainerInterface;
  */
 class Component implements Configure
 {
+
+
+	/**
+	 * @var Container
+	 */
+	#[Inject(ContainerInterface::class)]
+	public ContainerInterface $container;
+
+
+
+	/**
+	 * @var EventProvider
+	 */
+	#[Inject(EventProvider::class)]
+	public EventProvider $eventProvider;
+
+
 
 	/**
 	 * BaseAbstract constructor.
@@ -47,24 +65,6 @@ class Component implements Configure
 	{
 	}
 
-
-	/**
-	 * @return EventProvider
-	 * @throws \ReflectionException
-	 */
-	public function getEventProvider(): EventProvider
-	{
-		return Kiri::getDi()->get(EventProvider::class);
-	}
-
-
-	/**
-	 * @return Container
-	 */
-	#[Pure] public function getContainer(): ContainerInterface
-	{
-		return Kiri::getDi();
-	}
 
 
 	/**

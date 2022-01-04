@@ -13,7 +13,6 @@ use Note\Inject;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
-use Kiri\Events\EventProvider;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 use Throwable;

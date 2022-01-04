@@ -223,22 +223,21 @@ abstract class BaseApplication extends Component
 	 */
 	private function addEvent($key, $value): void
 	{
-		$eventProvider = di(EventProvider::class);
 		if ($value instanceof \Closure || is_object($value)) {
-			$eventProvider->on($key, $value, 0);
+			$this->eventProvider->on($key, $value, 0);
 			return;
 		}
 
 
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-				$eventProvider->on($key, $value, 0);
+				$this->eventProvider->on($key, $value, 0);
 				return;
 			}
 
 			if (is_string($value[0])) {
 				$value[0] = Kiri::createObject($value[0]);
-				$eventProvider->on($key, $value, 0);
+				$this->eventProvider->on($key, $value, 0);
 				return;
 			}
 
@@ -247,7 +246,7 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				$eventProvider->on($key, $item, 0);
+				$this->eventProvider->on($key, $item, 0);
 			}
 		}
 
