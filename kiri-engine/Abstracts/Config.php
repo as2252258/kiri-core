@@ -9,9 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Abstracts;
 
-use Exception;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
 
 
 /**
@@ -95,7 +93,19 @@ class Config extends Component
 	 */
 	public static function set($key, $value): mixed
 	{
-		return static::setData($key, $value);
+		$explode = explode('.', $key);
+		$parent = &static::$data;
+		foreach ($explode as $item) {
+			if (!isset($parent[$item])) {
+				$parent[$item] = [];
+			}
+			$parent = &$parent[$item];
+		}
+		$parent = $value;
+
+		unset($parent);
+
+		return static::$data;
 	}
 
 	/**

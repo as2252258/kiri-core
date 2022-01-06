@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Kiri\Di;
 
-use Kiri\Abstracts\Component;
 use Note\Inject;
 use Closure;
 use Exception;
@@ -79,8 +78,7 @@ class Container implements ContainerInterface
      * @param array $constrict
      * @param array $config
      * @return mixed
-     * @throws ReflectionException
-     * @throws Exception
+     * @throws
      */
     public function make($class, array $constrict = [], array $config = []): mixed
     {
