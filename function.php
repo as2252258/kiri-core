@@ -849,7 +849,7 @@ if (!function_exists('storage')) {
 			}
 		}
 		if (empty($fileName)) {
-			return $basePath . '/' . $path . '/';
+			return $basePath . '/' . $path;
 		}
 		$fileName = $basePath . '/' . $path . $fileName;
 		if (!file_exists($fileName)) {
