@@ -224,7 +224,7 @@ class HotReload extends Command
         $this->stopManager();
 
         $this->process = new Process(function (Process $process) {
-            $process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "restart"]);
+            $process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "start"]);
         });
 
         $this->process->start();
