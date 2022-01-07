@@ -9,7 +9,6 @@ use Kiri\Abstracts\AbstractServer;
 use Note\Inject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Server\Constant;
 use Server\Contract\OnCloseInterface;
 use Server\Contract\OnHandshakeInterface;
 use Server\Contract\OnMessageInterface;
@@ -17,7 +16,6 @@ use Server\Contract\OnOpenInterface;
 use Server\SwooleServerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\WebSocket\CloseFrame;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
@@ -114,13 +112,12 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 			} else {
 				$this->protocol($request, $response);
 			}
-		} catch (\Throwable $throwable) {
-			$response->status(500, $throwable->getMessage());
-			$response->end();
-		} finally {
 			if ($this->callback instanceof OnOpenInterface) {
 				$this->callback->onOpen($this->server, $request);
 			}
+		} catch (\Throwable $throwable) {
+			$response->status(4000 + $throwable->getCode(), $throwable->getMessage());
+			$response->end();
 		}
 	}
 
