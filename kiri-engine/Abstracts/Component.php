@@ -13,9 +13,9 @@ namespace Kiri\Abstracts;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Di\Container;
+use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Kiri;
-use Note\Inject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -25,10 +25,10 @@ use Psr\Container\NotFoundExceptionInterface;
  * @package Kiri\Kiri\Base
  * @property ContainerInterface|Container $container
  * @property EventProvider $eventProvider
+ * @property EventDispatch $eventDispatch
  */
 class Component implements Configure
 {
-
 
 
 	/**
@@ -66,12 +66,19 @@ class Component implements Configure
 
 
 	/**
+	 * @return EventDispatch
+	 */
+	protected function getEventDispatch(): EventDispatch
+	{
+		return Kiri::getDi()->get(EventDispatch::class);
+	}
+
+	/**
 	 * @throws Exception
 	 */
 	public function init()
 	{
 	}
-
 
 
 	/**
@@ -124,13 +131,14 @@ class Component implements Configure
 	public function addError($message, string $model = 'app'): bool
 	{
 		if ($message instanceof \Throwable) {
-			$this->error(jTraceEx($message));
+			$this->error($message = jTraceEx($message));
 		} else {
 			if (!is_string($message)) {
 				$message = json_encode($message, JSON_UNESCAPED_UNICODE);
 			}
 			$this->error($message);
 		}
+		Kiri::app()->getLogger()->fail($message, $model);
 		return FALSE;
 	}
 
@@ -156,8 +164,6 @@ class Component implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-//		$message = "\033[35m" . $message . "\033[0m";
-
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
 		if (!empty($file)) $context['file'] = $file;
@@ -177,8 +183,6 @@ class Component implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-//		$message = "\033[34m" . $message . "\033[0m";
-
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
 		if (!empty($file)) $context['file'] = $file;
@@ -198,9 +202,6 @@ class Component implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-
-//		$message = "\033[36m" . $message . "\033[0m";
-
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
 		if (!empty($file)) $context['file'] = $file;
@@ -220,8 +221,6 @@ class Component implements Configure
 		if (!is_string($message)) {
 			$message = print_r($message, true);
 		}
-
-//		$message = "\033[33m" . $message . "\033[0m";
 
 		$context = [];
 		if (!empty($method)) $context['method'] = $method;
@@ -252,8 +251,6 @@ class Component implements Configure
 			}
 			$context = $method;
 		}
-//		$message = "\033[41;37m" . $message . "\033[0m";
-
 		if (!empty($method)) $context['method'] = $method;
 		if (!empty($file)) $context['file'] = $file;
 

@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace Kiri\Error;
 
-use Note\Inject;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Kiri;
+use Note\Inject;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -46,8 +46,20 @@ class Logger extends Component
 	 */
 	public function getLastError(string $application = 'app'): string
 	{
-		return 'Unknown error.';
+		return $this->logs[$application] ?? 'Unknown error.';
 	}
+
+
+	/**
+	 * @param $message
+	 * @param $method
+	 * @return void
+	 */
+	public function fail($message, $method)
+	{
+		$this->logs[$method] = $message;
+	}
+
 
 	/**
 	 * @param string $messages

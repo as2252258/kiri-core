@@ -56,10 +56,6 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 			return;
 		}
 		$this->callback = $handler->callback[0];
-
-		$this->server->on(Constant::HANDSHAKE, [$this, 'onHandshake']);
-		$this->server->on(Constant::MESSAGE, [$this, 'onMessage']);
-		$this->server->on(Constant::CLOSE, [$this, 'onClose']);
 	}
 
 
@@ -114,7 +110,7 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 	{
 		try {
 			if ($this->callback instanceof OnHandshakeInterface) {
-				$this->__handshake($request, $response);
+				$this->callback->onHandshake($request, $response);
 			} else {
 				$this->protocol($request, $response);
 			}
@@ -126,64 +122,6 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 				$this->callback->onOpen($this->server, $request);
 			}
 		}
-	}
-
-
-	/**
-	 * @param Request $request
-	 * @param Response $response
-	 * @return void
-	 * @throws Exception
-	 */
-	private function __handshake(Request $request, Response $response)
-	{
-		$this->callback->onHandshake($request, $response);
-		$key = base64_encode(sha1($request->header['sec-websocket-key'] . self::SHA1_KEY, true));
-		if ($key != $response->header['Sec-Websocket-Accept']) {
-			throw new Exception('Protocol fail.');
-		}
-		$response->setStatusCode(101, 'connection success.');
-		$response->end();
-	}
-
-
-	/**
-	 * @param Request $request
-	 * @param Response $response
-	 * @return void
-	 */
-	private function _coroutine_server(Request $request, Response $response)
-	{
-		if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
-			$response->upgrade();
-			$this->afterHandshake($request);
-			while (true) {
-				$data = $response->recv();
-				if ($data === '' || $data === false || $data instanceof CloseFrame) {
-					if (!($this->callback instanceof OnCloseInterface)) {
-						break;
-					}
-					$this->callback->onClose($this->server, $response->fd);
-					break;
-				}
-				if (!($this->callback instanceof OnMessageInterface)) {
-					continue;
-				}
-				$this->callback->onMessage($this->server, $data);
-			}
-		}
-	}
-
-
-	/**
-	 * @param $request
-	 */
-	public function afterHandshake($request)
-	{
-		if (!($this->callback instanceof OnOpenInterface)) {
-			return;
-		}
-		$this->callback->onOpen($this->server, $request);
 	}
 
 
