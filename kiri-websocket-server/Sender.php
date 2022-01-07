@@ -8,7 +8,6 @@ class Sender
 
 	public function push($fd, $data)
 	{
-
 	}
 
 

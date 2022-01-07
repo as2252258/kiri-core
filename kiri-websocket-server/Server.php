@@ -63,6 +63,10 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 	 */
 	public function onClose(\Swoole\Server $server, int $fd): void
 	{
+		$clientInfo = $server->getClientInfo($fd);
+		if (!isset($clientInfo['websocket_status'])) {
+			return;
+		}
 		if ($this->callback instanceof OnCloseInterface) {
 			$this->callback->onClose($server, $fd);
 		}
