@@ -79,7 +79,7 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 	 * @return void
 	 * @throws Exception
 	 */
-	protected function protocol(Request $request, Response $response)
+	protected function setWebSocketProtocol(Request $request, Response $response)
 	{
 		$secWebSocketKey = $request->header['sec-websocket-key'];
 		$patten = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
@@ -99,8 +99,6 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 		foreach ($headers as $key => $val) {
 			$response->header($key, $val);
 		}
-		$response->setStatusCode(101, 'connection success.');
-		$response->end();
 	}
 
 
@@ -111,10 +109,12 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 	public function onHandshake(Request $request, Response $response): void
 	{
 		try {
+			$this->setWebSocketProtocol($request, $response);
 			if ($this->callback instanceof OnHandshakeInterface) {
 				$this->callback->onHandshake($request, $response);
 			} else {
-				$this->protocol($request, $response);
+				$response->setStatusCode(101, 'connection success.');
+				$response->end();
 			}
 			if ($this->callback instanceof OnOpenInterface) {
 				$this->callback->onOpen($this->server, $request);
