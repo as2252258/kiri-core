@@ -21,15 +21,12 @@
     "ext-xml": "*",
     "ext-curl": "*",
     "ext-openssl": "*",
-    "symfony/console": "v5.3.10",
+    "symfony/console": "~v5.3.10",
     "psr/log": "1.*",
-    "ext-sockets": "*",
-    "ext-pcntl": "*",
-    "ext-posix": "*",
     "composer-runtime-api": "^2.0",
     "psr/container": "^2.0",
     "psr/http-server-middleware": "1.0.1",
-    "game-worker/kiri-event": "^v1.0",
+    "game-worker/kiri-event": "^v2.0",
     "ext-inotify": "*"
   },
   "autoload": {
