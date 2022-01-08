@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 use DirectoryIterator;
@@ -15,19 +15,13 @@ use Throwable;
 
 /**
  * Class Loader
- * @package Note
+ * @package Annotation
  */
 class Loader extends Component
 {
 
 
-	private array $_classes = [];
-
-
 	private array $_directory = [];
-
-
-	private array $_property = [];
 
 
 	private array $_methods = [];
@@ -41,17 +35,6 @@ class Loader extends Component
 	public function loader($path, $namespace)
 	{
 		$this->_scanDir(new DirectoryIterator($path), $namespace);
-	}
-
-	/**
-	 * @param string $class
-	 * @param string $property
-	 * @return \ReflectionProperty|array|null
-	 * @throws ReflectionException
-	 */
-	public function getProperty(string $class, string $property = ''): \ReflectionProperty|array|null
-	{
-		return Kiri::getDi()->getClassReflectionProperty($class, $property);
 	}
 
 
@@ -147,7 +130,6 @@ class Loader extends Component
 	 * @param DirectoryIterator $path
 	 * @param string $namespace
 	 * @return ReflectionClass|null
-	 * @throws ReflectionException
 	 */
 	private function getReflect(DirectoryIterator $path, string $namespace): ?ReflectionClass
 	{

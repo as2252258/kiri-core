@@ -6,7 +6,7 @@ use Exception;
 use Http\Handler\DataGrip;
 use Http\Handler\Router;
 use Kiri\Abstracts\AbstractServer;
-use Note\Inject;
+use Kiri\Annotation\Inject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Server\Contract\OnCloseInterface;
@@ -23,7 +23,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 /**
  * websocket server
  */
-class Server extends AbstractServer implements OnHandshakeInterface, OnMessageInterface, OnCloseInterface
+class Server extends AbstractServer
 {
 
 	public Router $router;
@@ -36,10 +36,11 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 
 
 	/**
-	 * @var WebSocketServer
+	 * @var WebSocketInterface
 	 */
-	#[Inject(SwooleServerInterface::class)]
-	public WebSocketServer $server;
+	#[Inject(WebSocketInterface::class)]
+	public WebSocketInterface $server;
+
 
 
 	/**
@@ -116,8 +117,25 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 				$response->setStatusCode(101, 'connection success.');
 				$response->end();
 			}
-			if ($this->callback instanceof OnOpenInterface) {
-				$this->callback->onOpen($this->server, $request);
+//			if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+//				$response->upgrade();
+//				$this->deferOpen($request);
+//				while (true) {
+//					$receive = $response->recv();
+//					if ($receive === '' || $receive instanceof CloseFrame) {
+//						$response->close();
+//						if ($this->callback instanceof OnCloseInterface) {
+//							$this->callback->onClose($this->server, $response->fd);
+//						}
+//						break;
+//					}
+//					$this->callback->onMessage($this->server, $receive);
+//				}
+//			} else {
+//				$this->deferOpen($request);
+//			}
+			if ($response->isWritable()) {
+				$this->deferOpen($request);
 			}
 		} catch (\Throwable $throwable) {
 			$response->status(4000 + $throwable->getCode(), $throwable->getMessage());
@@ -126,14 +144,22 @@ class Server extends AbstractServer implements OnHandshakeInterface, OnMessageIn
 	}
 
 
+	private function deferOpen($request)
+	{
+		if ($this->callback instanceof OnOpenInterface) {
+			$this->callback->onOpen($request);
+		}
+	}
+
+
 	/**
-	 * @param \Swoole\Server $server
+	 * @param $server
 	 * @param Frame $frame
 	 */
-	public function onMessage(\Swoole\Server $server, Frame $frame): void
+	public function onMessage($server, Frame $frame): void
 	{
 		if ($this->callback instanceof OnMessageInterface) {
-			$this->callback->onMessage($server, $frame);
+			$this->callback->onMessage($frame);
 		}
 	}
 }

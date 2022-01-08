@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 use DirectoryIterator;
@@ -10,10 +10,10 @@ use ReflectionException;
 use Kiri\Abstracts\Component;
 
 /**
- * Class Note
- * @package Note
+ * Class Annotation
+ * @package Annotation
  */
-class Note extends Component
+class Annotation extends Component
 {
 
 

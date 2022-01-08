@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 /**
  * Class Attribute
- * @package Note
+ * @package Annotation
  */
-abstract class Attribute implements INote
+abstract class Attribute implements IAnnotation
 {
 
 

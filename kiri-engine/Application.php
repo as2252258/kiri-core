@@ -13,25 +13,22 @@ namespace Kiri;
 use Closure;
 use Database\DatabasesProviders;
 use Exception;
-use Kiri\Abstracts\BaseApplication;
-use Kiri\Abstracts\Config;
-use Kiri\Abstracts\Kernel;
+use Kiri\Abstracts\{BaseApplication, Config, Kernel};
 use Kiri\Crontab\CrontabProviders;
-use Kiri\Events\OnAfterCommandExecute;
-use Kiri\Events\OnBeforeCommandExecute;
-use Kiri\Exception\NotFindClassException;
+use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Kiri\FileListen\HotReload;
 use ReflectionException;
 use Server\ServerProviders;
 use stdClass;
 use Swoole\Process;
 use Swoole\Timer;
-use Symfony\Component\Console\Application as ConsoleApplication;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\{Application as ConsoleApplication,
+	Command\Command,
+	Input\ArgvInput,
+	Input\InputInterface,
+	Output\ConsoleOutput,
+	Output\OutputInterface
+};
 
 /**
  * Class Init
@@ -213,7 +210,6 @@ class Application extends BaseApplication
 	}
 
 
-
 	/**
 	 * @param $argv
 	 * @return array
@@ -222,7 +218,6 @@ class Application extends BaseApplication
 	{
 		return [new ArgvInput($argv), new ConsoleOutput()];
 	}
-
 
 
 	/**
@@ -242,8 +237,6 @@ class Application extends BaseApplication
 		fire(new OnAfterCommandExecute());
 		$output->writeln('ok' . PHP_EOL);
 	}
-
-
 
 
 	/**

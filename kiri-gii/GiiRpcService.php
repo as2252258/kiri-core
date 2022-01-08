@@ -33,8 +33,8 @@ class GiiRpcService extends GiiBase
 		
 namespace App\Rpc;
 
-use Note\Route\RpcProducer;
-use Note\Target;
+use Kiri\Annotation\Route\RpcProducer;
+use Kiri\Annotation\Target;
 use Exception;
 use Http\Controller;
 use Kiri\Core\Json;

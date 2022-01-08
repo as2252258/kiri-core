@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Note\Route;
+namespace Kiri\Annotation\Route;
 
 
-use Note\Attribute;
+use Kiri\Annotation\Attribute;
 
 /**
  * Class Document
- * @package Note\Route
+ * @package Annotation\Route
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Document extends Attribute
 {

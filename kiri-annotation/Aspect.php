@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 use Exception;
@@ -10,7 +10,7 @@ defined('ASPECT_ERROR') or define('ASPECT_ERROR', 'Aspect annotation must implem
 
 /**
  * Class Aspect
- * @package Note
+ * @package Annotation
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Aspect extends Attribute
 {

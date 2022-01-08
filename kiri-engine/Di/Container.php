@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Di;
 
-use Note\Inject;
+use Kiri\Annotation\Inject;
 use Closure;
 use Exception;
 use Kiri\Abstracts\Logger;
@@ -197,7 +197,7 @@ class Container implements ContainerInterface
 	 */
 	public function propertyInject(ReflectionClass $reflect, $object): mixed
 	{
-		foreach (NoteManager::getPropertyNote($reflect) as $property => $inject) {
+		foreach (AnnotationManager::getPropertyAnnotation($reflect) as $property => $inject) {
 			/** @var Inject $inject */
 			$inject->execute($object, $property);
 		}
@@ -212,7 +212,7 @@ class Container implements ContainerInterface
 	 */
 	public function getMethodAttribute($className, $method = null): array
 	{
-		$methods = NoteManager::getMethodNote($this->getReflect($className));
+		$methods = AnnotationManager::getMethodAnnotation($this->getReflect($className));
 		if (!empty($method)) {
 			return $methods[$method] ?? [];
 		}
@@ -227,7 +227,7 @@ class Container implements ContainerInterface
 	 */
 	public function getClassReflectionProperty(string $class, string $property = null): ReflectionProperty|null|array
 	{
-		$lists = NoteManager::getProperty($this->getReflect($class));
+		$lists = AnnotationManager::getProperty($this->getReflect($class));
 		if (empty($lists)) {
 			return null;
 		}
@@ -266,7 +266,7 @@ class Container implements ContainerInterface
 		if ($reflect->isAbstract() || $reflect->isTrait() || $reflect->isInterface()) {
 			return $this->_reflection[$class] = $reflect;
 		}
-		$construct = NoteManager::resolveTarget($reflect);
+		$construct = AnnotationManager::resolveTarget($reflect);
 		if (!empty($construct) && $construct->getNumberOfParameters() > 0) {
 			$this->_constructs[$class] = $construct;
 		}
@@ -284,7 +284,7 @@ class Container implements ContainerInterface
 		if (is_string($class)) {
 			$class = $this->getReflect($class);
 		}
-		return NoteManager::getMethods($class);
+		return AnnotationManager::getMethods($class);
 	}
 
 

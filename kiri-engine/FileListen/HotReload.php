@@ -8,7 +8,7 @@ use Kiri\Core\Json;
 use Kiri\Error\Logger;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
-use Note\Inject;
+use Kiri\Annotation\Inject;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\Timer;

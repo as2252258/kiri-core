@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 
-interface INote
+interface IAnnotation
 {
 
     /**

@@ -7,7 +7,7 @@ namespace Kiri;
 error_reporting(0);
 
 
-use Note\Note;
+use Kiri\Annotation\Annotation;
 use Database\Collection;
 use Database\ModelInterface;
 use Exception;
@@ -159,12 +159,12 @@ class Kiri
 
 
 	/**
-	 * @return Note
+	 * @return Annotation
 	 * @throws Exception
 	 */
-	public static function getNote(): Note
+	public static function getAnnotation(): Annotation
 	{
-		return static::app()->getNote();
+		return static::app()->getAnnotation();
 	}
 
 

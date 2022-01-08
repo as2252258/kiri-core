@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 use Exception;
@@ -12,7 +12,7 @@ use ReflectionProperty;
 
 /**
  * Class Inject
- * @package Note
+ * @package Annotation
  */
 #[\Attribute(\Attribute::TARGET_PROPERTY)] class Inject extends Attribute
 {
@@ -70,7 +70,6 @@ use ReflectionProperty;
      * @param $class
      * @param $method
      * @return ReflectionProperty|bool
-     * @throws ReflectionException
      */
     private function getProperty($class, $method): ReflectionProperty|bool
     {

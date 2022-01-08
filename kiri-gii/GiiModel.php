@@ -66,11 +66,11 @@ namespace ' . $namespace . ';
 					$html .= $imports . PHP_EOL;
 				}
 
-				if (!str_contains($imports, 'Database\Note\Set')) {
-					$html .= 'use Database\Note\Set;' . PHP_EOL;
+				if (!str_contains($imports, 'Database\Annotation\Set')) {
+					$html .= 'use Database\Annotation\Set;' . PHP_EOL;
 				}
-				if (!str_contains($imports, 'Database\Note\Get')) {
-					$html .= 'use Database\Note\Get;' . PHP_EOL;
+				if (!str_contains($imports, 'Database\Annotation\Get')) {
+					$html .= 'use Database\Annotation\Get;' . PHP_EOL;
 				}
 			} catch (\Throwable $e) {
 				logger()->addError($e, 'throwable');
@@ -84,11 +84,11 @@ namespace ' . $namespace . ';
 
 
 use Exception;
-use Note\Target;
+use Kiri\Annotation\Target;
 use Kiri\Core\Json;
 use Database\Connection;
-use Database\Note\Get;
-use Database\Note\Set;
+use Database\Annotation\Get;
+use Database\Annotation\Set;
 use Database\Relation;
 use Database\Model;
 ' . PHP_EOL;

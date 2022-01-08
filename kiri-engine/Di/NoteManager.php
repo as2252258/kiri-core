@@ -7,14 +7,14 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
 
-class NoteManager
+class AnnotationManager
 {
 
 
 	private static array $_classTarget = [];
-	private static array $_classMethodNote = [];
+	private static array $_classMethodAnnotation = [];
 	private static array $_classMethod = [];
-	private static array $_classPropertyNote = [];
+	private static array $_classPropertyAnnotation = [];
 	private static array $_classProperty = [];
 	private static array $_mapping = [];
 
@@ -25,9 +25,9 @@ class NoteManager
 	public static function clear()
 	{
 		static::$_classTarget = [];
-		static::$_classMethodNote = [];
+		static::$_classMethodAnnotation = [];
 		static::$_classMethod = [];
-		static::$_classPropertyNote = [];
+		static::$_classPropertyAnnotation = [];
 		static::$_classProperty = [];
 		static::$_mapping = [];
 	}
@@ -36,7 +36,7 @@ class NoteManager
 	/**
 	 * @param ReflectionClass $class
 	 */
-	public static function setTargetNote(ReflectionClass $class)
+	public static function setTargetAnnotation(ReflectionClass $class)
 	{
 		$className = $class->getName();
 		if (!isset(static::$_classTarget[$className])) {
@@ -111,7 +111,7 @@ class NoteManager
 	 * @param mixed $class
 	 * @return array
 	 */
-	public static function getTargetNote(mixed $class): array
+	public static function getTargetAnnotation(mixed $class): array
 	{
 		if (!is_string($class)) {
 			$class = $class::class;
@@ -123,20 +123,20 @@ class NoteManager
 	/**
 	 * @param ReflectionClass $class
 	 */
-	public static function setMethodNote(ReflectionClass $class)
+	public static function setMethodAnnotation(ReflectionClass $class)
 	{
 		$className = $class->getName();
-		static::$_classMethodNote[$className] = static::$_classMethod[$className] = [];
+		static::$_classMethodAnnotation[$className] = static::$_classMethod[$className] = [];
 		foreach ($class->getMethods() as $ReflectionMethod) {
 			static::$_classMethod[$className][$ReflectionMethod->getName()] = $ReflectionMethod;
-			static::$_classMethodNote[$className][$ReflectionMethod->getName()] = [];
+			static::$_classMethodAnnotation[$className][$ReflectionMethod->getName()] = [];
 			foreach ($ReflectionMethod->getAttributes() as $attribute) {
 				if (!class_exists($attribute->getName())) {
 					continue;
 				}
 				$instance = $attribute->newInstance();
 
-				static::$_classMethodNote[$className][$ReflectionMethod->getName()][] = $instance;
+				static::$_classMethodAnnotation[$className][$ReflectionMethod->getName()][] = $instance;
 
 				self::setMappingMethod($attribute, $className, $ReflectionMethod->getName(), $instance);
 			}
@@ -159,9 +159,9 @@ class NoteManager
 	 * @param ReflectionClass $class
 	 * @return array
 	 */
-	#[Pure] public static function getMethodNote(ReflectionClass $class): array
+	#[Pure] public static function getMethodAnnotation(ReflectionClass $class): array
 	{
-		return static::$_classMethodNote[$class->getName()] ?? [];
+		return static::$_classMethodAnnotation[$class->getName()] ?? [];
 	}
 
 
@@ -171,9 +171,9 @@ class NoteManager
 	 */
 	public static function resolveTarget(ReflectionClass $reflect): ?\ReflectionMethod
 	{
-		NoteManager::setPropertyNote($reflect);
-		NoteManager::setTargetNote($reflect);
-		NoteManager::setMethodNote($reflect);
+		AnnotationManager::setPropertyAnnotation($reflect);
+		AnnotationManager::setTargetAnnotation($reflect);
+		AnnotationManager::setMethodAnnotation($reflect);
 
 		return $reflect->getConstructor();
 	}
@@ -182,10 +182,10 @@ class NoteManager
 	/**
 	 * @param ReflectionClass $class
 	 */
-	public static function setPropertyNote(ReflectionClass $class)
+	public static function setPropertyAnnotation(ReflectionClass $class)
 	{
 		$className = $class->getName();
-		static::$_classProperty[$className] = static::$_classPropertyNote[$className] = [];
+		static::$_classProperty[$className] = static::$_classPropertyAnnotation[$className] = [];
 		foreach ($class->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PUBLIC |
 			ReflectionProperty::IS_PROTECTED) as $ReflectionMethod) {
 			static::$_classProperty[$className][$ReflectionMethod->getName()] = $ReflectionMethod;
@@ -196,7 +196,7 @@ class NoteManager
 
 				$instance = $attribute->newInstance();
 
-				static::$_classPropertyNote[$className][$ReflectionMethod->getName()] = $instance;
+				static::$_classPropertyAnnotation[$className][$ReflectionMethod->getName()] = $instance;
 
 				self::setMappingProperty($attribute, $className, $ReflectionMethod->getName(), $instance);
 			}
@@ -250,7 +250,7 @@ class NoteManager
 	 * @param string $method
 	 * @return mixed
 	 */
-	public static function getPropertyByNote(string $attribute, string $class, string $method): mixed
+	public static function getPropertyByAnnotation(string $attribute, string $class, string $method): mixed
 	{
 		$class = self::getAttributeTrees($attribute, $class);
 		if (empty($class) || !isset($class['property'])) {
@@ -294,9 +294,9 @@ class NoteManager
 	 * @param ReflectionClass $class
 	 * @return array
 	 */
-	#[Pure] public static function getPropertyNote(ReflectionClass $class): array
+	#[Pure] public static function getPropertyAnnotation(ReflectionClass $class): array
 	{
-		return static::$_classPropertyNote[$class->getName()] ?? [];
+		return static::$_classPropertyAnnotation[$class->getName()] ?? [];
 	}
 
 

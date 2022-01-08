@@ -44,7 +44,7 @@ class Runtime extends Command
 	public function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// TODO: Implement onHandler() method.
-		$annotation = Kiri::app()->getNote();
+		$annotation = Kiri::app()->getAnnotation();
 
 		$runtime = storage(static::CACHE_NAME);
 		$config = storage(static::CONFIG_NAME);

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 use Exception;
@@ -11,7 +11,7 @@ use Server\Tasker\AsyncTaskExecute;
 
 /**
  * Class Task
- * @package Note
+ * @package Annotation
  * Task任务
  */
 #[\Attribute(\Attribute::TARGET_CLASS)] class Task extends Attribute

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Note\Route;
+namespace Kiri\Annotation\Route;
 
 
-use Note\Attribute;
+use Kiri\Annotation\Attribute;
 
 /**
  * Class Socket
- * @package Note
+ * @package Annotation
  */
 #[\Attribute(\Attribute::TARGET_METHOD)] class Socket extends Attribute
 {

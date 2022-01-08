@@ -1,16 +1,16 @@
 <?php
 
 
-namespace Note\Route;
+namespace Kiri\Annotation\Route;
 
 
-use Note\Attribute;
+use Kiri\Annotation\Attribute;
 use Http\Handler\Abstracts\MiddlewareManager;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**
  * Class Middleware
- * @package Note\Route
+ * @package Annotation\Route
  */
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Middleware extends Attribute
 {

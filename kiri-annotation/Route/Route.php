@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Note\Route;
+namespace Kiri\Annotation\Route;
 
 
-use Note\Attribute;
+use Kiri\Annotation\Attribute;
 use Http\Handler\Router;
 use Kiri\Kiri;
 

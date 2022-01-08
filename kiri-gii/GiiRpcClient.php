@@ -36,9 +36,9 @@ class GiiRpcClient extends GiiBase
 		
 namespace App\Client\Rpc;
 
-use Note\Rpc\Consumer;
-use Note\Rpc\RpcClient;
-use Note\Target;
+use Kiri\Annotation\Rpc\Consumer;
+use Kiri\Annotation\Rpc\RpcClient;
+use Kiri\Annotation\Target;
 use Exception;
 use Rpc\Client;
 use Kiri\Core\Json;

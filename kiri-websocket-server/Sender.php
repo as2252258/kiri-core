@@ -45,6 +45,17 @@ class Sender implements WebSocketInterface
 
 
 	/**
+	 * @param $fd
+	 * @param $reactor_id
+	 * @return array|null
+	 */
+	public function connection_info($fd, $reactor_id = null): ?array
+	{
+		return $this->server->getClientInfo($fd, $reactor_id);
+	}
+
+
+	/**
 	 * @param int $fd
 	 * @param int $code
 	 * @param string $reason
@@ -53,7 +64,6 @@ class Sender implements WebSocketInterface
 	public function disconnect(int $fd, int $code = SWOOLE_WEBSOCKET_CLOSE_NORMAL, string $reason = ''): bool
 	{
 		if ($this->isEstablished($fd)) {
-			// TODO: Implement disconnect() method.
 			return $this->server->disconnect($fd, $code, $reason);
 		}
 		return false;

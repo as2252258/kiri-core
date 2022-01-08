@@ -8,14 +8,14 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Application;
 use Kiri\Core\ArrayAccess;
-use Kiri\Di\NoteManager;
+use Kiri\Di\AnnotationManager;
 use Kiri\Error\Logger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
-use Note\Note;
-use Note\Route\Route;
+use Kiri\Annotation\Annotation;
+use Kiri\Annotation\Route\Route;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
@@ -192,16 +192,16 @@ if (!function_exists('workerName')) {
 }
 
 
-if (!function_exists('note')) {
+if (!function_exists('Annotation')) {
 
 
 	/**
-	 * @return Note
+	 * @return Annotation
 	 * @throws Exception
 	 */
-	function annotation(): Note
+	function annotation(): Annotation
 	{
-		return Kiri::getNote();
+		return Kiri::getAnnotation();
 	}
 
 
@@ -220,7 +220,7 @@ if (!function_exists('scan_directory')) {
 	 */
 	function scan_directory($dir, $namespace, array $exclude = [])
 	{
-		$annotation = Kiri::app()->getNote();
+		$annotation = Kiri::app()->getAnnotation();
 		$annotation->read($dir, $namespace, $exclude);
 
 		injectRuntime($dir, $exclude);
@@ -256,12 +256,12 @@ if (!function_exists('injectRuntime')) {
 	 */
 	function injectRuntime(string $path, array $exclude = [])
 	{
-		$fileLists = Kiri::getNote()->runtime($path, $exclude);
+		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
 		$di = Kiri::getDi();
 
 		$router = [];
 		foreach ($fileLists as $class) {
-			foreach (NoteManager::getTargetNote($class) as $value) {
+			foreach (AnnotationManager::getTargetAnnotation($class) as $value) {
 				if (!method_exists($value, 'execute')) {
 					continue;
 				}

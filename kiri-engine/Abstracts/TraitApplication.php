@@ -4,14 +4,11 @@
 namespace Kiri\Abstracts;
 
 
-use Note\Note as SNote;
+use Kiri\Annotation\Annotation as SAnnotation;
 use Database\Connection;
 use Database\DatabasesProviders;
-use Http\Handler\Client\Client;
-use Http\Handler\Client\Curl;
 use Http\Handler\Router;
 use Server\Server;
-use Kiri\Crontab\Producer;
 use Kiri\Async;
 use Kiri\Error\Logger;
 use Kiri\Jwt\JWTAuth;
@@ -25,11 +22,9 @@ use Kiri\Jwt\JWTAuth;
  * @property Async $async
  * @property Logger $logger
  * @property JWTAuth $jwt
- * @property SNote $annotation
+ * @property SAnnotation $annotation
  * @property BaseGoto $goto
- * @property Client $client
  * @property Connection $databases
- * @property Curl $curl
  */
 trait TraitApplication
 {

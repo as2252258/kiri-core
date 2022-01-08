@@ -10,26 +10,18 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
-use Note\Note as SNote;
 use Database\Connection;
 use Exception;
 use Http\Handler\Router;
-use Kiri\Events\OnBeforeCommandExecute;
-use Server\Server;
 use Kafka\KafkaProvider;
-use Kiri\Async;
+use Kiri\{Async, Kiri};
+use Kiri\Annotation\Annotation as SAnnotation;
 use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
-use Kiri\Error\ErrorHandler;
-use Kiri\Error\Logger;
-use Kiri\Events\EventProvider;
-use Kiri\Exception\InitException;
-use Kiri\Exception\NotFindClassException;
-use Kiri\Kiri;
+use Kiri\Error\{ErrorHandler, Logger};
+use Kiri\Exception\{InitException, NotFindClassException};
 use ReflectionException;
-use Server\ServerManager;
-use Server\Contract\OnTaskInterface;
-use Server\Tasker\AsyncTaskExecute;
+use Server\{Contract\OnTaskInterface, Server, ServerManager, Tasker\AsyncTaskExecute};
 use Swoole\Table;
 
 /**
@@ -392,12 +384,12 @@ abstract class BaseApplication extends Component
 
 
 	/**
-	 * @return SNote
+	 * @return SAnnotation
 	 * @throws
 	 */
-	public function getNote(): SNote
+	public function getAnnotation(): SAnnotation
 	{
-		return $this->get('note');
+		return $this->get('Annotation');
 	}
 
 
@@ -409,7 +401,6 @@ abstract class BaseApplication extends Component
 	{
 		return $this->get('async');
 	}
-
 
 
 	/**
@@ -450,7 +441,7 @@ abstract class BaseApplication extends Component
 			'error'           => ['class' => ErrorHandler::class],
 			'config'          => ['class' => Config::class],
 			'logger'          => ['class' => Logger::class],
-			'note'      => ['class' => SNote::class],
+			'Annotation'      => ['class' => SAnnotation::class],
 			'databases'       => ['class' => Connection::class],
 			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],

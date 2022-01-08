@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Note;
+namespace Kiri\Annotation;
 
 
 /**
  * Class Target
- * @package Note
+ * @package Annotation
  */
 #[\Attribute(\Attribute::TARGET_CLASS)] class Target extends Attribute
 {
