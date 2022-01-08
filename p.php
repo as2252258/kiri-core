@@ -51,40 +51,40 @@
 
 
 var_dump(json_encode([
-	"Datacenter"     => "dc1",
-	"Node"           => "iz8vbi3edjyskl7kpuwudqz",
-	"SkipNodeUpdate" => false,
-	"Service"        => [
-		"ID"              => "redis1",
-		"Service"         => "FriendRpcService",
-		"Address"         => "172.26.221.211",
-		"TaggedAddresses" => [
-			"lan" => [
-				"address" => "127.0.0.1",
-				"port"    => 9627
-			],
-			"wan" => [
-				"address" => "172.26.221.211",
-				"port"    => 9627
-			]
-		],
-		"Meta"            => [
-			"redis_version" => "4.0"
-		],
-		"Port"            => 9627
-	],
-	"Check"          => [
-		"Node"       => "iz8vbi3edjyskl7kpuwudqz",
-		"CheckId"    => "service:redis1",
-		"Name"       => "Redis health check",
-		"Notes"      => "Script based health check",
-		"Status"     => "passing",
-		"ServiceID"  => "redis1",
-		"Definition" => [
-			"Http"                           => "http://172.26.221.211:9627",
-			"Interval"                       => "5s",
-			"Timeout"                        => "1s",
-			"DeregisterCriticalServiceAfter" => "30s"
-		],
-	],
+    "Datacenter"     => "dc1",
+    "Node"           => "iz8vbi3edjyskl7kpuwudqz",
+    "SkipNodeUpdate" => FALSE,
+    "Service"        => [
+        "ID"              => "redis1",
+        "Service"         => "FriendRpcService",
+        "Address"         => "172.26.221.211",
+        "TaggedAddresses" => [
+            "lan" => [
+                "address" => "127.0.0.1",
+                "port"    => 9627,
+            ],
+            "wan" => [
+                "address" => "172.26.221.211",
+                "port"    => 9627,
+            ],
+        ],
+        "Meta"            => [
+            "redis_version" => "4.0",
+        ],
+        "Port"            => 9627,
+    ],
+    "Check"          => [
+        "Node"       => "iz8vbi3edjyskl7kpuwudqz",
+        "CheckId"    => "service:redis1",
+        "Name"       => "Redis health check",
+        "Notes"      => "Script based health check",
+        "Status"     => "passing",
+        "ServiceID"  => "redis1",
+        "Definition" => [
+            "Http"                           => "http://172.26.221.211:9627",
+            "Interval"                       => "5s",
+            "Timeout"                        => "1s",
+            "DeregisterCriticalServiceAfter" => "30s",
+        ],
+    ],
 ]));
