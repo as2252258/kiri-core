@@ -31,6 +31,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class Init
@@ -234,6 +235,9 @@ class Application extends BaseApplication
 		if (!($class instanceof HotReload)) {
 			scan_directory(directory('app'), 'App');
 		}
+
+		$this->container->setBindings(OutputInterface::class, $output);
+
 		$class->run($input, $output);
 		fire(new OnAfterCommandExecute());
 		$output->writeln('ok' . PHP_EOL);
