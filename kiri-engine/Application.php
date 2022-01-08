@@ -190,7 +190,8 @@ class Application extends BaseApplication
 	 */
 	public function execute(array $argv): void
 	{
-		/** @var InputInterface $input */
+		ini_set('swoole.enable_preemptive_scheduler', 'On');
+		ini_set('swoole.enable_library', 'On');
 		[$input, $output] = $this->argument($argv);
 		try {
 			$console = di(ConsoleApplication::class);
