@@ -8,7 +8,7 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Application;
 use Kiri\Core\ArrayAccess;
-use Kiri\Di\AnnotationManager;
+use Kiri\Di\NoteManager;
 use Kiri\Error\Logger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
@@ -261,7 +261,7 @@ if (!function_exists('injectRuntime')) {
 
 		$router = [];
 		foreach ($fileLists as $class) {
-			foreach (AnnotationManager::getTargetAnnotation($class) as $value) {
+			foreach (NoteManager::getTargetAnnotation($class) as $value) {
 				if (!method_exists($value, 'execute')) {
 					continue;
 				}

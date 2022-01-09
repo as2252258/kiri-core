@@ -7,7 +7,7 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
 
-class AnnotationManager
+class NoteManager
 {
 
 
@@ -171,9 +171,9 @@ class AnnotationManager
 	 */
 	public static function resolveTarget(ReflectionClass $reflect): ?\ReflectionMethod
 	{
-		AnnotationManager::setPropertyAnnotation($reflect);
-		AnnotationManager::setTargetAnnotation($reflect);
-		AnnotationManager::setMethodAnnotation($reflect);
+		NoteManager::setPropertyAnnotation($reflect);
+		NoteManager::setTargetAnnotation($reflect);
+		NoteManager::setMethodAnnotation($reflect);
 
 		return $reflect->getConstructor();
 	}
