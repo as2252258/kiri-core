@@ -176,7 +176,6 @@ class HotReload extends Command
         Timer::clearAll();
         $this->driver->clear();
         $this->stopServer();
-        $this->stopManager();
         while ($ret = Process::wait(TRUE)) {
             echo "PID={$ret['pid']}\n";
             sleep(1);
@@ -193,18 +192,11 @@ class HotReload extends Command
         if (!empty($pid) && Process::kill($pid, 0)) {
             Process::kill($pid, SIGTERM);
         }
-    }
-
-
-    /**
-     *
-     */
-    protected function stopManager()
-    {
         if ($this->process && Process::kill($this->process->pid, 0)) {
             Process::kill($this->process->pid) && Process::wait(TRUE);
         }
     }
+
 
 
     /**
@@ -221,8 +213,6 @@ class HotReload extends Command
         $this->logger->warning('change reload');
 
         $this->stopServer();
-        $this->stopManager();
-
         $this->process = new Process(function (Process $process) {
             $process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "start"]);
         });
