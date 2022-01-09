@@ -69,7 +69,7 @@ class Server extends AbstractServer
 			return;
 		}
 		if ($this->callback instanceof OnCloseInterface) {
-			$this->callback->onClose($server, $fd);
+			$this->callback->onClose($fd);
 		}
 	}
 
