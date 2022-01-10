@@ -5,9 +5,9 @@ namespace Kiri\Error;
 
 
 use Exception;
-use Http\Aspect\OnAspectInterface;
-use Http\Aspect\OnJoinPointInterface;
-use Http\Constrict\RequestInterface;
+use Kiri\Message\Aspect\OnAspectInterface;
+use Kiri\Message\Aspect\OnJoinPointInterface;
+use Kiri\Message\Constrict\RequestInterface;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 

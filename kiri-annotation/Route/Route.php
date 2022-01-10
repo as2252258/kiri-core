@@ -5,7 +5,7 @@ namespace Kiri\Annotation\Route;
 
 
 use Kiri\Annotation\Attribute;
-use Http\Handler\Router;
+use Kiri\Message\Handler\Router;
 use Kiri\Kiri;
 
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Route extends Attribute

@@ -5,7 +5,7 @@ namespace Kiri\Annotation\Route;
 
 
 use Kiri\Annotation\Attribute;
-use Http\Handler\Abstracts\MiddlewareManager;
+use Kiri\Message\Handler\Abstracts\MiddlewareManager;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**

@@ -8,7 +8,7 @@ use Exception;
 use Kiri\Core\Json;
 use Kiri\Exception\ComponentException;
 use Kiri\Kiri;
-use Server\Abstracts\BaseProcess;
+use Kiri\Server\Abstracts\BaseProcess;
 use Swoole\Coroutine;
 use Swoole\Process;
 

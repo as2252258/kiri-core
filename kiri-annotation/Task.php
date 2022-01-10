@@ -6,7 +6,7 @@ namespace Kiri\Annotation;
 
 use Exception;
 use Kiri\Kiri;
-use Server\Tasker\AsyncTaskExecute;
+use Kiri\Server\Tasker\AsyncTaskExecute;
 
 
 /**

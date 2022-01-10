@@ -34,7 +34,7 @@ namespace App\Middleware;
 
 use Closure;
 use Psr\Http\Server\MiddlewareInterface;
-use Server\Constrict\RequestInterface;
+use Kiri\Server\Constrict\RequestInterface;
 
 ';
 

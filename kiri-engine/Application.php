@@ -18,7 +18,7 @@ use Kiri\Crontab\CrontabProviders;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Kiri\FileListen\HotReload;
 use ReflectionException;
-use Server\ServerProviders;
+use Kiri\Server\ServerProviders;
 use stdClass;
 use Swoole\Process;
 use Swoole\Timer;

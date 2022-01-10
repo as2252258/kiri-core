@@ -3,17 +3,17 @@
 namespace Kiri\Websocket;
 
 use Exception;
-use Http\Handler\DataGrip;
-use Http\Handler\Router;
+use Kiri\Message\Handler\DataGrip;
+use Kiri\Message\Handler\Router;
 use Kiri\Abstracts\AbstractServer;
 use Kiri\Annotation\Inject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Server\Contract\OnCloseInterface;
-use Server\Contract\OnHandshakeInterface;
-use Server\Contract\OnMessageInterface;
-use Server\Contract\OnOpenInterface;
-use Server\SwooleServerInterface;
+use Kiri\Server\Contract\OnCloseInterface;
+use Kiri\Server\Contract\OnHandshakeInterface;
+use Kiri\Server\Contract\OnMessageInterface;
+use Kiri\Server\Contract\OnOpenInterface;
+use Kiri\Server\SwooleServerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;

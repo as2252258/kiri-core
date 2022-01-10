@@ -88,7 +88,7 @@ namespace Rpc\Consumers;
 
 use Kiri\Annotation\Target;
 use Kiri\Rpc\Annotation\JsonRpc;
-use Http\Handler\Controller;
+use Kiri\Message\Handler\Controller;
 use Rpc\\' . ucfirst($name) . 'RpcInterface;
 
 

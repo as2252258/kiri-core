@@ -9,7 +9,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Psr\Log\LoggerInterface;
 use ReflectionException;
-use Server\Events\OnWorkerStop;
+use Kiri\Server\Events\OnWorkerStop;
 
 
 /**

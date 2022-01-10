@@ -18,7 +18,7 @@ use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
 use Kiri\Pool\Redis as PoolRedis;
 use Kiri\Annotation\Inject;
-use Server\Events\OnWorkerExit;
+use Kiri\Server\Events\OnWorkerExit;
 use Swoole\Timer;
 
 /**

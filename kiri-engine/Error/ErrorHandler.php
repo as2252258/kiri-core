@@ -10,12 +10,12 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Exception;
-use Http\Handler\Formatter\IFormatter;
+use Kiri\Message\Handler\Formatter\IFormatter;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Events\EventDispatch;
 use Kiri\Kiri;
-use Http\Events\OnAfterRequest;
+use Kiri\Message\Events\OnAfterRequest;
 
 /**
  * Class ErrorHandler

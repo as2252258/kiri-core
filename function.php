@@ -3,7 +3,7 @@
 defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
-use Http\Handler\Router;
+use Kiri\Message\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Application;
