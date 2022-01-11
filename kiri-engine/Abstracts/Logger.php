@@ -7,9 +7,9 @@ use Exception;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
+use Kiri\Server\Events\OnWorkerStop;
 use Psr\Log\LoggerInterface;
 use ReflectionException;
-use Kiri\Server\Events\OnWorkerStop;
 
 
 /**
@@ -222,7 +222,7 @@ class Logger implements LoggerInterface
 	private function _string($message, $context): string
 	{
 		if (!empty($context)) {
-			return $message . ' ' . PHP_EOL . json_encode($context, JSON_FORCE_OBJECT) . PHP_EOL;
+			return $message . ' ' . PHP_EOL . print_r($context, true) . PHP_EOL;
 		}
 		return $message . PHP_EOL;
 	}
