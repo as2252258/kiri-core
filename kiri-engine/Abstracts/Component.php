@@ -147,7 +147,7 @@ class Component implements Configure
 	 * @return Logger
 	 * @throws Exception
 	 */
-	private function logger(): Logger
+	protected function logger(): Logger
 	{
 		return Kiri::getDi()->get(Logger::class);
 	}
