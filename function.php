@@ -3,9 +3,10 @@
 defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
-use Kiri\Message\Handler\Router;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
+use Kiri\Annotation\Annotation;
+use Kiri\Annotation\Route\Route;
 use Kiri\Application;
 use Kiri\Core\ArrayAccess;
 use Kiri\Di\NoteManager;
@@ -14,8 +15,7 @@ use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Kiri;
-use Kiri\Annotation\Annotation;
-use Kiri\Annotation\Route\Route;
+use Kiri\Message\Handler\Router;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
@@ -1230,5 +1230,30 @@ if (!function_exists('success')) {
 	{
 		Kiri::app()->success($message, $method);
 	}
+}
+
+
+if (!function_exists('error_trigger_format')) {
+
+
+	/**
+	 * @param Throwable|Error $throwable
+	 * @return string
+	 */
+	function error_trigger_format(\Throwable|\Error $throwable): string
+	{
+		$message = 'Throwable: ' . $throwable->getMessage() . "\r\n" . '
+	' . $throwable->getFile() . " at line" . $throwable->getLine();
+
+		$message .= 'trance' . "\r\n";
+		foreach ($throwable->getTrace() as $value) {
+			if (!isset($value['file'])) {
+				continue;
+			}
+			$message .= $value['file'] . '->' . $value['line'] . '(' . $value['class'] . '::' . $value['function'] . ')';
+		}
+		return $message;
+	}
+
 }
 
