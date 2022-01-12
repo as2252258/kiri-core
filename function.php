@@ -1249,7 +1249,7 @@ if (!function_exists('error_trigger_format')) {
 			if (!isset($value['file'])) {
 				continue;
 			}
-			$message .= $value['file'] . '->' . $value['line'] . '(' . $value['class'] . '::' . $value['function'] . ')';
+			$message .= $value['file'] . '->' . $value['line'] . '(' . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . ')';
 		}
 		return $message;
 	}
