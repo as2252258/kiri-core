@@ -6,8 +6,8 @@ namespace Kiri\Annotation;
 
 use DirectoryIterator;
 use Exception;
-use Kiri\Abstracts\Component;
 use Kiri;
+use Kiri\Abstracts\Component;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
@@ -84,6 +84,9 @@ class Loader extends Component
 	public function _scanDir(DirectoryIterator $paths, $namespace, array $exclude = [])
 	{
 		foreach ($paths as $path) {
+			if (function_exists('opcache_invalidate')) {
+				opcache_invalidate($path->getRealPath(), true);
+			}
 			if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
 				continue;
 			}
