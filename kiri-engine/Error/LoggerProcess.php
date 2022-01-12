@@ -9,6 +9,7 @@ use Kiri\Core\Json;
 use Kiri\Exception\ComponentException;
 use Kiri\Kiri;
 use Kiri\Server\Abstracts\BaseProcess;
+use Kiri\Server\Broadcast\OnBroadcastInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Process;
@@ -35,12 +36,11 @@ class LoggerProcess extends BaseProcess
 	}
 
 
-
 	/**
-	 * @param $message
+	 * @param OnBroadcastInterface $message
 	 * @return void
 	 */
-	public function onBroadcast($message)
+	public function onBroadcast(OnBroadcastInterface $message): void
 	{
 		$logger = Kiri::getDi()->get(LoggerInterface::class);
 		$logger->debug($message->data . '::' . static::class);
