@@ -1252,9 +1252,9 @@ Throwable: ' . $throwable->getMessage() . '
 				continue;
 			}
 			$message .= '
-		'.$value['file'] . '->' . $value['line'] . '(' . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . ')';
+		' . $value['file'] . '->' . $value['line'] . '(' . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . ')';
 		}
-		return $message;
+		return "\033[37m" . $message . "\033[41m";
 	}
 
 }
