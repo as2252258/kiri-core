@@ -8,7 +8,7 @@ use Database\Db;
 use Database\Model;
 use Exception;
 use ReflectionException;
-use Kiri\Kiri;
+use Kiri;
 
 /**
  * Class GiiModel

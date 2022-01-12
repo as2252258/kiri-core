@@ -10,7 +10,7 @@ use Exception;
 
 /**
  * Class Help
- * @package Kiri\Kiri\Core
+ * @package Kiri\Core
  */
 class Help
 {

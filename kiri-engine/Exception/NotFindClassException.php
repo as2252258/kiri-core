@@ -16,7 +16,7 @@ use Throwable;
 
 /**
  * Class NotFindClassException
- * @package Kiri\Kiri\Exception
+ * @package Kiri\Exception
  */
 class NotFindClassException extends \Exception
 {

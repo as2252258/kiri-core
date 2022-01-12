@@ -29,6 +29,8 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
 	Output\ConsoleOutput,
 	Output\OutputInterface
 };
+use Kiri;
+
 
 /**
  * Class Init

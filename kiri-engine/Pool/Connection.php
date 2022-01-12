@@ -9,7 +9,7 @@ use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Context;
-use Kiri\Kiri;
+use Kiri;
 use Swoole\Error;
 use Throwable;
 

@@ -6,7 +6,7 @@ namespace Kiri\Annotation;
 
 use Exception;
 use Kiri\Events\EventProvider;
-use Kiri\Kiri;
+use Kiri;
 
 
 /**

@@ -39,6 +39,7 @@
       "Kiri\\Task\\": "kiri-task/"
     },
     "files": [
+      "Kiri.php",
       "error.php",
       "function.php"
     ]

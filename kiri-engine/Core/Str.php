@@ -9,7 +9,7 @@ use Exception;
 
 /**
  * Class Str
- * @package Kiri\Kiri\Core
+ * @package Kiri\Core
  */
 class Str
 {

@@ -15,7 +15,7 @@ use Throwable;
 
 /**
  * Class ComponentException
- * @package Kiri\Kiri\Exception
+ * @package Kiri\Exception
  */
 class ComponentException extends \Exception
 {

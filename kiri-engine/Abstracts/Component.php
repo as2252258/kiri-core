@@ -15,14 +15,14 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Di\Container;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
-use Kiri\Kiri;
+use Kiri;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Component
- * @package Kiri\Kiri\Base
+ * @package Kiri\Base
  * @property ContainerInterface|Container $container
  * @property EventProvider $eventProvider
  * @property EventDispatch $eventDispatch

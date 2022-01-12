@@ -5,7 +5,7 @@ namespace Kiri;
 
 
 use JetBrains\PhpStorm\Pure;
-
+use Kiri;
 
 /**
  * Class Environmental

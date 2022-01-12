@@ -8,7 +8,7 @@ use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Server\ServerManager;
 use Kiri\Server\Tasker\AsyncTaskExecute;
-
+use Kiri;
 /**
  * Class Async
  * @package Kiri

@@ -14,7 +14,6 @@ use Kiri\Error\Logger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
 use Kiri\Message\Handler\Router;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;

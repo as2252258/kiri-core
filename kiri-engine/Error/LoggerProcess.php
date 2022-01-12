@@ -7,7 +7,7 @@ namespace Kiri\Error;
 use Exception;
 use Kiri\Core\Json;
 use Kiri\Exception\ComponentException;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Server\Abstracts\BaseProcess;
 use Kiri\Server\Broadcast\OnBroadcastInterface;
 use Psr\Log\LoggerInterface;

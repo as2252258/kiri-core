@@ -16,7 +16,7 @@ use Swoole\Coroutine\System;
 
 /**
  * Class File
- * @package Kiri\Kiri\Cache
+ * @package Kiri\Cache
  */
 class File extends Component implements ICache
 {

@@ -5,7 +5,7 @@ namespace Gii;
 
 
 use Exception;
-use Kiri\Kiri;
+use Kiri;
 
 /**
  * Class GiiRpcClient

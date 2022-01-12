@@ -26,7 +26,7 @@ use Swoole\Table;
 
 /**
  * Class BaseApplication
- * @package Kiri\Kiri\Base
+ * @package Kiri\Base
  */
 abstract class BaseApplication extends Component
 {

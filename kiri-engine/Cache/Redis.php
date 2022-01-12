@@ -15,7 +15,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Pool\Redis as PoolRedis;
 use Kiri\Annotation\Inject;
 use Kiri\Server\Events\OnWorkerExit;
@@ -23,7 +23,7 @@ use Swoole\Timer;
 
 /**
  * Class Redis
- * @package Kiri\Kiri\Cache
+ * @package Kiri\Cache
  * @mixin \Redis
  */
 class Redis extends Component

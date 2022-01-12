@@ -5,7 +5,7 @@ namespace Kiri\Cache\Base;
 use Exception;
 use Kiri\Abstracts\Logger;
 use Kiri\Exception\RedisConnectException;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Pool\StopHeartbeatCheck;
 use RedisException;
 use Swoole\Timer;

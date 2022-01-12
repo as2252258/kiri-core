@@ -3,7 +3,7 @@
 namespace Kiri\Di;
 
 use Kiri\Abstracts\Component;
-use Kiri\Kiri;
+use Kiri;
 
 
 /**

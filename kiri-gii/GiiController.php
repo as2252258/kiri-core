@@ -6,7 +6,7 @@ namespace Gii;
 
 use Exception;
 use ReflectionException;
-use Kiri\Kiri;
+use Kiri;
 
 /**
  * Class GiiController

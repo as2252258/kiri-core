@@ -7,7 +7,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Error\Logger;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Annotation\Inject;
 use Swoole\Coroutine;
 use Swoole\Process;

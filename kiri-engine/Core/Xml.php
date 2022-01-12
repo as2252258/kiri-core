@@ -13,7 +13,7 @@ use Exception;
 
 /**
  * Class Xml
- * @package Kiri\Kiri\Core
+ * @package Kiri\Core
  */
 class Xml
 {

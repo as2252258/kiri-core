@@ -2,7 +2,7 @@
 
 namespace Kiri\Websocket;
 
-use Kiri\Kiri;
+use Kiri;
 use Swoole\{Coroutine\Http\Server as AliasServer, WebSocket\Server};
 
 

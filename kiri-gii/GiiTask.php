@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Gii;
 
 use Exception;
-use Kiri\Kiri;
+use Kiri;
 
 /**
  * Class GiiModel

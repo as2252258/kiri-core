@@ -14,13 +14,13 @@ use Kiri\Message\Handler\Formatter\IFormatter;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Events\EventDispatch;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Message\Events\OnAfterRequest;
 
 /**
  * Class ErrorHandler
  *
- * @package Kiri\Kiri\Base
+ * @package Kiri\Base
  * @property-read $asError
  */
 class ErrorHandler extends Component implements ErrorInterface

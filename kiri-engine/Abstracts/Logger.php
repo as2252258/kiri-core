@@ -6,7 +6,7 @@ use DirectoryIterator;
 use Exception;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Server\Events\OnWorkerStop;
 use Psr\Log\LoggerInterface;
 use ReflectionException;

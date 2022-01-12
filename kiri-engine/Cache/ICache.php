@@ -11,7 +11,7 @@ namespace Kiri\Cache;
 
 /**
  * Interface ICache
- * @package Kiri\Kiri\Cache
+ * @package Kiri\Cache
  */
 interface ICache
 {

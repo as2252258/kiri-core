@@ -11,7 +11,7 @@ namespace Kiri\Error;
 
 /**
  * Interface ErrorInterface
- * @package Kiri\Kiri\Error
+ * @package Kiri\Error
  */
 interface ErrorInterface
 {

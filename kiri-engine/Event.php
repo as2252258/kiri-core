@@ -7,7 +7,7 @@ namespace Kiri;
 
 use Exception;
 use Kiri\Abstracts\Component;
-
+use Kiri;
 /**
  * Class Event
  * @package Kiri

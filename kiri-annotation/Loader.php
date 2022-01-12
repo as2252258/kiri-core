@@ -7,7 +7,7 @@ namespace Kiri\Annotation;
 use DirectoryIterator;
 use Exception;
 use Kiri\Abstracts\Component;
-use Kiri\Kiri;
+use Kiri;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;

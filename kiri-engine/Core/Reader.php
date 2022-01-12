@@ -6,7 +6,7 @@ namespace Kiri\Core;
 
 /**
  * Class Reader
- * @package Kiri\Kiri\Core
+ * @package Kiri\Core
  */
 class Reader
 {

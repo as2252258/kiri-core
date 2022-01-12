@@ -13,7 +13,7 @@ namespace Kiri\Core;
 
 /**
  * Class DateFormat
- * @package Kiri\Kiri\Core
+ * @package Kiri\Core
  */
 class DateFormat
 {

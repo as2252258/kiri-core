@@ -14,7 +14,7 @@ use Kiri\Exception\ConfigException;
 
 /**
  * Class Config
- * @package Kiri\Kiri\Base
+ * @package Kiri\Base
  */
 class Config extends Component
 {

@@ -2,7 +2,7 @@
 
 namespace Kiri\Annotation;
 
-use Kiri\Kiri;
+use Kiri;
 
 #[\Attribute(\Attribute::TARGET_CLASS)] class Mapping extends Attribute
 {

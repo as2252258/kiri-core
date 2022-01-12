@@ -12,14 +12,14 @@ namespace Kiri\Error;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
-use Kiri\Kiri;
+use Kiri;
 use Kiri\Annotation\Inject;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
  * Class Logger
- * @package Kiri\Kiri\Error
+ * @package Kiri\Error
  * @mixin \Kiri\Abstracts\Logger
  */
 class Logger extends Component

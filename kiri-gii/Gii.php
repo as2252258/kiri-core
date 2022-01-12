@@ -13,7 +13,7 @@ use Database\Connection;
 use Database\Db;
 use Exception;
 use Kiri\Cache\Redis;
-use Kiri\Kiri;
+use Kiri;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**

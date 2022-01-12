@@ -6,7 +6,7 @@ namespace Kiri\Annotation;
 
 use Exception;
 use Kiri\Core\Str;
-use Kiri\Kiri;
+use Kiri;
 use ReflectionException;
 use ReflectionProperty;
 

@@ -5,7 +5,7 @@ namespace Gii;
 
 
 use Exception;
-use Kiri\Kiri;
+use Kiri;
 
 /**
  * Class GiiRpcClient
@@ -42,7 +42,7 @@ use Kiri\Annotation\Target;
 use Exception;
 use Rpc\Client;
 use Kiri\Core\Json;
-use Kiri\Kiri;
+use Kiri;
 
 ';
 

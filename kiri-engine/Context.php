@@ -5,7 +5,7 @@ namespace Kiri;
 
 use Kiri\Abstracts\BaseContext;
 use Swoole\Coroutine;
-
+use Kiri;
 /**
  * Class Context
  * @package Yoc\http

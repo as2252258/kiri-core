@@ -16,7 +16,7 @@ use Throwable;
 
 /**
  * Class JSON
- * @package Kiri\Kiri\Core
+ * @package Kiri\Core
  */
 class Json
 {

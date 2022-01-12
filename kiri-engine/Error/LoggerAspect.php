@@ -8,7 +8,7 @@ use Exception;
 use Kiri\Message\Aspect\OnAspectInterface;
 use Kiri\Message\Aspect\OnJoinPointInterface;
 use Kiri\Message\Constrict\RequestInterface;
-use Kiri\Kiri;
+use Kiri;
 use Psr\Log\LoggerInterface;
 
 

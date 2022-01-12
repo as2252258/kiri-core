@@ -9,18 +9,19 @@ declare(strict_types=1);
 
 namespace Kiri\Di;
 
-use Kiri\Annotation\Inject;
 use Closure;
 use Exception;
+use Kiri;
 use Kiri\Abstracts\Logger;
-use Kiri\Kiri;
+use Kiri\Annotation\Inject;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
-use Psr\Container\ContainerInterface;
+use static;
 
 /**
  * Class Container
@@ -61,36 +62,40 @@ class Container implements ContainerInterface
 	];
 
 
-    /**
-     * @param string $id
-     * @return mixed
-     * @throws
-     */
+	/**
+	 * @param string $id
+	 * @return mixed
+	 * @throws
+	 */
 	public function get(string $id): mixed
 	{
+		if ($id == ContainerInterface::class) {
+			return $this;
+		}
 		return $this->make($id, [], []);
 	}
 
 
-
-    /**
-     * @param $class
-     * @param array $constrict
-     * @param array $config
-     * @return mixed
-     * @throws
-     */
-    public function make($class, array $constrict = [], array $config = []): mixed
-    {
-        if ($this->isInterface($class)) {
-            $class = $this->_interfaces[$class];
-        }
-        if (!isset($this->_singletons[$class])) {
-            $this->_singletons[$class] = $this->resolve($class, $constrict, $config);
-        }
-        return $this->_singletons[$class];
-    }
-
+	/**
+	 * @param $class
+	 * @param array $constrict
+	 * @param array $config
+	 * @return mixed
+	 * @throws
+	 */
+	public function make($class, array $constrict = [], array $config = []): mixed
+	{
+		if ($class == ContainerInterface::class) {
+			return $this;
+		}
+		if ($this->isInterface($class)) {
+			$class = $this->_interfaces[$class];
+		}
+		if (!isset($this->_singletons[$class])) {
+			$this->_singletons[$class] = $this->resolve($class, $constrict, $config);
+		}
+		return $this->_singletons[$class];
+	}
 
 
 	/**
@@ -439,12 +444,12 @@ class Container implements ContainerInterface
 		return $old;
 	}
 
-    /**
-     * @param string $id
-     * @return bool
-     */
-    public function has(string $id): bool
-    {
-        return isset($this->_singletons[$id]) || isset($this->_interfaces[$id]);
-    }
+	/**
+	 * @param string $id
+	 * @return bool
+	 */
+	public function has(string $id): bool
+	{
+		return isset($this->_singletons[$id]) || isset($this->_interfaces[$id]);
+	}
 }

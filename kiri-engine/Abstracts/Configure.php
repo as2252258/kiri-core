@@ -10,7 +10,7 @@ namespace Kiri\Abstracts;
 
 /**
  * Interface Configure
- * @package Kiri\Kiri\Base
+ * @package Kiri\Base
  */
 interface Configure
 {

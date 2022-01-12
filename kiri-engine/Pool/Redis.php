@@ -10,11 +10,11 @@ use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Context;
 use Kiri\Exception\ConfigException;
-use Kiri\Kiri;
+use Kiri;
 
 /**
  * Class RedisClient
- * @package Kiri\Kiri\Pool
+ * @package Kiri\Pool
  */
 class Redis extends Component
 {
