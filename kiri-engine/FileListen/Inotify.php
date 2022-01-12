@@ -54,6 +54,7 @@ class Inotify
 			if (!is_dir($dir)) continue;
 			$this->watch($dir);
 		}
+		$this->process->int = -1;
 		Event::add($this->inotify, [$this, 'check']);
 		Event::wait();
 	}
