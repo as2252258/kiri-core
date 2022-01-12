@@ -110,8 +110,6 @@ class Scaner
 	{
 		$this->isReloading = TRUE;
 
-		if (str_contains($path, CONTROLLER_PATH))
-
 		$this->process->trigger_reload($path);
 
 		$this->loadDirs();
