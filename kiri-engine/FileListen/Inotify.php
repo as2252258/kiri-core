@@ -99,11 +99,12 @@ class Inotify
 	public function reload($path)
 	{
 		$this->process->trigger_reload($path);
+		$this->process->int = -1;
+
 		$this->clearWatch();
 		foreach ($this->dirs as $root) {
 			$this->watch($root);
 		}
-		$this->process->int = -1;
 		$this->isReloading = FALSE;
 	}
 
