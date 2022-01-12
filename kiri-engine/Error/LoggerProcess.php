@@ -34,6 +34,17 @@ class LoggerProcess extends BaseProcess
 	}
 
 
+
+	/**
+	 * @param $message
+	 * @return void
+	 */
+	public function onBroadcast($message)
+	{
+		var_dump($message . '::' . static::class);
+	}
+
+
 	/**
 	 * @param Process $process
 	 * @throws ComponentException
