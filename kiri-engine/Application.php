@@ -13,23 +13,22 @@ namespace Kiri;
 use Closure;
 use Database\DatabasesProviders;
 use Exception;
+use Kiri;
 use Kiri\Abstracts\{BaseApplication, Config, Kernel};
 use Kiri\Crontab\CrontabProviders;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Kiri\FileListen\HotReload;
-use ReflectionException;
 use Kiri\Server\ServerProviders;
+use ReflectionException;
 use stdClass;
 use Swoole\Process;
 use Swoole\Timer;
 use Symfony\Component\Console\{Application as ConsoleApplication,
 	Command\Command,
 	Input\ArgvInput,
-	Input\InputInterface,
 	Output\ConsoleOutput,
 	Output\OutputInterface
 };
-use Kiri;
 
 
 /**
@@ -231,7 +230,8 @@ class Application extends BaseApplication
 	{
 		fire(new OnBeforeCommandExecute());
 		if (!($class instanceof HotReload)) {
-			scan_directory(directory('app'), 'App');
+			scan_directory(COMPONENT_PATH, 'app\Components');
+			scan_directory(MODEL_PATH, 'app\Model');
 		}
 
 		$this->container->setBindings(OutputInterface::class, $output);

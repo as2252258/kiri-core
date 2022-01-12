@@ -23,14 +23,9 @@ use Swoole\WebSocket\Server;
 defined('DB_ERROR_BUSY') or define('DB_ERROR_BUSY', 'The database is busy. Please try again later.');
 defined('SELECT_IS_NULL') or define('SELECT_IS_NULL', 'Query data does not exist, please check the relevant conditions.');
 defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be empty, please add.');
-defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'app/Controllers/');
-defined('CRONTAB_PATH') or define('CRONTAB_PATH', APP_PATH . 'app/Crontab/');
-defined('CLIENT_PATH') or define('CLIENT_PATH', APP_PATH . 'app/Client/');
-defined('TASK_PATH') or define('TASK_PATH', APP_PATH . 'app/Async/');
-defined('LISTENER_PATH') or define('LISTENER_PATH', APP_PATH . 'app/Listener/');
-defined('KAFKA_PATH') or define('KAFKA_PATH', APP_PATH . 'app/Kafka/');
-defined('RPC_CLIENT_PATH') or define('RPC_CLIENT_PATH', APP_PATH . 'app/Client/Rpc/');
-defined('MODEL_PATH') or define('MODEL_PATH', APP_PATH . 'app/Model/');
+defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', APP_PATH . 'controllers/');
+defined('MODEL_PATH') or define('MODEL_PATH', APP_PATH . 'models/');
+defined('COMPONENT_PATH') or define('COMPONENT_PATH', APP_PATH . 'components/');
 
 
 /**

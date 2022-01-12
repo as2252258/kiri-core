@@ -21,7 +21,6 @@ use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionProperty;
-use static;
 
 /**
  * Class Container
