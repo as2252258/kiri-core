@@ -230,7 +230,12 @@ class Application extends BaseApplication
 	{
 		fire(new OnBeforeCommandExecute());
 		if (!($class instanceof HotReload)) {
-			scan_directory(COMPONENT_PATH, 'app\Components');
+			$config = Config::get('scanner', []);
+			if (!empty($config)) {
+				foreach ($config as $key => $value) {
+					scan_directory($value, $key);
+				}
+			}
 			scan_directory(MODEL_PATH, 'app\Model');
 		}
 
