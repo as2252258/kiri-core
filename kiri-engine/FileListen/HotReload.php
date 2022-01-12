@@ -203,10 +203,6 @@ class HotReload extends Command
 	 */
 	public function trigger_reload(string $path = '')
 	{
-		if ($this->int == 1) {
-			return;
-		}
-		$this->int = 1;
 		$this->logger->warning('change reload');
 		if (!empty($path) && str_starts_with($path, CONTROLLER_PATH)) {
 			$pid = file_get_contents(storage('.swoole.pid'));
@@ -214,6 +210,10 @@ class HotReload extends Command
 				Process::kill($pid, SIGUSR1);
 			}
 		} else {
+			if ($this->int == 1) {
+				return;
+			}
+			$this->int = 1;
 			$this->stopServer();
 			$this->process = new Process(function (Process $process) {
 				$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "start"]);
