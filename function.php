@@ -1241,14 +1241,14 @@ if (!function_exists('error_trigger_format')) {
 	 */
 	function error_trigger_format(\Throwable|\Error $throwable): string
 	{
-		$message = "\tThrowable: " . $throwable->getMessage() . "\t\n\t" . '	' . $throwable->getFile() . " at line " . $throwable->getLine();
+		$message = "\n\tThrowable: " . $throwable->getMessage() . "\t\n\t" . '	' . $throwable->getFile() . " at line " . $throwable->getLine();
 
-		$message .= "\t   trance";
+		$message .= "\n\t   trance";
 		foreach ($throwable->getTrace() as $value) {
 			if (!isset($value['file'])) {
 				continue;
 			}
-			$message .= "\t" . $value['file'] . "\t" . $value['line'] . "\t" . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function');
+			$message .= "\n\t" . $value['file'] . "\t" . $value['line'] . "\t" . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function');
 		}
 		return "\033[41;37m" . $message . "\033[0m";
 	}
