@@ -1241,7 +1241,7 @@ if (!function_exists('error_trigger_format')) {
 	 */
 	function error_trigger_format(\Throwable|\Error $throwable): string
 	{
-		$message = 'Throwable: ' . $throwable->getMessage() . "\r\n" . '
+		$message = 'Throwable: ' . $throwable->getMessage() . '
 	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\r\n";
 
 		$message .= 'trance' . "\r\n";
