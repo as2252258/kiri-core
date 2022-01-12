@@ -3,7 +3,6 @@
 namespace Kiri\FileListen;
 
 use Exception;
-use Swoole\Timer;
 
 class Scaner
 {
@@ -68,8 +67,11 @@ class Scaner
 			}
 			if (is_file($value)) {
 				if ($this->checkFile($value, $isReload)) {
-					Timer::after(2000, fn() => $this->timerReload());
 					$this->isReloading = TRUE;
+
+					sleep(2);
+
+					$this->timerReload($value);
 					break;
 				}
 			}
