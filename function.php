@@ -1249,8 +1249,8 @@ Throwable: ' . $throwable->getMessage() . "\t\n" . '	' . $throwable->getFile() .
 			if (!isset($value['file'])) {
 				continue;
 			}
-			$message .= "\t" . '
-		' . $value['file'] . '->' . $value['line'] . '(' . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . ')' . "\t";
+			$message .= '
+		' . $value['file'] . "\t" . $value['line'] . "\t" . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . "\t";
 		}
 		return "\033[41;37m" . $message . "\033[0m";
 	}
