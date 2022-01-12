@@ -1248,7 +1248,7 @@ if (!function_exists('error_trigger_format')) {
 			if (!isset($value['file'])) {
 				continue;
 			}
-			$message .= "\n\t" . $value['file'] . " -> " . $value['line'] . "(" . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'Closure') . ")";
+			$message .= "\n\t" . $value['file'] . " -> " . $value['line'] . "(" . ($value['class'] ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . ")";
 		}
 		return "\033[41;37m" . $message . "\033[0m";
 	}
