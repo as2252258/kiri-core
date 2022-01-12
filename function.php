@@ -1252,7 +1252,7 @@ Throwable: ' . $throwable->getMessage() . "\t\n" . '	' . $throwable->getFile() .
 			$message .= "\t" . '
 		' . $value['file'] . '->' . $value['line'] . '(' . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . ')' . "\t";
 		}
-		return print_r("\033[1;31,37m" . $message . "\33[41m", true);
+		return print_r("\033[1;31,37m\t\t" . $message . "\t\t\33[41m", true);
 	}
 
 }
