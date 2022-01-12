@@ -1255,7 +1255,7 @@ Throwable: ' . $throwable->getMessage() . '
 			$message .= '
 		' . $value['file'] . '->' . $value['line'] . '(' . ($value['class'] ?? 'static') . '::' . ($value['function'] ?? 'function') . ')';
 		}
-		return print_r("\033[37m\t" . $message . "\033[41m\t", true);
+		return print_r("\033[1;31,37m" . $message . "\33[41m", true);
 	}
 
 }
