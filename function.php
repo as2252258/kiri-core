@@ -1243,10 +1243,11 @@ if (!function_exists('error_trigger_format')) {
 	{
 		$message = '
 Throwable: ' . $throwable->getMessage() . '
-	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\r\n";
+	' . $throwable->getFile() . " at line " . $throwable->getLine();
 
 		$message .= '
-	trance' . "\r\n";
+	trance
+	';
 		foreach ($throwable->getTrace() as $value) {
 			if (!isset($value['file'])) {
 				continue;
