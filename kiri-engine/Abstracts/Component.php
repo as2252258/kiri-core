@@ -70,7 +70,7 @@ class Component implements Configure
 	 */
 	protected function getEventDispatch(): EventDispatch
 	{
-		return Kiri::getDi()->get(EventDispatch::class);
+		return $this->getContainer()->get(EventDispatch::class);
 	}
 
 	/**
