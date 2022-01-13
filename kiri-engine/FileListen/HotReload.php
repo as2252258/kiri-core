@@ -219,6 +219,8 @@ class HotReload extends Command
 				$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "start"]);
 			});
 			$this->process->start();
+
+			$this->int = -1;
 		}
 	}
 
