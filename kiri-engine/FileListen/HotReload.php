@@ -210,19 +210,11 @@ class HotReload extends Command
 				Process::kill($pid, SIGUSR1);
 			}
 		} else {
-			if ($this->int == 1) {
-				return;
-			}
-			$this->int = 1;
 			$this->stopServer();
 			$this->process = new Process(function (Process $process) {
 				$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "start"]);
 			});
 			$this->process->start();
-
-			var_dump(1);
-
-			$this->int = -1;
 		}
 	}
 
