@@ -4,20 +4,17 @@ namespace Kiri\Websocket;
 
 use Exception;
 use Kiri\Message\Handler\DataGrip;
-use Kiri\Message\Handler\Router;
 use Kiri\Abstracts\AbstractServer;
-use Kiri\Annotation\Inject;
+use Kiri\Message\Handler\RouterCollector;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Kiri\Server\Contract\OnCloseInterface;
 use Kiri\Server\Contract\OnHandshakeInterface;
 use Kiri\Server\Contract\OnMessageInterface;
 use Kiri\Server\Contract\OnOpenInterface;
-use Kiri\Server\SwooleServerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
-use Swoole\WebSocket\Server as WebSocketServer;
 
 
 /**
@@ -26,7 +23,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 class Server extends AbstractServer
 {
 
-	public Router $router;
+	public RouterCollector $router;
 
 
 	const SHA1_KEY = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
