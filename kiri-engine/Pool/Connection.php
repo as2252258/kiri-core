@@ -6,10 +6,10 @@ namespace Kiri\Pool;
 use Closure;
 use Database\Mysql\PDO;
 use Exception;
+use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Context;
-use Kiri;
 use Swoole\Error;
 use Throwable;
 
@@ -126,7 +126,11 @@ class Connection extends Component
 	 */
 	public function initConnections($name, $isMaster, $max)
 	{
-		$this->getPool()->initConnections($name, $isMaster, $max);
+		$pool = $this->getPool();
+		$pool->initConnections($name, $isMaster, $max);
+		for ($i = 0; $i < $max; $i++) {
+			$pool->push($name, $this->create($name, []));
+		}
 	}
 
 
@@ -184,7 +188,7 @@ class Connection extends Component
 			} else {
 				$result = true;
 			}
-		} catch (Error | Throwable $exception) {
+		} catch (Error|Throwable $exception) {
 			$result = $this->addError($exception, 'mysql');
 		} finally {
 			return $result;
