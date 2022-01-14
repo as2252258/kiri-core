@@ -218,6 +218,8 @@ class HotReload extends Command
 			});
 			$this->process->start();
 			$this->int = -1;
+
+			var_dump($this->int);
 		}
 	}
 
