@@ -97,7 +97,7 @@ class Connection extends Component
 		$minx = Config::get('databases.pool.min', 1);
 
 		/** @var PDO $connections */
-		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config), $minx);
+		$connections = $this->getPool()->get($coroutineName, null, $minx);
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
@@ -147,14 +147,16 @@ class Connection extends Component
 	/**
 	 * @param $coroutineName
 	 * @param $isMaster
+	 * @param array $config
+	 * @throws Kiri\Exception\ConfigException
 	 * @throws Exception
 	 */
-	public function release($coroutineName, $isMaster)
+	public function release($coroutineName, $isMaster, array $config)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, $isMaster);
 		/** @var PDO $client */
 		if (!($client = Context::getContext($coroutineName)) instanceof PDO) {
-			return;
+			$client = call_user_func($this->create($coroutineName, $config));
 		}
 		if ($client->inTransaction()) {
 			return;
