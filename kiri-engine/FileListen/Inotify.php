@@ -87,6 +87,9 @@ class Inotify
 			}
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
+
+				var_dump($ev);
+
 				Timer::after(3000, fn() => $this->reload($ev['name']));
 				$this->isReloading = TRUE;
 			}
