@@ -370,7 +370,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function getServer(): Server
 	{
-		return $this->get('server');
+		return Kiri::getDi()->get(Server::class);
 	}
 
 
