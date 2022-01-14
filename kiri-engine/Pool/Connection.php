@@ -119,6 +119,19 @@ class Connection extends Component
 
 
 	/**
+	 * @param string $name
+	 * @param PDO $PDO
+	 * @return void
+	 * @throws Kiri\Exception\ConfigException
+	 * @throws Exception
+	 */
+	public function addItem(string $name, PDO $PDO)
+	{
+		$this->getPool()->push($name, $PDO);
+	}
+
+
+	/**
 	 * @param $name
 	 * @param $isMaster
 	 * @param $max
@@ -128,9 +141,6 @@ class Connection extends Component
 	{
 		$pool = $this->getPool();
 		$pool->initConnections($name, $isMaster, $max);
-		for ($i = 0; $i < $max; $i++) {
-			$pool->push($name, $this->create($name, []));
-		}
 	}
 
 
