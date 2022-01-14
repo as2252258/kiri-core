@@ -4,9 +4,11 @@ namespace Kiri\Cache\Base;
 
 use Exception;
 use Kiri\Abstracts\Logger;
+use Kiri\Events\EventProvider;
 use Kiri\Exception\RedisConnectException;
 use Kiri;
 use Kiri\Pool\StopHeartbeatCheck;
+use Kiri\Server\Events\OnWorkerExit;
 use RedisException;
 use Swoole\Timer;
 
@@ -43,6 +45,9 @@ class Redis implements StopHeartbeatCheck
 	private int $_last = 0;
 
 
+	private EventProvider $eventProvider;
+
+
 	/**
 	 * @param array $config
 	 */
@@ -62,6 +67,21 @@ class Redis implements StopHeartbeatCheck
 	public function init()
 	{
 		$this->heartbeat_check();
+
+		$this->eventProvider = Kiri::getDi()->get(EventProvider::class);
+		$this->eventProvider->on(OnWorkerExit::class, [$this, 'onWorkerExit']);
+	}
+
+
+
+
+	/**
+	 * @param Kiri\Server\Events\OnWorkerExit $exit
+	 * @return void
+	 */
+	public function onWorkerExit(OnWorkerExit $exit)
+	{
+		$this->stopHeartbeatCheck();
 	}
 
 
@@ -70,9 +90,7 @@ class Redis implements StopHeartbeatCheck
 	 */
 	public function heartbeat_check(): void
 	{
-		if (env('state', 'start') == 'exit') {
-			return;
-		}
+
 		if ($this->_timer === -1) {
 			$this->_timer = Timer::tick(1000, fn() => $this->waite());
 		}
@@ -85,12 +103,15 @@ class Redis implements StopHeartbeatCheck
 	private function waite(): void
 	{
 		try {
-			if (env('state', 'start') == 'exit') {
+			if ($this->_timer === -1) {
 				Kiri::getDi()->get(Logger::class)->critical('timer end');
 				$this->stopHeartbeatCheck();
 			}
 			if (time() - $this->_last > intval($this->pool['tick'] ?? 60)) {
 				$this->stopHeartbeatCheck();
+
+				$this->eventProvider->off(OnWorkerExit::class, [$this, 'stopHeartbeatCheck']);
+
 				$this->pdo = null;
 			}
 		} catch (\Throwable $throwable) {
