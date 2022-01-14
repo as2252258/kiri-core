@@ -85,10 +85,12 @@ class Inotify
 			if (!in_array($ev['mask'], $LISTEN_TYPE)) {
 				continue;
 			}
+
+
+			var_dump($ev);
+
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
-
-				var_dump($ev);
 
 				Timer::after(3000, fn() => $this->reload($ev['name']));
 				$this->isReloading = TRUE;
