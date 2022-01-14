@@ -444,7 +444,6 @@ abstract class BaseApplication extends Component
 			'logger'          => ['class' => Logger::class],
 			'Annotation'      => ['class' => SAnnotation::class],
 			'databases'       => ['class' => Connection::class],
-			'jwt'             => ['class' => Jwt::class],
 			'async'           => ['class' => Async::class],
 			'kafka-container' => ['class' => KafkaProvider::class],
 		]);
