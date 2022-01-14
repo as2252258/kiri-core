@@ -36,14 +36,6 @@ class Server extends AbstractServer
 
 
 	/**
-	 * @var WebSocketInterface
-	 */
-	#[Inject(WebSocketInterface::class)]
-	public WebSocketInterface $server;
-
-
-
-	/**
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
 	 */
