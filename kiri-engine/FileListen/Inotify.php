@@ -86,13 +86,12 @@ class Inotify
 				continue;
 			}
 
-
-			var_dump($ev);
+			$search = array_search($ev['wd'], $this->watchFiles);
 
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
 
-				Timer::after(3000, fn() => $this->reload($ev['name']));
+				Timer::after(3000, fn() => $this->reload($search));
 				$this->isReloading = TRUE;
 			}
 		}
