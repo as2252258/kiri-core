@@ -36,6 +36,7 @@
       "Kiri\\Websocket\\": "kiri-websocket-server/",
       "Gii\\": "kiri-gii/",
       "Kiri\\Annotation\\": "kiri-annotation/",
+      "Kiri\\Server\\": "kiri-server/",
       "Kiri\\Task\\": "kiri-task/"
     },
     "files": [

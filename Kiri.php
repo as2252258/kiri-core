@@ -14,7 +14,7 @@ use Kiri\Application;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
 use Kiri\Environmental;
-use Kiri\Server\Tasker\AsyncTaskExecute;
+use Kiri\Task\AsyncTaskExecute;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use Swoole\Process;

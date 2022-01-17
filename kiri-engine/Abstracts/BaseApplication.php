@@ -22,7 +22,9 @@ use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler, Logger};
 use Kiri\Exception\{InitException, NotFindClassException};
 use ReflectionException;
-use Kiri\Server\{Contract\OnTaskInterface, Server, ServerManager, Tasker\AsyncTaskExecute};
+use Kiri\Server\{Server, ServerManager};
+use Kiri\Task\AsyncTaskExecute;
+use Kiri\Task\OnTaskInterface;
 use Swoole\Table;
 
 /**
@@ -200,7 +202,7 @@ abstract class BaseApplication extends Component
 
 	/**
 	 * @param OnTaskInterface $execute
-	 * @throws ReflectionException
+	 * @throws ReflectionException|Exception
 	 */
 	public function task(OnTaskInterface $execute): void
 	{

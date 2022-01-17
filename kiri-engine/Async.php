@@ -7,7 +7,7 @@ namespace Kiri;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Server\ServerManager;
-use Kiri\Server\Tasker\AsyncTaskExecute;
+use Kiri\Task\AsyncTaskExecute;
 use Kiri;
 /**
  * Class Async
