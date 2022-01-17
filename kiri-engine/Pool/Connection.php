@@ -97,7 +97,7 @@ class Connection extends Component
 		$minx = Config::get('databases.pool.min', 1);
 
 		/** @var PDO $connections */
-		$connections = $this->getPool()->get($coroutineName, null, $minx);
+		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config), $minx);
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
