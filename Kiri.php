@@ -14,7 +14,6 @@ use Kiri\Application;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
 use Kiri\Environmental;
-use Kiri\Task\AsyncTaskExecute;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use Swoole\Process;
@@ -140,25 +139,6 @@ class Kiri
 
 
 	/**
-	 * @param $port
-	 * @return bool
-	 * @throws Exception
-	 */
-	public static function port_already($port): bool
-	{
-		if (empty($port)) {
-			return false;
-		}
-		if (Kiri::getPlatform()->isLinux()) {
-			exec('netstat -tunlp | grep ' . $port, $output);
-		} else {
-			exec('lsof -i :' . $port . ' | grep -i "LISTEN"', $output);
-		}
-		return !empty($output);
-	}
-
-
-	/**
 	 * @return Annotation
 	 * @throws Exception
 	 */
@@ -167,15 +147,6 @@ class Kiri
 		return static::app()->getAnnotation();
 	}
 
-
-	/**
-	 * @param $service
-	 * @return string
-	 */
-	#[Pure] public static function listen($service): string
-	{
-		return sprintf('Check listen %s::%d -> ok', $service['host'], $service['port']);
-	}
 
 
 	/**
@@ -216,15 +187,6 @@ class Kiri
 
 
 	/**
-	 * @return bool
-	 */
-	public static function inCoroutine(): bool
-	{
-		return Coroutine::getCid() > 0;
-	}
-
-
-	/**
 	 * @return Container
 	 */
 	public static function getDi(): Container
@@ -243,40 +205,6 @@ class Kiri
 
 
 	/**
-	 * @param $workerId
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function setManagerId($workerId): mixed
-	{
-		if (empty($workerId) || static::isDocker()) {
-			return $workerId;
-		}
-
-		$tmpFile = storage($workerId . '.sock', 'pid/manager');
-
-		return self::writeFile($tmpFile, $workerId);
-	}
-
-
-	/**
-	 * @param $workerId
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function setProcessId($workerId): mixed
-	{
-		if (empty($workerId) || static::isDocker()) {
-			return $workerId;
-		}
-
-		$tmpFile = storage($workerId . '.sock', 'pid/process');
-
-		return self::writeFile($tmpFile, $workerId);
-	}
-
-
-	/**
 	 * @return bool
 	 */
 	public static function isDocker(): bool
@@ -290,39 +218,6 @@ class Kiri
 
 
 	/**
-	 * @param $workerId
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function setWorkerId($workerId): mixed
-	{
-		if (empty($workerId) || static::isDocker()) {
-			return $workerId;
-		}
-
-		$tmpFile = storage($workerId . '.sock', 'pid/worker');
-
-		return self::writeFile($tmpFile, $workerId);
-	}
-
-
-	/**
-	 * @param $workerId
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function setTaskId($workerId): mixed
-	{
-		if (empty($workerId) || static::isDocker()) {
-			return $workerId;
-		}
-
-		$tmpFile = storage($workerId . '.sock', 'pid/task');
-
-		return self::writeFile($tmpFile, $workerId);
-	}
-
-	/**
 	 * @param $fileName
 	 * @param $content
 	 * @param null $is_append
@@ -334,7 +229,7 @@ class Kiri
 		if ($is_append !== null) {
 			$params[] = $is_append;
 		}
-		return !self::inCoroutine() ? file_put_contents(...$params) : Coroutine::writeFile(...$params);
+		return !(Coroutine::getCid() > 0) ? file_put_contents(...$params) : Coroutine::writeFile(...$params);
 	}
 
 
@@ -356,113 +251,11 @@ class Kiri
 
 
 	/**
-	 * @param $workerId
-	 * @param bool $isWorker
-	 * @throws Exception
-	 */
-	public static function clearProcessId($workerId, bool $isWorker = false)
-	{
-		clearstatcache();
-		$directory = $isWorker === true ? 'pid/worker' : 'pid/task';
-		if (!file_exists($file = storage($workerId, $directory))) {
-			return;
-		}
-		shell_exec('rm -rf ' . $file);
-	}
-
-
-	/**
-	 * @param string|null $taskPid
-	 * @throws Exception
-	 */
-	public static function clearTaskPid(string $taskPid = null)
-	{
-		if (empty($taskPid)) {
-			exec('rm -rf ' . storage(null, 'pid/task'));
-		} else {
-			static::clearProcessId($taskPid);
-		}
-	}
-
-
-	/**
-	 * @param $taskPid
-	 * @throws Exception
-	 */
-	public static function clearWorkerPid($taskPid = null)
-	{
-		if (empty($taskPid)) {
-			exec('rm -rf ' . storage(null, 'pid/worker'));
-		} else {
-			static::clearProcessId($taskPid, true);
-		}
-	}
-
-
-	/**
-	 * @return Server|null
-	 * @throws
-	 */
-	public static function getWebSocket(): ?\Swoole\Server
-	{
-		$server = static::app()->getSwoole();
-		if (!($server instanceof \Swoole\Server)) {
-			return null;
-		}
-		return $server;
-	}
-
-
-	/**
-	 * @return false|string
-	 * @throws Exception
-	 */
-	public static function getMasterPid(): bool|string
-	{
-		$pid = Kiri::app()->getSwoole()->setting['pid_file'];
-
-		return file_get_contents($pid);
-	}
-
-
-	/**
-	 * @param int $fd
-	 * @param $data
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function push(int $fd, $data): mixed
-	{
-		$server = static::getWebSocket();
-		if (empty($server) || !$server->isEstablished($fd)) {
-			return false;
-		}
-		if (!is_string($data)) {
-			$data = Json::encode($data);
-		}
-		return $server->push($fd, $data);
-	}
-
-
-	/**
 	 * @return mixed
 	 */
 	public static function localhost(): mixed
 	{
 		return current(swoole_get_local_ip());
-	}
-
-
-	/**
-	 * @param string $class
-	 * @param array $params
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	public static function async(string $class, array $params = [])
-	{
-		$manager = di(AsyncTaskExecute::class);
-		$manager->execute(new $class(...$params));
 	}
 
 
@@ -487,19 +280,6 @@ class Kiri
 			$sqrt = abs($sqrt);
 		}
 		return (float)$sqrt;
-	}
-
-
-	/**
-	 * @param $process
-	 * @throws Exception
-	 */
-	public static function shutdown($process): void
-	{
-		static::app()->getSwoole()->shutdown();
-		if ($process instanceof Process) {
-			$process->exit(0);
-		}
 	}
 
 
@@ -540,33 +320,9 @@ class Kiri
 	}
 
 
-	private static array $_autoload = [];
-
-
 	const PROCESS = 'process';
 	const TASK = 'task';
 	const WORKER = 'worker';
-
-
-	/**
-	 * @param string $event
-	 * @param null $data
-	 * @return false|string
-	 * @throws Exception
-	 */
-	public static function param(string $event, $data = NULL): bool|string
-	{
-		if (is_object($data)) {
-			if ($data instanceof ModelInterface || $data instanceof Collection) {
-				$data = $data->getAttributes();
-			} else {
-				$data = get_object_vars($data);
-			}
-		}
-		if (!is_array($data)) $data = ['data' => $data];
-		return json_encode(array_merge(['callback' => $event], $data));
-	}
-
 
 	/**
 	 * @return string|null
@@ -603,35 +359,6 @@ class Kiri
 		return static::getEnvironmental() == static::PROCESS;
 	}
 
-
-	/**
-	 * @param $class
-	 * @param $file
-	 */
-	public static function setAutoload($class, $file)
-	{
-		if (isset(static::$_autoload[$class])) {
-			return;
-		}
-		static::$_autoload[$class] = $file;
-		include_once "Kiri.php";
-	}
-
-
-	/**
-	 * @param $className
-	 */
-	public static function autoload($className)
-	{
-		if (!isset(static::$_autoload[$className])) {
-			return;
-		}
-		$file = static::$_autoload[$className];
-		require_once "Kiri.php";
-	}
-
-
 }
 
-//spl_autoload_register([Kiri::class, 'autoload'], true, true);
 Kiri::setContainer(new Container());

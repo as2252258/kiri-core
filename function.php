@@ -297,22 +297,6 @@ if (!function_exists('injectRuntime')) {
 }
 
 
-if (!function_exists('swoole')) {
-
-
-	/**
-	 * @return Server|null
-	 * @throws Exception
-	 */
-	function swoole(): ?Server
-	{
-		return Kiri::getWebSocket();
-	}
-
-
-}
-
-
 if (!function_exists('directory')) {
 
 	/**
