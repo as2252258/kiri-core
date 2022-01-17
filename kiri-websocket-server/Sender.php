@@ -28,6 +28,16 @@ class Sender implements WebSocketInterface
 	}
 
 
+
+	/**
+	 * @param AliasServer|Server $server
+	 */
+	public function setServer(mixed $server): void
+	{
+		$this->server = $server;
+	}
+
+
 	/**
 	 * @param int $fd
 	 * @param mixed $data

@@ -3,15 +3,15 @@
 namespace Kiri\Websocket;
 
 use Exception;
-use Kiri\Message\Handler\DataGrip;
 use Kiri\Abstracts\AbstractServer;
+use Kiri\Message\Handler\DataGrip;
 use Kiri\Message\Handler\RouterCollector;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Kiri\Server\Contract\OnCloseInterface;
 use Kiri\Server\Contract\OnHandshakeInterface;
 use Kiri\Server\Contract\OnMessageInterface;
 use Kiri\Server\Contract\OnOpenInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
@@ -32,6 +32,9 @@ class Server extends AbstractServer
 	public mixed $callback = null;
 
 
+	public Sender $sender;
+
+
 	/**
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
@@ -44,6 +47,9 @@ class Server extends AbstractServer
 			return;
 		}
 		$this->callback = $handler->callback[0];
+
+		$this->sender = $this->container->get(Sender::class);
+		$this->sender->setServer($this->server);
 	}
 
 
