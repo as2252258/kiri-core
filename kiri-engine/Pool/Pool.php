@@ -41,11 +41,10 @@ class Pool extends Component
 
 
 	/**
-	 * @param Channel $channel
+	 * @param Channel|SplQueue $channel
 	 * @param $retain_number
-	 * @throws Exception
 	 */
-	protected function pop(Channel $channel, $retain_number): void
+	protected function pop(Channel|SplQueue $channel, $retain_number): void
 	{
 		while ($channel->length() > $retain_number) {
 			if (Context::inCoroutine()) {
