@@ -37,7 +37,7 @@ class TaskManager extends Component
 		}
 
 		$task_use_object = $swollen->setting['task_object'] ?? $swollen->setting['task_use_object'] ?? false;
-		$reflect = $this->container->get(OnServerTask::class);
+		$reflect = $this->getContainer()->get(OnServerTask::class);
 
 		$swollen->on('finish', [$reflect, 'onFinish']);
 		if ($task_use_object || $swollen->setting['task_enable_coroutine']) {

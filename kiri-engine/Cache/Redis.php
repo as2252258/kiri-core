@@ -19,6 +19,8 @@ use Kiri;
 use Kiri\Pool\Redis as PoolRedis;
 use Kiri\Annotation\Inject;
 use Kiri\Server\Events\OnWorkerExit;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Swoole\Timer;
 
 /**
@@ -43,7 +45,10 @@ class Redis extends Component
 
 
 	/**
+	 * @return void
 	 * @throws ConfigException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
 	public function init()
@@ -54,7 +59,7 @@ class Redis extends Component
 
 		$length = Config::get('cache.redis.pool.max', 10);
 
-		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
+		$this->getEventProvider()->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
 		$connections->initConnections('Redis:' . $config['host'], true, $length);
 	}

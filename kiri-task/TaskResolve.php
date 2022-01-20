@@ -21,7 +21,7 @@ trait TaskResolve
 		if (!class_exists($handler) && $this->hashMap->has($handler)) {
 			$handler = $this->hashMap->get($handler);
 		}
-		$implements = $this->container->getReflect($handler);
+		$implements = $this->getContainer()->getReflect($handler);
 		if (!in_array(OnTaskInterface::class, $implements->getInterfaceNames())) {
 			throw new Exception('Task must instance ' . OnTaskInterface::class);
 		}

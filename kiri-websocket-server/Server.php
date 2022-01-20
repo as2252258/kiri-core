@@ -41,14 +41,14 @@ class Server extends AbstractServer
 	 */
 	public function init()
 	{
-		$this->router = $this->container->get(DataGrip::class)->get('ws');
+		$this->router = $this->getContainer()->get(DataGrip::class)->get('ws');
 		$handler = $this->router->find('/', 'GET');
 		if (is_int($handler) || is_null($handler)) {
 			return;
 		}
 		$this->callback = $handler->callback[0];
 
-		$this->sender = $this->container->get(Sender::class);
+		$this->sender = $this->getContainer()->get(Sender::class);
 		$this->sender->setServer($this->server);
 	}
 

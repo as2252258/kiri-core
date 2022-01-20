@@ -239,7 +239,7 @@ class Application extends BaseApplication
 			scan_directory(MODEL_PATH, 'app\Model');
 		}
 
-		$this->container->setBindings(OutputInterface::class, $output);
+		$this->getContainer()->setBindings(OutputInterface::class, $output);
 
 		$class->run($input, $output);
 		fire(new OnAfterCommandExecute());

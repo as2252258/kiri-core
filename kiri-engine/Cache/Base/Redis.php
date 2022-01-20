@@ -45,8 +45,6 @@ class Redis implements StopHeartbeatCheck
 	private int $_last = 0;
 
 
-	private EventProvider $eventProvider;
-
 
 	/**
 	 * @param array $config
@@ -67,9 +65,6 @@ class Redis implements StopHeartbeatCheck
 	public function init()
 	{
 		$this->heartbeat_check();
-
-		$this->eventProvider = Kiri::getDi()->get(EventProvider::class);
-		$this->eventProvider->on(OnWorkerExit::class, [$this, 'onWorkerExit']);
 	}
 
 
@@ -109,8 +104,6 @@ class Redis implements StopHeartbeatCheck
 			}
 			if (time() - $this->_last > intval($this->pool['tick'] ?? 60)) {
 				$this->stopHeartbeatCheck();
-
-				$this->eventProvider->off(OnWorkerExit::class, [$this, 'stopHeartbeatCheck']);
 
 				$this->pdo = null;
 			}
