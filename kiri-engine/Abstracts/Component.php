@@ -23,9 +23,6 @@ use Psr\Container\NotFoundExceptionInterface;
 /**
  * Class Component
  * @package Kiri\Base
- * @property ContainerInterface|Container $container
- * @property EventProvider $eventProvider
- * @property EventDispatch $eventDispatch
  */
 class Component implements Configure
 {
@@ -67,6 +64,8 @@ class Component implements Configure
 
 	/**
 	 * @return EventDispatch
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 */
 	protected function getEventDispatch(): EventDispatch
 	{
@@ -87,38 +86,6 @@ class Component implements Configure
 	#[Pure] public static function className(): string
 	{
 		return static::class;
-	}
-
-	/**
-	 * @param $name
-	 * @param $value
-	 *
-	 * @throws Exception
-	 */
-	public function __set($name, $value)
-	{
-		$method = 'set' . ucfirst($name);
-		if (method_exists($this, $method)) {
-			$this->{$method}($value);
-		} else {
-			throw new Exception('The set name ' . $name . ' not find in class ' . static::class);
-		}
-	}
-
-	/**
-	 * @param $name
-	 *
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function __get($name): mixed
-	{
-		$method = 'get' . ucfirst($name);
-		if (method_exists($this, $method)) {
-			return $this->$method();
-		} else {
-			throw new Exception('The get name ' . $name . ' not find in class ' . static::class);
-		}
 	}
 
 
