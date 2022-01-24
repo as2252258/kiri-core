@@ -4,8 +4,9 @@ namespace Kiri\Core;
 
 use JetBrains\PhpStorm\Pure;
 use ReturnTypeWillChange;
+use Traversable;
 
-class HashMap implements \ArrayAccess
+class HashMap implements \ArrayAccess, \IteratorAggregate
 {
 
 	/**
@@ -14,7 +15,16 @@ class HashMap implements \ArrayAccess
 	private array $lists = [];
 
 
-	/**
+    /**
+     * @return Traversable
+     */
+    public function getIterator(): Traversable
+    {
+        return new \ArrayIterator($this->lists);
+    }
+
+
+    /**
 	 * @param string $key
 	 * @param $value
 	 */
