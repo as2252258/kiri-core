@@ -12,19 +12,19 @@ namespace Kiri\Abstracts;
 
 use Database\Connection;
 use Exception;
-use Kiri\Message\Handler\Router;
 use Kafka\KafkaProvider;
-use Kiri\Async;
 use Kiri;
 use Kiri\Annotation\Annotation as SAnnotation;
+use Kiri\Async;
 use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler, Logger};
 use Kiri\Exception\{InitException, NotFindClassException};
-use ReflectionException;
+use Kiri\Message\Handler\Router;
 use Kiri\Server\{Server, ServerManager};
 use Kiri\Task\AsyncTaskExecute;
 use Kiri\Task\OnTaskInterface;
+use ReflectionException;
 use Swoole\Table;
 
 /**

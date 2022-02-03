@@ -56,14 +56,15 @@ class CoroutineTaskExecute extends Component
 	 */
 	protected function handler()
 	{
+		Coroutine\defer(function () {
+			$this->handler();
+		});
 		$data = $this->channel->pop(-1);
 
 		$task = new Task();
 		$task->data = $data;
 
 		$this->taskServer->onCoroutineTask(null, $task);
-
-		$this->handler();
 	}
 
 
