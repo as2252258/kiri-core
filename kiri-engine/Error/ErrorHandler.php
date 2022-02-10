@@ -36,13 +36,8 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function register()
 	{
-//		ini_set('display_errors', '1');
 		set_exception_handler([$this, 'exceptionHandler']);
-		if (defined('HHVM_VERSION')) {
-			set_error_handler([$this, 'errorHandler']);
-		} else {
-			set_error_handler([$this, 'errorHandler']);
-		}
+		set_error_handler([$this, 'errorHandler']);
 		register_shutdown_function([$this, 'shutdown']);
 	}
 
@@ -117,8 +112,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function sendError($message, $file, $line, $code = 500): bool|string
 	{
 		$path = ['file' => $file, 'line' => $line];
-
-        var_dump(func_get_args());
 
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
