@@ -28,9 +28,18 @@ class CoroutineTaskExecute extends Component
 
 
 	/**
+	 * @param int $total
+	 */
+	public function setTotal(int $total): void
+	{
+		$this->total = $total;
+	}
+
+
+	/**
 	 *
 	 */
-	public function init()
+	public function start()
 	{
 		$this->hashMap = new HashMap();
 
@@ -40,7 +49,7 @@ class CoroutineTaskExecute extends Component
 
 		Coroutine::create(function () {
 			$barrier = Coroutine\Barrier::make();
-			for ($i = 0; $i < 50; $i++) {
+			for ($i = 0; $i < $this->total; $i++) {
 				Coroutine::create(function () {
 					$this->handler();
 				});
