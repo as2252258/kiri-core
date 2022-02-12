@@ -19,15 +19,6 @@ class Sender implements WebSocketInterface
 	private AliasServer|Server $server;
 
 
-	/**
-	 *
-	 */
-	public function __construct()
-	{
-		$this->server = Kiri::getDi()->get(WebSocketInterface::class);
-	}
-
-
 
 	/**
 	 * @param AliasServer|Server $server
