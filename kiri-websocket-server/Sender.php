@@ -37,8 +37,17 @@ class Sender implements WebSocketInterface
 	 */
 	public function push(int $fd, string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, int $flags = SWOOLE_WEBSOCKET_FLAG_FIN): bool
 	{
-		if ($this->isEstablished($fd)) {
+		if (!$this->isEstablished($fd)) {
+			return false;
+		}
+		if ($this->server instanceof Server) {
 			return $this->server->push($fd, $data, $opcode, $flags);
+		}
+		$collector = Kiri::getContainer()->get(FdCollector::class);
+
+		$response = $collector->get($fd);
+		if (!empty($response)) {
+			return $response->push($data, $opcode, $flags);
 		}
 		return false;
 	}
@@ -69,10 +78,13 @@ class Sender implements WebSocketInterface
 	 */
 	public function disconnect(int $fd, int $code = SWOOLE_WEBSOCKET_CLOSE_NORMAL, string $reason = ''): bool
 	{
-		if ($this->isEstablished($fd)) {
+		if (!$this->isEstablished($fd)) {
+			return false;
+		}
+		if ($this->server instanceof Server) {
 			return $this->server->disconnect($fd, $code, $reason);
 		}
-		return false;
+		return $this->server->close($fd, $reason);
 	}
 
 
@@ -82,7 +94,14 @@ class Sender implements WebSocketInterface
 	 */
 	public function isEstablished(int $fd): bool
 	{
-		return $this->exist($fd) && $this->server->isEstablished($fd);
+		if (!$this->exist($fd)) {
+			return false;
+		}
+
+		if ($this->server instanceof Server) {
+			return $this->server->isEstablished($fd);
+		}
+		return true;
 	}
 
 
@@ -92,7 +111,11 @@ class Sender implements WebSocketInterface
 	 */
 	public function exist(int $fd): bool
 	{
-		return $this->server->exist($fd);
+		if ($this->server instanceof Server) {
+			return $this->server->exist($fd);
+		}
+		$collector = Kiri::getContainer()->get(FdCollector::class);
+		return $collector->has($fd);
 	}
 
 }
