@@ -229,15 +229,15 @@ class Application extends BaseApplication
 	private function enableFileChange(Command $class, $input, $output): void
 	{
 		fire(new OnBeforeCommandExecute());
-		if (!($class instanceof HotReload)) {
-			$config = Config::get('scanner', []);
-			if (!empty($config)) {
-				foreach ($config as $key => $value) {
-					scan_directory($value, $key);
-				}
-			}
-			scan_directory(MODEL_PATH, 'app\Model');
-		}
+//		if (!($class instanceof HotReload)) {
+//			$config = Config::get('scanner', []);
+//			if (!empty($config)) {
+//				foreach ($config as $key => $value) {
+//					scan_directory($value, $key);
+//				}
+//			}
+//			scan_directory(MODEL_PATH, 'app\Model');
+//		}
 
 		$this->getContainer()->setBindings(OutputInterface::class, $output);
 
