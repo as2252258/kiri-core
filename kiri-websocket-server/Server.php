@@ -51,13 +51,12 @@ class Server extends AbstractServer
 
 
 	/**
-	 * @param \Swoole\Server $server
 	 * @param int $fd
 	 */
-	public function onClose(\Swoole\Server $server, int $fd): void
+	public function onClose(int $fd): void
 	{
-		$clientInfo = $server->getClientInfo($fd);
-		if (!isset($clientInfo['websocket_status'])) {
+		$collector = $this->getContainer()->get(Sender::class);
+		if (!$collector->isEstablished($fd)) {
 			return;
 		}
 		if ($this->callback instanceof OnCloseInterface) {
