@@ -17,7 +17,6 @@ use Kiri\Exception\ConfigException;
 use Kiri\Message\Handler\Router;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
-use Swoole\WebSocket\Server;
 
 if (!function_exists('make')) {
 
