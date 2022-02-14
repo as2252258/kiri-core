@@ -145,10 +145,9 @@ class Server extends AbstractServer
 
 
 	/**
-	 * @param $server
 	 * @param Frame $frame
 	 */
-	public function onMessage($server, Frame $frame): void
+	public function onMessage(Frame $frame): void
 	{
 		if ($this->callback instanceof OnMessageInterface) {
 			$this->callback->onMessage($frame);
