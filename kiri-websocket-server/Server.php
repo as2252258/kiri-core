@@ -52,13 +52,20 @@ class Server extends AbstractServer
 
 	/**
 	 * @param int $fd
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 */
 	public function onClose(int $fd): void
 	{
 		$collector = $this->getContainer()->get(Sender::class);
+
+		$fds = $this->getContainer()->get(FdCollector::class);
+
 		if (!$collector->isEstablished($fd)) {
 			return;
 		}
+		$fds->remove($fd);
+
 		if ($this->callback instanceof OnCloseInterface) {
 			$this->callback->onClose($fd);
 		}
