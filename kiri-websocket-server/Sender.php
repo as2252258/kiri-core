@@ -19,7 +19,6 @@ class Sender implements WebSocketInterface
 	private AliasServer|Server|null $server = null;
 
 
-
 	/**
 	 * @param AliasServer|Server $server
 	 */
@@ -52,7 +51,13 @@ class Sender implements WebSocketInterface
 	 */
 	public function connection_info($fd, $reactor_id = null): ?array
 	{
-		return $this->server->getClientInfo($fd, $reactor_id);
+		if ($this->server instanceof Server) {
+			return $this->server->getClientInfo($fd, $reactor_id);
+		}
+		if ($this->server->exist($fd)) {
+			return ['websocket_status' => 1];
+		}
+		return null;
 	}
 
 
