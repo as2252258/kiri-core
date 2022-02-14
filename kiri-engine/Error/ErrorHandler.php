@@ -10,12 +10,12 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Exception;
-use Kiri\Message\Handler\Formatter\IFormatter;
+use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
 use Kiri\Events\EventDispatch;
-use Kiri;
 use Kiri\Message\Events\OnAfterRequest;
+use Kiri\Message\Handler\Formatter\IFormatter;
 
 /**
  * Class ErrorHandler
@@ -72,7 +72,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		di(EventDispatch::class)->dispatch(new OnAfterRequest());
 
-        $this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
+		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
 
 
@@ -85,7 +85,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		$error = func_get_args();
 
-        $path = ['file' => $error[2], 'line' => $error[3]];
+		$path = ['file' => $error[2], 'line' => $error[3]];
 
 		if ($error[0] === 0) {
 			$error[0] = 500;
@@ -114,6 +114,8 @@ class ErrorHandler extends Component implements ErrorInterface
 		$path = ['file' => $file, 'line' => $line];
 
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
+
+		file_put_contents('php://output', $data . PHP_EOL, FILE_APPEND);
 
 		write($data, $this->category);
 
