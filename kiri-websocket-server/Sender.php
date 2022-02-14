@@ -14,9 +14,9 @@ class Sender implements WebSocketInterface
 
 
 	/**
-	 * @var AliasServer|Server
+	 * @var AliasServer|Server|null
 	 */
-	private AliasServer|Server $server;
+	private AliasServer|Server|null $server = null;
 
 
 

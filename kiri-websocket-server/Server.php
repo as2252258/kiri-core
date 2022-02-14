@@ -47,9 +47,6 @@ class Server extends AbstractServer
 			return;
 		}
 		$this->callback = $handler->callback[0];
-
-		$this->sender = $this->getContainer()->get(Sender::class);
-		$this->sender->setServer($this->server);
 	}
 
 
