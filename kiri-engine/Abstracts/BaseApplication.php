@@ -108,10 +108,10 @@ abstract class BaseApplication extends Component
 	protected function readLinesFromFile(string $filePath): array
 	{
 		// Read file into an array of lines with auto-detected line endings
-		$autodetect = ini_get('auto_detect_line_endings');
-		ini_set('auto_detect_line_endings', '1');
+//		$autodetect = ini_get('auto_detect_line_endings');
+//		ini_set('auto_detect_line_endings', '1');
 		$lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		ini_set('auto_detect_line_endings', $autodetect);
+//		ini_set('auto_detect_line_endings', $autodetect);
 
 		return $lines;
 	}
