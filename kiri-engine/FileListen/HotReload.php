@@ -213,7 +213,7 @@ class HotReload extends Command
 			$this->int = 1;
 			$this->stopServer();
 			$this->process = new Process(function (Process $process) {
-				$process->exec(PHP_BINARY, [APP_PATH . "kiri.php", "sw:server", "start"]);
+				Kiri::app()->getServer()->start();
 			});
 			$this->process->start();
 			$this->int = -1;
