@@ -203,7 +203,7 @@ class HotReload extends Command
 	 */
 	public function trigger_reload(string $path = '')
 	{
-		$this->logger->warning('change reload');
+		$this->logger->warning('restart');
 		if (!empty($path) && str_starts_with($path, CONTROLLER_PATH)) {
 			$pid = file_get_contents(storage('.swoole.pid'));
 			if (!empty($pid) && Process::kill($pid, 0)) {
