@@ -4,12 +4,14 @@ namespace Kiri\Websocket;
 
 use Kiri;
 use Swoole\{Coroutine\Http\Server as AliasServer, WebSocket\Server};
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 
 /**
  *
  */
-class Sender implements WebSocketInterface
+class Sender extends Kiri\Abstracts\Component implements WebSocketInterface
 {
 
 
@@ -17,6 +19,20 @@ class Sender implements WebSocketInterface
 	 * @var AliasServer|Server|null
 	 */
 	private AliasServer|Server|null $server = null;
+
+
+	private FdCollector $collector;
+
+
+	/**
+	 * @return void
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	public function init()
+	{
+		$this->collector = $this->getContainer()->get(FdCollector::class);
+	}
 
 
 	/**
@@ -43,9 +59,8 @@ class Sender implements WebSocketInterface
 		if ($this->server instanceof Server) {
 			return $this->server->push($fd, $data, $opcode, $flags);
 		}
-		$collector = Kiri::getContainer()->get(FdCollector::class);
 
-		$response = $collector->get($fd);
+		$response = $this->collector->get($fd);
 		if (!empty($response)) {
 			return $response->push($data, $opcode, $flags);
 		}
