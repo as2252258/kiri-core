@@ -28,16 +28,14 @@
     "psr/http-server-middleware": "1.0.1",
     "game-worker/kiri-event": "~v2.0",
     "game-worker/kiri-container": "~v1.0",
-    "ext-inotify": "*"
+    "ext-inotify": "*",
+    "ext-pcntl": "*"
   },
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
-      "Kiri\\Gateway\\": "kiri-gateway/",
-      "Kiri\\Websocket\\": "kiri-websocket-server/",
       "Gii\\": "kiri-gii/",
       "Kiri\\Annotation\\": "kiri-annotation/",
-      "Kiri\\Server\\": "kiri-server/",
       "Kiri\\Task\\": "kiri-task/"
     },
     "files": [
