@@ -21,7 +21,6 @@ use Kiri\Jwt\JWTAuth;
  * @property Logger $logger
  * @property JWTAuth $jwt
  * @property SAnnotation $annotation
- * @property BaseGoto $goto
  * @property Connection $databases
  */
 trait TraitApplication
