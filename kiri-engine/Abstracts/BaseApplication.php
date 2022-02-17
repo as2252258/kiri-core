@@ -15,7 +15,6 @@ use Exception;
 use Kafka\KafkaProvider;
 use Kiri;
 use Kiri\Annotation\Annotation as SAnnotation;
-use Kiri\Async;
 use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler, Logger};
@@ -397,16 +396,6 @@ abstract class BaseApplication extends Component
 
 
 	/**
-	 * @return Async
-	 * @throws
-	 */
-	public function getAsync(): Async
-	{
-		return $this->get('async');
-	}
-
-
-	/**
 	 * @param $array
 	 */
 	private function setComponents($array): void
@@ -446,7 +435,6 @@ abstract class BaseApplication extends Component
 			'logger'          => ['class' => Logger::class],
 			'Annotation'      => ['class' => SAnnotation::class],
 			'databases'       => ['class' => Connection::class],
-			'async'           => ['class' => Async::class],
 			'kafka-container' => ['class' => KafkaProvider::class],
 		]);
 	}

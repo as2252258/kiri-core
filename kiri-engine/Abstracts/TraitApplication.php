@@ -9,7 +9,6 @@ use Database\Connection;
 use Database\DatabasesProviders;
 use Kiri\Message\Handler\Router;
 use Kiri\Server\Server;
-use Kiri\Async;
 use Kiri\Error\Logger;
 use Kiri\Jwt\JWTAuth;
 
@@ -19,7 +18,6 @@ use Kiri\Jwt\JWTAuth;
  * @property Router $router
  * @property Server $server
  * @property DatabasesProviders $db
- * @property Async $async
  * @property Logger $logger
  * @property JWTAuth $jwt
  * @property SAnnotation $annotation
