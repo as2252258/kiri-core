@@ -27,7 +27,7 @@
     "psr/container": "^2.0",
     "psr/http-server-middleware": "1.0.1",
     "game-worker/kiri-event": "~v2.0",
-    "game-worker/kiri-container": "~v1.0",
+    "game-worker/kiri-container": "dev-master",
     "ext-inotify": "*",
     "ext-pcntl": "*"
   },
