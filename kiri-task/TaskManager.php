@@ -2,6 +2,7 @@
 
 namespace Kiri\Task;
 
+use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Component;
 use Kiri\Core\HashMap;
 use Psr\Container\ContainerExceptionInterface;
@@ -60,6 +61,16 @@ class TaskManager extends Component
 
 	/**
 	 * @param string $key
+	 * @return bool
+	 */
+	#[Pure] public function has(string $key): bool
+	{
+		return $this->hashMap->has($key);
+	}
+
+
+	/**
+	 * @param string $key
 	 * @return OnTaskInterface
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
@@ -69,6 +80,9 @@ class TaskManager extends Component
 		$task = $this->hashMap->get($key);
 		if (is_string($task)) {
 			$task = $this->getContainer()->get($task);
+			if (!empty($task)) {
+				$this->add($key, $task);
+			}
 		}
 		return $task;
 	}
