@@ -214,6 +214,9 @@ class HotReload extends Command
 			Kiri::app()->getServer()->start();
 		});
 		$this->process->start();
+
+		sleep(3);
+
 		$this->int = -1;
 	}
 
