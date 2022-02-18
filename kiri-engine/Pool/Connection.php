@@ -90,10 +90,25 @@ class Connection extends Component
 	public function get(mixed $config, bool $isMaster = false): ?PDO
 	{
 		$coroutineName = $this->name('Mysql:' . $config['cds'], $isMaster);
-		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
-			return $pdo;
+		if ($isMaster == false) {
+			return $this->_get($config, $coroutineName);
 		}
+		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
+			$pdo = Context::setContext($coroutineName, $this->_get($config, $coroutineName));
+		}
+		return $pdo;
+	}
 
+
+	/**
+	 * @param mixed $config
+	 * @param string $coroutineName
+	 * @return PDO
+	 * @throws Kiri\Exception\ConfigException
+	 * @throws Exception
+	 */
+	private function _get(mixed $config, string $coroutineName): PDO
+	{
 		$minx = Config::get('databases.pool.min', 1);
 
 		/** @var PDO $connections */
@@ -101,7 +116,7 @@ class Connection extends Component
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
-		return Context::setContext($coroutineName, $connections);
+		return $connections;
 	}
 
 
@@ -147,22 +162,35 @@ class Connection extends Component
 	/**
 	 * @param $coroutineName
 	 * @param $isMaster
-	 * @param array $config
 	 * @throws Kiri\Exception\ConfigException
 	 * @throws Exception
 	 */
-	public function release($coroutineName, $isMaster, array $config)
+	public function release($coroutineName, $isMaster)
 	{
 		$coroutineName = $this->name('Mysql:' . $coroutineName, $isMaster);
-		/** @var PDO $client */
-		if (!($client = Context::getContext($coroutineName)) instanceof PDO) {
-			$client = call_user_func($this->create($coroutineName, $config));
-		}
-		if ($client->inTransaction()) {
+
+		$client = Context::getContext($coroutineName);
+		if (!($client instanceof PDO) || $client->inTransaction()) {
 			return;
 		}
+
 		$this->getPool()->push($coroutineName, $client);
 		Context::remove($coroutineName);
+	}
+
+
+	/**
+	 * @param $coroutineName
+	 * @param PDO $PDO
+	 * @param bool $isMaster
+	 * @return void
+	 * @throws Exception
+	 * @throws Kiri\Exception\ConfigException
+	 */
+	public function recover($coroutineName, PDO $PDO, bool $isMaster = false)
+	{
+		$coroutineName = $this->name('Mysql:' . $coroutineName, $isMaster);
+		$this->getPool()->push($coroutineName, $PDO);
 	}
 
 
