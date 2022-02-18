@@ -252,14 +252,11 @@ class Application extends BaseApplication
 
 	/**
 	 * @return void
-	 * @throws ContainerExceptionInterface
 	 * @throws Exception
-	 * @throws NotFoundExceptionInterface
 	 * @throws ReflectionException
 	 */
 	protected function fileListener(): void
 	{
-		$this->getEventDispatch()->dispatch(new CreateConnectionPool());
 		$config = Config::get('scanner', []);
 		if (is_array($config)) foreach ($config as $key => $value) {
 			scan_directory($value, $key);
