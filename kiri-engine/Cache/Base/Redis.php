@@ -150,6 +150,7 @@ class Redis implements StopHeartbeatCheck
 		if ($this->_timer === -1) {
 			$this->heartbeat_check();
 		}
+		$this->_last = time();
 		if (!($this->pdo instanceof \Redis) || !$this->pdo->ping('isOk')) {
 			$this->pdo = $this->newClient();
 		}
