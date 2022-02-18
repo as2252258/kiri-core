@@ -11,6 +11,7 @@ namespace Kiri;
 
 
 use Closure;
+use Database\CreateConnectionPool;
 use Database\DatabasesProviders;
 use Exception;
 use Kiri;
@@ -19,6 +20,8 @@ use Kiri\Crontab\CrontabProviders;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Kiri\FileListen\HotReload;
 use Kiri\Server\ServerProviders;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use stdClass;
 use Swoole\Process;
@@ -223,7 +226,13 @@ class Application extends BaseApplication
 
 
 	/**
+	 * @param Command $class
+	 * @param $input
+	 * @param $output
+	 * @return void
 	 * @throws ReflectionException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
 	private function enableFileChange(Command $class, $input, $output): void
@@ -243,10 +252,14 @@ class Application extends BaseApplication
 
 	/**
 	 * @return void
+	 * @throws ContainerExceptionInterface
 	 * @throws Exception
+	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 */
 	protected function fileListener(): void
 	{
+		$this->getEventDispatch()->dispatch(new CreateConnectionPool());
 		$config = Config::get('scanner', []);
 		if (is_array($config)) foreach ($config as $key => $value) {
 			scan_directory($value, $key);
