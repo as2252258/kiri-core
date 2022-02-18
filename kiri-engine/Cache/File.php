@@ -119,7 +119,7 @@ class File extends Component implements ICache
 	 * @param $key
 	 * @return mixed|bool
 	 */
-	public function get($key): string|bool
+	public function get($key): mixed
 	{
 		$tmpFile = $this->getCacheKey($key);
 		if (!$this->exists($tmpFile)) {

@@ -26,7 +26,7 @@ interface ICache
 	 * @param $key
 	 * @return string|int|bool
 	 */
-	public function get($key): string|int|bool;
+	public function get($key): mixed;
 
 	/**
 	 * @param $key

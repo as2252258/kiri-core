@@ -25,6 +25,7 @@ defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be 
 defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', realpath(APP_PATH . 'controllers/'));
 defined('MODEL_PATH') or define('MODEL_PATH', realpath(APP_PATH . 'models/'));
 defined('COMPONENT_PATH') or define('COMPONENT_PATH', realpath(APP_PATH . 'components/'));
+defined('URL_MATCH') or define('URL_MATCH', '/(http[s]?:\/\/)?((?:[\w\-_]+\.)+\w+(?::\d+)?)(?:(\/[a-zA-Z0-9-\/]+)+[\/]?(\?[a-zA-Z]+=.*)?)?/');
 
 
 /**
