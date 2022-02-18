@@ -93,7 +93,7 @@ class Connection extends Component
 		if ($isMaster == false) {
 			return $this->_get($config, $coroutineName);
 		}
-		if (($pdo = Context::getContext($coroutineName)) instanceof PDO) {
+		if (!(($pdo = Context::getContext($coroutineName)) instanceof PDO)) {
 			$pdo = Context::setContext($coroutineName, $this->_get($config, $coroutineName));
 		}
 		return $pdo;
