@@ -976,7 +976,7 @@ if (!function_exists('sweep')) {
 	{
 		$array = [];
 		foreach (glob($configPath . '/*') as $config) {
-			$array = array_merge(require_once "$config", $array);
+			$array = array_merge(require "$config", $array);
 		}
 		return $array;
 	}
