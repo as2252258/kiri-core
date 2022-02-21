@@ -238,9 +238,6 @@ class Application extends BaseApplication
 	private function enableFileChange(Command $class, $input, $output): void
 	{
 		fire(new OnBeforeCommandExecute());
-		if (!($class instanceof HotReload)) {
-			$this->fileListener();
-		}
 
 		$this->getContainer()->setBindings(OutputInterface::class, $output);
 
@@ -249,20 +246,6 @@ class Application extends BaseApplication
 		$output->writeln('ok' . PHP_EOL);
 	}
 
-
-	/**
-	 * @return void
-	 * @throws Exception
-	 * @throws ReflectionException
-	 */
-	protected function fileListener(): void
-	{
-		$config = Config::get('scanner', []);
-		if (is_array($config)) foreach ($config as $key => $value) {
-			scan_directory($value, $key);
-		}
-		scan_directory(MODEL_PATH, 'app\Model');
-	}
 
 
 	/**
