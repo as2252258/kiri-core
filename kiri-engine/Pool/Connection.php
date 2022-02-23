@@ -90,25 +90,12 @@ class Connection extends Component
 	public function get(mixed $config, bool $isMaster = false): ?PDO
 	{
 		$coroutineName = $this->name('Mysql:' . $config['cds'], $isMaster);
-		if ($isMaster == false) {
-			return $this->_get($config, $coroutineName);
-		}
-		if (!(($pdo = Context::getContext($coroutineName)) instanceof PDO)) {
-			$pdo = Context::setContext($coroutineName, $this->_get($config, $coroutineName));
-		}
-		return $pdo;
-	}
 
+		$connection = Context::getContext($coroutineName);
+		if ($connection instanceof PDO) {
+			return $connection;
+		}
 
-	/**
-	 * @param mixed $config
-	 * @param string $coroutineName
-	 * @return PDO
-	 * @throws Kiri\Exception\ConfigException
-	 * @throws Exception
-	 */
-	private function _get(mixed $config, string $coroutineName): PDO
-	{
 		$minx = Config::get('databases.pool.min', 1);
 
 		/** @var PDO $connections */
@@ -118,6 +105,7 @@ class Connection extends Component
 		}
 		return $connections;
 	}
+
 
 
 	/**
