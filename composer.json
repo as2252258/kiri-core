@@ -38,7 +38,6 @@
     },
     "files": [
       "Kiri.php",
-      "error.php",
       "function.php"
     ]
   }
