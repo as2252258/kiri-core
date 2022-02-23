@@ -14,7 +14,7 @@ use ReflectionProperty;
  * Class Inject
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_PROPERTY)] class Inject extends Attribute
+#[\Attribute(\Attribute::TARGET_PROPERTY)] class Inject extends AbstractAttribute
 {
 
 

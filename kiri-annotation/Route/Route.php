@@ -4,11 +4,11 @@
 namespace Kiri\Annotation\Route;
 
 
-use Kiri\Annotation\Attribute;
+use Kiri\Annotation\AbstractAttribute;
 use Kiri\Message\Handler\Router;
 use Kiri;
 
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Route extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Route extends AbstractAttribute
 {
 
 	/**

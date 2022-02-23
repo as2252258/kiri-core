@@ -4,7 +4,7 @@ namespace Kiri\Annotation;
 
 use Kiri;
 
-#[\Attribute(\Attribute::TARGET_CLASS)] class Mapping extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS)] class Mapping extends AbstractAttribute
 {
 
 

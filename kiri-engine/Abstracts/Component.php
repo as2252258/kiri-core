@@ -12,10 +12,11 @@ namespace Kiri\Abstracts;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Kiri;
 use Kiri\Di\Container;
+use Kiri\Error\StdoutLogger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
-use Kiri;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -23,9 +24,15 @@ use Psr\Container\NotFoundExceptionInterface;
 /**
  * Class Component
  * @package Kiri\Base
+ * @property EventDispatch $eventDispatch
+ * @property EventProvider $eventProvider
+ * @property Container $container
  */
 class Component implements Configure
 {
+
+
+	protected ?StdoutLogger $logger = null;
 
 
 	/**
@@ -36,9 +43,28 @@ class Component implements Configure
 	 */
 	public function __construct(array $config = [])
 	{
+		if (is_null($this->logger)) {
+			$this->logger = Kiri::getDi()->get(StdoutLogger::class);
+		}
 		if (!empty($config) && is_array($config)) {
 			Kiri::configure($this, $config);
 		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function init()
+	{
+	}
+
+
+	/**
+	 * @return string
+	 */
+	#[Pure] public static function className(): string
+	{
+		return static::class;
 	}
 
 
@@ -72,156 +98,42 @@ class Component implements Configure
 		return $this->getContainer()->get(EventDispatch::class);
 	}
 
+
 	/**
+	 * @param string $name
+	 * @return mixed
 	 * @throws Exception
 	 */
-	public function init()
+	public function __get(string $name)
 	{
-	}
-
-
-	/**
-	 * @return string
-	 */
-	#[Pure] public static function className(): string
-	{
-		return static::class;
-	}
-
-
-	/**
-	 * @param $message
-	 * @param string $model
-	 * @return bool
-	 * @throws Exception
-	 */
-	public function addError($message, string $model = 'app'): bool
-	{
-		if ($message instanceof \Throwable) {
-			$this->error($message = jTraceEx($message));
+		$method = 'get' . ucfirst($name);
+		if (method_exists($this, $method)) {
+			return $this->{$method}();
+		} else if (method_exists($this, $name)) {
+			return $this->{$name};
 		} else {
-			if (!is_string($message)) {
-				$message = json_encode($message, JSON_UNESCAPED_UNICODE);
-			}
-			$this->error($message);
+			throw new Exception('Unable getting property ' . get_called_class() . '::' . $name);
 		}
-		Kiri::app()->getLogger()->fail($message, $model);
-		return FALSE;
 	}
 
 
 	/**
-	 * @return Logger
+	 * @param string $name
+	 * @param $value
+	 * @return void
 	 * @throws Exception
 	 */
-	protected function logger(): Logger
+	public function __set(string $name, $value): void
 	{
-		return Kiri::getDi()->get(Logger::class);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param string $file
-	 * @throws Exception
-	 */
-	public function debug(mixed $message, string $method = '', string $file = '')
-	{
-		if (!is_string($message)) {
-			$message = print_r($message, true);
-		}
-		$context = [];
-		if (!empty($method)) $context['method'] = $method;
-		if (!empty($file)) $context['file'] = $file;
-
-		$this->logger()->debug($message, $context);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param string $file
-	 * @throws Exception
-	 */
-	public function info(mixed $message, string $method = '', string $file = '')
-	{
-		if (!is_string($message)) {
-			$message = print_r($message, true);
-		}
-		$context = [];
-		if (!empty($method)) $context['method'] = $method;
-		if (!empty($file)) $context['file'] = $file;
-
-		$this->logger()->info($message, $context);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param string $file
-	 * @throws Exception
-	 */
-	public function success(mixed $message, string $method = '', string $file = '')
-	{
-		if (!is_string($message)) {
-			$message = print_r($message, true);
-		}
-		$context = [];
-		if (!empty($method)) $context['method'] = $method;
-		if (!empty($file)) $context['file'] = $file;
-
-		$this->logger()->notice($message, $context);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param string $method
-	 * @param string $file
-	 * @throws Exception
-	 */
-	public function warning(mixed $message, string $method = '', string $file = '')
-	{
-		if (!is_string($message)) {
-			$message = print_r($message, true);
-		}
-
-		$context = [];
-		if (!empty($method)) $context['method'] = $method;
-		if (!empty($file)) $context['file'] = $file;
-
-		$this->logger()->critical($message, $context);
-	}
-
-
-	/**
-	 * @param mixed $message
-	 * @param null $method
-	 * @param null $file
-	 * @throws Exception
-	 */
-	public function error(mixed $message, $method = null, $file = null)
-	{
-		if ($message instanceof \Throwable) {
-			$message = $message->getMessage() . " on line " . $message->getLine() . " at file " . $message->getFile();
-		}
-
-		$context = [];
-		if (is_string($method)) {
-			$message = (empty($method) ? '' : $method . ': ') . $message;
+		$method = 'set' . ucfirst($name);
+		if (method_exists($this, $method)) {
+			$this->{$method}($value);
+		} else if (method_exists($this, $name)) {
+			$this->{$name} = $value;
 		} else {
-			if (is_null($method)) {
-				$method = [];
-			}
-			$context = $method;
+			throw new Exception('Unable setting property ' . get_called_class() . '::' . $name);
 		}
-		if (!empty($method)) $context['method'] = $method;
-		if (!empty($file)) $context['file'] = $file;
-
-		$this->logger()->error($message, $context);
 	}
+
 
 }

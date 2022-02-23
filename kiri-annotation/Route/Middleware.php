@@ -4,7 +4,7 @@
 namespace Kiri\Annotation\Route;
 
 
-use Kiri\Annotation\Attribute;
+use Kiri\Annotation\AbstractAttribute;
 use Kiri\Message\Handler\Abstracts\MiddlewareManager;
 use Psr\Http\Server\MiddlewareInterface;
 
@@ -12,7 +12,7 @@ use Psr\Http\Server\MiddlewareInterface;
  * Class Middleware
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Middleware extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Middleware extends AbstractAttribute
 {
 
 

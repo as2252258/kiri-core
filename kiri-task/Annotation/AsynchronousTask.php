@@ -3,10 +3,10 @@
 namespace Kiri\Task\Annotation;
 
 
-use Kiri\Annotation\Attribute;
+use Kiri\Annotation\AbstractAttribute;
 use Kiri\Task\TaskManager;
 
-#[\Attribute(\Attribute::TARGET_CLASS)] class AsynchronousTask extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS)] class AsynchronousTask extends AbstractAttribute
 {
 
 

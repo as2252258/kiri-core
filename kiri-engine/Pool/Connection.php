@@ -229,7 +229,7 @@ class Connection extends Component
 				$result = true;
 			}
 		} catch (Error|Throwable $exception) {
-			$result = $this->addError($exception, 'mysql');
+			$result = $this->logger->addError($exception, 'mysql');
 		} finally {
 			return $result;
 		}

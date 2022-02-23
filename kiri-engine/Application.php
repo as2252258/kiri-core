@@ -11,7 +11,6 @@ namespace Kiri;
 
 
 use Closure;
-use Database\CreateConnectionPool;
 use Database\DatabasesProviders;
 use Exception;
 use Kiri;
@@ -62,8 +61,6 @@ class Application extends BaseApplication
 	public function init()
 	{
 		$this->import(ServerProviders::class);
-
-		$this->register(Runtime::class);
 	}
 
 

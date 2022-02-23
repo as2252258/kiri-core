@@ -124,7 +124,7 @@ class Loader extends Component
 			}
 			$this->appendFileToDirectory($path->getRealPath(), $replace->getName());
 		} catch (Throwable $throwable) {
-			$this->error(jTraceEx($throwable), 'throwable');
+			$this->logger->error(jTraceEx($throwable));
 		}
 	}
 
@@ -167,7 +167,7 @@ class Loader extends Component
 			}
 			return $paths;
 		} catch (Throwable $exception) {
-			$this->addError($exception, 'throwable');
+			$this->logger->addError($exception, 'throwable');
 			return [];
 		}
 	}

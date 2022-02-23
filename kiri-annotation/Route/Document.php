@@ -4,13 +4,13 @@
 namespace Kiri\Annotation\Route;
 
 
-use Kiri\Annotation\Attribute;
+use Kiri\Annotation\AbstractAttribute;
 
 /**
  * Class Document
  * @package Annotation\Route
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Document extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD)] class Document extends AbstractAttribute
 {
 
 	const INTEGER = 'int';

@@ -36,7 +36,6 @@ class Logger implements LoggerInterface
 
 	/**
 	 * @return void
-	 * @throws ReflectionException
 	 */
 	public function init()
 	{

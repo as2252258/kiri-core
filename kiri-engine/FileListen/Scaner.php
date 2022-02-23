@@ -3,7 +3,7 @@
 namespace Kiri\FileListen;
 
 use Exception;
-use Kiri\Error\Logger;
+use Kiri\Error\StdoutLogger;
 
 class Scaner
 {
@@ -113,7 +113,7 @@ class Scaner
 	{
 		$this->isReloading = TRUE;
 
-		\Kiri::getDi()->get(Logger::class)->warning('file change');
+		\Kiri::getDi()->get(StdoutLogger::class)->warning('file change');
 
 		$this->process->trigger_reload($path);
 

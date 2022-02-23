@@ -4,13 +4,13 @@
 namespace Kiri\Annotation\Route;
 
 
-use Kiri\Annotation\Attribute;
+use Kiri\Annotation\AbstractAttribute;
 
 /**
  * Class Socket
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_METHOD)] class Socket extends Attribute
+#[\Attribute(\Attribute::TARGET_METHOD)] class Socket extends AbstractAttribute
 {
 
 	const CLOSE = 'CLOSE';

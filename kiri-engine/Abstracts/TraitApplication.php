@@ -9,7 +9,6 @@ use Database\Connection;
 use Database\DatabasesProviders;
 use Kiri\Message\Handler\Router;
 use Kiri\Server\Server;
-use Kiri\Error\Logger;
 use Kiri\Jwt\JWTAuth;
 
 /**
@@ -18,7 +17,6 @@ use Kiri\Jwt\JWTAuth;
  * @property Router $router
  * @property Server $server
  * @property DatabasesProviders $db
- * @property Logger $logger
  * @property JWTAuth $jwt
  * @property SAnnotation $annotation
  * @property Connection $databases

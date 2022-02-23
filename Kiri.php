@@ -145,7 +145,7 @@ class Kiri
 	 */
 	public static function getAnnotation(): Annotation
 	{
-		return static::app()->getAnnotation();
+		return static::getDi()->get(Annotation::class);
 	}
 
 
@@ -310,15 +310,6 @@ class Kiri
 		return Kiri::createObject(Environmental::class);
 	}
 
-
-	/**
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function reload(): mixed
-	{
-		return Kiri::app()->getSwoole()->reload();
-	}
 
 
 	const PROCESS = 'process';

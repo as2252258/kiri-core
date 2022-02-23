@@ -8,7 +8,7 @@ namespace Kiri\Annotation;
  * Class Target
  * @package Annotation
  */
-#[\Attribute(\Attribute::TARGET_CLASS)] class Target extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS)] class Target extends AbstractAttribute
 {
 
 

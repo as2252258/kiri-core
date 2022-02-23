@@ -14,15 +14,17 @@ use Database\Connection;
 use Exception;
 use Kafka\KafkaProvider;
 use Kiri;
-use Kiri\Annotation\Annotation as SAnnotation;
 use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
-use Kiri\Error\{ErrorHandler, Logger};
+use Kiri\Error\{ErrorHandler};
+use Kiri\Error\StdoutLogger;
+use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Exception\{InitException, NotFindClassException};
 use Kiri\Message\Handler\Router;
-use Kiri\Server\{Server, ServerManager};
-use Kiri\Task\AsyncTaskExecute;
-use Kiri\Task\OnTaskInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Kiri\Server\{Server};
+use Psr\Log\LoggerInterface;
 use ReflectionException;
 use Swoole\Table;
 
@@ -53,6 +55,8 @@ abstract class BaseApplication extends Component
 	{
 		Kiri::init($this);
 
+		$this->mapping($config['mapping'] ?? []);
+
 		$config = sweep(APP_PATH . '/config');
 
 		$this->moreComponents();
@@ -60,7 +64,6 @@ abstract class BaseApplication extends Component
 		$this->parseEvents($config);
 		$this->initErrorHandler();
 		$this->enableEnvConfig();
-		$this->mapping($config['mapping'] ?? []);
 
 		parent::__construct();
 	}
@@ -72,6 +75,8 @@ abstract class BaseApplication extends Component
 	public function mapping(array $mapping)
 	{
 		$di = Kiri::getDi();
+		$di->mapping(StdoutLoggerInterface::class, StdoutLogger::class);
+		$di->mapping(LoggerInterface::class, Logger::class);
 		foreach ($mapping as $interface => $class) {
 			$di->mapping($interface, $class);
 		}
@@ -109,10 +114,9 @@ abstract class BaseApplication extends Component
 		// Read file into an array of lines with auto-detected line endings
 //		$autodetect = ini_get('auto_detect_line_endings');
 //		ini_set('auto_detect_line_endings', '1');
-		$lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-//		ini_set('auto_detect_line_endings', $autodetect);
+		//		ini_set('auto_detect_line_endings', $autodetect);
 
-		return $lines;
+		return file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	}
 
 	/**
@@ -199,39 +203,34 @@ abstract class BaseApplication extends Component
 	}
 
 
-	/**
-	 * @param OnTaskInterface $execute
-	 * @throws ReflectionException|Exception
-	 */
-	public function task(OnTaskInterface $execute): void
-	{
-		di(AsyncTaskExecute::class)->execute($execute);
-	}
-
 
 	/**
 	 * @param $key
 	 * @param $value
+	 * @return void
 	 * @throws InitException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
 	private function addEvent($key, $value): void
 	{
+		$provider = $this->getEventProvider();
 		if ($value instanceof \Closure || is_object($value)) {
-			$this->getEventProvider()->on($key, $value, 0);
+			$provider->on($key, $value, 0);
 			return;
 		}
 
 
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-				$this->getEventProvider()->on($key, $value, 0);
+				$provider->on($key, $value, 0);
 				return;
 			}
 
 			if (is_string($value[0])) {
 				$value[0] = Kiri::createObject($value[0]);
-				$this->getEventProvider()->on($key, $value, 0);
+				$provider->on($key, $value, 0);
 				return;
 			}
 
@@ -240,7 +239,7 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				$this->getEventProvider()->on($key, $item, 0);
+				$provider->on($key, $item, 0);
 			}
 		}
 
@@ -263,7 +262,8 @@ abstract class BaseApplication extends Component
 	 */
 	public function initErrorHandler()
 	{
-		$this->get('error')->register();
+		$error = $this->container->get(ErrorHandler::class);
+		$error->register();
 	}
 
 
@@ -305,65 +305,6 @@ abstract class BaseApplication extends Component
 	}
 
 
-	/**
-	 * @return \Redis|Redis
-	 * @throws
-	 */
-	public function getRedis(): Redis|\Redis
-	{
-		return Kiri::getDi()->get(Redis::class);
-	}
-
-	/**
-	 * @param $ip
-	 * @return bool
-	 */
-	public function isLocal($ip): bool
-	{
-		return $this->getFirstLocal() == $ip;
-	}
-
-
-	/**
-	 * @return ErrorHandler
-	 * @throws
-	 */
-	public function getError(): ErrorHandler
-	{
-		return $this->get('error');
-	}
-
-
-	/**
-	 * @param $name
-	 * @return Table
-	 * @throws
-	 */
-	public function getTable($name): Table
-	{
-		return $this->get($name);
-	}
-
-
-	/**
-	 * @return Config
-	 * @throws
-	 */
-	public function getConfig(): Config
-	{
-		return $this->get('config');
-	}
-
-
-	/**
-	 * @return Router
-	 * @throws
-	 */
-	public function getRouter(): Router
-	{
-		return Kiri::getDi()->get(Router::class);
-	}
-
 
 	/**
 	 * @return Server
@@ -374,34 +315,6 @@ abstract class BaseApplication extends Component
 		return Kiri::getDi()->get(Server::class);
 	}
 
-
-	/**
-	 * @return \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
-	 * @throws
-	 */
-	public function getSwoole(): \Swoole\Http\Server|\Swoole\Server|\Swoole\WebSocket\Server|null
-	{
-		return di(ServerManager::class)->getServer();
-	}
-
-
-	/**
-	 * @return SAnnotation
-	 * @throws
-	 */
-	public function getAnnotation(): SAnnotation
-	{
-		return $this->get('Annotation');
-	}
-
-
-	/**
-	 * @param $array
-	 */
-	private function setComponents($array): void
-	{
-		di(LocalService::class)->setComponents($array);
-	}
 
 
 	/**
@@ -421,21 +334,5 @@ abstract class BaseApplication extends Component
 	public function has($id): bool
 	{
 		return di(LocalService::class)->has($id);
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	protected function moreComponents(): void
-	{
-		$this->setComponents([
-			'error'           => ['class' => ErrorHandler::class],
-			'config'          => ['class' => Config::class],
-			'logger'          => ['class' => Logger::class],
-			'Annotation'      => ['class' => SAnnotation::class],
-			'databases'       => ['class' => Connection::class],
-			'kafka-container' => ['class' => KafkaProvider::class],
-		]);
 	}
 }

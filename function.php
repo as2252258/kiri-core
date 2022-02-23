@@ -9,8 +9,8 @@ use Kiri\Annotation\Annotation;
 use Kiri\Annotation\Route\Route;
 use Kiri\Application;
 use Kiri\Core\ArrayAccess;
-use Kiri\Di\NoteManager;
-use Kiri\Error\Logger;
+use Kiri\Di\TargetManager;
+use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
@@ -175,21 +175,6 @@ if (!function_exists('now')) {
 }
 
 
-if (!function_exists('workerName')) {
-
-
-	/**
-	 * @param $worker_id
-	 * @return string
-	 */
-	function workerName($worker_id)
-	{
-		return $worker_id >= Kiri::app()->getSwoole()->setting['worker_num'] ? 'Task' : 'Worker';
-	}
-
-}
-
-
 if (!function_exists('Annotation')) {
 
 
@@ -218,7 +203,7 @@ if (!function_exists('scan_directory')) {
 	 */
 	function scan_directory($dir, $namespace, array $exclude = [])
 	{
-		$annotation = Kiri::app()->getAnnotation();
+		$annotation = Kiri::getDi()->get(Annotation::class);
 		$annotation->read($dir, $namespace, $exclude);
 
 		injectRuntime($dir, $exclude);
@@ -259,18 +244,22 @@ if (!function_exists('injectRuntime')) {
 
 		$router = [];
 		foreach ($fileLists as $class) {
-			foreach (NoteManager::getTargetAnnotation($class) as $value) {
+			$targetAttributes = TargetManager::get($class)->getAttributes();
+			foreach ($targetAttributes as $value) {
+				$value = $value->newInstance();
 				if (!method_exists($value, 'execute')) {
 					continue;
 				}
 				$value->execute($class);
 			}
-			$methods = $di->getMethodAttribute($class);
+
+			$methods = TargetManager::get($class)->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
 				if (empty($attribute)) {
 					continue;
 				}
 				foreach ($attribute as $item) {
+					$item = $item->newInstance();
 					if ($item instanceof Route) {
 						$router[] = [$item, $class, $method];
 					} else {
@@ -448,22 +437,6 @@ if (!function_exists('loadByDir')) {
 }
 
 
-if (!function_exists('write')) {
-
-
-	/**
-	 * @param string $messages
-	 * @param string $category
-	 * @throws Exception
-	 */
-	function write(string $messages, string $category = 'app')
-	{
-		$logger = Kiri::app()->getLogger();
-		$logger->write($messages, $category);
-	}
-}
-
-
 if (!function_exists('redis')) {
 
 
@@ -536,12 +509,11 @@ if (!function_exists('logger')) {
 
 
 	/**
-	 * @return Logger
 	 * @throws Exception
 	 */
-	function logger(): Logger
+	function logger(): StdoutLoggerInterface
 	{
-		return Kiri::app()->getLogger();
+		return Kiri::getDi()->get(StdoutLoggerInterface::class);
 	}
 }
 
