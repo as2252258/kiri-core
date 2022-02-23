@@ -14,7 +14,7 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri;
 use Kiri\Di\Container;
-use Kiri\Error\StdoutLogger;
+use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Psr\Container\ContainerExceptionInterface;
@@ -32,7 +32,7 @@ class Component implements Configure
 {
 
 
-	protected ?StdoutLogger $logger = null;
+	protected ?StdoutLoggerInterface $logger = null;
 
 
 	/**
@@ -44,7 +44,7 @@ class Component implements Configure
 	public function __construct(array $config = [])
 	{
 		if (is_null($this->logger)) {
-			$this->logger = Kiri::getDi()->get(StdoutLogger::class);
+			$this->logger = Kiri::getDi()->get(StdoutLoggerInterface::class);
 		}
 		if (!empty($config) && is_array($config)) {
 			Kiri::configure($this, $config);

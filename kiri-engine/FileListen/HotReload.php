@@ -7,11 +7,11 @@ use Kiri;
 use Kiri\Abstracts\Config;
 use Kiri\Annotation\Inject;
 use Kiri\Core\Json;
+use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Exception\ConfigException;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\Timer;
-use Kiri\Error\StdoutLogger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,8 +39,8 @@ class HotReload extends Command
 	public Inotify|Scaner $driver;
 
 
-	#[Inject(StdoutLogger::class)]
-	public StdoutLogger $logger;
+	#[Inject(StdoutLoggerInterface::class)]
+	public StdoutLoggerInterface $logger;
 
 
 	protected mixed $source = NULL;
@@ -117,7 +117,7 @@ class HotReload extends Command
 		}
 		$data = Json::to(500, $error[1], $path);
 
-		$this->logger->error($data, 'error');
+		$this->logger->error('error', [$data]);
 	}
 
 

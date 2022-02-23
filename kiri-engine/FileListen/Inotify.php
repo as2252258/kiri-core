@@ -3,7 +3,7 @@
 namespace Kiri\FileListen;
 
 use Exception;
-use Kiri\Error\StdoutLogger;
+use Kiri\Error\StdoutLoggerInterface;
 use Swoole\Event;
 use Swoole\Timer;
 
@@ -103,7 +103,7 @@ class Inotify
 	 */
 	public function reload($path)
 	{
-		\Kiri::getDi()->get(StdoutLogger::class)->warning('file change');
+		\Kiri::getDi()->get(StdoutLoggerInterface::class)->warning('file change');
 
 		$this->process->trigger_reload($path);
 		$this->process->int = -1;

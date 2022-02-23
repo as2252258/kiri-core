@@ -10,23 +10,18 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
-use Database\Connection;
 use Exception;
-use Kafka\KafkaProvider;
 use Kiri;
-use Kiri\Cache\Redis;
 use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler};
-use Kiri\Error\StdoutLogger;
 use Kiri\Error\StdoutLoggerInterface;
+use Kiri\Error\StdoutLogger;
 use Kiri\Exception\{InitException, NotFindClassException};
-use Kiri\Message\Handler\Router;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Kiri\Server\{Server};
 use Psr\Log\LoggerInterface;
 use ReflectionException;
-use Swoole\Table;
 
 /**
  * Class BaseApplication
