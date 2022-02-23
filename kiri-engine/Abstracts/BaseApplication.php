@@ -59,7 +59,6 @@ abstract class BaseApplication extends Component
 
 		$config = sweep(APP_PATH . '/config');
 
-		$this->moreComponents();
 		$this->parseInt($config);
 		$this->parseEvents($config);
 		$this->initErrorHandler();
