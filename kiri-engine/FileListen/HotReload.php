@@ -5,7 +5,6 @@ namespace Kiri\FileListen;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Config;
-use Kiri\Annotation\Inject;
 use Kiri\Core\Json;
 use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Exception\ConfigException;
@@ -39,7 +38,6 @@ class HotReload extends Command
 	public Inotify|Scaner $driver;
 
 
-	#[Inject(StdoutLoggerInterface::class)]
 	public StdoutLoggerInterface $logger;
 
 
@@ -55,6 +53,8 @@ class HotReload extends Command
 	protected function configure()
 	{
 		$this->setName('sw:wather')->setDescription('server start');
+
+		$this->logger = Kiri::getDi()->get(StdoutLoggerInterface::class);
 	}
 
 
@@ -67,9 +67,9 @@ class HotReload extends Command
 		set_error_handler([$this, 'errorHandler']);
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
 		if (!extension_loaded('inotify')) {
-			$this->driver = Kiri::getDi()->make(Scaner::class, [$this->dirs, $this]);
+			$this->driver = make(Scaner::class, [$this->dirs, $this, $this->logger]);
 		} else {
-			$this->driver = Kiri::getDi()->make(Inotify::class, [$this->dirs, $this]);
+			$this->driver = make(Inotify::class, [$this->dirs, $this, $this->logger]);
 		}
 		$this->clearOtherService();
 		$this->setProcessName();

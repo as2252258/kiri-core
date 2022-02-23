@@ -17,7 +17,7 @@ class Scaner
 	 * @param array $dirs
 	 * @param HotReload $process
 	 */
-	public function __construct(protected array $dirs, public HotReload $process)
+	public function __construct(protected array $dirs, public HotReload $process,  public StdoutLoggerInterface $logger)
 	{
 	}
 
@@ -113,7 +113,7 @@ class Scaner
 	{
 		$this->isReloading = TRUE;
 
-		\Kiri::getDi()->get(StdoutLoggerInterface::class)->warning('file change');
+		$this->logger->warning('file change');
 
 		$this->process->trigger_reload($path);
 

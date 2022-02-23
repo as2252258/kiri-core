@@ -27,8 +27,10 @@ class Inotify
 	/**
 	 * @param array $dirs
 	 * @param HotReload $process
+	 * @param StdoutLoggerInterface $logger
+	 *
 	 */
-	public function __construct(protected array $dirs, public HotReload $process)
+	public function __construct(protected array $dirs, public HotReload $process, public StdoutLoggerInterface $logger)
 	{
 		set_error_handler([$this, 'error']);
 		set_exception_handler([$this, 'error']);
@@ -103,7 +105,7 @@ class Inotify
 	 */
 	public function reload($path)
 	{
-		\Kiri::getDi()->get(StdoutLoggerInterface::class)->warning('file change');
+		$this->logger->warning('file change');
 
 		$this->process->trigger_reload($path);
 		$this->process->int = -1;
@@ -137,8 +139,7 @@ class Inotify
 	{
 		//目录不存在
 		if (!is_dir($dir)) {
-			logger()->addError("[$dir] is not a directory.");
-			return false;
+			return $this->logger->addError("[$dir] is not a directory.");
 		}
 		//避免重复监听
 		if (isset($this->watchFiles[$dir])) {
