@@ -285,6 +285,7 @@ abstract class BaseApplication extends Component
 		return swoole_get_local_ip();
 	}
 
+
 	/**
 	 * @return mixed
 	 */
