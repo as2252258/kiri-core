@@ -240,11 +240,11 @@ if (!function_exists('injectRuntime')) {
 	function injectRuntime(string $path, array $exclude = [])
 	{
 		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
-		$di = Kiri::getDi();
 
 		$router = [];
 		foreach ($fileLists as $class) {
-			$targetAttributes = TargetManager::get($class)->getAttributes();
+			$target = TargetManager::get($class);
+			$targetAttributes = $target->getAttributes();
 			foreach ($targetAttributes as $value) {
 				$value = $value->newInstance();
 				if (!method_exists($value, 'execute')) {
@@ -253,7 +253,7 @@ if (!function_exists('injectRuntime')) {
 				$value->execute($class);
 			}
 
-			$methods = TargetManager::get($class)->getMethodsAttribute();
+			$methods = $target->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
 				if (empty($attribute)) {
 					continue;
