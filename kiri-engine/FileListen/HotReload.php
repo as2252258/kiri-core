@@ -66,10 +66,12 @@ class HotReload extends Command
 	{
 		set_error_handler([$this, 'errorHandler']);
 		$this->dirs = Config::get('inotify', [APP_PATH . 'app']);
+
+		$container = Kiri::getDi();
 		if (!extension_loaded('inotify')) {
-			$this->driver = make(Scaner::class, [$this->dirs, $this, $this->logger]);
+			$this->driver = $container->make(Scaner::class, [$this->dirs, $this, $this->logger]);
 		} else {
-			$this->driver = make(Inotify::class, [$this->dirs, $this, $this->logger]);
+			$this->driver = $container->make(Inotify::class, [$this->dirs, $this, $this->logger]);
 		}
 		$this->clearOtherService();
 		$this->setProcessName();
