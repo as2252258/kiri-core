@@ -30,7 +30,7 @@ class Redis extends Component
 	 */
 	public function get(mixed $config, bool $isMaster = false): mixed
 	{
-		$coroutineName = $this->name('Redis:' . $config['host'], $isMaster);
+		$coroutineName = $config['host'];
 		if (Context::hasContext($coroutineName)) {
 			return Context::getContext($coroutineName);
 		}
@@ -63,7 +63,7 @@ class Redis extends Component
 	 */
 	public function release(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('Redis:' . $config['host'], $isMaster);
+		$coroutineName = $config['host'];
 		if (!Context::hasContext($coroutineName)) {
 			return;
 		}
@@ -79,9 +79,8 @@ class Redis extends Component
 	 */
 	public function destroy(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('Redis:' . $config['host'], $isMaster);
-		$this->getPool()->clean($coroutineName);
-		Context::remove($coroutineName);
+		$this->getPool()->clean($config['host']);
+		Context::remove($config['host']);
 	}
 
 
@@ -92,8 +91,7 @@ class Redis extends Component
 	 */
 	public function connection_clear(array $config, bool $isMaster = false)
 	{
-		$coroutineName = $this->name('Redis:' . $config['host'], $isMaster);
-		$this->getPool()->clean($coroutineName);
+		$this->getPool()->clean($config['host']);
 	}
 
 
