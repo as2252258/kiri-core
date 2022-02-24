@@ -113,7 +113,7 @@ class Redis extends Component
 	 */
 	public function initConnections($name, $isMaster, $max)
 	{
-		$this->getPool()->initConnections($name, $isMaster, $max);
+		$this->getPool()->initConnections($name, $max);
 	}
 
 
