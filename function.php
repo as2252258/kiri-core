@@ -441,12 +441,12 @@ if (!function_exists('redis')) {
 
 
 	/**
-	 * @return \Kiri\Cache\Redis|Redis
+	 * @return \Kiri\Redis\Redis|Redis
 	 * @throws Exception
 	 */
-	function redis(): \Kiri\Cache\Redis|Redis
+	function redis(): \Kiri\Redis\Redis|Redis
 	{
-		return Kiri::getDi()->get(\Kiri\Cache\Redis::class);
+		return Kiri::getDi()->get(\Kiri\Redis\Redis::class);
 	}
 }
 

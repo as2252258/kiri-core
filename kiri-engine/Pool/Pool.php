@@ -5,11 +5,10 @@ namespace Kiri\Pool;
 
 
 use Exception;
-use Kiri\Context;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
+use Kiri\Context;
 use Kiri\Exception\ConfigException;
-use Kiri\Pool\Helper\SplQueue;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 

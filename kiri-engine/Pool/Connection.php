@@ -10,6 +10,8 @@ use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Context;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Swoole\Error;
 use Throwable;
 
@@ -20,7 +22,19 @@ use Throwable;
 class Connection extends Component
 {
 
-	use Alias;
+
+	private Pool $pool;
+
+
+	/**
+	 * @return void
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	public function init()
+	{
+		$this->pool = $this->getContainer()->get(Pool::class);
+	}
 
 
 	/**
@@ -83,15 +97,15 @@ class Connection extends Component
 	public function get(mixed $config): ?PDO
 	{
 		$coroutineName = $config['cds'];
-
-		if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
-			return $connection;
-		}
+//
+//		if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
+//			return $connection;
+//		}
 
 		$minx = Config::get('databases.pool.min', 1);
 
 		/** @var PDO $connections */
-		$connections = $this->getPool()->get($coroutineName, $this->create($coroutineName, $config), $minx);
+		$connections = $this->pool->get($coroutineName, $this->create($coroutineName, $config), $minx);
 		if (Context::hasContext('begin_' . $coroutineName)) {
 			$connections->beginTransaction();
 		}
@@ -121,7 +135,7 @@ class Connection extends Component
 	 */
 	public function addItem(string $name, PDO $PDO)
 	{
-		$this->getPool()->push($name, $PDO);
+		$this->pool->push($name, $PDO);
 	}
 
 
@@ -132,7 +146,7 @@ class Connection extends Component
 	 */
 	public function initConnections($name, $max)
 	{
-		$this->getPool()->initConnections($name, $max);
+		$this->pool->initConnections($name, $max);
 	}
 
 
@@ -148,7 +162,7 @@ class Connection extends Component
 			return;
 		}
 
-		$this->getPool()->push($coroutineName, $client);
+		$this->pool->push($coroutineName, $client);
 		Context::remove($coroutineName);
 	}
 
@@ -169,7 +183,7 @@ class Connection extends Component
 	 */
 	public function connection_clear($name)
 	{
-		$this->getPool()->clean($name);
+		$this->pool->clean($name);
 	}
 
 
@@ -202,17 +216,8 @@ class Connection extends Component
 	public function disconnect($coroutineName)
 	{
 		Context::remove($coroutineName);
-		$this->getPool()->clean($coroutineName);
+		$this->pool->clean($coroutineName);
 	}
 
-
-	/**
-	 * @return Pool
-	 * @throws Exception
-	 */
-	public function getPool(): Pool
-	{
-		return Kiri::getDi()->get(Pool::class);
-	}
 
 }
