@@ -30,9 +30,8 @@ class Connection extends Component
 	 * db is in transaction
 	 * @throws Exception
 	 */
-	public function inTransaction($cds): bool
+	public function inTransaction($name): bool
 	{
-		$name = $this->name('Mysql:' . $cds, true);
 		$connection = Context::getContext($name);
 		if ($connection instanceof PDO) {
 			return $connection->inTransaction();
@@ -46,7 +45,6 @@ class Connection extends Component
 	 */
 	public function beginTransaction($coroutineName)
 	{
-		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
 		$connection = Context::getContext($coroutineName);
 		if ($connection instanceof PDO) {
 			$connection->beginTransaction();
@@ -59,7 +57,6 @@ class Connection extends Component
 	 */
 	public function commit($coroutineName)
 	{
-		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
 		$connection = Context::getContext($coroutineName);
 		if ($connection instanceof PDO) {
 			$connection->commit();
@@ -73,7 +70,6 @@ class Connection extends Component
 	 */
 	public function rollback($coroutineName)
 	{
-		$coroutineName = $this->name('Mysql:' . $coroutineName, true);
 		$connection = Context::getContext($coroutineName);
 		if ($connection instanceof PDO) {
 			$connection->rollBack();
@@ -83,16 +79,14 @@ class Connection extends Component
 
 	/**
 	 * @param mixed $config
-	 * @param bool $isMaster
 	 * @return PDO|null
 	 * @throws Exception
 	 */
-	public function get(mixed $config, bool $isMaster = false): ?PDO
+	public function get(mixed $config): ?PDO
 	{
-		$coroutineName = $this->name('Mysql:' . $config['cds'], $isMaster);
+		$coroutineName = $config['cds'];
 
-		$connection = Context::getContext($coroutineName);
-		if ($connection instanceof PDO) {
+		if (($connection = Context::getContext($coroutineName)) instanceof PDO) {
 			return $connection;
 		}
 
@@ -136,27 +130,22 @@ class Connection extends Component
 
 	/**
 	 * @param $name
-	 * @param $isMaster
 	 * @param $max
 	 * @throws Exception
 	 */
-	public function initConnections($name, $isMaster, $max)
+	public function initConnections($name, $max)
 	{
-		$pool = $this->getPool();
-		$pool->initConnections($name, $isMaster, $max);
+		$this->getPool()->initConnections($name, $max);
 	}
 
 
 	/**
 	 * @param $coroutineName
-	 * @param $isMaster
 	 * @throws Kiri\Exception\ConfigException
 	 * @throws Exception
 	 */
-	public function release($coroutineName, $isMaster)
+	public function release($coroutineName)
 	{
-		$coroutineName = $this->name('Mysql:' . $coroutineName, $isMaster);
-
 		$client = Context::getContext($coroutineName);
 		if (!($client instanceof PDO) || $client->inTransaction()) {
 			return;
@@ -166,20 +155,6 @@ class Connection extends Component
 		Context::remove($coroutineName);
 	}
 
-
-	/**
-	 * @param $coroutineName
-	 * @param PDO $PDO
-	 * @param bool $isMaster
-	 * @return void
-	 * @throws Exception
-	 * @throws Kiri\Exception\ConfigException
-	 */
-	public function recover($coroutineName, PDO $PDO, bool $isMaster = false)
-	{
-		$coroutineName = $this->name('Mysql:' . $coroutineName, $isMaster);
-		$this->getPool()->push($coroutineName, $PDO);
-	}
 
 
 	/**
@@ -196,9 +171,9 @@ class Connection extends Component
 	 * batch release
 	 * @throws Exception
 	 */
-	public function connection_clear($name, $isMaster)
+	public function connection_clear($name)
 	{
-		$this->getPool()->clean($this->name($name, $isMaster));
+		$this->getPool()->clean($name);
 	}
 
 
@@ -226,13 +201,11 @@ class Connection extends Component
 
 	/**
 	 * @param $coroutineName
-	 * @param bool $isMaster
 	 * @throws Exception
 	 */
-	public function disconnect($coroutineName, bool $isMaster = false)
+	public function disconnect($coroutineName)
 	{
 		Context::remove($coroutineName);
-		$coroutineName = $this->name('Mysql:' . $coroutineName, $isMaster);
 		$this->getPool()->clean($coroutineName);
 	}
 

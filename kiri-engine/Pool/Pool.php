@@ -59,13 +59,11 @@ class Pool extends Component
 
 	/**
 	 * @param $name
-	 * @param false $isMaster
 	 * @param int $max
 	 * @throws ConfigException
 	 */
-	public function initConnections($name, bool $isMaster = false, int $max = 60)
+	public function initConnections($name, int $max = 60)
 	{
-		$name = $this->name($name, $isMaster);
 		if (isset(static::$_connections[$name])) {
 			$value = static::$_connections[$name];
 			if ($value instanceof Channel || $value instanceof SplQueue) {
