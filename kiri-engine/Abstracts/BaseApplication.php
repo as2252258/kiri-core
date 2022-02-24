@@ -266,7 +266,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function get($name): mixed
 	{
-		return di(LocalService::class)->get($name);
+		return $this->container->get(LocalService::class)->get($name);
 	}
 
 
@@ -316,7 +316,7 @@ abstract class BaseApplication extends Component
 	 */
 	public function set($id, $definition): void
 	{
-		di(LocalService::class)->set($id, $definition);
+		$this->container->get(LocalService::class)->set($id, $definition);
 	}
 
 
@@ -326,6 +326,6 @@ abstract class BaseApplication extends Component
 	 */
 	public function has($id): bool
 	{
-		return di(LocalService::class)->has($id);
+		return $this->container->get(LocalService::class)->has($id);
 	}
 }
