@@ -24,11 +24,8 @@ class Connection extends Component
 
 
 	/**
-	 * @param $cds
+	 * @param $name
 	 * @return bool
-	 *
-	 * db is in transaction
-	 * @throws Exception
 	 */
 	public function inTransaction($name): bool
 	{
@@ -38,6 +35,7 @@ class Connection extends Component
 		}
 		return false;
 	}
+
 
 	/**
 	 * @param $coroutineName
@@ -101,7 +99,6 @@ class Connection extends Component
 	}
 
 
-
 	/**
 	 * @param $coroutineName
 	 * @param $config
@@ -154,7 +151,6 @@ class Connection extends Component
 		$this->getPool()->push($coroutineName, $client);
 		Context::remove($coroutineName);
 	}
-
 
 
 	/**
