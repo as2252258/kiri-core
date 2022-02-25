@@ -134,9 +134,9 @@ class Context extends BaseContext
 			return;
 		}
 		if (Coroutine::getCid() === -1) {
-			unset(static::$_contents[$id]);
+			static::$_contents[$id] = null;
 		} else {
-			unset(Coroutine::getContext($coroutineId)[$id]);
+			Coroutine::getContext($coroutineId)[$id] = null;
 		}
 	}
 

@@ -326,9 +326,6 @@ if (!function_exists('isUrl')) {
 		if (!empty($query)) $path .= '?' . $query;
 		if (!empty($fragment)) $path .= '#' . $fragment;
 
-
-		unset($outPut);
-
 		return [$scheme == 'https', $host, $port, $path];
 	}
 
