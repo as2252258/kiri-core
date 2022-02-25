@@ -97,6 +97,9 @@ class Connection extends Component
 	public function get(mixed $config): ?PDO
 	{
 		$coroutineName = $config['cds'];
+		if (($pdo = Context::getContext($config['cds'])) instanceof PDO) {
+			return $pdo;
+		}
 
 		$minx = Config::get('databases.pool.min', 1);
 
