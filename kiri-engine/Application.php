@@ -238,13 +238,14 @@ class Application extends BaseApplication
 
 		$this->getContainer()->setBindings(OutputInterface::class, $output);
 
-		scan_directory(MODEL_PATH, 'app\Model');
+		if (!($class instanceof Kiri\Server\ServerCommand)) {
+			scan_directory(MODEL_PATH, 'app\Model');
+		}
 
 		$class->run($input, $output);
 		fire(new OnAfterCommandExecute());
 		$output->writeln('ok' . PHP_EOL);
 	}
-
 
 
 	/**

@@ -214,6 +214,7 @@ class HotReload extends Command
 		$this->stopServer();
 		$this->process = new Process(function (Process $process) {
 			$config = Config::get('scanner', []);
+			scan_directory(MODEL_PATH, 'app\Model');
 			if (is_array($config)) foreach ($config as $key => $value) {
 				scan_directory($value, $key);
 			}
