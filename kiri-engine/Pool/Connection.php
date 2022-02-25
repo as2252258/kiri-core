@@ -104,11 +104,11 @@ class Connection extends Component
 		$minx = Config::get('databases.pool.min', 1);
 
 		/** @var PDO $connections */
-		$connections = $this->pool->get($coroutineName, $this->create($coroutineName, $config), $minx);
-		if (Context::hasContext('begin_' . $coroutineName)) {
-			$connections->beginTransaction();
-		}
-		return $connections;
+		$pdo = $this->pool->get($coroutineName, static function () use ($coroutineName, $config) {
+			return Kiri::getDi()->create(PDO::class, [$config]);
+		}, $minx);
+
+		return Context::setContext($config['cds'], $pdo);
 	}
 
 
