@@ -167,7 +167,7 @@ class Context extends BaseContext
 		}
 		$value = static::$_contents[$id];
 		if (!empty($key) && is_array($value)) {
-			return isset($value[$key]) && $value[$key] !== null;
+			return ($value[$key] ?? null) !== null;
 		}
 		return true;
 	}
@@ -189,7 +189,7 @@ class Context extends BaseContext
 		}
 		$value = Coroutine::getContext($coroutineId)[$id];
 		if ($key !== null && is_array($value)) {
-			return isset($value[$key]) && $value[$key] !== null;
+			return ($value[$key] ?? null) !== null;
 		}
 		return true;
 	}
