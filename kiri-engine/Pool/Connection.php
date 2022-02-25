@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Pool;
 
 use Closure;
+use Database\Db;
 use Database\Mysql\PDO;
 use Exception;
 use Kiri;
@@ -103,11 +104,13 @@ class Connection extends Component
 
 		$minx = Config::get('databases.pool.min', 1);
 
-		/** @var PDO $connections */
+		/** @var PDO $pdo */
 		$pdo = $this->pool->get($coroutineName, static function () use ($coroutineName, $config) {
 			return Kiri::getDi()->create(PDO::class, [$config]);
 		}, $minx);
-
+		if (Db::inTransactionsActive() && !$pdo->inTransaction()) {
+			$pdo->beginTransaction();
+		}
 		return Context::setContext($config['cds'], $pdo);
 	}
 
