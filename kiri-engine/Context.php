@@ -135,8 +135,13 @@ class Context extends BaseContext
 		}
 		if (Coroutine::getCid() === -1) {
 			static::$_contents[$id] = null;
+
+			unset(static::$_contents[$id]);
+
 		} else {
 			Coroutine::getContext($coroutineId)[$id] = null;
+
+			unset(Coroutine::getContext($coroutineId)[$id]);
 		}
 	}
 
