@@ -5,7 +5,7 @@ namespace Kiri;
 
 use Kiri\Abstracts\BaseContext;
 use Swoole\Coroutine;
-use Kiri;
+
 /**
  * Class Context
  * @package Yoc\http
@@ -24,13 +24,13 @@ class Context extends BaseContext
 	 */
 	public static function setContext($id, $context, $coroutineId = null): mixed
 	{
-        if (is_null($coroutineId)) {
-            $coroutineId = Coroutine::getCid();
-        }
+		if (is_null($coroutineId)) {
+			$coroutineId = Coroutine::getCid();
+		}
 		if (Coroutine::getCid() !== -1) {
-            return Coroutine::getContext($coroutineId)[$id] = $context;
-        }
-        return static::$_contents[$id] = $context;
+			return Coroutine::getContext($coroutineId)[$id] = $context;
+		}
+		return static::$_contents[$id] = $context;
 	}
 
 	/**
@@ -41,9 +41,9 @@ class Context extends BaseContext
 	 */
 	public static function increment($id, int $value = 1, $coroutineId = null): bool|int
 	{
-        if (is_null($coroutineId)) {
-            $coroutineId = Coroutine::getCid();
-        }
+		if (is_null($coroutineId)) {
+			$coroutineId = Coroutine::getCid();
+		}
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			Coroutine::getContext($coroutineId)[$id] = 0;
 		}
@@ -58,9 +58,9 @@ class Context extends BaseContext
 	 */
 	public static function decrement($id, int $value = 1, $coroutineId = null): bool|int
 	{
-        if (is_null($coroutineId)) {
-            $coroutineId = Coroutine::getCid();
-        }
+		if (is_null($coroutineId)) {
+			$coroutineId = Coroutine::getCid();
+		}
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			Coroutine::getContext($coroutineId)[$id] = 0;
 		}
@@ -90,9 +90,9 @@ class Context extends BaseContext
 	 */
 	private static function loadByContext($id, $default = null, $coroutineId = null): mixed
 	{
-        if (is_null($coroutineId)) {
-            $coroutineId = Coroutine::getCid();
-        }
+		if (is_null($coroutineId)) {
+			$coroutineId = Coroutine::getCid();
+		}
 		return Coroutine::getContext($coroutineId)[$id] ?? $default;
 	}
 
@@ -127,9 +127,9 @@ class Context extends BaseContext
 	 */
 	public static function remove(string $id, $coroutineId = null)
 	{
-        if (is_null($coroutineId)) {
-            $coroutineId = Coroutine::getCid();
-        }
+		if (is_null($coroutineId)) {
+			$coroutineId = Coroutine::getCid();
+		}
 		if (!static::hasContext($id, $coroutineId)) {
 			return;
 		}
@@ -165,9 +165,9 @@ class Context extends BaseContext
 		if (!isset(static::$_contents[$id])) {
 			return false;
 		}
-        $value = static::$_contents[$id];
-        if (!empty($key) && is_array($value)) {
-			return isset($value[$key]);
+		$value = static::$_contents[$id];
+		if (!empty($key) && is_array($value)) {
+			return isset($value[$key]) && $value[$key] !== null;
 		}
 		return true;
 	}
@@ -181,15 +181,15 @@ class Context extends BaseContext
 	 */
 	private static function searchByCoroutine($id, $key = null, $coroutineId = null): bool
 	{
-        if (is_null($coroutineId)) {
-            $coroutineId = Coroutine::getCid();
-        }
+		if (is_null($coroutineId)) {
+			$coroutineId = Coroutine::getCid();
+		}
 		if (!isset(Coroutine::getContext($coroutineId)[$id])) {
 			return false;
 		}
-        $value = Coroutine::getContext($coroutineId)[$id];
+		$value = Coroutine::getContext($coroutineId)[$id];
 		if ($key !== null && is_array($value)) {
-			return isset($value[$key]);
+			return isset($value[$key]) && $value[$key] !== null;
 		}
 		return true;
 	}
