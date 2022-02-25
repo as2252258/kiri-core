@@ -57,10 +57,7 @@ class Connection extends Component
 	 */
 	public function beginTransaction($coroutineName)
 	{
-		$connection = Context::getContext($coroutineName['cds']);
-		if (is_null($connection)) {
-			$connection = $this->get($coroutineName);
-		}
+		$connection = $this->get($coroutineName);
 		if ($connection instanceof PDO) {
 			$connection->beginTransaction();
 		}
