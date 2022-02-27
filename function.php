@@ -260,7 +260,7 @@ if (!function_exists('injectRuntime')) {
 				foreach ($attribute as $item) {
 					$item = $item->newInstance();
 
-					if ($class == 'app\Controller\SiteController') {
+					if (str_contains($class, 'SiteController')) {
 						echo $class, ' ', $method, ' ', $item::class, PHP_EOL;
 					}
 
