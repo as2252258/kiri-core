@@ -108,9 +108,6 @@ class Connection extends Component
 		$pdo = $this->pool->get($coroutineName, static function () use ($coroutineName, $config) {
 			return Kiri::getDi()->create(PDO::class, [$config]);
 		}, $minx);
-		if (Db::inTransactionsActive() && !$pdo->inTransaction()) {
-			$pdo->beginTransaction();
-		}
 		return Context::setContext($config['cds'], $pdo);
 	}
 
