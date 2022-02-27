@@ -256,7 +256,8 @@ if (!function_exists('injectRuntime')) {
 			$methods = $target->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
 
-				var_dump($class, $method);
+
+				echo $class, ' ', $method, PHP_EOL;
 
 				foreach ($attribute as $item) {
 					$item = $item->newInstance();
