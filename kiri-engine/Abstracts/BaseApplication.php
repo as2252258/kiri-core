@@ -46,16 +46,12 @@ abstract class BaseApplication extends Component
 	public function __construct()
 	{
 		Kiri::init($this);
-
-		$this->mapping($config['mapping'] ?? []);
-
 		$config = sweep(APP_PATH . '/config');
-
+		$this->mapping($config['mapping'] ?? []);
 		$this->parseInt($config);
 		$this->parseEvents($config);
 		$this->initErrorHandler();
 		$this->enableEnvConfig();
-
 		parent::__construct();
 	}
 
