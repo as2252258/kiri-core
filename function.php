@@ -256,10 +256,13 @@ if (!function_exists('injectRuntime')) {
 			$methods = $target->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
 
-				echo $class, ' ', $method, PHP_EOL;
 
 				foreach ($attribute as $item) {
 					$item = $item->newInstance();
+
+
+					echo $class, ' ', $method, ' ', $item::class, PHP_EOL;
+
 					if ($item instanceof Route) {
 						$router[] = [$item, $class, $method];
 					} else {
