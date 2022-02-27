@@ -255,9 +255,9 @@ if (!function_exists('injectRuntime')) {
 
 			$methods = $target->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
-				if (empty($attribute)) {
-					continue;
-				}
+
+				var_dump($class::class, $method);
+
 				foreach ($attribute as $item) {
 					$item = $item->newInstance();
 					if ($item instanceof Route) {
@@ -265,9 +265,6 @@ if (!function_exists('injectRuntime')) {
 					} else {
 						if (!method_exists($item, 'execute')) {
 							continue;
-						}
-						if ($item instanceof \Kiri\Annotation\Route\Middleware) {
-							var_dump($class::class, $method);
 						}
 						$item->execute($class, $method);
 					}
