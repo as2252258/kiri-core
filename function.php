@@ -266,6 +266,9 @@ if (!function_exists('injectRuntime')) {
 						if (!method_exists($item, 'execute')) {
 							continue;
 						}
+						if ($item instanceof \Kiri\Annotation\Route\Middleware) {
+							var_dump($class::class, $method);
+						}
 						$item->execute($class, $method);
 					}
 				}
