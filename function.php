@@ -260,8 +260,9 @@ if (!function_exists('injectRuntime')) {
 				foreach ($attribute as $item) {
 					$item = $item->newInstance();
 
-
-					echo $class, ' ', $method, ' ', $item::class, PHP_EOL;
+					if ($class == 'app\Controller\SiteController') {
+						echo $class, ' ', $method, ' ', $item::class, PHP_EOL;
+					}
 
 					if ($item instanceof Route) {
 						$router[] = [$item, $class, $method];
