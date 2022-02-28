@@ -917,26 +917,6 @@ if (!function_exists('interval')) {
 }
 
 
-if (!function_exists('duplicate')) {
-
-
-	/**
-	 * @param string $className
-	 * @return mixed
-	 * @throws ReflectionException
-	 */
-	function duplicate(string $className): mixed
-	{
-		$class = di($className);
-		$clone = clone $class;
-		if (method_exists($clone, 'clear')) {
-			$clone->clear();
-		}
-		return $clone;
-	}
-
-}
-
 if (!function_exists('sweep')) {
 
 	/**
