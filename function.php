@@ -260,7 +260,6 @@ if (!function_exists('injectRuntime')) {
 					if (!class_exists($item->getName())) {
 						continue;
 					}
-					var_export($item);
 					$item = $item->newInstance();
 					if ($item instanceof Route) {
 						$router[] = [$item, $class, $method];
