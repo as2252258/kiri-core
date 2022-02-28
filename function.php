@@ -255,14 +255,15 @@ if (!function_exists('injectRuntime')) {
 
 			$methods = $target->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
-				if (str_contains($class, 'SiteController')) {
-					echo $class, ' ', $method, ' ', var_export($attribute, 'true'), PHP_EOL;
-				}
+//				if (str_contains($class, 'SiteController')) {
+//					echo $class, ' ', $method, ' ', var_export($attribute, 'true'), PHP_EOL;
+//				}
 				/** @var ReflectionAttribute $item */
 				foreach ($attribute as $item) {
 					if (!class_exists($item->getName())) {
 						continue;
 					}
+					var_export($item);
 					$item = $item->newInstance();
 					if ($item instanceof Route) {
 						$router[] = [$item, $class, $method];
