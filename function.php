@@ -253,6 +253,7 @@ if (!function_exists('injectRuntime')) {
 				$value->execute($class);
 			}
 
+
 			$methods = $target->getMethodsAttribute();
 			foreach ($methods as $method => $attribute) {
 				/** @var ReflectionAttribute $item */
