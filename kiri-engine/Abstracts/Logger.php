@@ -28,19 +28,9 @@ class Logger implements LoggerInterface
 	const DEBUG = 'debug';
 
 
-	private array $_loggers = [];
-
 
 	const LOGGER_LEVELS = [Logger::EMERGENCY, Logger::ALERT, Logger::CRITICAL, Logger::ERROR, Logger::WARNING, Logger::NOTICE, Logger::INFO, Logger::DEBUG];
 
-
-	/**
-	 * @return void
-	 */
-	public function init()
-	{
-		Kiri::getDi()->get(EventProvider::class)->on(OnWorkerStop::class, [$this, 'onAfterRequest']);
-	}
 
 
 	/**
