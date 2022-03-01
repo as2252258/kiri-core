@@ -161,23 +161,12 @@ class Logger implements LoggerInterface
 		$_string = '[' . now() . '] production.' . $level . ': ' . $this->_string($message, $context);
 
 		file_put_contents('php://output', $_string);
+
+		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
+
+		file_put_contents($filename, $_string);
 	}
 
-
-	/**
-	 * @param OnWorkerStop $param
-	 * @throws Exception
-	 */
-	public function onAfterRequest(OnWorkerStop $param)
-	{
-		$loggers = implode(PHP_EOL, $this->_loggers);
-		$this->_loggers = [];
-		if (!empty($loggers)) {
-			$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
-
-			file_put_contents($filename, $loggers);
-		}
-	}
 
 
 	/**
