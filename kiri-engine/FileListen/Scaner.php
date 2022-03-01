@@ -68,6 +68,9 @@ class Scaner
 			}
 			if (is_file($value)) {
 				if ($this->checkFile($value, $isReload)) {
+					if ($this->isReloading) {
+						break;
+					}
 					$this->isReloading = TRUE;
 
 					sleep(2);
