@@ -11,6 +11,7 @@ use Kiri;
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)] class Route extends AbstractAttribute
 {
 
+
 	/**
 	 * Route constructor.
 	 * @param string $uri
