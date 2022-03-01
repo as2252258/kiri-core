@@ -50,6 +50,7 @@ class Scaner
 	}
 
 
+
 	/**
 	 * @param $path
 	 * @param bool $isReload
