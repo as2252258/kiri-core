@@ -238,7 +238,7 @@ class Application extends BaseApplication
 
 		$this->getContainer()->setBindings(OutputInterface::class, $output);
 
-		if (!($class instanceof Kiri\Server\ServerCommand)) {
+		if (!($class instanceof HotReload)) {
 			scan_directory(MODEL_PATH, 'app\Model');
 		}
 
