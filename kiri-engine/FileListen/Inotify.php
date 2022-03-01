@@ -93,7 +93,9 @@ class Inotify
 
 			//非重启类型
 			if (str_ends_with($ev['name'], '.php')) {
-
+				if ($this->isReloading) {
+					break;
+				}
 				Timer::after(3000, fn() => $this->reload($search));
 				$this->isReloading = TRUE;
 			}
