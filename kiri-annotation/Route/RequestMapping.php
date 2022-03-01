@@ -9,11 +9,11 @@ use Kiri\Annotation\AbstractAttribute;
 
 
 	/**
-	 * @param Method $method
+	 * @param RequestMethod $method
 	 * @param string $path
 	 * @param string|null $version
 	 */
-	public function __construct(Method $method, string $path, string $version = null)
+	public function __construct(RequestMethod $method, string $path, string $version = null)
 	{
 	}
 

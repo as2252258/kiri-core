@@ -2,7 +2,7 @@
 
 namespace Kiri\Annotation\Route;
 
-enum Method
+enum RequestMethod
 {
 
 
