@@ -14,13 +14,12 @@ use Kiri;
 	/**
 	 * Route constructor.
 	 * @param string $uri
-	 * @param string $method
+	 * @param Method $method
 	 * @param string $version
 	 */
-	public function __construct(public string $uri, public string $method, public string $version = 'v.1.0')
+	public function __construct(public string $uri, public Method $method, public string $version = 'v.1.0')
 	{
 		$this->uri = '/' . ltrim($this->uri, '/');
-		$this->method = strtoupper($this->method);
 	}
 
 
@@ -28,12 +27,11 @@ use Kiri;
 	 * @param mixed $class
 	 * @param mixed|null $method
 	 * @return bool
-	 * @throws \ReflectionException
 	 */
 	public function execute(mixed $class, mixed $method = null): bool
 	{
 		$di = Kiri::getDi()->get(Router::class);
-		$di->addRoute($this->method, $this->uri, $class . '@' . $method);
+		$di->addRoute($this->method->getString(), $this->uri, $class . '@' . $method);
 		return parent::execute($class, $method);
 	}
 
