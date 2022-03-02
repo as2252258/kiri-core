@@ -27,8 +27,6 @@ use Psr\Log\LoggerInterface;
 abstract class BaseApplication extends Component
 {
 
-	use TraitApplication;
-
 
 	/**
 	 * @var string
