@@ -111,13 +111,12 @@ class HotReload extends Command
 	public function errorHandler()
 	{
 		$error = func_get_args();
-
 		$path = ['file' => $error[2], 'line' => $error[3]];
 
 		if ($error[0] === 0) {
 			$error[0] = 500;
 		}
-		$data = Json::to(500, $error[1], $path);
+		$data = Json::to($error[0], $error[1], $path);
 
 		$this->logger->error('error', [$data]);
 	}
