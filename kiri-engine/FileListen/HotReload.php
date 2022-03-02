@@ -137,9 +137,9 @@ class HotReload extends Command
 		$this->trigger_reload();
 		Timer::tick(1000, fn() => $this->healthCheck());
 
-		Process::signal(SIGTERM, [$this, 'onSignal']);
-		Process::signal(SIGKILL, [$this, 'onSignal']);
-
+		pcntl_signal(SIGTERM, function () {
+			$this->onSignal(func_get_args());
+		});
 		$this->driver->start();
 		return 0;
 	}
