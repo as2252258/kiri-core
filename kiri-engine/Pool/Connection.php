@@ -11,8 +11,6 @@ use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Context;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Swoole\Error;
 use Throwable;
 
@@ -24,17 +22,14 @@ class Connection extends Component
 {
 
 
-	private Pool $pool;
-
-
 	/**
-	 * @return void
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @param Pool $pool
+	 * @param array $config
+	 * @throws Exception
 	 */
-	public function init()
+	public function __construct(public Pool $pool, array $config = [])
 	{
-		$this->pool = $this->getContainer()->get(Pool::class);
+		parent::__construct($config);
 	}
 
 

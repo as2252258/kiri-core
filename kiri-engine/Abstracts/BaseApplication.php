@@ -15,6 +15,7 @@ use Kiri;
 use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler, StdoutLogger, StdoutLoggerInterface};
 use Kiri\Exception\{InitException};
+use Psr\Container\ContainerInterface;
 use Kiri\Server\{Server};
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -41,7 +42,7 @@ abstract class BaseApplication extends Component
 	 *
 	 * @throws
 	 */
-	public function __construct()
+	public function __construct(public ContainerInterface $container)
 	{
 		Kiri::init($this);
 		$config = sweep(APP_PATH . '/config');

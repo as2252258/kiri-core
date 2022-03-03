@@ -236,7 +236,7 @@ class Application extends BaseApplication
 	{
 		fire(new OnBeforeCommandExecute());
 
-		$this->getContainer()->setBindings(OutputInterface::class, $output);
+		$this->container->setBindings(OutputInterface::class, $output);
 
 		if (!($class instanceof HotReload)) {
 			scan_directory(MODEL_PATH, 'app\Model');

@@ -24,9 +24,6 @@ use Psr\Container\NotFoundExceptionInterface;
 /**
  * Class Component
  * @package Kiri\Base
- * @property EventDispatch $eventDispatch
- * @property EventProvider $eventProvider
- * @property Container $container
  */
 class Component implements Configure
 {
