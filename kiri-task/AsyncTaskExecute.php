@@ -7,6 +7,7 @@ use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Server\SwooleServerInterface;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 
@@ -17,17 +18,15 @@ class AsyncTaskExecute extends Component
 {
 
 
-	public TaskManager $hashMap;
-
-
 	/**
-	 * @return void
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @param TaskManager $hashMap
+	 * @param ContainerInterface $container
+	 * @param array $config
+	 * @throws Exception
 	 */
-	public function init()
+	public function __construct(public TaskManager $hashMap, public ContainerInterface $container, array $config = [])
 	{
-		$this->hashMap = $this->getContainer()->get(TaskManager::class);
+		parent::__construct($config);
 	}
 
 
@@ -44,9 +43,8 @@ class AsyncTaskExecute extends Component
 		if (is_string($handler)) {
 			$handler = $this->handle($handler, $params);
 		}
-		$container = $this->getContainer();
-		if ($container->has(SwooleServerInterface::class)) {
-			$server = $container->get(SwooleServerInterface::class);
+		if ($this->container->has(SwooleServerInterface::class)) {
+			$server = $this->container->get(SwooleServerInterface::class);
 			if ($workerId < 0 || $workerId > $server->setting['task_worker_num']) {
 				$workerId = random_int(0, $server->setting['task_worker_num'] - 1);
 			}
@@ -69,7 +67,7 @@ class AsyncTaskExecute extends Component
 		if (!class_exists($handler) && $this->hashMap->has($handler)) {
 			$handler = $this->hashMap->get($handler);
 		}
-		$implements = $this->getContainer()->getReflect($handler);
+		$implements = $this->container->getReflect($handler);
 		if (!in_array(OnTaskInterface::class, $implements->getInterfaceNames())) {
 			throw new Exception('Task must instance ' . OnTaskInterface::class);
 		}

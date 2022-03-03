@@ -20,6 +20,7 @@ use Kiri\Server\{Server};
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Kiri\Events\EventProvider;
 
 /**
  * Class BaseApplication
@@ -42,7 +43,7 @@ abstract class BaseApplication extends Component
 	 *
 	 * @throws
 	 */
-	public function __construct(public ContainerInterface $container)
+	public function __construct(public ContainerInterface $container, public EventProvider $eventProvider)
 	{
 		Kiri::init($this);
 		$config = sweep(APP_PATH . '/config');
@@ -183,22 +184,21 @@ abstract class BaseApplication extends Component
 	 */
 	private function addEvent($key, $value): void
 	{
-		$provider = $this->getEventProvider();
 		if ($value instanceof \Closure || is_object($value)) {
-			$provider->on($key, $value, 0);
+			$this->eventProvider->on($key, $value, 0);
 			return;
 		}
 
 
 		if (is_array($value)) {
 			if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-				$provider->on($key, $value, 0);
+				$this->eventProvider->on($key, $value, 0);
 				return;
 			}
 
 			if (is_string($value[0])) {
 				$value[0] = Kiri::createObject($value[0]);
-				$provider->on($key, $value, 0);
+				$this->eventProvider->on($key, $value, 0);
 				return;
 			}
 
@@ -207,7 +207,7 @@ abstract class BaseApplication extends Component
 				if (!is_callable($item, true)) {
 					throw new InitException("Class does not hav callback.");
 				}
-				$provider->on($key, $item, 0);
+				$this->eventProvider->on($key, $item, 0);
 			}
 		}
 

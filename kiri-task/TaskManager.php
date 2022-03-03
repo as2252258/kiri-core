@@ -2,10 +2,12 @@
 
 namespace Kiri\Task;
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Component;
 use Kiri\Core\HashMap;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Swoole\Server;
 
@@ -17,10 +19,13 @@ class TaskManager extends Component
 
 
 	/**
-	 *
+	 * @param ContainerInterface $container
+	 * @param array $config
+	 * @throws Exception
 	 */
-	public function init()
+	public function __construct(public ContainerInterface $container, array $config = [])
 	{
+		parent::__construct($config);
 		$this->hashMap = new HashMap();
 	}
 
@@ -38,7 +43,7 @@ class TaskManager extends Component
 		}
 
 		$task_use_object = $swollen->setting['task_object'] ?? $swollen->setting['task_use_object'] ?? false;
-		$reflect = $this->getContainer()->get(OnServerTask::class);
+		$reflect = $this->container->get(OnServerTask::class);
 
 		$swollen->on('finish', [$reflect, 'onFinish']);
 		if ($task_use_object || $swollen->setting['task_enable_coroutine']) {
@@ -79,7 +84,7 @@ class TaskManager extends Component
 	{
 		$task = $this->hashMap->get($key);
 		if (is_string($task)) {
-			$task = $this->getContainer()->get($task);
+			$task = $this->container->get($task);
 			if (!empty($task)) {
 				$this->add($key, $task);
 			}

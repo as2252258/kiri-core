@@ -13,13 +13,7 @@ namespace Kiri\Abstracts;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri;
-use Kiri\Di\Container;
 use Kiri\Error\StdoutLoggerInterface;
-use Kiri\Events\EventDispatch;
-use Kiri\Events\EventProvider;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Component
@@ -62,37 +56,6 @@ class Component implements Configure
 	#[Pure] public static function className(): string
 	{
 		return static::class;
-	}
-
-
-	/**
-	 * @return Container|ContainerInterface
-	 */
-	#[Pure] public function getContainer(): ContainerInterface|Container
-	{
-		return Kiri::getDi();
-	}
-
-
-	/**
-	 * @return EventProvider
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
-	 */
-	public function getEventProvider(): EventProvider
-	{
-		return $this->getContainer()->get(EventProvider::class);
-	}
-
-
-	/**
-	 * @return EventDispatch
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
-	 */
-	protected function getEventDispatch(): EventDispatch
-	{
-		return $this->getContainer()->get(EventDispatch::class);
 	}
 
 

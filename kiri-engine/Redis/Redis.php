@@ -14,11 +14,10 @@ use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
+use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
 use Kiri\Pool\Pool;
 use Kiri\Server\Events\OnWorkerExit;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Redis
@@ -41,25 +40,31 @@ class Redis extends Component
 	const REDIS_OPTION_POOL_MAX = 'max';
 
 
-	private Kiri\Pool\Pool $pool;
+	/**
+	 * @param EventProvider $eventProvider
+	 * @param Pool $pool
+	 * @param array $config
+	 * @throws Exception
+	 */
+	public function __construct(public EventProvider $eventProvider,
+	                            public Pool          $pool, array $config = [])
+	{
+		parent::__construct($config);
+	}
 
 
 	/**
 	 * @return void
 	 * @throws ConfigException
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
 	public function init()
 	{
-		$this->pool = Kiri::getDi()->get(Pool::class);
-
 		$config = $this->get_config();
 
 		$length = Config::get('cache.redis.pool.max', 10);
 
-		$this->getEventProvider()->on(OnWorkerExit::class, [$this, 'destroy'], 0);
+		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
 		$this->pool->initConnections($config['host'], $length);
 	}
