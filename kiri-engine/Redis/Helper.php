@@ -99,7 +99,7 @@ class Helper implements StopHeartbeatCheck
 
 
 	/**
-	 *
+	 * clear client heartbeat
 	 */
 	public function stopHeartbeatCheck(): void
 	{
