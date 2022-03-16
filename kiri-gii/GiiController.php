@@ -69,10 +69,9 @@ use Exception;
 use Kiri\Annotation\Target;
 use Kiri\Annotation\Route\Middleware;
 use Kiri\Annotation\Route\Route;
+use Kiri\Annotation\Route\RequestMethod;
 use Kiri\Core\Str;
 use Kiri\Core\Json;
-use Kiri\Message\Context\Request;
-use Kiri\Message\Context\Response;
 use Kiri\Message\Controller;
 use JetBrains\PhpStorm\ArrayShape;
 use {$model_namespace}\\{$managerName};
@@ -180,7 +179,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . $_path . '/add", method: "POST")]
+	#[Route(uri: "' . $_path . '/add", method: RequestMethod::REQUEST_POST)]
 	#[Middleware(middleware: [])]
 	public function actionAdd(): string
 	{
@@ -235,7 +234,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . $_path . '/update", method: "POST")]
+	#[Route(uri: "' . $_path . '/update", method: RequestMethod::REQUEST_POST)]
 	#[Middleware(middleware: [])]
 	public function actionUpdate(): string
 	{
@@ -272,7 +271,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . $_path . '/batch-delete", method: "POST")]
+	#[Route(uri: "' . $_path . '/batch-delete", method: RequestMethod::REQUEST_POST)]
 	#[Middleware(middleware: [])]
 	public function actionBatchDelete(): string
 	{
@@ -309,7 +308,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . $_path . '/detail", method: "POST")]
+	#[Route(uri: "' . $_path . '/detail", method: RequestMethod::REQUEST_POST)]
 	#[Middleware(middleware: [])]
     public function actionDetail(): string
     {
@@ -341,7 +340,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . $_path . '/delete", method: "POST")]
+	#[Route(uri: "' . $_path . '/delete", method: RequestMethod::REQUEST_POST)]
 	#[Middleware(middleware: [])]
     public function actionDelete(): string
     {
@@ -379,7 +378,7 @@ use {$model_namespace}\\{$managerName};
 	 * @return string
 	 * @throws Exception
 	 */
-	#[Route(uri: "' . $_path . '/list", method: "POST")]
+	#[Route(uri: "' . $_path . '/list", method: RequestMethod::REQUEST_GET)]
 	#[Middleware(middleware: [])]
     public function actionList(): string
     {        
