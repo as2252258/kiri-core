@@ -30,11 +30,11 @@ class Gii
 
 	private InputInterface $input;
 
-	public string $modelPath = APP_PATH . 'app/Model/';
-	public string $modelNamespace = 'App\\Model\\';
+	public string $modelPath = APP_PATH . 'models/';
+	public string $modelNamespace = 'app\Model\\';
 
-	public string $controllerPath = APP_PATH . 'app/Http/Controller/';
-	public string $controllerNamespace = 'App\\Controller\\';
+	public string $controllerPath = APP_PATH . 'controllers/';
+	public string $controllerNamespace = 'app\\Controller\\';
 
 
 	public static array $createSqls = [];
@@ -188,7 +188,7 @@ class Gii
 		$controller->setInput($this->input);
 		$controller->setModelNamespace($this->modelNamespace);
 		$controller->setControllerPath($this->controllerPath);
-		$controller->setModule($this->input->getArgument('module'));
+//		$controller->setModule($this->input->getArgument('module'));
 		$controller->setControllerNamespace($this->controllerNamespace);
 		return $controller->generate();
 	}
