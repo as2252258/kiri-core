@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Gii;
 
 use Exception;
-use ReflectionException;
 use Kiri;
+use ReflectionException;
+use function logger;
 
 /**
  * Class GiiController

@@ -8,6 +8,8 @@
             word-break: break-all;
             white-space: pre-wrap;
             word-wrap: break-word;
+            overflow-y: scroll;
+        overflow: hidden;
         }
     </style>
 </head>
@@ -48,7 +50,7 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://localhost:8080/websocket');
+        sock = new WebSocket('ws://127.0.0.1:9528/222');
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)

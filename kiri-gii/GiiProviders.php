@@ -6,9 +6,9 @@ namespace Gii;
 
 
 use Exception;
+use Kiri;
 use Kiri\Abstracts\Providers;
 use Kiri\Application;
-use Kiri;
 
 /**
  * Class DatabasesProviders

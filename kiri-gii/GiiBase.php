@@ -11,6 +11,7 @@ use Kiri\Core\Json;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Console\Input\InputInterface;
+use const APP_PATH;
 
 /**
  * Class GiiBase

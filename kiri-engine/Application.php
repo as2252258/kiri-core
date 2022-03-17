@@ -222,6 +222,7 @@ class Application extends BaseApplication
 	}
 
 
+
 	/**
 	 * @param Command $class
 	 * @param $input

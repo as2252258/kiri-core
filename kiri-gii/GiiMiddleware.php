@@ -7,6 +7,7 @@ namespace Gii;
 
 use Exception;
 use Kiri;
+use const APP_PATH;
 
 /**
  * Class GiiMiddleware

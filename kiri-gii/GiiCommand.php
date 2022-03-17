@@ -5,9 +5,9 @@ namespace Gii;
 
 
 use Exception;
+use Kiri;
 use Kiri\Abstracts\Config;
 use Kiri\Exception\ConfigException;
-use Kiri;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

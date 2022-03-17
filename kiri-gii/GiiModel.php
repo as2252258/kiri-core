@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Gii;
 
 use Database\Db;
-use Database\Model;
 use Exception;
-use ReflectionException;
 use Kiri;
+use ReflectionException;
+use function logger;
 
 /**
  * Class GiiModel

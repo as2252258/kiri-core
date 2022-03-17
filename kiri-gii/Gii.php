@@ -12,8 +12,6 @@ namespace Gii;
 use Database\Connection;
 use Database\Db;
 use Exception;
-use Kiri\Redis\Redis;
-use Kiri;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
