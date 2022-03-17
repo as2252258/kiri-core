@@ -32,7 +32,6 @@
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
-      "Gii\\": "kiri-gii/",
       "Kiri\\Annotation\\": "kiri-annotation/",
       "Kiri\\Task\\": "kiri-task/"
     },
