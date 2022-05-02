@@ -17,7 +17,6 @@ use Kiri;
 use Kiri\Abstracts\{BaseApplication, Config, Kernel};
 use Kiri\Crontab\CrontabProviders;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
-use Kiri\FileListen\HotReload;
 use Kiri\Server\ServerProviders;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -107,18 +106,6 @@ class Application extends BaseApplication
 	public function getProcessName(string $class): ?Process
 	{
 		return $this->_process[$class] ?? null;
-	}
-
-
-	/**
-	 * @throws
-	 */
-	public function withFileChangeListen()
-	{
-		$container = Kiri::getDi();
-
-		$console = $container->get(ConsoleApplication::class);
-		$console->add($container->get(HotReload::class));
 	}
 
 
@@ -239,9 +226,9 @@ class Application extends BaseApplication
 
 		$this->container->setBindings(OutputInterface::class, $output);
 
-		if (!($class instanceof HotReload)) {
-			scan_directory(MODEL_PATH, 'app\Model');
-		}
+        if (!($class instanceof Kiri\Server\ServerCommand)) {
+            scan_directory(MODEL_PATH,'app\Model');
+        }
 
 		$class->run($input, $output);
 		fire(new OnAfterCommandExecute());
