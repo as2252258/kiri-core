@@ -84,7 +84,6 @@ class Redis extends Component
 		} else {
 			$data = $this->proxy($name, $arguments);
 		}
-		$this->logger->debug('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
 		return $data;
 	}
 
@@ -168,11 +167,14 @@ SCRIPT;
 	public function proxy($name, $arguments): mixed
 	{
 		$client = $this->getClient();
+		$time = time();
 		try {
 			$response = $client->{$name}(...$arguments);
 		} catch (\Throwable $throwable) {
 			$response = $this->logger->addError($throwable->getMessage());
 		} finally {
+			$this->logger->debug('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
+
 			$this->pool->push($this->get_config()['host'], $client);
 		}
 		return $response;
