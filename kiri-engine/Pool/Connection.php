@@ -22,6 +22,9 @@ class Connection extends Component
 {
 
 
+	private array $master = [];
+
+
 	/**
 	 * @param Pool $pool
 	 * @param array $config
@@ -93,6 +96,9 @@ class Connection extends Component
 	public function get(mixed $config): ?PDO
 	{
 		$coroutineName = $config['cds'];
+		if (Db::inTransactionsActive() && isset($this->master[$coroutineName])) {
+			return $this->master[$coroutineName];
+		}
 		$minx = Config::get('databases.pool.min', 1);
 		return $this->pool->get($coroutineName, static function () use ($coroutineName, $config) {
 			$connect = Kiri::getDi()->create(PDO::class, [$config]);
