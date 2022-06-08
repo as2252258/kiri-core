@@ -84,9 +84,7 @@ class Redis extends Component
 		} else {
 			$data = $this->proxy($name, $arguments);
 		}
-		if (microtime(true) - $time >= 0.02) {
-			$this->logger->warning('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
-		}
+		$this->logger->warning('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
 		return $data;
 	}
 
