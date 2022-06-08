@@ -96,20 +96,20 @@ class Connection extends Component
 	public function get(mixed $config): ?PDO
 	{
 		$coroutineName = $config['cds'];
-		if (Db::inTransactionsActive() && isset($this->master[$coroutineName])) {
+		if (isset($this->master[$coroutineName])) {
 			return $this->master[$coroutineName];
 		}
 		$minx = Config::get('databases.pool.min', 1);
-		return $this->pool->get($coroutineName, static function () use ($coroutineName, $config) {
-			$connect = Kiri::getDi()->create(PDO::class, [$config]);
-			if (!Db::inTransactionsActive()) {
-				return $connect;
-			}
+		$connect = $this->pool->get($coroutineName, static function () use ($coroutineName, $config) {
+			return Kiri::getDi()->create(PDO::class, [$config]);
+		}, $minx);
+		if (Db::inTransactionsActive()) {
 			if (!$connect->inTransaction()) {
 				$connect->beginTransaction();
 			}
-			return $connect;
-		}, $minx);
+			return $this->master[$coroutineName] = $connect;
+		}
+		return $connect;
 	}
 
 
