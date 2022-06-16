@@ -198,6 +198,9 @@ class Logger implements LoggerInterface
 			$context = ['file' => $context->getFile(), 'line' => $context->getLine()];
 		}
 		if (!empty($context)) {
+			if (is_array($context) && $context[0] instanceof \Throwable) {
+				$context = ['file' => $context[0]->getFile(), 'line' => $context[0]->getLine()];
+			}
 			return $message . ' ' . PHP_EOL . print_r($context, true) . PHP_EOL;
 		}
 		return $message . PHP_EOL;
