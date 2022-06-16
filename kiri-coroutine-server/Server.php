@@ -179,12 +179,12 @@ class Server extends Component
 				}
 			}
 			if ($handler instanceof OnCloseInterface) {
-				$handler->onClose($this->server, $response->fd);
+				$handler->onClose($response->fd);
 			}
 			return null;
 		}
 
-		$params = $this->container->getArgs($handler[0], $handler[1] ?? null);
+		$params = $this->container->getArgs($handler[1], $handler[0] ?? null);
 		$result = call_user_func($handler, ...$params);
 		if (is_null($result)) {
 			return $this->write("", $response);
