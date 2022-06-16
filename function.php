@@ -29,23 +29,44 @@ if (!function_exists('make')) {
 	 */
 	function make($name, $default = NULL): mixed
 	{
-		if (class_exists($name)) {
-			return Kiri::createObject($name);
+		if (is_string($name)) {
+			if (Kiri::has($name)) {
+				return Kiri::app()->get($name);
+			}
+			if (empty($default)) {
+				throw new Exception("Unknown component ID: $name");
+			}
+			if (Kiri::has($default)) {
+				return Kiri::app()->get($default);
+			}
+			return null;
 		}
-		if (Kiri::has($name)) {
-			return Kiri::app()->get($name);
-		}
-		if (empty($default)) {
-			throw new Exception("Unknown component ID: $name");
-		}
-		if (Kiri::has($default)) {
-			return Kiri::app()->get($default);
-		}
-		$class = Kiri::createObject($default);
-		class_alias($name, $default, TRUE);
-		return $class;
+		return Kiri::createObject($default);
 	}
 
+
+}
+
+
+if (!function_exists('call')) {
+
+
+	/**
+	 * @param $handler
+	 * @param mixed ...$params
+	 * @return mixed
+	 * @throws Exception
+	 */
+	function call($handler, ...$params): mixed
+	{
+		if (is_array($handler) && is_string($handler[0])) {
+			$handler[0] = di($handler[0]);
+		}
+		if (!is_callable($handler, true)) {
+			throw new Exception('Call function not exists.');
+		}
+		return call_user_func($handler, ...$params);
+	}
 
 }
 

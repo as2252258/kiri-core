@@ -12,6 +12,6 @@ interface OnTaskInterface
 	public function execute();
 
 
-	public function finish(Server $server, int $task_id);
+	public function finish(?Server $server, int $task_id);
 
 }

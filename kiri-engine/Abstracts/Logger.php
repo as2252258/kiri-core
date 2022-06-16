@@ -28,9 +28,7 @@ class Logger implements LoggerInterface
 	const DEBUG = 'debug';
 
 
-
 	const LOGGER_LEVELS = [Logger::EMERGENCY, Logger::ALERT, Logger::CRITICAL, Logger::ERROR, Logger::WARNING, Logger::NOTICE, Logger::INFO, Logger::DEBUG];
-
 
 
 	/**
@@ -158,12 +156,11 @@ class Logger implements LoggerInterface
 	}
 
 
-
 	/**
 	 * @return void
 	 * @throws Exception
 	 */
-	public function flush()
+	public function flush(): void
 	{
 		$this->removeFile(storage());
 	}
@@ -173,7 +170,7 @@ class Logger implements LoggerInterface
 	 * @param string $dirname
 	 * @return void
 	 */
-	private function removeFile(string $dirname)
+	private function removeFile(string $dirname): void
 	{
 		$paths = new DirectoryIterator($dirname);
 		/** @var DirectoryIterator $path */
@@ -197,6 +194,9 @@ class Logger implements LoggerInterface
 	 */
 	private function _string($message, $context): string
 	{
+		if ($context instanceof \Throwable) {
+			$context = ['file' => $context->getFile(), 'line' => $context->getLine()];
+		}
 		if (!empty($context)) {
 			return $message . ' ' . PHP_EOL . print_r($context, true) . PHP_EOL;
 		}

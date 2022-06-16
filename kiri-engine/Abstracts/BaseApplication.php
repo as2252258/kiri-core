@@ -15,7 +15,7 @@ use Kiri;
 use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler, StdoutLogger, StdoutLoggerInterface};
 use Kiri\Exception\{InitException};
-use Psr\Container\ContainerInterface;
+use Kiri\Di\ContainerInterface;
 use Kiri\Server\{Server};
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;

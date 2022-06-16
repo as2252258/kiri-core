@@ -30,7 +30,7 @@ class OnServerTask
 	 * @param mixed $data
 	 * @throws ConfigException
 	 */
-	public function onTask(Server $server, int $task_id, int $src_worker_id, mixed $data)
+	public function onTask(Server $server, int $task_id, int $src_worker_id, mixed $data): void
 	{
 		try {
 			$data = $this->resolve($data);
@@ -49,7 +49,7 @@ class OnServerTask
 	 * @param Server\Task $task
 	 * @throws ConfigException
 	 */
-	public function onCoroutineTask(?Server $server, Server\Task $task)
+	public function onCoroutineTask(?Server $server, Server\Task $task): void
 	{
 		try {
 			$data = $this->resolve($task->data);
@@ -82,7 +82,7 @@ class OnServerTask
 	 * @param int $task_id
 	 * @param mixed $data
 	 */
-	public function onFinish(Server $server, int $task_id, mixed $data)
+	public function onFinish(Server $server, int $task_id, mixed $data): void
 	{
 		if (!($data instanceof OnTaskInterface)) {
 			return;

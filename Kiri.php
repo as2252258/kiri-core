@@ -14,7 +14,8 @@ use Kiri\Application;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
 use Kiri\Environmental;
-use Psr\Container\ContainerInterface;
+use Kiri\Di\ContainerInterface;
+use Kiri\Exception\ConfigException;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
@@ -149,7 +150,6 @@ class Kiri
 	}
 
 
-
 	/**
 	 * @param $className
 	 * @param array $construct
@@ -169,6 +169,24 @@ class Kiri
 		} else {
 			throw new Exception('Unsupported configuration type: ' . gettype($className));
 		}
+	}
+
+
+	/**
+	 * @param $prefix
+	 * @return void
+	 * @throws ConfigException
+	 */
+	public static function setProcessName($prefix): void
+	{
+		if (Kiri::getPlatform()->isMac()) {
+			return;
+		}
+		$name = '[' . Config::get('id', 'system-service') . ']';
+		if (!empty($prefix)) {
+			$name .= '.' . $prefix;
+		}
+		swoole_set_process_name($name);
 	}
 
 
@@ -309,7 +327,6 @@ class Kiri
 	{
 		return Kiri::createObject(Environmental::class);
 	}
-
 
 
 	const PROCESS = 'process';
