@@ -123,12 +123,12 @@ class Connection extends Component
 
 	/**
 	 * @param string $name
-	 * @return void
+	 * @return array
 	 * @throws Kiri\Exception\ConfigException
 	 */
-	public function check(string $name): void
+	public function check(string $name): array
 	{
-		$this->pool->check($name);
+		return $this->pool->check($name);
 	}
 
 

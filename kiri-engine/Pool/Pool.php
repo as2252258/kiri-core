@@ -59,21 +59,26 @@ class Pool extends Component
 
 	/**
 	 * @param $name
-	 * @return void
+	 * @return array
 	 * @throws ConfigException
 	 */
-	public function check($name): void
+	public function check($name): array
 	{
 		$channel = $this->channel($name);
+		$count = $success = 0;
 
 		$lists = [];
 		while (($pdo = $channel->pop()) instanceof PDO) {
-			$pdo->check();
+			$count += 1;
+			if ($pdo->check()) {
+				$success += 1;
+			}
 			$lists[] = $pdo;
 		}
 		foreach ($lists as $list) {
 			$channel->push($list);
 		}
+		return [$count, $success];
 	}
 
 
