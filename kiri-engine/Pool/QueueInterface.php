@@ -25,4 +25,7 @@ interface QueueInterface
 
 	public function isFull(): bool;
 
+
+	public function isClose(): bool;
+
 }

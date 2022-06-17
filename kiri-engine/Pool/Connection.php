@@ -13,6 +13,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Context;
 use Swoole\Error;
 use Throwable;
+use Kiri\Abstracts\CoordinatorManager;
 
 /**
  * Class Connection
@@ -96,8 +97,21 @@ class Connection extends Component
 	public function get(mixed $config): ?PDO
 	{
 		$minx = Config::get('databases.pool.min', 1);
-		return $this->pool->get($config['cds'], static function () use ($config) {
-			$connect = Kiri::getDi()->create(PDO::class, [$config]);
+
+		CoordinatorManager::utility($config['cds'])->yield();
+
+		return $this->pool->get($config['cds'], $this->generate($config), $minx);
+	}
+
+
+	/**
+	 * @param array $config
+	 * @return Closure
+	 */
+	public function generate(array $config): Closure
+	{
+		return static function () use ($config) {
+			$connect = new PDO($config);
 			if (!Db::inTransactionsActive()) {
 				return $connect;
 			}
@@ -105,7 +119,18 @@ class Connection extends Component
 				$connect->beginTransaction();
 			}
 			return $connect;
-		}, $minx);
+		};
+	}
+
+
+	/**
+	 * @param string $name
+	 * @return void
+	 * @throws Kiri\Exception\ConfigException
+	 */
+	public function check(string $name): void
+	{
+		$this->pool->check($name);
 	}
 
 
@@ -117,7 +142,7 @@ class Connection extends Component
 	public function create($coroutineName, $config): Closure
 	{
 		return static function () use ($coroutineName, $config) {
-			return Kiri::getDi()->create(PDO::class, [$config]);
+			return new PDO($config);
 		};
 	}
 
@@ -129,7 +154,7 @@ class Connection extends Component
 	 * @throws Kiri\Exception\ConfigException
 	 * @throws Exception
 	 */
-	public function addItem(string $name, PDO $PDO)
+	public function addItem(string $name, PDO $PDO): void
 	{
 		$this->pool->push($name, $PDO);
 	}

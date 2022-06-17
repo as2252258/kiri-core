@@ -98,4 +98,14 @@ class SplQueue implements QueueInterface
 		// TODO: Implement isFull() method.
 		return $this->channel->count() >= $this->max;
 	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isClose(): bool
+	{
+		return false;
+	}
+
 }

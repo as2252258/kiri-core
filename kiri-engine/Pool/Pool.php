@@ -4,12 +4,13 @@
 namespace Kiri\Pool;
 
 
+use Database\Mysql\PDO;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
+use Kiri\Abstracts\CoordinatorManager;
 use Kiri\Context;
 use Kiri\Exception\ConfigException;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 
@@ -20,7 +21,7 @@ use Swoole\Coroutine\Channel;
 class Pool extends Component
 {
 
-	/** @var Channel[] */
+	/** @var array<PoolQueue> */
 	private static array $_connections = [];
 
 	public int $max = 60;
@@ -40,10 +41,10 @@ class Pool extends Component
 
 
 	/**
-	 * @param Channel|SplQueue $channel
+	 * @param PoolQueue $channel
 	 * @param $retain_number
 	 */
-	protected function pop(Channel|SplQueue $channel, $retain_number): void
+	protected function pop(PoolQueue $channel, $retain_number): void
 	{
 		while ($channel->length() > $retain_number) {
 			if (Context::inCoroutine()) {
@@ -58,6 +59,24 @@ class Pool extends Component
 
 	/**
 	 * @param $name
+	 * @return void
+	 * @throws ConfigException
+	 */
+	public function check($name): void
+	{
+		CoordinatorManager::utility($name)->waite();
+
+		$channel = $this->channel($name);
+		while (($pdo = $channel->pop()) instanceof PDO) {
+			$pdo->check();
+		}
+
+		CoordinatorManager::utility($name)->done();
+	}
+
+
+	/**
+	 * @param $name
 	 * @param int $max
 	 * @throws ConfigException
 	 */
@@ -65,7 +84,7 @@ class Pool extends Component
 	{
 		if (isset(static::$_connections[$name])) {
 			$value = static::$_connections[$name];
-			if ($value instanceof Channel || $value instanceof SplQueue) {
+			if ($value instanceof PoolQueue) {
 				return;
 			}
 		}
@@ -76,11 +95,11 @@ class Pool extends Component
 
 	/**
 	 * @param $name
-	 * @return Channel|SplQueue
+	 * @return PoolQueue
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	private function getChannel($name): Channel|SplQueue
+	public function channel($name): PoolQueue
 	{
 		if (!isset(static::$_connections[$name])) {
 			$this->newChannel($name);
@@ -100,11 +119,7 @@ class Pool extends Component
 		if ($max == null) {
 			$max = Config::get('databases.pool.max', 10);
 		}
-		if (Coroutine::getCid() === -1) {
-			static::$_connections[$name] = new SplQueue($max);
-		} else {
-			static::$_connections[$name] = new Channel($max);
-		}
+		static::$_connections[$name] = new PoolQueue($max);
 	}
 
 
@@ -118,7 +133,7 @@ class Pool extends Component
 	 */
 	public function get($name, $callback, $minx): mixed
 	{
-		$channel = $this->getChannel($name);
+		$channel = $this->channel($name);
 		if (!$channel->isEmpty()) {
 			return $this->maxIdleQuantity($channel, $minx);
 		}
@@ -149,7 +164,7 @@ class Pool extends Component
 	 */
 	public function isNull($name): bool
 	{
-		return $this->getChannel($name)->isEmpty();
+		return $this->channel($name)->isEmpty();
 	}
 
 
@@ -198,7 +213,7 @@ class Pool extends Component
 	 */
 	public function push(string $name, mixed $client)
 	{
-		$channel = $this->getChannel($name);
+		$channel = $this->channel($name);
 		if (!$channel->isFull()) {
 			$channel->push($client);
 		}
@@ -216,13 +231,6 @@ class Pool extends Component
 			return;
 		}
 		while (static::$_connections[$name]->length() > 0) {
-            if (static::$_connections[$name] instanceof Channel)
-            {
-                if (!Context::inCoroutine())
-                {
-                    break;
-                }
-            }
 			$client = static::$_connections[$name]->pop();
 			if ($client instanceof StopHeartbeatCheck) {
 				$client->stopHeartbeatCheck();
@@ -234,9 +242,9 @@ class Pool extends Component
 
 
 	/**
-	 * @return Channel[]
+	 * @return PoolQueue[]
 	 */
-	protected function getChannels(): array
+	protected function channels(): array
 	{
 		return static::$_connections;
 	}
