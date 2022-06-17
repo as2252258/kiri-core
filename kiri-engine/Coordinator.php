@@ -7,19 +7,7 @@ class Coordinator
 
 	const WORKER_START = 'worker:start';
 
-	private bool $waite = true;
-
-
-	private static array $_waite = [];
-
-
-	/**
-	 * @return bool
-	 */
-	public function isWaite(): bool
-	{
-		return $this->waite;
-	}
+	private bool $waite = false;
 
 
 	/**
