@@ -104,7 +104,7 @@ class Pool extends Component
 		if (!isset(static::$_connections[$name])) {
 			$this->newChannel($name);
 		}
-		if (static::$_connections[$name]->errCode == SWOOLE_CHANNEL_CLOSED) {
+		if (static::$_connections[$name]->isClose()) {
 			throw new Exception('Channel is Close.');
 		}
 		return static::$_connections[$name];
