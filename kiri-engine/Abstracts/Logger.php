@@ -152,7 +152,7 @@ class Logger implements LoggerInterface
 
 		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
 
-		file_put_contents($filename, $_string);
+		file_put_contents($filename, $_string, FILE_APPEND);
 	}
 
 
