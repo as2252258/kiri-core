@@ -69,9 +69,7 @@ class Pool extends Component
 		$lists = [];
 		while (($pdo = $channel->pop()) instanceof PDO) {
 			$pdo->check();
-
 			$lists[] = $pdo;
-
 		}
 		foreach ($lists as $list) {
 			$channel->push($list);
