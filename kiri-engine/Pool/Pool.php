@@ -65,8 +65,11 @@ class Pool extends Component
 	public function check($name): array
 	{
 		$channel = $this->channel($name);
-		$count = $success = 0;
+		if ($channel->length() < 1) {
+			return [0, 0];
+		}
 
+		$count = $success = 0;
 		$lists = [];
 		while (($pdo = $channel->pop()) instanceof PDO) {
 			$count += 1;

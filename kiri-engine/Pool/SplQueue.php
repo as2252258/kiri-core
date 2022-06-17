@@ -56,6 +56,9 @@ class SplQueue implements QueueInterface
 	public function pop(float $timeout = -1): mixed
 	{
 		// TODO: Implement pop() method.
+		if ($this->channel->count() < 1) {
+			return null;
+		}
 		return $this->channel->dequeue();
 	}
 
