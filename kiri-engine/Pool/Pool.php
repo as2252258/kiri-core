@@ -64,14 +64,18 @@ class Pool extends Component
 	 */
 	public function check($name): void
 	{
-		CoordinatorManager::utility($name)->waite();
-
 		$channel = $this->channel($name);
+
+		$lists = [];
 		while (($pdo = $channel->pop()) instanceof PDO) {
 			$pdo->check();
-		}
 
-		CoordinatorManager::utility($name)->done();
+			$lists[] = $pdo;
+
+		}
+		foreach ($lists as $list) {
+			$channel->push($list);
+		}
 	}
 
 

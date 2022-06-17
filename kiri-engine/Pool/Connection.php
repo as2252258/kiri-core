@@ -98,8 +98,6 @@ class Connection extends Component
 	{
 		$minx = Config::get('databases.pool.min', 1);
 
-		CoordinatorManager::utility($config['cds'])->yield();
-
 		return $this->pool->get($config['cds'], $this->generate($config), $minx);
 	}
 
