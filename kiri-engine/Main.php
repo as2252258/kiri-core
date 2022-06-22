@@ -22,6 +22,7 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
 	Output\ConsoleOutput,
 	Output\OutputInterface
 };
+use Kiri\Di\LocalService;
 
 
 /**
@@ -54,7 +55,7 @@ class Main extends BaseMain
 		}
 		$class = Kiri::getDi()->get($service);
 		if (method_exists($class, 'onImport')) {
-			$class->onImport($this);
+			$class->onImport($this->container->get(LocalService::class));
 		}
 		return $this;
 	}
