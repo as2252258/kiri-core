@@ -199,7 +199,7 @@ class Logger implements LoggerInterface
 		if ($context instanceof \Throwable) {
 			$context = ['file' => $context->getFile(), 'line' => $context->getLine()];
 		}
-		if (is_array($context) && $context[0] instanceof \Throwable) {
+		if (is_array($context) && isset($context[0]) && $context[0] instanceof \Throwable) {
 			$context = ['file' => $context[0]->getFile(), 'line' => $context[0]->getLine()];
 		}
 		return print_r($context, true) . PHP_EOL;
