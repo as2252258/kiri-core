@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Kiri\Error;
 
+use Closure;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
@@ -49,10 +50,10 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
 	/**
-	 * @param array|null $callback
+	 * @param array|Closure|null $callback
 	 * @return void
 	 */
-	public function registerExceptionHandler(?array $callback): void
+	public function registerExceptionHandler(null|array|Closure $callback): void
 	{
 		if (empty($callback)) {
 			$callback = [$this, 'exceptionHandler'];
@@ -64,10 +65,10 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
 	/**
-	 * @param array|null $callback
+	 * @param array|Closure|null $callback
 	 * @return void
 	 */
-	public function registerErrorHandler(?array $callback): void
+	public function registerErrorHandler(null|array|Closure $callback): void
 	{
 		if (empty($callback)) {
 			$callback = [$this, 'errorHandler'];
@@ -79,10 +80,10 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
 	/**
-	 * @param array|null $callback
+	 * @param array|Closure|null $callback
 	 * @return void
 	 */
-	public function registerShutdownHandler(?array $callback): void
+	public function registerShutdownHandler(null|array|Closure $callback): void
 	{
 		if (empty($callback)) {
 			$callback = [$this, 'shutdown'];
