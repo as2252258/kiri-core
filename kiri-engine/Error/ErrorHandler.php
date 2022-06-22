@@ -13,9 +13,14 @@ use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
+use Kiri\Annotation\Inject;
 use Kiri\Events\EventDispatch;
 use Kiri\Message\Events\OnAfterRequest;
 use Kiri\Message\Handler\Formatter\IFormatter;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Kiri\Server\Events\OnShutdown;
+use ReflectionException;
 
 /**
  * Class ErrorHandler
@@ -31,6 +36,14 @@ class ErrorHandler extends Component implements ErrorInterface
 
 	public string $category = 'app';
 
+
+	/**
+	 * @var EventDispatch
+	 */
+	#[Inject(EventDispatch::class)]
+	public EventDispatch $dispatch;
+
+
 	/**
 	 * 错误处理注册
 	 */
@@ -42,9 +55,13 @@ class ErrorHandler extends Component implements ErrorInterface
 	}
 
 	/**
+	 * @return void
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function shutdown()
+	public function shutdown(): void
 	{
 		$lastError = error_get_last();
 		if (empty($lastError) || $lastError['type'] !== E_ERROR) {
@@ -57,6 +74,8 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$message = array_shift($messages);
 
+		$this->dispatch->dispatch(new OnShutdown());
+
 		$this->sendError($message, $lastError['file'], $lastError['line']);
 	}
 
@@ -64,22 +83,26 @@ class ErrorHandler extends Component implements ErrorInterface
 	/**
 	 * @param \Throwable $exception
 	 *
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function exceptionHandler(\Throwable $exception)
 	{
 		$this->category = 'exception';
 
-		di(EventDispatch::class)->dispatch(new OnAfterRequest());
+		$this->dispatch->dispatch(new OnAfterRequest());
 
 		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
 
 
 	/**
-	 * @throws Exception
-	 *
-	 * 以异常形式抛出错误，防止执行后续程序
+	 * @throws \ErrorException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 */
 	public function errorHandler()
 	{
@@ -95,7 +118,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 		$this->logger->error('On error handler', [$data]);
 
-		di(EventDispatch::class)->dispatch(new OnAfterRequest());
+		$this->dispatch->dispatch(new OnAfterRequest());
 
 		throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
 	}
@@ -115,8 +138,6 @@ class ErrorHandler extends Component implements ErrorInterface
 		$data = Json::to($code, $this->category . ': ' . $message, $path);
 
 		file_put_contents('php://output', $data . PHP_EOL, FILE_APPEND);
-
-		write($data, $this->category);
 
 		return $data;
 	}
