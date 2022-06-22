@@ -53,7 +53,6 @@ abstract class BaseMain extends Component
 		$this->mapping($config['mapping'] ?? []);
 		$this->parseInt($config);
 		$this->parseEvents($config);
-		$this->initErrorHandler();
 		$this->enableEnvConfig();
 		parent::__construct();
 	}
