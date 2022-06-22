@@ -34,6 +34,10 @@ class ErrorHandler extends Component implements ErrorInterface
 	/** @var ?IFormatter $message */
 	private ?IFormatter $message = NULL;
 
+
+	/**
+	 * @var string
+	 */
 	public string $category = 'app';
 
 
