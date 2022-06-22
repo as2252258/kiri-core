@@ -147,9 +147,9 @@ class Logger implements LoggerInterface
 			return;
 		}
 
-		$_string = '[' . now() . '] production.' . $level . ': ' . $message;
+		$_string = '[' . now() . '] production.' . $level . ': ' . $message . PHP_EOL;
 		if (!empty($context)) {
-			$_string .= PHP_EOL . $this->_string($context);
+			$_string .= $this->_string($context);
 		}
 		file_put_contents('php://output', $_string);
 
