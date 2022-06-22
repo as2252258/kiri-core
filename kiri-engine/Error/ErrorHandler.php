@@ -49,14 +49,34 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
 	/**
-	 * 错误处理注册
+	 * @param array|null $callback
+	 * @return void
 	 */
-	public function register()
+	public function registerExceptionHandler(?array $callback): void
 	{
-		set_exception_handler([$this, 'exceptionHandler']);
-		set_error_handler([$this, 'errorHandler']);
-		register_shutdown_function([$this, 'shutdown']);
+		set_exception_handler($callback ?? [$this, 'exceptionHandler']);
 	}
+
+
+	/**
+	 * @param array|null $callback
+	 * @return void
+	 */
+	public function registerErrorHandler(?array $callback): void
+	{
+		set_error_handler($callback ?? [$this, 'errorHandler']);
+	}
+
+
+	/**
+	 * @param array|null $callback
+	 * @return void
+	 */
+	public function registerShutdownHandler(?array $callback): void
+	{
+		register_shutdown_function($callback ?? [$this, 'shutdown']);
+	}
+
 
 	/**
 	 * @return void

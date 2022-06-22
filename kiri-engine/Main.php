@@ -23,6 +23,8 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
 	Output\OutputInterface
 };
 use Kiri\Di\LocalService;
+use Kiri\Exception\ConfigException;
+use Kiri\Error\ErrorHandler;
 
 
 /**
@@ -42,6 +44,21 @@ class Main extends BaseMain
 
 
 	public string $state = '';
+
+
+	/**
+	 * @return void
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 * @throws ConfigException
+	 */
+	public function init(): void
+	{
+		$error = $this->container->get(ErrorHandler::class);
+		$error->registerShutdownHandler(Config::get('error.shutdown', []));
+		$error->registerExceptionHandler(Config::get('error.exception', []));
+		$error->registerErrorHandler(Config::get('error.error', []));
+	}
 
 	/**
 	 * @param string $service
