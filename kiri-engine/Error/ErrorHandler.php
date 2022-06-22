@@ -54,7 +54,12 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function registerExceptionHandler(?array $callback): void
 	{
-		set_exception_handler($callback ?? [$this, 'exceptionHandler']);
+		if (empty($callback)) {
+			$callback = [$this, 'exceptionHandler'];
+		} else if (is_array($callback) && is_string($callback[0])) {
+			$callback[0] = Kiri::getDi()->get($callback[0]);
+		}
+		set_exception_handler($callback);
 	}
 
 
@@ -64,7 +69,12 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function registerErrorHandler(?array $callback): void
 	{
-		set_error_handler($callback ?? [$this, 'errorHandler']);
+		if (empty($callback)) {
+			$callback = [$this, 'errorHandler'];
+		} else if (is_array($callback) && is_string($callback[0])) {
+			$callback[0] = Kiri::getDi()->get($callback[0]);
+		}
+		set_error_handler($callback);
 	}
 
 
@@ -74,7 +84,12 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function registerShutdownHandler(?array $callback): void
 	{
-		register_shutdown_function($callback ?? [$this, 'shutdown']);
+		if (empty($callback)) {
+			$callback = [$this, 'shutdown'];
+		} else if (is_array($callback) && is_string($callback[0])) {
+			$callback[0] = Kiri::getDi()->get($callback[0]);
+		}
+		register_shutdown_function($callback);
 	}
 
 
