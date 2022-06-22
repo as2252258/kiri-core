@@ -137,6 +137,7 @@ class Logger implements LoggerInterface
 	 * @param string $message
 	 * @param array $context
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
 	public function log($level, $message, array $context = [])
 	{
@@ -146,8 +147,10 @@ class Logger implements LoggerInterface
 			return;
 		}
 
-		$_string = '[' . now() . '] production.' . $level . ': ' . $this->_string($message, $context);
-
+		$_string = '[' . now() . '] production.' . $level . ': ' . $message;
+		if (!empty($context)) {
+			$_string .= PHP_EOL . $this->_string($context);
+		}
 		file_put_contents('php://output', $_string);
 
 		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
@@ -188,21 +191,17 @@ class Logger implements LoggerInterface
 
 
 	/**
-	 * @param $message
 	 * @param $context
 	 * @return string
 	 */
-	private function _string($message, $context): string
+	private function _string($context): string
 	{
 		if ($context instanceof \Throwable) {
 			$context = ['file' => $context->getFile(), 'line' => $context->getLine()];
 		}
-		if (!empty($context)) {
-			if (is_array($context) && $context[0] instanceof \Throwable) {
-				$context = ['file' => $context[0]->getFile(), 'line' => $context[0]->getLine()];
-			}
-			return $message . ' ' . PHP_EOL . print_r($context, true) . PHP_EOL;
+		if (is_array($context) && $context[0] instanceof \Throwable) {
+			$context = ['file' => $context[0]->getFile(), 'line' => $context[0]->getLine()];
 		}
-		return $message . PHP_EOL;
+		return print_r($context, true) . PHP_EOL;
 	}
 }

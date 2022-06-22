@@ -131,7 +131,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	 * @return false|string
 	 * @throws Exception
 	 */
-	public function sendError($message, $file, $line, $code = 500): bool|string
+	public function sendError($message, $file, $line, int $code = 500): bool|string
 	{
 		$path = ['file' => $file, 'line' => $line];
 
@@ -168,6 +168,6 @@ class ErrorHandler extends Component implements ErrorInterface
 	 */
 	public function writer($message, string $category = 'app')
 	{
-		Kiri::app()->debug($message, $category);
+		Kiri::getLogger()->debug($category, [$message]);
 	}
 }

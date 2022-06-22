@@ -10,12 +10,15 @@ use Database\ModelInterface;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Annotation\Annotation;
-use Kiri\Application;
+use Kiri\Main;
 use Kiri\Core\Json;
 use Kiri\Di\Container;
+use Kiri\Di\LocalService;
 use Kiri\Environmental;
 use Kiri\Di\ContainerInterface;
+use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Exception\ConfigException;
+use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\WebSocket\Server;
@@ -40,25 +43,10 @@ class Kiri
 	private static Container $container;
 
 
-	/** @var ?Application */
-	private static ?Application $service = null;
-
-
-	/**
-	 * @param $service
-	 *
-	 * 初始化服务
-	 */
-	public static function init($service)
-	{
-		static::$service = $service;
-	}
-
-
 	/**
 	 * @param Container $container
 	 */
-	public static function setContainer(Container $container)
+	public static function setContainer(Container $container): void
 	{
 		$container->setBindings(ContainerInterface::class, $container);
 		static::$container = $container;
@@ -75,70 +63,12 @@ class Kiri
 
 
 	/**
-	 * @param $alias
-	 * @param array $array
-	 * @throws Exception
-	 */
-	public static function set($alias, array $array = [])
-	{
-		static::app()->set($alias, $array);
-	}
-
-
-	/**
-	 * @param string $name
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public static function getApp(string $name): mixed
-	{
-		return static::app()->get($name);
-	}
-
-	/**
-	 * @return Application|null
-	 */
-	public static function app(): ?Application
-	{
-		return static::$service;
-	}
-
-
-	/**
-	 * @return Application|null
-	 */
-	public static function getFactory(): ?Application
-	{
-		return static::$service;
-	}
-
-
-	/**
-	 * @return Application|null
-	 */
-	public static function getApplicationContext(): ?Application
-	{
-		return static::$service;
-	}
-
-
-	/**
 	 * @return Container|null
 	 */
 	public static function getContainerContext(): ?Container
 	{
 		return static::$container;
 	}
-
-	/**
-	 * @param $name
-	 * @return bool
-	 */
-	public static function has($name): bool
-	{
-		return static::$service->has($name);
-	}
-
 
 	/**
 	 * @return Annotation
@@ -215,11 +145,20 @@ class Kiri
 
 
 	/**
-	 * @return Container
+	 * @return LocalService
 	 */
-	public static function di(): Container
+	public static function service(): LocalService
 	{
-		return static::$container;
+		return static::$container->get(LocalService::class);
+	}
+
+
+	/**
+	 * @return LoggerInterface
+	 */
+	public static function getLogger(): LoggerInterface
+	{
+		return static::$container->get(LoggerInterface::class);
 	}
 
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
-use Kiri\Application;
+use Kiri\Di\LocalService;
 
 interface Provider
 {
 
-	public function onImport(Application $application);
+	public function onImport(LocalService $application);
 
 }

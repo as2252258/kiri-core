@@ -7,7 +7,7 @@ use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Annotation\Annotation;
 use Kiri\Annotation\Route\Route;
-use Kiri\Application;
+use Kiri\Main;
 use Kiri\Core\ArrayAccess;
 use Kiri\Di\TargetManager;
 use Kiri\Error\StdoutLoggerInterface;
@@ -29,19 +29,27 @@ if (!function_exists('make')) {
 	 */
 	function make($name, $default = NULL): mixed
 	{
-		if (is_string($name)) {
-			if (Kiri::has($name)) {
-				return Kiri::app()->get($name);
-			}
-			if (empty($default)) {
-				throw new Exception("Unknown component ID: $name");
-			}
-			if (Kiri::has($default)) {
-				return Kiri::app()->get($default);
-			}
-			return null;
+		if (!class_exists($name) && !interface_exists($name)) {
+			return Kiri::getDi()->get($default);
 		}
-		return Kiri::createObject($default);
+		return Kiri::getDi()->get($name);
+	}
+
+
+}
+
+if (!function_exists('instance')) {
+
+
+	/**
+	 * @param $class
+	 * @param array $constrict
+	 * @param array $config
+	 * @return mixed
+	 */
+	function instance($class, array $constrict = [], array $config = []): mixed
+	{
+		return Kiri::getDi()->create($class, $constrict, $config);
 	}
 
 
@@ -232,22 +240,6 @@ if (!function_exists('scan_directory')) {
 
 }
 
-if (!class_exists('ReturnTypeWillChange')) {
-
-	/**
-	 * @since 8.1
-	 */
-	#[Attribute(Attribute::TARGET_METHOD)]
-	final class ReturnTypeWillChange
-	{
-		public function __construct()
-		{
-		}
-	}
-
-
-}
-
 
 if (!function_exists('injectRuntime')) {
 
@@ -258,7 +250,7 @@ if (!function_exists('injectRuntime')) {
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	function injectRuntime(string $path, array $exclude = [])
+	function injectRuntime(string $path, array $exclude = []): void
 	{
 		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
 
@@ -482,23 +474,13 @@ if (!function_exists('fire')) {
 	}
 }
 
-
-if (!function_exists('app')) {
+if (!function_exists('instance_load')) {
 
 
 	/**
-	 * @return Application|null
+	 * @return void
 	 */
-	#[Pure] function app(): ?Application
-	{
-		return Kiri::app();
-	}
-
-}
-
-if (!function_exists('instance_load')) {
-
-	function instance_load()
+	function instance_load(): void
 	{
 		$content = json_decode(file_get_contents(__DIR__ . '/composer.json'), TRUE);
 		if (isset($content['autoload']) && isset($content['autoload']['psr-4'])) {
@@ -1028,36 +1010,6 @@ if (!function_exists('router')) {
 }
 
 
-if (!function_exists('isService')) {
-
-
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
-	function isService(string $name): bool
-	{
-		return Kiri::app()->has($name);
-	}
-
-}
-
-if (!function_exists('getService')) {
-
-
-	/**
-	 * @param string $name
-	 * @return mixed
-	 * @throws Exception
-	 */
-	function getService(string $name): mixed
-	{
-		return Kiri::app()->get($name);
-	}
-
-}
-
-
 if (!function_exists('jTraceEx')) {
 
 	/**
@@ -1139,9 +1091,9 @@ if (!function_exists('debug')) {
 	 * @param string $method
 	 * @throws Exception
 	 */
-	function debug(mixed $message, string $method = 'app')
+	function debug(mixed $message, string $method = 'app'): void
 	{
-		Kiri::app()->debug($message, $method);
+		Kiri::getLogger()->debug($method, [$message]);
 	}
 
 }
@@ -1153,9 +1105,9 @@ if (!function_exists('info')) {
 	 * @param string $method
 	 * @throws Exception
 	 */
-	function info(mixed $message, string $method = 'app')
+	function info(mixed $message, string $method = 'app'): void
 	{
-		Kiri::app()->info($message, $method);
+		Kiri::getLogger()->info($method, [$message]);
 	}
 
 }
@@ -1165,11 +1117,12 @@ if (!function_exists('error')) {
 	/**
 	 * @param mixed $message
 	 * @param string $method
-	 * @throws Exception
+	 * @return bool
 	 */
-	function error(mixed $message, string $method = 'error')
+	function error(mixed $message, string $method = 'error'): bool
 	{
-		Kiri::getDi()->get(LoggerInterface::class)->error($method, [$message]);
+		Kiri::getLogger()->error($method, [$message]);
+		return false;
 	}
 }
 
@@ -1182,19 +1135,19 @@ if (!function_exists('success')) {
 	 */
 	function success(mixed $message, string $method = 'app')
 	{
-		Kiri::app()->success($message, $method);
+		Kiri::getLogger()->critical($method, [$message]);
 	}
 }
 
 
-if (!function_exists('error_trigger_format')) {
+if (!function_exists('throwable')) {
 
 
 	/**
 	 * @param Throwable|Error $throwable
 	 * @return string
 	 */
-	function error_trigger_format(\Throwable|\Error $throwable): string
+	function throwable(\Throwable|\Error $throwable): string
 	{
 		$message = "Throwable: " . $throwable->getMessage() . "\n" . '	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\n";
 
@@ -1205,8 +1158,23 @@ if (!function_exists('error_trigger_format')) {
 			}
 			$message .= $value['file'] . " -> " . $value['line'] . "(" . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . ")\n";
 		}
-		return "\033[41;37m" . $message . "\033[0m";
+		return $message;
 	}
 
 }
 
+
+if (!function_exists('map')) {
+
+	/**
+	 * @param array $map
+	 * @param Closure $closure
+	 * @return void
+	 */
+	function map(array $map, Closure $closure): void
+	{
+		foreach ($map as $key => $value) {
+			$closure($key, $value);
+		}
+	}
+}

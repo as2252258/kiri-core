@@ -17,7 +17,7 @@ abstract class AbstractAttribute implements IAnnotation
      * @param mixed|string $method
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
+    #[\Kiri\ReturnTypeWillChange]
     public function execute(mixed $class, mixed $method = ''): mixed
     {
         // TODO: Implement execute() method.

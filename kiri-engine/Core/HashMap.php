@@ -3,7 +3,7 @@
 namespace Kiri\Core;
 
 use JetBrains\PhpStorm\Pure;
-use ReturnTypeWillChange;
+use Kiri\ReturnTypeWillChange;
 use Traversable;
 
 class HashMap implements \ArrayAccess, \IteratorAggregate
