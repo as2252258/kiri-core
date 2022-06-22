@@ -130,19 +130,6 @@ class Scaner extends BaseProcess
 		$this->tick();
 	}
 
-
-	/**
-	 * @return $this
-	 */
-	public function onSigterm(): static
-	{
-		pcntl_signal(SIGTERM, function () {
-			$this->onProcessStop();
-		});
-		return $this;
-	}
-
-
 	/**
 	 * @throws Exception
 	 */
