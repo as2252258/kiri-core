@@ -2,167 +2,161 @@
 
 namespace Kiri\Reload;
 
+use DirectoryIterator;
 use Exception;
 use Kiri\Abstracts\Config;
 use Kiri\Annotation\Inject;
 use Kiri\Server\Abstracts\BaseProcess;
+use Kiri\Server\ServerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
 
 class Scaner extends BaseProcess
 {
 
-    private array $md5Map = [];
+	private array $md5Map = [];
 
-    public bool $isReloading = FALSE;
-
-
-    private array $dirs = [];
+	public bool $isReloading = FALSE;
 
 
-    /**
-     * @var LoggerInterface
-     */
-    #[Inject(LoggerInterface::class)]
-    public LoggerInterface $logger;
+	private array $dirs = [];
 
 
-    /**
-     * @throws Exception
-     */
-    public function process(Process $process): void
-    {
-        $this->dirs = Config::get('reload.inotify', []);
-
-        $this->loadDirs();
-        $this->tick();
-    }
+	/**
+	 * @var LoggerInterface
+	 */
+	#[Inject(LoggerInterface::class)]
+	public LoggerInterface $logger;
 
 
-    /**
-     * @param bool $isReload
-     * @throws Exception
-     */
-    private function loadDirs(bool $isReload = FALSE)
-    {
-        foreach ($this->dirs as $value) {
-            if (is_bool($path = realpath($value))) {
-                continue;
-            }
+	/**
+	 * @throws Exception
+	 */
+	public function process(Process $process): void
+	{
+		$this->dirs = Config::get('reload.inotify', []);
 
-            if (!is_dir($path)) continue;
-
-            $this->loadByDir($path, $isReload);
-        }
-    }
+		$this->loadDirs();
+		$this->tick();
+	}
 
 
-    /**
-     * @param $path
-     * @param bool $isReload
-     * @return void
-     * @throws Exception
-     */
-    private function loadByDir($path, bool $isReload = FALSE): void
-    {
-        if (!is_string($path)) {
-            return;
-        }
-        $path = rtrim($path, '/');
-        foreach (glob(realpath($path) . '/*') as $value) {
-            if (is_dir($value)) {
-                $this->loadByDir($value, $isReload);
-            }
-            if (is_file($value)) {
-                if ($this->checkFile($value, $isReload)) {
-                    if ($this->isReloading) {
-                        break;
-                    }
-                    $this->isReloading = TRUE;
-
-                    sleep(2);
-
-                    $this->timerReload();
-                    break;
-                }
-            }
-        }
-    }
+	/**
+	 * @param bool $isReload
+	 * @throws Exception
+	 */
+	private function loadDirs(bool $isReload = FALSE)
+	{
+		foreach ($this->dirs as $value) {
+			$value = new DirectoryIterator($value);
+			if ($value->isDot() || str_starts_with($value->getFilename(), '.')) {
+				continue;
+			}
+			if ($value->isDir()) {
+				$this->loadByDir($value, $isReload);
+			}
+		}
+	}
 
 
-    /**
-     * @param $value
-     * @param $isReload
-     * @return bool
-     */
-    private function checkFile($value, $isReload): bool
-    {
-        $md5 = md5($value);
-        $mTime = filectime($value);
-        if (!isset($this->md5Map[$md5])) {
-            if ($isReload) {
-                return TRUE;
-            }
-            $this->md5Map[$md5] = $mTime;
-        } else {
-            if ($this->md5Map[$md5] != $mTime) {
-                if ($isReload) {
-                    return TRUE;
-                }
-                $this->md5Map[$md5] = $mTime;
-            }
-        }
-        return FALSE;
-    }
+	/**
+	 * @param DirectoryIterator $path
+	 * @param bool $isReload
+	 * @return void
+	 * @throws Exception
+	 */
+	private function loadByDir(DirectoryIterator $path, bool $isReload = FALSE): void
+	{
+		if ($path->isDir()) {
+			$this->loadByDir(new DirectoryIterator($path->getRealPath()), $isReload);
+		}
+		if (!str_ends_with($path->getFilename(), '.php')) {
+			return;
+		}
+		if ($this->checkFile($path, $isReload)) {
+			if ($this->isReloading) {
+				return;
+			}
+			$this->isReloading = TRUE;
+			sleep(2);
+			$this->timerReload();
+		}
+	}
 
 
-    /**
-     * @throws Exception
-     */
-    public function timerReload()
-    {
-        $this->isReloading = TRUE;
-
-        $this->logger->warning('file change');
-
-        $swow = \Kiri::getDi()->get(SwooleServerInterface::class);
-
-        $swow->reload();
-
-        $this->loadDirs();
-
-        $this->isReloading = FALSE;
-
-        $this->tick();
-    }
-
-
-    /**
-     * @return $this
-     */
-    public function onSigterm(): static
-    {
-        pcntl_signal(SIGTERM, function () {
-            $this->onProcessStop();
-        });
-        return $this;
-    }
+	/**
+	 * @param DirectoryIterator $value
+	 * @param $isReload
+	 * @return bool
+	 */
+	private function checkFile(DirectoryIterator $value, $isReload): bool
+	{
+		$md5 = md5_file($value->getRealPath());
+		$mTime = $value->getCTime();
+		if (!isset($this->md5Map[$md5])) {
+			if ($isReload) {
+				return TRUE;
+			}
+			$this->md5Map[$md5] = $mTime;
+		} else {
+			if ($this->md5Map[$md5] != $mTime) {
+				if ($isReload) {
+					return TRUE;
+				}
+				$this->md5Map[$md5] = $mTime;
+			}
+		}
+		return FALSE;
+	}
 
 
-    /**
-     * @throws Exception
-     */
-    public function tick()
-    {
-        if ($this->isStop) {
-            return;
-        }
+	/**
+	 * @throws Exception
+	 */
+	public function timerReload()
+	{
+		$this->isReloading = TRUE;
 
-        $this->loadDirs(TRUE);
+		$this->logger->warning('file change');
 
-        sleep(2);
+		$swow = \Kiri::getDi()->get(ServerInterface::class);
 
-        $this->tick();
-    }
+		$swow->reload();
+
+		$this->loadDirs();
+
+		$this->isReloading = FALSE;
+
+		$this->tick();
+	}
+
+
+	/**
+	 * @return $this
+	 */
+	public function onSigterm(): static
+	{
+		pcntl_signal(SIGTERM, function () {
+			$this->onProcessStop();
+		});
+		return $this;
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function tick()
+	{
+		if ($this->isStop) {
+			return;
+		}
+
+		$this->loadDirs(TRUE);
+
+		sleep(2);
+
+		$this->tick();
+	}
 
 }
