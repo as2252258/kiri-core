@@ -17,6 +17,8 @@ class Scaner extends BaseProcess
 	private array $md5Map = [];
 
 	public bool $isReloading = FALSE;
+	
+	public string $name = 'hot reload';
 
 
 	private array $dirs = [];
