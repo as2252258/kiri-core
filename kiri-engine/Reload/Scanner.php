@@ -11,13 +11,13 @@ use Kiri\Server\ServerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
 
-class Scaner extends BaseProcess
+class Scanner extends BaseProcess
 {
 
 	private array $md5Map = [];
 
 	public bool $isReloading = FALSE;
-	
+
 	public string $name = 'hot reload';
 
 
@@ -49,38 +49,51 @@ class Scaner extends BaseProcess
 	 */
 	private function loadDirs(bool $isReload = FALSE)
 	{
-		foreach ($this->dirs as $value) {
-			$value = new DirectoryIterator($value);
-			if ($value->isDot() || str_starts_with($value->getFilename(), '.')) {
-				continue;
+		try {
+			foreach ($this->dirs as $value) {
+				$value = new DirectoryIterator($value);
+				if ($value->isDir()) {
+					$this->loadByDir($value, $isReload);
+				}
 			}
-			if ($value->isDir()) {
-				$this->loadByDir($value, $isReload);
-			}
+		} catch (\Throwable $throwable) {
+			$this->logger->error($throwable->getMessage(), [$throwable]);
 		}
 	}
 
 
 	/**
-	 * @param DirectoryIterator $path
+	 * @param DirectoryIterator $iterator
 	 * @param bool $isReload
 	 * @return void
 	 * @throws Exception
 	 */
-	private function loadByDir(DirectoryIterator $path, bool $isReload = FALSE): void
+	private function loadByDir(DirectoryIterator $iterator, bool $isReload = FALSE): void
 	{
-		if ($path->isDir()) {
-			$this->loadByDir(new DirectoryIterator($path->getRealPath()), $isReload);
-		}
-		if (!str_ends_with($path->getFilename(), '.php')) {
-			return;
-		}
-		if ($this->checkFile($path, $isReload)) {
+		foreach ($iterator as $path) {
 			if ($this->isReloading) {
 				return;
 			}
-			$this->isReloading = TRUE;
-			sleep(2);
+			/** @var DirectoryIterator $path */
+
+			if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
+				continue;
+			}
+
+			if ($path->getExtension() !== 'php') {
+				continue;
+			}
+
+			if ($path->isDir()) {
+				$this->loadByDir(new DirectoryIterator($path->getRealPath()), $isReload);
+			}
+
+			if ($this->checkFile($path, $isReload)) {
+				$this->isReloading = TRUE;
+				break;
+			}
+		}
+		if ($this->isReloading) {
 			$this->timerReload();
 		}
 	}
@@ -93,8 +106,8 @@ class Scaner extends BaseProcess
 	 */
 	private function checkFile(DirectoryIterator $value, $isReload): bool
 	{
-		$md5 = md5_file($value->getRealPath());
-		$mTime = $value->getCTime();
+		$md5 = md5($value->getRealPath());
+		$mTime = filectime($value->getRealPath());
 		if (!isset($this->md5Map[$md5])) {
 			if ($isReload) {
 				return TRUE;
@@ -125,9 +138,9 @@ class Scaner extends BaseProcess
 
 		$swow->reload();
 
-		$this->loadDirs();
-
 		$this->isReloading = FALSE;
+
+		$this->loadDirs();
 
 		$this->tick();
 	}
