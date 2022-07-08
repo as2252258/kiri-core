@@ -1149,7 +1149,7 @@ if (!function_exists('throwable')) {
 	 */
 	function throwable(\Throwable|\Error $throwable): string
 	{
-		$message = "Throwable: " . $throwable->getMessage() . "\n" . '	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\n";
+		$message = $throwable->getMessage() . "\n" . '	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\n";
 
 		$message .= "trance\n";
 		foreach ($throwable->getTrace() as $value) {
