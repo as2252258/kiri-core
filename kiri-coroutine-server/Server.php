@@ -223,8 +223,9 @@ class Server extends Component
 		}
 
 		$headers = $message->getCookieParams();
-		if (is_array($headers)) foreach ($headers as $key => $header) {
-			$response->cookie($key, ...$header);
+		if (is_array($headers)) foreach ($headers as $header) {
+			$response->cookie($header->name, $header->value, $header->expires, $header->path, $header->domain,
+				$header->secure, $header->httponly, $header->samesite, $header->priority);
 		}
 
 		if (is_object($result)) {
