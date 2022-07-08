@@ -224,7 +224,7 @@ class Server extends Component
 
 		$headers = $message->getCookieParams();
 		if (is_array($headers)) foreach ($headers as $header) {
-			$response->cookie($header->name, $header->value, $header->expires, $header->path, $header->domain,
+			$response->setCookie($header->name, $header->value, $header->expires, $header->path, $header->domain,
 				$header->secure, $header->httponly, $header->samesite, $header->priority);
 		}
 
