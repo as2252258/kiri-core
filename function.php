@@ -1149,14 +1149,12 @@ if (!function_exists('throwable')) {
 	 */
 	function throwable(\Throwable|\Error $throwable): string
 	{
-		$message = $throwable->getMessage() . "\n" . '	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\n";
-
-		$message .= "trance\n";
+		$message = $throwable->getMessage() . '	' . $throwable->getFile() . " at line " . $throwable->getLine() . "\n";
 		foreach ($throwable->getTrace() as $value) {
 			if (!isset($value['file'])) {
 				continue;
 			}
-			$message .= $value['file'] . " -> " . $value['line'] . "(" . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . ")\n";
+			$message .= $value['file'] . " -> " . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . $value['line'] . ")\n";
 		}
 		return $message;
 	}
