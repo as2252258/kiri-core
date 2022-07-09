@@ -7,6 +7,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Annotation\Inject;
 use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Server\Abstracts\BaseProcess;
+use Kiri\Server\ServerInterface;
 use Swoole\Event;
 use Swoole\Process;
 use Swoole\Timer;
@@ -142,7 +143,7 @@ class Inotify extends BaseProcess
      */
     public function reload()
     {
-        $swollen = \Kiri::getDi()->get(SwooleServerInterface::class);
+        $swollen = \Kiri::getDi()->get(ServerInterface::class);
 
         $swollen->reload();
 
