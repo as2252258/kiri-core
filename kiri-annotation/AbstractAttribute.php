@@ -14,10 +14,10 @@ abstract class AbstractAttribute implements IAnnotation
 {
 
 
-	protected object $class;
+	protected object $_class;
 
 
-	protected string $method;
+	protected string $_method;
 
 
 	/**
@@ -37,7 +37,7 @@ abstract class AbstractAttribute implements IAnnotation
 	 */
 	public function getClass(): object
 	{
-		return $this->class;
+		return $this->_class;
 	}
 
 	/**
@@ -45,7 +45,7 @@ abstract class AbstractAttribute implements IAnnotation
 	 */
 	public function setClass(object $class): void
 	{
-		$this->class = $class;
+		$this->_class = $class;
 	}
 
 	/**
@@ -53,7 +53,7 @@ abstract class AbstractAttribute implements IAnnotation
 	 */
 	public function getMethod(): string
 	{
-		return $this->method;
+		return $this->_method;
 	}
 
 	/**
@@ -61,7 +61,7 @@ abstract class AbstractAttribute implements IAnnotation
 	 */
 	public function setMethod(string $method): void
 	{
-		$this->method = $method;
+		$this->_method = $method;
 	}
 
 
