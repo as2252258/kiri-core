@@ -58,7 +58,7 @@ class Redis extends Component
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function init()
+	public function init(): void
 	{
 		$config = $this->get_config();
 
@@ -78,7 +78,6 @@ class Redis extends Component
 	 */
 	public function __call($name, $arguments): mixed
 	{
-		$time = microtime(true);
 		if (method_exists($this, $name)) {
 			$data = $this->{$name}(...$arguments);
 		} else {

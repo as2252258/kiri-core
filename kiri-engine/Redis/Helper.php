@@ -39,9 +39,6 @@ class Helper implements StopHeartbeatCheck
 
 	private int $_timer = -1;
 
-	private int $_last = 0;
-
-
 
 	/**
 	 * @param array $config
@@ -59,53 +56,11 @@ class Helper implements StopHeartbeatCheck
 	}
 
 
-	public function init()
-	{
-		$this->heartbeat_check();
-	}
-
-
-	/**
-	 *
-	 */
-	public function heartbeat_check(): void
-	{
-
-		if ($this->_timer === -1) {
-			$this->_timer = Timer::tick(1000, fn() => $this->waite());
-		}
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	private function waite(): void
-	{
-		try {
-			if ($this->_timer === -1) {
-				Kiri::getDi()->get(Logger::class)->critical('timer end');
-				$this->stopHeartbeatCheck();
-			}
-			if (time() - $this->_last > intval($this->pool['tick'] ?? 60)) {
-				$this->stopHeartbeatCheck();
-
-				$this->pdo = null;
-			}
-		} catch (\Throwable $throwable) {
-			error($throwable);
-		}
-	}
-
-
 	/**
 	 * clear client heartbeat
 	 */
 	public function stopHeartbeatCheck(): void
 	{
-		if ($this->_timer > -1) {
-			Timer::clear($this->_timer);
-		}
 		$this->_timer = -1;
 	}
 
@@ -132,10 +87,6 @@ class Helper implements StopHeartbeatCheck
 	 */
 	public function _pdo(): \Redis
 	{
-		if ($this->_timer === -1) {
-			$this->heartbeat_check();
-		}
-		$this->_last = time();
 		if (!($this->pdo instanceof \Redis) || !$this->pdo->ping('isOk')) {
 			$this->pdo = $this->newClient();
 		}
