@@ -20,6 +20,7 @@ class Scanner extends BaseProcess
 
 	public string $name = 'hot reload';
 
+	protected bool $enable_coroutine = false;
 
 	private array $dirs = [];
 
@@ -122,6 +123,18 @@ class Scanner extends BaseProcess
 			}
 		}
 		return FALSE;
+	}
+
+
+	/**
+	 * @return $this
+	 */
+	public function onSigterm(): static
+	{
+		pcntl_signal(SIGTERM, function () {
+			$this->onProcessStop();
+		});
+		return $this;
 	}
 
 
