@@ -44,6 +44,9 @@ class SplQueue implements QueueInterface
 	public function push(mixed $data, float $timeout = -1): bool
 	{
 		// TODO: Implement push() method.
+		if ($this->isFull()) {
+			return false;
+		}
 		$this->channel->enqueue($data);
 		return true;
 	}

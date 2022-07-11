@@ -40,6 +40,9 @@ class PoolQueue implements QueueInterface
 	 */
 	public function push(mixed $data, float $timeout = -1): bool
 	{
+		if ($this->isFull()) {
+			return false;
+		}
 		if (!$this->isClose()) {
 			return $this->queue->push($data, $timeout);
 		}
