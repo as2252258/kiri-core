@@ -89,7 +89,7 @@ class Pool extends Component
 		$lists = [];
 		$count = $channel->length();
 		while ($this->status->is(StatusEnum::EXIT) === false) {
-			if (!(($pdo = $channel->pop(0)) instanceof PDO)) {
+			if (!(($pdo = $channel->pop(0.001)) instanceof PDO)) {
 				break;
 			}
 			if ($pdo->check()) {
