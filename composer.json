@@ -27,7 +27,8 @@
     "psr/container": "^2.0",
     "psr/http-server-middleware": "1.0.1",
     "ext-inotify": "*",
-    "ext-pcntl": "*"
+    "ext-pcntl": "*",
+    "ext-sockets": "*"
   },
   "autoload": {
     "psr-4": {
