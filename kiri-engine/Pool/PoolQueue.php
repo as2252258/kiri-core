@@ -17,11 +17,11 @@ class PoolQueue implements QueueInterface
 	 */
 	public function __construct(public int $max)
 	{
-//		if (Context::inCoroutine()) {
-//			$this->queue = new Channel($this->max);
-//		} else {
+		if (Context::inCoroutine()) {
+			$this->queue = new Channel($this->max);
+		} else {
 			$this->queue = new SplQueue($this->max);
-//		}
+		}
 	}
 
 
