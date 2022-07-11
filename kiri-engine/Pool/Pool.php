@@ -9,8 +9,11 @@ use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Abstracts\CoordinatorManager;
+use Kiri\Annotation\Inject;
 use Kiri\Context;
 use Kiri\Exception\ConfigException;
+use Kiri\Server\Abstracts\StatusEnum;
+use Kiri\Server\WorkerStatus;
 use Swoole\Coroutine\Channel;
 
 
@@ -25,6 +28,14 @@ class Pool extends Component
 	private static array $_connections = [];
 
 	public int $max = 60;
+
+
+	/**
+	 * @var WorkerStatus
+	 */
+	#[Inject(WorkerStatus::class)]
+	public WorkerStatus $status;
+
 
 	use Alias;
 
@@ -66,6 +77,11 @@ class Pool extends Component
 	{
 		$channel = $this->channel($name);
 		if ($channel->length() < 1) {
+			return [0, 0];
+		}
+
+		if ($this->status->is(StatusEnum::EXIT)) {
+			$channel->close();
 			return [0, 0];
 		}
 
