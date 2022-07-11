@@ -65,6 +65,7 @@ class Pool extends Component
 	public function check($name): array
 	{
 		$channel = $this->channel($name);
+		var_dump($channel->length());
 		if ($channel->length() < 1) {
 			return [0, 0];
 		}
