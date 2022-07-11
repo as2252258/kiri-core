@@ -51,7 +51,7 @@ class PoolQueue implements QueueInterface
 	 * @param float $timeout
 	 * @return mixed
 	 */
-	public function pop(float $timeout = 0.00001): mixed
+	public function pop(float $timeout = 0): mixed
 	{
 		return $this->queue->pop($timeout);
 	}
