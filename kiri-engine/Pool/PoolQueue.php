@@ -12,6 +12,9 @@ class PoolQueue implements QueueInterface
 	private Channel|SplQueue $queue;
 
 
+	/**
+	 * @param int $max
+	 */
 	public function __construct(public int $max)
 	{
 //		if (Context::inCoroutine()) {
