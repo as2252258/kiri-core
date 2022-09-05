@@ -21,7 +21,7 @@ class Scanner extends BaseProcess
 
 	public string $name = 'hot reload';
 
-	protected bool $enable_coroutine = true;
+	protected bool $enable_coroutine = false;
 
 	private array $dirs = [];
 
@@ -41,7 +41,7 @@ class Scanner extends BaseProcess
 		$this->dirs = Config::get('reload.inotify', []);
 
 		$this->loadDirs();
-		Timer::tick(3000, fn() => $this->loadByDir(false));
+		Timer::tick(3000, fn() => $this->loadDirs());
 	}
 
 
