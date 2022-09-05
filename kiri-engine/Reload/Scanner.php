@@ -156,15 +156,15 @@ class Scanner extends BaseProcess
 	 */
 	public function timerReload()
 	{
+		if ($this->isReloading) {
+			return;
+		}
 		$this->logger->warning('file change');
-
 		$swow = \Kiri::getDi()->get(ServerInterface::class);
-
 		$swow->reload();
 
-		$this->isReloading = FALSE;
-
 		$this->loadDirs();
+		$this->isReloading = FALSE;
 	}
 
 }
