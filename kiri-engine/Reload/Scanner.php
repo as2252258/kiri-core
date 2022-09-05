@@ -63,6 +63,9 @@ class Scanner extends BaseProcess
 		} catch (\Throwable $throwable) {
 			$this->logger->error($throwable->getMessage(), [$throwable]);
 		}
+		if ($this->isReloading) {
+			$this->timerReload();
+		}
 	}
 
 
@@ -96,9 +99,6 @@ class Scanner extends BaseProcess
 				$this->isReloading = TRUE;
 				break;
 			}
-		}
-		if ($this->isReloading) {
-			$this->timerReload();
 		}
 	}
 
