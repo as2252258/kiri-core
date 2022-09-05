@@ -52,6 +52,9 @@ class Scanner extends BaseProcess
 	{
 		try {
 			foreach ($this->dirs as $value) {
+				if ($this->isReloading) {
+					break;
+				}
 				$value = new DirectoryIterator($value);
 				if ($value->isDir()) {
 					$this->loadByDir($value, $isReload);
@@ -154,8 +157,6 @@ class Scanner extends BaseProcess
 		$this->isReloading = FALSE;
 
 		$this->loadDirs();
-
-		$this->tick();
 	}
 
 	/**
