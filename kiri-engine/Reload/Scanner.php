@@ -51,6 +51,7 @@ class Scanner extends BaseProcess
 	 */
 	private function loadDirs(bool $isReload = FALSE)
 	{
+		echo 'file tick ' . date('Y-m-d H:i:s') . PHP_EOL;
 		try {
 			if ($this->isReloading) {
 				return;
@@ -90,7 +91,7 @@ class Scanner extends BaseProcess
 			}
 			if ($this->checkFile($path, $isReload)) {
 				$this->isReloading = TRUE;
-				Timer::after(3000, fn() => $this->timerReload());
+				$this->timerReload();
 				break;
 			}
 		}
