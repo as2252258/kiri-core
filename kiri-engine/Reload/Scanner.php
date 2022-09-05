@@ -143,6 +143,7 @@ class Scanner extends BaseProcess
 	public function onSigterm(): static
 	{
 		pcntl_signal(SIGTERM, function () {
+			Timer::clearAll();
 			$this->onProcessStop();
 		});
 		return $this;
