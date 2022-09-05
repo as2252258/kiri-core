@@ -41,7 +41,7 @@ class Scanner extends BaseProcess
 		$this->dirs = Config::get('reload.inotify', []);
 
 		$this->loadDirs();
-		Timer::tick(3000, fn() => $this->loadDirs());
+		Timer::tick(3000, fn() => $this->loadDirs(true));
 	}
 
 
@@ -66,8 +66,6 @@ class Scanner extends BaseProcess
 			}
 		} catch (\Throwable $throwable) {
 			$this->logger->error($throwable->getMessage(), [$throwable]);
-		} finally {
-			$this->loadDirs($isReload);
 		}
 	}
 
