@@ -21,7 +21,7 @@ class Scanner extends BaseProcess
 
 	public string $name = 'hot reload';
 
-	protected bool $enable_coroutine = false;
+	protected bool $enable_coroutine = true;
 
 	private array $dirs = [];
 
