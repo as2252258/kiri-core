@@ -169,9 +169,7 @@ class Scanner extends BaseProcess
 		}
 
 		$this->loadDirs(TRUE);
-
 		sleep(2);
-
 		$this->tick();
 	}
 
