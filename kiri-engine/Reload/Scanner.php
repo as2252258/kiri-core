@@ -10,6 +10,7 @@ use Kiri\Server\Abstracts\BaseProcess;
 use Kiri\Server\ServerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Process;
+use Swoole\Timer;
 
 class Scanner extends BaseProcess
 {
@@ -40,7 +41,7 @@ class Scanner extends BaseProcess
 		$this->dirs = Config::get('reload.inotify', []);
 
 		$this->loadDirs();
-		$this->tick();
+		Timer::tick(3000, fn() => $this->loadByDir());
 	}
 
 
@@ -51,6 +52,9 @@ class Scanner extends BaseProcess
 	private function loadDirs(bool $isReload = FALSE)
 	{
 		try {
+			if ($this->isReloading) {
+				return;
+			}
 			foreach ($this->dirs as $value) {
 				if ($this->isReloading) {
 					break;
@@ -62,9 +66,8 @@ class Scanner extends BaseProcess
 			}
 		} catch (\Throwable $throwable) {
 			$this->logger->error($throwable->getMessage(), [$throwable]);
-		}
-		if ($this->isReloading) {
-			$this->timerReload();
+		} finally {
+			$this->loadDirs($isReload);
 		}
 	}
 
@@ -81,25 +84,32 @@ class Scanner extends BaseProcess
 			if ($this->isReloading) {
 				return;
 			}
-			/** @var DirectoryIterator $path */
-
-			if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
+			if (!$this->isNeedCheck($path)) {
 				continue;
 			}
-
-			if ($path->getExtension() !== 'php') {
-				continue;
-			}
-
 			if ($path->isDir()) {
 				$this->loadByDir(new DirectoryIterator($path->getRealPath()), $isReload);
 			}
-
 			if ($this->checkFile($path, $isReload)) {
 				$this->isReloading = TRUE;
+
+				Timer::after(3000, fn() => $this->timerReload());
 				break;
 			}
 		}
+	}
+
+
+	private function isNeedCheck(DirectoryIterator $path): bool
+	{
+		if ($path->isDot() || str_starts_with($path->getFilename(), '.')) {
+			return false;
+		}
+
+		if ($path->getExtension() !== 'php') {
+			return false;
+		}
+		return true;
 	}
 
 
@@ -148,8 +158,6 @@ class Scanner extends BaseProcess
 	{
 		$this->logger->warning('file change');
 
-		var_dump('file change');
-
 		$swow = \Kiri::getDi()->get(ServerInterface::class);
 
 		$swow->reload();
@@ -157,20 +165,6 @@ class Scanner extends BaseProcess
 		$this->isReloading = FALSE;
 
 		$this->loadDirs();
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	public function tick()
-	{
-		if ($this->isStop) {
-			return;
-		}
-
-		$this->loadDirs(TRUE);
-		sleep(2);
-		$this->tick();
 	}
 
 }
