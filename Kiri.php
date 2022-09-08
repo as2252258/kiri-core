@@ -308,5 +308,4 @@ class Kiri
 	}
 
 }
-
 Kiri::setContainer(Container::getInstance());
