@@ -309,4 +309,4 @@ class Kiri
 
 }
 
-Kiri::setContainer(new Container());
+Kiri::setContainer(Container::getInstance());
