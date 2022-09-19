@@ -72,7 +72,11 @@ class SplQueue implements QueueInterface
 	public function stats(): array
 	{
 		// TODO: Implement stats() method.
-		return [];
+		return [
+			'consumer_num' => 0,
+			'producer_num' => 0,
+			'queue_num'    => $this->length()
+		];
 	}
 
 

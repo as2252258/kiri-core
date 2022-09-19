@@ -64,6 +64,7 @@ class Pool extends Component
 				$connection->stopHeartbeatCheck();
 			}
 		}
+		$this->logger->warning('channel status', $channel->stats());
 	}
 
 
