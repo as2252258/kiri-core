@@ -187,6 +187,14 @@ class Connection extends Component
 
 
 	/**
+	 * @throws Exception
+	 */
+	public function flush($coroutineName, $minNumber = 1) {
+		$this->pool->flush($coroutineName, $minNumber);
+	}
+
+
+	/**
 	 * @param $coroutineName
 	 * @return bool
 	 */

@@ -41,12 +41,13 @@ class Pool extends Component
 
 
 	/**
-	 * @param $channel
+	 * @param $name
 	 * @param $retain_number
 	 * @throws Exception
 	 */
-	public function flush($channel, $retain_number)
+	public function flush($name, $retain_number)
 	{
+		$channel = $this->channel($name);
 		$this->pop($channel, $retain_number);
 	}
 
@@ -175,16 +176,13 @@ class Pool extends Component
 	/**
 	 * @param $channel
 	 * @param $minx
-	 * @return mixed
-	 * @throws Exception
+	 * @return void
 	 */
-	protected function maxIdleQuantity($channel, $minx): mixed
+	protected function maxIdleQuantity($channel, $minx): void
 	{
-		$connection = $channel->pop();
 		if ($channel->length() > $minx) {
 			$this->pop($channel, $minx);
 		}
-		return $connection;
 	}
 
 
