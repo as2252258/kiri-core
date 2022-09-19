@@ -166,7 +166,7 @@ class Pool extends Component
 	{
 		$channel = $this->channel($name);
 		if (!$channel->isEmpty()) {
-			return $this->maxIdleQuantity($channel, $minx);
+			return $channel->pop();
 		}
 		return $callback();
 	}
