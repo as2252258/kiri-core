@@ -64,7 +64,11 @@ class Pool extends Component
 				$connection->stopHeartbeatCheck();
 			}
 		}
-		$this->logger->warning('channel status', $channel->stats());
+		if (\Kiri::isWorker() || \Kiri::isTask()) {
+			$state = json_encode($channel->stats(), JSON_UNESCAPED_UNICODE);
+
+			$this->logger->warning('channel status(' . env('environmental_workerId') . '): ' . $state);
+		}
 	}
 
 
