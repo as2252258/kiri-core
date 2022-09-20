@@ -91,14 +91,15 @@ class Connection extends Component
 
 	/**
 	 * @param mixed $config
+	 * @param bool $isMaster
 	 * @return PDO|null
-	 * @throws Exception
+	 * @throws Kiri\Exception\ConfigException
 	 */
-	public function get(mixed $config): ?PDO
+	public function get(mixed $config, bool $isMaster = false): ?PDO
 	{
 		$minx = Config::get('databases.pool.min', 1);
 
-		return $this->pool->get($config['cds'], $this->generate($config), $minx);
+		return $this->pool->get($config['cds'] . ($isMaster ? 'master' : 'slave'), $this->generate($config), $minx);
 	}
 
 
@@ -189,7 +190,8 @@ class Connection extends Component
 	/**
 	 * @throws Exception
 	 */
-	public function flush($coroutineName, $minNumber = 1) {
+	public function flush($coroutineName, $minNumber = 1)
+	{
 		$this->pool->flush($coroutineName, $minNumber);
 	}
 
