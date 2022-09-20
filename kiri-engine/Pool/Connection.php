@@ -5,7 +5,7 @@ namespace Kiri\Pool;
 
 use Closure;
 use Database\Db;
-use Database\Mysql\PDO;
+use PDO;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
@@ -13,7 +13,6 @@ use Kiri\Abstracts\Config;
 use Kiri\Context;
 use Swoole\Error;
 use Throwable;
-use Kiri\Abstracts\CoordinatorManager;
 
 /**
  * Class Connection
@@ -95,7 +94,7 @@ class Connection extends Component
 	 * @return PDO|null
 	 * @throws Kiri\Exception\ConfigException
 	 */
-	public function get(mixed $config, bool $isMaster = false): ?PDO
+	public function get(mixed $config, bool $isMaster = false): ?\PDO
 	{
 		$minx = Config::get('databases.pool.min', 1);
 
@@ -110,14 +109,22 @@ class Connection extends Component
 	public function generate(array $config): Closure
 	{
 		return static function () use ($config) {
-			$connect = new PDO($config);
-			if (!Db::inTransactionsActive()) {
-				return $connect;
+			$link = new \PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'], $config['username'], $config['password'], [
+				\PDO::ATTR_EMULATE_PREPARES   => false,
+				\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
+				\PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
+				\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
+			]);
+			$link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			$link->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+			$link->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_EMPTY_STRING);
+			foreach ($config['attributes'] as $key => $attribute) {
+				$link->setAttribute($key, $attribute);
 			}
-			if (!$connect->inTransaction()) {
-				$connect->beginTransaction();
+			if (Db::inTransactionsActive()) {
+				$link->beginTransaction();
 			}
-			return $connect;
+			return $link;
 		};
 	}
 
