@@ -35,6 +35,18 @@ if (!function_exists('make')) {
 		return Kiri::getDi()->get($name);
 	}
 
+}
+
+
+if (!function_exists('isJson')) {
+
+
+	function isJson(?string $string): bool
+	{
+		if (is_null($string)) return false;
+		return str_starts_with($string, '{') && str_starts_with($string, '[')
+			&& str_ends_with($string, '}') && str_ends_with($string, ']');
+	}
 
 }
 
