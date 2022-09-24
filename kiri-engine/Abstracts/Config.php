@@ -60,7 +60,7 @@ class Config extends Component
 	 * @param bool $try
 	 * @param mixed|null $default
 	 * @return mixed
-	 * @throws ConfigException
+	 * @throws
 	 */
 	public static function get($key, mixed $default = null, bool $try = FALSE): mixed
 	{
