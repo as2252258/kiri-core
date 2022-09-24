@@ -205,6 +205,8 @@ class Loader extends Component
 		$replace = str_replace(DIRECTORY_SEPARATOR, '\\', $replace);
 		$explode = explode('\\', $replace);
 		array_shift($explode);
+		
+		var_dump($namespace . '\\' . implode('\\', $explode));
 
 		return $namespace . '\\' . implode('\\', $explode);
 	}
