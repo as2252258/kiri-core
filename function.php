@@ -242,7 +242,7 @@ if (!function_exists('scan_directory')) {
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	function scan_directory($dir, $namespace, array $exclude = [])
+	function scan_directory($dir, $namespace, array $exclude = []): void
 	{
 		$annotation = Kiri::getDi()->get(Annotation::class);
 		$annotation->read($dir, $namespace, $exclude);
