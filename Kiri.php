@@ -26,8 +26,8 @@ use Swoole\WebSocket\Server;
 defined('DB_ERROR_BUSY') or define('DB_ERROR_BUSY', 'The database is busy. Please try again later.');
 defined('SELECT_IS_NULL') or define('SELECT_IS_NULL', 'Query data does not exist, please check the relevant conditions.');
 defined('PARAMS_IS_NULL') or define('PARAMS_IS_NULL', 'Required items cannot be empty, please add.');
-defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', realpath(APP_PATH . 'controllers/'));
-defined('MODEL_PATH') or define('MODEL_PATH', realpath(APP_PATH . 'models/'));
+defined('CONTROLLER_PATH') or define('CONTROLLER_PATH', realpath(APP_PATH . 'app/Controller/'));
+defined('MODEL_PATH') or define('MODEL_PATH', realpath(APP_PATH . 'app/Model/'));
 defined('COMPONENT_PATH') or define('COMPONENT_PATH', realpath(APP_PATH . 'components/'));
 defined('URL_MATCH') or define('URL_MATCH', '/(http[s]?:\/\/)?((?:[\w\-_]+\.)+\w+(?::\d+)?)(?:(\/[a-zA-Z0-9-\/]+)+[\/]?(\?[a-zA-Z]+=.*)?)?/');
 
