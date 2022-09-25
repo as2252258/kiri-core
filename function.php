@@ -1161,7 +1161,7 @@ if (!function_exists('throwable')) {
 	 */
 	function throwable(\Throwable|\Error $throwable): string
 	{
-		$message = $throwable->getMessage() . '	' . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
+		$message = $throwable->getMessage() . PHP_EOL . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
 		foreach ($throwable->getTrace() as $value) {
 			if (!isset($value['file'])) {
 				continue;
