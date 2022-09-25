@@ -147,7 +147,7 @@ class Logger implements LoggerInterface
 			return;
 		}
 		
-		$_string = '[' . now() . ']' . PHP_EOL . $level . ': ' . $message . PHP_EOL;
+		$_string = '[' . now() . ']' . PHP_EOL . ucfirst($level) . ': ' . $message . PHP_EOL;
 		if (!empty($context)) {
 			$_string .= $this->_string($context);
 		}
