@@ -17,7 +17,7 @@ use ReflectionException;
  */
 class Logger implements LoggerInterface
 {
-
+	
 	const EMERGENCY = 'emergency';
 	const ALERT = 'alert';
 	const CRITICAL = 'critical';
@@ -26,11 +26,11 @@ class Logger implements LoggerInterface
 	const NOTICE = 'notice';
 	const INFO = 'info';
 	const DEBUG = 'debug';
-
-
+	
+	
 	const LOGGER_LEVELS = [Logger::EMERGENCY, Logger::ALERT, Logger::CRITICAL, Logger::ERROR, Logger::WARNING, Logger::NOTICE, Logger::INFO, Logger::DEBUG];
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -43,8 +43,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement emergency() method.
 		$this->log(Logger::EMERGENCY, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -57,8 +57,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement alert() method.
 		$this->log(Logger::ALERT, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -71,8 +71,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement critical() method.
 		$this->log(Logger::CRITICAL, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -83,8 +83,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement error() method.
 		$this->log(Logger::ERROR, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -95,7 +95,7 @@ class Logger implements LoggerInterface
 		// TODO: Implement warning() method.
 		$this->log(Logger::WARNING, $message, $context);
 	}
-
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -106,8 +106,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement notice() method.
 		$this->log(Logger::NOTICE, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -118,8 +118,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement info() method.
 		$this->log(Logger::INFO, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -130,8 +130,8 @@ class Logger implements LoggerInterface
 		// TODO: Implement debug() method.
 		$this->log(Logger::DEBUG, $message, $context);
 	}
-
-
+	
+	
 	/**
 	 * @param mixed $level
 	 * @param string $message
@@ -146,19 +146,19 @@ class Logger implements LoggerInterface
 		if (!in_array($level, $levels) || str_contains($message, 'Event::rshutdown')) {
 			return;
 		}
-
-		$_string = '[' . now() . '] production.' . $level . ': ' . $message . PHP_EOL;
+		
+		$_string = '[' . now() . ']' . PHP_EOL . $level . ': ' . $message . PHP_EOL;
 		if (!empty($context)) {
 			$_string .= $this->_string($context);
 		}
 		file_put_contents('php://output', $_string);
-
+		
 		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
-
+		
 		file_put_contents($filename, $_string, FILE_APPEND);
 	}
-
-
+	
+	
 	/**
 	 * @return void
 	 * @throws Exception
@@ -167,8 +167,8 @@ class Logger implements LoggerInterface
 	{
 		$this->removeFile(storage());
 	}
-
-
+	
+	
 	/**
 	 * @param string $dirname
 	 * @return void
@@ -188,8 +188,8 @@ class Logger implements LoggerInterface
 			@unlink($path->getRealPath());
 		}
 	}
-
-
+	
+	
 	/**
 	 * @param $context
 	 * @return string
