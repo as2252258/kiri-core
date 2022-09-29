@@ -12,10 +12,10 @@ use Swoole\Coroutine;
  */
 class Context extends BaseContext
 {
-
+	
 	protected static array $_contents = [];
-
-
+	
+	
 	/**
 	 * @param $id
 	 * @param $context
@@ -32,7 +32,7 @@ class Context extends BaseContext
 		}
 		return static::$_contents[$id] = $context;
 	}
-
+	
 	/**
 	 * @param $id
 	 * @param int $value
@@ -49,7 +49,7 @@ class Context extends BaseContext
 		}
 		return Coroutine::getContext($coroutineId)[$id] += $value;
 	}
-
+	
 	/**
 	 * @param $id
 	 * @param int $value
@@ -66,7 +66,7 @@ class Context extends BaseContext
 		}
 		return Coroutine::getContext($coroutineId)[$id] -= $value;
 	}
-
+	
 	/**
 	 * @param $id
 	 * @param null $default
@@ -80,8 +80,8 @@ class Context extends BaseContext
 		}
 		return static::loadByContext($id, $default, $coroutineId);
 	}
-
-
+	
+	
 	/**
 	 * @param $id
 	 * @param null $default
@@ -95,8 +95,8 @@ class Context extends BaseContext
 		}
 		return Coroutine::getContext($coroutineId)[$id] ?? $default;
 	}
-
-
+	
+	
 	/**
 	 * @param $id
 	 * @param null $default
@@ -106,8 +106,8 @@ class Context extends BaseContext
 	{
 		return static::$_contents[$id] ?? $default;
 	}
-
-
+	
+	
 	/**
 	 * @param null $coroutineId
 	 * @return mixed
@@ -120,7 +120,18 @@ class Context extends BaseContext
 			return static::$_contents ?? [];
 		}
 	}
-
+	
+	
+	/**
+	 * @return void
+	 */
+	public static function clearAll(): void
+	{
+		if (Coroutine::getCid() === -1) {
+			static::$_contents = [];
+		}
+	}
+	
 	/**
 	 * @param string $id
 	 * @param null $coroutineId
@@ -135,16 +146,16 @@ class Context extends BaseContext
 		}
 		if (Coroutine::getCid() === -1) {
 			static::$_contents[$id] = null;
-
+			
 			unset(static::$_contents[$id]);
-
+			
 		} else {
 			Coroutine::getContext($coroutineId)[$id] = null;
-
+			
 			unset(Coroutine::getContext($coroutineId)[$id]);
 		}
 	}
-
+	
 	/**
 	 * @param $id
 	 * @param null $key
@@ -158,8 +169,8 @@ class Context extends BaseContext
 		}
 		return static::searchByCoroutine($id, $key, $coroutineId);
 	}
-
-
+	
+	
 	/**
 	 * @param $id
 	 * @param null $key
@@ -176,8 +187,8 @@ class Context extends BaseContext
 		}
 		return true;
 	}
-
-
+	
+	
 	/**
 	 * @param $id
 	 * @param null $key
@@ -198,8 +209,8 @@ class Context extends BaseContext
 		}
 		return true;
 	}
-
-
+	
+	
 	/**
 	 * @return bool
 	 */
@@ -207,7 +218,7 @@ class Context extends BaseContext
 	{
 		return Coroutine::getCid() !== -1;
 	}
-
+	
 }
 
 
