@@ -127,9 +127,7 @@ class Context extends BaseContext
 	 */
 	public static function clearAll(): void
 	{
-		if (Coroutine::getCid() === -1) {
-			static::$_contents = [];
-		}
+		static::$_contents = [];
 	}
 	
 	/**
