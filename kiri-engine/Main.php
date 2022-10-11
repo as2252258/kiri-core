@@ -58,6 +58,7 @@ class Main extends BaseMain
 		$error->registerShutdownHandler(Config::get('error.shutdown', []));
 		$error->registerExceptionHandler(Config::get('error.exception', []));
 		$error->registerErrorHandler(Config::get('error.error', []));
+		$this->id = Config::get('id', uniqid('id.'));
 	}
 
 	/**

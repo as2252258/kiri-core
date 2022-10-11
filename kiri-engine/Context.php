@@ -110,12 +110,12 @@ class Context extends BaseContext
 
 	/**
 	 * @param null $coroutineId
-	 * @return mixed
+	 * @return Coroutine\Context|array
 	 */
-	public static function getAllContext($coroutineId = null): mixed
+	public static function getAllContext($coroutineId = null): Coroutine\Context|array
 	{
 		if (Coroutine::getCid() === -1) {
-			return Coroutine::getContext($coroutineId) ?? [];
+			return Coroutine::getContext((int)$coroutineId) ?? [];
 		} else {
 			return static::$_contents ?? [];
 		}
