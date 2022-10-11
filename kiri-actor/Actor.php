@@ -168,7 +168,9 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	/**
 	 * @return void
 	 */
-	abstract public function onUpdate(): void;
+	public function onUpdate(): void
+	{
+	}
 
 
 	/**
