@@ -33,6 +33,7 @@
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
+      "Kiri\\Actor\\": "kiri-actor/",
       "Kiri\\Annotation\\": "kiri-annotation/",
       "Kiri\\Task\\": "kiri-task/"
     },
