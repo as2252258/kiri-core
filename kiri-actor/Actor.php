@@ -25,6 +25,12 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	/**
 	 * @var int
 	 */
+	private int $messageId = -1;
+
+
+	/**
+	 * @var int
+	 */
 	private int $coroutineId = -1;
 
 
@@ -38,6 +44,12 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	 * @var float
 	 */
 	private float $startTime = 0;
+
+
+	/**
+	 * @var int
+	 */
+	private int $refreshInterval = 0;
 
 
 	/**
@@ -77,13 +89,21 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	}
 
 
-
 	/**
 	 * @return void
 	 */
 	public function init(): void
 	{
 
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isShutdown(): bool
+	{
+		return $this->isShutdown;
 	}
 
 
@@ -136,8 +156,18 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	public function shutdown(): void
 	{
 		$this->isShutdown = true;
+		Coroutine::cancel($this->coroutineId);
+		if ($this->messageId > -1) {
+			Coroutine::cancel($this->messageId);
+		}
 		$this->channel->close();
 	}
+
+
+	/**
+	 * @return void
+	 */
+	abstract public function onUpdate(): void;
 
 
 	/**
@@ -147,21 +177,44 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	{
 		$this->setState(ActorState::BUSY);
 		$this->init();
-		$this->loop();
+		$this->messageId = Coroutine::create(fn() => $this->loop());
+		$this->interval();
 		$this->setState(ActorState::IDLE);
 	}
 
 
 	/**
-	 * @return mixed
+	 * @return void
 	 */
-	private function loop(): mixed
+	private function interval(): void
 	{
+		if ($this->isShutdown()) {
+			return;
+		}
+		$this->onUpdate();
+
+		Coroutine::sleep($this->refreshInterval / 1000);
+
+		$this->interval();
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	private function loop(): bool
+	{
+		if ($this->messageId == -1) {
+			$this->messageId = Coroutine::getCid();
+		}
 		if ($this->channel->errCode == SWOOLE_CHANNEL_CLOSED) {
 			$this->channel = new Channel(99);
 		}
 		$message = $this->channel->pop();
 		$this->process($message);
+		if ($this->isShutdown()) {
+			return true;
+		}
 		return $this->loop();
 	}
 
