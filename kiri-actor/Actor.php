@@ -2,9 +2,10 @@
 
 namespace Kiri\Actor;
 
+use JsonSerializable;
 use Swoole\Coroutine\Channel;
 
-abstract class Actor implements ActorInterface
+abstract class Actor implements ActorInterface, JsonSerializable
 {
 
 
@@ -64,7 +65,7 @@ abstract class Actor implements ActorInterface
 	 */
 	private function __construct(readonly public string $uniqueId)
 	{
-		$this->channel = new Channel(1000);
+		$this->channel = new Channel(99);
 		$this->startTime = microtime(true);
 	}
 
@@ -113,24 +114,23 @@ abstract class Actor implements ActorInterface
 	 */
 	public function run(): void
 	{
-		if ($this->channel->errCode == SWOOLE_CHANNEL_CLOSED) {
-			if ($this->isShutdown) {
-				return;
-			}
-			$this->channel = new Channel(1000);
-		}
 		$this->setState(ActorState::BUSY);
-		while (!$this->isShutdown) {
-			$message = $this->channel->pop();
-			$this->process($message);
-			unset($message);
-		}
+		$this->loop();
 		$this->setState(ActorState::IDLE);
-		if ($this->isShutdown) {
-			$this->channel->close();
-			return;
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	private function loop(): mixed
+	{
+		if ($this->channel->errCode == SWOOLE_CHANNEL_CLOSED) {
+			$this->channel = new Channel(99);
 		}
-		$this->run();
+		$message = $this->channel->pop();
+		$this->process($message);
+		return $this->loop();
 	}
 
 }
