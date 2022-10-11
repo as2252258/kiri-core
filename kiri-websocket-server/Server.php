@@ -3,7 +3,6 @@
 namespace Kiri\Websocket;
 
 use Closure;
-use Co\WaitGroup;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
@@ -23,14 +22,13 @@ use Kiri\Message\Handler\RouterCollector;
 use Kiri\Message\ResponseEmitter;
 use Kiri\Message\ServerRequest;
 use Kiri\Message\Constrict\Response as CResponse;
-use Kiri\Server\Events\OnShutdown;
 use Kiri\Websocket\Contract\OnCloseInterface;
+use Kiri\Websocket\Contract\OnDisconnectInterface;
 use Kiri\Websocket\Contract\OnHandshakeInterface;
 use Kiri\Websocket\Contract\OnMessageInterface;
 use Kiri\Websocket\Contract\OnOpenInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use ReflectionException;
 use Swoole\Coroutine;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -39,7 +37,7 @@ use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server as WsServer;
 use Swoole\Coroutine\Http\Server as WhServer;
 
-class Server extends Component
+class Server extends Component implements OnHandshakeInterface, OnMessageInterface, OnCloseInterface, OnDisconnectInterface
 {
 
 
@@ -115,7 +113,7 @@ class Server extends Component
 	 */
 	public function init(): void
 	{
-		$exception = Config::get('exception.http', ExceptionHandlerDispatcher::class);
+		$exception = Config::get('exception.websocket', ExceptionHandlerDispatcher::class);
 		if (!in_array(ExceptionHandlerInterface::class, class_implements($exception))) {
 			$exception = ExceptionHandlerDispatcher::class;
 		}
@@ -130,7 +128,7 @@ class Server extends Component
 	 * @return void
 	 * @throws Exception
 	 */
-	public function onHandshake(Request $request, Response $response): void
+	public function OnHandshake(Request $request, Response $response): void
 	{
 		try {
 			/** @var \Kiri\Message\Response $psrResponse */
@@ -145,26 +143,26 @@ class Server extends Component
 			} else if (is_null($handler)) {
 				$psrResponse->withContent('Page not found.')->withStatus(404);
 			} else {
-				$psrResponse = $this->dispatcher->with($handler)->handle($psrRequest);
-
-				$executor = $handler->callback;
-				$response->upgrade();
-				if ($handler instanceof OnHandshakeInterface) {
-					$statusCode = $handler->onHandshake($request, $response);
-					$response->setStatusCode($statusCode);
-					$response->write("connect ok.");
-				}
-				if ($executor instanceof OnOpenInterface) {
-					$executor->onOpen($this->server, $request);
-				}
-				while (true) {
-					$frame = $response->recv();
-					if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
-						$handler->onClose($this->server, $response->fd);
-						break;
-					}
-					$handler->onMessage($this->server, $frame);
-				}
+//				$psrResponse = $this->dispatcher->with($handler)->handle($psrRequest);
+//
+//				$executor = $handler->callback;
+//				$response->upgrade();
+//				if ($handler instanceof OnHandshakeInterface) {
+//					$statusCode = $handler->OnHandshake($request, $response);
+//					$response->setStatusCode($statusCode);
+//					$response->write("connect ok.");
+//				}
+//				if ($executor instanceof OnOpenInterface) {
+//					$executor->onOpen($this->server, $request);
+//				}
+//				while (true) {
+//					$frame = $response->recv();
+//					if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
+//						$handler->onClose($this->server, $response->fd);
+//						break;
+//					}
+//					$handler->onMessage($this->server, $frame);
+//				}
 			}
 		} catch (\Throwable $throwable) {
 			$psrResponse = $this->exception->emit($throwable, di(CResponse::class));
@@ -175,44 +173,39 @@ class Server extends Component
 
 
 	/**
-	 * @param WsServer|Coroutine\Http\Server $server
 	 * @param Frame $frame
 	 * @return void
 	 */
-	public function onMessage(WsServer|WhServer $server, Frame $frame): void
+	public function OnMessage(Frame $frame): void
 	{
-		$handler = $this->handler->callback;
-		if ($handler instanceof OnMessageInterface) {
-			$handler->onMessage($server, $frame);
-		}
 	}
 
 
 	/**
-	 * @param WsServer|Coroutine\Http\Server $server
 	 * @param int $fd
 	 * @return void
 	 */
-	public function onClose(WsServer|WhServer $server, int $fd): void
+	public function OnClose(int $fd): void
 	{
-		$handler = $this->handler->callback;
-		if ($handler instanceof OnCloseInterface) {
-			$handler->onClose($server, $fd);
-		}
 	}
 
 
 	/**
-	 * @param WsServer|WhServer $server
+	 * @param int $fd
+	 * @return void
+	 */
+	public function OnDisconnect(int $fd): void
+	{
+		// TODO: Implement OnDisconnect() method.
+	}
+
+
+	/**
 	 * @param Request $request
 	 * @return void
 	 */
-	public function onOpen(WsServer|WhServer $server, Request $request): void
+	public function OnOpen(Request $request): void
 	{
-		$handler = $this->handler->callback;
-		if ($handler instanceof OnOpenInterface) {
-			$handler->onOpen($server, $request);
-		}
 	}
 
 

@@ -13,9 +13,9 @@ interface OnHandshakeInterface
 	/**
 	 * @param Request $request
 	 * @param Response $response
-	 * @return int
+	 * @return void
 	 */
-	public function onHandshake(Request $request, Response $response): int;
+	public function OnHandshake(Request $request, Response $response): void;
 
 
 }
