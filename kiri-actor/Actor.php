@@ -2,6 +2,7 @@
 
 namespace Kiri\Actor;
 
+use Exception;
 use JsonSerializable;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
@@ -172,9 +173,13 @@ abstract class Actor implements ActorInterface, JsonSerializable
 
 	/**
 	 * @return void
+	 * @throws Exception
 	 */
 	public function run(): void
 	{
+		if ($this->refreshInterval < 1) {
+			throw new Exception('Refresh interval must be greater than 1');
+		}
 		$this->setState(ActorState::BUSY);
 		$this->init();
 		$this->messageId = Coroutine::create(fn() => $this->loop());
@@ -191,7 +196,12 @@ abstract class Actor implements ActorInterface, JsonSerializable
 		if ($this->isShutdown()) {
 			return;
 		}
-		$this->onUpdate();
+
+		try {
+			$this->onUpdate();
+		} catch (\Throwable $exception) {
+			\Kiri::getLogger()->error(throwable($exception));
+		}
 
 		Coroutine::sleep($this->refreshInterval / 1000);
 
