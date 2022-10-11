@@ -6,9 +6,9 @@ interface ActorInterface
 {
 
 	/**
-	 * @param mixed $message
+	 * @param ActorMessage $message
 	 * @return void
 	 */
-	public function process(mixed $message): void;
+	public function process(ActorMessage $message): void;
 
 }

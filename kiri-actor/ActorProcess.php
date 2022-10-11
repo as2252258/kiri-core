@@ -47,16 +47,17 @@ class ActorProcess extends BaseProcess
 		$actorManager = $this->container->get(ActorManager::class);
 		while (!$this->isStop()) {
 			$read = json_decode($process->read(), true);
-			if (is_null($read) || !isset($read['event'])) {
+			if (is_null($read) || !isset($read['category'])) {
 				continue;
 			}
-			switch ($read['event']) {
+			$message = new ActorMessage($read['userId'], $read['event'], $read['body']);
+			switch ($read['category']) {
 				case ActorState::MESSAGE:
-					$actorManager->write($read['name'], $read['message']);
+					$actorManager->write($read['name'], $message);
 					break;
 				case ActorState::CREATE:
 					/** @var ActorInterface $actor */
-					$actor = $this->container->create($read['class']);
+					$actor = $this->container->create($read['class'], $read['constrict'], $read['config']);
 					$actorManager->addActor($actor);
 					break;
 				case ActorState::SHUTDOWN:
