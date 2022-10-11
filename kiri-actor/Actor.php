@@ -3,6 +3,7 @@
 namespace Kiri\Actor;
 
 use JsonSerializable;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 abstract class Actor implements ActorInterface, JsonSerializable
@@ -85,7 +86,11 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	 */
 	public static function newActor($id): static
 	{
-		return new static($id);
+		$actor = new static($id);
+		Coroutine::create(function (Actor $actor) {
+			$actor->run();
+		}, $actor);
+		return $actor;
 	}
 
 
