@@ -7,6 +7,10 @@ use JsonSerializable;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
+
+/**
+ * @Actor
+ */
 abstract class Actor implements ActorInterface, JsonSerializable
 {
 
