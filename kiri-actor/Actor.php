@@ -23,6 +23,12 @@ abstract class Actor implements ActorInterface, JsonSerializable
 
 
 	/**
+	 * @var int
+	 */
+	private int $coroutineId = -1;
+
+
+	/**
 	 * @var ActorState
 	 */
 	private ActorState $state;
@@ -87,10 +93,20 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	public static function newActor($id): static
 	{
 		$actor = new static($id);
-		Coroutine::create(function (Actor $actor) {
-			$actor->run();
-		}, $actor);
+		$actor->listen();
 		return $actor;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function listen(): void
+	{
+		Coroutine::create(function (Actor $actor) {
+			$actor->coroutineId = Coroutine::getCid();
+			$this->run();
+		}, $this);
 	}
 
 
