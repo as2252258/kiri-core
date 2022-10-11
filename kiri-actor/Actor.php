@@ -71,6 +71,15 @@ abstract class Actor implements ActorInterface, JsonSerializable
 
 
 	/**
+	 * @return void
+	 */
+	public function init(): void
+	{
+
+	}
+
+
+	/**
 	 * @param $id
 	 * @return static
 	 */
@@ -115,6 +124,7 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	public function run(): void
 	{
 		$this->setState(ActorState::BUSY);
+		$this->init();
 		$this->loop();
 		$this->setState(ActorState::IDLE);
 	}
