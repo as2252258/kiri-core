@@ -77,6 +77,7 @@ abstract class Actor implements ActorInterface, JsonSerializable
 	}
 
 
+
 	/**
 	 * @return void
 	 */
