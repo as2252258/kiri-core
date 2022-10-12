@@ -12,15 +12,12 @@ use Kiri\Di\ContainerInterface;
 use Kiri\Events\EventDispatch;
 use Kiri\Exception\ConfigException;
 use Kiri\Message\Abstracts\ExceptionHandlerInterface;
-use Kiri\Message\Constrict\RequestInterface;
 use Kiri\Message\Constrict\ResponseInterface;
 use Kiri\Message\ExceptionHandlerDispatcher;
 use Kiri\Message\Handler\DataGrip;
 use Kiri\Message\Handler\Dispatcher;
-use Kiri\Message\Handler\Handler;
 use Kiri\Message\Handler\RouterCollector;
 use Kiri\Message\ResponseEmitter;
-use Kiri\Message\ServerRequest;
 use Kiri\Message\Constrict\Response as CResponse;
 use Kiri\Websocket\Contract\OnCloseInterface;
 use Kiri\Websocket\Contract\OnDisconnectInterface;
@@ -34,10 +31,12 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\CloseFrame;
 use Swoole\WebSocket\Frame;
-use Swoole\WebSocket\Server as WsServer;
-use Swoole\Coroutine\Http\Server as WhServer;
 
-class Server extends Component implements OnHandshakeInterface, OnMessageInterface, OnCloseInterface, OnDisconnectInterface
+
+/**
+ *
+ */
+class Server extends Component implements OnHandshakeInterface, OnMessageInterface, OnCloseInterface, OnDisconnectInterface, OnOpenInterface
 {
 
 
@@ -48,40 +47,46 @@ class Server extends Component implements OnHandshakeInterface, OnMessageInterfa
 	public EventDispatch $dispatch;
 
 
+	/**
+	 * @var string
+	 */
 	public string $host = '0.0.0.0';
 
 
+	/**
+	 * @var int
+	 */
 	public int $port = 9527;
 
 
-	public bool $isSsl = false;
-
-
+	/**
+	 * @var RouterCollector
+	 */
 	public RouterCollector $router;
 
-	public bool $reuse_port = true;
 
-
-	private bool $isShutdown = false;
-
+	/**
+	 * @var Coroutine\Http\Server
+	 */
 	public Coroutine\Http\Server $server;
 
+
+	/**
+	 * @var ExceptionHandlerInterface
+	 */
 	public ExceptionHandlerInterface $exception;
 
 
-	private int|Handler|null $handler;
-
-
-	public array|null|Closure $handshake;
-
-
+	/**
+	 * @var array|Closure|null
+	 */
 	public array|null|Closure $message;
 
 
+	/**
+	 * @var array|Closure|null
+	 */
 	public array|null|Closure $close;
-
-
-	public array|null|Closure $disconnect;
 
 
 	/**
@@ -118,8 +123,6 @@ class Server extends Component implements OnHandshakeInterface, OnMessageInterfa
 			$exception = ExceptionHandlerDispatcher::class;
 		}
 		$this->exception = $this->container->get($exception);
-
-		$this->handler = $this->router->find('/', 'GET');
 	}
 
 	/**
@@ -134,35 +137,33 @@ class Server extends Component implements OnHandshakeInterface, OnMessageInterfa
 			/** @var \Kiri\Message\Response $psrResponse */
 			$psrResponse = Context::setContext(ResponseInterface::class, new \Kiri\Message\Response());
 
-			/** @var ServerRequest $psrRequest */
-			$psrRequest = Context::setContext(RequestInterface::class, ServerRequest::createServerRequest($request));
-
 			$handler = $this->router->find('/', 'GET');
 			if (is_integer($handler)) {
 				$psrResponse->withContent('Allow Method[' . $request->getMethod() . '].')->withStatus(405);
 			} else if (is_null($handler)) {
 				$psrResponse->withContent('Page not found.')->withStatus(404);
 			} else {
-//				$psrResponse = $this->dispatcher->with($handler)->handle($psrRequest);
-//
-//				$executor = $handler->callback;
-//				$response->upgrade();
-//				if ($handler instanceof OnHandshakeInterface) {
-//					$statusCode = $handler->OnHandshake($request, $response);
-//					$response->setStatusCode($statusCode);
-//					$response->write("connect ok.");
-//				}
-//				if ($executor instanceof OnOpenInterface) {
-//					$executor->onOpen($this->server, $request);
-//				}
-//				while (true) {
-//					$frame = $response->recv();
-//					if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
-//						$handler->onClose($this->server, $response->fd);
-//						break;
-//					}
-//					$handler->onMessage($this->server, $frame);
-//				}
+				$executor = $handler->dispatch->handler;
+
+				if (Context::inCoroutine()) {
+					$response->upgrade();
+					if ($handler instanceof OnHandshakeInterface) {
+						$handler->OnHandshake($request, $response);
+					}
+					if ($executor instanceof OnOpenInterface) {
+						$executor->OnOpen($request);
+					}
+					while (true) {
+						$frame = $response->recv();
+						if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
+							$handler->OnClose($response->fd);
+							break;
+						}
+						$handler->OnMessage($frame);
+					}
+				} else {
+					$this->OnOpen($request);
+				}
 			}
 		} catch (\Throwable $throwable) {
 			$psrResponse = $this->exception->emit($throwable, di(CResponse::class));
