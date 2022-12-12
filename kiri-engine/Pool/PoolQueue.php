@@ -2,8 +2,7 @@
 
 namespace Kiri\Pool;
 
-use Kiri\Context;
-
+use Kiri\Di\Context;
 use Swoole\Coroutine\Channel;
 
 class PoolQueue implements QueueInterface

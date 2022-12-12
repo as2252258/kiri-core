@@ -8,13 +8,10 @@ use Database\Mysql\PDO;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
-use Kiri\Abstracts\CoordinatorManager;
 use Kiri\Annotation\Inject;
-use Kiri\Context;
 use Kiri\Exception\ConfigException;
 use Kiri\Server\Abstracts\StatusEnum;
 use Kiri\Server\WorkerStatus;
-use Swoole\Coroutine\Channel;
 
 
 /**

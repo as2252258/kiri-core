@@ -5,12 +5,12 @@ namespace Kiri\Pool;
 
 use Closure;
 use Database\Db;
-use PDO;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
-use Kiri\Context;
+use Kiri\Di\Context;
+use PDO;
 use Swoole\Error;
 use Throwable;
 
