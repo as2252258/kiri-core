@@ -226,9 +226,9 @@ class Pool extends Component
 
 	/**
 	 * @param string $name
-	 * @return mixed
+	 * @return int
 	 */
-	public function size(string $name): mixed
+	public function size(string $name): int
 	{
 		if (!isset(static::$_connections[$name])) {
 			return 0;
