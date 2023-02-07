@@ -97,7 +97,7 @@ class Connection extends Component
 	public function get(mixed $config, bool $isMaster = false): ?\PDO
 	{
 		$name = $config['cds'] . ($isMaster ? 'master' : 'slave');
-		if (!$this->pool->hasChannel($name, $config['pool']['max'])) {
+		if (!$this->pool->hasChannel($name)) {
 			$this->pool->initConnections($name, $config['pool']['max']);
 		}
 		return $this->pool->get($name, $this->generate($config));

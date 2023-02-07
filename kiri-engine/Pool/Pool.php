@@ -139,7 +139,7 @@ class Pool extends Component
 	}
 
 
-	public function hasChannel($name, $max): bool
+	public function hasChannel($name): bool
 	{
 		$channel = static::$_connections[$name] ?? null;
 		if (!($channel instanceof PoolQueue)) {
