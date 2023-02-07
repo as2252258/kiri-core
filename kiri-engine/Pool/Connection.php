@@ -96,9 +96,7 @@ class Connection extends Component
 	 */
 	public function get(mixed $config, bool $isMaster = false): ?\PDO
 	{
-		$minx = Config::get('databases.pool.min', 1);
-
-		return $this->pool->get($config['cds'] . ($isMaster ? 'master' : 'slave'), $this->generate($config), $minx);
+		return $this->pool->get($config['cds'] . ($isMaster ? 'master' : 'slave'), $this->generate($config));
 	}
 
 

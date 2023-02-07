@@ -82,7 +82,7 @@ class Helper implements StopHeartbeatCheck
 
 	/**
 	 * @return \Redis
-	 * @throws RedisConnectException
+	 * @throws Exception
 	 * @throws RedisException
 	 */
 	public function _pdo(): \Redis
@@ -96,7 +96,7 @@ class Helper implements StopHeartbeatCheck
 
 	/**
 	 * @return \Redis
-	 * @throws RedisConnectException
+	 * @throws Exception
 	 */
 	private function newClient(): \Redis
 	{

@@ -91,6 +91,7 @@ class Redis extends Component
 	 * @param $key
 	 * @param int $timeout
 	 * @return bool
+	 * @throws \RedisException
 	 */
 	public function waite($key, int $timeout = 5): bool
 	{
@@ -189,7 +190,7 @@ SCRIPT;
 		$config = $this->get_config();
 		return $this->pool->get($config['host'], static function () use ($config) {
 			return new Helper($config);
-		}, 10);
+		});
 	}
 
 

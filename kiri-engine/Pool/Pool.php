@@ -24,9 +24,6 @@ class Pool extends Component
 	/** @var array<PoolQueue> */
 	private static array $_connections = [];
 
-	public int $max = 60;
-
-
 	/**
 	 * @var WorkerStatus
 	 */
@@ -112,18 +109,14 @@ class Pool extends Component
 	/**
 	 * @param $name
 	 * @param int $max
-	 * @throws ConfigException
 	 */
 	public function initConnections($name, int $max = 60)
 	{
-		if (isset(static::$_connections[$name])) {
-			$value = static::$_connections[$name];
-			if ($value instanceof PoolQueue) {
-				return;
-			}
+		$channel = static::$_connections[$name] ?? null;
+		if (($channel instanceof PoolQueue) && !$channel->isClose()) {
+			return;
 		}
-		$this->newChannel($name, $max);
-		$this->max = $max;
+		static::$_connections[$name] = new PoolQueue($max);
 	}
 
 
@@ -135,37 +128,25 @@ class Pool extends Component
 	 */
 	public function channel($name): PoolQueue
 	{
-		if (!isset(static::$_connections[$name])) {
-			$this->newChannel($name);
+		$channel = static::$_connections[$name] ?? null;
+		if (!($channel instanceof PoolQueue) ) {
+			throw new Exception('Channel is not exists.');
 		}
-		if (static::$_connections[$name]->isClose()) {
+		if ($channel->isClose()) {
 			throw new Exception('Channel is Close.');
 		}
-		return static::$_connections[$name];
-	}
-
-
-	/**
-	 * @throws ConfigException
-	 */
-	private function newChannel($name, $max = null)
-	{
-		if ($max == null) {
-			$max = Config::get('databases.pool.max', 10);
-		}
-		static::$_connections[$name] = new PoolQueue($max);
+		return $channel;
 	}
 
 
 	/**
 	 * @param $name
 	 * @param $callback
-	 * @param $minx
 	 * @return array
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function get($name, $callback, $minx): mixed
+	public function get($name, $callback): mixed
 	{
 		$channel = $this->channel($name);
 		if (!$channel->isEmpty()) {
@@ -217,10 +198,11 @@ class Pool extends Component
 	 */
 	public function hasItem(string $name): bool
 	{
-		if (isset(static::$_connections[$name])) {
-			return !static::$_connections[$name]->isEmpty();
+		$channel = static::$_connections[$name] ?? null;
+		if (!($channel instanceof PoolQueue) || $channel->isClose()) {
+			return false;
 		}
-		return false;
+		return !$channel->isEmpty();
 	}
 
 
@@ -230,10 +212,11 @@ class Pool extends Component
 	 */
 	public function size(string $name): int
 	{
-		if (!isset(static::$_connections[$name])) {
+		$channel = static::$_connections[$name] ?? null;
+		if (!($channel instanceof PoolQueue) || $channel->isClose()) {
 			return 0;
 		}
-		return static::$_connections[$name]->length();
+		return $channel->length();
 	}
 
 
@@ -248,7 +231,6 @@ class Pool extends Component
 		if (!$channel->isFull()) {
 			$channel->push($client);
 		}
-		unset($client);
 	}
 
 
@@ -258,17 +240,17 @@ class Pool extends Component
 	 */
 	public function clean(string $name)
 	{
-		if (!isset(static::$_connections[$name])) {
+		$channel = static::$_connections[$name] ?? null;
+		if (!($channel instanceof PoolQueue) || $channel->isClose()) {
 			return;
 		}
-		while (static::$_connections[$name]->length() > 0) {
-			$client = static::$_connections[$name]->pop();
+		while ($channel->length() > 0) {
+			$client = $channel->pop();
 			if ($client instanceof StopHeartbeatCheck) {
 				$client->stopHeartbeatCheck();
 			}
 		}
-		static::$_connections[$name] = null;
-		unset(static::$_connections[$name]);
+		$channel->close();
 	}
 
 
