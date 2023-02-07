@@ -129,13 +129,26 @@ class Pool extends Component
 	public function channel($name): PoolQueue
 	{
 		$channel = static::$_connections[$name] ?? null;
-		if (!($channel instanceof PoolQueue) ) {
+		if (!($channel instanceof PoolQueue)) {
 			throw new Exception('Channel is not exists.');
 		}
 		if ($channel->isClose()) {
 			throw new Exception('Channel is Close.');
 		}
 		return $channel;
+	}
+
+
+	public function hasChannel($name, $max): bool
+	{
+		$channel = static::$_connections[$name] ?? null;
+		if (!($channel instanceof PoolQueue)) {
+			return false;
+		}
+		if ($channel->isClose()) {
+			return false;
+		}
+		return true;
 	}
 
 
