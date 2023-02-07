@@ -41,8 +41,9 @@ class Pool extends Component
 	 */
 	public function flush($name, $retain_number)
 	{
-		$channel = $this->channel($name);
-		$this->pop($channel, $retain_number);
+		if ($this->hasChannel($name)) {
+			$this->pop($this->channel($name), $retain_number);
+		}
 	}
 
 
