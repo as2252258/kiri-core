@@ -100,7 +100,11 @@ class Connection extends Component
 		if (!$this->pool->hasChannel($name)) {
 			$this->pool->initConnections($name, $config['pool']['max']);
 		}
-		return $this->pool->get($name, $this->generate($config));
+		if (!Context::hasContext($name)) {
+			return Context::setContext($name, $this->pool->get($name, $this->generate($config)));
+		} else {
+			return Context::getContext($name);
+		}
 	}
 
 
@@ -111,6 +115,8 @@ class Connection extends Component
 	public function generate(array $config): Closure
 	{
 		return static function () use ($config) {
+			Kiri::getDi()->get(Kiri\Error\StdoutLoggerInterface::class)->alert('create database connect(' . $config['cds'] . ')');
+
 			$link = new \PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'], $config['username'], $config['password'], [
 				\PDO::ATTR_EMULATE_PREPARES   => false,
 				\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
@@ -165,6 +171,9 @@ class Connection extends Component
 	public function addItem(string $name, PDO $PDO): void
 	{
 		$this->pool->push($name, $PDO);
+		if (Context::inCoroutine()) {
+			Context::remove($name);
+		}
 	}
 
 
