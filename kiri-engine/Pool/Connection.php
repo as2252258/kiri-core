@@ -100,6 +100,7 @@ class Connection extends Component
 		if (!$this->pool->hasChannel($name)) {
 			$this->pool->initConnections($name, $config['pool']['max']);
 		}
+		var_dump(Context::getAllContext());
 		if (!Context::hasContext($name)) {
 			return Context::setContext($name, $this->pool->get($name, $this->generate($config)));
 		} else {
