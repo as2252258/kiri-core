@@ -41,7 +41,6 @@ use Psr\Http\Server\MiddlewareInterface;
 	 * @param mixed $class
 	 * @param mixed|null $method
 	 * @return $this
-	 * @throws \ReflectionException
 	 */
 	public function execute(mixed $class, mixed $method = null): mixed
 	{
