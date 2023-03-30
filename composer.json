@@ -35,7 +35,8 @@
       "Kiri\\": "kiri-engine/",
       "Kiri\\Actor\\": "kiri-actor/",
       "Kiri\\Annotation\\": "kiri-annotation/",
-      "Kiri\\Task\\": "kiri-task/"
+      "Kiri\\Task\\": "kiri-task/",
+      "Kiri\\Websocket\\": "kiri-websocket-server/"
     },
     "files": [
       "Kiri.php",
