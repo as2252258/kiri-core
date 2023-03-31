@@ -94,16 +94,15 @@ class Connection extends Component
 	 * @return PDO|null
 	 * @throws Kiri\Exception\ConfigException
 	 */
-	public function get(mixed $config, bool $isMaster = false): ?\PDO
+	public function get(mixed $config): ?\PDO
 	{
-		$name = $config['cds'] . ($isMaster ? 'master' : 'slave');
-		if (!$this->pool->hasChannel($name)) {
-			$this->pool->initConnections($name, $config['pool']['max']);
+		if (!$this->pool->hasChannel($config['cds'])) {
+			$this->pool->initConnections($config['cds'], $config['pool']['max']);
 		}
-		if (!Context::hasContext($name)) {
-			return Context::setContext($name, $this->pool->get($name, $this->generate($config)));
+		if (!Context::hasContext($config['cds'])) {
+			return Context::setContext($config['cds'], $this->pool->get($config['cds'], $this->generate($config)));
 		} else {
-			return Context::getContext($name);
+			return Context::getContext($config['cds']);
 		}
 	}
 
