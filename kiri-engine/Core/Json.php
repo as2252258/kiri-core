@@ -20,8 +20,8 @@ use Throwable;
  */
 class Json
 {
-
-
+	
+	
 	/**
 	 * @param $data
 	 * @return false|string
@@ -36,8 +36,8 @@ class Json
 		}
 		return $data;
 	}
-
-
+	
+	
 	/**
 	 * @param $data
 	 * @param bool $asArray
@@ -51,8 +51,33 @@ class Json
 		if (!is_string($data)) return null;
 		return json_decode($data, $asArray);
 	}
-
-
+	
+	
+	/**
+	 * @param string $message
+	 * @param int $code
+	 * @param array|string $data
+	 * @param int $count
+	 * @return string
+	 */
+	public static function jsonFail(string $message, int $code = 500, array|string $data = [], int $count = 0): string
+	{
+		return json_encode(['code' => $code, 'param' => $data, 'message' => $message, 'count' => $count], JSON_UNESCAPED_UNICODE);
+	}
+	
+	
+	/**
+	 * @param string $message
+	 * @param array|string $data
+	 * @param int $count
+	 * @return string
+	 */
+	public static function jsonSuccess(array|string $data = [], string $message = "ok", int $count = 0): string
+	{
+		return json_encode(['code' => 0, 'param' => $data, 'message' => $message, 'count' => $count], JSON_UNESCAPED_UNICODE);
+	}
+	
+	
 	/**
 	 * @param $code
 	 * @param string|array $message
@@ -65,11 +90,9 @@ class Json
 	{
 		$params['code'] = $code;
 		if (!is_string($message)) {
-            $params['message'] = 'System success.';
-            $params['param'] = $message;
-            if (!empty($data)) {
-                $params['exPageInfo'] = $data;
-            }
+			$params['message'] = 'System success.';
+			$params['param'] = $message;
+			$params['exPageInfo'] = $data;
 		} else {
 			$params['message'] = $message;
 			$params['param'] = $data;
@@ -87,8 +110,8 @@ class Json
 		}
 		return static::encode($params);
 	}
-
-
+	
+	
 	/**
 	 * @param Throwable|Error $throwable
 	 * @return bool|string
@@ -103,8 +126,8 @@ class Json
 		];
 		return Json::encode($array);
 	}
-
-
+	
+	
 	/**
 	 * @param $state
 	 * @param $body
@@ -115,7 +138,7 @@ class Json
 	{
 		$params['state'] = $state;
 		$params['body'] = ArrayAccess::toArray($body);
-
+		
 		return static::encode($params);
 	}
 }

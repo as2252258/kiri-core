@@ -31,24 +31,24 @@ use ReflectionException;
  */
 class ErrorHandler extends Component implements ErrorInterface
 {
-
+	
 	/** @var ?IFormatter $message */
 	private ?IFormatter $message = NULL;
-
-
+	
+	
 	/**
 	 * @var string
 	 */
 	public string $category = 'app';
-
-
+	
+	
 	/**
 	 * @var EventDispatch
 	 */
 	#[Inject(EventDispatch::class)]
 	public EventDispatch $dispatch;
-
-
+	
+	
 	/**
 	 * @param array|Closure|null $callback
 	 * @return void
@@ -62,8 +62,8 @@ class ErrorHandler extends Component implements ErrorInterface
 		}
 		set_exception_handler($callback);
 	}
-
-
+	
+	
 	/**
 	 * @param array|Closure|null $callback
 	 * @return void
@@ -77,8 +77,8 @@ class ErrorHandler extends Component implements ErrorInterface
 		}
 		set_error_handler($callback);
 	}
-
-
+	
+	
 	/**
 	 * @param array|Closure|null $callback
 	 * @return void
@@ -92,8 +92,8 @@ class ErrorHandler extends Component implements ErrorInterface
 		}
 		register_shutdown_function($callback);
 	}
-
-
+	
+	
 	/**
 	 * @return void
 	 * @throws ContainerExceptionInterface
@@ -107,19 +107,19 @@ class ErrorHandler extends Component implements ErrorInterface
 		if (empty($lastError) || $lastError['type'] !== E_ERROR) {
 			return;
 		}
-
+		
 		$this->category = 'shutdown';
-
+		
 		$messages = explode(PHP_EOL, $lastError['message']);
-
+		
 		$message = array_shift($messages);
-
+		
 		$this->dispatch->dispatch(new OnShutdown());
-
+		
 		$this->sendError($message, $lastError['file'], $lastError['line']);
 	}
-
-
+	
+	
 	/**
 	 * @param \Throwable $exception
 	 *
@@ -131,13 +131,13 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function exceptionHandler(\Throwable $exception)
 	{
 		$this->category = 'exception';
-
+		
 		$this->dispatch->dispatch(new OnAfterRequest());
-
+		
 		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
-
-
+	
+	
 	/**
 	 * @throws \ErrorException
 	 * @throws ContainerExceptionInterface
@@ -147,22 +147,22 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function errorHandler()
 	{
 		$error = func_get_args();
-
+		
 		$path = ['file' => $error[2], 'line' => $error[3]];
-
+		
 		if ($error[0] === 0) {
 			$error[0] = 500;
 		}
-
-		$data = Json::to(500, $error[1], $path);
-
+		
+		$data = Json::jsonFail($error[1], 500, $path);
+		
 		$this->logger->error('On error handler', [$data]);
-
+		
 		$this->dispatch->dispatch(new OnAfterRequest());
-
+		
 		throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
 	}
-
+	
 	/**
 	 * @param $message
 	 * @param $file
@@ -174,14 +174,14 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function sendError($message, $file, $line, int $code = 500): bool|string
 	{
 		$path = ['file' => $file, 'line' => $line];
-
-		$data = Json::to($code, $this->category . ': ' . $message, $path);
-
+		
+		$data = Json::jsonFail($this->category . ': ' . $message, $code, $path);
+		
 		file_put_contents('php://output', $data . PHP_EOL, FILE_APPEND);
-
+		
 		return $data;
 	}
-
+	
 	/**
 	 * @return mixed
 	 */
@@ -191,7 +191,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		$this->message = NULL;
 		return $message->getData();
 	}
-
+	
 	/**
 	 * @return bool
 	 */
@@ -199,7 +199,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	{
 		return $this->message !== NULL;
 	}
-
+	
 	/**
 	 * @param $message
 	 * @param string $category
