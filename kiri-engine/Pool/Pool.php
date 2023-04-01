@@ -155,9 +155,13 @@ class Pool extends Component
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function get($name): mixed
+	public function get($name, $callback): mixed
 	{
-		return $this->channel($name)->pop();
+		$channel = $this->channel($name);
+		if (!$channel->isEmpty()) {
+			return $channel->pop();
+		}
+		return $callback();
 	}
 
 
