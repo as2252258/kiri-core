@@ -99,7 +99,11 @@ class Connection extends Component
 		if (!$this->pool->hasChannel($config['cds'])) {
 			$this->pool->initConnections($config['cds'], $config['pool']['max']);
 		}
-		return $this->pool->get($config['cds'], $this->generate($config));
+
+		if (!$this->pool->hasItem($config['cds'])) {
+			return $this->generate($config);
+		}
+		return $this->pool->get($config['cds']);
 		if (!Context::hasContext($config['cds'])) {
 			return Context::setContext($config['cds'], );
 		} else {
@@ -112,29 +116,27 @@ class Connection extends Component
 	 * @param array $config
 	 * @return Closure
 	 */
-	public function generate(array $config): Closure
+	public function generate(array $config): \PDO
 	{
-		return static function () use ($config) {
-			Kiri::getDi()->get(Kiri\Error\StdoutLoggerInterface::class)->alert('create database connect(' . $config['cds'] . ')');
+		Kiri::getDi()->get(Kiri\Error\StdoutLoggerInterface::class)->alert('create database connect(' . $config['cds'] . ')');
 
-			$link = new \PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'], $config['username'], $config['password'], [
-				\PDO::ATTR_EMULATE_PREPARES   => false,
-				\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
-				\PDO::ATTR_PERSISTENT         => true,
-				\PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
-				\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
-			]);
-			$link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			$link->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
-			$link->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_EMPTY_STRING);
-			foreach ($config['attributes'] as $key => $attribute) {
-				$link->setAttribute($key, $attribute);
-			}
-			if (Db::inTransactionsActive()) {
-				$link->beginTransaction();
-			}
-			return $link;
-		};
+		$link = new \PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'], $config['username'], $config['password'], [
+			\PDO::ATTR_EMULATE_PREPARES   => false,
+			\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
+			\PDO::ATTR_PERSISTENT         => true,
+			\PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
+			\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
+		]);
+		$link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+		$link->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+		$link->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_EMPTY_STRING);
+		foreach ($config['attributes'] as $key => $attribute) {
+			$link->setAttribute($key, $attribute);
+		}
+		if (Db::inTransactionsActive()) {
+			$link->beginTransaction();
+		}
+		return $link;
 	}
 
 
