@@ -158,10 +158,10 @@ class Pool extends Component
 	public function get($name, $callback): mixed
 	{
 		$channel = $this->channel($name);
-		if (!$channel->isEmpty()) {
-			return $channel->pop();
+		if ($channel->isEmpty()) {
+			$channel->push($callback());
 		}
-		return $callback();
+		return $channel->pop();
 	}
 
 
