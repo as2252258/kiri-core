@@ -99,11 +99,7 @@ class Connection extends Component
 		if (!$this->pool->hasChannel($config['cds'])) {
 			$this->pool->initConnections($config['cds'], $config['pool']['max']);
 		}
-		if (!Context::hasContext($config['cds'])) {
-			return Context::setContext($config['cds'], $this->pool->get($config['cds'], $this->generate($config)));
-		} else {
-			return Context::getContext($config['cds']);
-		}
+		return $this->pool->get($config['cds'], $this->generate($config));
 	}
 
 
