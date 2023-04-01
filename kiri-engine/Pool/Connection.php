@@ -10,6 +10,7 @@ use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Di\Context;
+use Kiri\Exception\ConfigException;
 use PDO;
 use Swoole\Error;
 use Throwable;
@@ -90,9 +91,8 @@ class Connection extends Component
 
 	/**
 	 * @param mixed $config
-	 * @param bool $isMaster
 	 * @return PDO|null
-	 * @throws Kiri\Exception\ConfigException
+	 * @throws ConfigException
 	 */
 	public function get(mixed $config): ?\PDO
 	{
