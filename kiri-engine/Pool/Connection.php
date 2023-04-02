@@ -154,7 +154,10 @@ class Connection extends Component
 	{
 		return function () use ($config) {
 			if ($this->total >= 300) {
-				return $this->pool->waite($config['cds'], 30);
+				$connect = $this->pool->waite($config['cds'], 30);
+				if ($connect === false) {
+					throw new Exception("Get database link wait timeout.");
+				}
 			}
 			$this->total += 1;
 			return new \Database\Mysql\PDO($config);
