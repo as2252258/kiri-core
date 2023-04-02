@@ -25,6 +25,8 @@ class Connection extends Component
 
 	private array $master = [];
 
+	private int $total = 0;
+
 
 	/**
 	 * @param Pool $pool
@@ -150,7 +152,11 @@ class Connection extends Component
 	 */
 	public function create($config): Closure
 	{
-		return static function () use ($config) {
+		return function () use ($config) {
+			if ($this->total >= 300) {
+				return $this->pool->waite($config['cds'], 30);
+			}
+			$this->total += 1;
 			return new \Database\Mysql\PDO($config);
 		};
 	}

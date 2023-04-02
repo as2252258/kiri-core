@@ -244,6 +244,19 @@ class Pool extends Component
 
 
 	/**
+	 * @param $name
+	 * @param int $time
+	 * @return array
+	 * @throws ConfigException
+	 */
+	public function waite($name, int $time = 30): mixed
+	{
+		return $this->channel($name)->pop($time);
+	}
+
+
+
+	/**
 	 * @param string $name
 	 * @throws Exception
 	 */
