@@ -44,7 +44,7 @@ class Connection extends Component
 	public function inTransaction($name): bool
 	{
 		$connection = Context::getContext($name);
-		if ($connection instanceof PDO) {
+		if ($connection instanceof \Database\Mysql\PDO) {
 			return $connection->inTransaction();
 		}
 		return false;
@@ -58,7 +58,7 @@ class Connection extends Component
 	public function beginTransaction($coroutineName)
 	{
 		$connection = $this->get($coroutineName);
-		if ($connection instanceof PDO) {
+		if ($connection instanceof \Database\Mysql\PDO) {
 			$connection->beginTransaction();
 		}
 	}
@@ -70,7 +70,7 @@ class Connection extends Component
 	public function commit($coroutineName)
 	{
 		$connection = Context::getContext($coroutineName);
-		if ($connection instanceof PDO) {
+		if ($connection instanceof \Database\Mysql\PDO) {
 			$connection->commit();
 		}
 	}
@@ -83,7 +83,7 @@ class Connection extends Component
 	public function rollback($coroutineName)
 	{
 		$connection = Context::getContext($coroutineName);
-		if ($connection instanceof PDO) {
+		if ($connection instanceof \Database\Mysql\PDO) {
 			$connection->rollBack();
 		}
 	}
@@ -94,12 +94,12 @@ class Connection extends Component
 	 * @return PDO|null
 	 * @throws ConfigException
 	 */
-	public function get(mixed $config): ?\PDO
+	public function get(mixed $config): ?\Database\Mysql\PDO
 	{
 		if (!$this->pool->hasChannel($config['cds'])) {
 			$this->pool->initConnections($config['cds'], $config['pool']['max']);
 		}
-		return $this->pool->get($config['cds'], $this->generate($config));
+		return $this->pool->get($config['cds'], $this->create($config));
 	}
 
 
@@ -145,26 +145,24 @@ class Connection extends Component
 
 
 	/**
-	 * @param $coroutineName
 	 * @param $config
 	 * @return Closure
 	 */
-	public function create($coroutineName, $config): Closure
+	public function create($config): Closure
 	{
-		return static function () use ($coroutineName, $config) {
-			return new PDO($config);
+		return static function () use ($config) {
+			return new \Database\Mysql\PDO($config);
 		};
 	}
 
 
 	/**
 	 * @param string $name
-	 * @param PDO $PDO
+	 * @param \Database\Mysql\PDO $PDO $PDO
 	 * @return void
-	 * @throws Kiri\Exception\ConfigException
-	 * @throws Exception
+	 * @throws ConfigException
 	 */
-	public function addItem(string $name, PDO $PDO): void
+	public function addItem(string $name, \Database\Mysql\PDO $PDO): void
 	{
 		$this->pool->push($name, $PDO);
 	}
@@ -189,7 +187,7 @@ class Connection extends Component
 	public function release($coroutineName)
 	{
 		$client = Context::getContext($coroutineName);
-		if (!($client instanceof PDO) || $client->inTransaction()) {
+		if (!($client instanceof \Database\Mysql\PDO) || $client->inTransaction()) {
 			return;
 		}
 
