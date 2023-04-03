@@ -92,53 +92,23 @@ class Connection extends Component
 
 
 	/**
-	 * @param mixed $config
+	 * @param string $cds
 	 * @return PDO|null
 	 * @throws ConfigException
+	 * @throws Exception
 	 */
-	public function get(mixed $config): ?\Database\Mysql\PDO
+	public function get(string $cds): ?\Database\Mysql\PDO
 	{
-		if (!$this->pool->hasChannel($config['cds'])) {
-			$this->pool->initConnections($config['cds'], $config['pool']['max']);
+		if (!$this->pool->hasChannel($cds)) {
+			throw new Exception('Queue not exists.');
 		}
-		return $this->pool->get($config['cds'], $this->create($config));
-	}
-
-
-	/**
-	 * @param array $config
-	 * @return Closure
-	 */
-	public function generate(array $config): Closure
-	{
-		return static function () use ($config) {
-			Kiri::getDi()->get(Kiri\Error\StdoutLoggerInterface::class)->alert('create database connect(' . $config['cds'] . ')');
-
-			$link = new \PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'], $config['username'], $config['password'], [
-				\PDO::ATTR_EMULATE_PREPARES   => false,
-				\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
-				\PDO::ATTR_PERSISTENT         => true,
-				\PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
-				\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
-			]);
-			$link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			$link->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
-			$link->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_EMPTY_STRING);
-			foreach ($config['attributes'] as $key => $attribute) {
-				$link->setAttribute($key, $attribute);
-			}
-			if (Db::inTransactionsActive()) {
-				$link->beginTransaction();
-			}
-			return $link;
-		};
+		return $this->pool->get($cds);
 	}
 
 
 	/**
 	 * @param string $name
 	 * @return array
-	 * @throws Kiri\Exception\ConfigException
 	 */
 	public function check(string $name): array
 	{
@@ -178,13 +148,14 @@ class Connection extends Component
 
 
 	/**
-	 * @param $name
-	 * @param $max
-	 * @throws Exception
+	 * @param array $config
+	 * @param int $max
 	 */
-	public function initConnections($name, $max)
+	public function initConnections(array $config, int $max)
 	{
-		$this->pool->initConnections($name, $max);
+		$this->pool->initConnections($config['cds'], $max, function () use ($config) {
+			return new \Database\Mysql\PDO($config);
+		});
 	}
 
 

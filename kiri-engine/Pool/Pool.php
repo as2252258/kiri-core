@@ -9,6 +9,7 @@ use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
 use Kiri\Annotation\Inject;
+use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
 use Kiri\Server\Abstracts\StatusEnum;
 use Kiri\Server\WorkerStatus;
@@ -21,8 +22,8 @@ use Kiri\Server\WorkerStatus;
 class Pool extends Component
 {
 
-	/** @var array<PoolQueue> */
-	private static array $_connections = [];
+	/** @var array<PoolItem> */
+	private array $_connections = [];
 
 	/**
 	 * @var WorkerStatus
@@ -30,8 +31,11 @@ class Pool extends Component
 	#[Inject(WorkerStatus::class)]
 	public WorkerStatus $status;
 
-
-	use Alias;
+	/**
+	 * @var ContainerInterface
+	 */
+	#[Inject(ContainerInterface::class)]
+	public ContainerInterface $container;
 
 
 	/**
@@ -42,106 +46,93 @@ class Pool extends Component
 	public function flush($name, $retain_number)
 	{
 		if ($this->hasChannel($name)) {
-			$this->pop($this->channel($name), $retain_number);
+			$channel = $this->channel($name);
+			$channel->tailor($retain_number);
 		}
 	}
 
 
 	/**
-	 * @param PoolQueue $channel
+	 * @param PoolItem $channel
 	 * @param $retain_number
 	 */
-	protected function pop(PoolQueue $channel, $retain_number): void
+	protected function pop(PoolItem $channel, $retain_number): void
 	{
-		while ($channel->length() > $retain_number) {
-			$connection = $channel->pop(0.001);
-			if ($connection instanceof StopHeartbeatCheck) {
-				$connection->stopHeartbeatCheck();
-			}
-		}
+		$channel->tailor($retain_number);
 	}
 
 
 	/**
 	 * @param $name
 	 * @return array
-	 * @throws ConfigException
 	 */
 	public function check($name): array
 	{
-		$channel = $this->channel($name);
-		if ($channel->length() < 1) {
-			return [0, 0];
-		}
-
-		if ($this->status->is(StatusEnum::EXIT)) {
-			$channel->close();
-			return [0, 0];
-		}
-
-		$success = 0;
-		$lists = [];
-		$count = $channel->length();
-		while ($this->status->is(StatusEnum::EXIT) === false) {
-			if (!(($pdo = $channel->pop(0.001)) instanceof PDO)) {
-				break;
-			}
-			if ($pdo->check()) {
-				$success += 1;
-			}
-			$lists[] = $pdo;
-		}
-		if ($this->status->is(StatusEnum::EXIT) === false) {
-			foreach ($lists as $list) {
-				$channel->push($list);
-			}
-		} else {
-			$channel->close();
-		}
-		return [$count, $success];
+//		$channel = $this->channel($name);
+//		if ($channel->size() < 1) {
+//			return [0, 0];
+//		}
+//
+//		if ($this->status->is(StatusEnum::EXIT)) {
+//			$channel->close();
+//			return [0, 0];
+//		}
+//
+//		$success = 0;
+//		$lists = [];
+//		$count = $channel->size();
+//		while ($this->status->is(StatusEnum::EXIT) === false) {
+//			if (!(($pdo = $channel->pop(0.001)) instanceof PDO)) {
+//				break;
+//			}
+//			if ($pdo->check()) {
+//				$success += 1;
+//			}
+//			$lists[] = $pdo;
+//		}
+//		if ($this->status->is(StatusEnum::EXIT) === false) {
+//			foreach ($lists as $list) {
+//				$channel->push($list);
+//			}
+//		} else {
+//			$channel->close();
+//		}
+//		return [$count, $success];
+		return [0, 0];
 	}
 
 
 	/**
 	 * @param $name
 	 * @param int $max
+	 * @param \Closure $closure
 	 */
-	public function initConnections($name, int $max = 60)
+	public function initConnections($name, int $max, \Closure $closure)
 	{
-		$channel = static::$_connections[$name] ?? null;
-		if (($channel instanceof PoolQueue) && !$channel->isClose()) {
-			return;
+		if (!isset($this->_connections[$name])) {
+			$this->_connections[$name] = new PoolItem($max, $closure);
 		}
-		static::$_connections[$name] = new PoolQueue($max);
 	}
 
 
 	/**
 	 * @param $name
-	 * @return PoolQueue
+	 * @return PoolItem
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function channel($name): PoolQueue
+	public function channel($name): PoolItem
 	{
-		$channel = static::$_connections[$name] ?? null;
-		if (!($channel instanceof PoolQueue)) {
+		if (!isset($this->_connections[$name])) {
 			throw new Exception('Channel is not exists.');
 		}
-		if ($channel->isClose()) {
-			throw new Exception('Channel is Close.');
-		}
-		return $channel;
+		return $this->_connections[$name];
 	}
 
 
 	public function hasChannel($name): bool
 	{
-		$channel = static::$_connections[$name] ?? null;
-		if (!($channel instanceof PoolQueue)) {
-			return false;
-		}
-		if ($channel->isClose()) {
+		if (!isset($this->_connections[$name])) {
 			return false;
 		}
 		return true;
@@ -149,32 +140,13 @@ class Pool extends Component
 
 
 	/**
-	 * @param $name
-	 * @param $callback
+	 * @param string $name
 	 * @return array
 	 * @throws ConfigException
-	 * @throws Exception
 	 */
-	public function get($name, $callback): mixed
+	public function get(string $name): mixed
 	{
-		$channel = $this->channel($name);
-		if (!$channel->isEmpty()) {
-			return $channel->pop();
-		}
-		return $callback();
-	}
-
-
-	/**
-	 * @param $channel
-	 * @param $minx
-	 * @return void
-	 */
-	protected function maxIdleQuantity($channel, $minx): void
-	{
-		if ($channel->length() > $minx) {
-			$this->pop($channel, $minx);
-		}
+		return $this->channel($name)->pop();
 	}
 
 
@@ -207,8 +179,8 @@ class Pool extends Component
 	 */
 	public function hasItem(string $name): bool
 	{
-		$channel = static::$_connections[$name] ?? null;
-		if (!($channel instanceof PoolQueue) || $channel->isClose()) {
+		$channel = $this->_connections[$name] ?? null;
+		if ($channel === null) {
 			return false;
 		}
 		return !$channel->isEmpty();
@@ -221,11 +193,11 @@ class Pool extends Component
 	 */
 	public function size(string $name): int
 	{
-		$channel = static::$_connections[$name] ?? null;
-		if (!($channel instanceof PoolQueue) || $channel->isClose()) {
+		$channel = $this->_connections[$name] ?? null;
+		if ($channel === null) {
 			return 0;
 		}
-		return $channel->length();
+		return $channel->size();
 	}
 
 
@@ -236,10 +208,7 @@ class Pool extends Component
 	 */
 	public function push(string $name, mixed $client)
 	{
-		$channel = $this->channel($name);
-		if (!$channel->isFull()) {
-			$channel->push($client);
-		}
+		$this->channel($name)->push($client);
 	}
 
 
@@ -255,23 +224,17 @@ class Pool extends Component
 	}
 
 
-
 	/**
 	 * @param string $name
 	 * @throws Exception
 	 */
 	public function clean(string $name)
 	{
-		$channel = static::$_connections[$name] ?? null;
-		if (!($channel instanceof PoolQueue) || $channel->isClose()) {
+		$channel = $this->_connections[$name] ?? null;
+		if ($channel === null) {
 			return;
 		}
-		while ($channel->length() > 0) {
-			$client = $channel->pop();
-			if ($client instanceof StopHeartbeatCheck) {
-				$client->stopHeartbeatCheck();
-			}
-		}
+		$channel->tailor(0);
 		$channel->close();
 	}
 
@@ -281,7 +244,7 @@ class Pool extends Component
 	 */
 	protected function channels(): array
 	{
-		return static::$_connections;
+		return $this->_connections;
 	}
 
 
