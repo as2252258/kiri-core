@@ -15,7 +15,7 @@ interface QueueInterface
 	/**
 	 * @param mixed $data
 	 * @param float $timeout
-	 * @return void
+	 * @return bool
 	 */
 	public function push(mixed $data, float $timeout = -1): bool;
 
