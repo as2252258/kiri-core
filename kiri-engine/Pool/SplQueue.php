@@ -11,9 +11,15 @@ use JetBrains\PhpStorm\Pure;
 class SplQueue implements QueueInterface
 {
 
+	/**
+	 * @var \SplQueue
+	 */
 	private \SplQueue $channel;
 
 
+	/**
+	 * @var int
+	 */
 	public int $errCode = 0;
 
 
