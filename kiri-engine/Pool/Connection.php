@@ -117,25 +117,6 @@ class Connection extends Component
 
 
 	/**
-	 * @param $config
-	 * @return Closure
-	 */
-	public function create($config): Closure
-	{
-		return function () use ($config) {
-			if ($this->total >= 300) {
-				$connect = $this->pool->waite($config['cds'], 60);
-				if (!($connect instanceof \Database\Mysql\PDO)) {
-					throw new Exception("Get database link wait timeout.");
-				}
-			}
-			$this->total += 1;
-			return new \Database\Mysql\PDO($config);
-		};
-	}
-
-
-	/**
 	 * @param string $name
 	 * @param \Database\Mysql\PDO $PDO $PDO
 	 * @return void
@@ -182,16 +163,6 @@ class Connection extends Component
 	public function flush($coroutineName, $minNumber = 1)
 	{
 		$this->pool->flush($coroutineName, $minNumber);
-	}
-
-
-	/**
-	 * @param $coroutineName
-	 * @return bool
-	 */
-	private function hasClient($coroutineName): bool
-	{
-		return Context::exists($coroutineName);
 	}
 
 
