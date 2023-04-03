@@ -31,12 +31,6 @@ class Pool extends Component
 	#[Inject(WorkerStatus::class)]
 	public WorkerStatus $status;
 
-	/**
-	 * @var ContainerInterface
-	 */
-	#[Inject(ContainerInterface::class)]
-	public ContainerInterface $container;
-
 
 	/**
 	 * @param $name
