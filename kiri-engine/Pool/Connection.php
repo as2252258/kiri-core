@@ -45,7 +45,7 @@ class Connection extends Component
 	 */
 	public function inTransaction($name): bool
 	{
-		$connection = Context::getContext($name);
+		$connection = Context::get($name);
 		if ($connection instanceof \Database\Mysql\PDO) {
 			return $connection->inTransaction();
 		}
@@ -71,7 +71,7 @@ class Connection extends Component
 	 */
 	public function commit($coroutineName)
 	{
-		$connection = Context::getContext($coroutineName);
+		$connection = Context::get($coroutineName);
 		if ($connection instanceof \Database\Mysql\PDO) {
 			$connection->commit();
 		}
@@ -84,7 +84,7 @@ class Connection extends Component
 	 */
 	public function rollback($coroutineName)
 	{
-		$connection = Context::getContext($coroutineName);
+		$connection = Context::get($coroutineName);
 		if ($connection instanceof \Database\Mysql\PDO) {
 			$connection->rollBack();
 		}
@@ -195,7 +195,7 @@ class Connection extends Component
 	 */
 	public function release($coroutineName)
 	{
-		$client = Context::getContext($coroutineName);
+		$client = Context::get($coroutineName);
 		if (!($client instanceof \Database\Mysql\PDO) || $client->inTransaction()) {
 			return;
 		}
@@ -220,7 +220,7 @@ class Connection extends Component
 	 */
 	private function hasClient($coroutineName): bool
 	{
-		return Context::hasContext($coroutineName);
+		return Context::exists($coroutineName);
 	}
 
 

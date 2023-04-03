@@ -135,7 +135,7 @@ class Server extends Component implements OnHandshakeInterface, OnMessageInterfa
 	{
 		try {
 			/** @var \Kiri\Message\Response $psrResponse */
-			$psrResponse = Context::setContext(ResponseInterface::class, new \Kiri\Message\Response());
+			$psrResponse = Context::set(ResponseInterface::class, new \Kiri\Message\Response());
 
 			$handler = $this->router->find('/', 'GET');
 			if (is_integer($handler)) {
