@@ -64,26 +64,24 @@ class Config extends Component
 	 */
 	public static function get($key, mixed $default = null, bool $try = FALSE): mixed
 	{
-		$instance = static::$data;
 		if (!str_contains($key, '.')) {
-			return $instance[$key] ?? $default;
+			return static::$data[$key] ?? $default;
 		}
-		foreach (explode('.', $key) as $value) {
-			if (empty($value)) {
-				continue;
-			}
-			if (!isset($instance[$value])) {
+		$array = explode('.', $key);
+		$data = static::$data[array_shift($array)] ?? null;
+		if (($data == null || !is_array($data)) && count($array) > 0) {
+			return $default;
+		}
+		foreach ($array as $value) {
+			$data = $data[$value] ?? null;
+			if ($data === null) {
 				if ($try) {
 					throw new ConfigException(sprintf(self::ERROR_MESSAGE, $key));
 				}
 				return $default;
 			}
-			if (!is_array($instance[$value])) {
-				return $instance[$value];
-			}
-			$instance = $instance[$value];
 		}
-		return empty($instance) ? $default : $instance;
+		return $data;
 	}
 
 	/**
