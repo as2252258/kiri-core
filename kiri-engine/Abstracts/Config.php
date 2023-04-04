@@ -13,6 +13,20 @@ use Kiri\Exception\ConfigException;
 
 
 /**
+ * @param $key
+ * @param $try
+ * @return void
+ * @throws ConfigException
+ */
+function ConfigTry($key, $try): void
+{
+	if ($try) {
+		throw new ConfigException(sprintf(Config::ERROR_MESSAGE, $key));
+	}
+}
+
+
+/**
  * Class Config
  * @package Kiri\Base
  */
@@ -58,7 +72,7 @@ class Config extends Component
 	/**
 	 * @param $key
 	 * @param bool $try
-	 * @param mixed|null $default
+	 * @param mixed $default
 	 * @return mixed
 	 * @throws
 	 */
@@ -69,15 +83,17 @@ class Config extends Component
 		}
 		$array = explode('.', $key);
 		$data = static::$data[array_shift($array)] ?? null;
-		if (($data == null || !is_array($data)) && count($array) > 0) {
+		if ($data === null) {
+			return $default;
+		} else if (count($array) === 0) {
+			return $data;
+		} else if (!is_array($data)) {
 			return $default;
 		}
 		foreach ($array as $value) {
 			$data = $data[$value] ?? null;
 			if ($data === null) {
-				if ($try) {
-					throw new ConfigException(sprintf(self::ERROR_MESSAGE, $key));
-				}
+				ConfigTry($key, $try);
 				return $default;
 			}
 		}
