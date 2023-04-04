@@ -93,11 +93,11 @@ class Connection extends Component
 
 	/**
 	 * @param string $cds
-	 * @return PDO|null
+	 * @return \Database\Mysql\PDO|bool|null
 	 * @throws ConfigException
 	 * @throws Exception
 	 */
-	public function get(string $cds): ?\Database\Mysql\PDO
+	public function get(string $cds): null|\Database\Mysql\PDO|bool
 	{
 		if (!$this->pool->hasChannel($cds)) {
 			throw new Exception('Queue not exists.');
