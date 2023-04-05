@@ -131,7 +131,7 @@ class Connection extends Component
 	public function initConnections(array $config, int $max)
 	{
 		$this->pool->initConnections($config['cds'], $max, static function () use ($config) {
-			$link = new PDO('mysql:dbname=' . $config['databases'] . ';host=' . $config['cds'],
+			$link = new PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'],
 				$config['username'], $config['password'], [
 					PDO::ATTR_EMULATE_PREPARES   => false,
 					PDO::ATTR_CASE               => PDO::CASE_NATURAL,
