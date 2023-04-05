@@ -152,10 +152,10 @@ class Logger implements LoggerInterface
 			$_string .= $this->_string($context);
 		}
 		file_put_contents('php://output', $_string);
-		
-		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
-		
-		file_put_contents($filename, $_string, FILE_APPEND);
+//
+//		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
+//
+//		file_put_contents($filename, $_string, FILE_APPEND);
 	}
 	
 	
