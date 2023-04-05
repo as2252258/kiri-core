@@ -133,7 +133,7 @@ class Connection extends Component
 		$this->pool->initConnections($config['cds'], $max, static function () use ($config) {
 			$link = new PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'],
 				$config['username'], $config['password'], [
-					PDO::ATTR_EMULATE_PREPARES   => false,
+					PDO::ATTR_EMULATE_PREPARES   => true,
 					PDO::ATTR_CASE               => PDO::CASE_NATURAL,
 					PDO::ATTR_PERSISTENT         => true,
 					PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
