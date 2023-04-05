@@ -102,8 +102,12 @@ class PoolItem
 	public function pop(int $waite = 10): mixed
 	{
 		if ($this->created < $this->maxCreated) {
+			$callback = $this->callback;
+			$client = $callback();
+
 			$this->created += 1;
-			return call_user_func($this->callback);
+
+			return $client;
 		}
 		return $this->_items->pop($waite);
 	}
