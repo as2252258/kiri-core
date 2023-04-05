@@ -134,8 +134,22 @@ class Connection extends Component
 	 */
 	public function initConnections(array $config, int $max)
 	{
-		$this->pool->initConnections($config['cds'], $max, function () use ($config) {
-			return new \Database\Mysql\PDO($config);
+		$this->pool->initConnections($config['cds'], $max, static function () use ($config) {
+			$link = new \PDO('mysql:dbname=' . $config['database'] . ';host=' . $config['cds'],
+				$config['username'], $config['password'], [
+					\PDO::ATTR_EMULATE_PREPARES   => false,
+					\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
+					\PDO::ATTR_PERSISTENT         => true,
+					\PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
+					\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
+				]);
+			$link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			$link->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+			$link->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_EMPTY_STRING);
+			foreach ($config['attributes'] as $key => $attribute) {
+				$link->setAttribute($key, $attribute);
+			}
+			return $link;
 		});
 	}
 
