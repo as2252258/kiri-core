@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace Kiri\Pool;
 
-use Closure;
-use Database\Db;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
-use Kiri\Abstracts\Config;
 use Kiri\Di\Context;
 use Kiri\Exception\ConfigException;
 use PDO;
@@ -46,7 +43,7 @@ class Connection extends Component
 	public function inTransaction($name): bool
 	{
 		$connection = Context::get($name);
-		if ($connection instanceof \Database\Mysql\PDO) {
+		if ($connection instanceof PDO) {
 			return $connection->inTransaction();
 		}
 		return false;
@@ -60,7 +57,7 @@ class Connection extends Component
 	public function beginTransaction($coroutineName)
 	{
 		$connection = $this->get($coroutineName);
-		if ($connection instanceof \Database\Mysql\PDO) {
+		if ($connection instanceof PDO) {
 			$connection->beginTransaction();
 		}
 	}
@@ -72,7 +69,7 @@ class Connection extends Component
 	public function commit($coroutineName)
 	{
 		$connection = Context::get($coroutineName);
-		if ($connection instanceof \Database\Mysql\PDO) {
+		if ($connection instanceof PDO) {
 			$connection->commit();
 		}
 	}
@@ -85,7 +82,7 @@ class Connection extends Component
 	public function rollback($coroutineName)
 	{
 		$connection = Context::get($coroutineName);
-		if ($connection instanceof \Database\Mysql\PDO) {
+		if ($connection instanceof PDO) {
 			$connection->rollBack();
 		}
 	}
@@ -93,11 +90,10 @@ class Connection extends Component
 
 	/**
 	 * @param string $cds
-	 * @return \Database\Mysql\PDO|bool|null
-	 * @throws ConfigException
+	 * @return PDO|bool|null
 	 * @throws Exception
 	 */
-	public function get(string $cds): null|\Database\Mysql\PDO|bool
+	public function get(string $cds): null|PDO|bool
 	{
 		if (!$this->pool->hasChannel($cds)) {
 			throw new Exception('Queue not exists.');
@@ -118,11 +114,11 @@ class Connection extends Component
 
 	/**
 	 * @param string $name
-	 * @param \Database\Mysql\PDO $PDO $PDO
+	 * @param PDO $PDO
 	 * @return void
 	 * @throws ConfigException
 	 */
-	public function addItem(string $name, \Database\Mysql\PDO $PDO): void
+	public function addItem(string $name, PDO $PDO): void
 	{
 		$this->pool->push($name, $PDO);
 	}
@@ -135,17 +131,17 @@ class Connection extends Component
 	public function initConnections(array $config, int $max)
 	{
 		$this->pool->initConnections($config['cds'], $max, static function () use ($config) {
-			$link = new \PDO('mysql:dbname=' . $config['database'] . ';host=' . $config['cds'],
+			$link = new PDO('mysql:dbname=' . $config['database'] . ';host=' . $config['cds'],
 				$config['username'], $config['password'], [
-					\PDO::ATTR_EMULATE_PREPARES   => false,
-					\PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
-					\PDO::ATTR_PERSISTENT         => true,
-					\PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
-					\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
+					PDO::ATTR_EMULATE_PREPARES   => false,
+					PDO::ATTR_CASE               => PDO::CASE_NATURAL,
+					PDO::ATTR_PERSISTENT         => true,
+					PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
+					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
 				]);
-			$link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			$link->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
-			$link->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_EMPTY_STRING);
+			$link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$link->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+			$link->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
 			foreach ($config['attributes'] as $key => $attribute) {
 				$link->setAttribute($key, $attribute);
 			}
@@ -162,7 +158,7 @@ class Connection extends Component
 	public function release($coroutineName)
 	{
 		$client = Context::get($coroutineName);
-		if (!($client instanceof \Database\Mysql\PDO) || $client->inTransaction()) {
+		if (!($client instanceof PDO) || $client->inTransaction()) {
 			return;
 		}
 
