@@ -135,7 +135,7 @@ class Connection extends Component
 				$config['username'], $config['password'], [
 					PDO::ATTR_EMULATE_PREPARES   => true,
 					PDO::ATTR_CASE               => PDO::CASE_NATURAL,
-					PDO::ATTR_PERSISTENT         => true,
+					PDO::ATTR_PERSISTENT         => false,
 					PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
 					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
 				]);
