@@ -9,6 +9,9 @@ class StdoutLogger extends Logger implements StdoutLoggerInterface
 {
 
 
+	/**
+	 * @var array
+	 */
 	private array $errors = [];
 
 
