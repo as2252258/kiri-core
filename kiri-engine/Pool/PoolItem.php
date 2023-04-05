@@ -103,7 +103,7 @@ class PoolItem
 	{
 		if ($this->_items->isEmpty() && $this->created < $this->maxCreated) {
 			$callback = $this->callback;
-			$client = $callback();
+			$client = call_user_func($callback);
 
 			$this->created += 1;
 
