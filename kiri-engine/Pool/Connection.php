@@ -137,7 +137,7 @@ class Connection extends Component
 					PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 					PDO::ATTR_ORACLE_NULLS       => PDO::NULL_NATURAL,
 					PDO::ATTR_STRINGIFY_FETCHES  => false,
-					PDO::ATTR_PERSISTENT         => false,
+					PDO::ATTR_EMULATE_PREPARES   => false,
 					PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
 					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
 				]);
