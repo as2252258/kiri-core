@@ -95,9 +95,6 @@ class Connection extends Component
 	 */
 	public function get(string $cds): null|PDO|bool
 	{
-		if (!$this->pool->hasChannel($cds)) {
-			throw new Exception('Queue not exists.');
-		}
 		return $this->pool->get($cds);
 	}
 
@@ -121,35 +118,6 @@ class Connection extends Component
 	public function addItem(string $name, PDO $PDO): void
 	{
 		$this->pool->push($name, $PDO);
-	}
-
-
-	/**
-	 * @param array $config
-	 * @param int $max
-	 */
-	public function initConnections(array $config, int $max)
-	{
-		$this->pool->initConnections($config['cds'], $max, static function () use ($config) {
-			$options = [
-				PDO::ATTR_CASE               => PDO::CASE_NATURAL,
-				PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-				PDO::ATTR_ORACLE_NULLS       => PDO::NULL_NATURAL,
-				PDO::ATTR_STRINGIFY_FETCHES  => false,
-				PDO::ATTR_EMULATE_PREPARES   => false,
-				PDO::ATTR_TIMEOUT            => $config['connect_timeout'],
-				PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . ($config['charset'] ?? 'utf8mb4')
-			];
-			if (!Context::inCoroutine()) {
-				$options[PDO::ATTR_PERSISTENT] = true;
-			}
-			$link = new PDO('mysql:dbname=' . $config['dbname'] . ';host=' . $config['cds'],
-				$config['username'], $config['password'], $options);
-			foreach ($config['attributes'] as $key => $attribute) {
-				$link->setAttribute($key, $attribute);
-			}
-			return $link;
-		});
 	}
 
 
