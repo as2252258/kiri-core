@@ -30,6 +30,15 @@
     "ext-pcntl": "*",
     "ext-sockets": "*"
   },
+  "replace": {
+    "symfony/polyfill-apcu": "*",
+    "symfony/polyfill-php80": "*",
+    "symfony/polyfill-mbstring": "*",
+    "symfony/polyfill-ctype": "*",
+    "symfony/polyfill-php73": "*",
+    "symfony/polyfill-php72": "*",
+    "symfony/polyfill-php81": "*"
+  },
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
