@@ -2,6 +2,7 @@
 
 namespace Kiri\Pool;
 
+use Closure;
 use Kiri\Annotation\Inject;
 use Kiri\Di\Context;
 use Swoole\Coroutine\Channel;
@@ -11,9 +12,9 @@ class PoolItem
 
 
 	/**
-	 * @var PoolQueue
+	 * @var Channel|SplQueue
 	 */
-	private PoolQueue $_items;
+	private Channel|SplQueue $_items;
 
 
 	/**
@@ -24,18 +25,22 @@ class PoolItem
 
 	/**
 	 * @param int $maxCreated
-	 * @param \Closure $callback
+	 * @param Closure $callback
 	 */
-	public function __construct(readonly public int $maxCreated, readonly public \Closure $callback)
+	public function __construct(readonly public int $maxCreated, readonly public Closure $callback)
 	{
-		$this->_items = new PoolQueue($this->maxCreated);
+		if (Context::inCoroutine()) {
+			$this->_items = new Channel($this->maxCreated);
+		} else {
+			$this->_items = new SplQueue($this->maxCreated);
+		}
 	}
 
 
 	/**
-	 * @param PoolQueue $items
+	 * @param Channel|SplQueue $items
 	 */
-	public function setItems(PoolQueue $items): void
+	public function setItems(Channel|SplQueue $items): void
 	{
 		$this->_items = $items;
 	}
