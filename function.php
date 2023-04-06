@@ -36,6 +36,20 @@ if (!function_exists('make')) {
 	}
 	
 }
+if (!function_exists('copy')) {
+	
+	
+	/**
+	 * @param $name
+	 * @return mixed
+	 * @throws
+	 */
+	function copy($name): mixed
+	{
+		return Kiri::getDi()->copy($name);
+	}
+	
+}
 
 
 if (!function_exists('isJson')) {
