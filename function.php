@@ -36,7 +36,7 @@ if (!function_exists('make')) {
 	}
 	
 }
-if (!function_exists('copy')) {
+if (!function_exists('replica')) {
 	
 	
 	/**
@@ -44,7 +44,7 @@ if (!function_exists('copy')) {
 	 * @return mixed
 	 * @throws
 	 */
-	function copy($name): mixed
+	function replica($name): mixed
 	{
 		return Kiri::getDi()->copy($name);
 	}
