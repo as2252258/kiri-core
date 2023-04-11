@@ -16,6 +16,7 @@ use Kiri\Abstracts\Config;
 use Kiri\Core\Json;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
+use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
 use Kiri\Server\Events\OnWorkerExit;
 
@@ -66,7 +67,24 @@ class Redis extends Component
 
 		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
-		$this->pool->initConnections($config['host'], $length);
+		$this->pool->initConnections($config['host'], $length, static function () use ($config) {
+			$redis = new \Redis();
+			if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
+				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
+			}
+			if (!empty($config['auth']) && !$redis->auth($config['auth'])) {
+				throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
+			}
+			if ($config['read_timeout'] < 0) {
+				$config['read_timeout'] = 0;
+			}
+			$redis->select($config['databases']);
+			if ($config['read_timeout'] > 0) {
+				$redis->setOption(\Redis::OPT_READ_TIMEOUT, $config['read_timeout']);
+			}
+			$redis->setOption(\Redis::OPT_PREFIX, $config['prefix']);
+			return $redis;
+		});
 	}
 
 
@@ -96,7 +114,7 @@ class Redis extends Component
 	public function waite($key, int $timeout = 5): bool
 	{
 		$time = time();
-		while (!$this->setNx($key, 1)) {
+		while (!$this->setNx($key, '1')) {
 			if (time() - $time >= $timeout) {
 				return FALSE;
 			}
@@ -167,14 +185,11 @@ SCRIPT;
 	public function proxy($name, $arguments): mixed
 	{
 		$client = $this->getClient();
-		$time = time();
 		try {
 			$response = $client->{$name}(...$arguments);
 		} catch (\Throwable $throwable) {
 			$response = $this->logger->addError($throwable->getMessage());
 		} finally {
-			$this->logger->debug('Redis:' . Json::encode([$name, $arguments]) . (microtime(true) - $time));
-
 			$this->pool->push($this->get_config()['host'], $client);
 		}
 		return $response;
@@ -188,15 +203,12 @@ SCRIPT;
 	private function getClient(): Helper
 	{
 		$config = $this->get_config();
-		return $this->pool->get($config['host'], static function () use ($config) {
-			return new Helper($config);
-		});
+		return $this->pool->get($config['host']);
 	}
 
 
 	/**
 	 * @return array
-	 * @throws ConfigException
 	 */
 	public function get_config(): array
 	{
