@@ -197,10 +197,10 @@ SCRIPT;
 
 
 	/**
-	 * @return Helper
+	 * @return \Redis
 	 * @throws ConfigException
 	 */
-	private function getClient(): Helper
+	private function getClient(): \Redis
 	{
 		$config = $this->get_config();
 		return $this->pool->get($config['host']);
