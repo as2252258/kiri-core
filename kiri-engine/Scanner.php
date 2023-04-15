@@ -35,8 +35,9 @@ class Scanner extends Component
 		$container = Container::instance();
 		foreach ($this->files as $file) {
 			$class = $namespace . '\\' . $this->rename($file);
-			if (!file_exists($class)) {
-				throw new Exception('Please follow the PSR-4 specification to write code.' . $class);
+			if (file_exists($class)) {
+				error('Please follow the PSR-4 specification to write code.' . $class);
+				continue;
 			}
 			$container->parse($class);
 		}
