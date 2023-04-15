@@ -29,17 +29,11 @@ class Component implements Configure
 	/**
 	 * BaseAbstract constructor.
 	 *
-	 * @param array $config
 	 * @throws Exception
 	 */
-	public function __construct(array $config = [])
+	public function __construct()
 	{
-		if (is_null($this->logger)) {
-			$this->logger = Kiri::getDi()->get(StdoutLoggerInterface::class);
-		}
-		if (!empty($config) && is_array($config)) {
-			Kiri::configure($this, $config);
-		}
+		$this->init();
 	}
 
 	/**

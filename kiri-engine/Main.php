@@ -12,6 +12,7 @@ namespace Kiri;
 
 use Exception;
 use Kiri;
+use Kiri\Di\Container;
 use Kiri\Abstracts\{BaseMain, Config, Kernel};
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Psr\Container\ContainerExceptionInterface;
@@ -23,7 +24,6 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
 	Output\OutputInterface
 };
 use Kiri\Di\LocalService;
-use Kiri\Exception\ConfigException;
 use Kiri\Error\ErrorHandler;
 
 
@@ -119,6 +119,9 @@ class Main extends BaseMain
 		[$input, $output] = $this->argument($argv);
 		$console = $this->container->get(ConsoleApplication::class);
 		$command = $console->find($input->getFirstArgument());
+
+		$scanner = $this->container->get(Scanner::class);
+		$scanner->read(APP_PATH);
 
 		fire(new OnBeforeCommandExecute());
 

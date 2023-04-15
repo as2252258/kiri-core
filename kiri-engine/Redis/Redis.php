@@ -13,12 +13,15 @@ use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Abstracts\Config;
-use Kiri\Core\Json;
 use Kiri\Events\EventProvider;
+use Kiri\Di\Inject\Container;
 use Kiri\Exception\ConfigException;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
 use Kiri\Server\Events\OnWorkerExit;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Redis
@@ -28,35 +31,41 @@ use Kiri\Server\Events\OnWorkerExit;
 class Redis extends Component
 {
 
+	private string $host = '';
 
-	const REDIS_OPTION_HOST = 'host';
-	const REDIS_OPTION_PORT = 'port';
-	const REDIS_OPTION_PREFIX = 'prefix';
-	const REDIS_OPTION_AUTH = 'auth';
-	const REDIS_OPTION_DATABASES = 'databases';
-	const REDIS_OPTION_TIMEOUT = 'timeout';
-	const REDIS_OPTION_POOL = 'pool';
-	const REDIS_OPTION_POOL_TICK = 'tick';
-	const REDIS_OPTION_POOL_MIN = 'min';
-	const REDIS_OPTION_POOL_MAX = 'max';
+	private int $port = 6379;
+
+	private string $prefix = 'api:';
+
+	private string $auth = '';
+
+	private int $databases = 0;
+
+	private int $timeout = 30;
 
 
 	/**
-	 * @param EventProvider $eventProvider
-	 * @param Pool $pool
-	 * @param array $config
-	 * @throws Exception
+	 * @var ContainerInterface
 	 */
-	public function __construct(public EventProvider $eventProvider,
-	                            public Pool          $pool, array $config = [])
-	{
-		parent::__construct($config);
-	}
+	#[Container(ContainerInterface::class)]
+	readonly public ContainerInterface $container;
+
+
+	/**
+	 * @var int
+	 */
+	private int $read_timeout = -1;
+
+	/**
+	 * @var array|int[]
+	 */
+	private array $pool = ['min' => 1, 'max' => 100];
 
 
 	/**
 	 * @return void
-	 * @throws ConfigException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
 	public function init(): void
@@ -65,9 +74,11 @@ class Redis extends Component
 
 		$length = Config::get('cache.redis.pool.max', 10);
 
-		$this->eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
+		$eventProvider = $this->container->get(EventProvider::class);
+		$eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
-		$this->pool->initConnections($config['host'], $length, static function () use ($config) {
+		$pool = $this->container->get(Pool::class);
+		$pool->initConnections($config['host'], $length, static function () use ($config) {
 			$redis = new \Redis();
 			if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -157,30 +168,25 @@ SCRIPT;
 
 
 	/**
-	 * @throws ConfigException
+	 * @return void
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
-	public function release()
+	public function destroy(): void
 	{
-		$this->pool->clean($this->get_config()['host']);
+		$pool = $this->container->get(Pool::class);
+		$pool->clean($this->host);
 	}
 
-	/**
-	 * 销毁连接池
-	 * @throws ConfigException
-	 * @throws Exception
-	 */
-	public function destroy()
-	{
-		$this->pool->clean($this->get_config()['host']);
-	}
 
 	/**
 	 * @param $name
 	 * @param $arguments
 	 * @return mixed
 	 * @throws ConfigException
-	 * @throws Exception
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 */
 	public function proxy($name, $arguments): mixed
 	{
@@ -190,7 +196,8 @@ SCRIPT;
 		} catch (\Throwable $throwable) {
 			$response = $this->logger->addError($throwable->getMessage());
 		} finally {
-			$this->pool->push($this->get_config()['host'], $client);
+			$pool = $this->container->get(Pool::class);
+			$pool->push($this->host, $client);
 		}
 		return $response;
 	}
@@ -199,11 +206,13 @@ SCRIPT;
 	/**
 	 * @return \Redis
 	 * @throws ConfigException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 */
 	private function getClient(): \Redis
 	{
-		$config = $this->get_config();
-		return $this->pool->get($config['host']);
+		$pool = $this->container->get(Pool::class);
+		return $pool->get($this->host);
 	}
 
 
@@ -212,7 +221,16 @@ SCRIPT;
 	 */
 	public function get_config(): array
 	{
-		return Config::get('cache.redis', null, true);
+		return [
+			'host'         => $this->host,
+			'port'         => $this->port,
+			'prefix'       => $this->prefix,
+			'auth'         => $this->auth,
+			'databases'    => $this->databases,
+			'timeout'      => $this->timeout,
+			'read_timeout' => $this->read_timeout,
+			'pool'         => $this->pool
+		];
 	}
 
 }
