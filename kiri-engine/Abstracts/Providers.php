@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
-use Exception;
+use Kiri\Di\Inject\Container;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -18,6 +18,7 @@ abstract class Providers extends Component implements Provider
 	/**
 	 * @var ContainerInterface
 	 */
+	#[Container(ContainerInterface::class)]
 	public ContainerInterface $container;
 
 }
