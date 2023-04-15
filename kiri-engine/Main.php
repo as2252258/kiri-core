@@ -50,7 +50,6 @@ class Main extends BaseMain
 	 * @return void
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
-	 * @throws ConfigException
 	 */
 	public function init(): void
 	{
@@ -136,10 +135,10 @@ class Main extends BaseMain
 	private function argument($argv): array
 	{
 		$input = new ArgvInput($argv);
-		$this->container->setBindings(ArgvInput::class, $input);
+		$this->container->bind(ArgvInput::class, $input);
 
 		$output = new ConsoleOutput();
-		$this->container->setBindings(OutputInterface::class, $output);
+		$this->container->bind(OutputInterface::class, $output);
 
 		return [$input, $output];
 	}

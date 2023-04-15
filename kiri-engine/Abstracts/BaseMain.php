@@ -16,12 +16,6 @@ use Kiri\Di\LocalService;
 use Kiri\Error\{ErrorHandler, StdoutLogger, StdoutLoggerInterface};
 use Kiri\Exception\{InitException};
 use Kiri\Di\ContainerInterface;
-use Kiri\Message\Constrict\Request;
-use Kiri\Message\Constrict\RequestInterface;
-use Kiri\Message\Constrict\Response;
-use Kiri\Message\Constrict\ResponseInterface;
-use Kiri\Message\Emitter;
-use Kiri\Message\ResponseEmitter;
 use Kiri\Server\{Server};
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
@@ -64,13 +58,15 @@ abstract class BaseMain extends Component
 	public function mapping(array $mapping)
 	{
 		$di = Kiri::getDi();
-		$di->mapping(StdoutLoggerInterface::class, StdoutLogger::class);
-		$di->mapping(LoggerInterface::class, Logger::class);
-		$di->mapping(Emitter::class, ResponseEmitter::class);
-		$di->mapping(ResponseInterface::class, Response::class);
-		$di->mapping(RequestInterface::class, Request::class);
+		$di->set(StdoutLoggerInterface::class, StdoutLogger::class);
+		$di->set(LoggerInterface::class, Logger::class);
 		foreach ($mapping as $interface => $class) {
-			$di->mapping($interface, $class);
+			$di->set($interface, $class);
+		}
+
+		$components = Config::get('components', []);
+		foreach ($components as $id => $component) {
+			$this->set($id, $component);
 		}
 	}
 
