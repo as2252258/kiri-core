@@ -5,7 +5,7 @@ namespace Kiri\Abstracts;
 
 
 use Exception;
-use Kiri\Di\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Providers

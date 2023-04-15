@@ -15,7 +15,7 @@ use Kiri;
 use Kiri\Di\LocalService;
 use Kiri\Error\{StdoutLogger, StdoutLoggerInterface};
 use Kiri\Exception\{InitException};
-use Kiri\Di\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
 
