@@ -16,13 +16,8 @@ abstract class Providers extends Component implements Provider
 
 
 	/**
-	 * @param ContainerInterface $container
-	 * @param array $config
-	 * @throws Exception
+	 * @var ContainerInterface
 	 */
-	public function __construct(public ContainerInterface $container, array $config = [])
-	{
-		parent::__construct($config);
-	}
+	public ContainerInterface $container;
 
 }
