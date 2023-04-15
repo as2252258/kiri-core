@@ -243,102 +243,86 @@ if (!function_exists('now')) {
 		return date('Y-m-d H:i:s') . '.' . str_replace(time() . '.', '', (string)microtime(TRUE));
 	}
 }
-
-
-if (!function_exists('Annotation')) {
-
-
-	/**
-	 * @return Annotation
-	 * @throws Exception
-	 */
-	function annotation(): Annotation
-	{
-		return Kiri::getAnnotation();
-	}
-
-
-}
-
-
-if (!function_exists('scan_directory')) {
-
-
-	/**
-	 * @param $dir
-	 * @param $namespace
-	 * @param array $exclude
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	function scan_directory($dir, $namespace, array $exclude = []): void
-	{
-		$annotation = Kiri::getDi()->get(Annotation::class);
-		$annotation->read($dir, $namespace, $exclude);
-
-		injectRuntime($dir, $exclude);
-	}
-
-}
-
-
-if (!function_exists('injectRuntime')) {
-
-
-	/**
-	 * @param string $path
-	 * @param array $exclude
-	 * @throws ReflectionException
-	 * @throws Exception
-	 */
-	function injectRuntime(string $path, array $exclude = []): void
-	{
-		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
-
-		$router = [];
-		foreach ($fileLists as $class) {
-			$target = TargetManager::get($class);
-			$targetAttributes = $target->getAttributes();
-			foreach ($targetAttributes as $value) {
-				$value = $value->newInstance();
-				if (!method_exists($value, 'execute')) {
-					continue;
-				}
-				$value->execute($class);
-			}
-
-
-			$methods = $target->getMethodsAttribute();
-			foreach ($methods as $method => $attribute) {
-				/** @var ReflectionAttribute $item */
-				foreach ($attribute as $item) {
-					if (!class_exists($item->getName())) {
-						continue;
-					}
-					$item = $item->newInstance();
-					if ($item instanceof Route) {
-						$router[] = [$item, $class, $method];
-					} else {
-						if (!method_exists($item, 'execute')) {
-							continue;
-						}
-						$item->execute($class, $method);
-					}
-				}
-			}
-		}
-		if (!empty($router)) {
-			foreach ($router as $class) {
-				[$item, $class, $method] = $class;
-				if (!method_exists($item, 'execute')) {
-					continue;
-				}
-				$item->execute($class, $method);
-			}
-		}
-	}
-
-}
+//
+//
+//if (!function_exists('scan_directory')) {
+//
+//
+//	/**
+//	 * @param $dir
+//	 * @param $namespace
+//	 * @param array $exclude
+//	 * @throws ReflectionException
+//	 * @throws Exception
+//	 */
+//	function scan_directory($dir, $namespace, array $exclude = []): void
+//	{
+//		$annotation = Kiri::getDi()->get(Annotation::class);
+//		$annotation->read($dir, $namespace, $exclude);
+//
+//		injectRuntime($dir, $exclude);
+//	}
+//
+//}
+//
+//
+//if (!function_exists('injectRuntime')) {
+//
+//
+//	/**
+//	 * @param string $path
+//	 * @param array $exclude
+//	 * @throws ReflectionException
+//	 * @throws Exception
+//	 */
+//	function injectRuntime(string $path, array $exclude = []): void
+//	{
+//		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
+//
+//		$router = [];
+//		foreach ($fileLists as $class) {
+//			$target = TargetManager::get($class);
+//			$targetAttributes = $target->getAttributes();
+//			foreach ($targetAttributes as $value) {
+//				$value = $value->newInstance();
+//				if (!method_exists($value, 'execute')) {
+//					continue;
+//				}
+//				$value->execute($class);
+//			}
+//
+//
+//			$methods = $target->getMethodsAttribute();
+//			foreach ($methods as $method => $attribute) {
+//				/** @var ReflectionAttribute $item */
+//				foreach ($attribute as $item) {
+//					if (!class_exists($item->getName())) {
+//						continue;
+//					}
+//					$item = $item->newInstance();
+//					if ($item instanceof Route) {
+//						$router[] = [$item, $class, $method];
+//					} else {
+//						if (!method_exists($item, 'execute')) {
+//							continue;
+//						}
+//						$item->execute($class, $method);
+//					}
+//				}
+//			}
+//		}
+//		if (!empty($router)) {
+//			foreach ($router as $class) {
+//				[$item, $class, $method] = $class;
+//				if (!method_exists($item, 'execute')) {
+//					continue;
+//				}
+//				$item->execute($class, $method);
+//			}
+//		}
+//	}
+//
+//}
 
 
 if (!function_exists('directory')) {

@@ -70,15 +70,6 @@ class Kiri
 		return static::$container;
 	}
 
-	/**
-	 * @return Annotation
-	 * @throws Exception
-	 */
-	public static function getAnnotation(): Annotation
-	{
-		return static::getDi()->get(Annotation::class);
-	}
-
 
 	/**
 	 * @param $className
@@ -308,4 +299,4 @@ class Kiri
 	}
 
 }
-Kiri::setContainer(Container::getInstance());
+Kiri::setContainer(Container::instance());
