@@ -41,10 +41,7 @@
   "autoload": {
     "psr-4": {
       "Kiri\\": "kiri-engine/",
-      "Kiri\\Actor\\": "kiri-actor/",
-      "Kiri\\Annotation\\": "kiri-annotation/",
-      "Kiri\\Task\\": "kiri-task/",
-      "Kiri\\Websocket\\": "kiri-websocket-server/"
+      "Kiri\\Actor\\": "kiri-actor/"
     },
     "files": [
       "Kiri.php",
