@@ -148,7 +148,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		
 		$data = Json::jsonFail($error[1], 500, $path);
 		
-		$this->logger->error('On error handler', [$data]);
+		\Kiri::getLogger()->error('On error handler', [$data]);
 		
 		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
 		

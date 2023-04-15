@@ -124,6 +124,7 @@ class Kiri
 
 	/**
 	 * @return LoggerInterface
+	 * @throws ReflectionException
 	 */
 	public static function getLogger(): LoggerInterface
 	{

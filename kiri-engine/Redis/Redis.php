@@ -194,7 +194,7 @@ SCRIPT;
 		try {
 			$response = $client->{$name}(...$arguments);
 		} catch (\Throwable $throwable) {
-			$response = $this->logger->addError($throwable->getMessage());
+			$response = \Kiri::getLogger()->addError($throwable->getMessage());
 		} finally {
 			$pool = $this->container->get(Pool::class);
 			$pool->push($this->host, $client);

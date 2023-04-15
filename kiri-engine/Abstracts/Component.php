@@ -23,9 +23,6 @@ class Component implements Configure
 {
 
 
-	protected ?StdoutLoggerInterface $logger = null;
-
-
 	/**
 	 * BaseAbstract constructor.
 	 *
