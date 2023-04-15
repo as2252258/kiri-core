@@ -140,7 +140,7 @@ class Loader extends Component
 		if (!class_exists($class)) {
 			return null;
 		}
-		return Kiri::getDi()->getReflect($class);
+		return Kiri::getDi()->getReflectionClass($class);
 	}
 
 

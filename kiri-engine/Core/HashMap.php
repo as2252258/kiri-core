@@ -2,6 +2,7 @@
 
 namespace Kiri\Core;
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReturnTypeWillChange;
 use Traversable;
@@ -15,22 +16,48 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
 	private array $lists = [];
 
 
-    /**
-     * @return Traversable
-     */
-    public function getIterator(): Traversable
-    {
-        return new \ArrayIterator($this->lists);
-    }
+	/**
+	 * @return Traversable
+	 */
+	public function getIterator(): Traversable
+	{
+		return new \ArrayIterator($this->lists);
+	}
 
 
-    /**
+	/**
+	 * @return bool
+	 */
+	public function hasItem(): bool
+	{
+		return count($this->lists) > 0;
+	}
+
+
+	/**
 	 * @param string $key
 	 * @param $value
 	 */
 	public function put(string $key, $value)
 	{
 		$this->lists[$key] = $value;
+	}
+
+
+	/**
+	 * @param string $key
+	 * @param $value
+	 * @return void
+	 * @throws Exception
+	 */
+	public function append(string $key, $value): void
+	{
+		if (!$this->has($key)) {
+			$this->lists[$key] = [];
+		} else if (!is_array($this->lists[$key])) {
+			throw new Exception('Source must a array.');
+		}
+		$this->lists[$key][] = $value;
 	}
 
 
@@ -108,4 +135,17 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
 	{
 		unset($this->lists[$offset]);
 	}
+
+
+	public static function Tree(HashMap $root, string $leaf)
+	{
+		if ($root->has($leaf)) {
+			$hashMap = $root->get($leaf);
+		} else {
+			$hashMap = new HashMap();
+			$root->put($leaf, $hashMap);
+		}
+		return $hashMap;
+	}
+
 }
