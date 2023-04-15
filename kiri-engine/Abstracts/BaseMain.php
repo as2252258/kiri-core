@@ -43,7 +43,7 @@ abstract class BaseMain extends Component
 	public function __construct(public ContainerInterface $container, public EventProvider $provider)
 	{
 		$config = sweep(APP_PATH . '/config');
-		$this->mapping($config['mapping'] ?? []);
+		$this->mapping($config['mapping'] ?? [], $config['components']);
 		$this->parseInt($config);
 		$this->parseEvents($config);
 		$this->enableEnvConfig();
@@ -53,8 +53,9 @@ abstract class BaseMain extends Component
 
 	/**
 	 * @param array $mapping
+	 * @param array $components
 	 */
-	public function mapping(array $mapping)
+	public function mapping(array $mapping, array $components)
 	{
 		$di = Kiri::getDi();
 		$di->set(StdoutLoggerInterface::class, StdoutLogger::class);
@@ -63,7 +64,6 @@ abstract class BaseMain extends Component
 			$di->set($interface, $class);
 		}
 
-		$components = Config::get('components', []);
 		foreach ($components as $id => $component) {
 			$this->set($id, $component);
 		}
