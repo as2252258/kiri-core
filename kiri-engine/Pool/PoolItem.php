@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Kiri\Pool;
 
 use Closure;
-use Kiri\Annotation\Inject;
 use Kiri\Di\Context;
 use Swoole\Coroutine\Channel;
 

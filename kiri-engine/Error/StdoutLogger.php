@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiri\Error;
 
 use Kiri\Abstracts\Logger;

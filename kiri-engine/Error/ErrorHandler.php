@@ -14,14 +14,11 @@ use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
 use Kiri\Core\Json;
-use Kiri\Annotation\Inject;
 use Kiri\Events\EventDispatch;
-use Kiri\Message\Events\OnAfterRequest;
-use Kiri\Message\Handler\Formatter\IFormatter;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Kiri\Server\Events\OnShutdown;
 use ReflectionException;
+use Kiri\Di\Inject\Container;
 
 /**
  * Class ErrorHandler
@@ -32,10 +29,6 @@ use ReflectionException;
 class ErrorHandler extends Component implements ErrorInterface
 {
 	
-	/** @var ?IFormatter $message */
-	private ?IFormatter $message = NULL;
-	
-	
 	/**
 	 * @var string
 	 */
@@ -45,7 +38,7 @@ class ErrorHandler extends Component implements ErrorInterface
 	/**
 	 * @var EventDispatch
 	 */
-	#[Inject(EventDispatch::class)]
+	#[Container(EventDispatch::class)]
 	public EventDispatch $dispatch;
 	
 	
@@ -114,7 +107,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		
 		$message = array_shift($messages);
 		
-		$this->dispatch->dispatch(new OnShutdown());
+		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
 		
 		$this->sendError($message, $lastError['file'], $lastError['line']);
 	}
@@ -125,14 +118,13 @@ class ErrorHandler extends Component implements ErrorInterface
 	 *
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function exceptionHandler(\Throwable $exception)
 	{
 		$this->category = 'exception';
 		
-		$this->dispatch->dispatch(new OnAfterRequest());
+		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
 		
 		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
@@ -158,7 +150,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		
 		$this->logger->error('On error handler', [$data]);
 		
-		$this->dispatch->dispatch(new OnAfterRequest());
+		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
 		
 		throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
 	}
@@ -181,24 +173,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		
 		return $data;
 	}
-	
-	/**
-	 * @return mixed
-	 */
-	public function getErrorMessage(): mixed
-	{
-		$message = $this->message;
-		$this->message = NULL;
-		return $message->getData();
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function getAsError(): bool
-	{
-		return $this->message !== NULL;
-	}
+
 	
 	/**
 	 * @param $message

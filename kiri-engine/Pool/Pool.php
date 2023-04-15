@@ -7,12 +7,7 @@ namespace Kiri\Pool;
 use Database\Mysql\PDO;
 use Exception;
 use Kiri\Abstracts\Component;
-use Kiri\Abstracts\Config;
-use Kiri\Annotation\Inject;
-use Kiri\Di\ContainerInterface;
 use Kiri\Exception\ConfigException;
-use Kiri\Server\Abstracts\StatusEnum;
-use Kiri\Server\WorkerStatus;
 
 
 /**
@@ -24,12 +19,6 @@ class Pool extends Component
 
 	/** @var array<PoolItem> */
 	private array $_connections = [];
-
-	/**
-	 * @var WorkerStatus
-	 */
-	#[Inject(WorkerStatus::class)]
-	public WorkerStatus $status;
 
 
 	/**

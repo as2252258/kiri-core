@@ -13,10 +13,9 @@ namespace Kiri\Abstracts;
 use Exception;
 use Kiri;
 use Kiri\Di\LocalService;
-use Kiri\Error\{ErrorHandler, StdoutLogger, StdoutLoggerInterface};
+use Kiri\Error\{StdoutLogger, StdoutLoggerInterface};
 use Kiri\Exception\{InitException};
 use Kiri\Di\ContainerInterface;
-use Kiri\Server\{Server};
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
 
@@ -222,17 +221,6 @@ abstract class BaseMain extends Component
 	public function getFirstLocal(): mixed
 	{
 		return current($this->getLocalIps());
-	}
-
-
-	/**
-	 *
-	 * @return Server
-	 * @throws
-	 */
-	public function getServer(): Server
-	{
-		return Kiri::getDi()->get(Server::class);
 	}
 
 
