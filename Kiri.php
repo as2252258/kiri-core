@@ -5,23 +5,14 @@ declare(strict_types=1);
 error_reporting(0);
 
 
-use Database\Collection;
-use Database\ModelInterface;
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
-use Kiri\Annotation\Annotation;
-use Kiri\Main;
-use Kiri\Core\Json;
 use Kiri\Di\Container;
 use Kiri\Di\LocalService;
 use Kiri\Environmental;
-use Kiri\Di\ContainerInterface;
-use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Exception\ConfigException;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
-use Swoole\Process;
-use Swoole\WebSocket\Server;
 
 defined('DB_ERROR_BUSY') or define('DB_ERROR_BUSY', 'The database is busy. Please try again later.');
 defined('SELECT_IS_NULL') or define('SELECT_IS_NULL', 'Query data does not exist, please check the relevant conditions.');
@@ -39,26 +30,13 @@ defined('URL_MATCH') or define('URL_MATCH', '/(http[s]?:\/\/)?((?:[\w\-_]+\.)+\w
 class Kiri
 {
 
-	/** @var Container */
-	private static Container $container;
-
-
-	/**
-	 * @param Container $container
-	 */
-	public static function setContainer(Container $container): void
-	{
-		$container->setBindings(ContainerInterface::class, $container);
-		static::$container = $container;
-	}
-
 
 	/**
 	 * @return Container
 	 */
 	public static function getContainer(): Container
 	{
-		return static::$container;
+		return Container::instance();
 	}
 
 
@@ -67,7 +45,7 @@ class Kiri
 	 */
 	public static function getContainerContext(): ?Container
 	{
-		return static::$container;
+		return static::getContainer();
 	}
 
 
@@ -80,11 +58,11 @@ class Kiri
 	public static function createObject($className, array $construct = []): mixed
 	{
 		if (is_string($className) && class_exists($className)) {
-			return static::$container->get($className, $construct);
+			return static::getContainer()->get($className, $construct);
 		} else if (is_array($className) && isset($className['class'])) {
 			$class = $className['class'];
 			unset($className['class']);
-			return static::$container->create($class, $construct, $className);
+			return static::getContainer()->make($class, $construct, $className);
 		} else if (is_callable($className, TRUE)) {
 			return call_user_func($className, $construct);
 		} else {
@@ -131,7 +109,7 @@ class Kiri
 	 */
 	public static function getDi(): Container
 	{
-		return static::$container;
+		return static::getContainer();
 	}
 
 
@@ -140,7 +118,7 @@ class Kiri
 	 */
 	public static function service(): LocalService
 	{
-		return static::$container->get(LocalService::class);
+		return static::getContainer()->get(LocalService::class);
 	}
 
 
@@ -149,7 +127,7 @@ class Kiri
 	 */
 	public static function getLogger(): LoggerInterface
 	{
-		return static::$container->get(LoggerInterface::class);
+		return static::getContainer()->get(LoggerInterface::class);
 	}
 
 
@@ -299,4 +277,3 @@ class Kiri
 	}
 
 }
-Kiri::setContainer(Container::instance());
