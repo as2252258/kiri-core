@@ -33,7 +33,6 @@ class Component implements Configure
 	 */
 	public function __construct()
 	{
-		$this->init();
 	}
 
 	/**
