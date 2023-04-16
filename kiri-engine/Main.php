@@ -23,7 +23,8 @@ use ReflectionException;
 use Symfony\Component\Console\{Application as ConsoleApplication,
 	Input\ArgvInput,
 	Output\ConsoleOutput,
-	Output\OutputInterface};
+	Output\OutputInterface
+};
 
 
 /**
@@ -120,7 +121,7 @@ class Main extends BaseMain
 		$command = $console->find($input->getFirstArgument());
 
 		$scanner = $this->container->get(Scanner::class);
-		$scanner->read(APP_PATH);
+		$scanner->read(APP_PATH . 'app/');
 
 		fire(new OnBeforeCommandExecute());
 
