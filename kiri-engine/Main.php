@@ -12,8 +12,10 @@ namespace Kiri;
 
 use Exception;
 use Kiri;
-use Kiri\Di\Container;
 use Kiri\Abstracts\{BaseMain, Config, Kernel};
+use Kiri\Di\LocalService;
+use Kiri\Di\Scanner;
+use Kiri\Error\ErrorHandler;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -21,10 +23,7 @@ use ReflectionException;
 use Symfony\Component\Console\{Application as ConsoleApplication,
 	Input\ArgvInput,
 	Output\ConsoleOutput,
-	Output\OutputInterface
-};
-use Kiri\Di\LocalService;
-use Kiri\Error\ErrorHandler;
+	Output\OutputInterface};
 
 
 /**
