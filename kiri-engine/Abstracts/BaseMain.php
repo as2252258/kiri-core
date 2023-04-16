@@ -13,6 +13,7 @@ namespace Kiri\Abstracts;
 use Exception;
 use Kiri;
 use Kiri\Di\LocalService;
+use ReflectionException;
 use Kiri\Error\{StdoutLogger, StdoutLoggerInterface};
 use Kiri\Exception\{InitException};
 use Psr\Container\ContainerInterface;
@@ -40,7 +41,7 @@ abstract class BaseMain extends Component
 	 *
 	 * @throws
 	 */
-	public function __construct(public ContainerInterface $container, public EventProvider $provider)
+	public function __construct()
 	{
 		$config = sweep(APP_PATH . '/config');
 		$this->mapping($config['mapping'] ?? [], $config['components']);
@@ -182,26 +183,27 @@ abstract class BaseMain extends Component
 	 */
 	private function addEvent($key, $value): void
 	{
+		$provider = Kiri::getDi()->get(EventProvider::class);
 		if ($value instanceof \Closure || is_object($value)) {
-			$this->provider->on($key, $value, 0);
+			$provider->on($key, $value, 0);
 			return;
 		}
 		if (!is_array($value)) {
 			return;
 		}
 		if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-			$this->provider->on($key, $value, 0);
+			$provider->on($key, $value, 0);
 			return;
 		} else if (is_string($value[0])) {
 			$value[0] = Kiri::createObject($value[0]);
-			$this->provider->on($key, $value, 0);
+			$provider->on($key, $value, 0);
 			return;
 		}
 		foreach ($value as $item) {
 			if (!is_callable($item, true)) {
 				throw new InitException("Class does not hav callback.");
 			}
-			$this->provider->on($key, $item, 0);
+			$provider->on($key, $item, 0);
 		}
 	}
 
@@ -242,6 +244,7 @@ abstract class BaseMain extends Component
 	/**
 	 * @param $id
 	 * @param $definition
+	 * @throws ReflectionException
 	 */
 	public function set($id, $definition): void
 	{
@@ -252,6 +255,7 @@ abstract class BaseMain extends Component
 	/**
 	 * @param $id
 	 * @return bool
+	 * @throws ReflectionException
 	 */
 	public function has($id): bool
 	{

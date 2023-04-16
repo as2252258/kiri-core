@@ -48,12 +48,11 @@ class Main extends BaseMain
 
 	/**
 	 * @return void
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 */
 	public function init(): void
 	{
-		$error = $this->container->get(ErrorHandler::class);
+		$error = Kiri::getDi()->get(ErrorHandler::class);
 		$error->registerShutdownHandler(Config::get('error.shutdown', []));
 		$error->registerExceptionHandler(Config::get('error.exception', []));
 		$error->registerErrorHandler(Config::get('error.error', []));
@@ -72,7 +71,7 @@ class Main extends BaseMain
 		}
 		$class = Kiri::getDi()->get($service);
 		if (method_exists($class, 'onImport')) {
-			$class->onImport($this->container->get(LocalService::class));
+			$class->onImport(Kiri::getDi()->get(LocalService::class));
 		}
 		return $this;
 	}
@@ -81,8 +80,7 @@ class Main extends BaseMain
 	/**
 	 * @param Kernel $kernel
 	 * @return $this
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 */
 	public function commands(Kernel $kernel): static
 	{
@@ -96,13 +94,13 @@ class Main extends BaseMain
 	/**
 	 * @param string $command
 	 * @return void
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @throws ReflectionException
 	 */
 	public function command(string $command): void
 	{
-		$console = $this->container->get(ConsoleApplication::class);
-		$console->add($this->container->get($command));
+		$container = Kiri::getDi();
+		$console = $container->get(ConsoleApplication::class);
+		$console->add($container->get($command));
 	}
 
 
@@ -116,11 +114,13 @@ class Main extends BaseMain
 	 */
 	public function execute(array $argv): void
 	{
+		$container = Kiri::getDi();
+
 		[$input, $output] = $this->argument($argv);
-		$console = $this->container->get(ConsoleApplication::class);
+		$console = $container->get(ConsoleApplication::class);
 		$command = $console->find($input->getFirstArgument());
 
-		$scanner = $this->container->get(Scanner::class);
+		$scanner = $container->get(Scanner::class);
 		$scanner->read(APP_PATH . 'app/');
 
 		fire(new OnBeforeCommandExecute());
@@ -137,11 +137,12 @@ class Main extends BaseMain
 	 */
 	private function argument($argv): array
 	{
+		$container = Kiri::getDi();
 		$input = new ArgvInput($argv);
-		$this->container->bind(ArgvInput::class, $input);
+		$container->bind(ArgvInput::class, $input);
 
 		$output = new ConsoleOutput();
-		$this->container->bind(OutputInterface::class, $output);
+		$container->bind(OutputInterface::class, $output);
 
 		return [$input, $output];
 	}

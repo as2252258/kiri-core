@@ -5,17 +5,11 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
-use Kiri\Annotation\Annotation;
-use Kiri\Annotation\Route\Route;
-use Kiri\Main;
 use Kiri\Core\ArrayAccess;
-use Kiri\Di\TargetManager;
 use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
-use Kiri\Message\Handler\Router;
-use Psr\Log\LoggerInterface;
 use Swoole\Process;
 
 if (!function_exists('make')) {
