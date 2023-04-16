@@ -10,15 +10,18 @@ use Psr\Container\ContainerInterface;
 /**
  * Class Providers
  * @package Kiri\Abstracts
+ * @property-read ContainerInterface $container
  */
 abstract class Providers extends Component implements Provider
 {
 
 
 	/**
-	 * @var ContainerInterface
+	 * @return ContainerInterface
 	 */
-	#[Container(ContainerInterface::class)]
-	public ContainerInterface $container;
+	public function getContainer(): ContainerInterface
+	{
+		return \Kiri::getDi();
+	}
 
 }
