@@ -25,17 +25,16 @@ class Component implements Configure
 
 	/**
 	 * BaseAbstract constructor.
-	 *
-	 * @throws Exception
 	 */
 	public function __construct()
 	{
 	}
 
+
 	/**
-	 * @throws Exception
+	 * @return void
 	 */
-	public function init()
+	public function init(): void
 	{
 	}
 
