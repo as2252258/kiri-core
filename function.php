@@ -929,12 +929,15 @@ if (!function_exists('di')) {
 
 
 	/**
-	 * @param string $className
+	 * @param string|object $className
 	 * @return mixed
 	 * @throws ReflectionException
 	 */
-	function di(string $className): mixed
+	function di(string|object $className): mixed
 	{
+		if (is_object($className)) {
+			return $className;
+		}
 		return Kiri::getDi()->get($className);
 	}
 
