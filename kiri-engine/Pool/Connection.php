@@ -32,7 +32,7 @@ class Connection extends Component
 	 */
 	public function __construct(public Pool $pool, array $config = [])
 	{
-		parent::__construct($config);
+		parent::__construct();
 	}
 
 
