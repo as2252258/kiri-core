@@ -33,18 +33,12 @@ class ErrorHandler extends Component implements ErrorInterface
 	 * @var string
 	 */
 	public string $category = 'app';
-	
-	
-	/**
-	 * @var EventDispatch
-	 */
-	#[Container(EventDispatch::class)]
-	public EventDispatch $dispatch;
-	
-	
+
+
 	/**
 	 * @param array|Closure|null $callback
 	 * @return void
+	 * @throws ReflectionException
 	 */
 	public function registerExceptionHandler(null|array|Closure $callback): void
 	{
@@ -55,11 +49,12 @@ class ErrorHandler extends Component implements ErrorInterface
 		}
 		set_exception_handler($callback);
 	}
-	
-	
+
+
 	/**
 	 * @param array|Closure|null $callback
 	 * @return void
+	 * @throws ReflectionException
 	 */
 	public function registerErrorHandler(null|array|Closure $callback): void
 	{
@@ -107,7 +102,7 @@ class ErrorHandler extends Component implements ErrorInterface
 		
 		$message = array_shift($messages);
 		
-		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
+		Kiri::getDi()->get(EventDispatch::class)->dispatch(new Kiri\Events\OnSystemError());
 		
 		$this->sendError($message, $lastError['file'], $lastError['line']);
 	}
@@ -123,8 +118,8 @@ class ErrorHandler extends Component implements ErrorInterface
 	public function exceptionHandler(\Throwable $exception)
 	{
 		$this->category = 'exception';
-		
-		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
+
+		Kiri::getDi()->get(EventDispatch::class)->dispatch(new Kiri\Events\OnSystemError());
 		
 		$this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
@@ -149,8 +144,8 @@ class ErrorHandler extends Component implements ErrorInterface
 		$data = Json::jsonFail($error[1], 500, $path);
 		
 		\Kiri::getLogger()->error('On error handler', [$data]);
-		
-		$this->dispatch->dispatch(new Kiri\Events\OnSystemError());
+
+		Kiri::getDi()->get(EventDispatch::class)->dispatch(new Kiri\Events\OnSystemError());
 		
 		throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
 	}
