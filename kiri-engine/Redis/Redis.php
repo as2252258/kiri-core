@@ -45,13 +45,6 @@ class Redis extends Component
 
 
 	/**
-	 * @var ContainerInterface
-	 */
-	#[Container(ContainerInterface::class)]
-	readonly public ContainerInterface $container;
-
-
-	/**
 	 * @var int
 	 */
 	private int $read_timeout = -1;
@@ -74,10 +67,10 @@ class Redis extends Component
 
 		$length = Config::get('cache.redis.pool.max', 10);
 
-		$eventProvider = $this->container->get(EventProvider::class);
+		$eventProvider = Kiri::getDi()->get(EventProvider::class);
 		$eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
 
-		$pool = $this->container->get(Pool::class);
+		$pool = Kiri::getDi()->get(Pool::class);
 		$pool->initConnections($config['host'], $length, static function () use ($config) {
 			$redis = new \Redis();
 			if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
@@ -169,13 +162,11 @@ SCRIPT;
 
 	/**
 	 * @return void
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
-	 * @throws Exception
+	 * @throws \ReflectionException
 	 */
 	public function destroy(): void
 	{
-		$pool = $this->container->get(Pool::class);
+		$pool = Kiri::getDi()->get(Pool::class);
 		$pool->clean($this->host);
 	}
 
@@ -187,6 +178,7 @@ SCRIPT;
 	 * @throws ConfigException
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
+	 * @throws \ReflectionException
 	 */
 	public function proxy($name, $arguments): mixed
 	{
@@ -196,7 +188,7 @@ SCRIPT;
 		} catch (\Throwable $throwable) {
 			$response = \Kiri::getLogger()->addError($throwable->getMessage());
 		} finally {
-			$pool = $this->container->get(Pool::class);
+			$pool = Kiri::getDi()->get(Pool::class);
 			$pool->push($this->host, $client);
 		}
 		return $response;
@@ -206,12 +198,11 @@ SCRIPT;
 	/**
 	 * @return \Redis
 	 * @throws ConfigException
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @throws \ReflectionException
 	 */
 	private function getClient(): \Redis
 	{
-		$pool = $this->container->get(Pool::class);
+		$pool = Kiri::getDi()->get(Pool::class);
 		return $pool->get($this->host);
 	}
 
