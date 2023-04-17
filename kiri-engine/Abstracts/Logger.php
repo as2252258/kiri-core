@@ -34,7 +34,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 *
 	 * 紧急情况
 	 */
@@ -48,7 +47,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 *
 	 * 应该警惕的
 	 */
@@ -62,7 +60,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 *
 	 * 关键性的日志
 	 */
@@ -76,7 +73,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 */
 	public function error($message, array $context = [])
 	{
@@ -88,7 +84,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 */
 	public function warning($message, array $context = [])
 	{
@@ -99,7 +94,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 */
 	public function notice($message, array $context = [])
 	{
@@ -111,7 +105,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 */
 	public function info($message, array $context = [])
 	{
@@ -123,7 +116,6 @@ class Logger implements LoggerInterface
 	/**
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
 	 */
 	public function debug($message, array $context = [])
 	{
@@ -136,8 +128,7 @@ class Logger implements LoggerInterface
 	 * @param mixed $level
 	 * @param string $message
 	 * @param array $context
-	 * @throws ConfigException
-	 * @throws Exception
+	 * @throws
 	 */
 	public function log($level, $message, array $context = [])
 	{

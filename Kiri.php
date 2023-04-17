@@ -10,6 +10,8 @@ use Kiri\Abstracts\Config;
 use Kiri\Di\Container;
 use Kiri\Di\LocalService;
 use Kiri\Environmental;
+use Kiri\Error\StdoutLogger;
+use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Exception\ConfigException;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
@@ -74,7 +76,6 @@ class Kiri
 	/**
 	 * @param $prefix
 	 * @return void
-	 * @throws ConfigException
 	 */
 	public static function setProcessName($prefix): void
 	{
@@ -115,6 +116,7 @@ class Kiri
 
 	/**
 	 * @return LocalService
+	 * @throws ReflectionException
 	 */
 	public static function service(): LocalService
 	{
@@ -123,10 +125,10 @@ class Kiri
 
 
 	/**
-	 * @return LoggerInterface
+	 * @return StdoutLogger
 	 * @throws ReflectionException
 	 */
-	public static function getLogger(): LoggerInterface
+	public static function getLogger(): StdoutLogger
 	{
 		return static::getContainer()->get(LoggerInterface::class);
 	}

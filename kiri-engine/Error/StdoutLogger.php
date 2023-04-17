@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Kiri\Abstracts\Logger;
-use Kiri\Exception\ConfigException;
 
-class StdoutLogger extends Logger implements StdoutLoggerInterface
+class StdoutLogger extends Logger
 {
 
 
@@ -21,7 +20,6 @@ class StdoutLogger extends Logger implements StdoutLoggerInterface
 	 * @param $message
 	 * @param string $model
 	 * @return bool
-	 * @throws ConfigException
 	 */
 	public function addError($message, string $model = 'app'): bool
 	{

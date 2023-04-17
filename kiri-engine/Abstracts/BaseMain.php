@@ -14,7 +14,7 @@ use Exception;
 use Kiri;
 use Kiri\Di\LocalService;
 use ReflectionException;
-use Kiri\Error\{StdoutLogger, StdoutLoggerInterface};
+use Kiri\Error\StdoutLogger;
 use Kiri\Exception\{InitException};
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
@@ -54,12 +54,12 @@ abstract class BaseMain extends Component
 	/**
 	 * @param array $mapping
 	 * @param array $components
+	 * @throws ReflectionException
 	 */
 	public function mapping(array $mapping, array $components)
 	{
 		$di = Kiri::getDi();
-		$di->set(StdoutLoggerInterface::class, StdoutLogger::class);
-		$di->set(LoggerInterface::class, Logger::class);
+		$di->set(LoggerInterface::class, StdoutLogger::class);
 		foreach ($mapping as $interface => $class) {
 			$di->set($interface, $class);
 		}
