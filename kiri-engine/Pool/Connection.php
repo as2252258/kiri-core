@@ -172,7 +172,7 @@ class Connection extends Component
 				$result = true;
 			}
 		} catch (Error|Throwable $exception) {
-			$result = \Kiri::getLogger()->addError($exception, 'mysql');
+			$result = addError($exception, 'mysql');
 		} finally {
 			return $result;
 		}

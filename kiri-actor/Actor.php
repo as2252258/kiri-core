@@ -207,7 +207,7 @@ abstract class Actor implements ActorInterface, JsonSerializable
 		try {
 			$this->onUpdate();
 		} catch (\Throwable $exception) {
-			\Kiri::getLogger()->error(throwable($exception));
+			error($exception);
 		}
 
 		Coroutine::sleep($this->refreshInterval / 1000);

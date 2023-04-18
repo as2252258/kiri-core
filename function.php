@@ -1156,10 +1156,33 @@ if (!function_exists('error')) {
 	 * @param mixed $message
 	 * @param array $method
 	 * @return void
+	 * @throws ReflectionException
 	 */
 	function error(mixed $message, array $method = []): void
 	{
+		if ($message instanceof Throwable) {
+			$message = throwable($message);
+		}
 		Kiri::getLogger()->error($message, $method);
+	}
+}
+
+
+if (!function_exists('addError')) {
+
+	/**
+	 * @param mixed $message
+	 * @param string $method
+	 * @return bool
+	 * @throws ReflectionException
+	 */
+	function addError(mixed $message, string $method = 'app'): bool
+	{
+		$logger = Kiri::getLogger();
+		if ($message instanceof Throwable) {
+			$logger->error($message, [$message]);
+		}
+		return $logger->addError($message, $method);
 	}
 }
 
@@ -1186,7 +1209,7 @@ if (!function_exists('throwable')) {
 	 */
 	function throwable(\Throwable|\Error $throwable): string
 	{
-		$message = "\033[31mError: " . $throwable->getMessage() . "\033[0m" . PHP_EOL .
+		$message = "\033[31m" . $throwable->getMessage() . "\033[0m" . PHP_EOL .
 			' ' . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
 		foreach ($throwable->getTrace() as $value) {
 			if (!isset($value['file'])) {

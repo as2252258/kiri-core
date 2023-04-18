@@ -186,7 +186,7 @@ SCRIPT;
 		try {
 			$response = $client->{$name}(...$arguments);
 		} catch (\Throwable $throwable) {
-			$response = \Kiri::getLogger()->addError($throwable->getMessage());
+			$response = addError($throwable, 'redis');
 		} finally {
 			$pool = Kiri::getDi()->get(Pool::class);
 			$pool->push($this->host, $client);

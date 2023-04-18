@@ -23,7 +23,6 @@ class StdoutLogger extends Logger
 	 */
 	public function addError($message, string $model = 'app'): bool
 	{
-		$this->error($model, [$message]);
 		if ($message instanceof \Exception) {
 			$this->errors[$model] = $message->getMessage();
 		} else {
