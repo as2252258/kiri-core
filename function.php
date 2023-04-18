@@ -1186,12 +1186,13 @@ if (!function_exists('throwable')) {
 	 */
 	function throwable(\Throwable|\Error $throwable): string
 	{
-		$message = $throwable->getMessage() . PHP_EOL . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
+		$message = "\033[31mError: " . $throwable->getMessage() . "\033[0m" . PHP_EOL .
+			' ' . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
 		foreach ($throwable->getTrace() as $value) {
 			if (!isset($value['file'])) {
 				continue;
 			}
-			$message .= $value['file'] . " -> " . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . $value['line'] . ")" . PHP_EOL;
+			$message .= ' ' . $value['file'] . " -> " . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . $value['line'] . ")" . PHP_EOL;
 		}
 		return $message;
 	}
