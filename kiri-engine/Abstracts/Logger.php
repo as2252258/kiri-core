@@ -10,6 +10,7 @@ use Kiri;
 use Kiri\Server\Events\OnWorkerStop;
 use Psr\Log\LoggerInterface;
 use ReflectionException;
+use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
@@ -134,20 +135,20 @@ class Logger implements LoggerInterface
 	{
 		// TODO: Implement log() method.
 		$levels = Config::get('log.level', Logger::LOGGER_LEVELS);
-		if (in_array($level, $levels)) {
-			$_string = "[" . now() . ']' . ucfirst($level) . ": " . $message . PHP_EOL;
-			if (!empty($context)) {
-				$_string .= $this->_string($context);
-			}
-			if (str_contains($_string, 'Event::rshutdown')) {
-				return;
-			}
-			file_put_contents('php://output', $_string);
-
-			$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
-
-			file_put_contents($filename, $_string, FILE_APPEND);
+		if (!in_array($level, $levels)) {
+			return;
 		}
+		$_string = "[" . now() . ']' . ucfirst($level) . ": " . $message . PHP_EOL;
+		if (!empty($context)) $_string .= $this->_string($context);
+		if (str_contains($_string, 'Event::rshutdown')) {
+			return;
+		}
+
+		$console = Kiri::getDi()->get(OutputInterface::class);
+		$console->writeln($_string);
+		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
+
+		file_put_contents($filename, $_string, FILE_APPEND);
 	}
 
 
