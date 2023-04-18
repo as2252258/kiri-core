@@ -135,7 +135,7 @@ class Logger implements LoggerInterface
 		// TODO: Implement log() method.
 		$levels = Config::get('log.level', Logger::LOGGER_LEVELS);
 		if (in_array($level, $levels)) {
-			$_string = "\033[31m[" . now() . ']' . ucfirst($level) . ": \033[0m" . $message . PHP_EOL;
+			$_string = "[" . now() . ']' . ucfirst($level) . ": " . $message . PHP_EOL;
 			if (!empty($context)) {
 				$_string .= $this->_string($context);
 			}
