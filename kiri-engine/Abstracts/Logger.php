@@ -35,7 +35,6 @@ class Logger implements LoggerInterface
 	private array $levels = [];
 
 
-
 	public function __construct()
 	{
 		$this->levels = Config::get('log.level', Logger::LOGGER_LEVELS);
@@ -146,8 +145,10 @@ class Logger implements LoggerInterface
 		if (!in_array($level, $this->levels)) {
 			return;
 		}
-		$_string = "[" . now() . ']' . ucfirst($level) . ": " . $message . PHP_EOL;
-		if (!empty($context)) $_string .= $this->_string($context);
+		$_string = "[" . now() . ']' . ucfirst($level) . ": " . $message;
+		if (!empty($context)) {
+			$_string .= PHP_EOL . $this->_string($context);
+		}
 		if (str_contains($_string, 'Event::rshutdown')) {
 			return;
 		}
@@ -206,6 +207,6 @@ class Logger implements LoggerInterface
 		if (is_string($context)) {
 			return $context . PHP_EOL;
 		}
-		return implode(PHP_EOL, $context) . PHP_EOL;
+		return implode(PHP_EOL, $context);
 	}
 }
