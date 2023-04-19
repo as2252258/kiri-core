@@ -85,7 +85,8 @@ class Logger implements LoggerInterface
 	public static function __callStatic(string $name, array $arguments)
 	{
 		// TODO: Implement __callStatic() method.
-		Kiri::getLogger()->{'_' . $name}(...$arguments);
+		$name = str_replace('_', '', $name);
+		Kiri::getLogger()->{$name}(...$arguments);
 	}
 
 
