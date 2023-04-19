@@ -10,6 +10,8 @@ use Kiri\Error\StdoutLoggerInterface;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Swoole\Process;
 
 if (!function_exists('make')) {
@@ -835,7 +837,7 @@ if (!function_exists('storage')) {
 }
 
 
-if (!function_exists('event')) {
+if (!function_exists('on')) {
 
 
 	/**
@@ -844,7 +846,7 @@ if (!function_exists('event')) {
 	 * @param bool $isAppend
 	 * @throws Exception
 	 */
-	function event($name, $callback, bool $isAppend = TRUE)
+	function on($name, $callback, bool $isAppend = TRUE): void
 	{
 		$pro = di(EventProvider::class);
 		$pro->on($name, $callback, 0);
@@ -1197,6 +1199,23 @@ if (!function_exists('success')) {
 	{
 		Kiri::getLogger()->critical($method, [$message]);
 	}
+}
+
+if (!function_exists('event')) {
+
+
+	/**
+	 * @param object $object
+	 * @return void
+	 * @throws ReflectionException
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	function event(object $object): void
+	{
+		Kiri::getDi()->get(EventDispatch::class)->dispatch($object);
+	}
+
 }
 
 
