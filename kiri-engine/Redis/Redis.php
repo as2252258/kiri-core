@@ -33,28 +33,28 @@ use ReflectionException;
 class Redis extends Component
 {
 
-	private string $host = '';
+	public string $host = '';
 
-	private int $port = 6379;
+	public int $port = 6379;
 
-	private string $prefix = 'api:';
+	public string $prefix = 'api:';
 
-	private string $auth = '';
+	public string $auth = '';
 
-	private int $databases = 0;
+	public int $databases = 0;
 
-	private int $timeout = 30;
+	public int $timeout = 30;
 
 
 	/**
 	 * @var int
 	 */
-	private int $read_timeout = -1;
+	public int $read_timeout = -1;
 
 	/**
 	 * @var array|int[]
 	 */
-	private array $pool = ['min' => 1, 'max' => 100];
+	public array $pool = ['min' => 1, 'max' => 100];
 
 
 	/**
