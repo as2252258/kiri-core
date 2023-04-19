@@ -32,6 +32,16 @@ class Logger implements LoggerInterface
 	const LOGGER_LEVELS = [Logger::EMERGENCY, Logger::ALERT, Logger::CRITICAL, Logger::ERROR, Logger::WARNING, Logger::NOTICE, Logger::INFO, Logger::DEBUG];
 
 
+	private array $levels = [];
+
+
+
+	public function __construct()
+	{
+		$this->levels = Config::get('log.level', Logger::LOGGER_LEVELS);
+	}
+
+
 	/**
 	 * @param string $message
 	 * @param array $context
@@ -131,11 +141,9 @@ class Logger implements LoggerInterface
 	 * @param array $context
 	 * @throws
 	 */
-	public function log($level, $message, array $context = [])
+	public function log($level, $message, array $context = []): void
 	{
-		// TODO: Implement log() method.
-		$levels = Config::get('log.level', Logger::LOGGER_LEVELS);
-		if (!in_array($level, $levels)) {
+		if (!in_array($level, $this->levels)) {
 			return;
 		}
 		$_string = "[" . now() . ']' . ucfirst($level) . ": " . $message . PHP_EOL;
