@@ -74,6 +74,16 @@ class Kiri
 
 
 	/**
+	 * @return \Kiri\Pool\Pool
+	 * @throws ReflectionException
+	 */
+	public static function getPool(): \Kiri\Pool\Pool
+	{
+		return static::getDi()->get(\Kiri\Pool\Pool::class);
+	}
+
+
+	/**
 	 * @param $prefix
 	 * @return void
 	 */

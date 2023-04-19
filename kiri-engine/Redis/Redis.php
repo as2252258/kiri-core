@@ -22,6 +22,8 @@ use Kiri\Server\Events\OnWorkerExit;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
+use ReflectionException;
 
 /**
  * Class Redis
@@ -66,12 +68,8 @@ class Redis extends Component
 		$config = $this->get_config();
 
 		$length = Config::get('cache.redis.pool.max', 10);
-
-		$eventProvider = Kiri::getDi()->get(EventProvider::class);
-		$eventProvider->on(OnWorkerExit::class, [$this, 'destroy'], 0);
-
-		$pool = Kiri::getDi()->get(Pool::class);
-		$pool->initConnections($config['host'], $length, static function () use ($config) {
+		on(OnWorkerExit::class, [$this, 'destroy']);
+		Kiri::getPool()->initConnections($config['host'], $length, static function () use ($config) {
 			$redis = new \Redis();
 			if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
@@ -113,7 +111,7 @@ class Redis extends Component
 	 * @param $key
 	 * @param int $timeout
 	 * @return bool
-	 * @throws \RedisException
+	 * @throws RedisException
 	 */
 	public function waite($key, int $timeout = 5): bool
 	{
@@ -162,12 +160,11 @@ SCRIPT;
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
+	 * @throws
 	 */
 	public function destroy(): void
 	{
-		$pool = Kiri::getDi()->get(Pool::class);
-		$pool->clean($this->host);
+		Kiri::getPool()->clean($this->host);
 	}
 
 
@@ -178,7 +175,7 @@ SCRIPT;
 	 * @throws ConfigException
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function proxy($name, $arguments): mixed
 	{
@@ -188,8 +185,7 @@ SCRIPT;
 		} catch (\Throwable $throwable) {
 			$response = addError($throwable, 'redis');
 		} finally {
-			$pool = Kiri::getDi()->get(Pool::class);
-			$pool->push($this->host, $client);
+			Kiri::getPool()->push($this->host, $client);
 		}
 		return $response;
 	}
@@ -198,12 +194,11 @@ SCRIPT;
 	/**
 	 * @return \Redis
 	 * @throws ConfigException
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	private function getClient(): \Redis
 	{
-		$pool = Kiri::getDi()->get(Pool::class);
-		return $pool->get($this->host);
+		return Kiri::getPool()->get($this->host);
 	}
 
 

@@ -843,13 +843,13 @@ if (!function_exists('on')) {
 	/**
 	 * @param $name
 	 * @param $callback
-	 * @param bool $isAppend
-	 * @throws Exception
+	 * @param int $index
+	 * @throws
 	 */
-	function on($name, $callback, bool $isAppend = TRUE): void
+	function on($name, $callback, int $index = 0): void
 	{
 		$pro = di(EventProvider::class);
-		$pro->on($name, $callback, 0);
+		$pro->on($name, $callback, $index);
 	}
 
 }

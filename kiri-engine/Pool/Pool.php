@@ -26,7 +26,7 @@ class Pool extends Component
 	 * @param $retain_number
 	 * @throws Exception
 	 */
-	public function flush($name, $retain_number)
+	public function flush($name, $retain_number): void
 	{
 		if ($this->hasChannel($name)) {
 			$channel = $this->channel($name);
@@ -90,7 +90,7 @@ class Pool extends Component
 	 * @param int $max
 	 * @param \Closure $closure
 	 */
-	public function initConnections($name, int $max, \Closure $closure)
+	public function initConnections($name, int $max, \Closure $closure): void
 	{
 		if (!isset($this->_connections[$name])) {
 			$this->_connections[$name] = new PoolItem($max, $closure);
@@ -189,7 +189,7 @@ class Pool extends Component
 	 * @param mixed $client
 	 * @throws ConfigException
 	 */
-	public function push(string $name, mixed $client)
+	public function push(string $name, mixed $client): void
 	{
 		$this->channel($name)->push($client);
 	}
@@ -211,7 +211,7 @@ class Pool extends Component
 	 * @param string $name
 	 * @throws Exception
 	 */
-	public function clean(string $name)
+	public function clean(string $name): void
 	{
 		$channel = $this->_connections[$name] ?? null;
 		if ($channel === null) {
@@ -223,7 +223,7 @@ class Pool extends Component
 
 
 	/**
-	 * @return PoolQueue[]
+	 * @return PoolItem[]
 	 */
 	protected function channels(): array
 	{
