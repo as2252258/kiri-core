@@ -14,16 +14,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * @method static emergency(string $message, array $context = [])
- * @method static alert(string $message, array $context = [])
- * @method static critical(string $message, array $context = [])
- * @method static error(string $message, array $context = [])
- * @method static waring(string $message, array $context = [])
- * @method static notice(string $message, array $context = [])
- * @method static info(string $message, array $context = [])
- * @method static debug(string $message, array $context = [])
- * @method static log(mixed $level, string $message, array $context = [])
- * @method static flush()
+ * @method static _emergency(string $message, array $context = [])
+ * @method static _alert(string $message, array $context = [])
+ * @method static _critical(string $message, array $context = [])
+ * @method static _error(string $message, array $context = [])
+ * @method static _waring(string $message, array $context = [])
+ * @method static _notice(string $message, array $context = [])
+ * @method static _info(string $message, array $context = [])
+ * @method static _debug(string $message, array $context = [])
+ * @method static _log(mixed $level, string $message, array $context = [])
+ * @method static _flush()
  */
 class Logger implements LoggerInterface
 {
@@ -85,7 +85,7 @@ class Logger implements LoggerInterface
 	public static function __callStatic(string $name, array $arguments)
 	{
 		// TODO: Implement __callStatic() method.
-		Kiri::getLogger()->{$name}(...$arguments);
+		Kiri::getLogger()->{'_' . $name}(...$arguments);
 	}
 
 
