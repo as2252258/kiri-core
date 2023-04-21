@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @method static _alert(string $message, array $context = [])
  * @method static _critical(string $message, array $context = [])
  * @method static _error(string $message, array $context = [])
- * @method static _waring(string $message, array $context = [])
+ * @method static _warning(string $message, array $context = [])
  * @method static _notice(string $message, array $context = [])
  * @method static _info(string $message, array $context = [])
  * @method static _debug(string $message, array $context = [])
