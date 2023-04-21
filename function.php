@@ -6,12 +6,17 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 use JetBrains\PhpStorm\Pure;
 use Kiri\Abstracts\Config;
 use Kiri\Core\ArrayAccess;
-use Kiri\Error\StdoutLoggerInterface;
+use Kiri\Error\StdoutLogger;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Exception\ConfigException;
+use Kiri\Router\Request;
+use Kiri\Router\Response;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Process;
 
 if (!function_exists('make')) {
@@ -368,6 +373,36 @@ if (!function_exists('isUrl')) {
 }
 
 
+if (!function_exists('request')) {
+
+
+	/**
+	 * @return Request
+	 * @throws
+	 */
+	function request(): RequestInterface
+	{
+		return Kiri::service()->get('request');
+	}
+
+}
+
+
+if (!function_exists('response')) {
+
+
+	/**
+	 * @return Response
+	 * @throws
+	 */
+	function response(): ResponseInterface
+	{
+		return Kiri::service()->get('response');
+	}
+
+}
+
+
 if (!function_exists('split_request_uri')) {
 
 
@@ -534,9 +569,9 @@ if (!function_exists('logger')) {
 	/**
 	 * @throws Exception
 	 */
-	function logger(): StdoutLoggerInterface
+	function logger(): StdoutLogger
 	{
-		return Kiri::getDi()->get(StdoutLoggerInterface::class);
+		return Kiri::getDi()->get(StdoutLogger::class);
 	}
 }
 
