@@ -52,21 +52,6 @@ if (!function_exists('service')) {
 	}
 }
 
-if (!function_exists('replica')) {
-
-
-	/**
-	 * @param $name
-	 * @return mixed
-	 * @throws
-	 */
-	function replica($name): mixed
-	{
-		return Kiri::getDi()->copy($name);
-	}
-
-}
-
 
 if (!function_exists('isJson')) {
 
@@ -88,10 +73,11 @@ if (!function_exists('instance')) {
 	 * @param array $constrict
 	 * @param array $config
 	 * @return mixed
+	 * @throws
 	 */
 	function instance($class, array $constrict = [], array $config = []): mixed
 	{
-		return Kiri::getDi()->create($class, $constrict, $config);
+		return Kiri::getDi()->make($class, $constrict, $config);
 	}
 
 
