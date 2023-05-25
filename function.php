@@ -4,7 +4,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use JetBrains\PhpStorm\Pure;
-use Kiri\Abstracts\Config;
+use Kiri\Config\ConfigProvider;
 use Kiri\Core\ArrayAccess;
 use Kiri\Error\StdoutLogger;
 use Kiri\Events\EventDispatch;
@@ -16,7 +16,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 use Swoole\Process;
 
 if (!function_exists('make')) {
@@ -890,7 +889,7 @@ if (!function_exists('name')) {
 			return;
 		}
 
-		$name = Config::get('id', 'system') . '[' . $pid . ']';
+		$name = \config('id', 'system') . '[' . $pid . ']';
 		if (!empty($prefix)) {
 			$name .= '.' . $prefix;
 		}
@@ -934,9 +933,27 @@ if (!function_exists('config')) {
 	 * @param null $default
 	 * @return array|string|null
 	 */
-	#[Pure] function config($key, $default = NULL): null|array|string
+	function config($key, $default = NULL): null|array|string
 	{
-		return Config::get($key, $default);
+		return make(ConfigProvider::class)->get($key, $default);
+	}
+
+}
+
+
+
+if (!function_exists('created')) {
+
+    /**
+     * @param $key
+     * @param array $construct
+     * @param array $config
+     * @return array|string|null
+     * @throws ReflectionException
+     */
+	function created($key, array $construct = [], array $config = []): null|array|string
+	{
+		return Kiri::getDi()->make($key,$construct, $config);
 	}
 
 }

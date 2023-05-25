@@ -13,7 +13,6 @@ namespace Kiri\Abstracts;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri;
-use Kiri\Error\StdoutLoggerInterface;
 
 /**
  * Class Component

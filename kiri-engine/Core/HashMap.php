@@ -61,14 +61,15 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
 	}
 
 
-	/**
-	 * @param string $key
-	 * @return mixed
-	 */
-	#[Pure] public function get(string $key): mixed
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+	#[Pure] public function get(string $key,  mixed $default = null): mixed
 	{
 		if (!$this->has($key)) {
-			return null;
+			return $default;
 		}
 		return $this->lists[$key];
 	}

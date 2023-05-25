@@ -46,7 +46,7 @@ class Logger implements LoggerInterface
 
 	public function __construct()
 	{
-		$this->levels = Config::get('log.level', Logger::LOGGER_LEVELS);
+		$this->levels = \config('log.level', Logger::LOGGER_LEVELS);
 	}
 
 

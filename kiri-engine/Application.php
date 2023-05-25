@@ -12,7 +12,7 @@ namespace Kiri;
 
 use Exception;
 use Kiri;
-use Kiri\Abstracts\{BaseMain, Config, Kernel};
+use Kiri\Abstracts\{BaseApplication, Config, Kernel};
 use Kiri\Di\LocalService;
 use Kiri\Di\Scanner;
 use Kiri\Error\ErrorHandler;
@@ -34,7 +34,7 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
  *
  * @property-read Config $config
  */
-class Main extends BaseMain
+class Application extends BaseApplication
 {
 
 	/**
@@ -53,10 +53,10 @@ class Main extends BaseMain
 	public function init(): void
 	{
 		$error = Kiri::getDi()->get(ErrorHandler::class);
-		$error->registerShutdownHandler(Config::get('error.shutdown', []));
-		$error->registerExceptionHandler(Config::get('error.exception', []));
-		$error->registerErrorHandler(Config::get('error.error', []));
-		$this->id = Config::get('id', uniqid('id.'));
+		$error->registerShutdownHandler(\config('error.shutdown', []));
+		$error->registerExceptionHandler(\config('error.exception', []));
+		$error->registerErrorHandler(\config('error.error', []));
+		$this->id = \config('id', uniqid('id.'));
 	}
 
 	/**

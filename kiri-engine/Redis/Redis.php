@@ -12,7 +12,6 @@ namespace Kiri\Redis;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
-use Kiri\Abstracts\Config;
 use Kiri\Events\EventProvider;
 use Kiri\Di\Inject\Container;
 use Kiri\Exception\ConfigException;
@@ -67,7 +66,7 @@ class Redis extends Component
 	{
 		$config = $this->get_config();
 
-		$length = Config::get('cache.redis.pool.max', 10);
+		$length = \config('cache.redis.pool.max', 10);
 		on(OnWorkerExit::class, [$this, 'destroy']);
 		Kiri::getPool()->initConnections($config['host'], $length, static function () use ($config) {
 			$redis = new \Redis();

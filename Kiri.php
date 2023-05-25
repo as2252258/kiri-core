@@ -6,7 +6,6 @@ error_reporting(0);
 
 
 use JetBrains\PhpStorm\Pure;
-use Kiri\Abstracts\Config;
 use Kiri\Di\Container;
 use Kiri\Di\LocalService;
 use Kiri\Environmental;
@@ -92,7 +91,7 @@ class Kiri
 		if (Kiri::getPlatform()->isMac()) {
 			return;
 		}
-		$name = '[' . Config::get('id', 'system-service') . ']';
+		$name = '[' . \config('id', 'system-service') . ']';
 		if (!empty($prefix)) {
 			$name .= '.' . $prefix;
 		}
@@ -107,7 +106,7 @@ class Kiri
 	public static function getStoragePath(): string
 	{
 		$default = APP_PATH . 'storage' . DIRECTORY_SEPARATOR;
-		$path = Config::get('storage', $default);
+		$path = \config('storage', $default);
 		if (!is_dir($path)) {
 			mkdir($path, 0777, true);
 		}
