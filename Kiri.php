@@ -139,7 +139,7 @@ class Kiri
 	 */
 	public static function getLogger(): StdoutLogger
 	{
-		return static::getContainer()->get(LoggerInterface::class);
+		return static::getContainer()->get(StdoutLogger::class);
 	}
 
 
