@@ -47,7 +47,7 @@ abstract class BaseApplication extends Component
         $this->localService = make(LocalService::class);
 
         /** @var ConfigProvider $config */
-        $config = instance(ConfigProvider::class, [sweep(APP_PATH . '/config')]);
+        $config = make(ConfigProvider::class);
 
         $this->mapping($config);
         $this->parseStorage($config);

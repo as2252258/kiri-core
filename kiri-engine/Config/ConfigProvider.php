@@ -11,12 +11,12 @@ class ConfigProvider
 
 
     /**
-     * @param array $config
+     *
      */
-    public function __construct(array $config)
+    public function __construct()
     {
         $this->hashMap = new HashMap();
-        $this->load($config);
+        $this->load(sweep(APP_PATH . '/config'));
 
         $this->enableEnvConfig(APP_PATH . '.env');
     }

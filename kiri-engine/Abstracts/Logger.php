@@ -44,6 +44,9 @@ class Logger implements LoggerInterface
 	private array $levels = [];
 
 
+    /**
+     *
+     */
 	public function __construct()
 	{
 		$this->levels = \config('log.level', Logger::LOGGER_LEVELS);
@@ -176,8 +179,14 @@ class Logger implements LoggerInterface
 			return;
 		}
 
-		$console = Kiri::getDi()->get(OutputInterface::class);
-		$console->writeln($_string);
+        $container = Kiri::getDi();
+        if ($container->has(OutputInterface::class)) {
+            $console = $container->get(OutputInterface::class);
+            $console->writeln($_string);
+        } else {
+            file_put_contents('php://output', $message . PHP_EOL);
+        }
+
 		$filename = storage('log-' . date('Y-m-d') . '.log', 'log/');
 
 		file_put_contents($filename, $_string, FILE_APPEND);
