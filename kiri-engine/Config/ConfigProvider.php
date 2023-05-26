@@ -24,10 +24,10 @@ class ConfigProvider
 
     /**
      * @param string $key
-     * @param int|string|bool|array|null $default
-     * @return int|string|bool|array|null
+     * @param mixed $default
+     * @return mixed
      */
-    public function get(string $key, int|string|bool|null|array $default = null): int|string|bool|null|array
+    public function get(string $key, mixed $default = null): mixed
     {
         $keys = explode('.', $key);
 

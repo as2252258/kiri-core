@@ -931,9 +931,9 @@ if (!function_exists('config')) {
     /**
      * @param $key
      * @param null $default
-     * @return array|string|int|float|bool|null
+     * @return mixed
      */
-	function config($key, $default = NULL): null|array|string|int|float|bool
+	function config($key, $default = NULL): mixed
 	{
 		return make(ConfigProvider::class)->get($key, $default);
 	}

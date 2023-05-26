@@ -30,7 +30,7 @@ use ReflectionException;
  * @package Kiri\Cache
  * @mixin \Redis
  */
-class Redis extends Component
+class Redis
 {
 
     public string $host = '';
@@ -56,6 +56,14 @@ class Redis extends Component
      */
     public array $pool = ['min' => 1, 'max' => 100];
 
+
+    /**
+     * 初始化
+     */
+    public function __construct()
+    {
+        Kiri::configure($this, \config('redis', []));
+    }
 
     /**
      * @return void
