@@ -49,6 +49,36 @@ class ConfigProvider
 
 
     /**
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
+    public function modify(string $key, mixed $value): bool
+    {
+        $keys = explode('.', $key);
+
+        $hashMap = $this->hashMap->get(array_shift($keys));
+        if (is_null($hashMap)) {
+            return false;
+        }
+
+        $setting = &$hashMap;
+        foreach ($keys as $k => $val) {
+            if (!is_array($val)) {
+                unset($setting);
+                return false;
+            }
+            $setting = &$setting[$k];
+        }
+
+        $setting = $value;
+        unset($setting);
+
+        return $this->get($key) == $value;
+    }
+
+
+    /**
      * @param array $config
      * @return void
      */
