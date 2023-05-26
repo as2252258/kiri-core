@@ -36,12 +36,17 @@ use function Swoole\Coroutine\run;
 //
 //});
 
-function order(int $userId): string
-{
-    $explode = current(explode(' ', str_replace('0.', '', round((float)microtime(),6))));
+$spl = new \SplPriorityQueue();
+$spl->insert(1,0);
+$spl->insert(2,0);
+$spl->insert(3,0);
+$spl->insert(4,0);
+$spl->insert(5,0);
+$spl->insert(6,0);
+$spl->insert(7,0);
 
-    return 'N'.sprintf('%09d', $userId) . '.' . date('YmdHis') . '.' . str_pad($explode,6,0);
-}
-var_dump(
-    order(1)
-);
+
+$spl->compare();
+$spl->extract();
+
+var_dump($spl);
