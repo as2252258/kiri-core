@@ -71,10 +71,10 @@ if (!function_exists('instance')) {
 	 * @param $class
 	 * @param array $constrict
 	 * @param array $config
-	 * @return mixed
+	 * @return null|object
 	 * @throws
 	 */
-	function instance($class, array $constrict = [], array $config = []): mixed
+	function instance($class, array $constrict = [], array $config = []): ?object
 	{
 		return Kiri::getDi()->make($class, $constrict, $config);
 	}
@@ -948,10 +948,10 @@ if (!function_exists('created')) {
      * @param $key
      * @param array $construct
      * @param array $config
-     * @return array|string|null
+     * @return null|object
      * @throws ReflectionException
      */
-	function created($key, array $construct = [], array $config = []): null|array|string
+	function created($key, array $construct = [], array $config = []): ?object
 	{
 		return Kiri::getDi()->make($key,$construct, $config);
 	}
