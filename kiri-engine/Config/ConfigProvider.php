@@ -31,7 +31,7 @@ class ConfigProvider
     {
         $keys = explode($key, '.');
 
-        $hashMap = $this->hashMap->get(array_unshift($keys));
+        $hashMap = $this->hashMap->get(array_shift($keys));
         if (is_null($hashMap)) {
             return $default;
         }

@@ -928,12 +928,12 @@ if (!function_exists('env')) {
 
 if (!function_exists('config')) {
 
-	/**
-	 * @param $key
-	 * @param null $default
-	 * @return array|string|null
-	 */
-	function config($key, $default = NULL): null|array|string
+    /**
+     * @param $key
+     * @param null $default
+     * @return array|string|int|float|bool|null
+     */
+	function config($key, $default = NULL): null|array|string|int|float|bool
 	{
 		return make(ConfigProvider::class)->get($key, $default);
 	}

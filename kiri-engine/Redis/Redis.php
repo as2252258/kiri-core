@@ -58,9 +58,7 @@ class Redis extends Component
 
 	/**
 	 * @return void
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
-	 * @throws Exception
+     * @throws Exception
 	 */
 	public function init(): void
 	{
