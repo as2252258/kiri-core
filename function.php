@@ -367,7 +367,7 @@ if (!function_exists('request')) {
 	 */
 	function request(): RequestInterface
 	{
-		return Kiri::service()->get('request');
+		return Kiri::getDi()->get(RequestInterface::class);
 	}
 
 }
@@ -382,7 +382,7 @@ if (!function_exists('response')) {
 	 */
 	function response(): ResponseInterface
 	{
-		return Kiri::service()->get('response');
+        return Kiri::getDi()->get(ResponseInterface::class);
 	}
 
 }
@@ -1181,7 +1181,7 @@ if (!function_exists('info')) {
 	/**
 	 * @param mixed $message
 	 * @param string $method
-	 * @throws Exception
+	 * @throws
 	 */
 	function info(mixed $message, string $method = 'app'): void
 	{
@@ -1196,7 +1196,7 @@ if (!function_exists('error')) {
 	 * @param mixed $message
 	 * @param array $method
 	 * @return void
-	 * @throws ReflectionException
+	 * @throws
 	 */
 	function error(mixed $message, array $method = []): void
 	{
@@ -1214,7 +1214,7 @@ if (!function_exists('addError')) {
 	 * @param mixed $message
 	 * @param string $method
 	 * @return bool
-	 * @throws ReflectionException
+	 * @throws
 	 */
 	function addError(mixed $message, string $method = 'app'): bool
 	{
@@ -1231,10 +1231,10 @@ if (!function_exists('success')) {
 	/**
 	 * @param mixed $message
 	 * @param string $method
-	 * @throws Exception
+	 * @throws
 	 */
-	function success(mixed $message, string $method = 'app')
-	{
+	function success(mixed $message, string $method = 'app'): void
+    {
 		Kiri::getLogger()->critical($method, [$message]);
 	}
 }
