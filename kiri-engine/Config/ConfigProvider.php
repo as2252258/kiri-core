@@ -29,7 +29,7 @@ class ConfigProvider
      */
     public function get(string $key, int|string|bool|null|array $default = null): int|string|bool|null|array
     {
-        $keys = explode($key, '.');
+        $keys = explode('.', $key);
 
         $hashMap = $this->hashMap->get(array_shift($keys));
         if (is_null($hashMap)) {
