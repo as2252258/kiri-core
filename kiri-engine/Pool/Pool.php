@@ -90,7 +90,7 @@ class Pool extends Component
 	 * @param int $max
 	 * @param \Closure $closure
 	 */
-	public function initConnections($name, int $max, \Closure $closure): void
+	public function created($name, int $max, \Closure $closure): void
 	{
 		if (!isset($this->_connections[$name])) {
 			$this->_connections[$name] = new PoolItem($max, $closure);
@@ -113,12 +113,13 @@ class Pool extends Component
 	}
 
 
+    /**
+     * @param $name
+     * @return bool
+     */
 	public function hasChannel($name): bool
 	{
-		if (!isset($this->_connections[$name])) {
-			return false;
-		}
-		return true;
+		return isset($this->_connections[$name]) && $this->_connections[$name] instanceof PoolItem;
 	}
 
 

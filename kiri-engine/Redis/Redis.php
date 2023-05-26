@@ -68,7 +68,7 @@ class Redis extends Component
 
 		$length = \config('cache.redis.pool.max', 10);
 		on(OnWorkerExit::class, [$this, 'destroy']);
-		Kiri::getPool()->initConnections($config['host'], $length, static function () use ($config) {
+		Kiri::getPool()->created($config['host'], $length, static function () use ($config) {
 			$redis = new \Redis();
 			if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
 				throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));

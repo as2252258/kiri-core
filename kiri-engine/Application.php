@@ -12,7 +12,7 @@ namespace Kiri;
 
 use Exception;
 use Kiri;
-use Kiri\Abstracts\{BaseApplication, Config, Kernel};
+use Kiri\Abstracts\{BaseApplication, Kernel};
 use Kiri\Di\LocalService;
 use Kiri\Di\Scanner;
 use Kiri\Error\ErrorHandler;
@@ -31,8 +31,6 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
  * Class Init
  *
  * @package Kiri
- *
- * @property-read Config $config
  */
 class Application extends BaseApplication
 {

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
+use Database\DatabasesProviders;
 use Exception;
 use Kiri;
 use Kiri\Di\LocalService;
@@ -22,6 +23,7 @@ use Kiri\Events\EventProvider;
 /**
  * Class BaseApplication
  * @package Kiri\Base
+ * @property DatabasesProviders $connections
  */
 abstract class BaseApplication extends Component
 {
@@ -31,9 +33,6 @@ abstract class BaseApplication extends Component
      * @var string
      */
     public string $storage = APP_PATH . 'storage';
-
-    public string $envPath = APP_PATH . '.env';
-
 
     public LocalService $localService;
 

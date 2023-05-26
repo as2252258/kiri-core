@@ -65,10 +65,10 @@ class PoolItem
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	public function size(): bool
+    /**
+     * @return int
+     */
+	public function size(): int
 	{
 		return $this->_items->length();
 	}
