@@ -4,7 +4,6 @@
 namespace Kiri\Pool;
 
 
-use Database\Mysql\PDO;
 use Exception;
 use Kiri\Abstracts\Component;
 use Kiri\Exception\ConfigException;
