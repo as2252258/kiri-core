@@ -118,8 +118,13 @@ class Application extends BaseApplication
 		$console = $container->get(ConsoleApplication::class);
 		$command = $console->find($input->getFirstArgument());
 
-		$scanner = $container->get(Scanner::class);
-		$scanner->read(APP_PATH . 'app/');
+        if (!($command instanceof Kiri\Server\ServerCommand)) {
+            $scanner = $container->get(Scanner::class);
+            $scanner->read(APP_PATH . 'app/');
+        } else if (\config('reload.hot', false) === false) {
+            $scanner = $container->get(Scanner::class);
+            $scanner->read(APP_PATH . 'app/');
+        }
 
 		fire(new OnBeforeCommandExecute());
 
