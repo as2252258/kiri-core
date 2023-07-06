@@ -168,28 +168,31 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = []): void
     {
-        if (!in_array($level, $this->levels)) {
-            return;
-        }
-        $_string = "[" . now() . ']: ' . $message;
-        if (!empty($context)) {
-            $_string .= PHP_EOL . $this->_string($context);
-        }
+        if (!in_array($level, $this->levels)) return;
+        $_string = "[" . now() . ']: ' . $message . PHP_EOL . $this->_string($context);
         if (str_contains($_string, 'Event::rshutdown')) {
             return;
         }
 
-        $container = Kiri::getDi();
-        if ($container->has(OutputInterface::class)) {
-            $console = $container->get(OutputInterface::class);
-            $console->writeln($_string);
-        } else {
-            file_put_contents('php://output', $message . PHP_EOL);
-        }
+        file_put_contents('php://output', $message . PHP_EOL);
 
+        $this->write($level, $message);
+    }
+
+
+    /**
+     * @param string $level
+     * @param string $message
+     * @return void
+     * @throws Exception
+     */
+    public function write(string $level, string $message): void
+    {
         $filename = storage('/log-' . date('Y-m-d') . '.log', 'log/' . $level . '/');
 
-        file_put_contents($filename, $_string, FILE_APPEND);
+        $file = fopen($filename, 'a');
+        fwrite($file, $message);
+        fclose($file);
     }
 
 
@@ -230,6 +233,7 @@ class Logger implements LoggerInterface
      */
     private function _string($context): string
     {
+        if (empty($context)) return "";
         if ($context instanceof \Throwable) {
             $context = 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
         }
