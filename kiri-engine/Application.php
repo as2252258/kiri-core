@@ -128,7 +128,7 @@ class Application extends BaseApplication
             on(OnWorkerStart::class, function () {
                 $scanner = di(Scanner::class);
                 $scanner->read(APP_PATH . 'app/');
-            }, 999999999999);
+            });
         }
 
         fire(new OnBeforeCommandExecute());
