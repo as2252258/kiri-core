@@ -24,11 +24,11 @@
     "symfony/console": "~v5.3.10",
     "psr/log": "1.*",
     "composer-runtime-api": "^2.0",
-    "psr/container": "^2.0",
     "psr/http-server-middleware": "1.0.1",
     "ext-pcntl": "*",
     "ext-sockets": "*",
-    "nikic/php-parser": "^4.15"
+    "nikic/php-parser": "^4.15",
+    "ext-inotify": "*"
   },
   "replace": {
     "symfony/polyfill-apcu": "*",
