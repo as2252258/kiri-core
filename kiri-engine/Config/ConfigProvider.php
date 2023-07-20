@@ -16,7 +16,7 @@ class ConfigProvider
     public function __construct()
     {
         $this->hashMap = new HashMap();
-        $this->load(sweep(APP_PATH . '/config'));
+        $this->load(sweep(APP_PATH . 'config'));
 
         $this->enableEnvConfig(APP_PATH . '.env');
     }
