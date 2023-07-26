@@ -1266,13 +1266,23 @@ if (!function_exists('throwable')) {
      */
     function throwable(\Throwable|\Error $throwable): string
     {
-        $message = "\033[31m" . $throwable->getMessage() . "\033[0m" . PHP_EOL .
-            ' ' . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
+        $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL;
+        $message .= $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
+
+        $file = $throwable->getFile();
+        $line = $throwable->getLine();
+
         foreach ($throwable->getTrace() as $value) {
             if (!isset($value['file'])) {
-                continue;
+                $value['file'] = $file;
             }
-            $message .= ' ' . $value['file'] . " -> " . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . $value['line'] . ")" . PHP_EOL;
+            if (!isset($value['line'])) {
+                $value['line'] = $line;
+            }
+            $file = $value['file'];
+            $line = $value['line'];
+
+            $message .= $value['file'] . ' -> ' . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . implode(",", $value['args'] ?? []) . ")" . ' line ' . $line . PHP_EOL;
         }
         return $message;
     }
