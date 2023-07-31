@@ -167,7 +167,7 @@ SCRIPT;
         try {
             $response = $client->{$name}(...$arguments);
         } catch (\Throwable $throwable) {
-            $response = addError($throwable, 'redis');
+            $response = trigger_print_error($throwable, 'redis');
         } finally {
             $this->pool()->push($this->host, $client);
         }

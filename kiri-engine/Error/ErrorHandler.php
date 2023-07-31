@@ -13,12 +13,12 @@ use Closure;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
-use Kiri\Core\Json;
-use Kiri\Events\EventDispatch;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
-use Kiri\Di\Inject\Container;
+use Kiri\Abstracts\Logger;
+use Kiri\Events\OnSystemError;
 
 /**
  * Class ErrorHandler
@@ -36,16 +36,25 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
     /**
+     * @param ContainerInterface $container
+     */
+    public function __construct(public ContainerInterface $container)
+    {
+        parent::__construct();
+    }
+
+
+    /**
      * @param array|Closure|null $callback
      * @return void
-     * @throws ReflectionException
+     * @throws
      */
     public function registerExceptionHandler(null|array|Closure $callback): void
     {
         if (empty($callback)) {
             $callback = [$this, 'exceptionHandler'];
         } else if (is_array($callback) && is_string($callback[0])) {
-            $callback[0] = Kiri::getDi()->get($callback[0]);
+            $callback[0] = $this->container->get($callback[0]);
         }
         set_exception_handler($callback);
     }
@@ -54,14 +63,14 @@ class ErrorHandler extends Component implements ErrorInterface
     /**
      * @param array|Closure|null $callback
      * @return void
-     * @throws ReflectionException
+     * @throws
      */
     public function registerErrorHandler(null|array|Closure $callback): void
     {
         if (empty($callback)) {
             $callback = [$this, 'errorHandler'];
         } else if (is_array($callback) && is_string($callback[0])) {
-            $callback[0] = Kiri::getDi()->get($callback[0]);
+            $callback[0] = $this->container->get($callback[0]);
         }
         set_error_handler($callback);
     }
@@ -70,14 +79,14 @@ class ErrorHandler extends Component implements ErrorInterface
     /**
      * @param array|Closure|null $callback
      * @return void
-     * @throws ReflectionException
+     * @throws
      */
     public function registerShutdownHandler(null|array|Closure $callback): void
     {
         if (empty($callback)) {
             $callback = [$this, 'shutdown'];
         } else if (is_array($callback) && is_string($callback[0])) {
-            $callback[0] = Kiri::getDi()->get($callback[0]);
+            $callback[0] = $this->container->get($callback[0]);
         }
         register_shutdown_function($callback);
     }
@@ -99,7 +108,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
         error("\033[31m" . $lastError['message'] . "\033[0m" . $lastError['file'] . " at line " . $lastError['line'] . PHP_EOL);
 
-        event(new Kiri\Events\OnSystemError());
+        event(new OnSystemError());
     }
 
 
@@ -114,9 +123,9 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $this->category = 'exception';
 
-        Kiri::getLogger()->error($exception, []);
+        Logger::_error(jTraceEx($exception), []);
 
-        event(new Kiri\Events\OnSystemError());
+        event(new OnSystemError());
 
         $this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
     }
@@ -134,7 +143,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
         error("\033[31m" . $error[1] . "\033[0m" . $error[2] . " at line " . $error[3] . PHP_EOL);
 
-        event(new Kiri\Events\OnSystemError());
+        event(new OnSystemError());
 
         throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
     }

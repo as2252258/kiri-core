@@ -39,20 +39,6 @@ if (!function_exists('make')) {
 }
 
 
-if (!function_exists('service')) {
-
-    /**
-     * @param string $name
-     * @return mixed|null
-     * @throws Exception
-     */
-    function service(string $name): mixed
-    {
-        return Kiri::service()->get($name);
-    }
-}
-
-
 if (!function_exists('isJson')) {
 
 
@@ -85,6 +71,7 @@ if (!function_exists('instance')) {
 
 
 if (!function_exists('call')) {
+
 
 
     /**
@@ -155,19 +142,6 @@ if (!function_exists('checkPortIsAlready')) {
 }
 
 
-if (!function_exists('done')) {
-
-    /**
-     *
-     */
-    function done()
-    {
-        set_env('state', 'exit');
-    }
-
-}
-
-
 if (!function_exists('set_env')) {
 
 
@@ -175,7 +149,7 @@ if (!function_exists('set_env')) {
      * @param $key
      * @param $value
      */
-    function set_env($key, $value)
+    function set_env($key, $value): void
     {
         putenv(sprintf('%s=%s', $key, $value));
     }
@@ -211,7 +185,7 @@ if (!function_exists('is_enable_file_modification_listening')) {
 if (!function_exists('disable_file_modification_listening')) {
 
 
-    function disable_file_modification_listening()
+    function disable_file_modification_listening(): void
     {
         putenv('enable_file_modification_listening=off');
     }
@@ -230,86 +204,6 @@ if (!function_exists('now')) {
         return date('Y-m-d H:i:s') . '.' . str_replace(time() . '.', '', (string)microtime(TRUE));
     }
 }
-//
-//
-//if (!function_exists('scan_directory')) {
-//
-//
-//	/**
-//	 * @param $dir
-//	 * @param $namespace
-//	 * @param array $exclude
-//	 * @throws ReflectionException
-//	 * @throws Exception
-//	 */
-//	function scan_directory($dir, $namespace, array $exclude = []): void
-//	{
-//		$annotation = Kiri::getDi()->get(Annotation::class);
-//		$annotation->read($dir, $namespace, $exclude);
-//
-//		injectRuntime($dir, $exclude);
-//	}
-//
-//}
-//
-//
-//if (!function_exists('injectRuntime')) {
-//
-//
-//	/**
-//	 * @param string $path
-//	 * @param array $exclude
-//	 * @throws ReflectionException
-//	 * @throws Exception
-//	 */
-//	function injectRuntime(string $path, array $exclude = []): void
-//	{
-//		$fileLists = Kiri::getAnnotation()->runtime($path, $exclude);
-//
-//		$router = [];
-//		foreach ($fileLists as $class) {
-//			$target = TargetManager::get($class);
-//			$targetAttributes = $target->getAttributes();
-//			foreach ($targetAttributes as $value) {
-//				$value = $value->newInstance();
-//				if (!method_exists($value, 'execute')) {
-//					continue;
-//				}
-//				$value->execute($class);
-//			}
-//
-//
-//			$methods = $target->getMethodsAttribute();
-//			foreach ($methods as $method => $attribute) {
-//				/** @var ReflectionAttribute $item */
-//				foreach ($attribute as $item) {
-//					if (!class_exists($item->getName())) {
-//						continue;
-//					}
-//					$item = $item->newInstance();
-//					if ($item instanceof Route) {
-//						$router[] = [$item, $class, $method];
-//					} else {
-//						if (!method_exists($item, 'execute')) {
-//							continue;
-//						}
-//						$item->execute($class, $method);
-//					}
-//				}
-//			}
-//		}
-//		if (!empty($router)) {
-//			foreach ($router as $class) {
-//				[$item, $class, $method] = $class;
-//				if (!method_exists($item, 'execute')) {
-//					continue;
-//				}
-//				$item->execute($class, $method);
-//			}
-//		}
-//	}
-//
-//}
 
 
 if (!function_exists('directory')) {
@@ -318,7 +212,7 @@ if (!function_exists('directory')) {
      * @param $name
      * @return string
      */
-    #[Pure] function directory($name): string
+    function directory($name): string
     {
         return realpath(APP_PATH . $name);
     }
@@ -413,83 +307,6 @@ if (!function_exists('split_request_uri')) {
 }
 
 
-if (!function_exists('hadDomain')) {
-
-
-    /**
-     * @param $url
-     * @return false|array
-     */
-    function hadDomain($url): bool|array
-    {
-        $param = split_request_uri($url);
-        return !is_array($param) ? FALSE : $param[0];
-    }
-
-}
-
-
-if (!function_exists('isDomain')) {
-
-
-    /**
-     * @param $url
-     * @return false|array
-     */
-    function isDomain($url): array|bool
-    {
-        return !isIp($url);
-    }
-
-}
-if (!function_exists('isIp')) {
-
-
-    /**
-     * @param $url
-     * @return false|array
-     */
-    function isIp($url): bool|array
-    {
-        return preg_match('/(\d{1,3}\.){3}\.\d{1,3}(:\d{1,5})?/', $url);
-    }
-
-}
-
-
-if (!function_exists('loadByDir')) {
-
-
-    /**
-     * @param $namespace
-     * @param $dirname
-     */
-    function classAutoload($namespace, $dirname)
-    {
-        foreach (glob(rtrim($dirname, '/') . '/*') as $value) {
-            $value = realpath($value);
-            if (is_dir($value)) {
-                classAutoload($namespace, $value);
-            } else {
-                $pos = strpos($value, '.php');
-                if ($pos === FALSE || strlen($value) - 4 != $pos) {
-                    continue;
-                }
-
-                $replace = ltrim(str_replace(__DIR__, '', $value), '/');
-                $replace = str_replace('.php', '', $replace);
-
-                $first = explode(DIRECTORY_SEPARATOR, $replace);
-                array_shift($first);
-
-                Kiri::setAutoload($namespace . '\\' . implode('\\', $first), $value);
-            }
-        }
-    }
-
-
-}
-
 
 if (!function_exists('redis')) {
 
@@ -509,32 +326,15 @@ if (!function_exists('fire')) {
 
     /**
      * @param object $event
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      */
-    function fire(object $event)
+    function fire(object $event): void
     {
         di(EventDispatch::class)->dispatch($event);
     }
 }
-
-if (!function_exists('instance_load')) {
-
-
-    /**
-     * @return void
-     */
-    function instance_load(): void
-    {
-        $content = json_decode(file_get_contents(__DIR__ . '/composer.json'), TRUE);
-        if (isset($content['autoload']) && isset($content['autoload']['psr-4'])) {
-            $psr4 = $content['autoload']['psr-4'];
-            foreach ($psr4 as $namespace => $dirname) {
-                classAutoload($namespace, __DIR__ . '/' . $dirname);
-            }
-        }
-    }
-
-}
-
 
 if (!function_exists('exif_imagetype')) {
 
@@ -545,19 +345,6 @@ if (!function_exists('exif_imagetype')) {
     function exif_imagetype($name): string
     {
         return get_file_extension($name);
-    }
-}
-
-
-if (!function_exists('logger')) {
-
-
-    /**
-     * @throws Exception
-     */
-    function logger(): StdoutLogger
-    {
-        return Kiri::getDi()->get(StdoutLogger::class);
     }
 }
 
@@ -818,7 +605,7 @@ if (!function_exists('get_file_extension')) {
             $mimeType = finfo_file($fInfo, $filename);
             finfo_close($fInfo);
             $mimeType = current(explode('; ', $mimeType));
-            if (($search = array_search($mimeType, $mime_types)) == FALSE) {
+            if (!($search = array_search($mimeType, $mime_types))) {
                 return $mimeType;
             }
             return $search;
@@ -876,15 +663,14 @@ if (!function_exists('on')) {
 }
 
 
-if (!function_exists('name')) {
+if (!function_exists('process_name_set')) {
 
     /**
      * @param int $pid
      * @param string|null $prefix
-     * @throws ConfigException
      * @throws Exception
      */
-    function name(int $pid, string $prefix = NULL)
+    function process_name_set(int $pid, string $prefix = NULL): void
     {
         if (Kiri::getPlatform()->isMac()) {
             return;
@@ -901,6 +687,12 @@ if (!function_exists('name')) {
 
 
 if (!function_exists('zero_full')) {
+
+    /**
+     * @param int $data
+     * @param int $length
+     * @return string
+     */
     function zero_full(int $data = 1, int $length = 10): string
     {
         return sprintf('%0' . $length . 'd', $data);
@@ -915,7 +707,7 @@ if (!function_exists('env')) {
      * @param null $default
      * @return array|string|null
      */
-    #[Pure] function env($key, $default = NULL): null|array|string
+    function env($key, $default = NULL): null|array|string
     {
         $env = getenv($key);
         if ($env === FALSE) {
@@ -978,26 +770,6 @@ if (!function_exists('di')) {
 }
 
 
-if (!function_exists('interval')) {
-
-
-    /**
-     * @param callable $callback
-     * @param int $interval
-     * @param bool $is
-     */
-    function interval(callable $callback, int $interval = 1000, bool $is = FALSE): void
-    {
-        usleep($interval * 1000);
-
-        $callback();
-
-        interval($callback, $interval, $is);
-    }
-
-}
-
-
 if (!function_exists('sweep')) {
 
     /**
@@ -1015,48 +787,6 @@ if (!function_exists('sweep')) {
 
 }
 
-
-if (!function_exists('swoole_serialize')) {
-
-
-    /**
-     * @param $data
-     * @return string
-     */
-    function swoole_serialize($data): string
-    {
-//        if (class_exists('swoole_serialize')) {
-//            return \swoole_serialize::pack($data);
-//        } else {
-        return serialize($data);
-//        }
-    }
-
-}
-
-
-if (!function_exists('swoole_unserialize')) {
-
-
-    /**
-     * @param $data
-     * @return string
-     */
-    function swoole_unserialize($data): mixed
-    {
-        if (empty($data)) {
-            return NULL;
-        }
-//        if (class_exists('swoole_serialize')) {
-//            return \swoole_serialize::unpack($data);
-//        } else {
-        return unserialize($data);
-//        }
-    }
-
-}
-
-
 if (!function_exists('merge')) {
 
 
@@ -1068,21 +798,6 @@ if (!function_exists('merge')) {
     function merge($param, $param1): array
     {
         return ArrayAccess::merge($param, $param1);
-    }
-
-}
-
-
-if (!function_exists('router')) {
-
-
-    /**
-     * @return Router
-     * @throws Exception
-     */
-    function router(): Router
-    {
-        return Kiri::getDi()->get(Rout::class);
     }
 
 }
@@ -1130,66 +845,6 @@ if (!function_exists('jTraceEx')) {
 
 }
 
-
-if (!function_exists('swoole_substr_json_decode')) {
-
-
-    /**
-     * @param $packet
-     * @param int $length
-     * @return mixed
-     */
-    function swoole_substr_json_decode($packet, int $length = 0): mixed
-    {
-        return json_decode($packet, TRUE);
-    }
-
-}
-
-
-if (!function_exists('swoole_substr_unserialize')) {
-
-    /**
-     * @param $packet
-     * @param int $length
-     * @return mixed
-     */
-    function swoole_substr_unserialize($packet, int $length = 0): mixed
-    {
-        return unserialize($packet);
-    }
-
-}
-
-
-if (!function_exists('debug')) {
-
-    /**
-     * @param mixed $message
-     * @param string $method
-     * @throws Exception
-     */
-    function debug(mixed $message, string $method = 'app'): void
-    {
-        Kiri::getLogger()->debug($method, [$message]);
-    }
-
-}
-
-if (!function_exists('info')) {
-
-    /**
-     * @param mixed $message
-     * @param string $method
-     * @throws
-     */
-    function info(mixed $message, string $method = 'app'): void
-    {
-        Kiri::getLogger()->info($method, [$message]);
-    }
-
-}
-
 if (!function_exists('error')) {
 
     /**
@@ -1200,15 +855,12 @@ if (!function_exists('error')) {
      */
     function error(mixed $message, array $method = []): void
     {
-        if ($message instanceof Throwable) {
-            $message = throwable($message);
-        }
-        Kiri::getLogger()->error($message, $method);
+        Kiri::getLogger()->failure($message);
     }
 }
 
 
-if (!function_exists('addError')) {
+if (!function_exists('trigger_print_error')) {
 
     /**
      * @param mixed $message
@@ -1216,28 +868,12 @@ if (!function_exists('addError')) {
      * @return bool
      * @throws
      */
-    function addError(mixed $message, string $method = 'app'): bool
+    function trigger_print_error(mixed $message, string $method = 'app'): bool
     {
-        $logger = Kiri::getLogger();
-        if ($message instanceof Throwable) {
-            $logger->error($message, [$message]);
-        }
-        return $logger->addError($message, $method);
+        return Kiri::getLogger()->failure($message, $method);
     }
 }
 
-if (!function_exists('success')) {
-
-    /**
-     * @param mixed $message
-     * @param string $method
-     * @throws
-     */
-    function success(mixed $message, string $method = 'app'): void
-    {
-        Kiri::getLogger()->critical($method, [$message]);
-    }
-}
 
 if (!function_exists('event')) {
 

@@ -18,6 +18,7 @@ use Kiri\Di\Scanner;
 use Kiri\Error\ErrorHandler;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use Symfony\Component\Console\{Application as ConsoleApplication,
@@ -45,15 +46,23 @@ class Application extends BaseApplication
 
 
     /**
+     * @param ErrorHandler $errorHandler
+     */
+    public function __construct(public ErrorHandler       $errorHandler)
+    {
+        parent::__construct();
+    }
+
+
+    /**
      * @return void
      * @throws ReflectionException
      */
     public function init(): void
     {
-        $error = Kiri::getDi()->get(ErrorHandler::class);
-        $error->registerShutdownHandler(\config('error.shutdown', []));
-        $error->registerExceptionHandler(\config('error.exception', []));
-        $error->registerErrorHandler(\config('error.error', []));
+        $this->errorHandler->registerShutdownHandler(\config('error.shutdown', []));
+        $this->errorHandler->registerExceptionHandler(\config('error.exception', []));
+        $this->errorHandler->registerErrorHandler(\config('error.error', []));
         $this->id = \config('id', uniqid('id.'));
     }
 
@@ -69,7 +78,7 @@ class Application extends BaseApplication
         }
         $class = Kiri::getDi()->get($service);
         if (method_exists($class, 'onImport')) {
-            $class->onImport(Kiri::getDi()->get(LocalService::class));
+            $class->onImport($this->localService);
         }
         return $this;
     }

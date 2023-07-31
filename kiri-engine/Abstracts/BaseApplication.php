@@ -17,6 +17,7 @@ use Kiri\Di\LocalService;
 use Kiri\Config\ConfigProvider;
 use Kiri\Error\StdoutLogger;
 use Kiri\Exception\{InitException};
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
 
@@ -34,7 +35,23 @@ abstract class BaseApplication extends Component
      */
     public string $storage = APP_PATH . 'storage';
 
+
+    /**
+     * @var LocalService|mixed
+     */
     public LocalService $localService;
+
+
+    /**
+     * @var ContainerInterface
+     */
+    public ContainerInterface $container;
+
+
+    /**
+     * @var EventProvider
+     */
+    public EventProvider $provider;
 
     /**
      * Init constructor.
@@ -44,10 +61,12 @@ abstract class BaseApplication extends Component
      */
     public function __construct()
     {
-        $this->localService = make(LocalService::class);
+        $this->container = Kiri::getContainer();
+        $this->localService = $this->container->get(LocalService::class);
 
-        /** @var ConfigProvider $config */
-        $config = make(ConfigProvider::class);
+        $this->provider = $this->container->get(EventProvider::class);
+
+        $config = $this->container->get(ConfigProvider::class);
 
         $this->mapping($config);
         $this->parseStorage($config);
@@ -62,14 +81,13 @@ abstract class BaseApplication extends Component
      */
     public function mapping(ConfigProvider $config): void
     {
-        $di = Kiri::getDi();
-        $di->set(LoggerInterface::class, StdoutLogger::class);
+        $this->container->set(LoggerInterface::class, StdoutLogger::class);
         foreach ($config->get('mapping', []) as $interface => $class) {
-            $di->set($interface, $class);
+            $this->container->set($interface, $class);
         }
 
         foreach ($config->get('components', []) as $id => $component) {
-            $this->set($id, $component);
+            $this->container->set($id, $component);
         }
     }
 
@@ -121,27 +139,26 @@ abstract class BaseApplication extends Component
      */
     private function addEvent($key, $value): void
     {
-        $provider = Kiri::getDi()->get(EventProvider::class);
         if ($value instanceof \Closure || is_object($value)) {
-            $provider->on($key, $value, 0);
+            $this->provider->on($key, $value, 0);
             return;
         }
         if (!is_array($value)) {
             return;
         }
         if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-            $provider->on($key, $value, 0);
+            $this->provider->on($key, $value, 0);
             return;
         } else if (is_string($value[0])) {
             $value[0] = Kiri::createObject($value[0]);
-            $provider->on($key, $value, 0);
+            $this->provider->on($key, $value, 0);
             return;
         }
         foreach ($value as $item) {
             if (!is_callable($item, true)) {
                 throw new InitException("Class does not hav callback.");
             }
-            $provider->on($key, $item, 0);
+            $this->provider->on($key, $item, 0);
         }
     }
 

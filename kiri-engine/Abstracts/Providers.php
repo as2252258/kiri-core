@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Kiri\Abstracts;
 
 
-use Kiri\Di\Inject\Container;
+use Kiri;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -21,7 +21,7 @@ abstract class Providers extends Component implements Provider
 	 */
 	public function getContainer(): ContainerInterface
 	{
-		return \Kiri::getDi();
+		return Kiri::getDi();
 	}
 
 }

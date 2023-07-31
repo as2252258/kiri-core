@@ -21,14 +21,15 @@ class StdoutLogger extends Logger
 	 * @param string $model
 	 * @return bool
 	 */
-	public function addError($message, string $model = 'app'): bool
+	public function failure($message, string $model = 'app'): bool
 	{
 		if ($message instanceof \Exception) {
 			$this->errors[$model] = $message->getMessage();
 		} else {
 			$this->errors[$model] = $message;
-		}
-		return false;
+        }
+        $this->error($model, [$message]);
+        return false;
 	}
 
 
