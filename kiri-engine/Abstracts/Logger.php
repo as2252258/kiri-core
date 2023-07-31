@@ -233,7 +233,6 @@ class Logger implements LoggerInterface
      */
     private function _string($context): string
     {
-        if (empty($context)) return "";
         if ($context instanceof \Throwable) {
             $context = 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
         }
