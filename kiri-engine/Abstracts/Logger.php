@@ -169,7 +169,10 @@ class Logger implements LoggerInterface
     public function log($level, $message, array $context = []): void
     {
         if (!in_array($level, $this->levels)) return;
-        $_string = "[" . now() . ']: ' . $message . PHP_EOL . $this->_string($context);
+        $_string = "[" . now() . ']: ' . $message;
+        if (!empty($context)) {
+            $_string .= PHP_EOL . $this->_string($context);
+        }
         if (str_contains($_string, 'Event::rshutdown')) {
             return;
         }
