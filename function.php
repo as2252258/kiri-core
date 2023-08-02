@@ -897,6 +897,7 @@ if (!function_exists('throwable')) {
 
 
     /**
+     * 错误格式化
      * @param Throwable|Error|string $throwable
      * @return string
      */
