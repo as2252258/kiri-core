@@ -233,7 +233,6 @@ class Logger implements LoggerInterface
      */
     private function _string($context): string
     {
-        var_dump($context);
         if (is_string($context)) {
             return $context . PHP_EOL;
         }
