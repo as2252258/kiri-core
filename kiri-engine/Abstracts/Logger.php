@@ -241,7 +241,6 @@ class Logger implements LoggerInterface
         if ($context instanceof \Throwable) {
             return 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
         }
-
         if (!is_array($context)) {
             return "unknown";
         }
