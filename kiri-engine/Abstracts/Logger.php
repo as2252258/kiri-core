@@ -233,14 +233,14 @@ class Logger implements LoggerInterface
      */
     private function _string($context): string
     {
-        if ($context instanceof \Throwable) {
-            $context = 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
-        }
-        if (is_array($context) && isset($context[0]) && $context[0] instanceof \Throwable) {
-            $context = 'file -> ' . $context[0]->getFile() . PHP_EOL . 'line -> ' . $context[0]->getLine() . PHP_EOL;
-        }
         if (is_string($context)) {
             return $context . PHP_EOL;
+        }
+        if ($context instanceof \Throwable) {
+            return 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
+        }
+        if (is_array($context) && isset($context[0]) && $context[0] instanceof \Throwable) {
+            return 'file -> ' . $context[0]->getFile() . PHP_EOL . 'line -> ' . $context[0]->getLine() . PHP_EOL;
         }
         return implode(PHP_EOL, $context);
     }
