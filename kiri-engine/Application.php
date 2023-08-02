@@ -13,12 +13,10 @@ namespace Kiri;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\{BaseApplication, Kernel};
-use Kiri\Di\LocalService;
 use Kiri\Di\Scanner;
 use Kiri\Error\ErrorHandler;
 use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use Symfony\Component\Console\{Application as ConsoleApplication,
@@ -48,7 +46,7 @@ class Application extends BaseApplication
     /**
      * @param ErrorHandler $errorHandler
      */
-    public function __construct(public ErrorHandler       $errorHandler)
+    public function __construct(public ErrorHandler $errorHandler)
     {
         parent::__construct();
     }
@@ -56,7 +54,6 @@ class Application extends BaseApplication
 
     /**
      * @return void
-     * @throws ReflectionException
      */
     public function init(): void
     {
