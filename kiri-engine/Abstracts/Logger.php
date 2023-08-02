@@ -242,13 +242,12 @@ class Logger implements LoggerInterface
             return 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
         }
         if (!is_array($context)) {
-            return "unknown";
+            return "unknown" . PHP_EOL;
         }
-
         $data = [];
         foreach ($context as $value) {
             $data[] = $this->_string($value);
         }
-        return implode(PHP_EOL, $data);
+        return implode($data);
     }
 }
