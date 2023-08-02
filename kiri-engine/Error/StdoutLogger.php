@@ -28,7 +28,7 @@ class StdoutLogger extends Logger
 		} else {
 			$this->errors[$model] = $message;
         }
-        $this->error($model, [throwable($message)]);
+        $this->error(throwable($message), []);
         return false;
 	}
 
