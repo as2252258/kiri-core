@@ -922,7 +922,7 @@ if (!function_exists('throwable')) {
             $file = $value['file'];
             $line = $value['line'];
 
-            $message .= $value['file'] . ' -> ' . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . implode(",", $value['args'] ?? []) . ")" . ' line ' . $line . PHP_EOL;
+            $message .= $value['file'] . ' -> ' . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . "(" . var_export($value['args'] ?? [], true) . ")" . ' line ' . $line . PHP_EOL;
         }
         return $message;
     }
