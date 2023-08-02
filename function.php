@@ -897,11 +897,14 @@ if (!function_exists('throwable')) {
 
 
     /**
-     * @param Throwable|Error $throwable
+     * @param Throwable|Error|string $throwable
      * @return string
      */
-    function throwable(\Throwable|\Error $throwable): string
+    function throwable(\Throwable|\Error|string $throwable): string
     {
+        if (is_string($throwable)) {
+            return $throwable;
+        }
         $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL;
         $message .= $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
 

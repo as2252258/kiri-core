@@ -242,9 +242,15 @@ class Logger implements LoggerInterface
         if ($context instanceof \Throwable) {
             return 'file -> ' . $context->getFile() . PHP_EOL . 'line -> ' . $context->getLine() . PHP_EOL;
         }
-        if (is_array($context) && isset($context[0]) && $context[0] instanceof \Throwable) {
-            return 'file -> ' . $context[0]->getFile() . PHP_EOL . 'line -> ' . $context[0]->getLine() . PHP_EOL;
+
+        if (!is_array($context)) {
+            return "unknown";
         }
-        return implode(PHP_EOL, $context);
+
+        $data = [];
+        foreach ($context as $value) {
+            $data[] = $this->_string($value);
+        }
+        return implode(PHP_EOL, $data);
     }
 }
