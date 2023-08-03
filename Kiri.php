@@ -10,9 +10,6 @@ use Kiri\Di\Container;
 use Kiri\Di\LocalService;
 use Kiri\Environmental;
 use Kiri\Error\StdoutLogger;
-use Kiri\Error\StdoutLoggerInterface;
-use Kiri\Exception\ConfigException;
-use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 
 defined('DB_ERROR_BUSY') or define('DB_ERROR_BUSY', 'The database is busy. Please try again later.');
