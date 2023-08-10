@@ -2,6 +2,8 @@
 
 namespace Kiri\Events;
 
+use Symfony\Component\Console\Command\Command;
+
 class OnAfterCommandExecute
 {
 
@@ -9,7 +11,7 @@ class OnAfterCommandExecute
 	/**
 	 *
 	 */
-	public function __construct()
+	public function __construct(public Command $command)
 	{
 	}
 

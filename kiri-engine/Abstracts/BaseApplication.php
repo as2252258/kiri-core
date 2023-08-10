@@ -13,13 +13,17 @@ namespace Kiri\Abstracts;
 use Database\DatabasesProviders;
 use Exception;
 use Kiri;
+use Kiri\Events\EventInterface;
 use Kiri\Di\LocalService;
 use Kiri\Config\ConfigProvider;
 use Kiri\Error\StdoutLogger;
 use Kiri\Exception\{InitException};
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
+use ReflectionException;
 
 /**
  * Class BaseApplication
@@ -99,16 +103,15 @@ abstract class BaseApplication extends Component
      */
     public function parseStorage(ConfigProvider $config): void
     {
-        if ($storage = $config->get('storage', 'storage')) {
-            if (!str_contains($storage, APP_PATH)) {
-                $storage = APP_PATH . $storage . '/';
-            }
-            if (!is_dir($storage)) {
-                mkdir($storage, 0777, true);
-            }
-            if (!is_dir($storage) || !is_writeable($storage)) {
-                throw new InitException("Directory {$storage} does not have write permission");
-            }
+        $storage = $config->get('storage', 'storage');
+        if (!str_contains($storage, APP_PATH)) {
+            $storage = APP_PATH . $storage . '/';
+        }
+        if (!is_dir($storage)) {
+            mkdir($storage, 0777, true);
+        }
+        if (!is_dir($storage) || !is_writeable($storage)) {
+            throw new InitException("Directory {$storage} does not have write permission");
         }
     }
 
@@ -116,6 +119,9 @@ abstract class BaseApplication extends Component
     /**
      * @param ConfigProvider $config
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      * @throws Exception
      */
     public function parseEvents(ConfigProvider $config): void
@@ -123,42 +129,13 @@ abstract class BaseApplication extends Component
         $events = $config->get('events', []);
         foreach ($events as $key => $value) {
             if (is_string($value)) {
-                $value = Kiri::createObject($value);
+                $value = $this->container->get($value);
+                if (!($value instanceof EventInterface)) {
+                    throw new Exception("Event listen must implement " . EventInterface::class);
+                }
+                $value = [$value, 'process'];
             }
-            $this->addEvent($key, $value);
-        }
-    }
-
-
-    /**
-     * @param $key
-     * @param $value
-     * @return void
-     * @throws InitException
-     * @throws Exception
-     */
-    private function addEvent($key, $value): void
-    {
-        if ($value instanceof \Closure || is_object($value)) {
             $this->provider->on($key, $value, 0);
-            return;
-        }
-        if (!is_array($value)) {
-            return;
-        }
-        if (is_object($value[0]) && !($value[0] instanceof \Closure)) {
-            $this->provider->on($key, $value, 0);
-            return;
-        } else if (is_string($value[0])) {
-            $value[0] = Kiri::createObject($value[0]);
-            $this->provider->on($key, $value, 0);
-            return;
-        }
-        foreach ($value as $item) {
-            if (!is_callable($item, true)) {
-                throw new InitException("Class does not hav callback.");
-            }
-            $this->provider->on($key, $item, 0);
         }
     }
 

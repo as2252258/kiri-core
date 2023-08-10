@@ -662,6 +662,22 @@ if (!function_exists('on')) {
 
 }
 
+if (!function_exists('off')) {
+
+
+    /**
+     * @param $name
+     * @param $callback
+     * @throws
+     */
+    function off($name, $callback): void
+    {
+        $pro = di(EventProvider::class);
+        $pro->off($name, $callback);
+    }
+
+}
+
 
 if (!function_exists('process_name_set')) {
 

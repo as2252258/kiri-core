@@ -19,11 +19,7 @@ use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
-use Symfony\Component\Console\{Application as ConsoleApplication,
-    Input\ArgvInput,
-    Output\ConsoleOutput,
-    Output\OutputInterface
-};
+use Symfony\Component\Console\{Application as ConsoleApplication, Input\ArgvInput, Output\ConsoleOutput, Output\OutputInterface};
 use Kiri\Server\Events\OnWorkerStart;
 
 /**
@@ -54,6 +50,10 @@ class Application extends BaseApplication
 
     /**
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function init(): void
     {
@@ -61,7 +61,43 @@ class Application extends BaseApplication
         $this->errorHandler->registerExceptionHandler(\config('error.exception', []));
         $this->errorHandler->registerErrorHandler(\config('error.error', []));
         $this->id = \config('id', uniqid('id.'));
+
+        $event = $this->container->get(Kiri\Events\EventProvider::class);
+        $event->on(OnBeforeCommandExecute::class, [$this, 'beforeCommandExecute']);
     }
+
+
+    /**
+     * @param OnBeforeCommandExecute $beforeCommandExecute
+     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     */
+    public function beforeCommandExecute(OnBeforeCommandExecute $beforeCommandExecute): void
+    {
+        if (!($beforeCommandExecute->command instanceof Kiri\Server\ServerCommand)) {
+            $scanner = $this->container->get(Scanner::class);
+            $scanner->read(APP_PATH . 'app/');
+        } else if (\config('reload.hot', false) === false) {
+            $scanner = $this->container->get(Scanner::class);
+            $scanner->read(APP_PATH . 'app/');
+        } else {
+            on(OnWorkerStart::class, [$this, 'scanner']);
+        }
+    }
+
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function scanner(): void
+    {
+        $scanner = di(Scanner::class);
+        $scanner->read(APP_PATH . 'app/');
+    }
+
 
     /**
      * @param string $service
@@ -73,7 +109,7 @@ class Application extends BaseApplication
         if (!class_exists($service)) {
             return $this;
         }
-        $class = Kiri::getDi()->get($service);
+        $class = $this->container->get($service);
         if (method_exists($class, 'onImport')) {
             $class->onImport($this->localService);
         }
@@ -84,6 +120,8 @@ class Application extends BaseApplication
     /**
      * @param Kernel $kernel
      * @return $this
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
     public function commands(Kernel $kernel): static
@@ -98,13 +136,14 @@ class Application extends BaseApplication
     /**
      * @param string $command
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
     public function command(string $command): void
     {
-        $container = Kiri::getDi();
-        $console = $container->get(ConsoleApplication::class);
-        $console->add($container->get($command));
+        $console = $this->container->get(ConsoleApplication::class);
+        $console->add($this->container->get($command));
     }
 
 
@@ -118,46 +157,20 @@ class Application extends BaseApplication
      */
     public function execute(array $argv): void
     {
-        $container = Kiri::getDi();
-
-        [$input, $output] = $this->argument($argv);
-        $console = $container->get(ConsoleApplication::class);
-        $command = $console->find($input->getFirstArgument());
-
-        if (!($command instanceof Kiri\Server\ServerCommand)) {
-            $scanner = $container->get(Scanner::class);
-            $scanner->read(APP_PATH . 'app/');
-        } else if (\config('reload.hot', false) === false) {
-            $scanner = $container->get(Scanner::class);
-            $scanner->read(APP_PATH . 'app/');
-        } else {
-            on(OnWorkerStart::class, function () {
-                $scanner = di(Scanner::class);
-                $scanner->read(APP_PATH . 'app/');
-            });
-        }
-
-        fire(new OnBeforeCommandExecute());
-
-        $command->run($input, $output);
-        fire(new OnAfterCommandExecute());
-        $output->writeln('ok' . PHP_EOL);
-    }
-
-
-    /**
-     * @param $argv
-     * @return array
-     */
-    private function argument($argv): array
-    {
-        $container = Kiri::getDi();
         $input = new ArgvInput($argv);
-        $container->bind(ArgvInput::class, $input);
+        $this->container->bind(ArgvInput::class, $input);
 
         $output = new ConsoleOutput();
-        $container->bind(OutputInterface::class, $output);
+        $this->container->bind(OutputInterface::class, $output);
 
-        return [$input, $output];
+        $console = $this->container->get(ConsoleApplication::class);
+        $command = $console->find($input->getFirstArgument());
+
+        fire(new OnBeforeCommandExecute($command));
+
+        $command->run($input, $output);
+        fire(new OnAfterCommandExecute($command));
+        $output->writeln('execute complete.' . PHP_EOL);
     }
+    
 }
