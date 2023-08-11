@@ -123,7 +123,7 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $this->category = 'exception';
 
-        Logger::_error(jTraceEx($exception), []);
+        error(jTraceEx($exception), []);
 
         event(new OnSystemError());
 
