@@ -871,6 +871,9 @@ if (!function_exists('error')) {
      */
     function error(mixed $message, array $method = []): void
     {
+        if (is_string($message) && str_contains($message, 'inotify_rm_watch(): The file descriptor is not an inotify instance or the watch descriptor')) {
+            return;
+        }
         Kiri::getLogger()->failure($message);
     }
 }
