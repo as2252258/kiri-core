@@ -106,7 +106,7 @@ class ErrorHandler extends Component implements ErrorInterface
             return;
         }
 
-        error("\033[31m" . $lastError['message'] . "\033[0m" . $lastError['file'] . " at line " . $lastError['line'] . PHP_EOL);
+        debug_print_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
 
         event(new OnSystemError());
     }
@@ -123,7 +123,7 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $this->category = 'exception';
 
-        error(jTraceEx($exception), []);
+        trigger_print_error($exception);
 
         event(new OnSystemError());
 
@@ -141,7 +141,7 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $error = func_get_args();
 
-        error("\033[31m" . $error[1] . "\033[0m" . $error[2] . " at line " . $error[3] . PHP_EOL);
+        debug_print_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
 
         event(new OnSystemError());
 
