@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Kiri\Error;
 
-use Kiri\Abstracts\Logger;
+use Psr\Log\LoggerInterface;
+use ReflectionException;
 
-class StdoutLogger extends Logger
+class StdoutLogger
 {
 
 
@@ -16,11 +17,12 @@ class StdoutLogger extends Logger
 	private array $errors = [];
 
 
-	/**
-	 * @param $message
-	 * @param string $model
-	 * @return bool
-	 */
+    /**
+     * @param $message
+     * @param string $model
+     * @return bool
+     * @throws ReflectionException
+     */
 	public function failure($message, string $model = 'app'): bool
 	{
 		if ($message instanceof \Exception) {
@@ -28,7 +30,8 @@ class StdoutLogger extends Logger
 		} else {
 			$this->errors[$model] = $message;
         }
-        $this->error(throwable($message), []);
+        $logger = \Kiri::getDi()->get(LoggerInterface::class);
+        $logger->error(throwable($message), []);
         return false;
 	}
 

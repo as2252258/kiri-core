@@ -17,7 +17,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
-use Kiri\Abstracts\Logger;
 use Kiri\Events\OnSystemError;
 
 /**

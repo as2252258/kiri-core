@@ -4,13 +4,10 @@ namespace Kiri\Abstracts;
 
 use DirectoryIterator;
 use Exception;
-use Kiri\Events\EventProvider;
-use Kiri\Exception\ConfigException;
 use Kiri;
-use Kiri\Server\Events\OnWorkerStop;
+use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
 use ReflectionException;
-use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
@@ -168,6 +165,16 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = []): void
     {
+        /** @var \Monolog\Logger $logger */
+        $logger = Kiri::getDi()->get(LoggerInterface::class);
+
+        $logger->log($level, $message, $context);
+
+        $run = new StreamHandler(APP_PATH . 'storage/logs/' . date('Y-m-d') . '/'.date('Y-m-d').'.log');
+        $logger->pushHandler($run);
+
+
+
         if (!in_array($level, $this->levels)) return;
         $_string = "[" . now() . ']: ' . $message;
         if (!empty($context)) {

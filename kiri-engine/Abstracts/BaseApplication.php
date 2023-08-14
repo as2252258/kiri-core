@@ -16,14 +16,15 @@ use Kiri;
 use Kiri\Events\EventInterface;
 use Kiri\Di\LocalService;
 use Kiri\Config\ConfigProvider;
-use Kiri\Error\StdoutLogger;
 use Kiri\Exception\{InitException};
+use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
 use ReflectionException;
+use Monolog\Logger;
 
 /**
  * Class BaseApplication
@@ -75,9 +76,12 @@ abstract class BaseApplication extends Component
         $this->mapping($config);
         $this->parseStorage($config);
         $this->parseEvents($config);
+
         parent::__construct();
     }
 
+
+    const LOGGER_LEVELS = [Logger::EMERGENCY, Logger::ALERT, Logger::CRITICAL, Logger::ERROR, Logger::WARNING, Logger::NOTICE, Logger::INFO, Logger::DEBUG];
 
     /**
      * @param ConfigProvider $config
@@ -85,7 +89,14 @@ abstract class BaseApplication extends Component
      */
     public function mapping(ConfigProvider $config): void
     {
-        $this->container->set(LoggerInterface::class, StdoutLogger::class);
+        $this->container->bind(LoggerInterface::class, $logger = new Logger($config->get('id')));
+        $levels = \config('log.level', self::LOGGER_LEVELS);
+
+        foreach ($levels as $level) {
+            $run = new StreamHandler(APP_PATH . 'storage/logs/' . $level . '/' . date('Y-m-d') . '.log', $level);
+            $logger->pushHandler($run);
+        }
+
         foreach ($config->get('mapping', []) as $interface => $class) {
             $this->container->set($interface, $class);
         }
