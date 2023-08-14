@@ -93,8 +93,7 @@ abstract class BaseApplication extends Component
         $levels = \config('log.level', self::LOGGER_LEVELS);
 
         foreach ($levels as $level) {
-            $run = new StreamHandler(APP_PATH . 'storage/logs/' . $level . '/' . date('Y-m-d') . '.log', $level);
-            $logger->pushHandler($run);
+            $logger->pushHandler(new StreamHandler(APP_PATH . 'storage/logs/' . Logger::getLevelName($levels) . '/' . date('Y-m-d') . '.log', $level));
         }
 
         foreach ($config->get('mapping', []) as $interface => $class) {
