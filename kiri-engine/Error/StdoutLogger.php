@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Kiri\Abstracts\BaseApplication;
-use Kiri\Application;
-use Kiri\Di\Inject\Container;
+use Kiri\Abstracts\Component;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -15,8 +14,17 @@ use ReflectionException;
 
 /**
  * @see LoggerInterface
+ * @method error(string $message, array $context)
+ * @method log($level, $message, array $context = array())
+ * @method debug($message, array $context = array())
+ * @method info($message, array $context = array())
+ * @method notice($message, array $context = array())
+ * @method warning($message, array $context = array())
+ * @method critical($message, array $context = array())
+ * @method alert($message, array $context = array())
+ * @method emergency($message, array $context = array())
  */
-class StdoutLogger
+class StdoutLogger extends Component
 {
 
 
@@ -26,15 +34,25 @@ class StdoutLogger
     private array $errors = [];
 
 
-    #[Container(Logger::class)]
-    public Logger $logger;
+    /**
+     * @var Logger
+     */
+    protected Logger $logger;
+
+
+    /**
+     * @return void
+     */
+    public function init(): void
+    {
+        $this->logger = new Logger(\config('id'));
+    }
 
 
     /**
      * @param $message
      * @param string $model
      * @return bool
-     * @throws ReflectionException
      */
     public function failure($message, string $model = 'app'): bool
     {
@@ -43,8 +61,7 @@ class StdoutLogger
         } else {
             $this->errors[$model] = $message;
         }
-        $logger = \Kiri::getDi()->get(LoggerInterface::class);
-        $logger->error(throwable($message), []);
+        $this->error(throwable($message), []);
         return false;
     }
 
