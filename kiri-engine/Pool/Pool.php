@@ -84,12 +84,12 @@ class Pool extends Component
 	}
 
 
-	/**
-	 * @param $name
-	 * @param int $max
-	 * @param \Closure $closure
-	 */
-	public function created($name, int $max, \Closure $closure): void
+    /**
+     * @param $name
+     * @param int $max
+     * @param callable $closure
+     */
+	public function created($name, int $max, callable $closure): void
 	{
 		if (!isset($this->_connections[$name])) {
 			$this->_connections[$name] = new PoolItem($max, $closure);
