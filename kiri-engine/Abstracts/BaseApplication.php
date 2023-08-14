@@ -17,7 +17,6 @@ use Kiri\Events\EventInterface;
 use Kiri\Di\LocalService;
 use Kiri\Config\ConfigProvider;
 use Kiri\Exception\{InitException};
-use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -90,12 +89,6 @@ abstract class BaseApplication extends Component
     public function mapping(ConfigProvider $config): void
     {
         $this->container->bind(LoggerInterface::class, $logger = new Logger($config->get('id')));
-        $levels = \config('log.level', self::LOGGER_LEVELS);
-
-        foreach ($levels as $level) {
-            $logger->pushHandler(new StreamHandler(APP_PATH . 'storage/logs/' . Logger::getLevelName($level) . '/' . date('Y-m-d') . '.log', $level));
-        }
-
         foreach ($config->get('mapping', []) as $interface => $class) {
             $this->container->set($interface, $class);
         }
