@@ -25,9 +25,9 @@ class PoolItem
 
     /**
      * @param int $maxCreated
-     * @param Closure $callback
+     * @param Closure|array $callback
      */
-    public function __construct(readonly public int $maxCreated, readonly public Closure $callback)
+    public function __construct(readonly public int $maxCreated, readonly public Closure|array $callback)
     {
         if (Context::inCoroutine()) {
             $this->_items = new Channel($this->maxCreated);
