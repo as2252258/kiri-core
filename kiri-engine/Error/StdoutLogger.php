@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kiri\Error;
 
-use Kiri\Abstracts\BaseApplication;
 use Kiri\Abstracts\Component;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -39,13 +38,23 @@ class StdoutLogger extends Component
      */
     protected Logger $logger;
 
+    protected array $levels;
 
-    /**
-     * @return void
-     */
-    public function init(): void
+    public function __construct()
     {
+        parent::__construct();
+
         $this->logger = new Logger(\config('id'));
+        $this->levels = [
+            'debug'     => $this->logger::DEBUG,
+            'info'      => $this->logger::INFO,
+            'notice'    => $this->logger::NOTICE,
+            'warning'   => $this->logger::WARNING,
+            'error'     => $this->logger::ERROR,
+            'critical'  => $this->logger::CRITICAL,
+            'alert'     => $this->logger::ALERT,
+            'emergency' => $this->logger::EMERGENCY,
+        ];
     }
 
 
@@ -74,21 +83,28 @@ class StdoutLogger extends Component
      */
     public function __call(string $name, array $arguments)
     {
-        // TODO: Implement __call() method.
-        if (!isset($arguments[2])) {
-            $arguments[2] = [];
+        try {
+            if (method_exists($this->logger, $name)) {
+                $this->createHandler($name)->$name(...$arguments);
+            } else if (method_exists($this, $name)) {
+                $this->{$name}(...$arguments);
+            }
+        } catch (\Throwable $exception) {
+            echo $exception->getMessage() . PHP_EOL;
         }
-        [$level, $message, $context] = $arguments;
+    }
 
-        $levels = \config('log.level', BaseApplication::LOGGER_LEVELS);
-        if (!in_array($level, $levels)) {
-            return;
+
+    /**
+     * @param string $name
+     * @return Logger
+     */
+    protected function createHandler(string $name): Logger
+    {
+        if (!$this->logger->isHandling($this->levels[$name])) {
+            $this->logger->pushHandler(new StreamHandler(APP_PATH . 'storage/logs/' . $name . '/' . date('Y-m-d') . '.log', $this->levels[$name]));
         }
-        if (!$this->logger->isHandling($level)) {
-            $path = APP_PATH . 'storage/logs/' . strtolower(Logger::getLevelName($level)) . '/' . date('Y-m-d') . '.log';
-            $this->logger->pushHandler(new StreamHandler($path, $level));
-        }
-        $this->logger->{$name}($level, $message, $context);
+        return $this->logger;
     }
 
 
