@@ -139,7 +139,7 @@ SCRIPT;
      */
     public function destroy(): void
     {
-        $this->pool()->clean($this->host);
+        $this->pool()->close($this->host);
     }
 
 
@@ -165,7 +165,7 @@ SCRIPT;
 
     /**
      * @return \Redis
-     * @throws ReflectionException
+     * @throws Exception
      */
     private function getClient(): \Redis
     {
@@ -175,7 +175,7 @@ SCRIPT;
 
     /**
      * @return Pool
-     * @throws ReflectionException
+     * @throws Exception
      */
     protected function pool(): Pool
     {
