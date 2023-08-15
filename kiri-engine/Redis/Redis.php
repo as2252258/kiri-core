@@ -139,7 +139,7 @@ SCRIPT;
      */
     public function destroy(): void
     {
-        $this->pool()->close($this->host);
+        $this->pool()->flush($this->host,0);
     }
 
 
