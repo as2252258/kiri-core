@@ -14,7 +14,6 @@ use Kiri;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
 use Kiri\Server\Events\OnWorkerExit;
-use ReflectionException;
 
 /**
  * Class Redis
@@ -139,7 +138,7 @@ SCRIPT;
      */
     public function destroy(): void
     {
-        $this->pool()->flush($this->host,0);
+        $this->pool()->flush($this->host, 0);
     }
 
 
