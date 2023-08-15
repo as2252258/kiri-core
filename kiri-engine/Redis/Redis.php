@@ -177,7 +177,6 @@ SCRIPT;
 
     /**
      * @return \Redis
-     * @throws ConfigException
      * @throws ReflectionException
      */
     private function getClient(): \Redis
