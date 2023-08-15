@@ -44,46 +44,6 @@ class Pool extends Component
 	}
 
 
-	/**
-	 * @param $name
-	 * @return array
-	 */
-	public function check($name): array
-	{
-//		$channel = $this->channel($name);
-//		if ($channel->size() < 1) {
-//			return [0, 0];
-//		}
-//
-//		if ($this->status->is(StatusEnum::EXIT)) {
-//			$channel->close();
-//			return [0, 0];
-//		}
-//
-//		$success = 0;
-//		$lists = [];
-//		$count = $channel->size();
-//		while ($this->status->is(StatusEnum::EXIT) === false) {
-//			if (!(($pdo = $channel->pop(0.001)) instanceof PDO)) {
-//				break;
-//			}
-//			if ($pdo->check()) {
-//				$success += 1;
-//			}
-//			$lists[] = $pdo;
-//		}
-//		if ($this->status->is(StatusEnum::EXIT) === false) {
-//			foreach ($lists as $list) {
-//				$channel->push($list);
-//			}
-//		} else {
-//			$channel->close();
-//		}
-//		return [$count, $success];
-		return [0, 0];
-	}
-
-
     /**
      * @param $name
      * @param int $max
