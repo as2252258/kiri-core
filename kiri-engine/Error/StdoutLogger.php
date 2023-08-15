@@ -40,6 +40,10 @@ class StdoutLogger extends Component
 
     protected array $levels;
 
+
+    /**
+     * StdoutLogger construct
+     */
     public function __construct()
     {
         parent::__construct();
