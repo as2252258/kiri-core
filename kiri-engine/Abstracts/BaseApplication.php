@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
 use ReflectionException;
 use Monolog\Logger;
+use Kiri\Pool\{Pool, PoolInterface};
 use Kiri\Error\StdoutLogger;
 
 /**
@@ -90,6 +91,7 @@ abstract class BaseApplication extends Component
     public function mapping(ConfigProvider $config): void
     {
         $this->container->bind(LoggerInterface::class, new StdoutLogger());
+        $this->container->set(PoolInterface::class, Pool::class);
         foreach ($config->get('mapping', []) as $interface => $class) {
             $this->container->set($interface, $class);
         }

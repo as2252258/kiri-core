@@ -10,19 +10,10 @@ declare(strict_types=1);
 namespace Kiri\Redis;
 
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
 use Kiri;
-use Kiri\Abstracts\Component;
-use Kiri\Events\EventProvider;
-use Kiri\Di\Inject\Container;
-use Kiri\Exception\ConfigException;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
 use Kiri\Server\Events\OnWorkerExit;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use ReflectionException;
 
 /**
@@ -156,10 +147,7 @@ SCRIPT;
      * @param $name
      * @param $arguments
      * @return mixed
-     * @throws ConfigException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function proxy($name, $arguments): mixed
     {
@@ -193,57 +181,32 @@ SCRIPT;
     {
         $pool = Kiri::getPool();
         if (!$pool->hasChannel($this->host)) {
-            $config = $this->get_config();
-            $length = \config('cache.redis.pool.max', 10);
-            $pool->created($config['host'], $length, $this->connect($config));
+            $pool->created($this->host, \config('cache.redis.pool.max', 10), [$this, 'connect']);
         }
         return $pool;
     }
 
 
     /**
-     * @param $config
-     * @return \Closure
+     * @return \Redis
+     * @throws RedisConnectException
      */
-    protected function connect($config): \Closure
+    protected function connect(): \Redis
     {
-        return static function () use ($config) {
-            $redis = new \Redis();
-            if (!$redis->connect($config['host'], $config['port'], $config['timeout'])) {
-                throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $config['host'], $config['port']));
-            }
-            if (!empty($config['auth']) && !$redis->auth($config['auth'])) {
-                throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $config['host'], $config['auth']));
-            }
-            if ($config['read_timeout'] < 0) {
-                $config['read_timeout'] = 0;
-            }
-            $redis->select($config['databases']);
-            if ($config['read_timeout'] > 0) {
-                $redis->setOption(\Redis::OPT_READ_TIMEOUT, $config['read_timeout']);
-            }
-            $redis->setOption(\Redis::OPT_PREFIX, $config['prefix']);
-            return $redis;
-        };
+        $redis = new \Redis();
+        if (!$redis->connect($this->host, $this->port, $this->timeout)) {
+            throw new RedisConnectException(sprintf('The Redis Connect %s::%d Fail.', $this->host, $this->port));
+        }
+        if (!empty($this->auth) && !$redis->auth($this->auth)) {
+            throw new RedisConnectException(sprintf('Redis Error: %s, Host %s, Auth %s', $redis->getLastError(), $this->host, $this->auth));
+        }
+        $redis->select($this->databases);
+        if ($this->read_timeout > 0) {
+            $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->read_timeout);
+        }
+        if (!empty($this->prefix)) {
+            $redis->setOption(\Redis::OPT_PREFIX, $this->prefix);
+        }
+        return $redis;
     }
-
-
-    /**
-     * @return array
-     */
-    #[ArrayShape(['host' => "string", 'port' => "int", 'prefix' => "string", 'auth' => "string", 'databases' => "int", 'timeout' => "int", 'read_timeout' => "int", 'pool' => "array|int[]"])]
-    public function get_config(): array
-    {
-        return [
-            'host'         => $this->host,
-            'port'         => $this->port,
-            'prefix'       => $this->prefix,
-            'auth'         => $this->auth,
-            'databases'    => $this->databases,
-            'timeout'      => $this->timeout,
-            'read_timeout' => $this->read_timeout,
-            'pool'         => $this->pool
-        ];
-    }
-
 }
