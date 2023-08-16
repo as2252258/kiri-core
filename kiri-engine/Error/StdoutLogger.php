@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Kiri\Abstracts\Component;
+use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -107,7 +108,7 @@ class StdoutLogger extends Component
     protected function createHandler(string $name): Logger
     {
         if (!$this->logger->isHandling($this->levels[$name])) {
-            $this->logger->pushHandler(new StreamHandler(APP_PATH . 'storage/logs/' . $name . '/' . date('Y-m-d') . '.log', $this->levels[$name]));
+            $this->logger->pushHandler(new RotatingFileHandler(APP_PATH . 'storage/logs/' . $name . '/' . date('Y-m-d') . '.log', $this->levels[$name]));
         }
         return $this->logger;
     }
