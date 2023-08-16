@@ -105,7 +105,7 @@ class ErrorHandler extends Component implements ErrorInterface
             return;
         }
 
-        echo '[' . date('Y-m-d H:i:s') . ']' . var_export($lastError, true);
+        echo '[' . date('Y-m-d H:i:s') . ']' . $lastError['message'] . PHP_EOL . $lastError['file'] . PHP_EOL . $lastError['line'];
 
         event(new OnSystemError());
     }
@@ -139,8 +139,6 @@ class ErrorHandler extends Component implements ErrorInterface
     public function errorHandler()
     {
         $error = func_get_args();
-
-        debug_print_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
 
         event(new OnSystemError());
 
