@@ -74,6 +74,7 @@ class StdoutLogger extends Component
         } else {
             $this->errors[$model] = $message;
         }
+        file_put_contents('php"//output', '[' . date('Y-m-d H:i:s') . '] ' . throwable($message) . PHP_EOL, FILE_APPEND);
         $this->error(throwable($message), []);
         return false;
     }
