@@ -6,7 +6,6 @@ namespace Kiri\Error;
 
 use Kiri\Abstracts\Component;
 use Monolog\Handler\RotatingFileHandler;
-use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use ReflectionException;
