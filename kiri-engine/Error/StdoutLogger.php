@@ -109,7 +109,7 @@ class StdoutLogger extends Component
     {
         if (!$this->logger->isHandling($this->levels[$name])) {
             $handler = new RotatingFileHandler(APP_PATH . 'storage/logs/' . $name . '/' . date('Y-m-d') . '.log', $this->levels[$name]);
-            $handler->setFormatter(new LineFormatter("[%datetime%]: %message% %context%\n", 'Y-m-d H:i:s'));
+            $handler->setFormatter(new LineFormatter("[%datetime%] %channel%.%level_name%:\n%message% %context%\n", 'Y-m-d H:i:s'));
             $this->logger->pushHandler($handler);
         }
         return $this->logger;
