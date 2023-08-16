@@ -105,7 +105,7 @@ class ErrorHandler extends Component implements ErrorInterface
             return;
         }
 
-        debug_print_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
+        echo '[' . date('Y-m-d H:i:s') . ']' . var_export($lastError, true);
 
         event(new OnSystemError());
     }
