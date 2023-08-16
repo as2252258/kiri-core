@@ -105,7 +105,7 @@ class ErrorHandler extends Component implements ErrorInterface
             return;
         }
 
-        echo '[' . date('Y-m-d H:i:s') . ']' . $lastError['message'] . PHP_EOL . $lastError['file'] . PHP_EOL . $lastError['line'];
+        echo '[' . date('Y-m-d H:i:s') . ']' . $lastError['message'] . PHP_EOL;
 
         event(new OnSystemError());
     }
