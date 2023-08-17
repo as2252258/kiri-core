@@ -96,6 +96,7 @@ class Application extends BaseApplication
     {
         $scanner = di(Scanner::class);
         $scanner->read(APP_PATH . 'app/');
+        $scanner->parse('App');
     }
 
 
