@@ -91,6 +91,7 @@ class StdoutLogger extends Component
     {
         try {
             if (method_exists($this->logger, $name)) {
+                var_dump($arguments);
                 $this->createHandler($name)->$name(...$arguments);
             } else if (method_exists($this, $name)) {
                 $this->{$name}(...$arguments);
