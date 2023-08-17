@@ -82,21 +82,7 @@ class Application extends BaseApplication
         } else if (\config('reload.hot', false) === false) {
             $scanner = $this->container->get(Scanner::class);
             $scanner->read(APP_PATH . 'app/');
-        } else {
-            on(OnWorkerStart::class, [$this, 'scanner']);
         }
-    }
-
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function scanner(): void
-    {
-        $scanner = di(Scanner::class);
-        $scanner->read(APP_PATH . 'app/');
-        $scanner->parse('App');
     }
 
 
