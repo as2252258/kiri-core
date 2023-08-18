@@ -104,9 +104,7 @@ class ErrorHandler extends Component implements ErrorInterface
         if (empty($lastError) || $lastError['type'] !== E_ERROR) {
             return;
         }
-
-        echo '[' . date('Y-m-d H:i:s') . ']' . $lastError['message'] . PHP_EOL;
-
+        trigger_print_error($lastError['message']);
         event(new OnSystemError());
     }
 
