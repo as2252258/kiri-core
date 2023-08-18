@@ -89,7 +89,7 @@ class StdoutLogger extends Component
         if (str_contains($message, 'inotify_rm_watch')) {
             return false;
         }
-        file_put_contents('php://output', '[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, FILE_APPEND);
+        file_put_contents('php://output', '[' . date('Y-m-d H:i:s') . '] ' . $message, FILE_APPEND);
         $this->error($message, []);
         return false;
     }
@@ -110,7 +110,7 @@ class StdoutLogger extends Component
                 $this->{$name}(...$arguments);
             }
         } catch (\Throwable $exception) {
-            echo $exception->getMessage() . PHP_EOL;
+            file_put_contents('php://output', '[' . date('Y-m-d H:i:s') . '] ' . $exception->getMessage(), FILE_APPEND);
         }
     }
 
