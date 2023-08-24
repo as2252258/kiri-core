@@ -16,13 +16,4 @@ namespace Kiri\Error;
 interface ErrorInterface
 {
 
-	/**
-	 * @param $message
-	 * @param $file
-	 * @param $line
-	 * @param int $code
-	 * @return mixed
-	 */
-	public function sendError($message, $file, $line, int $code = 500): mixed;
-
 }

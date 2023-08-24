@@ -123,8 +123,6 @@ class ErrorHandler extends Component implements ErrorInterface
         trigger_print_error($exception);
 
         event(new OnSystemError());
-
-        $this->sendError($exception->getMessage(), $exception->getFile(), $exception->getLine());
     }
 
 
@@ -140,18 +138,5 @@ class ErrorHandler extends Component implements ErrorInterface
         event(new OnSystemError());
 
         debug_print_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
-    }
-
-    /**
-     * @param $message
-     * @param $file
-     * @param $line
-     * @param int $code
-     * @return false|string
-     * @throws Exception
-     */
-    public function sendError($message, $file, $line, int $code = 500): bool|string
-    {
-        return "";
     }
 }
