@@ -14,7 +14,7 @@ use ReflectionException;
 
 /**
  * @see LoggerInterface
- * @method error(string $message, array $context)
+ * @method error(string $message, array $context = array())
  * @method log($level, $message, array $context = array())
  * @method debug($message, array $context = array())
  * @method info($message, array $context = array())
