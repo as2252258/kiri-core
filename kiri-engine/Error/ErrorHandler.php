@@ -129,18 +129,17 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
     /**
-     * @throws \ErrorException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
     public function errorHandler()
     {
-        $error = func_get_args();
+        var_dump(func_get_args());
 
         event(new OnSystemError());
 
-        throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
+        debug_print_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
     }
 
     /**
