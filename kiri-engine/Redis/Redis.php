@@ -61,7 +61,6 @@ class Redis
      */
     public function init(): void
     {
-        on(OnWorkerExit::class, [$this, 'destroy']);
     }
 
 
@@ -138,7 +137,7 @@ SCRIPT;
      */
     public function destroy(): void
     {
-        $this->pool()->flush($this->host, 0);
+        $this->pool()->close($this->host);
     }
 
 
