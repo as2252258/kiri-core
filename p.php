@@ -1,17 +1,14 @@
 <?php
 
+use function Swoole\Coroutine\run;
 
-use Swoole\Runtime;
-use Swoole\Coroutine\Http\Server;
+run(function () {
 
-Runtime::enableCoroutine(true);
-
-\Co\run(function () {
-	Swoole\Coroutine::create(function () {
-		var_dump(1);
-	});
-	$server = new Server('0.0.0.0',9501);
-	$server->handle('/', function () {
-	});
-	$server->start();
+    $channel = new \Swoole\Coroutine\Channel(100);
+    for ($i = 0; $i < 90; $i++) {
+        $channel->push(100);
+    }
+    $channel->close();
+    $channel = null;
+    var_dump($channel);
 });

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Kiri\Error;
 
 use Closure;
+use ErrorException;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
@@ -18,6 +19,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use Kiri\Events\OnSystemError;
+use Throwable;
 
 /**
  * Class ErrorHandler
@@ -110,13 +112,13 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
     /**
-     * @param \Throwable $exception
+     * @param Throwable $exception
      *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
-    public function exceptionHandler(\Throwable $exception): void
+    public function exceptionHandler(Throwable $exception): void
     {
         $this->category = 'exception';
 
@@ -127,7 +129,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
     /**
-     * @throws \ErrorException
+     * @throws ErrorException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
@@ -136,8 +138,10 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $error = func_get_args();
 
+        var_dump($error);
+
         event(new OnSystemError());
 
-        throw new \ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
+        throw new ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
     }
 }

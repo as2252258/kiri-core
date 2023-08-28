@@ -22,66 +22,76 @@ class Component implements Configure
 {
 
 
-	/**
-	 * BaseAbstract constructor.
-	 */
-	public function __construct()
-	{
-	}
+    /**
+     * BaseAbstract constructor.
+     */
+    public function __construct()
+    {
+    }
 
 
-	/**
-	 * @return void
-	 */
-	public function init(): void
-	{
-	}
+    /**
+     * @return void
+     */
+    public function init(): void
+    {
+    }
 
 
-	/**
-	 * @return string
-	 */
-	#[Pure] public static function className(): string
-	{
-		return static::class;
-	}
+    /**
+     * @return string
+     */
+    #[Pure] public static function className(): string
+    {
+        return static::class;
+    }
 
 
-	/**
-	 * @param string $name
-	 * @return mixed
-	 * @throws Exception
-	 */
-	public function __get(string $name)
-	{
-		$method = 'get' . ucfirst($name);
-		if (method_exists($this, $method)) {
-			return $this->{$method}();
-		} else if (method_exists($this, $name)) {
-			return $this->{$name};
-		} else {
-			throw new Exception('Unable getting property ' . get_called_class() . '::' . $name);
-		}
-	}
+    /**
+     * @return Kiri\Error\StdoutLogger
+     * @throws \ReflectionException
+     */
+    public function getLogger(): Kiri\Error\StdoutLogger
+    {
+        return Kiri::getLogger();
+    }
 
 
-	/**
-	 * @param string $name
-	 * @param $value
-	 * @return void
-	 * @throws Exception
-	 */
-	public function __set(string $name, $value): void
-	{
-		$method = 'set' . ucfirst($name);
-		if (method_exists($this, $method)) {
-			$this->{$method}($value);
-		} else if (method_exists($this, $name)) {
-			$this->{$name} = $value;
-		} else {
-			throw new Exception('Unable setting property ' . get_called_class() . '::' . $name);
-		}
-	}
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws Exception
+     */
+    public function __get(string $name)
+    {
+        $method = 'get' . ucfirst($name);
+        if (method_exists($this, $method)) {
+            return $this->{$method}();
+        } else if (method_exists($this, $name)) {
+            return $this->{$name};
+        } else {
+            throw new Exception('Unable getting property ' . get_called_class() . '::' . $name);
+        }
+    }
+
+
+    /**
+     * @param string $name
+     * @param $value
+     * @return void
+     * @throws Exception
+     */
+    public function __set(string $name, $value): void
+    {
+        $method = 'set' . ucfirst($name);
+        if (method_exists($this, $method)) {
+            $this->{$method}($value);
+        } else if (method_exists($this, $name)) {
+            $this->{$name} = $value;
+        } else {
+            throw new Exception('Unable setting property ' . get_called_class() . '::' . $name);
+        }
+    }
 
 
 }

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Kiri\Actor;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class ActorMessage implements \JsonSerializable
 {
 
@@ -63,7 +65,8 @@ class ActorMessage implements \JsonSerializable
 	/**
 	 * @return array
 	 */
-	public function jsonSerialize(): array
+	#[ArrayShape(['userId' => "int", 'event' => "string", 'body' => "array"])]
+    public function jsonSerialize(): array
 	{
 		return [
 			'userId' => $this->userId,
