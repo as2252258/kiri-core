@@ -23,7 +23,7 @@ use Throwable;
 
 /**
  * Class ErrorHandler
- *
+ * hahahah
  * @package Kiri\Base
  * @property-read $asError
  */
