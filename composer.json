@@ -29,7 +29,6 @@
     "ext-sockets": "*",
     "nikic/php-parser": "^4.15",
     "ext-inotify": "*",
-    "ext-ssh2": "*",
     "game-worker/kiri-pool": "~v1.0",
     "monolog/monolog": "^2.9",
     "psr/container": "^2.0"
