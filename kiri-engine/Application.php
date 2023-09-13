@@ -19,7 +19,11 @@ use Kiri\Events\{OnAfterCommandExecute, OnBeforeCommandExecute};
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
-use Symfony\Component\Console\{Application as ConsoleApplication, Input\ArgvInput, Output\ConsoleOutput, Output\OutputInterface};
+use Symfony\Component\Console\{Application as ConsoleApplication,
+    Exception\ExceptionInterface,
+    Input\ArgvInput,
+    Output\ConsoleOutput,
+    Output\OutputInterface};
 use Kiri\Server\Events\OnWorkerStart;
 
 /**
@@ -140,7 +144,7 @@ class Application extends BaseApplication
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
-     * @throws Exception
+     * @throws Exception|ExceptionInterface
      */
     public function execute(array $argv): void
     {
@@ -151,7 +155,7 @@ class Application extends BaseApplication
         $this->container->bind(OutputInterface::class, $output);
 
         $console = $this->container->get(ConsoleApplication::class);
-        $command = $console->find($input->getFirstArgument());
+        $command = $console->find($input->getFirstArgument() ?? 'list');
 
         fire(new OnBeforeCommandExecute($command));
 
