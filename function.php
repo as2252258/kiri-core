@@ -6,6 +6,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 use JetBrains\PhpStorm\Pure;
 use Kiri\Config\ConfigProvider;
 use Kiri\Core\ArrayAccess;
+use Kiri\Di\Context;
 use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Router\Request;
@@ -274,7 +275,9 @@ if (!function_exists('response')) {
      */
     function response(): ResponseInterface
     {
-        return Kiri::getDi()->get(ResponseInterface::class);
+        $data = Kiri::getDi()->get(ResponseInterface::class);
+
+        return Context::get(ResponseInterface::class, $data);
     }
 
 }
