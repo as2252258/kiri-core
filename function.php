@@ -260,7 +260,9 @@ if (!function_exists('request')) {
      */
     function request(): RequestInterface
     {
-        return Kiri::getDi()->get(RequestInterface::class);
+        $data = Kiri::getDi()->get(RequestInterface::class);
+
+        return Context::get(RequestInterface::class, $data);
     }
 
 }
