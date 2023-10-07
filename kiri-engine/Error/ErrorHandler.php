@@ -138,8 +138,6 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $error = func_get_args();
 
-        var_dump($error);
-
         event(new OnSystemError());
 
         throw new ErrorException($error[1], $error[0], 1, $error[2], $error[3]);
