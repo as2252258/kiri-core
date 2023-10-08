@@ -44,7 +44,7 @@ if (!function_exists('isJson')) {
     {
         if (is_null($string)) return false;
         return (str_starts_with($string, '{') && str_ends_with($string, '}'))
-            || (str_ends_with($string, '[') && str_starts_with($string, ']'));
+               || (str_ends_with($string, '[') && str_starts_with($string, ']'));
     }
 
 }
@@ -69,7 +69,6 @@ if (!function_exists('instance')) {
 
 
 if (!function_exists('call')) {
-
 
 
     /**
@@ -250,6 +249,32 @@ if (!function_exists('isUrl')) {
 
 }
 
+if (!function_exists('msgpack_pack')) {
+
+
+    /**
+     * @param $content
+     * @return string
+     */
+    function msgpack_pack($content): string
+    {
+        return serialize($content);
+    }
+
+}
+if (!function_exists('msgpack_unpack')) {
+
+
+    /**
+     * @param $content
+     * @return mixed
+     */
+    function msgpack_unpack($content): mixed
+    {
+        return unserialize($content);
+    }
+
+}
 
 if (!function_exists('request')) {
 
@@ -305,7 +330,6 @@ if (!function_exists('split_request_uri')) {
     }
 
 }
-
 
 
 if (!function_exists('redis')) {
@@ -597,11 +621,11 @@ if (!function_exists('get_file_extension')) {
         ];
 
         $explode = explode('.', $filename);
-        $ext = strtolower(array_pop($explode));
+        $ext     = strtolower(array_pop($explode));
         if (array_key_exists($ext, $mime_types)) {
             return $ext;
         } else if (function_exists('finfo_open')) {
-            $fInfo = finfo_open(FILEINFO_MIME);
+            $fInfo    = finfo_open(FILEINFO_MIME);
             $mimeType = finfo_file($fInfo, $filename);
             finfo_close($fInfo);
             $mimeType = current(explode('; ', $mimeType));
@@ -832,13 +856,13 @@ if (!function_exists('jTraceEx')) {
     function jTraceEx($e, $seen = NULL, bool $toHtml = FALSE): string
     {
         $starter = $seen ? 'Caused by: ' : '';
-        $result = [];
+        $result  = [];
         if (!$seen) $seen = [];
-        $trace = $e->getTrace();
-        $prev = $e->getPrevious();
+        $trace    = $e->getTrace();
+        $prev     = $e->getPrevious();
         $result[] = sprintf('%s%s: %s', $starter, $e::class, $e->getMessage());
-        $file = $e->getFile();
-        $line = $e->getLine();
+        $file     = $e->getFile();
+        $line     = $e->getLine();
 
         foreach ($trace as $value) {
             $result[] = sprintf(' at %s%s%s(%s%s%s)',
