@@ -218,37 +218,6 @@ if (!function_exists('directory')) {
 }
 
 
-if (!function_exists('isUrl')) {
-
-
-    /**
-     * @param $url
-     * @param bool $get_info
-     * @return false|array
-     */
-    function isUrl($url, bool $get_info = TRUE): bool|array
-    {
-        if (str_starts_with($url, '/')) {
-            return FALSE;
-        }
-        $queryMatch = '/((http[s]?):\/\/)?(([\w\-\_]+\.)+\w+(:\d+)?)(\/.*)?/';
-        if (!preg_match($queryMatch, $url, $outPut)) {
-            return FALSE;
-        }
-
-        [$scheme, $host, $port, $user, $pass, $query, $path, $fragment] = parse_url($url);
-        if ($scheme == 'https' && empty($port)) {
-            $port = 443;
-        }
-
-        if (!empty($query)) $path .= '?' . $query;
-        if (!empty($fragment)) $path .= '#' . $fragment;
-
-        return [$scheme == 'https', $host, $port, $path];
-    }
-
-}
-
 if (!function_exists('msgpack_pack')) {
 
 
@@ -285,7 +254,9 @@ if (!function_exists('request')) {
      */
     function request(): RequestInterface
     {
-        return Kiri::getDi()->get(RequestInterface::class);
+        $request = Kiri::getDi()->get(RequestInterface::class);
+
+        return Context::get(RequestInterface::class, $request);
     }
 
 }
@@ -303,30 +274,6 @@ if (!function_exists('response')) {
         $data = Kiri::getDi()->get(ResponseInterface::class);
 
         return Context::get(ResponseInterface::class, $data);
-    }
-
-}
-
-
-if (!function_exists('split_request_uri')) {
-
-
-    /**
-     * @param $url
-     * @return false|array
-     */
-    function split_request_uri($url): bool|array
-    {
-        if (($parse = isUrl($url, NULL)) === FALSE) {
-            return FALSE;
-        }
-
-        [$isHttps, $domain, $port, $path] = $parse;
-        $uri = $isHttps ? 'https://' . $domain : 'http://' . $domain;
-        if (!empty($port)) {
-            $uri .= ':' . $port;
-        }
-        return [$uri, $path];
     }
 
 }
