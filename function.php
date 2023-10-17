@@ -874,8 +874,6 @@ if (!function_exists('event')) {
      * @param object $object
      * @return void
      * @throws ReflectionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     function event(object $object): void
     {
