@@ -26,11 +26,11 @@ class Xml
 	 */
 	public static function toArray($data, bool $asArray = true): object|array
 	{
-		$data = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
+		$data = \simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($data === false) {
 			throw new Exception('Parameter format error.');
 		}
-		$array = get_object_vars($data);
+		$array = \get_object_vars($data);
 		if (isset($array[0])) {
 			$array[$data->getName()] = $array[0];
 			unset($array[0]);
@@ -45,9 +45,9 @@ class Xml
 	 */
 	public static function isXml($str): object|bool|array
 	{
-		$xml_parser = xml_parser_create();
-		if (!xml_parse($xml_parser, $str, true)) {
-			xml_parser_free($xml_parser);
+		$xml_parser = \xml_parser_create();
+		if (!\xml_parse($xml_parser, $str, true)) {
+			\xml_parser_free($xml_parser);
 			return false;
 		} else {
 			return self::toArray($str);
