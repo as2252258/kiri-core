@@ -1,16 +1,15 @@
 <?php
 
-if (class_exists('\ReturnTypeWillChange')) {
-	return;
+if (!class_exists('\ReturnTypeWillChange')) {
+    #[\Attribute(\Attribute::TARGET_METHOD)]
+    final class ReturnTypeWillChange
+    {
+
+
+        public function __construct()
+        {
+        }
+
+    }
 }
 
-#[\Attribute(\Attribute::TARGET_METHOD)]
-final class ReturnTypeWillChange
-{
-
-
-	public function __construct()
-	{
-	}
-
-}

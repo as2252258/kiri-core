@@ -6,6 +6,8 @@ namespace Kiri\Core;
 
 
 use Exception;
+use Swift_Message;
+use Swift_SmtpTransport;
 
 
 /**
@@ -114,11 +116,8 @@ class Help
 	public static function toString($parameter): bool|array|string
 	{
 		if (!is_string($parameter)) {
-			$parameter = ArrayAccess::toArray($parameter);
-			if (is_array($parameter)) {
-				$parameter = Json::encode($parameter);
-			}
-		}
+            $parameter = Json::encode(ArrayAccess::toArray($parameter));
+        }
 		return $parameter;
 	}
 
@@ -152,7 +151,7 @@ class Help
 	 *
 	 * 随机字符串
 	 */
-	public static function random($length = 20): string
+	public static function random(int $length = 20): string
 	{
 		$res = [];
 		$str = 'abcdefghijklmnopqrstuvwxyz';
@@ -162,7 +161,7 @@ class Help
 			if (empty($rand)) {
 				$rand = substr($str, strlen($str) - 3, 1);
 			}
-			array_push($res, $rand);
+			$res[] = $rand;
 		}
 
 		return implode($res);
@@ -199,14 +198,14 @@ class Help
 	 * @param string $Subject
 	 * @param $messageContent
 	 */
-	public static function sendEmail($email, string $Subject, $messageContent)
-	{
+	public static function sendEmail($email, string $Subject, $messageContent): void
+    {
 		if (!class_exists('\Swift_Mailer')) {
 			return;
 		}
-		$mailer = new \Swift_Mailer((new \Swift_SmtpTransport($email['host'], $email['port']))
+		$mailer = new \Swift_Mailer((new Swift_SmtpTransport($email['host'], $email['port']))
 			->setUsername($email['username'])->setPassword($email['password']));
-		$message = (new \Swift_Message($Subject))
+		$message = (new Swift_Message($Subject))
 			->setFrom([$email['send']['address'] => $email['send']['nickname']])
 			->setBody('Here is the message itself');
 

@@ -95,8 +95,6 @@ class ErrorHandler extends Component implements ErrorInterface
 
     /**
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      * @throws Exception
      */
@@ -114,8 +112,6 @@ class ErrorHandler extends Component implements ErrorInterface
     /**
      * @param Throwable $exception
      *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws Exception
      */
     public function exceptionHandler(Throwable $exception): void
@@ -130,8 +126,6 @@ class ErrorHandler extends Component implements ErrorInterface
 
     /**
      * @throws ErrorException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
     public function errorHandler()

@@ -13,6 +13,7 @@ namespace Kiri\Abstracts;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use Kiri;
+use ReflectionException;
 
 /**
  * Class Component
@@ -49,7 +50,7 @@ class Component implements Configure
 
     /**
      * @return Kiri\Error\StdoutLogger
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getLogger(): Kiri\Error\StdoutLogger
     {

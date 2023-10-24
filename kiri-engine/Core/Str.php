@@ -45,7 +45,7 @@ class Str
      */
     public static function random(int $length = 20): int|string
     {
-        $number = '';
+        $number  = '';
         $default = str_split(self::NUMBER);
         if ($length < 1) $length = 1;
         for ($i = 0; $i < $length; $i++) {
@@ -157,7 +157,7 @@ class Str
         asort($array);
         $str = implode('', $array);
         for ($i = 0; $i < $number; $i++) {
-            $_tmp = md5($key) . md5($str) . mb_substr($add, $len, $len + 5, 'utf-8');
+            $_tmp  = md5($key) . md5($str) . mb_substr($add, $len, $len + 5, 'utf-8');
             $res[] = md5($_tmp);
         }
         sort($res, SORT_STRING);
@@ -171,17 +171,12 @@ class Str
      */
     public static function filename($file, $type): string
     {
-        switch ($type) {
-            case 'image/png':
-                return md5_file($file) . '.png';
-            case 'image/jpeg':
-            case 'image/jpg':
-                return md5_file($file) . '.jpg';
-            case 'image/gif':
-                return md5_file($file) . '.gif';
-                break;
-        }
-        return md5_file($file);
+        return match ($type) {
+            'image/png' => md5_file($file) . '.png',
+            'image/jpeg', 'image/jpg' => md5_file($file) . '.jpg',
+            'image/gif' => md5_file($file) . '.gif',
+            default => md5_file($file),
+        };
     }
 
     /**

@@ -138,7 +138,12 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
     }
 
 
-    public static function Tree(HashMap $root, string $leaf)
+    /**
+     * @param HashMap $root
+     * @param string $leaf
+     * @return HashMap
+     */
+    public static function Tree(HashMap $root, string $leaf): HashMap
     {
         if ($root->has($leaf)) {
             $hashMap = $root->get($leaf);

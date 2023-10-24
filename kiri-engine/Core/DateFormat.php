@@ -94,8 +94,8 @@ class DateFormat
 	 * @param null $endTime
 	 * @return string
 	 */
-	public static function mtime($startTime, $endTime = null)
-	{
+	public static function mtime($startTime, $endTime = null): string
+    {
 		if ($endTime === null) {
 			$endTime = microtime(true);
 		}

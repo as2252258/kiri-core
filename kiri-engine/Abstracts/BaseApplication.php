@@ -23,8 +23,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
 use ReflectionException;
-use Monolog\Logger;
-use Kiri\Pool\{Pool, PoolInterface};
 use Kiri\Error\StdoutLogger;
 
 /**
@@ -67,7 +65,7 @@ abstract class BaseApplication extends Component
      */
     public function __construct()
     {
-        $this->container = Kiri::getContainer();
+        $this->container    = Kiri::getContainer();
         $this->localService = $this->container->get(LocalService::class);
 
         $this->provider = $this->container->get(EventProvider::class);
@@ -81,8 +79,6 @@ abstract class BaseApplication extends Component
         parent::__construct();
     }
 
-
-    const LOGGER_LEVELS = [Logger::EMERGENCY, Logger::ALERT, Logger::CRITICAL, Logger::ERROR, Logger::WARNING, Logger::NOTICE, Logger::INFO, Logger::DEBUG];
 
     /**
      * @param ConfigProvider $config

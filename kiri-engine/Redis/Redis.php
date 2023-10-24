@@ -13,7 +13,6 @@ use Exception;
 use Kiri;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
-use Kiri\Server\Events\OnWorkerExit;
 
 /**
  * Class Redis
