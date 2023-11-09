@@ -261,6 +261,23 @@ if (!function_exists('request')) {
 
 }
 
+if (!function_exists('inject')) {
+
+
+    /**
+     * @param object $object
+     * @return object
+     * @throws ReflectionException
+     */
+    function inject(object $object): object
+    {
+        $container = Kiri::getDi();
+        $reflect = $container->getReflectionClass($object::class);
+        $container->resolveProperties($reflect, $object);
+        return $object;
+    }
+}
+
 
 if (!function_exists('response')) {
 
