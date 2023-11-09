@@ -92,7 +92,7 @@ abstract class BaseApplication extends Component
         }
 
         foreach ($config->get('components', []) as $id => $component) {
-            $this->container->set($id, $component);
+            $this->localService->set($id, $component);
         }
     }
 
