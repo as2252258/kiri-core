@@ -17,6 +17,18 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Process;
 
+interface Arrayable
+{
+
+
+    /**
+     * @return array
+     */
+    public function toArray(): array;
+
+}
+
+
 if (!function_exists('make')) {
 
 
@@ -272,7 +284,7 @@ if (!function_exists('inject')) {
     function inject(object $object): object
     {
         $container = Kiri::getDi();
-        $reflect = $container->getReflectionClass($object::class);
+        $reflect   = $container->getReflectionClass($object::class);
         $container->resolveProperties($reflect, $object);
         return $object;
     }
