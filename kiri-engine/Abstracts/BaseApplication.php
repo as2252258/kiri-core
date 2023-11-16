@@ -83,6 +83,7 @@ abstract class BaseApplication extends Component
     /**
      * @param ConfigProvider $config
      * @return void
+     * @throws Exception
      */
     public function mapping(ConfigProvider $config): void
     {
@@ -90,9 +91,8 @@ abstract class BaseApplication extends Component
         foreach ($config->get('mapping', []) as $interface => $class) {
             $this->container->set($interface, $class);
         }
-
         foreach ($config->get('components', []) as $id => $component) {
-            $this->localService->set($id, $component);
+            $this->localService->set($id, Kiri::createObject($component));
         }
     }
 
