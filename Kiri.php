@@ -157,10 +157,10 @@ class Kiri
 	 * @param $fileName
 	 * @param $content
 	 * @param null $is_append
-	 * @return mixed
-	 */
-	public static function writeFile($fileName, $content, $is_append = null): mixed
-	{
+	 * @return int|bool
+     */
+	public static function writeFile($fileName, $content, $is_append = null): int|bool
+    {
 		$params = [$fileName, (string)$content];
 		if ($is_append !== null) {
 			$params[] = $is_append;
