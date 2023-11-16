@@ -56,7 +56,7 @@ class Kiri
 	public static function createObject($className, array $construct = []): mixed
 	{
 		if (is_string($className) && class_exists($className)) {
-			return static::getContainer()->make($className, $construct);
+			return static::getContainer()->get($className);
 		} else if (is_array($className) && isset($className['class'])) {
 			$class = $className['class'];
 			unset($className['class']);
