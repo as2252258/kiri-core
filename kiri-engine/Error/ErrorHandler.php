@@ -14,9 +14,8 @@ use ErrorException;
 use Exception;
 use Kiri;
 use Kiri\Abstracts\Component;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Kiri\Di\Inject\Container;
 use ReflectionException;
 use Kiri\Events\OnSystemError;
 use Throwable;
@@ -37,12 +36,10 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
     /**
-     * @param ContainerInterface $container
+     * @var ContainerInterface
      */
-    public function __construct(public ContainerInterface $container)
-    {
-        parent::__construct();
-    }
+    #[Container(ContainerInterface::class)]
+    public ContainerInterface $container;
 
 
     /**

@@ -23,8 +23,9 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
     Exception\ExceptionInterface,
     Input\ArgvInput,
     Output\ConsoleOutput,
-    Output\OutputInterface};
-use Kiri\Server\Events\OnWorkerStart;
+    Output\OutputInterface
+};
+use Kiri\Di\Inject\Container;
 
 /**
  * Class Init
@@ -44,12 +45,10 @@ class Application extends BaseApplication
 
 
     /**
-     * @param ErrorHandler $errorHandler
+     * @var ErrorHandler
      */
-    public function __construct(public ErrorHandler $errorHandler)
-    {
-        parent::__construct();
-    }
+    #[Container(ErrorHandler::class)]
+    public ErrorHandler $errorHandler;
 
 
     /**
@@ -163,5 +162,5 @@ class Application extends BaseApplication
         fire(new OnAfterCommandExecute($command));
         $output->writeln('execute complete.' . PHP_EOL);
     }
-    
+
 }
