@@ -153,9 +153,8 @@ SCRIPT;
             $response = $client->{$name}(...$arguments);
         } catch (\Throwable $throwable) {
             $response = trigger_print_error($throwable, 'redis');
-        } finally {
-            $this->pool()->push($this->host, $client);
         }
+        $this->pool()->push($this->host, $client);
         return $response;
     }
 
@@ -178,7 +177,7 @@ SCRIPT;
     {
         $pool = Kiri::getPool();
         if (!$pool->hasChannel($this->host)) {
-            $pool->created($this->host, \config('cache.redis.pool.max', 10), [$this, 'connect']);
+            $pool->created($this->host, $this->pool['max'], [$this, 'connect']);
         }
         return $pool;
     }
