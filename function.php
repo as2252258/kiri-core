@@ -896,6 +896,21 @@ if (!function_exists('trigger_print_error')) {
 }
 
 
+if (!function_exists('println')) {
+
+    /**
+     * @param mixed $message
+     * @param string $method
+     * @return bool
+     * @throws
+     */
+    function println(mixed $message, string $method = 'app'): bool
+    {
+        return Kiri::getLogger()->failure($message, $method);
+    }
+}
+
+
 if (!function_exists('event')) {
 
 

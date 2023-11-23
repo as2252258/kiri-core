@@ -13,6 +13,7 @@ use Exception;
 use Kiri;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
+use function println;
 
 /**
  * Class Redis
@@ -72,11 +73,10 @@ class Redis
     public function __call($name, $arguments): mixed
     {
         if (method_exists($this, $name)) {
-            $data = $this->{$name}(...$arguments);
+            return $this->{$name}(...$arguments);
         } else {
-            $data = $this->proxy($name, $arguments);
+            return $this->proxy($name, $arguments);
         }
-        return $data;
     }
 
 
@@ -150,12 +150,12 @@ SCRIPT;
     {
         $client = $this->getClient();
         try {
-            $response = $client->{$name}(...$arguments);
+            return $client->{$name}(...$arguments);
         } catch (\Throwable $throwable) {
-            $response = trigger_print_error($throwable, 'redis');
+            return trigger_print_error(throwable($throwable));
+        } finally {
+            $this->pool()->push($this->host, $client);
         }
-        $this->pool()->push($this->host, $client);
-        return $response;
     }
 
 

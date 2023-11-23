@@ -158,6 +158,7 @@ abstract class BaseApplication extends Component
     /**
      * @param $id
      * @param $definition
+     * @throws Exception
      */
     public function set($id, $definition): void
     {
