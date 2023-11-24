@@ -102,23 +102,6 @@ if (!function_exists('call')) {
 
 }
 
-
-if (!function_exists('map')) {
-
-
-    /**
-     * @param array $params
-     * @param Closure $closure
-     * @return mixed
-     */
-    function map(array $params, Closure $closure): mixed
-    {
-        return array_map($closure, $params);
-    }
-
-}
-
-
 if (!function_exists('checkPortIsAlready')) {
 
 

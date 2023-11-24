@@ -33,7 +33,9 @@
     "ext-inotify": "*",
     "game-worker/kiri-pool": "~v1.0",
     "monolog/monolog": "^2.9",
-    "psr/container": "^2.0"
+    "psr/container": "^2.0",
+    "ext-libsodium": "*",
+    "swiftmailer/swiftmailer": "^6.3"
   },
   "replace": {
     "symfony/polyfill-apcu": "*",
