@@ -112,7 +112,7 @@ abstract class BaseApplication extends Component
             mkdir($storage, 0777, true);
         }
         if (!is_dir($storage) || !is_writeable($storage)) {
-            throw new InitException("Directory {$storage} does not have write permission");
+            throw new InitException("Directory $storage does not have write permission");
         }
     }
 
