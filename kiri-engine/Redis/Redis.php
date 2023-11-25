@@ -154,7 +154,9 @@ SCRIPT;
         } catch (\Throwable $throwable) {
             return trigger_print_error(throwable($throwable));
         } finally {
-            $this->pool()->push($this->host, $client);
+            if ($client->ping('h') == 'h') {
+                $this->pool()->push($this->host, $client);
+            }
         }
     }
 
