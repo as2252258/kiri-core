@@ -900,7 +900,7 @@ if (!function_exists('event')) {
     /**
      * @param object $object
      * @return void
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     function event(object $object): void
     {
