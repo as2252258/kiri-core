@@ -923,7 +923,7 @@ if (!function_exists('throwable')) {
         if (is_string($throwable)) {
             return $throwable;
         }
-        $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL;
+        $message = "\033[31m" . '[' . date('Y-m-d H:i:s') . ']' . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL;
         $message .= $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
 
         $file = $throwable->getFile();
