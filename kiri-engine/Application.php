@@ -25,6 +25,7 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
     Output\ConsoleOutput,
     Output\OutputInterface
 };
+use Kiri\Server\ServerCommand;
 use Kiri\Di\Inject\Container;
 
 /**
@@ -53,9 +54,6 @@ class Application extends BaseApplication
 
     /**
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
      * @throws Exception
      */
     public function init(): void
@@ -65,8 +63,7 @@ class Application extends BaseApplication
         $this->errorHandler->registerErrorHandler(\config('error.error', []));
         $this->id = \config('id', uniqid('id.'));
 
-        $event = $this->container->get(Kiri\Events\EventProvider::class);
-        $event->on(OnBeforeCommandExecute::class, [$this, 'beforeCommandExecute']);
+        $this->provider->on(OnBeforeCommandExecute::class, [$this, 'beforeCommandExecute']);
     }
 
 
@@ -79,7 +76,7 @@ class Application extends BaseApplication
      */
     public function beforeCommandExecute(OnBeforeCommandExecute $beforeCommandExecute): void
     {
-        if (!($beforeCommandExecute->command instanceof Kiri\Server\ServerCommand)) {
+        if (!($beforeCommandExecute->command instanceof ServerCommand)) {
             $scanner = $this->container->get(Scanner::class);
             $scanner->read(APP_PATH . 'app/');
         } else if (\config('reload.hot', false) === false) {
@@ -112,7 +109,6 @@ class Application extends BaseApplication
      * @return $this
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
      */
     public function commands(Kernel $kernel): static
     {
@@ -128,7 +124,6 @@ class Application extends BaseApplication
      * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
      */
     public function command(string $command): void
     {
@@ -147,10 +142,8 @@ class Application extends BaseApplication
      */
     public function execute(array $argv): void
     {
-        $input = new ArgvInput($argv);
+        [$input, $output] = [new ArgvInput($argv), new ConsoleOutput()];
         $this->container->bind(ArgvInput::class, $input);
-
-        $output = new ConsoleOutput();
         $this->container->bind(OutputInterface::class, $output);
 
         $console = $this->container->get(ConsoleApplication::class);
