@@ -160,7 +160,7 @@ class Application extends BaseApplication
 
         $command->run($input, $output);
         fire(new OnAfterCommandExecute($command));
-        $output->writeln('execute complete.' . PHP_EOL);
+        $output->writeln('execute complete.');
     }
 
 }
