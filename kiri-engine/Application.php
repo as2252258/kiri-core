@@ -87,20 +87,23 @@ class Application extends BaseApplication
 
 
     /**
-     * @param string $service
+     * @param string ...$services
      * @return $this
-     * @throws
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function import(string $service): static
+    public function import(string ...$services): static
     {
-        if (!class_exists($service)) {
-            return $this;
-        }
+        foreach ($services as $service) {
+            if (!class_exists($service)) {
+                continue;
+            }
 
-        /** @var Kiri\Abstracts\Provider $class */
-        $class = $this->container->get($service);
-        if (method_exists($class, 'onImport')) {
-            $class->onImport();
+            /** @var Kiri\Abstracts\Provider $class */
+            $class = $this->container->get($service);
+            if (method_exists($class, 'onImport')) {
+                $class->onImport();
+            }
         }
         return $this;
     }
