@@ -96,9 +96,11 @@ class Application extends BaseApplication
         if (!class_exists($service)) {
             return $this;
         }
+
+        /** @var Kiri\Abstracts\Provider $class */
         $class = $this->container->get($service);
         if (method_exists($class, 'onImport')) {
-            $class->onImport($this->localService);
+            $class->onImport();
         }
         return $this;
     }
