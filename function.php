@@ -4,6 +4,7 @@ defined('APP_PATH') or define('APP_PATH', realpath(__DIR__ . '/../../'));
 
 
 use JetBrains\PhpStorm\Pure;
+use Kiri\Application;
 use Kiri\Config\ConfigProvider;
 use Kiri\Core\ArrayAccess;
 use Kiri\Di\Context;
@@ -25,6 +26,20 @@ interface Arrayable
      * @return array
      */
     public function toArray(): array;
+
+}
+
+
+if (!function_exists('application')) {
+
+    /**
+     * @return Application
+     * @throws Exception
+     */
+    function application(): Application
+    {
+        return Kiri::getDi()->get(Application::class);
+    }
 
 }
 
