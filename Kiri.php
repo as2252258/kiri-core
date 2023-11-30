@@ -71,7 +71,7 @@ class Kiri
 
     /**
      * @return \Kiri\Pool\Pool
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     public static function getPool(): \Kiri\Pool\Pool
     {

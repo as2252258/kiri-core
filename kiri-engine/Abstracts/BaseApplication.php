@@ -28,7 +28,7 @@ use Kiri\Error\StdoutLogger;
  * @package Kiri\Base
  * @property DatabasesProviders $connections
  */
-abstract class BaseApplication extends Component
+abstract class BaseApplication extends LocalService
 {
 
 
