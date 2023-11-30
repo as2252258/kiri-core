@@ -21,7 +21,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Kiri\Events\EventProvider;
-use ReflectionException;
 use Kiri\Error\StdoutLogger;
 
 /**
@@ -60,7 +59,6 @@ abstract class BaseApplication extends Component
     /**
      * @param ConfigProvider $config
      * @return void
-     * @throws Exception
      */
     public function mapping(ConfigProvider $config): void
     {
@@ -111,41 +109,5 @@ abstract class BaseApplication extends Component
             }
             $this->provider->on($key, $value, 0);
         }
-    }
-
-
-    /**
-     * @param string $name
-     * @return mixed|null
-     * @throws Exception
-     */
-    public function __get(string $name)
-    {
-        if ($this->localService->has($name)) {
-            return $this->localService->get($name);
-        } else {
-            return parent::__get($name);
-        }
-    }
-
-
-    /**
-     * @param $id
-     * @param $definition
-     * @throws Exception
-     */
-    public function set($id, $definition): void
-    {
-        $this->localService->set($id, $definition);
-    }
-
-
-    /**
-     * @param $id
-     * @return bool
-     */
-    public function has($id): bool
-    {
-        return $this->localService->has($id);
     }
 }
