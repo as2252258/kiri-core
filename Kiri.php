@@ -7,7 +7,6 @@ error_reporting(0);
 
 use JetBrains\PhpStorm\Pure;
 use Kiri\Di\Container;
-use Kiri\Di\LocalService;
 use Kiri\Environmental;
 use Kiri\Error\StdoutLogger;
 use Swoole\Coroutine;
@@ -122,18 +121,8 @@ class Kiri
 
 
     /**
-     * @return LocalService
-     * @throws ReflectionException
-     */
-    public static function service(): LocalService
-    {
-        return static::getContainer()->get(LocalService::class);
-    }
-
-
-    /**
      * @return StdoutLogger
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     public static function getLogger(): StdoutLogger
     {

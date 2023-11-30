@@ -14,7 +14,6 @@ use Database\DatabasesProviders;
 use Exception;
 use Kiri;
 use Kiri\Events\EventInterface;
-use Kiri\Di\LocalService;
 use Kiri\Config\ConfigProvider;
 use Kiri\Exception\{InitException};
 use Psr\Container\ContainerExceptionInterface;
@@ -41,37 +40,15 @@ abstract class BaseApplication extends Component
 
 
     /**
-     * @var LocalService|mixed
+     * @param EventProvider $provider
+     * @param ConfigProvider $config
+     * @param ContainerInterface $container
+     * @throws ContainerExceptionInterface
+     * @throws InitException
+     * @throws NotFoundExceptionInterface
      */
-    public LocalService $localService;
-
-
-    /**
-     * @var ContainerInterface
-     */
-    public ContainerInterface $container;
-
-
-    /**
-     * @var EventProvider
-     */
-    public EventProvider $provider;
-
-    /**
-     * Init constructor.
-     *
-     *
-     * @throws
-     */
-    public function __construct()
+    public function __construct(public EventProvider $provider, public ConfigProvider $config, public ContainerInterface $container)
     {
-        $this->container    = Kiri::getContainer();
-        $this->localService = $this->container->get(LocalService::class);
-
-        $this->provider = $this->container->get(EventProvider::class);
-
-        $config = $this->container->get(ConfigProvider::class);
-
         $this->mapping($config);
         $this->parseStorage($config);
         $this->parseEvents($config);
@@ -90,9 +67,6 @@ abstract class BaseApplication extends Component
         $this->container->bind(LoggerInterface::class, new StdoutLogger());
         foreach ($config->get('mapping', []) as $interface => $class) {
             $this->container->set($interface, $class);
-        }
-        foreach ($config->get('components', []) as $id => $component) {
-            $this->localService->set($id, Kiri::createObject($component));
         }
     }
 
@@ -122,7 +96,6 @@ abstract class BaseApplication extends Component
      * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
      * @throws Exception
      */
     public function parseEvents(ConfigProvider $config): void

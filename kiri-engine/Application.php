@@ -120,15 +120,17 @@ class Application extends BaseApplication
 
 
     /**
-     * @param string $command
+     * @param string ...$command
      * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function command(string $command): void
+    public function command(string ...$command): void
     {
         $console = $this->container->get(ConsoleApplication::class);
-        $console->add($this->container->get($command));
+        foreach ($command as $value) {
+            $console->add($this->container->get($value));
+        }
     }
 
 
@@ -142,17 +144,19 @@ class Application extends BaseApplication
      */
     public function execute(array $argv): void
     {
-        [$input, $output] = [new ArgvInput($argv), new ConsoleOutput()];
-        $this->container->bind(ArgvInput::class, $input);
-        $this->container->bind(OutputInterface::class, $output);
+        /** @var ArgvInput $input */
+        $input = $this->container->bind(ArgvInput::class, new ArgvInput($argv));
+
+        /** @var ConsoleOutput $output */
+        $output = $this->container->bind(OutputInterface::class, new ConsoleOutput());
 
         $console = $this->container->get(ConsoleApplication::class);
         $command = $console->find($input->getFirstArgument() ?? 'list');
 
         fire(new OnBeforeCommandExecute($command));
-
         $command->run($input, $output);
         fire(new OnAfterCommandExecute($command));
+
         $output->writeln('execute complete.');
     }
 
