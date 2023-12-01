@@ -30,6 +30,19 @@ class DateFormat
 
 
     /**
+     * @param int $time
+     * @return array
+     */
+    public static function timeFromStrDate(int $time): array
+    {
+        $year  = date('Y', $time);
+        $month = date('m', $time);
+        $day   = date('d', $time);
+        return [$year, $month, $day];
+    }
+
+
+    /**
      * @param $time
      * @return bool|false|int|string
      */
