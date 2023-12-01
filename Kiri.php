@@ -47,20 +47,21 @@ class Kiri
 
 
     /**
-     * @param $className
+     * @param string|array $className
      * @param array $construct
      * @return mixed
      * @throws Exception
      */
-    public static function createObject($className, array $construct = []): mixed
+    public static function createObject(string|array $className, array $construct = []): mixed
     {
+        $container = static::getContainer();
         if (is_string($className) && class_exists($className)) {
-            $object = static::getContainer()->get($className);
+            $object = $container->get($className);
             return self::configure($object, $construct);
         } else if (is_array($className) && isset($className['class'])) {
             $class = $className['class'];
             unset($className['class']);
-            return static::getContainer()->make($class, $construct, $className);
+            return $container->make($class, $construct, $className);
         } else if (is_callable($className, TRUE)) {
             return call_user_func($className, $construct);
         } else {
