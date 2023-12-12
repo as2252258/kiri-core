@@ -79,9 +79,11 @@ class Application extends BaseApplication
         if (!($beforeCommandExecute->command instanceof ServerCommand)) {
             $scanner = $this->container->get(Scanner::class);
             $scanner->read(APP_PATH . 'app/');
+            $scanner->parse('App');
         } else if (\config('reload.hot', false) === false) {
             $scanner = $this->container->get(Scanner::class);
             $scanner->read(APP_PATH . 'app/');
+            $scanner->parse('App');
         }
     }
 
