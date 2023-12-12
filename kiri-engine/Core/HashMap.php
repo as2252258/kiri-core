@@ -38,7 +38,7 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
      * @param string $key
      * @param $value
      */
-    public function put(string $key, $value)
+    public function put(string $key, $value): void
     {
         $this->lists[$key] = $value;
     }
@@ -78,7 +78,7 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
     /**
      * @param string $key
      */
-    public function del(string $key)
+    public function del(string $key): void
     {
         if (!$this->has($key)) {
             return;
@@ -122,7 +122,7 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
      * @param mixed $value
      */
     #[ReturnTypeWillChange]
-    public function offsetSet(mixed $offset, mixed $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->put($offset, $value);
     }
@@ -132,7 +132,7 @@ class HashMap implements \ArrayAccess, \IteratorAggregate
      * @param mixed $offset
      */
     #[ReturnTypeWillChange]
-    public function offsetUnset(mixed $offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->lists[$offset]);
     }

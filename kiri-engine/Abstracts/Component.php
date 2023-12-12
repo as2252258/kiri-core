@@ -51,7 +51,7 @@ class Component implements Configure
 
     /**
      * @return StdoutLogger
-     * @throws ReflectionException
+     * @throws
      */
     public function getLogger(): StdoutLogger
     {
@@ -62,7 +62,7 @@ class Component implements Configure
     /**
      * @param string $name
      * @return mixed
-     * @throws Exception
+     * @throws
      */
     public function __get(string $name)
     {
@@ -81,7 +81,7 @@ class Component implements Configure
      * @param string $name
      * @param $value
      * @return void
-     * @throws Exception
+     * @throws
      */
     public function __set(string $name, $value): void
     {

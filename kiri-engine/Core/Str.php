@@ -14,9 +14,9 @@ use Exception;
 class Str
 {
 
-    const STRING = 'abcdefghijklmnopqrstuvwxyz';
+    const string STRING = 'abcdefghijklmnopqrstuvwxyz';
 
-    const NUMBER = '01234567890';
+    const string NUMBER = '01234567890';
 
     /**
      * @param int $length
@@ -107,7 +107,7 @@ class Str
      */
     public static function isSerialize($data, $callBack = NULL): bool
     {
-        $false = !empty($data) && swoole_unserialize($data) !== FALSE;
+        $false = !empty($data) && unserialize($data) !== FALSE;
         if ($false && is_callable($callBack, TRUE)) {
             return call_user_func($callBack, $data);
         }
@@ -172,10 +172,10 @@ class Str
     public static function filename($file, $type): string
     {
         return match ($type) {
-            'image/png' => md5_file($file) . '.png',
+            'image/png'               => md5_file($file) . '.png',
             'image/jpeg', 'image/jpg' => md5_file($file) . '.jpg',
-            'image/gif' => md5_file($file) . '.gif',
-            default => md5_file($file),
+            'image/gif'               => md5_file($file) . '.gif',
+            default                   => md5_file($file),
         };
     }
 

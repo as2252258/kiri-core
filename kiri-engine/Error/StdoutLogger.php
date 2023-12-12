@@ -99,7 +99,7 @@ class StdoutLogger extends Component
      * @param string $name
      * @param array $arguments
      * @return void
-     * @throws ReflectionException
+     * @throws
      */
     public function __call(string $name, array $arguments)
     {

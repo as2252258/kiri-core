@@ -61,7 +61,7 @@ class Help
     /**
      * @param $xml
      * @return mixed
-     * @throws Exception
+     * @throws
      */
     public static function toArray($xml): mixed
     {
@@ -111,7 +111,7 @@ class Help
     /**
      * @param $parameter
      * @return array|false|string
-     * @throws Exception
+     * @throws
      */
     public static function toString($parameter): bool|array|string
     {

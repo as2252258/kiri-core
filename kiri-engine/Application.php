@@ -55,7 +55,7 @@ class Application extends BaseApplication
 
     /**
      * @return void
-     * @throws Exception
+     * @throws
      */
     public function init(): void
     {
@@ -71,9 +71,7 @@ class Application extends BaseApplication
     /**
      * @param OnBeforeCommandExecute $beforeCommandExecute
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     public function beforeCommandExecute(OnBeforeCommandExecute $beforeCommandExecute): void
     {
@@ -90,8 +88,7 @@ class Application extends BaseApplication
     /**
      * @param string ...$services
      * @return $this
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function import(string ...$services): static
     {
@@ -112,8 +109,7 @@ class Application extends BaseApplication
     /**
      * @param Kernel $kernel
      * @return $this
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function commands(Kernel $kernel): static
     {
@@ -127,8 +123,7 @@ class Application extends BaseApplication
     /**
      * @param string ...$command
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function command(string ...$command): void
     {
@@ -142,10 +137,7 @@ class Application extends BaseApplication
     /**
      * @param array $argv
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
-     * @throws Exception|ExceptionInterface
+     * @throws
      */
     public function execute(array $argv): void
     {

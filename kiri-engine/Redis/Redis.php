@@ -58,7 +58,7 @@ class Redis
 
     /**
      * @return void
-     * @throws Exception
+     * @throws
      */
     public function init(): void
     {
@@ -85,7 +85,7 @@ class Redis
      * @param $key
      * @param int $timeout
      * @return bool
-     * @throws RedisException
+     * @throws
      */
     public function waite($key, int $timeout = 5): bool
     {
@@ -105,7 +105,7 @@ class Redis
      * @param $key
      * @param int $timeout
      * @return bool|int
-     * @throws Exception
+     * @throws
      */
     public function lock($key, int $timeout = 5): bool|int
     {
@@ -124,7 +124,7 @@ SCRIPT;
     /**
      * @param $key
      * @return int
-     * @throws Exception
+     * @throws
      */
     public function unlock($key): int
     {
@@ -165,7 +165,7 @@ SCRIPT;
 
     /**
      * @return \Redis
-     * @throws Exception
+     * @throws
      */
     private function getClient(): \Redis
     {
@@ -175,7 +175,7 @@ SCRIPT;
 
     /**
      * @return Pool
-     * @throws Exception
+     * @throws
      */
     protected function pool(): Pool
     {
@@ -189,7 +189,7 @@ SCRIPT;
 
     /**
      * @return \Redis
-     * @throws RedisConnectException|RedisException
+     * @throws
      */
     protected function connect(): \Redis
     {

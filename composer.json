@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.3",
     "ext-json": "*",
     "ext-fileinfo": "*",
     "ext-pdo": "*",
@@ -53,7 +53,6 @@
     },
     "files": [
       "Kiri.php",
-      "ReturnTypeWillChange.php",
       "function.php"
     ]
   }

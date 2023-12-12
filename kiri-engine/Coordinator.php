@@ -7,7 +7,7 @@ namespace Kiri;
 class Coordinator
 {
 
-	const WORKER_START = 'worker:start';
+	const string WORKER_START = 'worker:start';
 
 	private bool $waite = false;
 

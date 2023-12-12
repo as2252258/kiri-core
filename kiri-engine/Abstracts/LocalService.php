@@ -33,7 +33,7 @@ class LocalService extends Component implements LocalServiceInterface
     /**
      * @param string $name
      * @return mixed
-     * @throws Exception
+     * @throws
      */
     public function get(string $name): mixed
     {
@@ -66,7 +66,7 @@ class LocalService extends Component implements LocalServiceInterface
     /**
      * @param string $name
      * @return mixed
-     * @throws Exception
+     * @throws
      */
     public function __get(string $name)
     {

@@ -92,7 +92,7 @@ class ErrorHandler extends Component implements ErrorInterface
     /**
      * @return void
      * @throws ReflectionException
-     * @throws Exception
+     * @throws
      */
     public function shutdown(): void
     {
@@ -108,7 +108,7 @@ class ErrorHandler extends Component implements ErrorInterface
     /**
      * @param Throwable $exception
      *
-     * @throws Exception
+     * @throws
      */
     public function exceptionHandler(Throwable $exception): void
     {
@@ -121,8 +121,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
 
     /**
-     * @throws ErrorException
-     * @throws ReflectionException
+     * @throws
      */
     public function errorHandler()
     {

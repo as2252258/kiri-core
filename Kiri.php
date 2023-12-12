@@ -50,7 +50,7 @@ class Kiri
      * @param string|array $className
      * @param array $construct
      * @return mixed
-     * @throws Exception
+     * @throws
      */
     public static function createObject(string|array $className, array $construct = []): mixed
     {
@@ -72,7 +72,7 @@ class Kiri
 
     /**
      * @return \Kiri\Pool\Pool
-     * @throws ReflectionException|Exception
+     * @throws
      */
     public static function getPool(): \Kiri\Pool\Pool
     {
@@ -99,7 +99,7 @@ class Kiri
 
     /**
      * @return string
-     * @throws Exception
+     * @throws
      */
     public static function getStoragePath(): string
     {
@@ -123,7 +123,7 @@ class Kiri
 
     /**
      * @return StdoutLogger
-     * @throws ReflectionException|Exception
+     * @throws
      */
     public static function getLogger(): StdoutLogger
     {

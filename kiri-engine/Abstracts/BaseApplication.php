@@ -41,9 +41,7 @@ abstract class BaseApplication extends LocalService
      * @param EventProvider $provider
      * @param ConfigProvider $config
      * @param ContainerInterface $container
-     * @throws ContainerExceptionInterface
-     * @throws InitException
-     * @throws NotFoundExceptionInterface
+     * @throws
      */
     public function __construct(public EventProvider $provider, public ConfigProvider $config, public ContainerInterface $container)
     {
@@ -71,7 +69,7 @@ abstract class BaseApplication extends LocalService
     /**
      * @param ConfigProvider $config
      * @return void
-     * @throws InitException
+     * @throws
      */
     public function parseStorage(ConfigProvider $config): void
     {
@@ -91,9 +89,7 @@ abstract class BaseApplication extends LocalService
     /**
      * @param ConfigProvider $config
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws Exception
+     * @throws
      */
     public function parseEvents(ConfigProvider $config): void
     {
