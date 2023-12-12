@@ -25,7 +25,7 @@ composer.lock
 commands/result
 config/setting.php
 tests/
-vendor/
+vendor*
 runtime/
 
 *.xml
