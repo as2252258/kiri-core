@@ -12,7 +12,6 @@ namespace Kiri\Error;
 use Closure;
 use ErrorException;
 use Exception;
-use Kiri;
 use Kiri\Abstracts\Component;
 use Psr\Container\ContainerInterface;
 use Kiri\Di\Inject\Container;

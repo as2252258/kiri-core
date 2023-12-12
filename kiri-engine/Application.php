@@ -27,6 +27,7 @@ use Symfony\Component\Console\{Application as ConsoleApplication,
 };
 use Kiri\Server\ServerCommand;
 use Kiri\Di\Inject\Container;
+use function config;
 
 /**
  * Class Init
@@ -58,10 +59,10 @@ class Application extends BaseApplication
      */
     public function init(): void
     {
-        $this->errorHandler->registerShutdownHandler(\config('error.shutdown', []));
-        $this->errorHandler->registerExceptionHandler(\config('error.exception', []));
-        $this->errorHandler->registerErrorHandler(\config('error.error', []));
-        $this->id = \config('id', uniqid('id.'));
+        $this->errorHandler->registerShutdownHandler(config('error.shutdown', []));
+        $this->errorHandler->registerExceptionHandler(config('error.exception', []));
+        $this->errorHandler->registerErrorHandler(config('error.error', []));
+        $this->id = config('id', uniqid('id.'));
 
         $this->provider->on(OnBeforeCommandExecute::class, [$this, 'beforeCommandExecute']);
     }
@@ -78,12 +79,10 @@ class Application extends BaseApplication
     {
         if (!($beforeCommandExecute->command instanceof ServerCommand)) {
             $scanner = $this->container->get(Scanner::class);
-            $scanner->read(APP_PATH . 'app/');
-            $scanner->parse('App');
-        } else if (\config('reload.hot', false) === false) {
+            $scanner->load_directory(APP_PATH . 'app/');
+        } else if (config('reload.hot', false) === false) {
             $scanner = $this->container->get(Scanner::class);
-            $scanner->read(APP_PATH . 'app/');
-            $scanner->parse('App');
+            $scanner->load_directory(APP_PATH . 'app/');
         }
     }
 

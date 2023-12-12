@@ -13,7 +13,8 @@ use Exception;
 use Kiri;
 use Kiri\Exception\RedisConnectException;
 use Kiri\Pool\Pool;
-use function println;
+use RedisException;
+use function config;
 
 /**
  * Class Redis
@@ -52,7 +53,7 @@ class Redis
      */
     public function __construct()
     {
-        Kiri::configure($this, \config('redis', []));
+        Kiri::configure($this, config('redis', []));
     }
 
     /**
@@ -84,6 +85,7 @@ class Redis
      * @param $key
      * @param int $timeout
      * @return bool
+     * @throws RedisException
      */
     public function waite($key, int $timeout = 5): bool
     {
@@ -187,7 +189,7 @@ SCRIPT;
 
     /**
      * @return \Redis
-     * @throws RedisConnectException
+     * @throws RedisConnectException|RedisException
      */
     protected function connect(): \Redis
     {

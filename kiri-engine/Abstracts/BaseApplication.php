@@ -12,7 +12,6 @@ namespace Kiri\Abstracts;
 
 use Database\DatabasesProviders;
 use Exception;
-use Kiri;
 use Kiri\Events\EventInterface;
 use Kiri\Config\ConfigProvider;
 use Kiri\Exception\{InitException};
