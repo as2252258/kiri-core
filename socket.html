@@ -50,7 +50,7 @@
     }
 
     function connect() {
-        sock = new WebSocket('ws://127.0.0.1:9528/222');
+        sock = new WebSocket('wss://center-wss.stupideyes.com/ws?access_token=6648f48a-466ba-6394-70527ef8b-bc47b8');
         sock.onopen = function () {
             if (tick) {
                 clearInterval(tick)
