@@ -939,6 +939,9 @@ if (!function_exists('throwable')) {
             return $throwable;
         }
         $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
+        $message .= '              Trance: ' . PHP_EOL;
+        $message .= '                File: ' . $throwable->getFile() . PHP_EOL;
+        $message .= '                Line: ' . $throwable->getLine() . PHP_EOL;
 
         $file = $throwable->getFile();
         $line = $throwable->getLine();
@@ -953,7 +956,7 @@ if (!function_exists('throwable')) {
             $file = $value['file'];
             $line = $value['line'];
 
-            $message .= $value['file'] . ' -> ' . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . ' line ' . $line . PHP_EOL;
+            $message .= '                      ' . $value['file'] . ' -> ' . (isset($value['class']) ? $value['class'] . '::' : '') . ($value['function'] ?? 'Closure') . ' line ' . $line . PHP_EOL;
         }
         return $message;
     }
