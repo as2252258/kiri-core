@@ -942,7 +942,7 @@ if (!function_exists('throwable')) {
         $line = $throwable->getLine();
 
         $trance  = $throwable->getTrace();
-        $current = array_pop($trance);
+        $current = array_shift($trance);
         $message .= '              Trance: ' . $current['file'] . ' -> ' . (isset($current['class']) ? $current['class'] . '::' : '') . ($current['function'] ?? 'Closure') . ' line ' . $line . PHP_EOL;
 
         foreach ($trance as $value) {
