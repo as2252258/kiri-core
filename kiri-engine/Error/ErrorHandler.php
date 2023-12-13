@@ -91,7 +91,7 @@ class ErrorHandler extends Component implements ErrorInterface
 
     /**
      * @return void
-     * @throws ReflectionException
+     * @throws
      * @throws
      */
     public function shutdown(): void
@@ -100,7 +100,9 @@ class ErrorHandler extends Component implements ErrorInterface
         if (empty($lastError) || $lastError['type'] !== E_ERROR) {
             return;
         }
-        trigger_print_error($lastError['message']);
+
+        $this->getLogger()->failure($lastError['message'] . PHP_EOL);
+
         event(new OnSystemError());
     }
 
@@ -114,7 +116,7 @@ class ErrorHandler extends Component implements ErrorInterface
     {
         $this->category = 'exception';
 
-        trigger_print_error($exception);
+        $this->getLogger()->failure($exception);
 
         event(new OnSystemError());
     }
