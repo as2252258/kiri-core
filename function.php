@@ -12,8 +12,6 @@ use Kiri\Events\EventDispatch;
 use Kiri\Events\EventProvider;
 use Kiri\Router\Request;
 use Kiri\Router\Response;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Process;
@@ -34,7 +32,7 @@ if (!function_exists('application')) {
 
     /**
      * @return Application
-     * @throws Exception
+     * @throws
      */
     function application(): Application
     {
@@ -102,7 +100,7 @@ if (!function_exists('call')) {
      * @param $handler
      * @param mixed ...$params
      * @return mixed
-     * @throws Exception
+     * @throws
      */
     function call($handler, ...$params): mixed
     {
@@ -123,7 +121,7 @@ if (!function_exists('checkPortIsAlready')) {
     /**
      * @param $port
      * @return bool|string
-     * @throws Exception
+     * @throws
      */
     function checkPortIsAlready($port): bool|string
     {
@@ -277,7 +275,7 @@ if (!function_exists('inject')) {
     /**
      * @param object $object
      * @return object
-     * @throws ReflectionException
+     * @throws
      */
     function inject(object $object): object
     {
@@ -311,7 +309,7 @@ if (!function_exists('redis')) {
 
     /**
      * @return \Kiri\Redis\Redis|Redis
-     * @throws Exception
+     * @throws
      */
     function redis(): \Kiri\Redis\Redis|Redis
     {
@@ -324,9 +322,7 @@ if (!function_exists('fire')) {
 
     /**
      * @param object $event
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @throws
      */
     function fire(object $event): void
     {
@@ -619,7 +615,7 @@ if (!function_exists('storage')) {
      * @param string|null $fileName
      * @param string|null $path
      * @return string
-     * @throws Exception
+     * @throws
      */
     function storage(?string $fileName = '', ?string $path = ''): string
     {
@@ -683,7 +679,7 @@ if (!function_exists('process_name_set')) {
     /**
      * @param int $pid
      * @param string|null $prefix
-     * @throws Exception
+     * @throws
      */
     function process_name_set(int $pid, string $prefix = NULL): void
     {
@@ -756,7 +752,7 @@ if (!function_exists('created')) {
      * @param array $construct
      * @param array $config
      * @return null|object
-     * @throws ReflectionException
+     * @throws
      */
     function created($key, array $construct = [], array $config = []): ?object
     {
@@ -772,7 +768,7 @@ if (!function_exists('di')) {
     /**
      * @param string|object $className
      * @return mixed
-     * @throws ReflectionException
+     * @throws
      */
     function di(string|object $className): mixed
     {
@@ -915,7 +911,7 @@ if (!function_exists('event')) {
     /**
      * @param object $object
      * @return void
-     * @throws ReflectionException|Exception
+     * @throws
      */
     function event(object $object): void
     {
