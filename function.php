@@ -938,7 +938,7 @@ if (!function_exists('throwable')) {
         if (is_string($throwable)) {
             return $throwable;
         }
-        $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL . $throwable->getFile() . " at line " . $throwable->getLine() . PHP_EOL;
+        $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL;
         $message .= '              Trance: ' . PHP_EOL;
         $message .= '                File: ' . $throwable->getFile() . PHP_EOL;
         $message .= '                Line: ' . $throwable->getLine() . PHP_EOL;
