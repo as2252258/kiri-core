@@ -937,12 +937,15 @@ if (!function_exists('throwable')) {
         $message = "\033[31m" . $throwable::class . ' ' . $throwable->getMessage() . "\033[0m" . PHP_EOL;
         $message .= '                File: ' . $throwable->getFile() . PHP_EOL;
         $message .= '                Line: ' . $throwable->getLine() . PHP_EOL;
-        $message .= '              Trance: ' . PHP_EOL;
 
         $file = $throwable->getFile();
         $line = $throwable->getLine();
 
-        foreach ($throwable->getTrace() as $value) {
+        $trance  = $throwable->getTrace();
+        $current = array_pop($trance);
+        $message .= '              Trance: ' . $current['file'] . ' -> ' . (isset($current['class']) ? $current['class'] . '::' : '') . ($current['function'] ?? 'Closure') . ' line ' . $line . PHP_EOL;
+
+        foreach ($trance as $value) {
             if (!isset($value['file'])) {
                 $value['file'] = $file;
             }
