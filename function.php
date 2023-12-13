@@ -943,7 +943,15 @@ if (!function_exists('throwable')) {
 
         $trance  = $throwable->getTrace();
         $current = array_shift($trance);
-        $message .= '              Trance: ' . $current['file'] . ' -> ' . (isset($current['class']) ? $current['class'] . '::' : '') . ($current['function'] ?? 'Closure') . ' line ' . $line . PHP_EOL;
+
+
+        if (!isset($current['file'])) {
+            $current['file'] = $file;
+        }
+        if (!isset($current['line'])) {
+            $current['line'] = $line;
+        }
+        $message .= '              Trance: ' . $current['file'] . ' -> ' . (isset($current['class']) ? $current['class'] . '::' : '') . ($current['function'] ?? 'Closure') . ' line ' . $current['line'] . PHP_EOL;
 
         foreach ($trance as $value) {
             if (!isset($value['file'])) {
