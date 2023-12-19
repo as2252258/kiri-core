@@ -28,6 +28,21 @@ interface Arrayable
 }
 
 
+if (!function_exists('json_validator')) {
+
+
+    /**
+     * @param string $data
+     * @return bool
+     */
+    function json_validator(string $data): bool
+    {
+        return is_null(json_decode($data));
+    }
+
+}
+
+
 if (!function_exists('application')) {
 
     /**
